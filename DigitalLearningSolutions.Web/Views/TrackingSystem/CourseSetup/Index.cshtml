@@ -19,19 +19,7 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Centre course setup</h1>
 
-    <partial name="SearchablePage/Configurations/_FullWidthSearchAndSort" model="Model"/>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <partial name="SearchablePage/_Filters" model="Model" />
-      </div>
-    </div>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <vc:current-filters searchable-page-view-model="Model" />
-      </div>
-    </div>
+    <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
     @if (!Model.Courses.Any()) {
       <p>The centre has no courses set up yet.</p>

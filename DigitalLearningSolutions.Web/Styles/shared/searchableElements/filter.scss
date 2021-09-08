@@ -1,7 +1,7 @@
 ﻿@import "common";
 @import "tags";
 
-.filter-dropdown {
+/*.filter-dropdown {
   @extend .input-with-submit-button;
   width: 80%;
 
@@ -56,9 +56,9 @@
     border-radius: 4px;
     background-color: $color_nhsuk-red;
   }
-}
+}*/
 
-.applied-filter-container {
+/*.applied-filter-container {
   height: auto;
   width: 100%;
   float: left;
@@ -75,7 +75,7 @@
 .clear-filter-button-container {
   width: 20%;
   float: left;
-}
+}*/
 
 .filter-tag {
   padding-top: 11px;

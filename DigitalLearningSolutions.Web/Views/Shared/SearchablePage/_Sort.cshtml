@@ -6,11 +6,20 @@
   @if (Model.FilterEnabled) {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
   }
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
-    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
-    <div class="sort-direction-dropdown-container">
-      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort direction">
+  <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
+  <div class="sort-box-flex-container">
+    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown"
+            id="select-sort-by"
+            asp-for="SortBy"
+            asp-items="Model.SortBySelectListItems"
+            aria-label="Sort by">
+    </select>
+
+    <div class="sort-order-button-flex-container">
+      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown"
+              id="select-sort-direction"
+              asp-for="SortDirection"
+              aria-label="Sort direction">
         <option value="Ascending">Ascending</option>
         <option value="Descending">Descending</option>
       </select>

@@ -1,46 +1,11 @@
 @import "~nhsuk-frontend/packages/core/all";
 @import "common";
 
+
+/*#region old stuff */
+
 .sort-dropdown {
   border-radius: 4px;
-}
-
-.sort-by-dropdown {
-  @extend .left-dropdown;
-
-  @include mq($from: tablet) {
-    width: 66.666666%;
-  }
-}
-
-.sort-direction-dropdown {
-  @extend .input-with-no-js-submit-button;
-  width: 63%;
-
-  @include mq($from: tablet) {
-    width: 66.666666%;
-  }
-}
-
-.sort-direction-dropdown-container {
-  @include mq($from: desktop) {
-    width: calc(60% - 12px);
-    float: left;
-  }
-}
-
-.sort-submit {
-  @extend .right-submit-button;
-  background-color: $button-dark-blue;
-
-  @include mq($from: desktop) {
-    width: calc(33.33333% - 4px);
-
-    .search-sort-flex-container & {
-      min-width: unset;
-      width: calc(33.33333% - 4px);
-    }
-  }
 }
 
 .sort-row {
@@ -104,3 +69,5 @@
     padding-left: 8px;
   }
 }
+
+/*#endregion */

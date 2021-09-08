@@ -15,7 +15,7 @@
             string sortBy,
             string sortDirection,
             int page
-        ) : base(searchString, page, false, sortBy, sortDirection)
+        ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(

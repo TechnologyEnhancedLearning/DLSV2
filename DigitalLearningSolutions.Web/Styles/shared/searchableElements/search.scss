@@ -1,43 +1,13 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "common";
 
-.search-box {
-  @extend .input-with-no-js-submit-button;
-  -webkit-appearance: none;
 
-  @include mq($until: tablet) {
-    width: 79%;
-  }
 
-  @include mq($from: tablet) {
-    width: 70%;
-  }
 
-  @include mq($from: desktop) {
-    width: 80%;
 
-    .js-enabled .search-sort-flex-container & {
-      width: 100%;
-    }
-  }
-}
-
-.nhsuk-search__submit {
-  background-color: $button-dark-blue;
-  float: left;
-
-  .nhsuk-icon__search {
-    fill: #fff;
-  }
-
-  &:hover {
-    background-color: $button-hover-colour;
-  }
-}
-
-div#search {
+/*div#search {
   text-align: left;
-  //padding: 0 16px;
+  padding: 0 16px;
 
   @include mq($from: desktop) {
     flex-basis: 50%;
@@ -50,4 +20,4 @@ div#search {
       flex-basis: 50%;
     }
   }
-}
+}*/

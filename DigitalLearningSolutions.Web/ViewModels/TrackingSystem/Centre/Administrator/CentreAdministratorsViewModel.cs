@@ -15,7 +15,7 @@
             string? searchString,
             string? filterBy,
             int page
-        ) : base(searchString, page, true, filterBy: filterBy)
+        ) : base(searchString, page, true, filterBy: filterBy, searchLabel: "Search administrators")
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(

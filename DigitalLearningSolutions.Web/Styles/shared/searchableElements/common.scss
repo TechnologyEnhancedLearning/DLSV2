@@ -42,10 +42,6 @@ $button-hover-colour: #4c6272;
     &:focus {
       border-right: 4px solid $color_nhsuk-black;
     }
-
-    @include mq($until: tablet) {
-      width: 100%;
-    }
   }
 }
 
@@ -72,7 +68,6 @@ $button-hover-colour: #4c6272;
   float: left;
   margin-bottom: nhsuk-spacing(4);
   outline: none;
-  width: 100%;
 
   &:focus {
     border: 4px solid $color_nhsuk_black;
@@ -86,12 +81,6 @@ $button-hover-colour: #4c6272;
 
   @include mq($from: tablet) {
     height: 40px;
-    width: 80%;
-  }
-
-  @include mq($from: desktop) {
-    width: 40%;
-    float: left;
     margin-right: nhsuk-spacing(2);
   }
 }
@@ -110,46 +99,204 @@ $button-hover-colour: #4c6272;
 .search-sort-flex-container {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 
-  @include govuk-media-query($from: tablet) {
-    flex-direction: column;
-  }
-
-  @include govuk-media-query($from: tablet) {
+  @include mq($from: desktop) {
     flex-direction: row;
   }
 
-  .search-box-flex-container {
+  .search-container {
     display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 
-    @include govuk-media-query($from: desktop) {
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-
-    @include govuk-media-query($until: desktop) {
-      width: 100%;
-    }
-
-    @include govuk-media-query($from: desktop) {
+    @include mq($from: desktop) {
       width: 40%;
-      padding-right: 0px;
+      margin-right: 8px;
+    }
+
+    @include mq($until: desktop) {
+      width: 100%;
     }
   }
 
-  .sort-box-flex-container {
+  .sort-container {
     display: flex;
 
-    @include govuk-media-query($from: desktop) {
-      flex-direction: row;
+    @include mq($from: desktop) {
+      flex: 1;
     }
 
-    @include govuk-media-query($until: desktop) {
+    @include mq($until: desktop) {
       width: 100%;
     }
+  }
+}
 
-    @include govuk-media-query($from: desktop) {
-      padding-left: 8px;
+.search-box-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+
+  .search-box {
+    @extend .input-with-no-js-submit-button;
+    -webkit-appearance: none;
+    flex: 1;
+  }
+
+  .nhsuk-search__submit {
+    background-color: $button-dark-blue;
+
+    .nhsuk-icon__search {
+      fill: #fff;
     }
+
+    &:hover {
+      background-color: $button-hover-colour;
+    }
+  }
+}
+
+.sort-box-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+
+  .sort-by-dropdown {
+    @extend .left-dropdown;
+    display: flex;
+
+    @include mq($from: tablet) {
+      flex: 1;
+    }
+  }
+
+  .sort-order-button-flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+
+    .sort-direction-dropdown {
+      @extend .input-with-no-js-submit-button;
+      display: flex;
+      flex: 1;
+    }
+
+    .sort-submit {
+      @extend .right-submit-button;
+      background-color: $button-dark-blue;
+      min-width: 100px;
+    }
+  }
+
+  @include mq($until: tablet) {
+    flex-direction: column;
+  }
+}
+
+.filters-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+
+  @include mq($until: desktop) {
+    flex-direction: column;
+  }
+
+  .filter-dropdown-selector {
+    @extend .left-dropdown;
+    display: none;
+
+    .js-enabled & {
+      display: flex;
+      width: 100%;
+
+      @include mq($from: desktop) {
+        width: 40%;
+      }
+    }
+  }
+
+  .filters-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+
+.filter-dropdown-container {
+  width: 100%;
+  display: flex;
+
+  .js-enabled & {
+    display: none;
+  }
+
+  .filter-form {
+    width: 100%;
+
+    .filter-flex-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      width: 100%;
+
+      .filter-dropdown {
+        @extend .input-with-submit-button;
+        display: flex;
+        flex: 1;
+      }
+
+      .filter-submit {
+        @extend .right-submit-button;
+
+        &__dropdown {
+          @extend .right-submit-button;
+          background-color: $button-dark-blue;
+
+          @include mq($from: tablet) {
+            width: 20%;
+          }
+
+          @include mq($from: desktop) {
+            width: 20%;
+
+            .js-enabled & {
+              width: 33.3333%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.applied-filter-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+
+  .applied-filter-container {
+    flex: 1;
+
+    @include mq($until: tablet) {
+      width: 100%;
+    }
+  }
+
+  .filter-submit__clear {
+    @extend .right-submit-button;
+    width: 20%;
+    border-radius: 4px;
+    background-color: $color_nhsuk-red;
+  }
+
+  @include mq($until: tablet) {
+    flex-direction: column;
   }
 }

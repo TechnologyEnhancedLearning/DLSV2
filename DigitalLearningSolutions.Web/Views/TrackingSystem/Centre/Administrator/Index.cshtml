@@ -33,22 +33,7 @@
       </div>
     </div>
 
-    <div class="nhsuk-grid-row">
-      <vc:search-box label="Search administrators"
-                     searchable-page-view-model="Model" />
-    </div>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <partial name="SearchablePage/_Filters" model="Model" />
-      </div>
-    </div>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <vc:current-filters searchable-page-view-model="Model" />
-      </div>
-    </div>
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model"/>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">

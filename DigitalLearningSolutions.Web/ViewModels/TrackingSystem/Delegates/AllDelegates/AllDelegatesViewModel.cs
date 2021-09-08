@@ -18,7 +18,7 @@
             string sortBy,
             string sortDirection,
             string? filterBy
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, searchLabel: "Search delegates")
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 delegateUserCards.AsQueryable(),

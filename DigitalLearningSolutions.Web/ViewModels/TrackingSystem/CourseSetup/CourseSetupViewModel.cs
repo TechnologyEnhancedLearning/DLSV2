@@ -17,7 +17,7 @@
             string sortDirection,
             string? filterBy,
             int page
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, searchLabel: "Search courses")
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 courses.AsQueryable(),
