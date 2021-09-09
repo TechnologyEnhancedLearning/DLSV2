@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = ActivityFilterData.GetDefaultFilterData(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
@@ -66,7 +67,7 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -82,7 +83,7 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
 
             var (jobGroups, courseCategories, courses) =
@@ -99,6 +100,36 @@
                 dataStartDate
             );
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditFilters")]
+        public IActionResult EditFilters(EditFiltersViewModel model)
+        {
+            // validate here
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // data assumed valid from here
+            var startDate = new DateTime(model.StartYear!.Value, model.StartMonth!.Value, model.StartDay!.Value);
+            var endDate = model.NoEndDate
+                ? (DateTime?)null
+                : new DateTime(model.EndYear!.Value, model.EndMonth!.Value, model.EndDay!.Value);
+
+            var filterData = new ActivityFilterData(
+                startDate,
+                endDate,
+                model.JobGroupId,
+                model.CourseCategoryId,
+                model.CustomisationId,
+                model.ReportInterval
+            );
+
+            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -2,14 +2,18 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.Helpers;
+    using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class EditFiltersViewModel
+    public class EditFiltersViewModel : IValidatableObject
     {
+        public EditFiltersViewModel() {}
+
         public EditFiltersViewModel(
             ActivityFilterData filterData,
             int userCategoryId,
@@ -57,9 +61,41 @@
         public DateTime DataStart { get; set; }
         public bool CanFilterCourseCategories { get; set; }
 
-        public IEnumerable<SelectListItem> JobGroupOptions { get; set; }
-        public IEnumerable<SelectListItem> CourseCategoryOptions { get; set; }
-        public IEnumerable<SelectListItem> CustomisationOptions { get; set; }
-        public IEnumerable<SelectListItem> ReportIntervalOptions { get; set; }
+        public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> CourseCategoryOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> CustomisationOptions { get; set; } = new List<SelectListItem>();
+        public IEnumerable<SelectListItem> ReportIntervalOptions { get; set; } = new List<SelectListItem>();
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var validationResults = new List<ValidationResult>();
+
+            if (CourseCategoryId.HasValue && CustomisationId.HasValue)
+            {
+                validationResults.Add(new ValidationResult("Please filter by only one of Course and Course Category"));
+            }
+
+            var startDateValidationResults = DateValidator.ValidateDate(StartDay, StartMonth, StartYear, "Start date", true, false, true)
+                .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
+
+            validationResults.AddRange(startDateValidationResults);
+
+            if (!NoEndDate)
+            {
+                var endDateValidationResults = DateValidator.ValidateDate(EndDay, EndMonth, EndYear, "End date", true, false, true)
+                    .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
+
+                if (StartYear > EndYear
+                    || StartYear == EndYear && StartMonth > EndMonth
+                    || StartYear == EndYear && StartMonth == EndMonth && StartDay > EndDay)
+                {
+                    endDateValidationResults.Add(new ValidationResult("End date must not precede start date"));
+                }
+
+                validationResults.AddRange(endDateValidationResults);
+            }
+
+            return validationResults;
+        }
     }
 }
