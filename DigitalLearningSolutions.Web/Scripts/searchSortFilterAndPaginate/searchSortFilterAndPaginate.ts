@@ -49,6 +49,7 @@ export class SearchSortFilterAndPaginate {
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.page = 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
@@ -59,11 +60,13 @@ export class SearchSortFilterAndPaginate {
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.page += 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.page -= 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private searchSortAndPaginate(searchableData: ISearchableData): void {
@@ -146,5 +149,9 @@ export class SearchSortFilterAndPaginate {
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
     resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+  }
+
+  private static scrollToTop() : void {
+    window.scrollTo(0, 0);
   }
 }
