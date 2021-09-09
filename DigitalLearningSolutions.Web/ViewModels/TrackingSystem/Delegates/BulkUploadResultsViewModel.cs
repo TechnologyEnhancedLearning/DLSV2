@@ -47,6 +47,17 @@
                 BulkUploadResult.ErrorReason.AliasIdInUse => "The Alias ID is already in use by another delegate.",
                 BulkUploadResult.ErrorReason.EmailAddressInUse =>
                     "The Email address is already in use by another delegate.",
+                BulkUploadResult.ErrorReason.TooLongFirstName => "First name must be 250 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongLastName => "Last name must be 250 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongEmail => "Email address must be 250 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAliasId => "Alias must be 250 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer1 => "Answer1 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer2 => "Answer2 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer3 => "Answer3 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer4 => "Answer4 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer5 => "Answer5 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.TooLongAnswer6 => "Answer6 must be 100 characters or fewer.",
+                BulkUploadResult.ErrorReason.BadFormatEmail => "Email address must be in the correct format, like name@example.com.",
                 _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
             };
         }

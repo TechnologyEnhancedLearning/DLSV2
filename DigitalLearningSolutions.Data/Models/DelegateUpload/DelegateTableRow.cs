@@ -36,7 +36,7 @@
             Answer5 = FindFieldValue("Answer5");
             Answer6 = FindFieldValue("Answer6");
             AliasId = FindFieldValue("AliasID");
-            Email = FindFieldValue("EmailAddress");
+            Email = FindFieldValue("EmailAddress")?.Trim();
             RowStatus = RowStatus.NotYetProcessed;
         }
 
@@ -79,6 +79,50 @@
             else if (string.IsNullOrEmpty(Email))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidEmail;
+            }
+            else if (FirstName.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongFirstName;
+            }
+            else if (LastName.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongLastName;
+            }
+            else if (Email.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongEmail;
+            }
+            else if (!IsEmailFormatValid())
+            {
+                Error = BulkUploadResult.ErrorReason.BadFormatEmail;
+            }
+            else if (AliasId != null && AliasId.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAliasId;
+            }
+            else if (Answer1 != null && Answer1.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer1;
+            }
+            else if (Answer2 != null && Answer2.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer2;
+            }
+            else if (Answer3 != null && Answer3.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer3;
+            }
+            else if (Answer4 != null && Answer4.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer4;
+            }
+            else if (Answer5 != null && Answer5.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer5;
+            }
+            else if (Answer6 != null && Answer6.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer6;
             }
 
             return !Error.HasValue;
@@ -142,6 +186,13 @@
             }
 
             return (delegateUser.EmailAddress ?? string.Empty) == Email;
+        }
+
+        private bool IsEmailFormatValid()
+        {
+            var whitespace = Email!.Any(char.IsWhiteSpace);
+            var index = Email!.IndexOf('@');
+            return !whitespace && index > 0 && index != Email.Length - 1 && index == Email.LastIndexOf('@');
         }
     }
 }
