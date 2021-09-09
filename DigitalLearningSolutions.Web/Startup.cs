@@ -182,6 +182,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<IUserService, UserService>();
         }
 
