@@ -3,15 +3,50 @@
 
 .sort-form {
   width: 100%;
+}
 
-  .sort-box-flex-container {
+.sort-box-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+
+  .sort-by-dropdown {
+    @extend .left-dropdown;
+    display: flex;
+
+    @include mq($until: tablet) {
+      width: 100%;
+    }
+
+    @include mq($from: tablet) {
+      flex: 1;
+    }
+  }
+
+  .sort-order-button-flex-container {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    width: 100%;
 
-    .sort-by-dropdown {
-      @extend .left-dropdown;
+    .search-sort-flex-container & {
+      @include mq($from: tablet) {
+        width: 50%;
+      }
+    }
+
+    @include mq($from: tablet) {
+      width: 60%;
+    }
+
+    @include mq($from: large-desktop) {
+      .js-enabled & {
+        width: 33.3333%;
+      }
+    }
+
+    .sort-direction-dropdown {
+      @extend .input-with-no-js-submit-button;
       display: flex;
 
       @include mq($until: tablet) {
@@ -21,62 +56,27 @@
       @include mq($from: tablet) {
         flex: 1;
       }
+
+      .js-enabled & {
+        width: 100%;
+      }
     }
 
-    .sort-order-button-flex-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-
-      .search-sort-flex-container & {
-        @include mq($from: tablet) {
-          width: 50%;
-        }
-      }
+    .sort-submit {
+      @extend .right-submit-button;
+      background-color: $button-dark-blue;
+      min-width: 100px;
 
       @include mq($from: tablet) {
-        width: 60%;
-      }
-
-      @include mq($from: large-desktop) {
-        .js-enabled & {
+        &.non-js-only {
           width: 33.3333%;
         }
       }
-
-      .sort-direction-dropdown {
-        @extend .input-with-no-js-submit-button;
-        display: flex;
-
-        @include mq($until: tablet) {
-          width: 100%;
-        }
-
-        @include mq($from: tablet) {
-          flex: 1;
-        }
-
-        .js-enabled & {
-          width: 100%;
-        }
-      }
-
-      .sort-submit {
-        @extend .right-submit-button;
-        background-color: $button-dark-blue;
-        min-width: 100px;
-
-        @include mq($from: tablet) {
-          &.non-js-only {
-            width: 33.3333%;
-          }
-        }
-      }
     }
+  }
 
-    @include mq($until: tablet) {
-      flex-direction: column;
-    }
+  @include mq($until: tablet) {
+    flex-direction: column;
   }
 }
 

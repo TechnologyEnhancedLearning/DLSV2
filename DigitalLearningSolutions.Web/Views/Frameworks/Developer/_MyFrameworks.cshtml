@@ -9,86 +9,81 @@
 }
 else
 {
-  <form method="get" role="search" asp-action="ViewFrameworks" asp-route-tabname="Mine" asp-route-page="@Model.Page">
-    <div class="nhsuk-grid-row sort-and-search">
-      <partial name="Shared/_FrameworkPageSearch" model="Model" />
-      <partial name="Shared/_FrameworkPageSort" model="Model" />
-    </div>
-    <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
-    <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-    <table role="table" class="nhsuk-table-responsive">
-      <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Frameworks you are working on</caption>
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Framework
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Created
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Status
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Owner
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        @foreach (var framework in Model.BrandedFrameworks)
-        {
-          <tr role="row" class="nhsuk-table__row framework-row">
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Framework </span>
-              <span class="framework-name">
-                @framework.FrameworkName
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Created </span>
-              <span class="framework-created-date">
-                @framework.CreatedDate.ToShortDateString()
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Status </span>
-              <span class="framework-publish-status">
-                <partial name="Shared/_StatusTag" model="framework.PublishStatusID" />
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Owner </span>
-              <span class="framework-owner">
-                @framework.Owner
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Actions </span>
-              @if (framework.UserRole > 1)
-              {
-                <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
-                  View/Edit
-                </a>
-              }
-              else if (framework.UserRole == 1)
-              {
-              <a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
-                Review
-              </a>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-    @if (Model.TotalPages > 1)
+<form method="get" role="search" asp-action="ViewFrameworks" asp-route-tabname="Mine" asp-route-page="@Model.Page">
+
+  <partial name="Shared/_FrameworksSearchAndSort" model="Model" />
+
+  <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
+  <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+  <table role="table" class="nhsuk-table-responsive">
+    <caption class="nhsuk-table__caption nhsuk-u-visually-hidden">Frameworks you are working on</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Framework
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Created
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Status
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Owner
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var framework in Model.BrandedFrameworks)
+      {
+<tr role="row" class="nhsuk-table__row framework-row">
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Framework </span>
+    <span class="framework-name">
+      @framework.FrameworkName
+    </span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Created </span>
+    <span class="framework-created-date">
+      @framework.CreatedDate.ToShortDateString()
+    </span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Status </span>
+    <span class="framework-publish-status">
+      <partial name="Shared/_StatusTag" model="framework.PublishStatusID" />
+    </span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Owner </span>
+    <span class="framework-owner">
+      @framework.Owner
+    </span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Actions </span>
+    @if (framework.UserRole > 1)
     {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
-  </form>
+<a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
+  View/Edit
+</a> }
+          else if (framework.UserRole == 1)
+          {
+<a asp-action="ViewFramework" asp-route-frameworkId="@framework.ID" asp-route-tabname="Structure">
+  Review
+</a>}
+  </td>
+</tr>        }
+    </tbody>
+  </table>
+  @if (Model.TotalPages > 1)
+  {
+<partial name="SearchablePage/_Pagination" model="Model" />}
+</form>
 }
 @if (Model.IsFrameworkDeveloper)
 {
