@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class ValidateAllowedApplicationTypeAttribute : Attribute, IActionFilter
@@ -24,14 +25,20 @@
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
             {
-                context.Result = new RedirectToActionResult("Index", "Login", new { });
+                RedirectToLogin(context);
                 return;
             }
 
-            if (!context.ActionArguments.TryGetValue(applicationArgumentName, out var argumentValue) || !(argumentValue is ApplicationType application))
+            if (HasModelBindingError(context))
             {
+                context.Result = new NotFoundResult();
                 return;
             }
+
+            var application = (ApplicationType?)
+                (context.ActionArguments.ContainsKey(applicationArgumentName)
+                    ? context.ActionArguments[applicationArgumentName]
+                    : null);
 
             if (user.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
             {
@@ -39,14 +46,30 @@
                 return;
             }
 
-            if (ApplicationType.LearningPortal.Equals(application) && !user.HasLearningPortalPermissions() ||
-                ApplicationType.TrackingSystem.Equals(application) && !user.HasCentreAdminPermissions() ||
-                ApplicationType.Frameworks.Equals(application) && !user.HasFrameworksAdminPermissions() ||
-                ApplicationType.Main.Equals(application) && !user.HasCentreAdminPermissions()
-            )
+            if (user.HasCentreAdminPermissions() && ApplicationType.Main.Equals(application))
             {
-                context.Result = new RedirectToActionResult("Welcome", "Home", new { });
+                RedirectToNullVersion(context);
+                return;
             }
+
+            if (!user.HasLearningPortalPermissions() && ApplicationType.LearningPortal.Equals(application) ||
+                !user.HasFrameworksAdminPermissions() && ApplicationType.Frameworks.Equals(application) ||
+                !user.HasCentreAdminPermissions() && (ApplicationType.TrackingSystem.Equals(application) ||
+                                                      ApplicationType.Main.Equals(application) ||
+                                                      application is null))
+            {
+                RedirectToHome(context);
+            }
+        }
+
+        private bool HasModelBindingError(ActionExecutingContext context)
+        {
+            return context.ModelState.GetValidationState(applicationArgumentName) == ModelValidationState.Invalid;
+        }
+
+        private void RedirectToLogin(ActionExecutingContext context)
+        {
+            context.Result = new RedirectToActionResult("Index", "Login", new { });
         }
 
         private void RedirectToLearningPortalVersion(ActionExecutingContext context)
@@ -57,6 +80,17 @@
                 [applicationArgumentName] = ApplicationType.LearningPortal
             };
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
+        }
+
+        private void RedirectToNullVersion(ActionExecutingContext context)
+        {
+            var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
+            context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, new { });
+        }
+
+        private void RedirectToHome(ActionExecutingContext context)
+        {
+            context.Result = new RedirectToActionResult("Welcome", "Home", new { });
         }
     }
 }
