@@ -6,6 +6,17 @@
   }
 }
 
+.inner-flex-container {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
 .conjunction {
-    align-self: flex-end;
+  align-self: flex-end;
+  justify-content: flex-end;
+
+  @include mq($until: tablet) {
+    display: flex;
+    min-width: nhsuk-spacing(7)
+  }
 }
