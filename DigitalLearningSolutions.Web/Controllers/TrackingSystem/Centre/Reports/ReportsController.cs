@@ -85,9 +85,8 @@
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
-
             var (jobGroups, courseCategories, courses) =
-                activityService.GetFilterOptions(centreId, filterData.CourseCategoryId);
+                activityService.GetFilterOptions(centreId, adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId);
 
             var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
 
@@ -106,13 +105,11 @@
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
         {
-            // validate here
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // data assumed valid from here
             var startDate = new DateTime(model.StartYear!.Value, model.StartMonth!.Value, model.StartDay!.Value);
             var endDate = model.NoEndDate
                 ? (DateTime?)null

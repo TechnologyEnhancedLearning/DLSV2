@@ -1,16 +1,19 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @using Microsoft.Extensions.Configuration
 @model EditFiltersViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit report filters";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-  var reportIntervalValue = (int)Model.ReportInterval;
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Edit report filters";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+    ViewData["HeaderPathName"] = "Tracking System";
+    var reportIntervalValue = (int)Model.ReportInterval;
+    var courseSelected = Model.CustomisationId.HasValue;
+    var categorySelected = Model.CourseCategoryId.HasValue;
 }
 
 @section NavMenuItems {
@@ -45,12 +48,12 @@
 
             <div class="nhsuk-radios nhsuk-radios--conditional">
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="course-filter-type-1" name="course-filter-type" type="radio" value="course" aria-controls="conditional-course-filter-type-1" aria-expanded="false">
+                <input name="FilterType" class="nhsuk-radios__input" id="course-filter-type-1" type="radio" value="@CourseFilterType.Course" aria-controls="conditional-course-filter-type-1" aria-expanded="@(courseSelected ? "true" : "false")" @(courseSelected ? "checked" : "")>
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
                   Course
                 </label>
               </div>
-              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-course-filter-type-1">
+              <div class="nhsuk-radios__conditional @(courseSelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-1">
 
                 <vc:select-list asp-for="CustomisationId"
                                 label="Choose a course"
@@ -64,12 +67,12 @@
               </div>
 
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="course-filter-type-2" name="course-filter-type" type="radio" value="course category" aria-controls="conditional-course-filter-type-2" aria-expanded="false">
+                <input name="FilterType" class="nhsuk-radios__input" id="course-filter-type-2" type="radio" value="@CourseFilterType.CourseCategory" aria-controls="conditional-course-filter-type-2" aria-expanded="@(categorySelected ? "true" : "false")"  @(categorySelected ? "checked" : "")>
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
                   Course category
                 </label>
               </div>
-              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-course-filter-type-2">
+              <div class="nhsuk-radios__conditional @(categorySelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-2">
                 <vc:select-list asp-for="CourseCategoryId"
                                 label="Choose course category from the list below"
                                 value="@Model.CourseCategoryId.ToString()"
@@ -83,6 +86,7 @@
           </fieldset>
         </div>
       } else {
+        <input type="hidden" asp-for="FilterType" value="@CourseFilterType.CourseCategory"/>
         <vc:select-list asp-for="CustomisationId"
                         label="Choose a course filter"
                         value="@Model.CustomisationId.ToString()"

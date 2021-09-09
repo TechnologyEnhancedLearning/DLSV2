@@ -7,12 +7,14 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class EditFiltersViewModel : IValidatableObject
     {
-        public EditFiltersViewModel() {}
+        private int? courseCategoryId;
+        public EditFiltersViewModel() { }
 
         public EditFiltersViewModel(
             ActivityFilterData filterData,
@@ -24,6 +26,9 @@
         )
         {
             JobGroupId = filterData.JobGroupId;
+
+            FilterType = filterData.CustomisationId.HasValue ? CourseFilterType.Course :
+                filterData.CourseCategoryId.HasValue ? CourseFilterType.CourseCategory : CourseFilterType.None;
             CourseCategoryId = filterData.CourseCategoryId;
             CustomisationId = filterData.CustomisationId;
             StartDay = filterData.StartDate.Day;
@@ -39,7 +44,8 @@
             DataStart = dataStartDate;
 
             JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(jobGroupOptions, JobGroupId);
-            CourseCategoryOptions = SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
+            CourseCategoryOptions =
+                SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
             CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
             var reportIntervals = Enum.GetValues(typeof(ReportInterval))
                 .Cast<int>()
@@ -48,8 +54,21 @@
         }
 
         public int? JobGroupId { get; set; }
-        public int? CourseCategoryId { get; set; }
-        public int? CustomisationId { get; set; }
+        public CourseFilterType FilterType { get; set; }
+
+        public int? CourseCategoryId
+        {
+            get => FilterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
+            set => courseCategoryId = value;
+        }
+
+        public int? CustomisationId
+        {
+            get => FilterType == CourseFilterType.Course ? customisationId : null;
+            set => customisationId = value;
+        }
+
+        private int? customisationId { get; set; }
         public int? StartDay { get; set; }
         public int? StartMonth { get; set; }
         public int? StartYear { get; set; }
@@ -75,14 +94,30 @@
                 validationResults.Add(new ValidationResult("Please filter by only one of Course and Course Category"));
             }
 
-            var startDateValidationResults = DateValidator.ValidateDate(StartDay, StartMonth, StartYear, "Start date", true, false, true)
+            var startDateValidationResults = DateValidator.ValidateDate(
+                    StartDay,
+                    StartMonth,
+                    StartYear,
+                    "Start date",
+                    true,
+                    false,
+                    true
+                )
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
 
             validationResults.AddRange(startDateValidationResults);
 
             if (!NoEndDate)
             {
-                var endDateValidationResults = DateValidator.ValidateDate(EndDay, EndMonth, EndYear, "End date", true, false, true)
+                var endDateValidationResults = DateValidator.ValidateDate(
+                        EndDay,
+                        EndMonth,
+                        EndYear,
+                        "End date",
+                        true,
+                        false,
+                        true
+                    )
                     .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
 
                 if (StartYear > EndYear
