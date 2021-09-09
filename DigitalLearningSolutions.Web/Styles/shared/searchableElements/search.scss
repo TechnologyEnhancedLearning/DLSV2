@@ -1,23 +1,27 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "common";
 
+.search-box-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
 
-
-
-
-/*div#search {
-  text-align: left;
-  padding: 0 16px;
-
-  @include mq($from: desktop) {
-    flex-basis: 50%;
+  .search-box {
+    @extend .input-with-no-js-submit-button;
+    -webkit-appearance: none;
+    flex: 1;
   }
-  // IE11 hack, since otherwise this overflows horribly when setting flex-basis
-  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-    flex-basis: auto;
 
-    @include mq($from: large-desktop) {
-      flex-basis: 50%;
+  .nhsuk-search__submit {
+    background-color: $button-dark-blue;
+
+    .nhsuk-icon__search {
+      fill: #fff;
+    }
+
+    &:hover {
+      background-color: $button-hover-colour;
     }
   }
-}*/
+}
