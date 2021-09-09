@@ -49,7 +49,7 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        @if (!Model.Delegates.Any()) {
+        @if (!Model.Delegates.Any() && Model.SearchString == null && Model.FilterBy == null) {
           <p class="nhsuk-u-margin-top-4" role="alert">
             <b>No delegates found.</b>
           </p>
