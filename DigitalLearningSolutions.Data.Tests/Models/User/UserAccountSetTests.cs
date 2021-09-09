@@ -25,11 +25,10 @@
         {
             // Given
             var adminUser = Builder<AdminUser>.CreateNew().Build();
-            var adminUsers = new List<AdminUser> { adminUser };
             var delegates = new List<DelegateUser>();
 
             // When
-            var result = new UserAccountSet(adminUsers, delegates).Any();
+            var result = new UserAccountSet(adminUser, delegates).Any();
 
             // Then
             result.Should().BeTrue();
@@ -42,7 +41,7 @@
             var delegates = new List<DelegateUser> { Builder<DelegateUser>.CreateNew().Build() };
 
             // When
-            var result = new UserAccountSet(new List<AdminUser>(), delegates).Any();
+            var result = new UserAccountSet(null, delegates).Any();
 
             // Then
             result.Should().BeTrue();
@@ -56,13 +55,12 @@
             var adminId = 234;
 
             var adminAccount = Builder<AdminUser>.CreateNew().With(user => user.Id = adminId).Build();
-            var adminAccounts = new List<AdminUser> { adminAccount };
             var delegateAccounts = delegateIds.Select(
                 id => Builder<DelegateUser>.CreateNew().With(user => user.Id = id).Build()
             );
 
             // When
-            var userRefs = new UserAccountSet(adminAccounts, delegateAccounts).GetUserRefs();
+            var userRefs = new UserAccountSet(adminAccount, delegateAccounts).GetUserRefs();
 
             // Then
             userRefs.Should().Contain(delegateIds.Select(id => new UserReference(id, UserType.DelegateUser)));
@@ -94,10 +92,9 @@
             // Given
             var adminId = 234;
             var adminAccount = Builder<AdminUser>.CreateNew().With(user => user.Id = adminId).Build();
-            var adminAccounts = new List<AdminUser> { adminAccount };
 
             // When
-            var userRefs = new UserAccountSet(adminAccounts, new DelegateUser[] { }).GetUserRefs();
+            var userRefs = new UserAccountSet(adminAccount, new DelegateUser[] { }).GetUserRefs();
 
             // Then
             userRefs.Should().Contain(new UserReference(adminId, UserType.AdminUser));

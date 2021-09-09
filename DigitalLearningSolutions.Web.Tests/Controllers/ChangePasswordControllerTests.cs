@@ -76,8 +76,7 @@
         {
             // Given
             var user = Builder<AdminUser>.CreateNew().Build();
-            var users = new List<AdminUser> { user };
-            GivenPasswordVerificationReturnsUsers(new UserAccountSet(users, null), "current-password");
+            GivenPasswordVerificationReturnsUsers(new UserAccountSet(user, null), "current-password");
 
             // When
             var result = await authenticatedController.Index(
@@ -98,11 +97,10 @@
         {
             // Given
             var adminUser = Builder<AdminUser>.CreateNew().Build();
-            var adminUsers = new List<AdminUser> { adminUser };
             var delegateUser = Builder<DelegateUser>.CreateNew().Build();
             GivenLoggedInUserAccountsAre(adminUser, delegateUser);
 
-            var verifiedUsers = new UserAccountSet(adminUsers, new[] { delegateUser });
+            var verifiedUsers = new UserAccountSet(adminUser, new[] { delegateUser });
             GivenPasswordVerificationReturnsUsers(verifiedUsers, "current-password");
 
             // When

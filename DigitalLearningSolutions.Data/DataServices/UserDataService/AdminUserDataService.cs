@@ -51,7 +51,7 @@
             return user;
         }
 
-        public List<AdminUser> GetAdminUsersByUsername(string username)
+        public AdminUser? GetAdminUserByUsername(string username)
         {
             return connection.Query<AdminUser>(
                 @"SELECT
@@ -90,7 +90,7 @@
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
-            ).ToList();
+            ).SingleOrDefault();
         }
 
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)

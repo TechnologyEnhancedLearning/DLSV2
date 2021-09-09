@@ -25,45 +25,39 @@
 
         public LoginResult AttemptLogin(string username, string password)
         {
-            var (unverifiedAdminUsers, unverifiedDelegateUsers) = userService.GetUsersByUsername(username);
+            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(username);
 
-            if (NoAccounts(unverifiedAdminUsers, unverifiedDelegateUsers))
+            if (NoAccounts(unverifiedAdminUser, unverifiedDelegateUsers))
             {
                 return new LoginResult(LoginAttemptResult.InvalidUsername);
             }
 
-            var (verifiedAdminUsers, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
+            var (verifiedAdminUser, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
                 password,
-                unverifiedAdminUsers,
+                unverifiedAdminUser,
                 unverifiedDelegateUsers
             );
-
-            var verifiedAdminUser = verifiedAdminUsers.SingleOrDefault();
 
             if (MultipleEmailsUsedAcrossAccounts(verifiedAdminUser, verifiedDelegateUsers))
             {
                 throw new LoginWithMultipleEmailsException("Not all accounts have the same email");
             }
 
-            var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUsers.Any() && verifiedAdminUser == null;
-            var adminAccountToRecordFailureAgainstIsKnown = unverifiedAdminUsers.Count == 1;
+            var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
 
-            var adminAccountIsAlreadyLocked = adminAccountToRecordFailureAgainstIsKnown &&
-                                              unverifiedAdminUsers.Single().IsLocked;
-            var adminAccountHasJustBecomeLocked = adminAccountToRecordFailureAgainstIsKnown &&
-                                                  unverifiedAdminUsers.Single().FailedLoginCount == 4 &&
+            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
+            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
                                                   adminAccountVerificationAttemptedAndFailed;
 
             var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
             var shouldIncreaseFailedLoginCount =
-                adminAccountToRecordFailureAgainstIsKnown && adminAccountVerificationAttemptedAndFailed &&
+                adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
 
             if (shouldIncreaseFailedLoginCount)
             {
-                var adminUser = unverifiedAdminUsers.Single();
-                userService.IncrementFailedLoginCount(adminUser);
+                userService.IncrementFailedLoginCount(unverifiedAdminUser!);
             }
 
             if (adminAccountIsLocked)
@@ -74,7 +68,7 @@
                 }
                 else
                 {
-                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUsers.Single());
+                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
                 }
             }
 
@@ -100,15 +94,17 @@
                 verifiedAdminUser
             );
 
-            var adminUserToLoginIfCentreActive = new[] { verifiedAdminUser, verifiedLinkedAdmin }
-                .Where(au => au != null).Distinct().SingleOrDefault();
+            var adminUserToLoginIfCentreActive = verifiedLinkedAdmin;
             if (adminUserToLoginIfCentreActive?.IsLocked == true)
             {
                 adminUserToLoginIfCentreActive = null;
             }
 
             var delegateUsersToLogInIfCentreActive =
-                approvedVerifiedDelegates.Concat(verifiedLinkedDelegates).Distinct().ToList();
+                approvedVerifiedDelegates.Concat(verifiedLinkedDelegates)
+                    .GroupBy(du => du.Id)
+                    .Select(g => g.First())
+                    .ToList();
 
             var (adminUserToLogIn, delegateUsersToLogIn) = userService.GetUsersWithActiveCentres(
                 adminUserToLoginIfCentreActive,
@@ -139,11 +135,18 @@
             AdminUser? verifiedAdminUser
         )
         {
-            var verifiedLinkedAdmin = verifiedAdminUser ??
-                                      userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
-                                          approvedVerifiedDelegates,
-                                          password
-                                      );
+            var verifiedAssociatedAdmin = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                approvedVerifiedDelegates,
+                password
+            );
+
+            if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
+            {
+                verifiedAssociatedAdmin = null;
+            }
+
+            var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
+                                      
             var verifiedLinkedDelegates =
                 userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
@@ -163,9 +166,9 @@
             return uniqueEmails.Count > 1;
         }
 
-        private static bool NoAccounts(List<AdminUser> adminUsers, List<DelegateUser> delegateUsers)
+        private static bool NoAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            return adminUsers.Count == 0 && delegateUsers.Count == 0;
+            return adminUser == null && delegateUsers.Count == 0;
         }
     }
 }

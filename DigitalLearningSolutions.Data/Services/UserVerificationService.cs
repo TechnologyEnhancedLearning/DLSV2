@@ -9,7 +9,7 @@
     {
         UserAccountSet VerifyUsers(
             string password,
-            List<AdminUser> unverifiedAdminUsers,
+            AdminUser? unverifiedAdminUser,
             List<DelegateUser> unverifiedDelegateUsers
         );
 
@@ -35,18 +35,19 @@
 
         public UserAccountSet VerifyUsers(
             string password,
-            List<AdminUser> unverifiedAdminUsers,
+            AdminUser? unverifiedAdminUser,
             List<DelegateUser> unverifiedDelegateUsers
         )
         {
-            var verifiedAdminUsers =
-                unverifiedAdminUsers.Where(au => cryptoService.VerifyHashedPassword(au.Password, password))
-                    .ToList();
+            var verifiedAdminUser =
+                cryptoService.VerifyHashedPassword(unverifiedAdminUser?.Password, password)
+                    ? unverifiedAdminUser
+                    : null;
             var verifiedDelegateUsers =
                 unverifiedDelegateUsers.Where(du => cryptoService.VerifyHashedPassword(du.Password, password))
                     .ToList();
 
-            return new UserAccountSet(verifiedAdminUsers, verifiedDelegateUsers);
+            return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
         }
 
         public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(
@@ -82,7 +83,6 @@
             var adminUserAssociatedWithDelegates = userDataService.GetAdminUserByEmailAddress(delegateEmail);
 
             var isSuitableAdmin = adminUserAssociatedWithDelegates != null &&
-                                  delegateUsers.Any(du => du.CentreId == adminUserAssociatedWithDelegates.CentreId) &&
                                   cryptoService.VerifyHashedPassword(
                                       adminUserAssociatedWithDelegates.Password,
                                       password

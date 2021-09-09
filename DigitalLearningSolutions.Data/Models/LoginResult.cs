@@ -14,16 +14,13 @@
         )
         {
             LoginAttemptResult = result;
-            LogInAdmin = adminUser;
-            LogInDelegates = delegateUsers ?? new List<DelegateUser>();
-            AvailableCentres = availableCentres;
+            Accounts = new UserAccountSet(adminUser, delegateUsers);
+            AvailableCentres = availableCentres ?? new List<CentreUserDetails>();
         }
 
         public LoginAttemptResult LoginAttemptResult { get; set; }
 
-        public AdminUser? LogInAdmin { get; set; }
-
-        public List<DelegateUser> LogInDelegates { get; set; }
+        public UserAccountSet Accounts { get; set; }
 
         public List<CentreUserDetails>? AvailableCentres { get; set; }
     }

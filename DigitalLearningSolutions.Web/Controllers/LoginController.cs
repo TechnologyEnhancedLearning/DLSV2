@@ -54,7 +54,7 @@
             }
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
-            var (adminLoginDetails, delegateLoginDetails) = GetLoginDetails(loginResult.LogInAdmin, loginResult.LogInDelegates);
+            var (adminLoginDetails, delegateLoginDetails) = GetLoginDetails(loginResult.Accounts);
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidUsername:
@@ -64,7 +64,7 @@
                     ModelState.AddModelError("Password", "The password you have entered is incorrect");
                     return View("Index", model);
                 case LoginAttemptResult.AccountLocked:
-                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.LogInAdmin!.FailedLoginCount + 1 });
+                    return RedirectToAction("AccountLocked", new { failedCount = loginResult.Accounts.AdminAccount!.FailedLoginCount + 1 });
                 case LoginAttemptResult.AccountNotApproved:
                     return View("AccountNotApproved");
                 case LoginAttemptResult.InactiveCentre:
@@ -131,10 +131,10 @@
         }
 
         private (AdminLoginDetails?, List<DelegateLoginDetails>) GetLoginDetails(
-            AdminUser? adminUser,
-            List<DelegateUser> delegateUsers
+            UserAccountSet accounts
         )
         {
+            var (adminUser, delegateUsers) = accounts;
             var adminLoginDetails = adminUser != null ? new AdminLoginDetails(adminUser) : null;
             var delegateLoginDetails = delegateUsers.Select(du => new DelegateLoginDetails(du)).ToList();
             return (adminLoginDetails, delegateLoginDetails);

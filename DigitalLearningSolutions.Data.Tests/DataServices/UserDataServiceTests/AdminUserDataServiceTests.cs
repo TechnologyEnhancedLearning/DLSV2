@@ -42,7 +42,7 @@
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedAdminUser = userDataService.GetAdminUsersByUsername("Username");
+            var returnedAdminUser = userDataService.GetAdminUserByUsername("Username");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
@@ -55,7 +55,7 @@
             var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser();
 
             // When
-            var returnedAdminUser = userDataService.GetAdminUsersByUsername("ebtnaxrbatnexr");
+            var returnedAdminUser = userDataService.GetAdminUserByUsername("ebtnaxrbatnexr");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
