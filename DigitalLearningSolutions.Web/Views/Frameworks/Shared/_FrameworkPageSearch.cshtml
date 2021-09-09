@@ -2,7 +2,7 @@
 @model BaseSearchablePageViewModel
 
 <div class="search-box-flex-container" id="search">
-  <label class="nhsuk-u-visually-hidden" for="search-field">@Model.SearchLabel</label>
+  <label class="nhsuk-u-visually-hidden" for="search-field">Search frameworks</label>
   <input class="search-box" id="search-field" name="searchString" type="search" placeholder="Search" autocomplete="off" value="@Model.SearchString">
   <button class="nhsuk-search__submit" type="submit" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
     <svg class="nhsuk-icon nhsuk-icon__search" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

@@ -31,6 +31,16 @@ $nhs-dark-grey: #425563;
   }
 }
 
+.sort-select-container {
+  padding-right: 8px;
+  padding-top: 8px;
+
+  @include mq($from: desktop) {
+    padding-left: 8px;
+    margin-top: -8px;
+  }
+}
+
 .tags {
   display: flex;
   margin-bottom: 16px;
