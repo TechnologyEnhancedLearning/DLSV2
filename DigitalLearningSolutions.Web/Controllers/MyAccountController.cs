@@ -17,6 +17,7 @@
 
     [Route("/{application}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
+    [ValidateAllowedApplicationType]
     [Authorize]
     public class MyAccountController : Controller
     {
@@ -44,11 +45,6 @@
         [NoCaching]
         public IActionResult Index(ApplicationType? application = null)
         {
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
-            {
-                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
-            }
-
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
@@ -68,16 +64,6 @@
         [HttpGet("EditDetails")]
         public IActionResult EditDetails(ApplicationType? application = null)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
-            {
-                return RedirectToAction("EditDetails", new { application = ApplicationType.LearningPortal });
-            }
-
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
@@ -268,6 +254,20 @@
                     model.Answer6
                 );
             return (accountDetailsData, centreAnswersData);
+        }
+
+        private IActionResult? ValidatePermissions(ApplicationType? application)
+        {
+            if (ApplicationType.LearningPortal.Equals(application) && !User.HasLearningPortalPermissions() ||
+                ApplicationType.TrackingSystem.Equals(application) && !User.HasCentreAdminPermissions() ||
+                ApplicationType.Frameworks.Equals(application) && !User.HasFrameworksAdminPermissions() ||
+                ApplicationType.Main.Equals(application) && !User.HasCentreAdminPermissions()
+            )
+            {
+                return RedirectToAction("Welcome", "Home");
+            }
+
+            return null;
         }
     }
 }

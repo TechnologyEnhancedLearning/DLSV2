@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -11,6 +12,7 @@
 
     [Route("/{application}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
+    [ValidateAllowedApplicationType]
     [Authorize]
     public class ChangePasswordController : Controller
     {
@@ -26,11 +28,6 @@
         [HttpGet]
         public IActionResult Index(ApplicationType? application = null)
         {
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
-            {
-                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
-            }
-
             var model = new ChangePasswordViewModel { Application = application };
             return View(model);
         }

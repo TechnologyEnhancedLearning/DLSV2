@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
@@ -11,6 +12,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
+    [ValidateAllowedApplicationType]
     public class NotificationPreferencesController : Controller
     {
         private readonly ILogger<NotificationPreferencesController> logger;
@@ -29,16 +31,6 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences", Order = 1)]
         public IActionResult Index(ApplicationType? application)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
-            {
-                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
-            }
-
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
             var adminNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.AdminUser, adminId);
@@ -58,11 +50,6 @@ namespace DigitalLearningSolutions.Web.Controllers
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
         public IActionResult UpdateNotificationPreferences(UserType? userType, ApplicationType? application)
         {
-            if (User.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
-            {
-                return RedirectToAction("Index", new { application = ApplicationType.LearningPortal });
-            }
-
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
