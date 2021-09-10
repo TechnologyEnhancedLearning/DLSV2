@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model DateRangeInputDateInputViewModel
+
+@{
+  var dayErrorCss = Model.HasDayError ? "nhsuk-input--error" : "";
+  var monthErrorCss = Model.HasMonthError ? "nhsuk-input--error" : "";
+  var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
+  var conditionalInputClass = Model.IsConditionalDateInput ? "nhsuk-checkboxes__conditional" : "";
+  var conditionalInputId = Model.IsConditionalDateInput ? "conditional-end-date" : "start-date";
+}
+
+<div class="@conditionalInputClass" id="@conditionalInputId">
+  <legend class="nhsuk-label">
+    @Model.Label
+  </legend>
+  <div class="nhsuk-date-input">
+    <div class="nhsuk-date-input__item">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="@Model.DayId">Day</label>
+        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorCss"
+               id="@Model.DayId"
+               name="@Model.DayId"
+               value="@Model.DayValue"
+               type="text"
+               pattern="[0-9]*"
+               inputmode="numeric" />
+      </div>
+    </div>
+    <div class="nhsuk-date-input__item">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="@Model.MonthId">Month</label>
+        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorCss"
+               id="@Model.MonthId"
+               name="@Model.MonthId"
+               value="@Model.MonthValue"
+               type="text"
+               pattern="[0-9]*"
+               inputmode="numeric" />
+      </div>
+    </div>
+    <div class="nhsuk-date-input__item">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="@Model.YearId">Year</label>
+        <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-3 @yearErrorCss"
+               id="@Model.YearId"
+               name="@Model.YearId"
+               value="@Model.YearValue"
+               type="text"
+               pattern="[0-9]*"
+               inputmode="numeric" />
+      </div>
+    </div>
+  </div>
+</div>

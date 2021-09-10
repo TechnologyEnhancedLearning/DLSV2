@@ -105,7 +105,7 @@
                            end-date-checkbox-label="No end date"
                            css-class="date-range-css"
                            hint-text="The reporting in your centre starts on @Model.DataStart.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
-                           end-date-checkbox-hint-text="Check this box to include all data between the start date and now."/>
+                           end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today"/>
 
       <vc:select-list asp-for="ReportInterval"
                       label="Report by"

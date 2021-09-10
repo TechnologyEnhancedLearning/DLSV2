@@ -80,27 +80,38 @@
                 endDateCheckboxHintText
                 );
 
-            var viewModel = new DateRangeInputViewModel(
-                id,
-                label,
-                startDayId,
-                startMonthId,
-                startYearId,
-                endDayId,
-                endMonthId,
-                endYearId,
-                startDayValue,
-                startMonthValue,
-                startYearValue,
-                endDayValue,
-                endMonthValue,
-                endYearValue,
+            var startDateModel = new DateRangeInputDateInputViewModel(
+                "Start date",
                 startDayErrors?.Count > 0,
                 startMonthErrors?.Count > 0,
                 startYearErrors?.Count > 0,
+                startDayId,
+                startMonthId,
+                startYearId,
+                startDayValue,
+                startMonthValue,
+                startYearValue
+            );
+
+            var endDateModel = new DateRangeInputDateInputViewModel(
+                "End date",
                 endDayErrors?.Count > 0,
                 endMonthErrors?.Count > 0,
                 endYearErrors?.Count > 0,
+                endDayId,
+                endMonthId,
+                endYearId,
+                endDayValue,
+                endMonthValue,
+                endYearValue,
+                true
+            );
+
+            var viewModel = new DateRangeInputViewModel(
+                id,
+                label,
+                startDateModel,
+                endDateModel,
                 checkboxViewModel,
                 checkboxErrors?.Count > 0,
                 errorMessage,
