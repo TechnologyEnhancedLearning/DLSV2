@@ -462,7 +462,36 @@
             }
             sessionRequestVerification.CandidateAssessmentSupervisorId = model.CandidateAssessmentSupervisorId;
             TempData.Set(sessionRequestVerification);
-            return RedirectToAction("VerificationResults", new { model.SelfAssessmentId });
+            return RedirectToAction("VerificationPickResults", new { model.SelfAssessmentId });
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        public IActionResult VerificationPickResults(int selfAssessmentId)
+        {
+            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            TempData.Set(sessionRequestVerification);
+            var competencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList());
+            var model = new VerificationPickResultsViewModel()
+            {
+                Vocubulary = sessionRequestVerification.Vocabulary,
+                SelfAssessmentId = sessionRequestVerification.SelfAssessmentID,
+                SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup)
+            };
+            return View("SelfAssessments/VerificationPickResults", model);
+        }
+        private List<Competency> PopulateCompetencyLevelDescriptors(List<Competency> competencies)
+        {
+            foreach (var competency in competencies)
+            {
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                    }
+                }
+            }
+            return competencies;
         }
     }
 }

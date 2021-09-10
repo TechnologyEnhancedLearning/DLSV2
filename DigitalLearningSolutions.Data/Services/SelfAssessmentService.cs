@@ -20,6 +20,7 @@
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
+        IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
         Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
@@ -368,6 +369,28 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
                     return competency;
                 },
                 param: new { candidateAssessmentId, adminId }
+            );
+            return result.GroupBy(competency => competency.Id).Select(group =>
+            {
+                var groupedCompetency = group.First();
+                groupedCompetency.AssessmentQuestions = group.Select(competency => competency.AssessmentQuestions.Single()).ToList();
+                return groupedCompetency;
+            });
+        }
+        public IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId)
+        {
+            var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
+                $@"WITH {LatestAssessmentResults}
+                    SELECT {CompetencyFields}
+                    FROM {CompetencyTables}
+                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL))
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
+                (competency, assessmentQuestion) =>
+                {
+                    competency.AssessmentQuestions.Add(assessmentQuestion);
+                    return competency;
+                },
+                param: new { selfAssessmentId, candidateId }
             );
             return result.GroupBy(competency => competency.Id).Select(group =>
             {
