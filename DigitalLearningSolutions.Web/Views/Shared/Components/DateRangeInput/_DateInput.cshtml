@@ -7,9 +7,10 @@
   var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
   var conditionalInputClass = Model.IsConditionalDateInput ? "nhsuk-checkboxes__conditional" : "";
   var conditionalInputId = Model.IsConditionalDateInput ? "conditional-end-date" : "start-date";
+  var isHiddenClass = Model.IsHidden ? "nhsuk-checkboxes__conditional--hidden" : "";
 }
 
-<div class="@conditionalInputClass" id="@conditionalInputId">
+<div class="@conditionalInputClass @isHiddenClass" id="@conditionalInputId">
   <legend class="nhsuk-label">
     @Model.Label
   </legend>

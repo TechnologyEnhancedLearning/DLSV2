@@ -104,6 +104,7 @@
                 endDayValue,
                 endMonthValue,
                 endYearValue,
+                !checkboxValue,
                 true
             );
 

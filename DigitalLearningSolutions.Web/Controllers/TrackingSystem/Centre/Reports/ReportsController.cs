@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -19,8 +18,8 @@
     [Route("/TrackingSystem/Centre/Reports")]
     public class ReportsController : Controller
     {
-        private readonly IActivityService activityService;
         private readonly IActivityDataService activityDataService;
+        private readonly IActivityService activityService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
@@ -86,7 +85,10 @@
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             var (jobGroups, courseCategories, courses) =
-                activityService.GetFilterOptions(centreId, adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId);
+                activityService.GetFilterOptions(
+                    centreId,
+                    adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                );
 
             var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
 
@@ -111,9 +113,9 @@
             }
 
             var startDate = new DateTime(model.StartYear!.Value, model.StartMonth!.Value, model.StartDay!.Value);
-            var endDate = model.NoEndDate
-                ? (DateTime?)null
-                : new DateTime(model.EndYear!.Value, model.EndMonth!.Value, model.EndDay!.Value);
+            var endDate = model.EndDate
+                ? new DateTime(model.EndYear!.Value, model.EndMonth!.Value, model.EndDay!.Value)
+                : (DateTime?)null;
 
             var filterData = new ActivityFilterData(
                 startDate,

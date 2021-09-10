@@ -6,6 +6,7 @@
         public readonly bool HasMonthError;
         public readonly bool HasYearError;
         public readonly bool IsConditionalDateInput;
+        public readonly bool IsHidden;
 
         public DateRangeInputDateInputViewModel(
             string label,
@@ -18,6 +19,7 @@
             string? dayValue,
             string? monthValue,
             string? yearValue,
+            bool isHidden = false,
             bool isConditionalDateInput = false
         )
         {
@@ -31,6 +33,7 @@
             DayValue = dayValue;
             MonthValue = monthValue;
             YearValue = yearValue;
+            IsHidden = isHidden;
             IsConditionalDateInput = isConditionalDateInput;
         }
 

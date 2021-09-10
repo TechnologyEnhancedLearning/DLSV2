@@ -37,7 +37,7 @@
             EndDay = filterData.EndDate?.Day;
             EndMonth = filterData.EndDate?.Month;
             EndYear = filterData.EndDate?.Year;
-            NoEndDate = !filterData.EndDate.HasValue;
+            EndDate = filterData.EndDate.HasValue;
             ReportInterval = filterData.ReportInterval;
             CanFilterCourseCategories = userCategoryId == 0;
 
@@ -75,7 +75,7 @@
         public int? EndDay { get; set; }
         public int? EndMonth { get; set; }
         public int? EndYear { get; set; }
-        public bool NoEndDate { get; set; }
+        public bool EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
         public DateTime DataStart { get; set; }
         public bool CanFilterCourseCategories { get; set; }
@@ -107,7 +107,7 @@
 
             validationResults.AddRange(startDateValidationResults);
 
-            if (!NoEndDate)
+            if (EndDate)
             {
                 var endDateValidationResults = DateValidator.ValidateDate(
                         EndDay,
