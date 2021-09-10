@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateUpload
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.Models.User;
@@ -92,9 +93,13 @@
             {
                 Error = BulkUploadResult.ErrorReason.TooLongEmail;
             }
-            else if (!IsEmailFormatValid())
+            else if (!new EmailAddressAttribute().IsValid(Email))
             {
                 Error = BulkUploadResult.ErrorReason.BadFormatEmail;
+            }
+            else if (Email.Any(char.IsWhiteSpace))
+            {
+                Error = BulkUploadResult.ErrorReason.WhitespaceInEmail;
             }
             else if (AliasId != null && AliasId.Length > 250)
             {
@@ -186,13 +191,6 @@
             }
 
             return (delegateUser.EmailAddress ?? string.Empty) == Email;
-        }
-
-        private bool IsEmailFormatValid()
-        {
-            var whitespace = Email!.Any(char.IsWhiteSpace);
-            var index = Email!.IndexOf('@');
-            return !whitespace && index > 0 && index != Email.Length - 1 && index == Email.LastIndexOf('@');
         }
     }
 }

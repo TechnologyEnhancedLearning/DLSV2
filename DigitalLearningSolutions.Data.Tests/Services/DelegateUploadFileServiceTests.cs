@@ -224,10 +224,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_has_bad_format_email_error_for_email_with_whitespace()
+        public void ProcessDelegateTable_has_whitespace_in_email_error_for_email_with_whitespace()
         {
             var row = GetSampleDelegateDataRow(emailAddress: "white space@test.com");
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.BadFormatEmail);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.WhitespaceInEmail);
         }
 
         [Test]

@@ -28,7 +28,8 @@
             TooLongAnswer4,
             TooLongAnswer5,
             TooLongAnswer6,
-            BadFormatEmail
+            BadFormatEmail,
+            WhitespaceInEmail
         }
 
         public BulkUploadResult() { }
