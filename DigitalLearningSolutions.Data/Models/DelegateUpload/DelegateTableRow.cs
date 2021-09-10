@@ -67,11 +67,11 @@
             }
             else if (string.IsNullOrEmpty(LastName))
             {
-                Error = BulkUploadResult.ErrorReason.InvalidLastName;
+                Error = BulkUploadResult.ErrorReason.MissingLastName;
             }
             else if (string.IsNullOrEmpty(FirstName))
             {
-                Error = BulkUploadResult.ErrorReason.InvalidFirstName;
+                Error = BulkUploadResult.ErrorReason.MissingFirstName;
             }
             else if (!Active.HasValue)
             {
@@ -79,7 +79,7 @@
             }
             else if (string.IsNullOrEmpty(Email))
             {
-                Error = BulkUploadResult.ErrorReason.InvalidEmail;
+                Error = BulkUploadResult.ErrorReason.MissingEmail;
             }
             else if (FirstName.Length > 250)
             {

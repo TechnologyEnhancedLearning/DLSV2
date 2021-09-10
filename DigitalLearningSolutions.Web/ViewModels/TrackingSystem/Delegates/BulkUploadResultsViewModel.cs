@@ -29,11 +29,11 @@
             {
                 BulkUploadResult.ErrorReason.InvalidJobGroupId =>
                     "Job group ID was not valid. Please ensure a valid Job Group ID number is provided (use the 'Job Groups' worksheet in the downloaded template for a list of valid IDs).",
-                BulkUploadResult.ErrorReason.InvalidLastName =>
+                BulkUploadResult.ErrorReason.MissingLastName =>
                     "Last name was not provided. Last name is a required field and cannot be left blank.",
-                BulkUploadResult.ErrorReason.InvalidFirstName =>
+                BulkUploadResult.ErrorReason.MissingFirstName =>
                     "First name was not provided. First name is a required field and cannot be left blank.",
-                BulkUploadResult.ErrorReason.InvalidEmail =>
+                BulkUploadResult.ErrorReason.MissingEmail =>
                     "Email was not provided. Email is a required field and cannot be left blank.",
                 BulkUploadResult.ErrorReason.InvalidActive =>
                     "Active field could not be read. The Active field should contain 'TRUE' or 'FALSE'.",

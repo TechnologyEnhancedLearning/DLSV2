@@ -119,24 +119,24 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_lastname_error_for_missing_lastname()
+        public void ProcessDelegateTable_has_missing_lastname_error_for_missing_lastname()
         {
             var row = GetSampleDelegateDataRow(lastName: string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidLastName);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingLastName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_firstname_error_for_missing_firstname()
+        public void ProcessDelegateTable_has_missing_firstname_error_for_missing_firstname()
         {
             var row = GetSampleDelegateDataRow(string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidFirstName);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingFirstName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_invalid_email_error_for_missing_email()
+        public void ProcessDelegateTable_has_missing_email_error_for_missing_email()
         {
             var row = GetSampleDelegateDataRow(emailAddress: string.Empty);
-            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidEmail);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingEmail);
         }
 
         [Test]

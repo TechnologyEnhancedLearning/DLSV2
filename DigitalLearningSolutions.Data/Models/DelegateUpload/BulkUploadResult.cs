@@ -8,9 +8,9 @@
         public enum ErrorReason
         {
             InvalidJobGroupId,
-            InvalidLastName,
-            InvalidFirstName,
-            InvalidEmail,
+            MissingLastName,
+            MissingFirstName,
+            MissingEmail,
             InvalidActive,
             NoRecordForDelegateId,
             UnexpectedErrorForUpdate,
