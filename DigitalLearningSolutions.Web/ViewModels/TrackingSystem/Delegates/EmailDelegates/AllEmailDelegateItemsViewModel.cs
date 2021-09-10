@@ -15,14 +15,15 @@
         public AllEmailDelegateItemsViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> customPrompts
+            IEnumerable<CustomPrompt> customPrompts,
+            IEnumerable<int> selectedIds
         )
         {
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
-                    var preChecked = false;
+                    var preChecked = selectedIds.Contains(delegateUser.Id);
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
                     return new EmailDelegatesItemViewModel(delegateUser, preChecked, customFields, promptsWithOptions);
                 }

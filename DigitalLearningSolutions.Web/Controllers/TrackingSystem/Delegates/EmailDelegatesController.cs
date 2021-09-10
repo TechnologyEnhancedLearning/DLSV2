@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
     using System.Collections.Generic;
@@ -81,13 +81,13 @@
         }
 
         [Route("AllEmailDelegateItems")]
-        public IActionResult AllEmailDelegateItems()
+        public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
 
-            var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);
+            var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts, selectedIds);
 
             return View(model);
         }
