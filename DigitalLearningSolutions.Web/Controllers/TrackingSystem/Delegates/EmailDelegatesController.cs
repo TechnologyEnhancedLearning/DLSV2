@@ -68,6 +68,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
                 model.SetDelegates(delegateUsers, filterBy);
                 model.SetFilters(jobGroups, customPrompts);
+                model.FilterBy = filterBy;
                 return View(model);
             }
 

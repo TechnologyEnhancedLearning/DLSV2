@@ -10,11 +10,11 @@
         public const string Descending = "Descending";
         public const string Ascending = "Ascending";
 
-        public readonly string? FilterBy;
-
         public readonly bool FilterEnabled;
 
         public readonly string? SearchString;
+
+        public string? FilterBy;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
