@@ -21,8 +21,11 @@ export class SearchSortFilterAndPaginate {
   private page: number;
 
   private readonly filterEnabled: boolean;
+
   private readonly searchEnabled: boolean;
+
   private readonly sortEnabled: boolean;
+
   private readonly paginationEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
