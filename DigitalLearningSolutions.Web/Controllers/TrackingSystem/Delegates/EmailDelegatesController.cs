@@ -83,13 +83,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
 
-            return RedirectToAction("Confirmation", new { selectedUsersCount = selectedUsers.Count });
-        }
-
-        [Route("Confirmation")]
-        public IActionResult Confirmation(int selectedUsersCount)
-        {
-            return View("Confirmation", selectedUsersCount);
+            return View("Confirmation", selectedUsers.Count);
         }
 
         [Route("AllEmailDelegateItems")]
