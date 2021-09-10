@@ -24,6 +24,7 @@
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -574,6 +575,18 @@ FROM   SupervisorDelegates AS sd INNER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)", new { selfAssessmentId, candidateId }
+                  );
+        }
+        public IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<SelfAssessmentSupervisor>(
+                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+FROM   SupervisorDelegates AS sd INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID LEFT OUTER JOIN
+             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+             SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+WHERE (sd.Removed IS NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.ResultsReview, 1) = 1)", new { selfAssessmentId, candidateId }
                   );
         }
         public IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId)
