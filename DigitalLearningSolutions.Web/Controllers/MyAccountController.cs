@@ -255,19 +255,5 @@
                 );
             return (accountDetailsData, centreAnswersData);
         }
-
-        private IActionResult? ValidatePermissions(ApplicationType? application)
-        {
-            if (ApplicationType.LearningPortal.Equals(application) && !User.HasLearningPortalPermissions() ||
-                ApplicationType.TrackingSystem.Equals(application) && !User.HasCentreAdminPermissions() ||
-                ApplicationType.Frameworks.Equals(application) && !User.HasFrameworksAdminPermissions() ||
-                ApplicationType.Main.Equals(application) && !User.HasCentreAdminPermissions()
-            )
-            {
-                return RedirectToAction("Welcome", "Home");
-            }
-
-            return null;
-        }
     }
 }
