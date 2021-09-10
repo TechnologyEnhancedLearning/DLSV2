@@ -183,6 +183,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGroupsService, GroupsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

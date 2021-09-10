@@ -14,7 +14,7 @@
             string senderAddress,
             string addedByProcess,
             bool urgent,
-            DateTime deliverAfter
+            DateTime? deliverAfter = null
         );
     }
 
@@ -32,7 +32,7 @@
             string senderAddress,
             string addedByProcess,
             bool urgent,
-            DateTime deliverAfter
+            DateTime? deliverAfter = null
         )
         {
             var emailParams = emails.Select(

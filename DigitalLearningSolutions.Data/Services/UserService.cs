@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
+            string baseUrl,
             CentreAnswersData? centreAnswersData = null
         );
 
@@ -42,13 +43,19 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class UserService : IUserService
     {
+        private readonly IGroupsService groupsService;
         private readonly ILoginService loginService;
         private readonly IUserDataService userDataService;
 
-        public UserService(IUserDataService userDataService, ILoginService loginService)
+        public UserService(
+            IUserDataService userDataService,
+            ILoginService loginService,
+            IGroupsService groupsService
+        )
         {
             this.userDataService = userDataService;
             this.loginService = loginService;
+            this.groupsService = groupsService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
@@ -122,6 +129,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
+            string baseUrl,
             CentreAnswersData? centreAnswersData = null
         )
         {
@@ -154,7 +162,10 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateIds
                 );
 
-                if (verifiedDelegateUsers.Any(u => u.Id == accountDetailsData.DelegateId) && centreAnswersData != null)
+                var oldDelegateDetails =
+                    verifiedDelegateUsers.SingleOrDefault(u => u.Id == accountDetailsData.DelegateId);
+
+                if (oldDelegateDetails != null && centreAnswersData != null)
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
                         accountDetailsData.DelegateId!.Value,
@@ -165,6 +176,13 @@ namespace DigitalLearningSolutions.Data.Services
                         centreAnswersData.Answer4,
                         centreAnswersData.Answer5,
                         centreAnswersData.Answer6
+                    );
+
+                    groupsService.SynchroniseUserChangesWithGroups(
+                        oldDelegateDetails,
+                        accountDetailsData,
+                        centreAnswersData,
+                        baseUrl
                     );
                 }
             }

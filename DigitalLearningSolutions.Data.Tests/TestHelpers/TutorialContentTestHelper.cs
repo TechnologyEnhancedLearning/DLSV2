@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Linq;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
@@ -83,6 +84,17 @@
                             AND TutorialID = @tutorialID;",
                 new { customisationId, tutorialId }
             );
+        }
+
+        public int? GetAspProgressFromTutorialAndProgressId(int tutorialId, int progressId)
+        {
+            return connection.Query<int>(
+                @"SELECT aspProgressId
+                    FROM aspProgress
+                    WHERE ProgressId = @progressId
+                    AND TutorialID = @tutorialId;",
+                new { progressId, tutorialId }
+            ).FirstOrDefault();
         }
     }
 }

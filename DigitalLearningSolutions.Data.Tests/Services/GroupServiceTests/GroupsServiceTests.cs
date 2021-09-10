@@ -1,0 +1,201 @@
+﻿namespace DigitalLearningSolutions.Data.Tests.Services.GroupServiceTests
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.Email;
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
+    using FluentAssertions;
+    using NUnit.Framework;
+
+    public partial class GroupsServiceTests
+    {
+        private const int GenericNewProgressId = 17;
+        private const int GenericRelatedTutorialId = 5;
+
+        private readonly string genericEmailBodyHtml = @"
+                <p>Dear newFirst newLast</p>
+                <p>This is an automated message to notify you that you have been enrolled on the course 
+                <b>application - customisation</b> 
+                by the system because a previous course completion has expired.</p>
+                <p>To login to the course directly <a href=""baseUrl/LearningMenu/13"">click here</a>.</p>
+                <p>To login to the Learning Portal to access and complete your course 
+                <a href=""baseUrl/LearningPortal/Current"">click here</a>.</p>";
+
+        private readonly string genericEmailBodyText = @"
+                Dear newFirst newLast
+                This is an automated message to notify you that you have been enrolled on the course 
+                application - customisation
+                by the system because a previous course completion has expired.
+                To login to the course directly click here:baseUrl/LearningMenu/13.
+                To login to the Learning Portal to access and complete your course click here: 
+                baseUrl/LearningPortal/Current.";
+
+        private readonly AccountDetailsData reusableAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+
+        private readonly DelegateUser reusableDelegateDetails =
+            UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
+
+        private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
+        private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
+        private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private IClockService clockService = null!;
+        private IEmailService emailService = null!;
+        private IGroupsDataService groupsDataService = null!;
+        private IGroupsService groupsService = null!;
+        private IJobGroupsDataService jobGroupsDataService = null!;
+        private ITutorialContentDataService tutorialContentDataService = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            groupsDataService = A.Fake<IGroupsDataService>();
+            clockService = A.Fake<IClockService>();
+            tutorialContentDataService = A.Fake<ITutorialContentDataService>();
+            emailService = A.Fake<IEmailService>();
+            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            DatabaseModificationsDoNothing();
+            groupsService = new GroupsService(
+                groupsDataService,
+                clockService,
+                tutorialContentDataService,
+                emailService,
+                jobGroupsDataService
+            );
+        }
+
+        [Test]
+        public void GetSynchronisedGroupsForCentre_only_returns_groups_with_SyncLinkedFields_active()
+        {
+            // Given
+            var nonSynchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                changesToRegistrationDetailsShouldChangeGroupMembership: false
+            );
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                6,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { nonSynchronisedGroup, synchronisedGroup }
+            );
+
+            // When
+            var result = groupsService.GetSynchronisedGroupsForCentre(1).ToList();
+
+            // Then
+            result.Should().BeEquivalentTo(new List<Group> { synchronisedGroup });
+        }
+
+        private void DelegateMustNotHaveBeenRemovedFromAGroup()
+        {
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
+                .MustNotHaveHappened();
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+            ).MustNotHaveHappened();
+        }
+
+        private void DelegateMustNotHaveBeenAddedToAGroup()
+        {
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        private void DelegateProgressRecordMustNotHaveBeenUpdated()
+        {
+            A.CallTo(
+                () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+            ).MustNotHaveHappened();
+        }
+
+        private void NewDelegateProgressRecordMustNotHaveBeenAdded()
+        {
+            A.CallTo(
+                () => groupsDataService.CreateNewDelegateProgress(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<int>._,
+                    A<int?>._,
+                    A<DateTime?>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () => groupsDataService.CreateNewAspProgress(A<int>._, A<int>._)
+            ).MustNotHaveHappened();
+        }
+
+        private void NoEnrolmentEmailsMustHaveBeenSent()
+        {
+            A.CallTo(() => emailService.ScheduleEmails(A<IEnumerable<Email>>._, A<string>._, A<DateTime>._))
+                .MustNotHaveHappened();
+        }
+
+        private void DatabaseModificationsDoNothing()
+        {
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._)).DoesNothing();
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+            ).DoesNothing();
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
+                .DoesNothing();
+            A.CallTo(
+                () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+            ).DoesNothing();
+            A.CallTo(
+                () => groupsDataService.CreateNewDelegateProgress(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<int>._,
+                    A<int?>._,
+                    A<DateTime?>._,
+                    A<int>._
+                )
+            ).Returns(0);
+            A.CallTo(() => groupsDataService.CreateNewAspProgress(A<int>._, A<int>._)).DoesNothing();
+            A.CallTo(() => emailService.ScheduleEmails(A<IEnumerable<Email>>._, A<string>._, A<DateTime>._))
+                .DoesNothing();
+        }
+
+        private void SetupEnrolProcessFakes(
+            int newProgressId,
+            int relatedTutorialId,
+            GroupCourse groupCourse,
+            Progress? progress = null
+        )
+        {
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
+            A.CallTo(() => groupsDataService.GetGroupCourses(A<int>._, A<int>._)).Returns(
+                new List<GroupCourse> { groupCourse }
+            );
+            var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };
+            A.CallTo(() => groupsDataService.GetDelegateProgressForCourse(A<int>._, A<int>._))
+                .Returns(progressRecords);
+            A.CallTo(
+                () => groupsDataService.CreateNewDelegateProgress(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime>._,
+                    A<int>._,
+                    A<int?>._,
+                    A<DateTime?>._,
+                    A<int>._
+                )
+            ).Returns(newProgressId);
+            A.CallTo(() => tutorialContentDataService.GetTutorialsForCourse(A<int>._))
+                .Returns(new List<int> { relatedTutorialId });
+        }
+    }
+}

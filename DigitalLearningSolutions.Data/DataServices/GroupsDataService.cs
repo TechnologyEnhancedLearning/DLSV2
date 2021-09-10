@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public interface IGroupsDataService
@@ -22,6 +23,25 @@
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
+
+        IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
+
+        void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
+
+        void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink);
+
+        int CreateNewDelegateProgress(
+            int delegateId,
+            int customisationId,
+            int customisationVersion,
+            DateTime submittedTime,
+            int enrollmentMethodId,
+            int? enrolledByAdminId,
+            DateTime? completeByDate,
+            int supervisorAdminId
+        );
+
+        void CreateNewAspProgress(int tutorialId, int progressId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -107,6 +127,8 @@
                         Mandatory AS IsMandatory,
                         IsAssessed,
                         AddedDate AS AddedToGroup,
+                        c.CurrentVersion,
+                        gc.SupervisorAdminID,
                         au.Forename AS SupervisorFirstName,
                         au.Surname AS SupervisorLastName,
                         gc.CompleteWithinMonths,
@@ -151,8 +173,9 @@
                                 AND p.EnrollmentMethodID  = 3
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL)",
-                new {groupId, delegateId, removedDate}
+                                AND P.RemovedDate IS NULL
+                                AND p.LoginCount = 0)",
+                new { groupId, delegateId, removedDate }
             );
         }
 
@@ -177,7 +200,116 @@
                 @"DELETE FROM GroupDelegates
                     WHERE GroupID = @groupId
                       AND DelegateID = @delegateId",
-                new {groupId, delegateId}
+                new { groupId, delegateId }
+            );
+        }
+
+        public IEnumerable<Progress> GetDelegateProgressForCourse(
+            int delegateId,
+            int customisationId
+        )
+        {
+            return connection.Query<Progress>(
+                @"SELECT ProgressId, 
+	                    CandidateID, 
+	                    CustomisationID, 
+	                    Completed, 
+	                    RemovedDate, 
+	                    SystemRefreshed, 
+	                    SupervisorAdminID,
+                        CompleteByDate,
+                        EnrollmentMethodID,
+                        EnrolledByAdminID,
+                        SubmittedTime,
+                        CustomisationVersion
+                    FROM Progress 
+                    WHERE CandidateID = @delegateId
+                        AND CustomisationID = @customisationId",
+                new { delegateId, customisationId }
+            );
+        }
+
+        public void UpdateProgressSupervisorAndCompleteByDate(
+            int progressId,
+            int supervisorAdminId,
+            DateTime? completeByDate
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        SupervisorAdminID = @supervisorAdminId,
+                        CompleteByDate = @completeByDate
+                    WHERE ProgressID = @progressId",
+                new { progressId, supervisorAdminId, completeByDate }
+            );
+        }
+
+        public void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink)
+        {
+            connection.Execute(
+                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                    VALUES (
+                        @groupId, 
+                        @delegateId, 
+                        @addedDate, 
+                        @addedByFieldLink)",
+                new { groupId, delegateId, addedDate, addedByFieldLink }
+            );
+        }
+
+        public int CreateNewDelegateProgress(
+            int delegateId,
+            int customisationId,
+            int customisationVersion,
+            DateTime submittedTime,
+            int enrollmentMethodId,
+            int? enrolledByAdminId,
+            DateTime? completeByDate,
+            int supervisorAdminId
+        )
+        {
+            var progressId = connection.QuerySingle<int>(
+                @"INSERT INTO Progress(
+                        CandidateID,
+                        CustomisationID,
+                        CustomisationVersion,
+                        SubmittedTime,
+                        EnrollmentMethodID,
+                        EnrolledByAdminID,
+                        CompleteByDate,
+                        SupervisorAdminID)
+                    OUTPUT Inserted.ProgressID
+                    VALUES (
+                        @delegateId,
+                        @customisationId,
+                        @customisationVersion,
+                        @submittedTime,
+                        @enrollmentMethodId,
+                        @enrolledByAdminId,
+                        @completeByDate,
+                        @supervisorAdminId)",
+                new
+                {
+                    delegateId,
+                    customisationId,
+                    customisationVersion,
+                    submittedTime,
+                    enrollmentMethodId,
+                    enrolledByAdminId,
+                    completeByDate,
+                    supervisorAdminId
+                }
+            );
+
+            return progressId;
+        }
+
+        public void CreateNewAspProgress(int tutorialId, int progressId)
+        {
+            connection.Execute(
+                @"INSERT INTO aspProgress (TutorialId, ProgressId)
+                    VALUES (@tutorialId, @progressId)",
+                new { tutorialId, progressId }
             );
         }
     }

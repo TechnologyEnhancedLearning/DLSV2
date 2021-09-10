@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.TutorialContentDataServiceTests
 {
+    using System.Collections.Generic;
     using System.Linq;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -26,6 +27,20 @@
                 result.First().Status.Should().BeTrue();
                 result.First().DiagStatus.Should().BeTrue();
             }
+        }
+
+        [Test]
+        public void GetTutorialsByCourse_returns_correct_tutorials()
+        {
+            // Given
+            const int customisationId = 27240;
+            var expectedTutorials = new List<int> { 9378, 9379, 9380, 9381, 9382, 9383, 9384, 9385, 9386, 9387 };
+
+            // When
+            var result = tutorialContentDataService.GetTutorialsForCourse(customisationId).ToList();
+
+            // Then
+            result.Should().BeEquivalentTo(expectedTutorials);
         }
     }
 }

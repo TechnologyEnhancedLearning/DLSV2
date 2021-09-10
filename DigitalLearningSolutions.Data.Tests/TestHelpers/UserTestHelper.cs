@@ -120,9 +120,9 @@
         public static AdminUser GetDefaultCategoryNameAllAdminUser()
         {
             return GetDefaultAdminUser(
-                id: 11,
-                centreId: 59,
-                centreName: "Guy's and St Thomas' NHS Foundation Trust",
+                11,
+                59,
+                "Guy's and St Thomas' NHS Foundation Trust",
                 firstName: "xxxxxxx",
                 lastName: "xxxxxx",
                 emailAddress: "ub.e@onlrxghciatsk",
@@ -218,6 +218,41 @@
             );
 
             return users.Single();
+        }
+
+        public static AccountDetailsData GetDefaultAccountDetailsData(
+            int? adminId = null,
+            int? delegateId = null,
+            string password = "password",
+            string firstName = "firstname",
+            string surname = "lastname",
+            string email = "email@email.com",
+            byte[]? profileImage = null
+        )
+        {
+            return new AccountDetailsData(
+                adminId,
+                delegateId,
+                password,
+                firstName,
+                surname,
+                email,
+                profileImage
+            );
+        }
+
+        public static CentreAnswersData GetDefaultCentreAnswersData(
+            int centreId = 1,
+            int jobGroupId = 1,
+            string? answer1 = null,
+            string? answer2 = null,
+            string? answer3 = null,
+            string? answer4 = null,
+            string? answer5 = null,
+            string? answer6 = null
+        )
+        {
+            return new CentreAnswersData(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
         }
     }
 }

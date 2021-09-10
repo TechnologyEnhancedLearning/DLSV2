@@ -105,7 +105,8 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, A<string>._, null))
+                .DoesNothing();
             var model = new EditDetailsViewModel
             {
                 FirstName = "Test",
@@ -119,7 +120,8 @@
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, null)).MustHaveHappened();
+            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, A<string>._, null))
+                .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -169,7 +171,8 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, A<string>._, null))
+                .DoesNothing();
 
             var model = new EditDetailsViewModel
             {
