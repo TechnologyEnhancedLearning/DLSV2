@@ -20,8 +20,6 @@
             string baseUrl
         );
 
-        IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId);
-
         void EnrolDelegateOnGroupCourses(
             DelegateUser oldDetails,
             AccountDetailsData newDetails,
@@ -34,20 +32,21 @@
     public class GroupsService : IGroupsService
     {
         private const string AddedByProcess = "AddDelegateToGroup_Refactor";
+        private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
         private readonly IClockService clockService;
         private readonly IEmailService emailService;
-
-        private readonly string EnrolEmailSubject = "New Learning Portal Course Enrolment";
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly IProgressDataService progressDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
             IClockService clockService,
             ITutorialContentDataService tutorialContentDataService,
             IEmailService emailService,
-            IJobGroupsDataService jobGroupsDataService
+            IJobGroupsDataService jobGroupsDataService,
+            IProgressDataService progressDataService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -55,6 +54,7 @@
             this.tutorialContentDataService = tutorialContentDataService;
             this.emailService = emailService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.progressDataService = progressDataService;
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -110,12 +110,6 @@
             }
         }
 
-        public IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
-        {
-            return groupsDataService.GetGroupsForCentre(centreId)
-                .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
-        }
-
         public void EnrolDelegateOnGroupCourses(
             DelegateUser oldDetails,
             AccountDetailsData newDetails,
@@ -135,7 +129,7 @@
                 }
 
                 var candidateProgressOnCourse =
-                    groupsDataService.GetDelegateProgressForCourse(oldDetails.Id, groupCourse.CustomisationId);
+                    progressDataService.GetDelegateProgressForCourse(oldDetails.Id, groupCourse.CustomisationId);
                 var existingRecordToUpdate = candidateProgressOnCourse.FirstOrDefault(
                     p => !p.SystemRefreshed && p.Completed == null && p.RemovedDate == null
                 );
@@ -145,7 +139,7 @@
                     var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0
                         ? groupCourse.SupervisorAdminId.Value
                         : existingRecordToUpdate.SupervisorAdminId;
-                    groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         existingRecordToUpdate.ProgressId,
                         updatedSupervisorAdminId,
                         completeByDate
@@ -153,7 +147,7 @@
                 }
                 else
                 {
-                    var newProgressId = groupsDataService.CreateNewDelegateProgress(
+                    var newProgressId = progressDataService.CreateNewDelegateProgress(
                         oldDetails.Id,
                         groupCourse.CustomisationId,
                         groupCourse.CurrentVersion,
@@ -169,7 +163,7 @@
 
                     foreach (var tutorial in tutorialsForCourse)
                     {
-                        groupsDataService.CreateNewAspProgress(tutorial, newProgressId);
+                        progressDataService.CreateNewAspProgress(tutorial, newProgressId);
                     }
                 }
 
@@ -180,6 +174,12 @@
                     emailService.ScheduleEmail(email, AddedByProcess);
                 }
             }
+        }
+
+        private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
+        {
+            return groupsDataService.GetGroupsForCentre(centreId)
+                .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)

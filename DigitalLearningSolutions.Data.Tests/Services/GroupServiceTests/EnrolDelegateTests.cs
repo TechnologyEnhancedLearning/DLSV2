@@ -47,7 +47,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -58,7 +58,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -88,7 +88,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -99,7 +99,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -129,7 +129,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -140,7 +140,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -170,7 +170,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -181,7 +181,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -211,7 +211,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -222,7 +222,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -253,7 +253,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -264,7 +264,7 @@
                         supervisorId
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -294,7 +294,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -305,7 +305,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -337,7 +337,7 @@
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
-                    () => groupsDataService.CreateNewDelegateProgress(
+                    () => progressDataService.CreateNewDelegateProgress(
                         reusableDelegateDetails.Id,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
@@ -348,7 +348,7 @@
                         A<int>._
                     )
                 ).MustHaveHappened();
-                A.CallTo(() => groupsDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
+                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
                     .MustHaveHappened();
             }
         }
@@ -377,7 +377,7 @@
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
                 A.CallTo(
-                    () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         A<DateTime?>._
@@ -412,7 +412,7 @@
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
                 A.CallTo(
-                    () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         reusableProgressRecord.SupervisorAdminId,
                         A<DateTime?>._
@@ -447,7 +447,7 @@
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
                 A.CallTo(
-                    () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         supervisorId,
                         A<DateTime?>._
@@ -482,7 +482,7 @@
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
                 A.CallTo(
-                    () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         null
@@ -519,7 +519,7 @@
             {
                 NewDelegateProgressRecordMustNotHaveBeenAdded();
                 A.CallTo(
-                    () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
                         A<int>._,
                         expectedFutureDate

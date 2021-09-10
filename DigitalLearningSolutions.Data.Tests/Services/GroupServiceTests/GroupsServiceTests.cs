@@ -32,6 +32,7 @@
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
+        private IProgressDataService progressDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -41,39 +42,18 @@
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             emailService = A.Fake<IEmailService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            progressDataService = A.Fake<IProgressDataService>();
             DatabaseModificationsDoNothing();
             groupsService = new GroupsService(
                 groupsDataService,
                 clockService,
                 tutorialContentDataService,
                 emailService,
-                jobGroupsDataService
+                jobGroupsDataService,
+                progressDataService
             );
         }
-
-        [Test]
-        public void GetSynchronisedGroupsForCentre_only_returns_groups_with_SyncLinkedFields_active()
-        {
-            // Given
-            var nonSynchronisedGroup = GroupTestHelper.GetDefaultGroup(
-                5,
-                changesToRegistrationDetailsShouldChangeGroupMembership: false
-            );
-            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
-                6,
-                changesToRegistrationDetailsShouldChangeGroupMembership: true
-            );
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
-                new List<Group> { nonSynchronisedGroup, synchronisedGroup }
-            );
-
-            // When
-            var result = groupsService.GetSynchronisedGroupsForCentre(1).ToList();
-
-            // Then
-            result.Should().BeEquivalentTo(new List<Group> { synchronisedGroup });
-        }
-
+        
         private void DelegateMustNotHaveBeenRemovedFromAGroup()
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
@@ -92,14 +72,14 @@
         private void DelegateProgressRecordMustNotHaveBeenUpdated()
         {
             A.CallTo(
-                () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
             ).MustNotHaveHappened();
         }
 
         private void NewDelegateProgressRecordMustNotHaveBeenAdded()
         {
             A.CallTo(
-                () => groupsDataService.CreateNewDelegateProgress(
+                () => progressDataService.CreateNewDelegateProgress(
                     A<int>._,
                     A<int>._,
                     A<int>._,
@@ -111,7 +91,7 @@
                 )
             ).MustNotHaveHappened();
             A.CallTo(
-                () => groupsDataService.CreateNewAspProgress(A<int>._, A<int>._)
+                () => progressDataService.CreateNewAspProgress(A<int>._, A<int>._)
             ).MustNotHaveHappened();
         }
 
@@ -130,10 +110,10 @@
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
             A.CallTo(
-                () => groupsDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
             ).DoesNothing();
             A.CallTo(
-                () => groupsDataService.CreateNewDelegateProgress(
+                () => progressDataService.CreateNewDelegateProgress(
                     A<int>._,
                     A<int>._,
                     A<int>._,
@@ -144,7 +124,7 @@
                     A<int>._
                 )
             ).Returns(0);
-            A.CallTo(() => groupsDataService.CreateNewAspProgress(A<int>._, A<int>._)).DoesNothing();
+            A.CallTo(() => progressDataService.CreateNewAspProgress(A<int>._, A<int>._)).DoesNothing();
             A.CallTo(() => emailService.ScheduleEmails(A<IEnumerable<Email>>._, A<string>._, A<DateTime>._))
                 .DoesNothing();
         }
@@ -161,10 +141,10 @@
                 new List<GroupCourse> { groupCourse }
             );
             var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };
-            A.CallTo(() => groupsDataService.GetDelegateProgressForCourse(A<int>._, A<int>._))
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(A<int>._, A<int>._))
                 .Returns(progressRecords);
             A.CallTo(
-                () => groupsDataService.CreateNewDelegateProgress(
+                () => progressDataService.CreateNewDelegateProgress(
                     A<int>._,
                     A<int>._,
                     A<int>._,
