@@ -41,6 +41,14 @@
       </div>
     </div>
 
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+      <div class="nhsuk-grid-column-full">
+        <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Select</label>
+        <input type="submit" class="nhsuk-search__submit select-all-button" id="select-all-button" value="Select all" />
+        <input type="button" class="nhsuk-search__submit select-all-button" id="deselect-all-button" value="Deselect all" />
+      </div>
+    </div>
+
     @if (Model.Delegates == null || !Model.Delegates.Any()) {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No delegates found.</b>
