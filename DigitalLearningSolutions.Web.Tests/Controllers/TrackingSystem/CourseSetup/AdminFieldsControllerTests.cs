@@ -219,7 +219,7 @@
         }
 
         [Test]
-        public void AddAdminField_save_calls_service_and_redirects_to_index()
+        public void AddAdminField_save_clears_temp_data_and_redirects_to_index()
         {
             // Given
             var model = new AddAdminFieldViewModel(100, 1, "Test");
@@ -243,15 +243,6 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(
-                    () => courseAdminFieldsService.AddCustomPromptToCourse(
-                        100,
-                        101,
-                        0,
-                        1,
-                        "Test"
-                    )
-                ).MustHaveHappened();
                 controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
                 result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
             }
@@ -282,15 +273,6 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(
-                    () => courseAdminFieldsService.AddCustomPromptToCourse(
-                        100,
-                        101,
-                        0,
-                        1,
-                        "Test"
-                    )
-                ).MustHaveHappened();
                 result.Should().BeStatusCodeResult().WithStatusCode(500);
             }
         }

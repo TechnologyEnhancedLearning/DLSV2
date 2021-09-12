@@ -94,12 +94,13 @@
             const string promptName = "Access Permissions";
             A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).Returns
                 (new List<(int, string)> { (1, promptName) });
+
             // When
             var result = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
 
             // Then
             A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).MustHaveHappened();
-            result.Contains((1, promptName)).Should().BeTrue();
+            result.Should().BeEquivalentTo(new List<(int, string)> { (1, promptName) });
         }
 
         [Test]

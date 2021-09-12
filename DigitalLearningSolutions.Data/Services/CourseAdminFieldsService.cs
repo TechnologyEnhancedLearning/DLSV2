@@ -152,8 +152,7 @@
 
             var promptNumbers = new List<int> { 1, 2, 3 };
             var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
-            var nextPromptNumber = unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
-            return nextPromptNumber;
+            return unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
         }
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(

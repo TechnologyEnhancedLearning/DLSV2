@@ -60,7 +60,6 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    courseAdminFields.CustomField1Mandatory.Should().BeFalse();
                     courseAdminFields.CustomField1Options.Should().BeEquivalentTo(options);
                 }
             }
@@ -100,7 +99,6 @@
                 using (new AssertionScope())
                 {
                     courseCustomPrompts.CustomField3Prompt.Should().BeEquivalentTo(customPrompt);
-                    courseCustomPrompts.CustomField3Mandatory.Should().BeFalse();
                     courseCustomPrompts.CustomField3Options.Should().BeEquivalentTo(options);
                 }
             }

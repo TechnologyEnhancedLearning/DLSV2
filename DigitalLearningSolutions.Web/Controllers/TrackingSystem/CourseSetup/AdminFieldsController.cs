@@ -100,7 +100,7 @@
             return action switch
             {
                 SaveAction => EditAdminFieldPostSave(model),
-                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
+                AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => EditAdminFieldBulk(model),
                 _ => new StatusCodeResult(500)
             };
@@ -154,18 +154,8 @@
             TempData.Clear();
 
             var model = new AddAdminFieldViewModel(customisationId);
-            var addAdminFieldData = new AddAdminFieldData(model);
-            var id = addAdminFieldData.Id;
 
-            Response.Cookies.Append(
-                AddPromptCookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
-            TempData.Set(addAdminFieldData);
+            SetAddAdminFieldTempData(model);
 
             return RedirectToAction("AddAdminField", new { customisationId = model.CustomisationId });
         }
@@ -176,7 +166,7 @@
         {
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
-            SetViewBagCoursePromptNameOptions(addAdminFieldData.AddModel.CustomPromptId);
+            SetViewModelCoursePromptNameOptions(addAdminFieldData.AddModel);
 
             var model = addAdminFieldData?.AddModel ?? new AddAdminFieldViewModel(customisationId);
 
@@ -189,7 +179,7 @@
         {
             if (!ModelState.IsValid)
             {
-                SetViewBagCoursePromptNameOptions();
+                SetViewModelCoursePromptNameOptions(model);
                 return View(model);
             }
 
@@ -203,7 +193,7 @@
             return action switch
             {
                 SaveAction => AddAdminFieldPostSave(model),
-                AddPromptAction => AdminFieldAnswersPostAddPrompt(model, true),
+                AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => AddAdminFieldBulk(model),
                 _ => new StatusCodeResult(500)
             };
@@ -378,8 +368,7 @@
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(
-            AdminFieldAnswersViewModel model,
-            bool saveToTempData = false
+            AdminFieldAnswersViewModel model
         )
         {
             if (!ModelState.IsValid)
@@ -397,23 +386,17 @@
             }
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
-
-            if (saveToTempData)
-            {
-                UpdateTempDataWithCoursePromptModelValues();
-            }
 
             return View(model);
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(
-            AddAdminFieldViewModel model,
-            bool saveToTempData = false
+            AddAdminFieldViewModel model
         )
         {
             if (!ModelState.IsValid)
             {
-                SetViewBagCoursePromptNameOptions();
+                SetViewModelCoursePromptNameOptions(model);
                 return View(model);
             }
 
@@ -428,12 +411,9 @@
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
-            if (saveToTempData)
-            {
-                UpdateTempDataWithCoursePromptModelValues(model);
-            }
+            UpdateTempDataWithCoursePromptModelValues(model);
 
-            SetViewBagCoursePromptNameOptions(model.CustomPromptId);
+            SetViewModelCoursePromptNameOptions(model);
 
             return View(model);
         }
@@ -465,7 +445,7 @@
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
-            SetViewBagCoursePromptNameOptions(model.CustomPromptId);
+            SetViewModelCoursePromptNameOptions(model);
 
             return View(model);
         }
@@ -501,17 +481,11 @@
             return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
         }
 
-        private void SetViewBagCoursePromptNameOptions(int? selectedId = null)
+        private void SetViewModelCoursePromptNameOptions(AddAdminFieldViewModel model)
         {
             var coursePrompts = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
-            ViewBag.CoursePromptNameOptions =
-                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
-        }
-
-        private void UpdateTempDataWithCoursePromptModelValues()
-        {
-            var data = TempData.Peek<AdminFieldAnswersViewModel>()!;
-            TempData.Set(data);
+            model.CoursePromptNameOptions =
+                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, model.CustomPromptId);
         }
 
         private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)

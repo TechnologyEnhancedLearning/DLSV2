@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class AddAdminFieldViewModel : AdminFieldAnswersViewModel
     {
@@ -30,7 +32,8 @@
         }
 
         [Required(ErrorMessage = "Select a prompt name")]
-
         public int? CustomPromptId { get; set; }
+
+        public IEnumerable<SelectListItem>? CoursePromptNameOptions { get; set; }
     }
 }
