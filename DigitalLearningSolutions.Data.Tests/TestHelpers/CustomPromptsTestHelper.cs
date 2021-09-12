@@ -114,13 +114,10 @@
             {
                 CustomField1Prompt = customField1Prompt,
                 CustomField1Options = customField1Options,
-                CustomField1Mandatory = customField1Mandatory,
                 CustomField2Prompt = customField2Prompt,
                 CustomField2Options = customField2Options,
-                CustomField2Mandatory = customField2Mandatory,
                 CustomField3Prompt = customField3Prompt,
                 CustomField3Options = customField3Options,
-                CustomField3Mandatory = customField3Mandatory,
                 CourseCategoryId = courseCategoryId
             };
         }
@@ -142,13 +139,10 @@
             {
                 CustomField1Prompt = customField1Prompt,
                 CustomField1Options = customField1Options,
-                CustomField1Mandatory = customField1Mandatory,
                 CustomField2Prompt = customField2Prompt,
                 CustomField2Options = customField2Options,
-                CustomField2Mandatory = customField2Mandatory,
                 CustomField3Prompt = customField3Prompt,
                 CustomField3Options = customField3Options,
-                CustomField3Mandatory = customField3Mandatory,
                 CourseCategoryId = courseCategoryId
             };
         }
