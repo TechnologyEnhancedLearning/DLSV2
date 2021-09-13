@@ -3,9 +3,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Http;
 
     public class EditDetailsViewModel
@@ -15,7 +15,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public EditDetailsViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            List<(int id, string name)> jobGroups)
+            List<(int id, string name)> jobGroups
+        )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             LastName = adminUser?.LastName ?? delegateUser?.LastName;
@@ -35,17 +36,17 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         }
 
         [Required(ErrorMessage = "Enter your first name")]
-        [MaxLength(250, ErrorMessage = "First name must be 250 characters or fewer")]
+        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string? FirstName { get; set; }
 
         [Required(ErrorMessage = "Enter your last name")]
-        [MaxLength(250, ErrorMessage = "Last name must be 250 characters or fewer")]
+        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Enter your email address")]
-        [MaxLength(255, ErrorMessage = "Email address must be 255 characters or fewer")]
-        [EmailAddress(ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
-        [NoWhitespace("Email address must not contain any whitespace characters")]
+        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
+        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
+        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Enter your current password")]
@@ -54,7 +55,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public byte[]? ProfileImage { get; set; }
 
-        [AllowedExtensions(new []{".png",".tiff",".jpg",".jpeg",".bmp",".gif"})]
+        [AllowedExtensions(new[] { ".png", ".tiff", ".jpg", ".jpeg", ".bmp", ".gif" })]
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }

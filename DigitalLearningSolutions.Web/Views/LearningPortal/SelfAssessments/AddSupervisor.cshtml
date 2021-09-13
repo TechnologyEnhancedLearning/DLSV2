@@ -14,6 +14,7 @@
   <li class="nhsuk-breadcrumb__item">Add</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>New activity supervisor</h1>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form method="post">
@@ -21,24 +22,28 @@
       {
         <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorEmail) })" />
       }
-      <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-        <h1>Add supervisor</h1>
-      </label>
-      <div class="nhsuk-form-group">
-        <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
-        <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
-        <vc:text-input asp-for="SupervisorEmail"
-                       label="Supervisor email"
-                       populate-with-current-value="true"
-                       type="text"
-                       spell-check="false"
-                       hint-text="Enter the work email address of your supervisor."
-                       autocomplete="email"
-                       css-class="nhsuk-u-width-one-half" />
-      </div>
-      <button class="nhsuk-button" type="submit">
-        Next
-      </button>
+      <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+          <span class="nhsuk-fieldset__heading">
+            Add a supervisor
+          </span>
+        </legend>
+        <nhs-form-group nhs-validation-for="SelfAssessmentName">
+          <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+          <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
+          <vc:text-input asp-for="SupervisorEmail"
+                         label="Supervisor email"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="false"
+                         hint-text="Enter the work email address of your supervisor."
+                         autocomplete="email"
+                         css-class="nhsuk-u-width-one-half" />
+</nhs-form-group>
+        </fieldset>
+        <button class="nhsuk-button" type="submit">
+          Next
+        </button>
     </form>
   </div>
 </div>

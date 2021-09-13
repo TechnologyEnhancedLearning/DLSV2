@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Web.ModelBinders;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FluentMigrator.Runner;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -141,66 +141,84 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
 
             // Register services.
-            services.AddScoped<ICentresService, CentresService>();
-            services.AddScoped<ICentresDataService, CentresDataService>();
-            services.AddScoped<IConfigService, ConfigService>();
-            services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<ICourseDataService, CourseDataService>();
-            services.AddScoped<ILogoService, LogoService>();
-            services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
-            services.AddScoped<INotificationDataService, NotificationDataService>();
-            services.AddScoped<INotificationService, NotificationService>();
-            services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
-            services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
-            services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
-            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
-            services.AddScoped<IFrameworkService, FrameworkService>();
-            services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<ICourseContentService, CourseContentService>();
-            services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
-            services.AddScoped<ISessionDataService, SessionDataService>();
-            services.AddScoped<ISessionService, SessionService>();
-            services.AddScoped<ISectionContentDataService, SectionContentDataService>();
-            services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
-            services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
-            services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
-            services.AddScoped<ICourseCompletionService, CourseCompletionService>();
-            services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
-            services.AddScoped<IPasswordResetService, PasswordResetService>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IUserDataService, UserDataService>();
-            services.AddScoped<ICryptoService, CryptoService>();
-            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
-            services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
-            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
-            services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
-            services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
-            services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
-            services.AddScoped<IImageResizeService, ImageResizeService>();
-            services.AddScoped<IRegistrationDataService, RegistrationDataService>();
-            services.AddScoped<IRegistrationService, RegistrationService>();
-            services.AddScoped<IPasswordService, PasswordService>();
-            services.AddScoped<IPasswordDataService, PasswordDataService>();
-            services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
-            services.AddScoped<CentreCustomPromptHelper>();
-            services.AddScoped<IClockService, ClockService>();
-            services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
-            services.AddScoped<IRoleProfileService, RoleProfileService>();
-            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
-            services.AddScoped<ISupervisorService, SupervisorService>();
-            services.AddScoped<IActivityDataService, ActivityDataService>();
+            RegisterServices(services);
+            RegisterDataServices(services);
+            RegisterHelpers(services);
+            RegisterWebServiceFilters(services);
+        }
+
+        private static void RegisterServices(IServiceCollection services)
+        {
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
+            services.AddScoped<ICentresService, CentresService>();
+            services.AddScoped<IClockService, ClockService>();
+            services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
+            services.AddScoped<ICourseCompletionService, CourseCompletionService>();
+            services.AddScoped<ICourseContentService, CourseContentService>();
+            services.AddScoped<ICourseDelegatesService, CourseDelegatesService>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICryptoService, CryptoService>();
+            services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
             services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
-            services.AddScoped<IRegionDataService, RegionDataService>();
-            services.AddScoped<IGroupsDataService, GroupsDataService>();
+            services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
+            services.AddScoped<IFrameworkService, FrameworkService>();
+            services.AddScoped<IImageResizeService, ImageResizeService>();
+            services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<ILogoService, LogoService>();
+            services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IPasswordResetService, PasswordResetService>();
+            services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
+            services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
+            services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<IUserService, UserService>();
+        }
+
+        private static void RegisterDataServices(IServiceCollection services)
+        {
+            services.AddScoped<IActivityDataService, ActivityDataService>();
+            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
+            services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
+            services.AddScoped<ICourseDataService, CourseDataService>();
+            services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
+            services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
+            services.AddScoped<IEmailDataService, EmailDataService>();
+            services.AddScoped<IGroupsDataService, GroupsDataService>();
+            services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<INotificationDataService, NotificationDataService>();
+            services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<IPasswordDataService, PasswordDataService>();
+            services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IRegionDataService, RegionDataService>();
+            services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<ISectionContentDataService, SectionContentDataService>();
+            services.AddScoped<ISessionDataService, SessionDataService>();
+            services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
-            RegisterWebServiceFilters(services);
+            services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
+            services.AddScoped<IUserDataService, UserDataService>();
+        }
+
+        private static void RegisterHelpers(IServiceCollection services)
+        {
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddScoped<CentreCustomPromptHelper>();
+            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
+            services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)

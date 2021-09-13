@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateUpload
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.Models.User;
@@ -36,7 +37,7 @@
             Answer5 = FindFieldValue("Answer5");
             Answer6 = FindFieldValue("Answer6");
             AliasId = FindFieldValue("AliasID");
-            Email = FindFieldValue("EmailAddress");
+            Email = FindFieldValue("EmailAddress")?.Trim();
             RowStatus = RowStatus.NotYetProcessed;
         }
 
@@ -64,25 +65,69 @@
             {
                 Error = BulkUploadResult.ErrorReason.InvalidJobGroupId;
             }
-
-            if (string.IsNullOrEmpty(LastName))
+            else if (string.IsNullOrEmpty(LastName))
             {
-                Error = BulkUploadResult.ErrorReason.InvalidLastName;
+                Error = BulkUploadResult.ErrorReason.MissingLastName;
             }
-
-            if (string.IsNullOrEmpty(FirstName))
+            else if (string.IsNullOrEmpty(FirstName))
             {
-                Error = BulkUploadResult.ErrorReason.InvalidFirstName;
+                Error = BulkUploadResult.ErrorReason.MissingFirstName;
             }
-
-            if (string.IsNullOrEmpty(Email))
-            {
-                Error = BulkUploadResult.ErrorReason.InvalidEmail;
-            }
-
-            if (!Active.HasValue)
+            else if (!Active.HasValue)
             {
                 Error = BulkUploadResult.ErrorReason.InvalidActive;
+            }
+            else if (string.IsNullOrEmpty(Email))
+            {
+                Error = BulkUploadResult.ErrorReason.MissingEmail;
+            }
+            else if (FirstName.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongFirstName;
+            }
+            else if (LastName.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongLastName;
+            }
+            else if (Email.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongEmail;
+            }
+            else if (!new EmailAddressAttribute().IsValid(Email))
+            {
+                Error = BulkUploadResult.ErrorReason.BadFormatEmail;
+            }
+            else if (Email.Any(char.IsWhiteSpace))
+            {
+                Error = BulkUploadResult.ErrorReason.WhitespaceInEmail;
+            }
+            else if (AliasId != null && AliasId.Length > 250)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAliasId;
+            }
+            else if (Answer1 != null && Answer1.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer1;
+            }
+            else if (Answer2 != null && Answer2.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer2;
+            }
+            else if (Answer3 != null && Answer3.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer3;
+            }
+            else if (Answer4 != null && Answer4.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer4;
+            }
+            else if (Answer5 != null && Answer5.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer5;
+            }
+            else if (Answer6 != null && Answer6.Length > 100)
+            {
+                Error = BulkUploadResult.ErrorReason.TooLongAnswer6;
             }
 
             return !Error.HasValue;

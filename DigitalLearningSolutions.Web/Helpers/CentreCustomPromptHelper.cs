@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -63,6 +65,31 @@
             ).ToList();
         }
 
+        public static List<CustomFieldViewModel> GetCustomFieldViewModels(
+            DelegateUser delegateUser,
+            IEnumerable<CustomPrompt> customPrompts
+        )
+        {
+            var answers = new List<string?>
+            {
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            };
+
+            return customPrompts.Select(
+                cp => new CustomFieldViewModel(
+                    cp.CustomPromptNumber,
+                    cp.CustomPromptText,
+                    cp.Mandatory,
+                    answers[cp.CustomPromptNumber - 1]
+                )
+            ).ToList();
+        }
+
         public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(int centreId, DelegateUser delegateUser)
         {
             return GetCustomFieldViewModelsForCentre(
@@ -112,6 +139,25 @@
                     modelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
                 }
             }
+        }
+
+        public IEnumerable<CustomPrompt> GetCustomPromptsForCentre(int centreId)
+        {
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts;
+        }
+
+        public static string GetDelegateCustomPromptAnswerName(int customPromptNumber)
+        {
+            return customPromptNumber switch
+            {
+                1 => nameof(DelegateUserCard.Answer1),
+                2 => nameof(DelegateUserCard.Answer2),
+                3 => nameof(DelegateUserCard.Answer3),
+                4 => nameof(DelegateUserCard.Answer4),
+                5 => nameof(DelegateUserCard.Answer5),
+                6 => nameof(DelegateUserCard.Answer6),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 }

@@ -1,20 +1,23 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class ReportsViewModel
     {
-        public ReportsViewModel(IEnumerable<PeriodOfActivity> activity)
+        public ReportsViewModel(IEnumerable<PeriodOfActivity> activity, ReportsFilterModel filterModel)
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
-
+            ReportsFilterModel = filterModel;
             EvaluationSummaryViewModels = new List<EvaluationSummaryViewModel>();
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
+        public ReportsFilterModel ReportsFilterModel { get; set; }
         public List<EvaluationSummaryViewModel> EvaluationSummaryViewModels { get; set; }
     }
 
@@ -44,5 +47,32 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
         public int Completions { get; set; }
         public int Evaluations { get; set; }
         public int Registrations { get; set; }
+    }
+
+    public class ReportsFilterModel
+    {
+        public ReportsFilterModel(
+            ActivityFilterData filterData,
+            string jobGroupName,
+            string courseCategoryName,
+            string courseNameString,
+            bool userManagingAllCourses
+        )
+        {
+            JobGroupName = jobGroupName;
+            CourseCategoryName = courseCategoryName;
+            CourseName = courseNameString;
+            ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
+            DateRange =
+                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate.ToString(DateHelper.StandardDateFormat)}";
+            ShowCourseCategoryFilter = userManagingAllCourses;
+        }
+
+        public string JobGroupName { get; set; }
+        public string CourseCategoryName { get; set; }
+        public string CourseName { get; set; }
+        public string DateRange { get; set; }
+        public string ReportIntervalName { get; set; }
+        public bool ShowCourseCategoryFilter { get; set; }
     }
 }

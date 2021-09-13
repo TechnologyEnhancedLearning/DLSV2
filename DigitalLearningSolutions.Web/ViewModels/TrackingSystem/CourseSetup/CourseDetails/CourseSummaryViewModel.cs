@@ -1,14 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class CourseSummaryViewModel
     {
         public CourseSummaryViewModel(CourseDetails courseDetails)
         {
             CurrentVersion = courseDetails.CurrentVersion;
-            CreatedDate = courseDetails.CreatedDate.ToString("dd/MM/yyyy");
-            LastAccessed = courseDetails.LastAccessed?.ToString("dd/MM/yyyy");
+            CreatedDate = courseDetails.CreatedDate.ToString(DateHelper.StandardDateFormat);
+            LastAccessed = courseDetails.LastAccessed?.ToString(DateHelper.StandardDateFormat);
             Completions = courseDetails.CompletedCount;
             ActiveLearners = courseDetails.InProgressCount;
         }

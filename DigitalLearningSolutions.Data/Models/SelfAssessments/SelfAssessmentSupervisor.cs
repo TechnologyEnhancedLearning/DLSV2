@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public int? SupervisorAdminID { get; set; }
         public string SupervisorName { get; set; }
         public string SupervisorEmail { get; set; }
+        public DateTime NotificationSent { get; set; }
         public string RoleName { get; set; }
         public bool ReviewResults { get; set; }
         public bool SelfAssessmentReview { get; set; }

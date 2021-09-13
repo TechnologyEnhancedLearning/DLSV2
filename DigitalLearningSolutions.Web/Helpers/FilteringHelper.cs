@@ -10,7 +10,13 @@
     {
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
+        public const char EmptyValue = '╳';
         public const string ClearString = "CLEAR";
+
+        public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
+        {
+            return group + Separator + propertyName + Separator + propertyValue;
+        }
 
         public static string? AddNewFilterToFilterBy(string? filterBy, string? newFilterValue)
         {
@@ -19,7 +25,7 @@
                 return newFilterValue;
             }
 
-            if (newFilterValue == null || filterBy.Contains(newFilterValue))
+            if (newFilterValue == null || filterBy.Split(FilterSeparator).Contains(newFilterValue))
             {
                 return filterBy;
             }
@@ -56,7 +62,9 @@
         {
             var propertyType = typeof(T).GetProperty(propertyName)!.PropertyType;
             var propertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromString(propertyValueString);
-            return items.Where(propertyName, propertyValue);
+            return EmptyValue.ToString().Equals(propertyValue)
+                ? items.WhereNullOrEmpty(propertyName)
+                : items.Where(propertyName, propertyValue);
         }
 
         private class AppliedFilter

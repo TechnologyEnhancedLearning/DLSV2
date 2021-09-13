@@ -10,13 +10,13 @@
 
         public static readonly FilterOptionViewModel IsInactive = new FilterOptionViewModel(
             "Inactive",
-            Group + FilteringHelper.Separator + nameof(CourseStatistics.Active) + FilteringHelper.Separator + "false",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "false"),
             FilterStatus.Warning
         );
 
         public static readonly FilterOptionViewModel IsActive = new FilterOptionViewModel(
             "Active",
-            Group + FilteringHelper.Separator + nameof(CourseStatistics.Active) + FilteringHelper.Separator + "true",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.Active), "true"),
             FilterStatus.Success
         );
     }
@@ -27,15 +27,13 @@
 
         public static readonly FilterOptionViewModel IsHiddenInLearningPortal = new FilterOptionViewModel(
             "Hidden in Learning Portal",
-            Group + FilteringHelper.Separator + nameof(CourseStatistics.HideInLearnerPortal) +
-            FilteringHelper.Separator + "true",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.HideInLearnerPortal), "true"),
             FilterStatus.Warning
         );
 
         public static readonly FilterOptionViewModel IsNotHiddenInLearningPortal = new FilterOptionViewModel(
             "Visible in Learning Portal",
-            Group + FilteringHelper.Separator + nameof(CourseStatistics.HideInLearnerPortal) +
-            FilteringHelper.Separator + "false",
+            FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.HideInLearnerPortal), "false"),
             FilterStatus.Success
         );
     }

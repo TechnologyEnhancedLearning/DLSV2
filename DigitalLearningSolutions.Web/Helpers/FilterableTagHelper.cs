@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -79,6 +80,61 @@
             }
 
             return tags;
+        }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseDelegate(CourseDelegate courseDelegate)
+        {
+            var tags = new List<SearchableTagViewModel>();
+
+            if (courseDelegate.Active)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Active));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateAccountStatusFilterOptions.Inactive));
+            }
+
+            if (courseDelegate.Locked)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.Locked));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressLockedFilterOptions.NotLocked, true));
+            }
+
+            if (courseDelegate.RemovedDate.HasValue)
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.Removed));
+            }
+            else
+            {
+                tags.Add(new SearchableTagViewModel(CourseDelegateProgressRemovedFilterOptions.NotRemoved, true));
+            }
+
+            return tags;
+        }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(
+            DelegateUserCard delegateUser
+        )
+        {
+            return new List<SearchableTagViewModel>
+            {
+                delegateUser.Active
+                    ? new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsActive)
+                    : new SearchableTagViewModel(DelegateActiveStatusFilterOptions.IsNotActive),
+                delegateUser.IsPasswordSet
+                    ? new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordSet)
+                    : new SearchableTagViewModel(DelegatePasswordStatusFilterOptions.PasswordNotSet),
+                delegateUser.IsAdmin
+                    ? new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsAdmin)
+                    : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
+                new SearchableTagViewModel(
+                    DelegateRegistrationTypeFilterOptions.FromRegistrationType(delegateUser.RegistrationType)
+                )
+            };
         }
     }
 }

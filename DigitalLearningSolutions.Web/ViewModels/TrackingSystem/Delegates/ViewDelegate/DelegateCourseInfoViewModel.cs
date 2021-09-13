@@ -1,14 +1,13 @@
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 {
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class DelegateCourseInfoViewModel
     {
-        private const string DateFormat = "dd/MM/yyyy";
-
         public DelegateCourseInfoViewModel(DelegateCourseDetails details)
         {
             var info = details.DelegateCourseInfo;
@@ -17,11 +16,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
             CustomisationName = info.CustomisationName;
             SupervisorForename = info.SupervisorForename;
             SupervisorSurname = info.SupervisorSurname;
-            Enrolled = info.Enrolled.ToString(DateFormat);
-            LastUpdated = info.LastUpdated.ToString(DateFormat);
-            CompleteBy = info.CompleteBy?.ToString(DateFormat);
-            Completed = info.Completed?.ToString(DateFormat);
-            Evaluated = info.Evaluated?.ToString(DateFormat);
+            Enrolled = info.Enrolled.ToString(DateHelper.StandardDateFormat);
+            LastUpdated = info.LastUpdated.ToString(DateHelper.StandardDateFormat);
+            CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateFormat);
+            Completed = info.Completed?.ToString(DateHelper.StandardDateFormat);
+            Evaluated = info.Evaluated?.ToString(DateHelper.StandardDateFormat);
             EnrolmentMethod = info.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",

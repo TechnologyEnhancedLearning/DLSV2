@@ -8,16 +8,28 @@
         public enum ErrorReason
         {
             InvalidJobGroupId,
-            InvalidLastName,
-            InvalidFirstName,
-            InvalidEmail,
+            MissingLastName,
+            MissingFirstName,
+            MissingEmail,
             InvalidActive,
             NoRecordForDelegateId,
             UnexpectedErrorForUpdate,
             UnexpectedErrorForCreate,
             ParameterError,
             AliasIdInUse,
-            EmailAddressInUse
+            EmailAddressInUse,
+            TooLongFirstName,
+            TooLongLastName,
+            TooLongEmail,
+            TooLongAliasId,
+            TooLongAnswer1,
+            TooLongAnswer2,
+            TooLongAnswer3,
+            TooLongAnswer4,
+            TooLongAnswer5,
+            TooLongAnswer6,
+            BadFormatEmail,
+            WhitespaceInEmail
         }
 
         public BulkUploadResult() { }

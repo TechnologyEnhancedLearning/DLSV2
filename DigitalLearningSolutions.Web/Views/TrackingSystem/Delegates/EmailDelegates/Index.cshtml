@@ -1,0 +1,71 @@
+﻿@inject IConfiguration Configuration
+@using Dapper
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
+@using Microsoft.Extensions.Configuration
+@model EmailDelegatesViewModel
+
+@{
+  ViewData["Title"] = "Send welcome messages";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var exampleDate = DateTime.Today;
+  var selectedDelegateIds = Model.SelectedDelegateIds.AsList();
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedDelegateIds), nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
+    }
+
+    <span class="nhsuk-body-l">Select delegates to send email to.</span>
+
+    @if (Model.Delegates == null || !Model.Delegates.Any()) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No delegates found.</b>
+      </p>
+    } else {
+      <form method="post">
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset">
+            <div class="nhsuk-checkboxes">
+              @foreach (var delegateModel in Model.Delegates) {
+                <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-3">
+                  <input class="nhsuk-checkboxes__input"
+                         id="@delegateModel.Id-checkbox"
+                         type="checkbox"
+                         name="SelectedDelegateIds"
+                         value="@delegateModel.Id"
+                         @(selectedDelegateIds?.Contains(delegateModel.Id) == true ? "checked" : string.Empty) />
+                  <label class="nhsuk-label nhsuk-checkboxes__label" for="@delegateModel.Id-checkbox">
+                    @delegateModel.Name (@delegateModel.Email)
+                  </label>
+                  <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@delegateModel.Id-hint">
+                    Registered on @delegateModel.RegistrationDate
+                  </div>
+                </div>
+              }
+            </div>
+          </fieldset>
+        </div>
+        <vc:date-input id="welcome-email-date"
+                       label="Deliver email on or after:"
+                       day-id="@nameof(Model.Day)"
+                       month-id="@nameof(Model.Month)"
+                       year-id="@nameof(Model.Year)"
+                       css-class="nhsuk-form-group"
+                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+        <button class="nhsuk-button" type="submit">Send welcome emails</button>
+      </form>
+    }
+
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+  </div>
+</div>
