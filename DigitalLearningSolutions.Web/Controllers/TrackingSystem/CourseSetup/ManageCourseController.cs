@@ -41,5 +41,28 @@
 
             return View(model);
         }
+
+        [HttpGet]
+        [Route("{customisationId:int}/Manage/LearningPathwayDefaults")]
+        public IActionResult EditLearningPathwayDefaults(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+
+            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            if (courseDetails == null)
+            {
+                return NotFound();
+            }
+
+            var model = new LearningPathwayDefaultsViewModel(courseDetails);
+
+            return View(model);
+        }
     }
 }

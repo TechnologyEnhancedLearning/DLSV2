@@ -1,0 +1,77 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.Extensions.Configuration
+@model LearningPathwayDefaultsViewModel
+
+@{
+  ViewData["Title"] = "Edit Learning Pathway defaults";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post"
+          asp-controller="ManageCourse"
+          asp-action="EditLearningPathwayDefaults">
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" asp-for="CompleteWithinMonths">
+          Completion within (in months)
+        </label>
+        <div class="nhsuk-hint">
+          Within how many months of enrolment should the learner complete the course?
+        </div>
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" inputmode="numeric">
+      </div>
+
+      <div class="nhsuk-form-group">
+        <label class="nhsuk-label" asp-for="CompleteWithinMonths">
+          Completion valid for (in months)
+        </label>
+        <div class="nhsuk-hint">
+          For how many months after completion will the completion remain valid
+          (before the learner is expected to complete the course again)?
+        </div>
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" inputmode="numeric">
+      </div>
+
+      <div class="nhsuk-checkboxes nhsuk-u-margin-bottom-3">
+
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input"
+                 type="checkbox"
+                 asp-for="Mandatory">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="Mandatory">
+            Course is mandatory
+          </label>
+          <div class="nhsuk-hint nhsuk-checkboxes__hint">
+            Cannot be removed from the current course list by learner after enrolment
+          </div>
+        </div>
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input"
+                 type="checkbox"
+                 asp-for="AutoRefresh">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="AutoRefresh">
+            Enable auto-refresh
+          </label>
+          <div class="nhsuk-hint nhsuk-checkboxes__hint">
+            After the completion valid period expires, should the learner automatically be enrolled on a refresher course?
+          </div>
+        </div>
+      </div>
+      <button class="nhsuk-button" type="submit">Save</button>
+
+    </form>
+
+
+  </div>
+</div>
