@@ -47,7 +47,7 @@
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                   <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
                   <div class="nhsuk-checkboxes__item">
-                    <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="ResultIds" type="checkbox" value="@question.ResultId">
+                    <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="ResultIds" checked="@(Model.ResultIds != null ? Model.ResultIds.Contains((int)question.ResultId) : false)" type="checkbox" value="@question.ResultId">
                     <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
                       @competency.Name
                     </label>

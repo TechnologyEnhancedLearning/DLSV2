@@ -456,7 +456,8 @@
                 Vocubulary = sessionRequestVerification.Vocabulary,
                 SelfAssessmentId = sessionRequestVerification.SelfAssessmentID,
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
-                Supervisors = supervisors
+                Supervisors = supervisors,
+                CandidateAssessmentSupervisorId = sessionRequestVerification.CandidateAssessmentSupervisorId
             };
             return View("SelfAssessments/VerificationPickSupervisor", model);
         }
@@ -489,7 +490,8 @@
                 Vocubulary = sessionRequestVerification.Vocabulary,
                 SelfAssessmentId = sessionRequestVerification.SelfAssessmentID,
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
-                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup)
+                CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
+                ResultIds = sessionRequestVerification.ResultIds
             };
             return View("SelfAssessments/VerificationPickResults", model);
         }
