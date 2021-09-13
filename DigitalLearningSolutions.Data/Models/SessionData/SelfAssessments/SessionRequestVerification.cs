@@ -14,6 +14,6 @@
         public string SelfAssessmentName { get; set; }
         public string Vocabulary { get; set; }
         public int CandidateAssessmentSupervisorId { get; set; }
-        public List<int>? SelfAssessmentResultId { get; set; }
+        public List<int>? ResultIds { get; set; }
     }
 }

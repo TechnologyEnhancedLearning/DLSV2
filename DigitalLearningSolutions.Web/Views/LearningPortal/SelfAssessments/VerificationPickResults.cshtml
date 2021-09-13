@@ -20,57 +20,61 @@
 { 
   <h3>Tick each self assessment result that you wish to verify and sign-off and then click Submit</h3>
 <form method="post">
-  @foreach (var competencyGroup in Model.CompetencyGroups)
-  {
-    <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-      <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            @competencyGroup.First().Vocabulary
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Question
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Response
-          </th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        @foreach (var competency in competencyGroup)
-        {
-          @foreach (var question in competency.AssessmentQuestions)
+  <nhs-form-group nhs-validation-for="ResultIds">
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+      <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
+        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              @competencyGroup.First().Vocabulary
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Question
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Response
+            </th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          @foreach (var competency in competencyGroup)
           {
-        <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="resultChecked" type="checkbox" value="@question.ResultId">
-              <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
-                @competency.Name
-              </label>
-            </div>
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Questions </span>
-            <span class="status-tag">
+            @foreach (var question in competency.AssessmentQuestions)
+            {
+              <tr role="row" class="nhsuk-table__row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                  <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="ResultIds" type="checkbox" value="@question.ResultId">
+                    <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
+                      @competency.Name
+                    </label>
+                  </div>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Questions </span>
+                  <span class="status-tag">
 
-              @question.Question
+                    @question.Question
 
-            </span>
-          </td>
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-            <span class="nhsuk-table-responsive__heading">Responses </span>
-            <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
-          </td>
+                  </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Responses </span>
+                  <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
+                </td>
 
-        </tr>
+              </tr>
+            }
           }
-        }
-      </tbody>
-    </table>
-  }
+        </tbody>
+      </table>
+    }
+  </nhs-form-group>
+  <input type="hidden" asp-for="SelfAssessmentName" />
+  <input type="hidden" asp-for="Vocubulary" />
   <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
     <div class="nhsuk-grid-column-full">
       <a class="nhsuk-button nhsuk-button--secondary" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">

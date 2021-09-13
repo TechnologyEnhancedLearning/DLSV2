@@ -14,6 +14,20 @@
 
     public partial class LearningPortalController
     {
+        private List<Competency> PopulateCompetencyLevelDescriptors(List<Competency> competencies)
+        {
+            foreach (var competency in competencies)
+            {
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                    }
+                }
+            }
+            return competencies;
+        }
         private const string CookieName = "DLSSelfAssessmentService";
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
         public IActionResult SelfAssessment(int selfAssessmentId)
@@ -479,19 +493,18 @@
             };
             return View("SelfAssessments/VerificationPickResults", model);
         }
-        private List<Competency> PopulateCompetencyLevelDescriptors(List<Competency> competencies)
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
+        public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
-            foreach (var competency in competencies)
+            if(model.ResultIds == null)
             {
-                foreach (var assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
-                    {
-                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
-                    }
-                }
+                var competencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList());
+                model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
+                ModelState.AddModelError(nameof(model.ResultIds), "Please choose at least one result to verify.");
+                return View("SelfAssessments/VerificationPickResults", model);
             }
-            return competencies;
+            return RedirectToAction("VerificationSummary", new { model.SelfAssessmentId });
         }
     }
 }
