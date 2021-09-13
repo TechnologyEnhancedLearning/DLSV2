@@ -12,10 +12,10 @@
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
           @foreach (var (answer, percentage) in Model.Data) {
             <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key">
+              <dt class="nhsuk-summary-list__key eval-summary-row__key">
                 @answer
               </dt>
-              <dd class="nhsuk-summary-list__value">
+              <dd class="nhsuk-summary-list__value eval-summary-row__value">
                 @percentage.ToString("0.0")%
               </dd>
             </div>
