@@ -44,13 +44,15 @@
             }
 
             var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
+            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
 
             var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
             var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
-                                                  adminAccountVerificationAttemptedAndFailed;
+                                                  adminAccountVerificationAttemptedAndFailed &&
+                                                  !delegateAccountVerificationSuccessful;
 
             var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
-            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
+            
             var shouldIncreaseFailedLoginCount =
                 adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
@@ -140,6 +142,9 @@
                 password
             );
 
+            // If the admin we've found is not at the same centre as any of the verified delegates
+            // we must be logging in by CandidateNumber or AliasID and we do not want to find
+            // accounts at different centres in that case.
             if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
             {
                 verifiedAssociatedAdmin = null;

@@ -22,6 +22,6 @@
 
         public UserAccountSet Accounts { get; set; }
 
-        public List<CentreUserDetails>? AvailableCentres { get; set; }
+        public List<CentreUserDetails> AvailableCentres { get; set; }
     }
 }

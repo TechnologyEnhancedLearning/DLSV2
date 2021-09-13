@@ -78,7 +78,7 @@
                         model.ReturnUrl
                     );
                 case LoginAttemptResult.ChooseACentre:
-                    var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres!);
+                    var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres);
                     SetTempDataForChooseACentre(
                         model.RememberMe,
                         adminLoginDetails,
