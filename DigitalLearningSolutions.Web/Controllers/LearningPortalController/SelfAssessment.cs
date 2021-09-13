@@ -499,7 +499,7 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
-            if(model.ResultIds == null)
+            if (model.ResultIds == null)
             {
                 var competencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList());
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
@@ -520,13 +520,38 @@
             string supervisorString = $"{supervisor.SupervisorName} ({supervisor.SupervisorEmail}) - {supervisor.RoleName}";
             var model = new VerificationSummaryViewModel()
             {
-                Supervisor = supervisorString, 
+                Supervisor = supervisorString,
                 SelfAssessmentId = selfAssessmentId,
                 ResultCount = sessionRequestVerification.ResultIds.Count(),
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
                 Vocubulary = sessionRequestVerification.Vocabulary
             };
             return View("SelfAssessments/VerificationSummary", model);
+        }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Summary")]
+        public IActionResult SubmitVerification()
+        {
+            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            TempData.Set(sessionRequestVerification);
+            if (sessionRequestVerification.ResultIds != null)
+            {
+                int candidateAssessmentSupervisorId = sessionRequestVerification.CandidateAssessmentSupervisorId;
+                int resultCount = 0;
+                foreach (var resultId in sessionRequestVerification.ResultIds)
+                {
+                    if (supervisorService.InsertSelfAssessmentResultSupervisorVerification(candidateAssessmentSupervisorId, resultId))
+                    {
+                        resultCount++;
+                    };
+                }
+                if (resultCount > 0)
+                {
+                    frameworkNotificationService.SendResultVerificationRequest(candidateAssessmentSupervisorId, sessionRequestVerification.SelfAssessmentID, resultCount);
+                }
+            }
+
+            return RedirectToAction("SelfAssessmentOverview", new { sessionRequestVerification.SelfAssessmentID });
         }
     }
 }
