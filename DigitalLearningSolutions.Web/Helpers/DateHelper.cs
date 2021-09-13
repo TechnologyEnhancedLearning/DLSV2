@@ -25,7 +25,7 @@
             return interval switch
             {
                 ReportInterval.Days => "d/MM/yyyy",
-                ReportInterval.Weeks => "Week commencing d/MM/yyyy",
+                ReportInterval.Weeks => "'Week commencing' d/MM/yyyy",
                 ReportInterval.Months => "MMMM, yyyy",
                 ReportInterval.Quarters => "Q, yyyy",
                 _ => "yyyy"

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
@@ -59,6 +60,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
