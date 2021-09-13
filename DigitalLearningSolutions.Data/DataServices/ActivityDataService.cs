@@ -98,12 +98,12 @@ namespace DigitalLearningSolutions.Data.DataServices
 					    SUM(CASE WHEN Q3 = 255 THEN 1 ELSE 0 END) AS Q3NoResponse,
 					    
 					    SUM(CASE WHEN Q3 = 0 THEN 1 ELSE 0 END) AS Q4Hrs0,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 1) THEN 1 ELSE 0 END) AS Q4HrsLt1,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 2) THEN 1 ELSE 0 END) AS Q4Hrs1To2,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 3) THEN 1 ELSE 0 END) AS Q4Hrs2To4,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 4) THEN 1 ELSE 0 END) AS Q4Hrs4To6,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 5) THEN 1 ELSE 0 END) AS Q4HrsGt6,
-					    SUM(CASE WHEN (Q3 != 0 and Q4 = 255) THEN 1 ELSE 0 END) AS Q4NoResponse,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 1) THEN 1 ELSE 0 END) AS Q4HrsLt1,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 2) THEN 1 ELSE 0 END) AS Q4Hrs1To2,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 3) THEN 1 ELSE 0 END) AS Q4Hrs2To4,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 4) THEN 1 ELSE 0 END) AS Q4Hrs4To6,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 5) THEN 1 ELSE 0 END) AS Q4HrsGt6,
+					    SUM(CASE WHEN (Q3 != 0 AND Q4 = 255) THEN 1 ELSE 0 END) AS Q4NoResponse,
 					    
 					    SUM(CASE WHEN Q5 = 0 THEN 1 ELSE 0 END) AS Q5No,
 					    SUM(CASE WHEN Q5 = 1 THEN 1 ELSE 0 END) AS Q5Yes,
@@ -119,12 +119,23 @@ namespace DigitalLearningSolutions.Data.DataServices
 					    SUM(CASE WHEN Q7 = 1 THEN 1 ELSE 0 END) AS Q7Yes,
 					    SUM(CASE WHEN Q7 = 255 THEN 1 ELSE 0 END) AS Q7NoResponse
                     FROM Evaluations e
-                    INNER JOIN Customisations c ON e.CustomisationID = c.CustomisationID
-                    WHERE EvaluatedDate >= @startDate
+                    INNER JOIN Customisations c ON c.CustomisationID = e.CustomisationID
+                    INNER JOIN Applications a ON a.ApplicationID = c.ApplicationID
+                    WHERE CentreID = @centreId
+                        AND EvaluatedDate >= @startDate
                         AND EvaluatedDate <= @endDate
-                        AND (@customisationId IS NULL OR c.CustomisationID = @customisationId)
-                        AND CentreID = @centreId",
-                new { startDate, endDate, customisationId, centreId }
+                        AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
+                        AND (@customisationId IS NULL OR e.CustomisationID = @customisationId)
+                        AND (@courseCategoryId IS NULL OR CourseCategoryId = @courseCategoryId)",
+                new
+                {
+                    centreId,
+                    startDate,
+                    endDate,
+                    jobGroupId,
+                    customisationId,
+                    courseCategoryId
+                }
             );
         }
     }
