@@ -100,38 +100,10 @@
         public static CourseAdminFieldsResult GetDefaultCourseAdminFieldsResult(
             string? customField1Prompt = "System Access Granted",
             string? customField1Options = "Test",
-            bool customField1Mandatory = false,
             string? customField2Prompt = "Priority Access",
             string? customField2Options = "",
-            bool customField2Mandatory = false,
             string? customField3Prompt = null,
             string? customField3Options = "",
-            bool customField3Mandatory = false,
-            int courseCategoryId = 0
-        )
-        {
-            return new CourseAdminFieldsResult
-            {
-                CustomField1Prompt = customField1Prompt,
-                CustomField1Options = customField1Options,
-                CustomField2Prompt = customField2Prompt,
-                CustomField2Options = customField2Options,
-                CustomField3Prompt = customField3Prompt,
-                CustomField3Options = customField3Options,
-                CourseCategoryId = courseCategoryId
-            };
-        }
-
-        public static CourseAdminFieldsResult GetDefaultCourseAdminFieldsResult2(
-            string? customField1Prompt = "System Access Granted",
-            string? customField1Options = "Test",
-            bool customField1Mandatory = false,
-            string? customField2Prompt = "Access Permissions",
-            string? customField2Options = "",
-            bool customField2Mandatory = false,
-            string? customField3Prompt = null,
-            string? customField3Options = "",
-            bool customField3Mandatory = false,
             int courseCategoryId = 0
         )
         {
