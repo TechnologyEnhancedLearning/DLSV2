@@ -504,7 +504,27 @@
                 ModelState.AddModelError(nameof(model.ResultIds), "Please choose at least one result to verify.");
                 return View("SelfAssessments/VerificationPickResults", model);
             }
+            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            sessionRequestVerification.ResultIds = model.ResultIds;
+            TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationSummary", new { model.SelfAssessmentId });
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Summary")]
+        public IActionResult VerificationSummary(int selfAssessmentId)
+        {
+            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
+            TempData.Set(sessionRequestVerification);
+            var supervisor = selfAssessmentService.GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(sessionRequestVerification.CandidateAssessmentSupervisorId);
+            string supervisorString = $"{supervisor.SupervisorName} ({supervisor.SupervisorEmail}) - {supervisor.RoleName}";
+            var model = new VerificationSummaryViewModel()
+            {
+                Supervisor = supervisorString, 
+                SelfAssessmentId = selfAssessmentId,
+                ResultCount = sessionRequestVerification.ResultIds.Count(),
+                SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
+                Vocubulary = sessionRequestVerification.Vocabulary
+            };
+            return View("SelfAssessments/VerificationSummary", model);
         }
     }
 }
