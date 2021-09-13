@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -98,12 +98,12 @@
 					    SUM(CASE WHEN Q3 = 255 THEN 1 ELSE 0 END) AS Q3NoResponse,
 					    
 					    SUM(CASE WHEN Q3 = 0 THEN 1 ELSE 0 END) AS Q4Hrs0,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 1) THEN 1 ELSE 0 END) AS Q4HrsLt1,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 2) THEN 1 ELSE 0 END) AS Q4Hrs1To2,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 3) THEN 1 ELSE 0 END) AS Q4Hrs2To4,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 4) THEN 1 ELSE 0 END) AS Q4Hrs4To6,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 5) THEN 1 ELSE 0 END) AS Q4HrsFt6,
-					    SUM(CASE WHEN (Q3 != 1 and Q4 = 255) THEN 1 ELSE 0 END) AS Q4NoResponse,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 1) THEN 1 ELSE 0 END) AS Q4HrsLt1,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 2) THEN 1 ELSE 0 END) AS Q4Hrs1To2,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 3) THEN 1 ELSE 0 END) AS Q4Hrs2To4,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 4) THEN 1 ELSE 0 END) AS Q4Hrs4To6,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 5) THEN 1 ELSE 0 END) AS Q4HrsGt6,
+					    SUM(CASE WHEN (Q3 != 0 and Q4 = 255) THEN 1 ELSE 0 END) AS Q4NoResponse,
 					    
 					    SUM(CASE WHEN Q5 = 0 THEN 1 ELSE 0 END) AS Q5No,
 					    SUM(CASE WHEN Q5 = 1 THEN 1 ELSE 0 END) AS Q5Yes,

@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -73,16 +74,65 @@
         {
             // when
             var result = service.GetFilteredActivity(
-                    101,
-                    DateTime.Parse("2014-01-01 00:00:00.000"),
-                    DateTime.Parse("2014-03-31 23:59:59.999"),
-                    jobGroupId,
-                    courseCategoryId,
-                    customisationId
-                );
+                101,
+                DateTime.Parse("2014-01-01 00:00:00.000"),
+                DateTime.Parse("2014-03-31 23:59:59.999"),
+                jobGroupId,
+                courseCategoryId,
+                customisationId
+            );
 
             // then
             result.Count().Should().Be(expectedCount);
+        }
+
+        [Test]
+        public void GetEvaluationSummaryData_fetches_data_correctly()
+        {
+            // Given
+            var expectedResult = new EvaluationSummaryData
+            {
+                Q1No = 664,
+                Q1Yes = 627,
+                Q1NoResponse = 35,
+                Q2No = 739,
+                Q2Yes = 546,
+                Q2NoResponse = 41,
+                Q3No = 723,
+                Q3Yes = 567,
+                Q3NoResponse = 36,
+                Q4Hrs0 = 723,
+                Q4HrsLt1 = 313,
+                Q4Hrs1To2 = 142,
+                Q4Hrs2To4 = 60,
+                Q4Hrs4To6 = 17,
+                Q4HrsGt6 = 25,
+                Q4NoResponse = 46,
+                Q5No = 488,
+                Q5Yes = 756,
+                Q5NoResponse = 82,
+                Q6NotApplicable = 278,
+                Q6No = 436,
+                Q6YesIndirectly = 436,
+                Q6YesDirectly = 126,
+                Q6NoResponse = 50,
+                Q7No = 400,
+                Q7Yes = 869,
+                Q7NoResponse = 57
+            };
+
+            // When
+            var result = service.GetEvaluationSummaryData(
+                121,
+                new DateTime(2010, 01, 01),
+                new DateTime(2020, 01, 01),
+                null,
+                null,
+                10059
+            );
+
+            // Then
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }
