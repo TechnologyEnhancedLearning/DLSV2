@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Data.DataServices
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -118,7 +118,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 					    SUM(CASE WHEN Q7 = 0 THEN 1 ELSE 0 END) AS Q7No,
 					    SUM(CASE WHEN Q7 = 1 THEN 1 ELSE 0 END) AS Q7Yes,
 					    SUM(CASE WHEN Q7 = 255 THEN 1 ELSE 0 END) AS Q7NoResponse
-                    FROM Evaluations
+                    FROM Evaluations e
+                    INNER JOIN Customisations c ON e.CustomisationID = c.CustomisationID
+                    WHERE EvaluatedDate >= @startDate
+                        AND EvaluatedDate <= @endDate
+                        AND (@customisationId IS NULL OR c.CustomisationID = @customisationId)
+                        AND CentreID = @centreId",
+                new { startDate, endDate, customisationId, centreId }
             );
         }
     }
