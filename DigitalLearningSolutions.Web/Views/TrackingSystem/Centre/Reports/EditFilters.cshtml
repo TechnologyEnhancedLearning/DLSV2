@@ -6,14 +6,14 @@
 @model EditFiltersViewModel
 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Edit report filters";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
-    var reportIntervalValue = (int)Model.ReportInterval;
-    var courseSelected = Model.CustomisationId.HasValue;
-    var categorySelected = Model.CourseCategoryId.HasValue;
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit report filters";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var reportIntervalValue = (int)Model.ReportInterval;
+  var courseSelected = Model.CustomisationId.HasValue;
+  var categorySelected = Model.CourseCategoryId.HasValue;
 }
 
 @section NavMenuItems {
@@ -25,8 +25,19 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.JobGroupId), nameof(Model.CourseCategoryId), nameof(Model.CustomisationId), nameof(Model.StartDay), nameof(Model.StartMonth), nameof(Model.StartYear), nameof(Model.EndDay), nameof(Model.EndMonth), nameof(Model.EndYear), nameof(Model.ReportInterval) })" />
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.JobGroupId),
+                                                   nameof(Model.CourseCategoryId),
+                                                   nameof(Model.CustomisationId),
+                                                   nameof(Model.StartDay),
+                                                   nameof(Model.StartMonth),
+                                                   nameof(Model.StartYear),
+                                                   nameof(Model.EndDay),
+                                                   nameof(Model.EndMonth),
+                                                   nameof(Model.EndYear),
+                                                   nameof(Model.ReportInterval) })" />
     }
+
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit report filters</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditFilters">
 
@@ -41,14 +52,21 @@
 
       @if (Model.CanFilterCourseCategories) {
         <div class="nhsuk-form-group">
-          <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
-            <div class="nhsuk-hint" id="contact-hint">
+          <fieldset class="nhsuk-fieldset" aria-describedby="course-course-category-hint">
+            <div class="nhsuk-hint" id="course-course-category-hint">
               Choose whether to filter based on course or course category
             </div>
 
             <div class="nhsuk-radios nhsuk-radios--conditional">
               <div class="nhsuk-radios__item">
-                <input name="FilterType" class="nhsuk-radios__input" id="course-filter-type-1" type="radio" value="@CourseFilterType.Course" aria-controls="conditional-course-filter-type-1" aria-expanded="@(courseSelected ? "true" : "false")" @(courseSelected ? "checked" : "")>
+                <input name="FilterType"
+                       class="nhsuk-radios__input"
+                       id="course-filter-type-1"
+                       type="radio"
+                       value="@CourseFilterType.Course"
+                       aria-controls="conditional-course-filter-type-1"
+                       aria-expanded="@(courseSelected ? "true" : "false")"
+                       @(courseSelected ? "checked" : "")>
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
                   Course
                 </label>
@@ -67,7 +85,14 @@
               </div>
 
               <div class="nhsuk-radios__item">
-                <input name="FilterType" class="nhsuk-radios__input" id="course-filter-type-2" type="radio" value="@CourseFilterType.CourseCategory" aria-controls="conditional-course-filter-type-2" aria-expanded="@(categorySelected ? "true" : "false")"  @(categorySelected ? "checked" : "")>
+                <input name="FilterType"
+                       class="nhsuk-radios__input"
+                       id="course-filter-type-2"
+                       type="radio"
+                       value="@CourseFilterType.CourseCategory"
+                       aria-controls="conditional-course-filter-type-2"
+                       aria-expanded="@(categorySelected ? "true" : "false")"
+                       @(categorySelected ? "checked" : "")>
                 <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
                   Course category
                 </label>
@@ -86,7 +111,7 @@
           </fieldset>
         </div>
       } else {
-        <input type="hidden" asp-for="FilterType" value="@CourseFilterType.CourseCategory"/>
+        <input type="hidden" asp-for="FilterType" value="@CourseFilterType.CourseCategory" />
         <vc:select-list asp-for="CustomisationId"
                         label="Choose a course filter"
                         value="@Model.CustomisationId.ToString()"
@@ -109,7 +134,7 @@
                            end-date-checkbox-label="End date"
                            css-class="date-range-css"
                            hint-text="The reporting in your centre starts on @Model.DataStart.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
-                           end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today"/>
+                           end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today" />
 
       <vc:select-list asp-for="ReportInterval"
                       label="Report by"
