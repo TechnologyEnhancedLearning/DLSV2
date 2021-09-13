@@ -41,7 +41,7 @@
     <h1 id="page-heading" class="nhsuk-heading-xl">Edit report filters</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditFilters">
 
-      <vc:select-list asp-for="JobGroupId"
+      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
                       label="Choose job group filter"
                       value="@Model.JobGroupId.ToString()"
                       hint-text=""
@@ -59,7 +59,7 @@
 
             <div class="nhsuk-radios nhsuk-radios--conditional">
               <div class="nhsuk-radios__item">
-                <input name="FilterType"
+                <input name="@nameof(Model.FilterType)"
                        class="nhsuk-radios__input"
                        id="course-filter-type-1"
                        type="radio"
@@ -73,7 +73,7 @@
               </div>
               <div class="nhsuk-radios__conditional @(courseSelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-1">
 
-                <vc:select-list asp-for="CustomisationId"
+                <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                                 label="Choose a course"
                                 value="@Model.CustomisationId.ToString()"
                                 hint-text=""
@@ -85,7 +85,7 @@
               </div>
 
               <div class="nhsuk-radios__item">
-                <input name="FilterType"
+                <input name="@nameof(Model.FilterType)"
                        class="nhsuk-radios__input"
                        id="course-filter-type-2"
                        type="radio"
@@ -98,7 +98,7 @@
                 </label>
               </div>
               <div class="nhsuk-radios__conditional @(categorySelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-2">
-                <vc:select-list asp-for="CourseCategoryId"
+                <vc:select-list asp-for="@nameof(Model.CourseCategoryId)"
                                 label="Choose course category from the list below"
                                 value="@Model.CourseCategoryId.ToString()"
                                 hint-text=""
@@ -112,7 +112,7 @@
         </div>
       } else {
         <input type="hidden" asp-for="FilterType" value="@CourseFilterType.CourseCategory" />
-        <vc:select-list asp-for="CustomisationId"
+        <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                         label="Choose a course filter"
                         value="@Model.CustomisationId.ToString()"
                         hint-text=""
@@ -124,19 +124,19 @@
 
       <vc:date-range-input id="date-range"
                            label="Reporting date range"
-                           start-day-id="StartDay"
-                           start-month-id="StartMonth"
-                           start-year-id="StartYear"
-                           end-day-id="EndDay"
-                           end-month-id="EndMonth"
-                           end-year-id="EndYear"
-                           end-date-checkbox-id="EndDate"
+                           start-day-id="@nameof(Model.StartDay)"
+                           start-month-id="@nameof(Model.StartMonth)"
+                           start-year-id="@nameof(Model.StartYear)"
+                           end-day-id="@nameof(Model.EndDay)"
+                           end-month-id="@nameof(Model.EndMonth)"
+                           end-year-id="@nameof(Model.EndYear)"
+                           end-date-checkbox-id="@nameof(Model.EndDate)"
                            end-date-checkbox-label="End date"
                            css-class="date-range-css"
                            hint-text="The reporting in your centre starts on @Model.DataStart.ToString(DateHelper.StandardDateFormat). Please select any date range between that date and now."
                            end-date-checkbox-hint-text="Check this box to specify an end date. If left unchecked will display data until today" />
 
-      <vc:select-list asp-for="ReportInterval"
+      <vc:select-list asp-for="@nameof(Model.ReportInterval)"
                       label="Report by"
                       value="@reportIntervalValue.ToString()"
                       hint-text=""
