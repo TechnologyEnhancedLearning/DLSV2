@@ -27,13 +27,10 @@
                 CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                     "System Access Granted",
                     "Test",
-                    false,
                     "Priority Access",
                     null,
-                    false,
                     null,
                     null,
-                    false,
                     2
                 );
 
