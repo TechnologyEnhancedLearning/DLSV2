@@ -67,12 +67,12 @@
             };
         }
 
-        public static async Task<(int, DateTime)> GetProgressRemovedFields(
+        public static async Task<(int, DateTime?)> GetProgressRemovedFields(
             this DbConnection connection,
             int progressId
         )
         {
-            var progress = await connection.QueryAsync<(int, DateTime)>(
+            var progress = await connection.QueryAsync<(int, DateTime?)>(
                 @"SELECT
                         RemovalMethodID,
                         RemovedDate

@@ -158,6 +158,31 @@
         }
 
         [Test]
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.Now;
+                const int delegateId = 299228;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(285172);
+
+                // Then
+                progressFields.Item1.Should().Be(0);
+                progressFields.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+
+        [Test]
         public void GetRelatedProgressIdForGroupDelegate_returns_expected_value()
         {
             // Given

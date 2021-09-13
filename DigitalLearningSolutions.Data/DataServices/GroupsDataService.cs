@@ -142,8 +142,15 @@
 
         public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
+            const string numberOfGroupsWhereDelegateIsEnrolledOnThisCourse =
+            @"SELECT COUNT(DISTINCT(gd.GroupId))
+            FROM dbo.Progress AS pr
+            INNER JOIN dbo.GroupCustomisations AS gc ON gc.CustomisationID = pr.CustomisationID
+            INNER JOIN dbo.GroupDelegates AS gd ON gd.DelegateID = pr.CandidateID AND gd.GroupID = gc.GroupID
+            WHERE pr.CustomisationID = Progress.CustomisationID AND pr.CandidateID = Progress.CandidateID";
+
             connection.Execute(
-                @"UPDATE Progress
+                $@"UPDATE Progress
                     SET
                         RemovedDate = @removedDate,
                         RemovalMethodID = 3
@@ -156,7 +163,8 @@
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
                                 AND P.RemovedDate IS NULL
-                                AND p.LoginCount = 0)",
+                                AND p.LoginCount = 0)
+                        AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
                 new { groupId, delegateId, removedDate }
             );
         }
