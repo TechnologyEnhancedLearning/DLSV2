@@ -80,11 +80,10 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(EditDetailsViewModel model, string action, ApplicationType? application = null)
+        public IActionResult EditDetails(EditDetailsViewModel model, string action)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
             ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(model);
-            model.Application = application;
             return action switch
             {
                 "save" => EditDetailsPostSave(model),

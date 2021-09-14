@@ -11,7 +11,7 @@
         public NotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications,
-            ApplicationType? application = null
+            ApplicationType? application
         )
         {
             AdminNotifications = new NotificationPreferenceListViewModel(

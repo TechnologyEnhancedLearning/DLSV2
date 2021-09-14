@@ -33,7 +33,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ChangePasswordViewModel model, ApplicationType? application = null)
+        public async Task<IActionResult> Index(ChangePasswordViewModel model)
         {
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
@@ -52,7 +52,6 @@
 
             if (!ModelState.IsValid)
             {
-                model.Application = application;
                 return View(model);
             }
 
@@ -60,7 +59,7 @@
 
             await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
 
-            return View("Success", application);
+            return View("Success", model.Application);
         }
     }
 }
