@@ -32,14 +32,14 @@
 </div>
 
 <form method="post" novalidate asp-action="AddAdminField">
-  <vc:select-list asp-for="@nameof(Model.CustomPromptId)"
+  <vc:select-list asp-for="@nameof(Model.AdminFieldId)"
                   label="Field name"
-                  value="@Model.CustomPromptId.ToString()"
+                  value="@Model.AdminFieldId.ToString()"
                   hint-text=""
                   deselectable="false"
                   css-class="nhsuk-u-width-one-half"
                   default-option="Select a prompt name"
-                  select-list-options="@Model.CoursePromptNameOptions" />
+                  select-list-options="@Model.AdminFieldNameOptions" />
 
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>

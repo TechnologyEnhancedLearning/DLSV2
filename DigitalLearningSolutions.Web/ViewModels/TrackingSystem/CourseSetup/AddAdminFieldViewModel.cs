@@ -19,21 +19,21 @@
 
         public AddAdminFieldViewModel(
             int customisationId,
-            int customPromptId,
+            int adminFieldId,
             string? options,
             string? answer = null
         )
         {
             CustomisationId = customisationId;
-            CustomPromptId = customPromptId;
+            AdminFieldId = adminFieldId;
             OptionsString = options;
             IncludeAnswersTableCaption = true;
             Answer = answer;
         }
 
-        [Required(ErrorMessage = "Select a prompt name")]
-        public int? CustomPromptId { get; set; }
+        [Required(ErrorMessage = "Select a field name")]
+        public int? AdminFieldId { get; set; }
 
-        public IEnumerable<SelectListItem>? CoursePromptNameOptions { get; set; }
+        public IEnumerable<SelectListItem>? AdminFieldNameOptions { get; set; }
     }
 }

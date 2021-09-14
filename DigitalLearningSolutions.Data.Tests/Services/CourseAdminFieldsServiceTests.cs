@@ -92,15 +92,16 @@
         {
             // Given
             const string promptName = "Access Permissions";
+            var coursePrompts = new List<(int, string)> { (1, promptName) };
             A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).Returns
-                (new List<(int, string)> { (1, promptName) });
+                (coursePrompts);
 
             // When
             var result = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
 
             // Then
             A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).MustHaveHappened();
-            result.Should().BeEquivalentTo(new List<(int, string)> { (1, promptName) });
+            result.Should().BeEquivalentTo(coursePrompts);
         }
 
         [Test]

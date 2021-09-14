@@ -324,7 +324,7 @@
                 model.CustomisationId,
                 centreId,
                 categoryId.Value,
-                model.CustomPromptId!.Value,
+                model.AdminFieldId!.Value,
                 model.OptionsString
             ))
             {
@@ -484,8 +484,8 @@
         private void SetViewModelCoursePromptNameOptions(AddAdminFieldViewModel model)
         {
             var coursePrompts = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
-            model.CoursePromptNameOptions =
-                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, model.CustomPromptId);
+            model.AdminFieldNameOptions =
+                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, model.AdminFieldId);
         }
 
         private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)
