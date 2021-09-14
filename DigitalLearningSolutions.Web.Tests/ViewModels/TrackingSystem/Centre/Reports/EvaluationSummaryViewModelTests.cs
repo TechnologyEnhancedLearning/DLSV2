@@ -13,15 +13,15 @@
             // Given
             var expectedData = new Dictionary<string, float>
             {
-                { "Yes", (float)100 * 107 / 216 }, { "No", (float)100 * 102 / 216 },
-                { "No response", (float)100 * 7 / 216 }
+                { "Yes", 20f }, { "No", 50f }, { "No response", 30f }
             };
 
             // When
             var model = new EvaluationSummaryViewModel(
                 "Increased productivity?",
                 new Dictionary<string, int>
-                    { { "Yes", 107 }, { "No", 102 }, { "No response", 7 } }
+                    { { "Yes", 10 }, { "No", 25 }, { "No response", 15 } },
+                15
             );
 
             // Then
@@ -30,13 +30,30 @@
         }
 
         [Test]
-        public void EvaluationSummaryViewModel_sets_data_to_null_when_no_responses()
+        public void EvaluationSummaryViewModel_sets_data_to_null_when_no_responses_at_all()
+        {
+            // When
+            var model = new EvaluationSummaryViewModel(
+                "This question has never been seen!",
+                new Dictionary<string, int>
+                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } },
+                0
+            );
+
+            // Then
+            model.Question.Should().Be("This question has never been seen!");
+            model.Data.Should().BeNull();
+        }
+
+        [Test]
+        public void EvaluationSummaryViewModel_sets_data_to_null_when_all_responses_are_noResponse()
         {
             // When
             var model = new EvaluationSummaryViewModel(
                 "Don't answer this question!",
                 new Dictionary<string, int>
-                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } }
+                    { { "Yes", 0 }, { "No", 0 }, { "No response", 25 } },
+                25
             );
 
             // Then

@@ -100,4 +100,8 @@ $light-blue: #8EBAFF;
 
 .eval-summary-row__value {
   width: 30%;
+
+  @include mq($from: tablet) {
+    text-align: end;
+  }
 }
