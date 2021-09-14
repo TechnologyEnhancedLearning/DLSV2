@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
             var enumerationName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
             if (string.IsNullOrEmpty(enumerationName.FirstValue))
             {
-                bindingContext.Result = ModelBindingResult.Success(default(ApplicationType));
+                bindingContext.Result = ModelBindingResult.Success(ApplicationType.Default);
             }
             else if (ApplicationType.TryGetFromUrlSnippet(enumerationName.FirstValue, out var result, true))
             {

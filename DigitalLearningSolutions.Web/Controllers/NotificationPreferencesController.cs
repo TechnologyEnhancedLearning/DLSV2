@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Web.Controllers
 
         [Route("/{application}/NotificationPreferences")]
         [Route("/NotificationPreferences", Order = 1)]
-        public IActionResult Index(ApplicationType? application)
+        public IActionResult Index(ApplicationType application)
         {
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
             var adminNotifications =
@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var delegateNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application ?? ApplicationType.Default);
+            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application);
 
             return View(model);
         }
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         [HttpGet]
         [Route("/{application}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
-        public IActionResult UpdateNotificationPreferences(UserType? userType, ApplicationType? application)
+        public IActionResult UpdateNotificationPreferences(UserType? userType, ApplicationType application)
         {
             var userReference = GetUserReference(userType);
             if (userReference == null)
@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                     userReference.Id
                 );
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application ?? ApplicationType.Default);
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application);
 
             return View(model);
         }
@@ -74,7 +74,7 @@ namespace DigitalLearningSolutions.Web.Controllers
         public IActionResult SaveNotificationPreferences(
             UserType? userType,
             IEnumerable<int> notificationIds,
-            ApplicationType? application
+            ApplicationType application
         )
         {
             var userReference = GetUserReference(userType);
@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 notificationIds
             );
 
-            return RedirectToAction("Index", "NotificationPreferences", new { application });
+            return RedirectToAction("Index", "NotificationPreferences", new { application = application.UrlSnippet });
         }
 
         private UserReference? GetUserReference(UserType? userType)
