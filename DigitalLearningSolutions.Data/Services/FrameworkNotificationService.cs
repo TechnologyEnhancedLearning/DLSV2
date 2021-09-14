@@ -188,7 +188,7 @@
             var dlsUrlBuilder = GetDLSUriBuilder();
             if (supervisorDelegate.CandidateID == null)
             {
-                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegateId}";
+                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
                 builder.TextBody = $@"Dear colleague,
                               You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}).
                               To register, visit {dlsUrlBuilder.Uri.ToString()}.
@@ -330,7 +330,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             if (supervisorDelegate.SupervisorAdminID == null)
             {
                 var dlsUrlBuilder = GetDLSUriBuilder();
-                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegateId}";
+                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
                 builder.TextBody = $@"Dear colleague,
                               You have been identified by {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) as their {delegateSelfAssessment.SupervisorRoleTitle} for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
                               To register to use the platform, visit {dlsUrlBuilder.Uri.ToString()}.
