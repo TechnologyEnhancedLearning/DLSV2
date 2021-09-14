@@ -78,7 +78,7 @@
                     customisationId,
                     centreId,
                     categoryId.Value
-                ).AdminFields
+                )!.AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
