@@ -33,7 +33,5 @@
 
         [Required(ErrorMessage = "Select a field name")]
         public int? AdminFieldId { get; set; }
-
-        public IEnumerable<SelectListItem>? AdminFieldNameOptions { get; set; }
     }
 }

@@ -166,7 +166,7 @@
         {
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
-            SetViewModelCoursePromptNameOptions(addAdminFieldData.AddModel);
+            SetViewBagAdminFieldNameOptions(addAdminFieldData.AddModel.AdminFieldId);
 
             var model = addAdminFieldData?.AddModel ?? new AddAdminFieldViewModel(customisationId);
 
@@ -177,9 +177,14 @@
         [Route("{customisationId}/AdminFields/Add")]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
+            if (customisationId != model.CustomisationId)
+            {
+                return new StatusCodeResult(500);
+            }
+
             if (!ModelState.IsValid)
             {
-                SetViewModelCoursePromptNameOptions(model);
+                SetViewBagAdminFieldNameOptions();
                 return View(model);
             }
 
@@ -228,7 +233,7 @@
             }
 
             var addData = TempData.Peek<AddAdminFieldData>()!;
-            addData.AddModel!.OptionsString =
+            addData.AddModel.OptionsString =
                 NewlineSeparatedStringListHelper.RemoveEmptyOptions(model.OptionsString);
             TempData.Set(addData);
 
@@ -315,8 +320,6 @@
 
         private IActionResult AddAdminFieldPostSave(AddAdminFieldViewModel model)
         {
-            ModelState.ClearAllErrors();
-
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
@@ -396,7 +399,7 @@
         {
             if (!ModelState.IsValid)
             {
-                SetViewModelCoursePromptNameOptions(model);
+                SetViewBagAdminFieldNameOptions();
                 return View(model);
             }
 
@@ -413,7 +416,7 @@
 
             UpdateTempDataWithCoursePromptModelValues(model);
 
-            SetViewModelCoursePromptNameOptions(model);
+            SetViewBagAdminFieldNameOptions(model.AdminFieldId);
 
             return View(model);
         }
@@ -445,7 +448,7 @@
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
-            SetViewModelCoursePromptNameOptions(model);
+            SetViewBagAdminFieldNameOptions(model.AdminFieldId);
 
             return View(model);
         }
@@ -481,11 +484,11 @@
             return int.TryParse(action.Remove(0, DeleteAction.Length), out index);
         }
 
-        private void SetViewModelCoursePromptNameOptions(AddAdminFieldViewModel model)
+        private void SetViewBagAdminFieldNameOptions(int? selectedId = null)
         {
             var coursePrompts = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
-            model.AdminFieldNameOptions =
-                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, model.AdminFieldId);
+            ViewBag.AdminFieldNameOptions =
+                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
         }
 
         private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)
