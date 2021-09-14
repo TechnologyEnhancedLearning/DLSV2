@@ -174,5 +174,24 @@
             var preCheckedIds = model.Delegates!.Where(x => x.PreChecked).Select(x => x.Id);
             preCheckedIds.Should().BeEquivalentTo(selectedDelegateIds);
         }
+
+
+        [Test]
+        public void SetDelegates_should_set_all_items_preChecked_if_selectAll_true()
+        {
+            // Given
+            var model = new EmailDelegatesViewModel();
+
+            // When
+            model.SetDelegates(delegateUsers, null, true);
+
+            // Then
+            model.Delegates!.Count().Should().Be(delegateUsers.Length);
+            model.MatchingSearchResults.Should().Be(delegateUsers.Length);
+            foreach (var emailDelegatesItemViewModel in model.Delegates!)
+            {
+                emailDelegatesItemViewModel.PreChecked.Should().BeTrue();
+            }
+        }
     }
 }

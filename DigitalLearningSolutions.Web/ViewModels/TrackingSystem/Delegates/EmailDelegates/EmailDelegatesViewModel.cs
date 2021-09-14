@@ -27,13 +27,14 @@
             IEnumerable<DelegateUserCard> delegateUsers,
             IEnumerable<(int id, string name)> jobGroups,
             IEnumerable<CustomPrompt> customPrompts,
-            string? filterBy
+            string? filterBy,
+            bool selectAll = false
         ) : this(filterBy)
         {
             Day = DateTime.Today.Day;
             Month = DateTime.Today.Month;
             Year = DateTime.Today.Year;
-            SetDelegates(delegateUsers, filterBy);
+            SetDelegates(delegateUsers, filterBy, selectAll);
             SetFilters(jobGroups, customPrompts);
         }
 
@@ -63,13 +64,14 @@
             );
         }
 
-        public void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? filterBy)
+        public void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? filterBy, bool selectAll = false)
         {
             var filteredItems = FilteringHelper.FilterItems(delegateUsers.AsQueryable(), filterBy).ToList();
             Delegates = filteredItems.Select(
                 delegateUser =>
                 {
-                    var preChecked = SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
+                    var preChecked = selectAll ||
+                                     SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
                     return new EmailDelegatesItemViewModel(delegateUser, preChecked);
                 }
             );

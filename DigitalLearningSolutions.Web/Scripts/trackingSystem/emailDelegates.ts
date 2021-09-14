@@ -16,7 +16,11 @@ const deselectAll = () => {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
   allCheckboxes.forEach((checkbox) => { if (checkbox.checked) checkbox.click(); });
 };
+
+const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
 const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
 const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
+
+selectAllForm.addEventListener('submit', (e) => e.preventDefault());
 selectAllButton.addEventListener('click', selectAll);
 deselectAllButton.addEventListener('click', deselectAll);

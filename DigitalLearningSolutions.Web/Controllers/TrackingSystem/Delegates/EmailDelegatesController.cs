@@ -37,7 +37,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         }
 
         [HttpGet]
-        public IActionResult Index(string? filterBy = null, string? filterValue = null)
+        public IActionResult Index(
+            string? filterBy = null,
+            string? filterValue = null,
+            bool selectAll = false
+        )
         {
             filterBy = GetNewFilterBy(filterBy, filterValue);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
@@ -48,7 +52,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 delegateUsers,
                 jobGroups,
                 customPrompts,
-                filterBy
+                filterBy,
+                selectAll
             );
 
             Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, filterBy);
