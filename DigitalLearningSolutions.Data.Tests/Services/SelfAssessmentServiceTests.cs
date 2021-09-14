@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using NUnit.Framework;
@@ -173,7 +172,7 @@
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1, null);
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
 
-                //Then
+                // Then
                 var competency = selfAssessmentService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
                 var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId).Result;
                 result.Should().Be(actualResult);
@@ -361,7 +360,7 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
-                //Then
+                // Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);
@@ -398,7 +397,7 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
-                //Then
+                // Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);

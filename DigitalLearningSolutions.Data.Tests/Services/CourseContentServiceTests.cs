@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CourseContent;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -757,7 +756,7 @@
                 var progressId = courseContentService.GetOrCreateProgressId(candidateId, customisationId, centreId);
                 var isProgressAdded = courseContentTestHelper.DoesProgressExist(candidateId, customisationId);
 
-                //Then
+                // Then
                 progressId.Should().NotBeNull();
                 initialDoesProgressExist.Should().BeFalse();
                 isProgressAdded.Should().BeTrue();
