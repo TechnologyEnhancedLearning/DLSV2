@@ -1,0 +1,47 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
+@using Microsoft.Extensions.Configuration
+@model SetDelegatePasswordViewModel
+
+@{
+    ViewData["Title"] = "Set delegate user password";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+    ViewData["HeaderPathName"] = "Tracking System";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Set delegate user password</h1>
+
+    <p class="nhsuk-body-l">
+      User: @Model.Name
+    </p>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
+      <input type="hidden" asp-for="Name" />
+      <vc:text-input asp-for="@nameof(Model.Password)"
+                     label="Password"
+                     populate-with-current-value="false"
+                     type="text"
+                     spell-check="false"
+                     autocomplete=""
+                     hint-text="Password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
+                     css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+  </div>
+</div>
