@@ -14,8 +14,7 @@
         /// Gets a single admin or null by Login or Email Address
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown in the case where 2 admins are found in the database.
-        /// This should not occur as Login is not an editable column,
-        /// but there is no constraint on the column to prevent this</exception>
+        /// This should not occur as Login is not an editable column.</exception>
         AdminUser? GetAdminUserByUsername(string username);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         int GetNumberOfActiveAdminsAtCentre(int centreId);

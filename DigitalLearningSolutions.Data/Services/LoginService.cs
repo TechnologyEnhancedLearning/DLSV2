@@ -45,17 +45,15 @@
 
             var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
             var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
-
-            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
-            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
-                                                  adminAccountVerificationAttemptedAndFailed &&
-                                                  !delegateAccountVerificationSuccessful;
-
-            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
-            
             var shouldIncreaseFailedLoginCount =
                 adminAccountVerificationAttemptedAndFailed &&
                 !delegateAccountVerificationSuccessful;
+
+            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
+            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
+                                                  shouldIncreaseFailedLoginCount;
+
+            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
 
             if (shouldIncreaseFailedLoginCount)
             {
@@ -142,16 +140,15 @@
                 password
             );
 
-            // If the admin we've found is not at the same centre as any of the verified delegates
-            // we must be logging in by CandidateNumber or AliasID and we do not want to find
-            // accounts at different centres in that case.
+            // If we find a new linked admin we must be logging in by CandidateNumber or AliasID.
+            // In this case, we are trying to log directly into a centre so we discard an admin at a different centre.
             if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
             {
                 verifiedAssociatedAdmin = null;
             }
 
             var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
-                                      
+
             var verifiedLinkedDelegates =
                 userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
