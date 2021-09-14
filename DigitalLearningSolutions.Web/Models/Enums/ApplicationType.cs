@@ -40,7 +40,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             ApplicationName = applicationName;
 
             HeaderPath = headerPath != null
-                ? $"{ConfigHelper.GetAppConfig()["AppRootPath"]}{headerPath}"
+                ? ConfigHelper.GetAppConfig()["AppRootPath"] + headerPath
                 : null;
 
             HeaderPathName = headerPathName;

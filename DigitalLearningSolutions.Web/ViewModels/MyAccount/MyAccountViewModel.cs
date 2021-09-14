@@ -13,7 +13,7 @@
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             CentreCustomPromptsWithAnswers? customPrompts,
-            ApplicationType? application = null)
+            ApplicationType? application)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;

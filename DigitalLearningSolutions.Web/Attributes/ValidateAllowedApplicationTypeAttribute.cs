@@ -48,7 +48,7 @@
 
             if (user.HasCentreAdminPermissions() && ApplicationType.Main.Equals(application))
             {
-                RedirectToNullVersion(context);
+                RedirectToDefaultApplicationVersion(context);
                 return;
             }
 
@@ -82,7 +82,7 @@
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
         }
 
-        private void RedirectToNullVersion(ActionExecutingContext context)
+        private void RedirectToDefaultApplicationVersion(ActionExecutingContext context)
         {
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, new { });
