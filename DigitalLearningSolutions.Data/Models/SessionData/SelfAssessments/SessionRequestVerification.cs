@@ -1,16 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments
 {
     using System;
-    public class SessionAddSupervisor
+    using System.Collections.Generic;
+
+    public class SessionRequestVerification
     {
-        public SessionAddSupervisor()
+        public SessionRequestVerification()
         {
             Id = new Guid();
         }
         public Guid Id { get; set; }
         public int SelfAssessmentID { get; set; }
         public string SelfAssessmentName { get; set; }
-        public string SupervisorEmail { get; set; }
-        public int? SelfAssessmentSupervisorRoleId { get; set; }
+        public string Vocabulary { get; set; }
+        public int CandidateAssessmentSupervisorId { get; set; }
+        public List<int>? ResultIds { get; set; }
     }
 }

@@ -26,6 +26,7 @@
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
         SelfAssessmentSupervisorRole GetSupervisorRoleById(int id);
         DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
+        CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
@@ -36,6 +37,7 @@
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
+        bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
         bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
     }
@@ -487,6 +489,32 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
         @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
             WHERE ID = @supervisorDelegateId",
        new { supervisorDelegateId });
+        }
+
+        public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)
+        {
+            //Set any existing verification requests to superceded:
+            connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE CandidateAssessmentSupervisorID = @candidateAssessmentSupervisorId AND SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
+            //Insert a new SelfAssessmentResultSupervisorVerifications record:
+            var numberOfAffectedRows = connection.Execute(
+                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())",  new { candidateAssessmentSupervisorId, resultId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting Self Assessment Result Supervisor Verification as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}, resultId: {resultId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId)
+        {
+            return connection.Query<CandidateAssessmentSupervisor>(
+               $@"SELECT *
+                  FROM   CandidateAssessmentSupervisors
+                  WHERE (ID = @candidateAssessmentSupervisorId)", new { candidateAssessmentSupervisorId }
+               ).FirstOrDefault();
         }
     }
 }
