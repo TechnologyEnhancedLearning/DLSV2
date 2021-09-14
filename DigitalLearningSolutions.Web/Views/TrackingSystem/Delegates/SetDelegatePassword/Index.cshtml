@@ -4,11 +4,11 @@
 @model SetDelegatePasswordViewModel
 
 @{
-    ViewData["Title"] = "Set delegate user password";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Set delegate user password";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 
 @section NavMenuItems {
@@ -17,8 +17,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Password) })" />
     }
 
@@ -30,6 +29,7 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
       <input type="hidden" asp-for="Name" />
+      <input type="hidden" asp-for="DelegateId" />
       <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"
@@ -42,6 +42,12 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+    @if (Model.IsFromViewDelegatePage) {
+      var routeData = new Dictionary<string, string> {{ "delegateId", Model.DelegateId.ToString() } };
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
+    } else {
+      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+    }
+
   </div>
 </div>

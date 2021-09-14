@@ -9,6 +9,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -39,7 +40,10 @@
                 throw new NoDelegateEmailException();
             }
 
-            var model = new SetDelegatePasswordViewModel(delegateUser.FullName);
+            var referer = HttpContext.Request.GetTypedHeaders().Referer;
+            var isFromViewDelegatePage = referer?.AbsolutePath.StartsWith("/TrackingSystem/Delegates/View") == true;
+            
+            var model = new SetDelegatePasswordViewModel(delegateUser.FullName, delegateId, isFromViewDelegatePage);
 
             return View(model);
         }

@@ -9,7 +9,11 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Primitives;
     using NUnit.Framework;
 
     public class SetDelegatePasswordControllerTests
@@ -18,16 +22,20 @@
         private const int DelegateId = 2;
 
         private IPasswordService passwordService = null!;
+        private HttpRequest request = null!;
         private SetDelegatePasswordController setDelegatePasswordController = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
+            request = A.Fake<HttpRequest>();
             userDataService = A.Fake<IUserDataService>();
             passwordService = A.Fake<IPasswordService>();
             setDelegatePasswordController = new SetDelegatePasswordController(passwordService, userDataService)
-                .WithDefaultContext()
+                .WithMockHttpRequestHttpContext(request)
+                .WithMockServices()
+                .WithMockTempData()
                 .WithMockUser(true);
         }
 
@@ -70,17 +78,51 @@
         }
 
         [Test]
-        public void Index_should_return_view_result()
+        public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_referer_is_not_view_page()
         {
             // Given
             A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
+            request.Headers["Referer"] = "https://baseurl/Some/Other/Url";
 
             // When
             var result = setDelegatePasswordController.Index(DelegateId);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
+            result.As<ViewResult>().Model.As<SetDelegatePasswordViewModel>().IsFromViewDelegatePage.Should().BeFalse();
+        }
+
+        [Test]
+        public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_referer_is_null()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser());
+            request.Headers["Referer"] = new StringValues();
+
+            // When
+            var result = setDelegatePasswordController.Index(DelegateId);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+            result.As<ViewResult>().Model.As<SetDelegatePasswordViewModel>().IsFromViewDelegatePage.Should().BeFalse();
+        }
+
+        [Test]
+        public void Index_should_return_view_result_with_IsFromViewDelegatePage_true_when_referer_is_view_page()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
+                .Returns(UserTestHelper.GetDefaultDelegateUser());
+            request.Headers["Referer"] = "https://baseurl/TrackingSystem/Delegates/View/86726";
+
+            // When
+            var result = setDelegatePasswordController.Index(DelegateId);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+            result.As<ViewResult>().Model.As<SetDelegatePasswordViewModel>().IsFromViewDelegatePage.Should().BeTrue();
         }
 
         [Test]
