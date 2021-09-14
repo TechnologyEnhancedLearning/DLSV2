@@ -11,7 +11,7 @@
   ViewData["HeaderPath"] = Model.Application.HeaderPath;
   ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application }
+    { "application", Model.Application.UrlSnippet }
   };
 }
 
@@ -29,7 +29,7 @@
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-application="@Model.Application" enctype="multipart/form-data">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-application="@Model.Application.UrlSnippet" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>

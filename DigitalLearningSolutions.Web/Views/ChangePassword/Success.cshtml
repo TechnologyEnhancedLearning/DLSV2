@@ -1,18 +1,17 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@model ApplicationType?
+@model ApplicationType
 @{
   ViewData["Title"] = "Password Changed Successfully";
-  var application = Model ?? ApplicationType.Main;
-  ViewData["Application"] = application.ApplicationName;
-  ViewData["HeaderPath"] = application.HeaderPath;
-  ViewData["HeaderPathName"] = application.HeaderPathName;
+  ViewData["Application"] = Model.ApplicationName;
+  ViewData["HeaderPath"] = Model.HeaderPath;
+  ViewData["HeaderPathName"] = Model.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model }
+    { "application", Model.UrlSnippet }
   };
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="application" />
+  <partial name="_AutoNavMenuItems" model="Model" />
 }
 
 <div class="nhsuk-grid-row">
