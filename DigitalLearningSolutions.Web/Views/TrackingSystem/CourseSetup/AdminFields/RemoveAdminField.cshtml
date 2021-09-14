@@ -57,7 +57,7 @@
           }
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="Confirm" />
+              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" asp-for="@nameof(Model.Confirm)" />
               <label class="nhsuk-label nhsuk-checkboxes__label" for="confirm">
                 @if (Model.AnswerCount == 1) {
                   @:I am sure that I wish to delete this field and @Model.AnswerCount admin response

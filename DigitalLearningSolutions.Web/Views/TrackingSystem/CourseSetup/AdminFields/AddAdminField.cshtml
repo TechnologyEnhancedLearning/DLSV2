@@ -32,7 +32,7 @@
 </div>
 
 <form method="post" novalidate asp-action="AddAdminField">
-  <vc:select-list asp-for="CustomPromptId"
+  <vc:select-list asp-for="@nameof(Model.CustomPromptId)"
                   label="Field name"
                   value="@Model.CustomPromptId.ToString()"
                   hint-text=""
@@ -59,7 +59,7 @@
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-one-half">
-      <vc:text-input asp-for="Answer"
+      <vc:text-input asp-for="@nameof(Model.Answer)"
                      label="Add a new answer?"
                      populate-with-current-value="true"
                      type="text"
