@@ -3,7 +3,10 @@ namespace DigitalLearningSolutions.Web.Models.Enums
     using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ModelBinders;
+    using Microsoft.AspNetCore.Mvc;
 
+    [ModelBinder(BinderType = typeof(ApplicationTypeModelBinder))]
     public class ApplicationType : Enumeration
     {
         public static readonly ApplicationType TrackingSystem = new ApplicationType(
@@ -11,18 +14,28 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             nameof(TrackingSystem),
             "Tracking System",
             "/TrackingSystem/Centre/Dashboard",
-            "Tracking System"
+            "Tracking System",
+            "TrackingSystem"
         );
 
-        public static readonly ApplicationType Frameworks = new ApplicationType(1, nameof(Frameworks), "Frameworks");
-        public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "Main");
+        public static readonly ApplicationType Frameworks = new ApplicationType(
+            1,
+            nameof(Frameworks),
+            "Frameworks",
+            null,
+            null,
+            "Frameworks"
+        );
+
+        public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "Main", null, null, null);
 
         public static readonly ApplicationType LearningPortal = new ApplicationType(
             3,
             nameof(LearningPortal),
             "Learning Portal",
             "/LearningPortal/Current",
-            "My Current Activities"
+            "My Current Activities",
+            "LearningPortal"
         );
 
         public static readonly ApplicationType Default = Main;
@@ -30,13 +43,15 @@ namespace DigitalLearningSolutions.Web.Models.Enums
         public readonly string ApplicationName;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
+        public readonly string? UrlSnippet;
 
         private ApplicationType(
             int id,
             string name,
             string applicationName,
-            string? headerPath = null,
-            string? headerPathName = null
+            string? headerPath,
+            string? headerPathName,
+            string? urlSnippet
         ) : base(id, name)
         {
             ApplicationName = applicationName;
@@ -46,6 +61,8 @@ namespace DigitalLearningSolutions.Web.Models.Enums
                 : null;
 
             HeaderPathName = headerPathName;
+
+            UrlSnippet = urlSnippet;
         }
 
         public static implicit operator ApplicationType(string value)
@@ -63,6 +80,17 @@ namespace DigitalLearningSolutions.Web.Models.Enums
         public static implicit operator string?(ApplicationType? applicationType)
         {
             return applicationType?.Name;
+        }
+
+        public static bool TryGetFromUrlSnippet(
+            string urlSnippet,
+            out ApplicationType? enumeration,
+            bool ignoreCase = false
+        )
+        {
+            var comparison =
+                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture;
+            return TryParse(item => string.Equals(item.UrlSnippet, urlSnippet, comparison), out enumeration);
         }
     }
 }

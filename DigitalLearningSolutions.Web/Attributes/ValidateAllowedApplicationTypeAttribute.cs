@@ -46,12 +46,6 @@
                 return;
             }
 
-            if (user.HasCentreAdminPermissions() && ApplicationType.Main.Equals(application))
-            {
-                RedirectToDefaultApplicationVersion(context);
-                return;
-            }
-
             if (!user.HasLearningPortalPermissions() && ApplicationType.LearningPortal.Equals(application) ||
                 !user.HasFrameworksAdminPermissions() && ApplicationType.Frameworks.Equals(application) ||
                 !user.HasCentreAdminPermissions() && (ApplicationType.TrackingSystem.Equals(application) ||
@@ -80,12 +74,6 @@
                 [applicationArgumentName] = ApplicationType.LearningPortal
             };
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
-        }
-
-        private void RedirectToDefaultApplicationVersion(ActionExecutingContext context)
-        {
-            var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
-            context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, new { });
         }
 
         private void RedirectToHome(ActionExecutingContext context)
