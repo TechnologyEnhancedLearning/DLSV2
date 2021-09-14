@@ -4,7 +4,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
-  ViewData["Application"] = Model.Application.ApplicationName;
+  ViewData["Application"] = Model.Application.HeaderExtension;
   ViewData["HeaderPath"] = Model.Application.HeaderPath;
   ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {

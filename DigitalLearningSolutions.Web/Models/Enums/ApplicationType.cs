@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "Frameworks"
         );
 
-        public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "Main", null, null, null);
+        public static readonly ApplicationType Main = new ApplicationType(2, nameof(Main), "", null, null, null);
 
         public static readonly ApplicationType LearningPortal = new ApplicationType(
             3,
@@ -40,7 +40,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
 
         public static readonly ApplicationType Default = Main;
 
-        public readonly string ApplicationName;
+        public readonly string HeaderExtension;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
         public readonly string? UrlSnippet;
@@ -48,13 +48,13 @@ namespace DigitalLearningSolutions.Web.Models.Enums
         private ApplicationType(
             int id,
             string name,
-            string applicationName,
+            string headerExtension,
             string? headerPath,
             string? headerPathName,
             string? urlSnippet
         ) : base(id, name)
         {
-            ApplicationName = applicationName;
+            HeaderExtension = headerExtension;
 
             HeaderPath = headerPath != null
                 ? ConfigHelper.GetAppConfig()["AppRootPath"] + headerPath

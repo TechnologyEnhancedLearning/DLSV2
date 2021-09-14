@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FakeItEasy;
@@ -111,7 +112,8 @@
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
-                Password = "password"
+                Password = "password",
+                Application = ApplicationType.Default,
             };
 
             // When
