@@ -10,7 +10,7 @@
   ViewData["Application"] = application.ApplicationName;
   ViewData["HeaderPath"] = application.HeaderPath;
   ViewData["HeaderPathName"] = application.HeaderPathName;
-  var aspAllRouteData = new Dictionary<string, string?> {
+  var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model.Application }
   };
 }
@@ -33,6 +33,6 @@
       }
     </div>
 
-    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" asp-all-route-data="@aspAllRouteData" />
+    <vc:back-link asp-controller="MyAccount" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>

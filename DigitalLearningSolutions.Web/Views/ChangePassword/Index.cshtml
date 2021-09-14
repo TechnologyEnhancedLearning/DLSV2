@@ -9,7 +9,7 @@
   ViewData["Application"] = application.ApplicationName;
   ViewData["HeaderPath"] = application.HeaderPath;
   ViewData["HeaderPathName"] = application.HeaderPathName;
-  var aspAllRouteData = new Dictionary<string, string?> {
+  var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model.Application }
   };
 }
@@ -60,6 +60,6 @@
       <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 
-    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@aspAllRouteData" />
+    <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>

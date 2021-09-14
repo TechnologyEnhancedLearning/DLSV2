@@ -6,7 +6,7 @@
   ViewData["Application"] = application.ApplicationName;
   ViewData["HeaderPath"] = application.HeaderPath;
   ViewData["HeaderPathName"] = application.HeaderPathName;
-  var aspAllRouteData = new Dictionary<string, string?> {
+  var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model }
   };
 }
@@ -20,6 +20,6 @@
     <h1 class="nhsuk-heading-xl">Change password</h1>
     <div class="nhsuk-body-m">Your password was successfully changed.</div>
 
-    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" asp-all-route-data="@aspAllRouteData" />
+    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>
