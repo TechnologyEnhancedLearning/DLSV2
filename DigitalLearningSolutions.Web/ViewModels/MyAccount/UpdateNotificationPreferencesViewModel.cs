@@ -9,7 +9,7 @@
         public UpdateNotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> notifications,
             string userType,
-            ApplicationType? application
+            ApplicationType application
         )
         {
             Notifications = notifications;
@@ -19,6 +19,6 @@
 
         public string UserType { get; set; }
         public IEnumerable<NotificationPreference> Notifications { get; set; }
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }

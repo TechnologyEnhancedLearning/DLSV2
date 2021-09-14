@@ -13,7 +13,7 @@
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             CentreCustomPromptsWithAnswers? customPrompts,
-            ApplicationType? application)
+            ApplicationType application)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
@@ -50,6 +50,6 @@
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
 
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }

@@ -26,9 +26,9 @@
         }
 
         [HttpGet]
-        public IActionResult Index(ApplicationType? application = null)
+        public IActionResult Index(ApplicationType? application)
         {
-            var model = new ChangePasswordViewModel { Application = application };
+            var model = new ChangePasswordViewModel { Application = application ?? ApplicationType.Default };
             return View(model);
         }
 

@@ -43,7 +43,7 @@
         }
 
         [NoCaching]
-        public IActionResult Index(ApplicationType? application = null)
+        public IActionResult Index(ApplicationType? application)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -55,14 +55,14 @@
                     delegateUser
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, application);
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, application ?? ApplicationType.Default);
 
             return View(model);
         }
 
         [NoCaching]
         [HttpGet("EditDetails")]
-        public IActionResult EditDetails(ApplicationType? application = null)
+        public IActionResult EditDetails(ApplicationType? application)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -73,7 +73,7 @@
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
 
-            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application);
+            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application ?? ApplicationType.Default);
 
             return View(model);
         }

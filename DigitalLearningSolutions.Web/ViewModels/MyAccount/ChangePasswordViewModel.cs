@@ -10,6 +10,6 @@
         [DataType(DataType.Password)]
         public string? CurrentPassword { get; set; }
 
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }

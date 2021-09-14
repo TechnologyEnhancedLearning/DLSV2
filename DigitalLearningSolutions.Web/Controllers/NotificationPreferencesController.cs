@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var delegateNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application);
+            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application ?? ApplicationType.Default);
 
             return View(model);
         }
@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                     userReference.Id
                 );
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application);
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application ?? ApplicationType.Default);
 
             return View(model);
         }

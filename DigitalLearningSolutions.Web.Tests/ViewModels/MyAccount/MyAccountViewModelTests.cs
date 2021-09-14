@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -23,7 +24,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts, null);
+            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts, ApplicationType.Default);
 
             // Then
             using (new AssertionScope())
@@ -46,7 +47,7 @@
             var adminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, null, null, null);
+            var returnedModel = new MyAccountViewModel(adminUser, null, null, ApplicationType.Default);
 
             // Then
             using (new AssertionScope())
@@ -74,7 +75,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, null);
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, ApplicationType.Default);
 
             // Then
             using (new AssertionScope())
@@ -103,7 +104,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, null);
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, ApplicationType.Default);
 
             // Then
             using (new AssertionScope())

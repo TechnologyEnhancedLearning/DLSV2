@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
-            ApplicationType? application
+            ApplicationType application
         )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
@@ -77,6 +77,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public string? Answer6 { get; set; }
 
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }

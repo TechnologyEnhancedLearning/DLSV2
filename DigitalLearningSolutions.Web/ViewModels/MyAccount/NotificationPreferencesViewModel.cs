@@ -11,7 +11,7 @@
         public NotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications,
-            ApplicationType? application
+            ApplicationType application
         )
         {
             AdminNotifications = new NotificationPreferenceListViewModel(
@@ -34,7 +34,7 @@
 
         public NotificationPreferenceListViewModel DelegateNotifications { get; set; }
 
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 
     public class NotificationPreferenceListViewModel
@@ -43,7 +43,7 @@
             IEnumerable<NotificationPreference> notifications,
             UserType userType,
             bool showAsExpandable,
-            ApplicationType? application
+            ApplicationType application
         )
         {
             Notifications = notifications;
@@ -58,6 +58,6 @@
 
         public bool ShowAsExpandable { get; set; }
 
-        public ApplicationType? Application { get; set; }
+        public ApplicationType Application { get; set; }
     }
 }

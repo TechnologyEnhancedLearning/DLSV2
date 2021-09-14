@@ -1,4 +1,3 @@
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.Extensions.Configuration
 @model MyAccountViewModel
@@ -9,14 +8,13 @@
 
 @{
   ViewData["Title"] = "My Account";
-  var application = Model.Application ?? ApplicationType.Main;
-  ViewData["Application"] = application.ApplicationName;
-  ViewData["HeaderPath"] = application.HeaderPath;
-  ViewData["HeaderPathName"] = application.HeaderPathName;
+  ViewData["Application"] = Model.Application.ApplicationName;
+  ViewData["HeaderPath"] = Model.Application.HeaderPath;
+  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="application" />
+  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 <div class="nhsuk-grid-row">

@@ -25,6 +25,8 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "My Current Activities"
         );
 
+        public static readonly ApplicationType Default = Main;
+
         public readonly string ApplicationName;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;

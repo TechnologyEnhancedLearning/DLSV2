@@ -1,21 +1,19 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @model ChangePasswordViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
-  var application = Model.Application ?? ApplicationType.Main;
-  ViewData["Application"] = application.ApplicationName;
-  ViewData["HeaderPath"] = application.HeaderPath;
-  ViewData["HeaderPathName"] = application.HeaderPathName;
+  ViewData["Application"] = Model.Application.ApplicationName;
+  ViewData["HeaderPath"] = Model.Application.HeaderPath;
+  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model.Application }
   };
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="application" />
+  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 <div class="nhsuk-grid-row">
