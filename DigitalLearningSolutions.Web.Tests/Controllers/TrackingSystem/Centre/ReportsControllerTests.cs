@@ -1,13 +1,78 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre
 {
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+    using FakeItEasy;
+    using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using NUnit.Framework;
 
     public class ReportsControllerTests
     {
-        [Test]
-        public void EditFilters_reads_value_from_cookie()
-        {
+        private ReportsController reportsController = null!;
+        
+        private HttpRequest httpRequest = null!;
+        private HttpResponse httpResponse = null!;
+        private IActivityService activityService = null!;
+        private IActivityDataService activityDataService = null!;
+        private IUserDataService userDataService = null!;
 
+        [SetUp]
+        public void Setup()
+        {
+            activityService = A.Fake<IActivityService>();
+            activityDataService = A.Fake<IActivityDataService>();
+            userDataService = A.Fake<IUserDataService>();
+
+            httpRequest = A.Fake<HttpRequest>();
+            httpResponse = A.Fake<HttpResponse>();
+            const string cookieName = "ReportsFilterCookie";
+            const string cookieValue = "";
+
+            reportsController = new ReportsController(activityService, activityDataService, userDataService)
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockUser(true)
+                .WithMockServices()
+                .WithMockTempData();
+        }
+
+        [Test]
+        public void EditFilters_invalid_model_returns_view()
+        {
+            // Given
+            var model = new EditFiltersViewModel();
+            reportsController.ModelState.AddModelError(nameof(EditFiltersViewModel.StartDay), "Required");
+
+            // When
+            var result = reportsController.EditFilters(model);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void EditFilters_post_sets_cookie_reads_value_from_cookie()
+        {
+            // Given
+            var model = new EditFiltersViewModel
+            {
+                StartDay = 1,
+                StartMonth = 1,
+                StartYear = 2021,
+                EndDate = false
+            };
+
+            // When
+            var result = reportsController.EditFilters(model);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("ReportsFilterCookie", A<string>._, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

@@ -89,11 +89,6 @@
         {
             var validationResults = new List<ValidationResult>();
 
-            if (CourseCategoryId.HasValue && CustomisationId.HasValue)
-            {
-                validationResults.Add(new ValidationResult("Please filter by only one of Course and Course Category"));
-            }
-
             var startDateValidationResults = DateValidator.ValidateDate(
                     StartDay,
                     StartMonth,
