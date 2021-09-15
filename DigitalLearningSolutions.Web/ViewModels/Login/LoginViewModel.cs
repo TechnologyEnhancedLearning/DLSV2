@@ -11,12 +11,13 @@
             RememberMe = false;
         }
 
-        public LoginViewModel(string? returnUrl)
+        public LoginViewModel(string? returnUrl, string? queryString)
         {
             Username = string.Empty;
             Password = string.Empty;
             RememberMe = false;
             ReturnUrl = returnUrl;
+            QueryString = queryString;
         }
 
         [Required(ErrorMessage = "Enter your email address or user ID")]
@@ -30,5 +31,7 @@
         public bool RememberMe { get; set; }
 
         public string? ReturnUrl { get; set; }
+
+        public string? QueryString { get; set; }
     }
 }

@@ -34,14 +34,14 @@
             this.logger = logger;
         }
 
-        public IActionResult Index(string? returnUrl = null)
+        public IActionResult Index(string? returnUrl = null, string? queryString = null)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var model = new LoginViewModel(returnUrl);
+            var model = new LoginViewModel(returnUrl, queryString);
             return View(model);
         }
 
@@ -75,7 +75,8 @@
                         adminLoginDetails,
                         delegateLoginDetails.FirstOrDefault(),
                         model.RememberMe,
-                        model.ReturnUrl
+                        model.ReturnUrl,
+                        model.QueryString
                     );
                 case LoginAttemptResult.ChooseACentre:
                     var chooseACentreViewModel = new ChooseACentreViewModel(loginResult.AvailableCentres);
@@ -84,7 +85,8 @@
                         adminLoginDetails,
                         delegateLoginDetails,
                         chooseACentreViewModel,
-                        model.ReturnUrl
+                        model.ReturnUrl,
+                        model.QueryString
                     );
                     return RedirectToAction("ChooseACentre", "Login");
                 default:
@@ -114,6 +116,7 @@
             var adminLoginDetails = TempData.Peek<AdminLoginDetails>();
             var delegateLoginDetails = TempData.Peek<List<DelegateLoginDetails>>();
             var returnUrl = (string?)TempData["ReturnUrl"];
+            var queryString = (string?)TempData["QueryString"];
             TempData.Clear();
 
             var adminAccountForChosenCentre = adminLoginDetails?.CentreId == centreId ? adminLoginDetails : null;
@@ -121,7 +124,7 @@
                 delegateLoginDetails?.FirstOrDefault(du => du.CentreId == centreId);
 
             sessionService.StartAdminSession(adminAccountForChosenCentre?.Id);
-            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl);
+            return await LogIn(adminAccountForChosenCentre, delegateAccountForChosenCentre, rememberMe, returnUrl, queryString);
         }
 
         [HttpGet]
@@ -145,7 +148,8 @@
             AdminLoginDetails? adminLoginDetails,
             List<DelegateLoginDetails> delegateLoginDetails,
             ChooseACentreViewModel chooseACentreViewModel,
-            string? returnUrl
+            string? returnUrl,
+            string? queryString
         )
         {
             TempData.Clear();
@@ -154,13 +158,15 @@
             TempData.Set(delegateLoginDetails);
             TempData.Set(chooseACentreViewModel);
             TempData["ReturnUrl"] = returnUrl;
+            TempData["QueryString"] = queryString;
         }
 
         private async Task<IActionResult> LogIn(
             AdminLoginDetails? adminLoginDetails,
             DelegateLoginDetails? delegateLoginDetails,
             bool rememberMe,
-            string? returnUrl
+            string? returnUrl,
+            string? queryString
         )
         {
             var claims = LoginClaimsHelper.GetClaimsForSignIn(adminLoginDetails, delegateLoginDetails);
@@ -173,16 +179,16 @@
             };
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-            return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
+            return RedirectToReturnUrl(returnUrl, queryString) ?? RedirectToAction("Index", "Home");
         }
 
-        private IActionResult? RedirectToReturnUrl(string? returnUrl)
+        private IActionResult? RedirectToReturnUrl(string? returnUrl, string? queryString)
         {
             if (!string.IsNullOrEmpty(returnUrl))
             {
                 if (Url.IsLocalUrl(returnUrl))
                 {
-                    return Redirect(returnUrl);
+                    return Redirect(returnUrl + queryString);
                 }
 
                 logger.LogWarning($"Attempted login redirect to non-local returnUrl {returnUrl}");
