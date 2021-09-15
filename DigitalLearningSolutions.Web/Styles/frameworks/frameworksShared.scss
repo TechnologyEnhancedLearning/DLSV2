@@ -3,31 +3,27 @@
 @import "../shared/searchableElements/searchableElements";
 $nhs-dark-grey: #425563;
 
-.search-box-flex-container {
-  .search-box {
-    .js-enabled & {
-      border-right: 0;
-      border-radius: 4px 0 0 4px;
+.search-box {
+  .js-enabled & {
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
+  }
+}
+
+.sort-order-button-container {
+  .js-enabled & {
+    width: 100%;
+
+    @include mq($from: tablet) {
+      width: 50%;
     }
   }
 }
 
-.sort-box-flex-container {
-  .sort-order-button-flex-container {
-    .js-enabled & {
-      width: 100%;
-
-      @include mq($from: tablet) {
-        width: 50%;
-      }
-    }
-
-    .sort-direction-dropdown {
-      .js-enabled & {
-        border-right: 0;
-        border-radius: 4px 0 0 4px;
-      }
-    }
+.sort-direction-dropdown {
+  .js-enabled & {
+    border-right: 0;
+    border-radius: 4px 0 0 4px;
   }
 }
 

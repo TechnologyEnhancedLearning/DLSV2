@@ -7,7 +7,7 @@
   <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
     <input type="hidden" name="filterBy" value="@FilteringHelper.ClearString" />
     <input type="hidden" name="searchString" value="@Model.SearchString" />
-    <div class="applied-filter-flex-container">
+    <div class="applied-filters-container">
       <div class="applied-filter-container" id="applied-filter-container">
         @foreach (var filter in Model.AppliedFilters) {
           <partial name="SearchablePage/_AppliedFilterTag" model="filter"/>

@@ -1,27 +1,27 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "common";
 
-.search-box-flex-container {
+.search-box-container {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   width: 100%;
+}
 
-  .search-box {
-    @extend .input-with-no-js-submit-button;
-    -webkit-appearance: none;
-    flex: 1;
+.search-box {
+  @extend .input-with-no-js-submit-button;
+  -webkit-appearance: none;
+  flex: 1;
+}
+
+.nhsuk-search__submit {
+  background-color: $button-dark-blue;
+
+  .nhsuk-icon__search {
+    fill: $color_nhsuk-white;
   }
 
-  .nhsuk-search__submit {
-    background-color: $button-dark-blue;
-
-    .nhsuk-icon__search {
-      fill: #fff;
-    }
-
-    &:hover {
-      background-color: $button-hover-colour;
-    }
+  &:hover {
+    background-color: $button-hover-colour;
   }
 }

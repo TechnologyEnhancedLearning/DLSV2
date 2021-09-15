@@ -1,6 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model BaseSearchablePageViewModel
 
-<partial name="SearchablePage/Configurations/_FullWidthSearchAndSort" model="Model"/>
+<div class="search-sort-container">
+  <div class="search-container">
+    <partial name="SearchablePage/_Search" model="Model" />
+  </div>
+  <div class="sort-container">
+    <partial name="SearchablePage/_Sort" model="Model" />
+  </div>
+</div>
 
-<partial name="SearchablePage/_Filters" model="Model" />
+@if (Model.FilterEnabled)
+{
+  <partial name="SearchablePage/_Filters" model="Model" />
+}

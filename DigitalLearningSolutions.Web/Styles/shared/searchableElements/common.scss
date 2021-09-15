@@ -45,16 +45,6 @@ $button-hover-colour: #4c6272;
   }
 }
 
-.sort-and-search {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-
-  @include mq($from: desktop) {
-    flex-direction: row;
-  }
-}
-
 .button-small {
   padding: 2px 10px;
 }
@@ -96,18 +86,16 @@ $button-hover-colour: #4c6272;
   }
 }
 
-.search-sort-flex-container {
+.search-sort-container {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
 
   @include mq($from: large-desktop) {
     flex-direction: row;
   }
 
   .search-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
     width: 100%;
 
     @include mq($from: large-desktop) {
@@ -117,8 +105,6 @@ $button-hover-colour: #4c6272;
   }
 
   .sort-container {
-    display: flex;
-
     @include mq($from: large-desktop) {
       flex: 1;
     }

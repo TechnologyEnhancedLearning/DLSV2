@@ -9,7 +9,7 @@
 } else {
   <form method="get" role="search" asp-action="FrameworksViewAll" asp-route-page="@Model.Page">
 
-    <partial name="SearchablePage/Configurations/_FullWidthSearchAndSort" model="Model" />
+    <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
     <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
     <partial name="Shared/_SearchResultsCount" model="Model" />

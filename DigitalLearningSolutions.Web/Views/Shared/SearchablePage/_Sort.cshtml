@@ -1,13 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 @model BaseSearchablePageViewModel
 
-<form class="sort-form" method="get" role="search">
+<form method="get" role="search">
   <input type="hidden" name="searchString" value="@Model.SearchString" />
   @if (Model.FilterEnabled) {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
   }
   <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
-  <div class="sort-box-flex-container">
+  <div class="sort-box-container">
     <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown"
             id="select-sort-by"
             asp-for="SortBy"
@@ -15,7 +15,7 @@
             aria-label="Sort by">
     </select>
 
-    <div class="sort-order-button-flex-container">
+    <div class="sort-order-button-container">
       <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown"
               id="select-sort-direction"
               asp-for="SortDirection"
