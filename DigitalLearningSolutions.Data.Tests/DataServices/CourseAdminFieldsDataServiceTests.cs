@@ -89,8 +89,8 @@
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
                 var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2);
                 var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
-                    .Single(c => c.Item1 == 1)
-                    .Item2;
+                    .Single(c => c.id == 1)
+                    .name;
 
                 // Then
                 using (new AssertionScope())

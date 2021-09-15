@@ -12,7 +12,7 @@
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
-        public IEnumerable<(int, string)> GetCoursePromptsAlphabetical();
+        public IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
 
         public void UpdateCustomPromptForCourse(
             int customisationId,
@@ -80,16 +80,15 @@
             );
         }
 
-        public IEnumerable<(int, string)> GetCoursePromptsAlphabetical()
+        public IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical()
         {
-            var coursePrompts = connection.Query<(int, string)>
+            return connection.Query<(int, string)>
             (
                 @"SELECT CoursePromptID, CoursePrompt
                         FROM CoursePrompts
                         WHERE Active = 1
                         ORDER BY CoursePrompt"
             );
-            return coursePrompts;
         }
 
         public void UpdateCustomPromptForCourse(
