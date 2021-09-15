@@ -8,14 +8,14 @@ const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems${queryString
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
 
-const selectAll = () => {
+function selectAll(): void {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
   allCheckboxes.forEach((checkbox) => { if (!checkbox.checked) checkbox.click(); });
-};
-const deselectAll = () => {
+}
+function deselectAll(): void {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
   allCheckboxes.forEach((checkbox) => { if (checkbox.checked) checkbox.click(); });
-};
+}
 
 const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
 const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;

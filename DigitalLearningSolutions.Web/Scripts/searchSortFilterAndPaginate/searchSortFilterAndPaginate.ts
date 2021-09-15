@@ -46,7 +46,7 @@ export class SearchSortFilterAndPaginate {
       }
 
       setUpSort(() => this.searchSortAndPaginate(searchableData));
-      
+
       if (paginationEnabled) {
         setUpPagination(
           () => this.onNextPagePressed(searchableData),
