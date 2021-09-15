@@ -21,7 +21,7 @@
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
-    @if (!Model.Courses.Any() && Model.SearchString == null && Model.FilterBy == null) {
+    @if (Model.NoDataFound) {
       <p>The centre has no courses set up yet.</p>
     } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />

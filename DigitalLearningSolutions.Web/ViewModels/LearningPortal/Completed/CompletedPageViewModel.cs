@@ -46,5 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             CourseSortByOptions.LastAccessed,
             CourseSortByOptions.CompletedDate
         };
+
+        public override bool NoDataFound => !CompletedCourses.Any() && NoSearchOrFilter;
     }
 }

@@ -40,5 +40,7 @@
             CourseSortByOptions.Category,
             CourseSortByOptions.Topic
         };
+
+        public override bool NoDataFound => !AvailableCourses.Any() && NoSearchOrFilter;
     }
 }

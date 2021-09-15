@@ -36,5 +36,7 @@
             DefaultSortByOptions.Name
         };
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
+
+        public override bool NoDataFound => !SuperviseDelegateDetails.Any() && NoSearchOrFilter;
     }
 }

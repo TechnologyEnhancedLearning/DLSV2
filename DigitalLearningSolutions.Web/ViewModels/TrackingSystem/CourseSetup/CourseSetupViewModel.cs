@@ -44,5 +44,7 @@
             CourseSortByOptions.TotalDelegates,
             CourseSortByOptions.InProgress
         };
+
+        public override bool NoDataFound => !Courses.Any() && NoSearchOrFilter;
     }
 }

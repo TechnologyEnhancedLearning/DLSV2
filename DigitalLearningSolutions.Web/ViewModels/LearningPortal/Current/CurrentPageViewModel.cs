@@ -64,5 +64,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             CourseSortByOptions.DiagnosticScore,
             CourseSortByOptions.PassedSections
         };
+
+        public override bool NoDataFound => !CurrentCourses.Any() && NoSearchOrFilter;
     }
 }

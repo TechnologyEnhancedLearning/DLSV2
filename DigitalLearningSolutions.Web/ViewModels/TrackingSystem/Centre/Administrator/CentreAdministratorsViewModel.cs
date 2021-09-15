@@ -54,5 +54,7 @@
         };
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }
+
+        public override bool NoDataFound => !Admins.Any() && NoSearchOrFilter;
     }
 }

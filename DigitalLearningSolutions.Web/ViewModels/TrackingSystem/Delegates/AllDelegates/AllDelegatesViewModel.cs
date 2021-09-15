@@ -53,5 +53,7 @@
             DelegateSortByOptions.Name,
             DelegateSortByOptions.RegistrationDate
         };
+
+        public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;
     }
 }

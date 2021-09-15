@@ -37,7 +37,7 @@
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-full">
-        @if (!Model.Admins.Any() && Model.SearchString == null && Model.FilterBy == null) {
+        @if (Model.NoDataFound) {
           <p class="nhsuk-u-margin-top-4" role="alert">
             <b>No administrators found.</b>
           </p>

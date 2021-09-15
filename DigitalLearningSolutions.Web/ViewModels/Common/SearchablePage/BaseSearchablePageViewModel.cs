@@ -47,6 +47,10 @@
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
 
+        public abstract bool NoDataFound { get; }
+
+        public bool NoSearchOrFilter => SearchString == null && FilterBy == null;
+
         public IEnumerable<FilterViewModel> Filters { get; set; }
     }
 }
