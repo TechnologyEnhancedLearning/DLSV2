@@ -238,7 +238,7 @@
             ).Returns(true);
 
             // When
-            var result = controller.AddAdminField(1, model, action);
+            var result = controller.AddAdminField(100, model, action);
 
             // Then
             using (new AssertionScope())
