@@ -182,12 +182,6 @@
                 return new StatusCodeResult(500);
             }
 
-            if (!ModelState.IsValid)
-            {
-                SetViewBagAdminFieldNameOptions();
-                return View(model);
-            }
-
             UpdateTempDataWithCoursePromptModelValues(model);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
@@ -320,6 +314,14 @@
 
         private IActionResult AddAdminFieldPostSave(AddAdminFieldViewModel model)
         {
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(AddAdminFieldViewModel.AdminFieldId));
+
+            if (!ModelState.IsValid)
+            {
+                SetViewBagAdminFieldNameOptions();
+                return View(model);
+            }
+
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
@@ -371,7 +373,7 @@
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(
-            AdminFieldAnswersViewModel model
+            EditAdminFieldViewModel model
         )
         {
             if (!ModelState.IsValid)
@@ -397,9 +399,11 @@
             AddAdminFieldViewModel model
         )
         {
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(AddAdminFieldViewModel.Answer));
+
             if (!ModelState.IsValid)
             {
-                SetViewBagAdminFieldNameOptions();
+                SetViewBagAdminFieldNameOptions(model.AdminFieldId);
                 return View(model);
             }
 
@@ -463,6 +467,22 @@
 
             ModelState.Remove(nameof(AdminFieldAnswersViewModel.Answer));
             model.Answer = null;
+        }
+
+        private void SetBlankAnswerError()
+        {
+            ModelState.AddModelError(
+                nameof(AdminFieldAnswersViewModel.Answer),
+                "Enter an answer"
+            );
+        }
+
+        private void SetAnswerLengthTooLongError()
+        {
+            ModelState.AddModelError(
+                nameof(AdminFieldAnswersViewModel.Answer),
+                "Answer must be 100 characters or fewer"
+            );
         }
 
         private void SetTotalAnswersLengthTooLongError(AdminFieldAnswersViewModel model)
