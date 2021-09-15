@@ -22,7 +22,7 @@
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
             ValidatePageHeading("Add course admin field");
             var addPageResult = new AxeBuilder(Driver).Analyze();
-            Driver.SelectDropdownItemValue("CustomPromptId", "1");
+            Driver.SelectDropdownItemValue("AdminFieldId", "1");
 
             AddAnswer("Answer 1");
             AddAnswer("Answer 2");
