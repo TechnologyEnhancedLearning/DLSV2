@@ -124,7 +124,7 @@
         }
 
         [Test]
-        public async Task Succesful_sign_in_with_query_string_should_redirect_with_correct_query()
+        public async Task Successful_sign_in_with_query_string_should_redirect_with_correct_query()
         {
             // Given
             GivenSignInIsSuccessful();
