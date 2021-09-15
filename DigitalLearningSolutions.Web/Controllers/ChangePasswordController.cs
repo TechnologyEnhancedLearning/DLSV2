@@ -28,38 +28,39 @@
         [HttpGet]
         public IActionResult Index(ApplicationType application)
         {
-            var model = new ChangePasswordViewModel { Application = application };
+            var model = new ChangePasswordViewModel(application);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ChangePasswordViewModel model)
+        public async Task<IActionResult> Index(ChangePasswordFormData formData, ApplicationType application)
         {
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
 
-            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(model.CurrentPassword)
+            var verifiedLinkedUsersAccounts = string.IsNullOrEmpty(formData.CurrentPassword)
                 ? new UserAccountSet()
-                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, model.CurrentPassword!);
+                : userService.GetVerifiedLinkedUsersAccounts(adminId, delegateId, formData.CurrentPassword!);
 
             if (!verifiedLinkedUsersAccounts.Any())
             {
                 ModelState.AddModelError(
-                    nameof(ChangePasswordViewModel.CurrentPassword),
+                    nameof(ChangePasswordFormData.CurrentPassword),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
             }
 
             if (!ModelState.IsValid)
             {
+                var model = new ChangePasswordViewModel(formData, application);
                 return View(model);
             }
 
-            var newPassword = model.Password!;
+            var newPassword = formData.Password!;
 
             await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
 
-            return View("Success", model.Application);
+            return View("Success", application);
         }
     }
 }
