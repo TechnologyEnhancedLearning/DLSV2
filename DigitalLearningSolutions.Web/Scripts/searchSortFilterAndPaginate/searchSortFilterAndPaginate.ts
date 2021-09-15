@@ -22,19 +22,16 @@ export class SearchSortFilterAndPaginate {
 
   private readonly searchEnabled: boolean;
 
-  private readonly sortEnabled: boolean;
+  private readonly paginationEnabled: boolean;
 
   private readonly filterEnabled: boolean;
 
-  private readonly paginationEnabled: boolean;
-
   // Route proved should be a relative path with no leading /
-  constructor(route: string, searchEnabled: boolean, sortEnabled: boolean, filterEnabled: boolean, paginationEnabled: boolean, filterCookieName = '') {
+  constructor(route: string, searchEnabled: boolean, paginationEnabled: boolean, filterEnabled: boolean, filterCookieName = '') {
     this.page = 1;
     this.searchEnabled = searchEnabled;
-    this.sortEnabled = sortEnabled;
-    this.filterEnabled = filterEnabled;
     this.paginationEnabled = paginationEnabled;
+    this.filterEnabled = filterEnabled;
 
     SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
       if (searchableData === undefined) {
@@ -47,9 +44,9 @@ export class SearchSortFilterAndPaginate {
       if (searchEnabled) {
         setUpSearch(() => this.onSearchUpdated(searchableData));
       }
-      if (sortEnabled) {
-        setUpSort(() => this.searchSortAndPaginate(searchableData));
-      }
+
+      setUpSort(() => this.searchSortAndPaginate(searchableData));
+      
       if (paginationEnabled) {
         setUpPagination(
           () => this.onNextPagePressed(searchableData),
@@ -87,9 +84,7 @@ export class SearchSortFilterAndPaginate {
     const filteredElements = this.filterEnabled
       ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
       : searchedElements;
-    const sortedElements = this.sortEnabled
-      ? sortSearchableElements(filteredElements)
-      : filteredElements;
+    const sortedElements = sortSearchableElements(filteredElements);
 
     if (this.shouldDisplayResultCount()) {
       SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
