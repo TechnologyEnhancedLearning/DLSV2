@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             bool selectAll = false
         )
         {
-            filterBy = GetNewFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
@@ -68,7 +68,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (!ModelState.IsValid)
             {
-                filterBy = GetNewFilterBy(filterBy, filterValue);
+                filterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
                 model.SetDelegates(delegateUsers, filterBy);
@@ -103,22 +103,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var centreId = User.GetCentreId();
             return userService.GetDelegateUserCardsForWelcomeEmail(centreId)
                 .OrderByDescending(card => card.DateRegistered);
-        }
-
-        private string? GetNewFilterBy(string? filterBy, string? filterValue)
-        {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies.ContainsKey(EmailDelegateFilterCookieName)
-                    ? Request.Cookies[EmailDelegateFilterCookieName]
-                    : null;
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
-            return FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
         }
     }
 }
