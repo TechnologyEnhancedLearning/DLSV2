@@ -15,39 +15,39 @@
         private readonly DelegateUserCard[] delegateUsers =
         {
             new DelegateUserCard
-                { Id=1, FirstName = "a", LastName = "Surname", Answer4 = string.Empty },
+                { Id = 1, FirstName = "a", LastName = "Surname", Answer4 = string.Empty },
             new DelegateUserCard
-                { Id=2, FirstName = "b purple", LastName = "Surname", Answer4 = string.Empty },
+                { Id = 2, FirstName = "b purple", LastName = "Surname", Answer4 = string.Empty },
             new DelegateUserCard
-                { Id=3, FirstName = "c", LastName = "Surname" },
+                { Id = 3, FirstName = "c", LastName = "Surname" },
             new DelegateUserCard
-                { Id=4, FirstName = "d purple", LastName = "Surname" },
+                { Id = 4, FirstName = "d purple", LastName = "Surname" },
             new DelegateUserCard
-                { Id=5, FirstName = "e", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 5, FirstName = "e", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=6, FirstName = "f", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 6, FirstName = "f", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=7, FirstName = "g", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 7, FirstName = "g", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=8, FirstName = "h", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 8, FirstName = "h", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=9, FirstName = "i", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 9, FirstName = "i", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=10, FirstName = "j", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 10, FirstName = "j", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=11, FirstName = "k", LastName = "Surname", DateRegistered = DateTime.Today },
+                { Id = 11, FirstName = "k", LastName = "Surname", DateRegistered = DateTime.Today },
             new DelegateUserCard
-                { Id=12, FirstName = "l", LastName = "Surname", Answer4 = "C 1" },
+                { Id = 12, FirstName = "l", LastName = "Surname", Answer4 = "C 1" },
             new DelegateUserCard
-                { Id=13, FirstName = "m", LastName = "Surname", Answer4 = "C 2" },
+                { Id = 13, FirstName = "m", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard
-                { Id=14, FirstName = "n", LastName = "Surname", Answer4 = "C 2" },
+                { Id = 14, FirstName = "n", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard
-                { Id=15, FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) }
+                { Id = 15, FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) }
         };
 
         [Test]
-        public void EmailDelegates_should_return_all_delegates_on_one_page()
+        public void EmailDelegatesViewModel_should_return_all_delegates_on_one_page()
         {
             // When
             var model = new EmailDelegatesViewModel(
@@ -64,7 +64,7 @@
         }
 
         [Test]
-        public void EmailDelegates_sets_delivery_date_today_by_default()
+        public void EmailDelegatesViewModel_sets_delivery_date_today_by_default()
         {
             // When
             var model = new EmailDelegatesViewModel(
@@ -81,7 +81,7 @@
         }
 
         [Test]
-        public void SetFilters_should_only_include_custom_prompts_with_options()
+        public void EmailDelegatesViewModel_should_only_include_custom_prompts_with_options()
         {
             // Given
             var customPrompts = new List<CustomPrompt>
@@ -104,14 +104,18 @@
         }
 
         [Test]
-        public void SetDelegates_should_filter_delegates_correctly()
+        public void EmailDelegatesViewModel_should_filter_delegates_correctly()
         {
             // Given
-            var model = new EmailDelegatesViewModel();
             var filterBy = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2";
 
             // When
-            model.SetDelegates(delegateUsers, filterBy);
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                new List<(int id, string name)>(),
+                new List<CustomPrompt>(),
+                filterBy
+            );
 
             // Then
             model.Delegates!.Should().HaveCount(2);
@@ -121,14 +125,19 @@
         }
 
         [Test]
-        public void SetDelegates_should_filter_delegates_correctly_by_empty_values()
+        public void EmailDelegatesViewModel_should_filter_delegates_correctly_by_empty_values()
         {
             // Given
-            var model = new EmailDelegatesViewModel();
-            var filterBy = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue;
+            var filterBy = "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
+                           FilteringHelper.EmptyValue;
 
             // When
-            model.SetDelegates(delegateUsers, filterBy);
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                new List<(int id, string name)>(),
+                new List<CustomPrompt>(),
+                filterBy
+            );
 
             // Then
             model.Delegates!.Should().HaveCount(6);
@@ -142,13 +151,15 @@
         }
 
         [Test]
-        public void SetDelegates_should_set_all_delegates_if_filterBy_is_null()
+        public void EmailDelegatesViewModel_should_set_all_delegates_if_filterBy_is_null()
         {
-            // Given
-            var model = new EmailDelegatesViewModel();
-
             // When
-            model.SetDelegates(delegateUsers, null);
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                new List<(int id, string name)>(),
+                new List<CustomPrompt>(),
+                null
+            );
 
             // Then
             model.Delegates!.Count().Should().Be(delegateUsers.Length);
@@ -156,17 +167,18 @@
         }
 
         [Test]
-        public void SetDelegates_should_set_preChecked_values_based_on_selectedDelegateIds()
+        public void EmailDelegatesViewModel_should_set_preChecked_values_based_on_selectedDelegateIds()
         {
             // Given
             var selectedDelegateIds = new List<int> { 1, 4, 7 };
-            var model = new EmailDelegatesViewModel
-            {
-                SelectedDelegateIds = selectedDelegateIds
-            };
 
             // When
-            model.SetDelegates(delegateUsers, null);
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                new List<(int id, string name)>(),
+                new List<CustomPrompt>(),
+                null
+            ) { SelectedDelegateIds = selectedDelegateIds };
 
             // Then
             model.Delegates!.Count().Should().Be(delegateUsers.Length);
@@ -175,15 +187,17 @@
             preCheckedIds.Should().BeEquivalentTo(selectedDelegateIds);
         }
 
-
         [Test]
-        public void SetDelegates_should_set_all_items_preChecked_if_selectAll_true()
+        public void EmailDelegatesViewModel_should_set_all_items_preChecked_if_selectAll_true()
         {
-            // Given
-            var model = new EmailDelegatesViewModel();
-
             // When
-            model.SetDelegates(delegateUsers, null, true);
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                new List<(int id, string name)>(),
+                new List<CustomPrompt>(),
+                null,
+                true
+            );
 
             // Then
             model.Delegates!.Count().Should().Be(delegateUsers.Length);

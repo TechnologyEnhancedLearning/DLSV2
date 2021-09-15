@@ -55,7 +55,7 @@
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
 
-        public void SetFilters(IEnumerable<(int id, string name)> jobGroups, IEnumerable<CustomPrompt> customPrompts)
+        private void SetFilters(IEnumerable<(int id, string name)> jobGroups, IEnumerable<CustomPrompt> customPrompts)
         {
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Filters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
@@ -64,7 +64,7 @@
             );
         }
 
-        public void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? filterBy, bool selectAll = false)
+        private void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? filterBy, bool selectAll = false)
         {
             var filteredItems = FilteringHelper.FilterItems(delegateUsers.AsQueryable(), filterBy).ToList();
             Delegates = filteredItems.Select(

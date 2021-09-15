@@ -14,7 +14,7 @@
 
         public readonly string? SearchString;
 
-        public string? FilterBy;
+        public readonly string? FilterBy;
 
         protected BaseSearchablePageViewModel(
             string? searchString,

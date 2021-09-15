@@ -71,10 +71,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 filterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
-                model.SetDelegates(delegateUsers, filterBy);
-                model.SetFilters(jobGroups, customPrompts);
-                model.FilterBy = filterBy;
-                return View(model);
+                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, filterBy)
+                {
+                    SelectedDelegateIds = model.SelectedDelegateIds,
+                    Day = model.Day,
+                    Month = model.Month,
+                    Year = model.Year
+                };
+                return View(viewModel);
             }
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
