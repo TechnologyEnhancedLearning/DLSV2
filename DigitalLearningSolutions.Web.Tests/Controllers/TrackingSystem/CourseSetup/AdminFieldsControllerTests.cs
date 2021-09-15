@@ -42,7 +42,7 @@
                 .Returns(null);
 
             // When
-            var result = controller.AdminFields(1);
+            var result = controller.Index(1);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -58,7 +58,7 @@
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
-            var result = controller.AdminFields(1);
+            var result = controller.Index(1);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
@@ -90,7 +90,7 @@
                     "Options"
                 )
             ).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -244,7 +244,7 @@
             using (new AssertionScope())
             {
                 controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
             }
         }
 
@@ -386,7 +386,7 @@
             var result = controller.RemoveAdminField(100, 2);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -430,7 +430,7 @@
             var result = controller.RemoveAdminField(100, 1, removeViewModel);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("AdminFields");
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)

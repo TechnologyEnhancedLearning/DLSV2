@@ -40,7 +40,7 @@
 
         [HttpGet]
         [Route("{customisationId}/AdminFields")]
-        public IActionResult AdminFields(int customisationId)
+        public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
@@ -162,19 +162,21 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId)
         {
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
             SetViewBagAdminFieldNameOptions(addAdminFieldData.AddModel.AdminFieldId);
 
-            var model = addAdminFieldData?.AddModel ?? new AddAdminFieldViewModel(customisationId);
+            var model = addAdminFieldData.AddModel;
 
             return View(model);
         }
 
         [HttpPost]
         [Route("{customisationId}/AdminFields/Add")]
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
             if (customisationId != model.CustomisationId)
@@ -283,7 +285,7 @@
                 model.OptionsString
             );
 
-            return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
+            return RedirectToAction("Index", new { customisationId = model.CustomisationId });
         }
 
         private IActionResult EditAdminFieldBulk(EditAdminFieldViewModel model)
@@ -334,7 +336,7 @@
             ))
             {
                 TempData.Clear();
-                return RedirectToAction("AdminFields", new { customisationId = model.CustomisationId });
+                return RedirectToAction("Index", new { customisationId = model.CustomisationId });
             }
 
             return new StatusCodeResult(500);
@@ -369,7 +371,7 @@
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
         {
             courseAdminFieldsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
-            return RedirectToAction("AdminFields", new { customisationId });
+            return RedirectToAction("Index", new { customisationId });
         }
 
         private IActionResult AdminFieldAnswersPostAddPrompt(
@@ -467,22 +469,6 @@
 
             ModelState.Remove(nameof(AdminFieldAnswersViewModel.Answer));
             model.Answer = null;
-        }
-
-        private void SetBlankAnswerError()
-        {
-            ModelState.AddModelError(
-                nameof(AdminFieldAnswersViewModel.Answer),
-                "Enter an answer"
-            );
-        }
-
-        private void SetAnswerLengthTooLongError()
-        {
-            ModelState.AddModelError(
-                nameof(AdminFieldAnswersViewModel.Answer),
-                "Answer must be 100 characters or fewer"
-            );
         }
 
         private void SetTotalAnswersLengthTooLongError(AdminFieldAnswersViewModel model)
