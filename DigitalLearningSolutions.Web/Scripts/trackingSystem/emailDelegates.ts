@@ -6,7 +6,7 @@ const queryString = '?selectedIds='.concat(selectedIds.join('&selectedIds='));
 const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems${queryString}`;
 
 // eslint-disable-next-line no-new
-new SearchSortFilterAndPaginate(route, true, 'EmailDelegateFilter', false, false, false);
+new SearchSortFilterAndPaginate(route, false, false, true, false, 'EmailDelegateFilter');
 
 const selectAll = () => {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;

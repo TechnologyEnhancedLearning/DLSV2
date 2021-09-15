@@ -20,20 +20,20 @@ export interface ISearchableData {
 export class SearchSortFilterAndPaginate {
   private page: number;
 
-  private readonly filterEnabled: boolean;
-
   private readonly searchEnabled: boolean;
 
   private readonly sortEnabled: boolean;
 
+  private readonly filterEnabled: boolean;
+
   private readonly paginationEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string, filterEnabled = false, filterCookieName = '', searchEnabled = true, sortEnabled = true, paginationEnabled = true) {
+  constructor(route: string, searchEnabled: boolean, sortEnabled: boolean, filterEnabled: boolean, paginationEnabled: boolean, filterCookieName = '') {
     this.page = 1;
-    this.filterEnabled = filterEnabled;
     this.searchEnabled = searchEnabled;
     this.sortEnabled = sortEnabled;
+    this.filterEnabled = filterEnabled;
     this.paginationEnabled = paginationEnabled;
 
     SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
