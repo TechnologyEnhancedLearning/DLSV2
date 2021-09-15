@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class AddAdminFieldViewModel : AdminFieldAnswersViewModel
     {
@@ -19,7 +17,7 @@
 
         public AddAdminFieldViewModel(
             int customisationId,
-            int adminFieldId,
+            int? adminFieldId,
             string? options,
             string? answer = null
         )
