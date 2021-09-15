@@ -26,67 +26,56 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@new []{ nameof(AddAdminFieldViewModel.AdminFieldId), nameof(AddAdminFieldViewModel.Answer) }" />
     }
-
     <h1 class="nhsuk-heading-xl">Add course admin field</h1>
-  </div>
-</div>
 
-<form method="post" novalidate asp-action="AddAdminField">
-  <vc:select-list asp-for="@nameof(Model.AdminFieldId)"
-                  label="Field name"
-                  value="@Model.AdminFieldId.ToString()"
-                  hint-text=""
-                  deselectable="false"
-                  css-class="nhsuk-u-width-one-half"
-                  default-option="Select a prompt name"
-                  select-list-options="@ViewBag.AdminFieldNameOptions" />
+    <form method="post" novalidate asp-action="AddAdminField">
+      <vc:select-list asp-for="@nameof(Model.AdminFieldId)"
+                      label="Field name"
+                      value="@Model.AdminFieldId.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a prompt name"
+                      select-list-options="@ViewBag.AdminFieldNameOptions" />
 
-  <div class="hidden-submit">
-    <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
-  </div>
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
+      </div>
 
-  <input type="hidden" asp-for="OptionsString" />
+      <input type="hidden" asp-for="OptionsString" />
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
       @if (string.IsNullOrEmpty(Model.OptionsString)) {
         <partial name="_NoConfiguredAnswers" />
       } else {
         <partial name="_AdminFieldAnswerTable" model="Model" />
       }
-    </div>
-  </div>
 
-  <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <vc:text-input asp-for="@nameof(Model.Answer)"
-                     label="Add a new answer?"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="true"
-                     autocomplete=""
-                     hint-text=""
-                     css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
-    </div>
-  </div>
+      <div class="nhsuk-grid-row divider">
+        <div class="nhsuk-grid-column-one-half">
+          <vc:text-input asp-for="@nameof(Model.Answer)"
+                         label="Add a new answer?"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="true"
+                         autocomplete=""
+                         hint-text=""
+                         css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
+        </div>
+      </div>
 
-  <div class="nhsuk-grid-row divider">
-    <div class="nhsuk-grid-column-one-half">
-      <p class="nhsuk-label">Want to edit answers in bulk?</p>
-      <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
-    </div>
-  </div>
+      <div class="nhsuk-grid-row divider">
+        <div class="nhsuk-grid-column-one-half">
+          <p class="nhsuk-label">Want to edit answers in bulk?</p>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
+        </div>
+      </div>
 
-  <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
-    <div class="nhsuk-grid-column-full">
-      <button name="action" class="nhsuk-button" value="@AdminFieldsController.SaveAction">Save</button>
-    </div>
-  </div>
-</form>
+      <div class="nhsuk-u-margin-bottom-3">
+        <button name="action" class="nhsuk-button" value="@AdminFieldsController.SaveAction">Save</button>
+      </div>
+    </form>
 
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
     <vc:cancel-link asp-controller="AdminFields" asp-action="AdminFields" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>
