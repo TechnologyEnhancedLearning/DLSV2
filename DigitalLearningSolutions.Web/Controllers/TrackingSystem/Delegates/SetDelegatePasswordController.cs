@@ -37,7 +37,7 @@
 
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
             {
-                throw new NoDelegateEmailException();
+                return View("NoEmail");
             }
 
             var referer = HttpContext.Request.GetTypedHeaders().Referer;

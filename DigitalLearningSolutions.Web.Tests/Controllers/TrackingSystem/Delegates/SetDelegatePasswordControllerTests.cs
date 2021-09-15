@@ -67,14 +67,17 @@
         }
 
         [Test]
-        public void Index_should_throw_exception_for_delegate_user_with_no_email()
+        public void Index_should_show_error_view_for_delegate_user_with_no_email()
         {
             // Given
             A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(emailAddress: null));
 
+            // When
+            var result = setDelegatePasswordController.Index(DelegateId);
+
             // Then
-            Assert.Throws<NoDelegateEmailException>(() => setDelegatePasswordController.Index(DelegateId));
+            result.Should().BeViewResult().WithViewName("NoEmail");
         }
 
         [Test]
