@@ -13,15 +13,9 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
         {
             // Given
             const string question = "Increased productivity?";
-            var model = new EvaluationSummaryModel(
-                question,
-                new Dictionary<string, int>
-                    { { "Yes", 10 }, { "No", 25 }, { "No response", 15 } }
-            );
-            var expectedPercentages = new Dictionary<string, float>
-            {
-                { "Yes", 20f }, { "No", 50f }, { "No response", 30f }
-            };
+            var responseCounts = new List<(string, int)> { ("Yes", 10), ("No", 25), ("No response", 15) };
+            var expectedPercentages = new List<(string, float)> { ("Yes", 20f), ("No", 50f), ("No response", 30f) };
+            var model = new EvaluationSummaryModel(question, responseCounts);
 
             // When
             var viewModel = new EvaluationSummaryViewModel(model);
@@ -36,11 +30,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
         {
             // Given
             const string question = "Don't answer this question!";
-            var model = new EvaluationSummaryModel(
-                question,
-                new Dictionary<string, int>
-                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } }
-            );
+            var responseCounts = new List<(string, int)> { ("Yes", 0), ("No", 0), ("No response", 0) };
+            var model = new EvaluationSummaryModel(question, responseCounts);
 
             // When
             var viewModel = new EvaluationSummaryViewModel(model);

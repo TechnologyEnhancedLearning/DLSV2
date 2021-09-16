@@ -12,13 +12,12 @@
             if (model.ResponseCounts != null)
             {
                 ResponsePercentages = model.ResponseCounts
-                    .Select(x => new KeyValuePair<string, float>(x.Key, 100f * x.Value / model.TotalResponses))
-                    .ToDictionary(x => x.Key, x => x.Value);
+                    .Select(x => (question: x.response, percentage: 100f * x.count / model.TotalResponses));
             }
         }
 
         public string Question { get; set; }
 
-        public Dictionary<string, float>? ResponsePercentages { get; set; }
+        public IEnumerable<(string response, float percentage)>? ResponsePercentages { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public static class EvaluationSummaryTestHelper
@@ -35,6 +36,63 @@
                 Q7No = 51,
                 Q7Yes = 157,
                 Q7NoResponse = 8
+            };
+        }
+
+        public static IEnumerable<EvaluationSummaryModel> GetDefaultEvaluationSummaryModels()
+        {
+            return new List<EvaluationSummaryModel>
+            {
+                new EvaluationSummaryModel(
+                    "Increased productivity?",
+                    new List<(string question, int count)>
+                    {
+                        ("Yes", 107), ("No", 102), ("No response", 7)
+                    }
+                ),
+                new EvaluationSummaryModel(
+                    "Gained new skills?",
+                    new List<(string question, int count)>
+                    {
+                        ("Yes", 102), ("No", 107), ("No response", 7)
+                    }
+                ),
+
+                new EvaluationSummaryModel(
+                    "Perform faster?",
+                    new List<(string question, int count)>
+                    {
+                        ("Yes", 112), ("No", 95), ("No response", 9)
+                    }
+                ),
+
+                new EvaluationSummaryModel(
+                    "Time saving per week",
+                    new List<(string question, int count)>
+                    {
+                        ("0 hrs", 95), ("<1 hr", 54), ("1-2 hrs", 30),
+                        ("2-4 hrs", 16), ("4-6 hrs", 7), (">6 hrs", 3),
+                        ("No response", 11)
+                    }
+                ),
+                new EvaluationSummaryModel(
+                    "Pass on skills?",
+                    new List<(string question, int count)> { ("Yes", 136), ("No", 64), ("No response", 16) }
+                ),
+                new EvaluationSummaryModel(
+                    "Help with patients/clients?",
+                    new List<(string question, int count)>
+                    {
+                        ("Yes, directly", 34),
+                        ("Yes, indirectly", 86),
+                        ("No", 64),
+                        ("No response", 9)
+                    }
+                ),
+                new EvaluationSummaryModel(
+                    "Recommended materials?",
+                    new List<(string question, int count)> { ("Yes", 157), ("No", 51), ("No response", 8) }
+                )
             };
         }
     }

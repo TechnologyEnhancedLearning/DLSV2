@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
         {
             // Given
             const string question = "Increased productivity?";
-            var responseCounts = new Dictionary<string, int> { { "Yes", 10 }, { "No", 25 }, { "No response", 15 } };
+            var responseCounts = new List<(string, int)> { ("Yes", 10), ("No", 25), ("No response", 15) };
 
             // When
             var model = new EvaluationSummaryModel(question, responseCounts);
@@ -26,15 +26,15 @@ namespace DigitalLearningSolutions.Data.Tests.Models
         [Test]
         public void EvaluationSummaryModel_sets_ResponseCounts_to_null_when_no_responses()
         {
+            // Given
+            const string question = "Don't answer this question!";
+            var responseCounts = new List<(string, int)> { ("Yes", 0), ("No", 0), ("No response", 0) };
+
             // When
-            var model = new EvaluationSummaryModel(
-                "Don't answer this question!",
-                new Dictionary<string, int>
-                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } }
-            );
+            var model = new EvaluationSummaryModel(question, responseCounts);
 
             // Then
-            model.Question.Should().Be("Don't answer this question!");
+            model.Question.Should().Be(question);
             model.ResponseCounts.Should().BeNull();
             model.TotalResponses.Should().Be(0);
         }
