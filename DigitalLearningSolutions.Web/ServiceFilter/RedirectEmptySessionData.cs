@@ -20,18 +20,15 @@
             if (context.Controller is Controller controller)
             {
                 var userSessionData = controller.TempData.Peek<T>();
-                if (userSessionData == null && context.ActionArguments.ContainsKey("customisationId"))
+                if (userSessionData == null)
                 {
                     // ReSharper disable once Mvc.ActionNotResolved
                     context.Result = controller.RedirectToAction(
                         "Index",
-                        new { customisationId = context.ActionArguments["customisationId"] }
+                        context.ActionArguments.ContainsKey("customisationId")
+                            ? new { customisationId = context.ActionArguments["customisationId"] }
+                            : null
                     );
-                }
-                else if (userSessionData == null)
-                {
-                    // ReSharper disable once Mvc.ActionNotResolved
-                    context.Result = controller.RedirectToAction("Index");
                 }
             }
         }
