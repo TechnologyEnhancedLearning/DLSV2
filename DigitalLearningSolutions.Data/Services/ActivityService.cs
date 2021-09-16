@@ -15,8 +15,6 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
             ActivityFilterData filterData
         );
-
-        EvaluationSummaryData GetEvaluationSummaryData(int centreId, ActivityFilterData filterData);
     }
 
     public class ActivityService : IActivityService
@@ -79,19 +77,6 @@
             return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
-        }
-
-        public EvaluationSummaryData GetEvaluationSummaryData(int centreId, ActivityFilterData filterData)
-        {
-            return activityDataService
-                .GetEvaluationSummaryData(
-                    centreId,
-                    filterData.StartDate,
-                    filterData.EndDate,
-                    filterData.JobGroupId,
-                    filterData.CourseCategoryId,
-                    filterData.CustomisationId
-                );
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)

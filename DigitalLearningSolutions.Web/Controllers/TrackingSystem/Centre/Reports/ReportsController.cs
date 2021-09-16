@@ -19,14 +19,17 @@
     {
         private readonly IActivityService activityService;
         private readonly IUserDataService userDataService;
+        private readonly IEvaluationSummaryService evaluationSummaryService;
 
         public ReportsController(
             IActivityService activityService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IEvaluationSummaryService evaluationSummaryService
         )
         {
             this.activityService = activityService;
             this.userDataService = userDataService;
+            this.evaluationSummaryService = evaluationSummaryService;
         }
 
         public IActionResult Index()
@@ -51,7 +54,7 @@
                 adminUser.CategoryId == 0
             );
 
-            var evaluationSummaryData = activityService.GetEvaluationSummaryData(centreId, filterData);
+            var evaluationSummaryData = evaluationSummaryService.GetEvaluationSummaryData(centreId, filterData);
 
             var model = new ReportsViewModel(activity, filterModel, evaluationSummaryData);
             return View(model);

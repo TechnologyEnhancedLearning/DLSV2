@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -84,26 +83,6 @@
 
             // then
             result.Count().Should().Be(expectedCount);
-        }
-
-        [Test]
-        public void GetEvaluationSummaryData_fetches_data_correctly()
-        {
-            // Given
-            var expectedResult = EvaluationSummaryTestHelper.GetDefaultEvaluationSummaryData();
-
-            // When
-            var result = service.GetEvaluationSummaryData(
-                121,
-                new DateTime(2010, 01, 01),
-                new DateTime(2020, 01, 01),
-                1,
-                3,
-                10059
-            );
-
-            // Then
-            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }
