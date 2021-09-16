@@ -16,7 +16,7 @@
 @if (Model.SelfAssessment.IsSupervised)
 {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="StartRequestVerification">
-    Request @Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower() verification
+    Request @Model.VocabSingular() verification
   </a>
 }
 @if (Model.CompetencyGroups.Any())
@@ -56,6 +56,12 @@
 
     }
   }
+}
+@if (Model.NumberOfOptionalCompetencies() > 0)
+{
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="ManageOptionalCompetencies">
+    Manage @Model.NumberOfOptionalCompetencies() optional @Model.VocabPlural()
+  </a>
 }
 
 @if (Model.SelfAssessment.UseFilteredApi)

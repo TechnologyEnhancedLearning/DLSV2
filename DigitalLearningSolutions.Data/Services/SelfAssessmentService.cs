@@ -115,6 +115,7 @@
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
                                                   COALESCE((SELECT TOP(1) FrameworkConfig FROM Frameworks F INNER JOIN FrameworkCompetencies AS FC ON FC.FrameworkID = F.ID WHERE FC.CompetencyID = C.ID), 'Capability') AS Vocabulary,
+                                                  SAS.Optional,
                                                   AQ.ID         AS Id,
                                                   AQ.Question,
                                                   AQ.MaxValueDescription,
