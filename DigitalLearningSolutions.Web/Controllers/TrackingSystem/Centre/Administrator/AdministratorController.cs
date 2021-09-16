@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -18,17 +20,19 @@
     public class AdministratorController : Controller
     {
         private const string AdminFilterCookieName = "AdminFilter";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly INumberOfAdministratorsHelper numberOfAdministratorsHelper;
         private readonly IUserDataService userDataService;
 
         public AdministratorController(
             IUserDataService userDataService,
-            ICourseCategoriesDataService courseCategoriesDataService
+            ICourseCategoriesDataService courseCategoriesDataService,
+            INumberOfAdministratorsHelper numberOfAdministratorsHelper
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
+            this.numberOfAdministratorsHelper = numberOfAdministratorsHelper;
         }
 
         [Route("{page=1:int}")]
@@ -82,17 +86,19 @@
         [HttpGet]
         public IActionResult EditAdminRoles(int adminId)
         {
+            var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
-            if (adminUser == null)
+
+            if (adminUser == null || adminUser.CentreId != centreId)
             {
                 return NotFound();
             }
 
-            var centreId = User.GetCentreId();
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+            var numberOfAdmins = numberOfAdministratorsHelper.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser, centreId, categories);
+            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins);
             return View(model);
         }
 
@@ -100,6 +106,19 @@
         [HttpPost]
         public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
         {
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
+            if (NewUserRolesExceedAvailableSpots(model, adminUser))
+            {
+                return new StatusCodeResult(500);
+            }
+
             userDataService.UpdateAdminUserPermissions(
                 adminId,
                 model.IsCentreAdmin,
@@ -137,6 +156,37 @@
                 .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
+        }
+
+        private bool NewUserRolesExceedAvailableSpots(EditRolesViewModel newRoles, AdminUser oldUserDetails)
+        {
+            var currentNumberOfAdmins =
+                numberOfAdministratorsHelper.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
+
+            if (newRoles.IsTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (newRoles.IsContentCreator && !oldUserDetails.IsContentCreator &&
+                currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (newRoles.ContentManagementRole.Equals(ContentManagementRole.CmsAdministrator) &&
+                !oldUserDetails.IsCmsAdministrator && currentNumberOfAdmins.CmsAdministratorsAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (newRoles.ContentManagementRole.Equals(ContentManagementRole.CmsManager) &&
+                !oldUserDetails.IsCmsManager && currentNumberOfAdmins.CmsManagersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

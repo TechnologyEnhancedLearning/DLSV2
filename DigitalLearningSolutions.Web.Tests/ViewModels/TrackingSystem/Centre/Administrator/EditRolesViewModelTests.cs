@@ -33,9 +33,10 @@
                 importOnly: true,
                 categoryId: 0
             );
+            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
 
             // Then
             using (new AssertionScope())
@@ -60,9 +61,10 @@
                 isContentManager: true,
                 importOnly: false
             );
+            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
 
             // Then
             result.ContentManagementRole.Should().BeEquivalentTo(ContentManagementRole.CmsManager);
@@ -76,12 +78,246 @@
                 isContentManager: false,
                 importOnly: false
             );
+            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
 
             // Then
             result.ContentManagementRole.Should().BeEquivalentTo(ContentManagementRole.NoContentManagementRole);
+        }
+
+        [Test]
+        public void EditRolesViewModel_sets_up_all_checkboxes_and_inputs_when_under_limits()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Checkboxes.Count.Should().Be(4);
+                result.Radios.Count.Should().Be(3);
+                result.Checkboxes.Contains(AdminRoleInputs.CentreAdminCheckbox).Should().BeTrue();
+                result.Checkboxes.Contains(AdminRoleInputs.SupervisorCheckbox).Should().BeTrue();
+                result.Checkboxes.Contains(AdminRoleInputs.TrainerCheckbox).Should().BeTrue();
+                result.Checkboxes.Contains(AdminRoleInputs.ContentCreatorCheckbox).Should().BeTrue();
+                result.Radios.Contains(AdminRoleInputs.CmsAdministratorRadioButton).Should().BeTrue();
+                result.Radios.Contains(AdminRoleInputs.CmsManagerRadioButton).Should().BeTrue();
+                result.Radios.Contains(AdminRoleInputs.NoCmsPermissionsRadioButton).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeFalse();
+                result.NoContentManagerOptionsAvailable.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_not_set_up_Trainer_checkbox_when_its_limit_is_reached_and_user_not_a_trainer()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(isTrainer: false);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Checkboxes.Count.Should().Be(3);
+                result.Checkboxes.Contains(AdminRoleInputs.TrainerCheckbox).Should().BeFalse();
+                result.NotAllRolesDisplayed.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void EditRolesViewModel_does_set_up_Trainer_checkbox_when_its_limit_is_reached_and_user_is_a_trainer()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(isTrainer: true);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Checkboxes.Count.Should().Be(4);
+                result.Checkboxes.Contains(AdminRoleInputs.TrainerCheckbox).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_not_set_up_Content_creator_checkbox_when_its_limit_is_reached_and_user_is_not_a_content_creator()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(isContentCreator: false);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Checkboxes.Count.Should().Be(3);
+                result.Checkboxes.Contains(AdminRoleInputs.ContentCreatorCheckbox).Should().BeFalse();
+                result.NotAllRolesDisplayed.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_set_up_Content_creator_checkbox_when_its_limit_is_reached_and_user_is_a_content_creator()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(isContentCreator: true);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Checkboxes.Count.Should().Be(4);
+                result.Checkboxes.Contains(AdminRoleInputs.ContentCreatorCheckbox).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_not_set_up_Cms_admin_radio_button_when_its_limit_is_reached_and_user_is_not_a_cms_admin()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                    cmsAdministrators: 5,
+                    cmsAdministratorSpots: 5
+                );
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Radios.Count.Should().Be(2);
+                result.Radios.Contains(AdminRoleInputs.CmsAdministratorRadioButton).Should().BeFalse();
+                result.NotAllRolesDisplayed.Should().BeTrue();
+                result.NoContentManagerOptionsAvailable.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_set_up_Cms_admin_radio_button_when_its_limit_is_reached_and_user_is_a_cms_admin()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: true, isContentManager: true);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                    cmsAdministrators: 5,
+                    cmsAdministratorSpots: 5
+                );
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Radios.Count.Should().Be(3);
+                result.Radios.Contains(AdminRoleInputs.CmsAdministratorRadioButton).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeFalse();
+                result.NoContentManagerOptionsAvailable.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_not_set_up_Cms_manager_radio_button_when_its_limit_is_reached_and_user_is_not_a_cms_manager()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Radios.Count.Should().Be(2);
+                result.Radios.Contains(AdminRoleInputs.CmsManagerRadioButton).Should().BeFalse();
+                result.NotAllRolesDisplayed.Should().BeTrue();
+                result.NoContentManagerOptionsAvailable.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_does_set_up_Cms_manager_radio_button_when_its_limit_is_reached_and_user_is_a_cms_manager()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: true);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Radios.Count.Should().Be(3);
+                result.Radios.Contains(AdminRoleInputs.CmsManagerRadioButton).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeFalse();
+                result.NoContentManagerOptionsAvailable.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void
+            EditRolesViewModel_sets_only_NoCmsPermissions_radio_button_when_both_limits_reached_and_user_has_no_permissions()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
+            var numberOfAdmins =
+                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                    cmsManagers: 5,
+                    cmsManagerSpots: 5,
+                    cmsAdministrators: 5,
+                    cmsAdministratorSpots: 5
+                );
+
+            // When
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Radios.Count.Should().Be(1);
+                result.Radios.Contains(AdminRoleInputs.CmsManagerRadioButton).Should().BeFalse();
+                result.Radios.Contains(AdminRoleInputs.CmsAdministratorRadioButton).Should().BeFalse();
+                result.Radios.Contains(AdminRoleInputs.NoCmsPermissionsRadioButton).Should().BeTrue();
+                result.NotAllRolesDisplayed.Should().BeTrue();
+                result.NoContentManagerOptionsAvailable.Should().BeTrue();
+            }
         }
     }
 }

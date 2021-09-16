@@ -1,35 +1,30 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class NumberOfAdministratorsViewModel
     {
-        public NumberOfAdministratorsViewModel(Centre centreDetails, List<AdminUser> adminUsers)
+        public NumberOfAdministratorsViewModel(NumberOfAdministrators numberOfAdministrators)
         {
-            Admins = adminUsers.Count(a => a.IsCentreAdmin).ToString();
-            Supervisors = adminUsers.Count(a => a.IsSupervisor).ToString();
+            Admins = numberOfAdministrators.Admins.ToString();
+            Supervisors = numberOfAdministrators.Supervisors.ToString();
 
-            var trainers = adminUsers.Count(a => a.IsTrainer);
-            var cmsAdministrators = adminUsers.Count(a => a.IsCmsAdministrator);
-            var cmsManagers = adminUsers.Count(a => a.IsCmsManager);
-            var ccLicences = adminUsers.Count(a => a.IsContentCreator);
-
-            Trainers = DisplayStringHelper.FormatNumberWithLimit(trainers, centreDetails.TrainerSpots);
+            Trainers = DisplayStringHelper.FormatNumberWithLimit(
+                numberOfAdministrators.Trainers,
+                numberOfAdministrators.TrainerSpots
+            );
             CmsAdministrators = DisplayStringHelper.FormatNumberWithLimit(
-                cmsAdministrators,
-                centreDetails.CmsAdministratorSpots
+                numberOfAdministrators.CmsAdministrators,
+                numberOfAdministrators.CmsAdministratorSpots
             );
             CmsManagers = DisplayStringHelper.FormatNumberWithLimit(
-                cmsManagers,
-                centreDetails.CmsManagerSpots
+                numberOfAdministrators.CmsManagers,
+                numberOfAdministrators.CmsManagerSpots
             );
             CcLicences = DisplayStringHelper.FormatNumberWithLimit(
-                ccLicences,
-                centreDetails.CcLicenceSpots
+                numberOfAdministrators.CcLicences,
+                numberOfAdministrators.CcLicenceSpots
             );
         }
 

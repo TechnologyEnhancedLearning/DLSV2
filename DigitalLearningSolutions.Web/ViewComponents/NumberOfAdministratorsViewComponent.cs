@@ -2,29 +2,26 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
     public class NumberOfAdministratorsViewComponent : ViewComponent
     {
-        private readonly ICentresDataService centresDataService;
-        private readonly IUserDataService userDataService;
+        private readonly INumberOfAdministratorsHelper numberOfAdministratorsHelper;
 
         public NumberOfAdministratorsViewComponent(
-            ICentresDataService centresDataService,
-            IUserDataService userDataService
+            INumberOfAdministratorsHelper numberOfAdministratorsHelper
         )
         {
-            this.centresDataService = centresDataService;
-            this.userDataService = userDataService;
+            this.numberOfAdministratorsHelper = numberOfAdministratorsHelper;
         }
 
         public IViewComponentResult Invoke(int centreId)
         {
-            var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
-            var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
+            var numberOfAdministrators = numberOfAdministratorsHelper.GetCentreAdministratorNumbers(centreId);
 
-            var numberOfAdminsViewModel = new NumberOfAdministratorsViewModel(centreDetails, adminUsersAtCentre);
+            var numberOfAdminsViewModel = new NumberOfAdministratorsViewModel(numberOfAdministrators);
 
             return View(numberOfAdminsViewModel);
         }
