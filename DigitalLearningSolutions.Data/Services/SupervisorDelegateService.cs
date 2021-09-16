@@ -6,6 +6,7 @@
     public interface ISupervisorDelegateService
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
+        SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(int supervisorDelegateId, string email);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
@@ -21,5 +22,20 @@
         {
             return supervisorDelegateDataService.GetSupervisorDelegateRecord(supervisorDelegateId);
         }
+
+        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(
+            int supervisorDelegateId,
+            string email
+        )
+        {
+            var record = GetSupervisorDelegateRecord(supervisorDelegateId);
+            if (record != null && record.DelegateEmail == email && record.CandidateID == null && record.Removed == null)
+            {
+                return record;
+            }
+
+            return null;
+        }
+
     }
 }
