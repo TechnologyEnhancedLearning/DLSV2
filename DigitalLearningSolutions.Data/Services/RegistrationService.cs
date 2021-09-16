@@ -60,14 +60,19 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            var (supervisorDelegateRecord, approved) = GetSupervisorDelegateRecordByIdOrEmail(supervisorDelegateId, delegateRegistrationModel.Email);
+            var (supervisorDelegateRecord, approved) = GetSupervisorDelegateRecordByIdOrEmail(
+                delegateRegistrationModel.Centre,
+                supervisorDelegateId,
+                delegateRegistrationModel.Email
+            );
 
             // TODO 602
 
             var centreIpPrefixes =
                 centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved = approved ||
-                centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";
+                                                 centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
+                                                 userIp == "::1";
 
             var candidateNumber =
                 registrationDataService.RegisterDelegate(delegateRegistrationModel);
@@ -192,12 +197,21 @@ namespace DigitalLearningSolutions.Data.Services
             return new Email(emailSubject, body, emailAddress);
         }
 
-        private (SupervisorDelegate? record, bool approved) GetSupervisorDelegateRecordByIdOrEmail(int? supervisorDelegateId, string email)
+        private (SupervisorDelegate? record, bool approved) GetSupervisorDelegateRecordByIdOrEmail(
+            int centreId,
+            int? supervisorDelegateId,
+            string email
+        )
         {
             SupervisorDelegate? supervisorDelegateRecord = null;
             if (supervisorDelegateId.HasValue)
             {
-                supervisorDelegateRecord = supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(supervisorDelegateId.Value, email);
+                supervisorDelegateRecord =
+                    supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
+                        centreId,
+                        supervisorDelegateId.Value,
+                        email
+                    );
             }
 
             var approved = supervisorDelegateRecord != null;

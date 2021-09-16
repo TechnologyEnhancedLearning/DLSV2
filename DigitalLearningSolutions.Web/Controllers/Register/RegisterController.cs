@@ -61,8 +61,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return NotFound();
             }
 
-            var supervisorDelegateRecord = inviteId.HasValue
-                ? supervisorDelegateService.GetSupervisorDelegateRecord(inviteId.Value)
+            var supervisorDelegateRecord = centreId.HasValue && inviteId.HasValue
+                ? supervisorDelegateService.GetSupervisorDelegateRecord(centreId.Value, inviteId.Value)
                 : null;
 
             SetDelegateRegistrationData(

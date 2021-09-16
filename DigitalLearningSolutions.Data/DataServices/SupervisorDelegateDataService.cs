@@ -20,20 +20,22 @@
 
         public SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId)
         {
-            return connection.QuerySingle<SupervisorDelegate>(
+            return connection.QuerySingle<SupervisorDelegate?>(
                 @"SELECT
-                        ID,
-                        SupervisorAdminID,
-                        SupervisorEmail,
-                        CandidateID,
-                        DelegateEmail,
-                        Added,
-                        AddedByDelegate,
-                        NotificationSent,
-                        Confirmed,
-                        Removed
-                    FROM SupervisorDelegates
-                    WHERE (ID = @supervisorDelegateId) AND (Removed IS NULL)",
+                        sd.ID,
+                        sd.SupervisorAdminID,
+                        sd.SupervisorEmail,
+                        sd.CandidateID,
+                        sd.DelegateEmail,
+                        sd.Added,
+                        sd.AddedByDelegate,
+                        sd.NotificationSent,
+                        sd.Confirmed,
+                        sd.Removed,
+                        au.CentreID
+                    FROM SupervisorDelegates sd
+                    INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
+                    WHERE ID = @supervisorDelegateId",
                 new { supervisorDelegateId }
             );
         }
