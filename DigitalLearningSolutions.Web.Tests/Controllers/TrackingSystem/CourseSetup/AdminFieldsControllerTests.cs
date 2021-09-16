@@ -198,8 +198,7 @@
             var result = controller.AddAdminFieldNew(1);
 
             // Then
-            controller.TempData.Peek<AddAdminFieldData>().Should()
-                .NotBeNull();
+            controller.TempData.Peek<AddAdminFieldData>().Should().NotBeNull();
             result.Should().BeRedirectToActionResult().WithActionName("AddAdminField");
         }
 
@@ -214,7 +213,7 @@
             var result = controller.AddAdminField(1);
 
             // Then
-            AssertAddAdminFieldViewModelIsExpectedModel(expectedPromptModel);
+            AssertAddTempDataIsExpected(expectedPromptModel);
             result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
         }
 
@@ -324,7 +323,6 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddAdminFieldViewModelIsExpectedModel(expectedViewModel);
                 AssertAddTempDataIsExpected(expectedViewModel);
                 result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
                 AssertNumberOfConfiguredAnswersOnView(result, 2);
@@ -348,7 +346,6 @@
             // Then
             using (new AssertionScope())
             {
-                AssertAddAdminFieldViewModelIsExpectedModel(expectedViewModel);
                 AssertAddTempDataIsExpected(expectedViewModel);
             }
         }
@@ -529,12 +526,6 @@
             result.Should().BeViewResult();
             result.As<ViewResult>().Model.As<AdminFieldAnswersViewModel>().Options.Count.Should()
                 .Be(expectedCount);
-        }
-
-        private void AssertAddAdminFieldViewModelIsExpectedModel(AddAdminFieldViewModel addModel)
-        {
-            controller.TempData.Peek<AddAdminFieldData>()!.AddModel.Should()
-                .BeEquivalentTo(addModel);
         }
 
         private void AssertEditTempDataIsExpected(EditAdminFieldViewModel expectedData)
