@@ -26,7 +26,7 @@
                 return newFilterValue;
             }
 
-            if (newFilterValue == null || filterBy.Contains(newFilterValue))
+            if (newFilterValue == null || filterBy.Split(FilterSeparator).Contains(newFilterValue))
             {
                 return filterBy;
             }

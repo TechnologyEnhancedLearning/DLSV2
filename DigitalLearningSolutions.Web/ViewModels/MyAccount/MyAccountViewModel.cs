@@ -19,6 +19,7 @@
             ProfilePicture = adminUser?.ProfileImage ?? delegateUser?.ProfileImage;
             Centre = adminUser?.CentreName ?? delegateUser?.CentreName;
             DelegateNumber = delegateUser?.CandidateNumber;
+            AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
 
             CustomFields = new List<CustomFieldViewModel>();
@@ -35,6 +36,8 @@
         public string? User { get; set; }
 
         public string? DelegateNumber { get; set; }
+
+        public string? AliasId { get; set; }
 
         public string? FirstName { get; set; }
 

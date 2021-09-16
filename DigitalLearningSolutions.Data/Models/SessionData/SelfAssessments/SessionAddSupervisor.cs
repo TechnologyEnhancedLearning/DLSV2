@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models.SessionData
+﻿namespace DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments
 {
     using System;
     public class SessionAddSupervisor

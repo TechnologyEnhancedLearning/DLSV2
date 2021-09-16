@@ -1,0 +1,25 @@
+﻿@inject IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
+
+@{
+  ViewData["Title"] = "Delegate account password changed";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Delegate account password changed</h1>
+
+    <p class="nhsuk-body-l">
+      You should contact the delegate to inform them of their login details and recommend that they change their password using the My account interface after login.
+    </p>
+
+    <vc:action-link asp-controller="AllDelegates" asp-action="Index" link-text="Manage all delegates" />
+  </div>
+</div>

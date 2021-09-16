@@ -4,10 +4,11 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
+    
 
     public interface IUserService
     {
-        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
+        (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
@@ -42,21 +43,19 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class UserService : IUserService
     {
-        private readonly ILoginService loginService;
+        private readonly IUserVerificationService userVerificationService;
         private readonly IUserDataService userDataService;
 
-        public UserService(IUserDataService userDataService, ILoginService loginService)
+        public UserService(IUserDataService userDataService, IUserVerificationService userVerificationService)
         {
             this.userDataService = userDataService;
-            this.loginService = loginService;
+            this.userVerificationService = userVerificationService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = userDataService.GetAdminUserByUsername(username);
-            var delegateUsername =
-                string.IsNullOrWhiteSpace(adminUser?.EmailAddress) ? username : adminUser.EmailAddress;
-            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(delegateUsername);
+            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
         }
@@ -199,12 +198,12 @@ namespace DigitalLearningSolutions.Data.Services
                     ? new List<DelegateUser> { loggedInDelegateUser }
                     : new List<DelegateUser>();
 
-                return loginService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
+                return userVerificationService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
             }
 
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
-            return loginService.VerifyUsers(password, adminUser, delegateUsers);
+            return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)

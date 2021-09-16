@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using FakeItEasy;
     using FluentAssertions;
@@ -15,14 +14,14 @@
 
     public class EmailDelegatesControllerTests
     {
-        private EmailDelegatesController emailDelegatesController = null!;
         private CentreCustomPromptHelper centreCustomPromptsHelper = null!;
+        private EmailDelegatesController emailDelegatesController = null!;
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-        private IUserService userService = null!;
         private IPasswordResetService passwordResetService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -38,7 +37,12 @@
             const string cookieName = "EmailDelegateFilter";
             const string cookieValue = "JobGroupId|JobGroupId|1";
 
-            emailDelegatesController = new EmailDelegatesController(centreCustomPromptsHelper, jobGroupsDataService, passwordResetService, userService)
+            emailDelegatesController = new EmailDelegatesController(
+                    centreCustomPromptsHelper,
+                    jobGroupsDataService,
+                    passwordResetService,
+                    userService
+                )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
@@ -64,7 +68,7 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
-            var result = emailDelegatesController.Index(filterBy: filterBy);
+            var result = emailDelegatesController.Index(filterBy);
 
             // Then
             result.As<ViewResult>().Model.As<EmailDelegatesViewModel>().FilterBy.Should()
@@ -78,7 +82,7 @@
             const string filterBy = "CLEAR";
 
             // When
-            var result = emailDelegatesController.Index(filterBy: filterBy);
+            var result = emailDelegatesController.Index(filterBy);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("EmailDelegateFilter")).MustHaveHappened();
@@ -94,7 +98,7 @@
             const string newFilterValue = "JobGroupId|JobGroupId|2";
 
             // When
-            var result = emailDelegatesController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = emailDelegatesController.Index(filterBy, newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("EmailDelegateFilter", newFilterValue, A<CookieOptions>._))
@@ -111,7 +115,7 @@
             const string newFilterValue = "JobGroupId|JobGroupId|2";
 
             // When
-            var result = emailDelegatesController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = emailDelegatesController.Index(filterBy, newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("EmailDelegateFilter", newFilterValue, A<CookieOptions>._))
