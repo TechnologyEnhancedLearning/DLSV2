@@ -101,7 +101,8 @@
            role="button"
            asp-controller="SetDelegatePassword"
            asp-action="Index"
-           asp-route-delegateId="@Model.DelegateInfo.Id">
+           asp-route-delegateId="@Model.DelegateInfo.Id"
+           asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
         <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">

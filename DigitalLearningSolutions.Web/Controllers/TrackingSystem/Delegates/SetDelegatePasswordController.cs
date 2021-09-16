@@ -6,13 +6,12 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("TrackingSystem/Delegates/SetPassword/{delegateId:int}")]
+    [Route("TrackingSystem/Delegates/{delegateId:int}/SetPassword")]
     public class SetDelegatePasswordController : Controller
     {
         private readonly IPasswordService passwordService;
@@ -25,7 +24,7 @@
         }
 
         [HttpGet]
-        public IActionResult Index(int delegateId)
+        public IActionResult Index(int delegateId, bool isFromViewDelegatePage)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
 
@@ -39,23 +38,36 @@
                 return View("NoEmail");
             }
 
-            var referer = HttpContext.Request.GetTypedHeaders().Referer;
-            var isFromViewDelegatePage = referer?.AbsolutePath.StartsWith("/TrackingSystem/Delegates/View") == true;
-
             var model = new SetDelegatePasswordViewModel(delegateUser.FullName, delegateId, isFromViewDelegatePage);
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> IndexAsync(SetDelegatePasswordViewModel model, int delegateId)
+        public async Task<IActionResult> IndexAsync(
+            SetDelegatePasswordViewModel model,
+            int delegateId,
+            bool isFromViewDelegatePage
+        )
         {
             if (!ModelState.IsValid)
             {
+                model.IsFromViewDelegatePage = isFromViewDelegatePage;
                 return View(model);
             }
 
             var delegateUser = userDataService.GetDelegateUserById(delegateId);
+
+            if (delegateUser == null || delegateUser.CentreId != User.GetCentreId())
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+            {
+                return View("NoEmail");
+            }
+
             await passwordService.ChangePasswordAsync(delegateUser!.EmailAddress!, model.Password!);
 
             return View("Confirmation");

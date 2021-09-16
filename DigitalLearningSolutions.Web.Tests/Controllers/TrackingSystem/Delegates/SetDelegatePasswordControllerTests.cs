@@ -10,9 +10,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Primitives;
     using NUnit.Framework;
 
     public class SetDelegatePasswordControllerTests
@@ -21,20 +19,16 @@
         private const int DelegateId = 2;
 
         private IPasswordService passwordService = null!;
-        private HttpRequest request = null!;
         private SetDelegatePasswordController setDelegatePasswordController = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            request = A.Fake<HttpRequest>();
             userDataService = A.Fake<IUserDataService>();
             passwordService = A.Fake<IPasswordService>();
             setDelegatePasswordController = new SetDelegatePasswordController(passwordService, userDataService)
-                .WithMockHttpRequestHttpContext(request)
-                .WithMockServices()
-                .WithMockTempData()
+                .WithDefaultContext()
                 .WithMockUser(true);
         }
 
@@ -45,7 +39,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(DelegateId)).Returns(null);
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId);
+            var result = setDelegatePasswordController.Index(DelegateId, true);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -59,7 +53,7 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 1));
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId);
+            var result = setDelegatePasswordController.Index(DelegateId, true);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -73,22 +67,21 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser(emailAddress: null));
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId);
+            var result = setDelegatePasswordController.Index(DelegateId, true);
 
             // Then
             result.Should().BeViewResult().WithViewName("NoEmail");
         }
 
         [Test]
-        public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_referer_is_not_view_page()
+        public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_not_from_view_page()
         {
             // Given
             A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
-            request.Headers["Referer"] = "https://baseurl/Some/Other/Url";
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId);
+            var result = setDelegatePasswordController.Index(DelegateId, false);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -96,31 +89,14 @@
         }
 
         [Test]
-        public void Index_should_return_view_result_with_IsFromViewDelegatePage_false_when_referer_is_null()
+        public void Index_should_return_view_result_with_IsFromViewDelegatePage_true_when_from_view_page()
         {
             // Given
             A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
-            request.Headers["Referer"] = new StringValues();
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            result.As<ViewResult>().Model.As<SetDelegatePasswordViewModel>().IsFromViewDelegatePage.Should().BeFalse();
-        }
-
-        [Test]
-        public void Index_should_return_view_result_with_IsFromViewDelegatePage_true_when_referer_is_view_page()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser());
-            request.Headers["Referer"] = "https://baseurl/TrackingSystem/Delegates/View/86726";
-
-            // When
-            var result = setDelegatePasswordController.Index(DelegateId);
+            var result = setDelegatePasswordController.Index(DelegateId, true);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -128,7 +104,7 @@
         }
 
         [Test]
-        public async Task IndexAsync_with_invalid_model_returns_view_async()
+        public async Task IndexAsync_with_invalid_model_returns_initial_form_async()
         {
             // Given
             var model = new SetDelegatePasswordViewModel();
@@ -138,7 +114,7 @@
             );
 
             // When
-            var result = await setDelegatePasswordController.IndexAsync(model, DelegateId);
+            var result = await setDelegatePasswordController.IndexAsync(model, DelegateId, true);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -155,7 +131,7 @@
             A.CallTo(() => passwordService.ChangePasswordAsync(A<string>._, A<string>._)).Returns(Task.CompletedTask);
 
             // When
-            var result = await setDelegatePasswordController.IndexAsync(model, DelegateId);
+            var result = await setDelegatePasswordController.IndexAsync(model, DelegateId, true);
 
             // Then
             A.CallTo(() => passwordService.ChangePasswordAsync(delegateUser.EmailAddress!, Password))

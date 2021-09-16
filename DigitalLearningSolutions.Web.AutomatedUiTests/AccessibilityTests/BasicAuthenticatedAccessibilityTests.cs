@@ -42,7 +42,6 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup/10716/Content", "Course content")]
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage", "Level 1 - Microsoft Excel 2010 - Inductions")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
-        [InlineData("/TrackingSystem/Delegates/SetPassword/3", "Set delegate user password")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData(
@@ -50,7 +49,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
-        [InlineData("/TrackingSystem/Delegates/View/3", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
