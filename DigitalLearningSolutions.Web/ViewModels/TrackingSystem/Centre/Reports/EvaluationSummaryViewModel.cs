@@ -5,11 +5,11 @@
 
     public class EvaluationSummaryViewModel
     {
-        public EvaluationSummaryViewModel(string question, Dictionary<string, int> counts, int noResponseCount)
+        public EvaluationSummaryViewModel(string question, Dictionary<string, int> counts)
         {
             Question = question;
             var totalResponses = counts.Sum(x => x.Value);
-            if (totalResponses > noResponseCount)
+            if (totalResponses != 0)
             {
                 Data = counts
                     .Select(x => new KeyValuePair<string, float>(x.Key, 100f * x.Value / totalResponses))

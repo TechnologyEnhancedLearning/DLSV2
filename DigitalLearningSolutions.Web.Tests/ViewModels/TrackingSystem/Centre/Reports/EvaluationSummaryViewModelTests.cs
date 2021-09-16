@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Reports
+namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Reports
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
@@ -20,8 +20,7 @@
             var model = new EvaluationSummaryViewModel(
                 "Increased productivity?",
                 new Dictionary<string, int>
-                    { { "Yes", 10 }, { "No", 25 }, { "No response", 15 } },
-                15
+                    { { "Yes", 10 }, { "No", 25 }, { "No response", 15 } }
             );
 
             // Then
@@ -30,30 +29,13 @@
         }
 
         [Test]
-        public void EvaluationSummaryViewModel_sets_data_to_null_when_no_responses_at_all()
-        {
-            // When
-            var model = new EvaluationSummaryViewModel(
-                "This question has never been seen!",
-                new Dictionary<string, int>
-                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } },
-                0
-            );
-
-            // Then
-            model.Question.Should().Be("This question has never been seen!");
-            model.Data.Should().BeNull();
-        }
-
-        [Test]
-        public void EvaluationSummaryViewModel_sets_data_to_null_when_all_responses_are_noResponse()
+        public void EvaluationSummaryViewModel_sets_data_to_null_when_no_responses()
         {
             // When
             var model = new EvaluationSummaryViewModel(
                 "Don't answer this question!",
                 new Dictionary<string, int>
-                    { { "Yes", 0 }, { "No", 0 }, { "No response", 25 } },
-                25
+                    { { "Yes", 0 }, { "No", 0 }, { "No response", 0 } }
             );
 
             // Then

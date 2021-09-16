@@ -19,20 +19,17 @@
                 new EvaluationSummaryViewModel(
                     "Increased productivity?",
                     new Dictionary<string, int>
-                        { { "Yes", 107 }, { "No", 102 }, { "No response", 7 } },
-                    7
+                        { { "Yes", 107 }, { "No", 102 }, { "No response", 7 } }
                 ),
                 new EvaluationSummaryViewModel(
                     "Gained new skills?",
                     new Dictionary<string, int>
-                        { { "Yes", 102 }, { "No", 107 }, { "No response", 7 } },
-                    7
+                        { { "Yes", 102 }, { "No", 107 }, { "No response", 7 } }
                 ),
                 new EvaluationSummaryViewModel(
                     "Perform faster?",
                     new Dictionary<string, int>
-                        { { "Yes", 112 }, { "No", 95 }, { "No response", 9 } },
-                    9
+                        { { "Yes", 112 }, { "No", 95 }, { "No response", 9 } }
                 ),
                 new EvaluationSummaryViewModel(
                     "Time saving per week",
@@ -41,14 +38,12 @@
                         { "0 hrs", 95 }, { "<1 hr", 54 }, { "1-2 hrs", 30 },
                         { "2-4 hrs", 16 }, { "4-6 hrs", 7 }, { ">6 hrs", 3 },
                         { "No response", 11 }
-                    },
-                    11
+                    }
                 ),
                 new EvaluationSummaryViewModel(
                     "Pass on skills?",
                     new Dictionary<string, int>
-                        { { "Yes", 136 }, { "No", 64 }, { "No response", 16 } },
-                    16
+                        { { "Yes", 136 }, { "No", 64 }, { "No response", 16 } }
                 ),
                 new EvaluationSummaryViewModel(
                     "Help with patients/clients?",
@@ -56,14 +51,12 @@
                     {
                         { "Yes, directly", 34 }, { "Yes, indirectly", 86 },
                         { "No", 64 }, { "No response", 9 }
-                    },
-                    64
+                    }
                 ),
                 new EvaluationSummaryViewModel(
                     "Recommended materials?",
                     new Dictionary<string, int>
-                        { { "Yes", 157 }, { "No", 51 }, { "No response", 8 } },
-                    8
+                        { { "Yes", 157 }, { "No", 51 }, { "No response", 8 } }
                 )
             };
 
