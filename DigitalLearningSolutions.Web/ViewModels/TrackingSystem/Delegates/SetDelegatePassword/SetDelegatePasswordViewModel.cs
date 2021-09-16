@@ -1,10 +1,25 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 {
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class ConfirmPasswordViewModel
+    public class SetDelegatePasswordViewModel
     {
+        public SetDelegatePasswordViewModel() { }
+
+        public SetDelegatePasswordViewModel(string name, int delegateId, bool isFromViewDelegatePage = false)
+        {
+            Name = name;
+            DelegateId = delegateId;
+            IsFromViewDelegatePage = isFromViewDelegatePage;
+        }
+
+        public string Name { get; set; }
+
+        public int DelegateId { get; set; }
+
+        public bool IsFromViewDelegatePage { get; set; }
+
         [Required(ErrorMessage = CommonValidationErrorMessages.PasswordRequired)]
         [MinLength(8, ErrorMessage = CommonValidationErrorMessages.PasswordMinLength)]
         [MaxLength(100, ErrorMessage = CommonValidationErrorMessages.PasswordMaxLength)]
@@ -14,10 +29,5 @@
         )]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
-
-        [Required(ErrorMessage = "Repeat your password to confirm")]
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Password and re-typed password must match")]
-        public string? ConfirmPassword { get; set; }
     }
 }
