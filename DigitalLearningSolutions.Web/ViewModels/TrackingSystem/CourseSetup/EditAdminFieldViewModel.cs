@@ -12,7 +12,6 @@
             CustomisationId = customisationId;
             PromptNumber = customPrompt.CustomPromptNumber;
             Prompt = customPrompt.CustomPromptText;
-            Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
             IncludeAnswersTableCaption = true;
         }
@@ -21,14 +20,12 @@
             int customisationId,
             int customPromptNumber,
             string text,
-            string? options,
-            bool mandatory
+            string? options
         )
         {
             CustomisationId = customisationId;
             PromptNumber = customPromptNumber;
             Prompt = text;
-            Mandatory = mandatory;
             OptionsString = options;
             IncludeAnswersTableCaption = true;
         }
@@ -36,7 +33,5 @@
         public int PromptNumber { get; set; }
 
         public string Prompt { get; set; }
-
-        public bool Mandatory { get; set; }
     }
 }

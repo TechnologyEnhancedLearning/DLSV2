@@ -234,6 +234,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<ResetPasswordData>>();
             services.AddScoped<RedirectEmptySessionData<BulkUploadResult>>();
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
+            services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
         }
 
