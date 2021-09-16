@@ -1,21 +1,20 @@
-﻿namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models;
 
-    public interface INumberOfAdministratorsHelper
+    public interface INumberOfAdministratorsService
     {
         NumberOfAdministrators GetCentreAdministratorNumbers(int centreId);
-
     }
 
-    public class NumberOfAdministratorsHelper: INumberOfAdministratorsHelper
+    public class NumberOfAdministratorsService: INumberOfAdministratorsService
     {
         private readonly ICentresDataService centresDataService;
         private readonly IUserDataService userDataService;
 
-        public NumberOfAdministratorsHelper(
+        public NumberOfAdministratorsService(
             ICentresDataService centresDataService,
             IUserDataService userDataService
         )

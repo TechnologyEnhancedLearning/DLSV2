@@ -4,9 +4,9 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -18,6 +18,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class AdministratorControllerTests
@@ -52,15 +53,17 @@
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private INumberOfAdministratorsHelper numberOfAdministratorsHelper = null!;
+        private INumberOfAdministratorsService numberOfAdministratorsService = null!;
         private IUserDataService userDataService = null!;
+        private ILogger<AdministratorController> logger = null!;
 
         [SetUp]
         public void Setup()
         {
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
-            numberOfAdministratorsHelper = A.Fake<INumberOfAdministratorsHelper>();
+            numberOfAdministratorsService = A.Fake<INumberOfAdministratorsService>();
+            logger = A.Fake<ILogger<AdministratorController>>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -74,7 +77,8 @@
             administratorController = new AdministratorController(
                     userDataService,
                     courseCategoriesDataService,
-                    numberOfAdministratorsHelper
+                    numberOfAdministratorsService,
+                    logger
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -219,7 +223,7 @@
             );
             var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(currentAdminUser);
-            A.CallTo(() => numberOfAdministratorsHelper.GetCentreAdministratorNumbers(A<int>._))
+            A.CallTo(() => numberOfAdministratorsService.GetCentreAdministratorNumbers(A<int>._))
                 .Returns(numberOfAdmins);
 
             // When
@@ -276,7 +280,7 @@
                 cmsManagers: 6
             );
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(currentAdminUser);
-            A.CallTo(() => numberOfAdministratorsHelper.GetCentreAdministratorNumbers(A<int>._))
+            A.CallTo(() => numberOfAdministratorsService.GetCentreAdministratorNumbers(A<int>._))
                 .Returns(numberOfAdmins);
 
             // When
@@ -335,7 +339,7 @@
                 cmsManagers: 6
             );
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(currentAdminUser);
-            A.CallTo(() => numberOfAdministratorsHelper.GetCentreAdministratorNumbers(A<int>._))
+            A.CallTo(() => numberOfAdministratorsService.GetCentreAdministratorNumbers(A<int>._))
                 .Returns(numberOfAdmins);
 
             // When
