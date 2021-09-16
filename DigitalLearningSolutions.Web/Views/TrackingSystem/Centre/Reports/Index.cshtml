@@ -38,6 +38,13 @@
       <partial name="_ActivityGraph.cshtml" />
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
+    
+    <a
+      class="nhsuk-button nhsuk-u-margin-top-6"
+      asp-controller="Reports"
+      asp-action="DownloadUsageData"
+      role="button"
+    >Download usage data</a>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />

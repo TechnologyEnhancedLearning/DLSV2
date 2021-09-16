@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -15,6 +17,8 @@
         (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
             ActivityFilterData filterData
         );
+
+        byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
     }
 
     public class ActivityService : IActivityService
@@ -23,6 +27,9 @@
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+
+        private const string SheetName = "UsageStats"; // TODO HEEDLS-460 is this actually needed?
+        private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
 
         public ActivityService(
             IActivityDataService activityDataService,
@@ -141,6 +148,24 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
+        {
+            using var workbook = new XLWorkbook();
+
+            var activityData = GetFilteredActivity(centreId, filterData).Select(
+                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
+            );
+
+            var sheet = workbook.Worksheets.Add(SheetName);
+            var table = sheet.Cell(1, 1).InsertTable(activityData);
+            table.Theme = TableTheme;
+            sheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
         }
     }
 }

@@ -76,5 +76,23 @@
         // {
         //     return View();
         // }
+
+        [HttpGet]
+        [Route("Download")]
+        public IActionResult DownloadUsageData()
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+
+            var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
+
+            return File(dataFile,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // TODO HEEDLS-460 do I want to make the content type a centrally managed constant?
+                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx" // TODO HEEDLS-460 what title? include filters?
+            );
+        }
     }
 }
