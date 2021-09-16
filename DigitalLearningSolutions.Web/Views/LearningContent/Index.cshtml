@@ -34,6 +34,6 @@
   </div>
 </div>
 
-<div class="nhsuk-grid-row responsive-iframe-wrapper @(Model.LongTitle ? "responsive-iframe-wrapper-extra-padding" : "responsive-iframe-wrapper-padding")">
+<div class="nhsuk-grid-row responsive-iframe-wrapper @(Model.TitleIsLong ? "responsive-iframe-wrapper-extra-padding" : "responsive-iframe-wrapper-padding")">
   <iframe class="responsive-iframe" title="@Model.Title" src="@url"></iframe>
 </div>
