@@ -2,7 +2,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -26,6 +25,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
 
         public RegisterController(
@@ -35,7 +35,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             ICryptoService cryptoService,
             IUserService userService,
             CentreCustomPromptHelper centreCustomPromptHelper,
-            IFeatureManager featureManager
+            IFeatureManager featureManager,
+            ISupervisorDelegateService supervisorDelegateService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,9 +46,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userService = userService;
             this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.featureManager = featureManager;
+            this.supervisorDelegateService = supervisorDelegateService;
         }
 
-        public IActionResult Index(int? centreId = null)
+        public IActionResult Index(int? centreId = null, int? inviteId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -59,7 +61,15 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return NotFound();
             }
 
-            SetDelegateRegistrationData(centreId);
+            var supervisorDelegateRecord = inviteId.HasValue
+                ? supervisorDelegateService.GetSupervisorDelegateRecord(inviteId.Value)
+                : null;
+
+            SetDelegateRegistrationData(
+                centreId,
+                supervisorDelegateRecord?.ID,
+                supervisorDelegateRecord?.DelegateEmail
+            );
 
             return RedirectToAction("PersonalInformation");
         }
@@ -259,9 +269,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        private void SetDelegateRegistrationData(int? centreId)
+        private void SetDelegateRegistrationData(int? centreId, int? supervisorDelegateId, string? email)
         {
-            var delegateRegistrationData = new DelegateRegistrationData(centreId);
+            var delegateRegistrationData = new DelegateRegistrationData(centreId, supervisorDelegateId, email);
             var id = delegateRegistrationData.Id;
 
             Response.Cookies.Append(
