@@ -111,6 +111,15 @@
         {
             if (!ModelState.IsValid)
             {
+                var centreId = User.GetCentreId();
+                var adminId = User.GetAdminId()!.Value;
+                var adminUser = userDataService.GetAdminUserById(adminId)!;
+                var (jobGroups, courseCategories, courses) =
+                    activityService.GetFilterOptions(
+                        centreId,
+                        adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                    );
+                model.SetUpDropdownOptions(jobGroups, courseCategories, courses, adminUser.CategoryId);
                 return View(model);
             }
 

@@ -56,9 +56,9 @@
             var endDayValue = endDayProperty?.GetValue(model)?.ToString();
             var endMonthValue = endMonthProperty?.GetValue(model)?.ToString();
             var endYearValue = endYearProperty?.GetValue(model)?.ToString();
-            var endDayErrors = ViewData.ModelState[startDayProperty?.Name]?.Errors;
-            var endMonthErrors = ViewData.ModelState[startMonthProperty?.Name]?.Errors;
-            var endYearErrors = ViewData.ModelState[startYearProperty?.Name]?.Errors;
+            var endDayErrors = ViewData.ModelState[endDayProperty?.Name]?.Errors;
+            var endMonthErrors = ViewData.ModelState[endMonthProperty?.Name]?.Errors;
+            var endYearErrors = ViewData.ModelState[endYearProperty?.Name]?.Errors;
 
             var checkboxProperty = model.GetType().GetProperty(endDateCheckboxId);
             var checkboxValue = (bool)checkboxProperty?.GetValue(model)!;

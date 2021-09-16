@@ -87,14 +87,19 @@
                 EndYear = endYear,
                 EndDate = true
             };
-            var expectedError = new ValidationResult("End date must not precede start date");
+            var expectedFirstError = new ValidationResult("End date must not precede start date", new[] { "StartDay" });
+            var expectedSecondError = new ValidationResult(
+                "",
+                new[] { "StartMonth", "StartYear", "EndDay", "EndMonth", "EndYear" }
+            );
 
             // When
             var result = viewModel.Validate(new ValidationContext(viewModel)).ToList();
 
             // Then
-            result.Should().HaveCount(1);
-            result.First().Should().BeEquivalentTo(expectedError);
+            result.Should().HaveCount(2);
+            result.First().Should().BeEquivalentTo(expectedFirstError);
+            result.Last().Should().BeEquivalentTo(expectedSecondError);
         }
 
         [TestCase(1, 1, 2021, 1, 1, 2020)]

@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DocumentFormat.OpenXml.Bibliography;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class EditFiltersViewModel : IValidatableObject
@@ -39,18 +38,9 @@
             EndYear = filterData.EndDate?.Year;
             EndDate = filterData.EndDate.HasValue;
             ReportInterval = filterData.ReportInterval;
-            CanFilterCourseCategories = userCategoryId == 0;
-
             DataStart = dataStartDate;
 
-            JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(jobGroupOptions, JobGroupId);
-            CourseCategoryOptions =
-                SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
-            CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
-            var reportIntervals = Enum.GetValues(typeof(ReportInterval))
-                .Cast<int>()
-                .Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
-            ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
+            SetUpDropdownOptions(jobGroupOptions, courseCategoryOptions, courseOptions, userCategoryId);
         }
 
         public int? JobGroupId { get; set; }
@@ -98,7 +88,7 @@
                     false,
                     true
                 )
-                .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
+                .ToValidationResultList(nameof(StartDay), nameof(StartMonth), nameof(StartYear));
 
             validationResults.AddRange(startDateValidationResults);
 
@@ -113,19 +103,56 @@
                         false,
                         true
                     )
-                    .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
+                    .ToValidationResultList(nameof(EndDay), nameof(EndMonth), nameof(EndYear));
 
                 if (StartYear > EndYear
                     || StartYear == EndYear && StartMonth > EndMonth
                     || StartYear == EndYear && StartMonth == EndMonth && StartDay > EndDay)
                 {
-                    endDateValidationResults.Add(new ValidationResult("End date must not precede start date"));
+                    endDateValidationResults.Add(
+                        new ValidationResult(
+                            "End date must not precede start date",
+                            new[]
+                            {
+                                nameof(StartDay)
+                            }
+                        )
+                    );
+                    endDateValidationResults.Add(
+                        new ValidationResult(
+                            "",
+                            new[]
+                            {
+                                nameof(StartMonth), nameof(StartYear), nameof(EndDay),
+                                nameof(EndMonth), nameof(EndYear)
+                            }
+                        )
+                    );
                 }
 
                 validationResults.AddRange(endDateValidationResults);
             }
 
             return validationResults;
+        }
+
+        public void SetUpDropdownOptions(
+            IEnumerable<(int, string)> jobGroupOptions,
+            IEnumerable<(int, string)> courseCategoryOptions,
+            IEnumerable<(int, string)> courseOptions,
+            int userCategoryId
+        )
+        {
+            CanFilterCourseCategories = userCategoryId == 0;
+
+            JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(jobGroupOptions, JobGroupId);
+            CourseCategoryOptions =
+                SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
+            CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
+            var reportIntervals = Enum.GetValues(typeof(ReportInterval))
+                .Cast<int>()
+                .Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
+            ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
         }
     }
 }
