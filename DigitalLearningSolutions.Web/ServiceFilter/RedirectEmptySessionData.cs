@@ -25,9 +25,7 @@
                     // ReSharper disable once Mvc.ActionNotResolved
                     context.Result = controller.RedirectToAction(
                         "Index",
-                        context.ActionArguments.ContainsKey("customisationId")
-                            ? new { customisationId = context.ActionArguments["customisationId"] }
-                            : null
+                        context.ActionArguments
                     );
                 }
             }
