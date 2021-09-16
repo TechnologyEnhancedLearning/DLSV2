@@ -18,8 +18,8 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
-        private readonly IUserDataService userDataService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
+        private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
@@ -54,9 +54,9 @@
                 adminUser.CategoryId == 0
             );
 
-            var evaluationSummaryData = evaluationSummaryService.GetEvaluationSummaryData(centreId, filterData);
+            var evaluationSummaryModels = evaluationSummaryService.GetEvaluationSummaryModels(centreId, filterData);
 
-            var model = new ReportsViewModel(activity, filterModel, evaluationSummaryData);
+            var model = new ReportsViewModel(activity, filterModel, evaluationSummaryModels);
             return View(model);
         }
 

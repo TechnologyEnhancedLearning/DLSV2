@@ -2,23 +2,23 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public class EvaluationSummaryViewModel
     {
-        public EvaluationSummaryViewModel(string question, Dictionary<string, int> counts)
+        public EvaluationSummaryViewModel(EvaluationSummaryModel model)
         {
-            Question = question;
-            var totalResponses = counts.Sum(x => x.Value);
-            if (totalResponses != 0)
+            Question = model.Question;
+            if (model.ResponseCounts != null)
             {
-                Data = counts
-                    .Select(x => new KeyValuePair<string, float>(x.Key, 100f * x.Value / totalResponses))
+                ResponsePercentages = model.ResponseCounts
+                    .Select(x => new KeyValuePair<string, float>(x.Key, 100f * x.Value / model.TotalResponses))
                     .ToDictionary(x => x.Key, x => x.Value);
             }
         }
 
         public string Question { get; set; }
 
-        public Dictionary<string, float>? Data { get; set; }
+        public Dictionary<string, float>? ResponsePercentages { get; set; }
     }
 }
