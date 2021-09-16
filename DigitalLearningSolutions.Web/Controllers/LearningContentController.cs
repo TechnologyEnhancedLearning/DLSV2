@@ -35,7 +35,7 @@
             var model = new LearningContentViewModel(
                 TerminologyAndClassificationsDeliveryServiceBrand,
                 TerminologyAndClassificationsDeliveryServiceTitle,
-                true
+                titleIsLong: true
             );
             return View("Index", model);
         }
