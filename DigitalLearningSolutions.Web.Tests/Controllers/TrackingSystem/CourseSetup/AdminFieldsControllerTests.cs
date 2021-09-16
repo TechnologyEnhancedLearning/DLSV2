@@ -35,20 +35,6 @@
         }
 
         [Test]
-        public void AdminFields_returns_NotFound_when_no_appropriate_course_found()
-        {
-            // Given
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
-                .Returns(null);
-
-            // When
-            var result = controller.Index(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void AdminFields_returns_AdminFields_page_when_appropriate_course_found()
         {
             // Given
