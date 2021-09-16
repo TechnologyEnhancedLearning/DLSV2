@@ -11,7 +11,7 @@
 
     public interface ICourseAdminFieldsService
     {
-        public CourseAdminFields? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+        public CourseAdminFields GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
@@ -22,7 +22,7 @@
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptId, string? options);
 
-        public List<(int id, string value)> GetCoursePromptsAlphabeticalList();
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList();
 
         public bool AddCustomPromptToCourse(
             int customisationId,
@@ -51,7 +51,7 @@
             this.logger = logger;
         }
 
-        public CourseAdminFields? GetCustomPromptsForCourse(
+        public CourseAdminFields GetCustomPromptsForCourse(
             int customisationId,
             int centreId,
             int categoryId = 0
@@ -82,7 +82,7 @@
             courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptId, options);
         }
 
-        public List<(int id, string value)> GetCoursePromptsAlphabeticalList()
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList()
         {
             return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
         }
@@ -145,7 +145,7 @@
             return courseAdminFieldsDataService.GetPromptName(customisationId, promptNumber);
         }
 
-        private static int? GetNextPromptNumber(CourseAdminFields? courseAdminFields)
+        private static int? GetNextPromptNumber(CourseAdminFields courseAdminFields)
         {
             var existingPromptNumbers = courseAdminFields.AdminFields
                 .Select(c => c.CustomPromptNumber);
@@ -170,7 +170,7 @@
             return result;
         }
 
-        private List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
+        private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
             CourseAdminFieldsResult? result
         )
         {

@@ -50,11 +50,6 @@
                 categoryId.Value
             );
 
-            if (courseAdminFields == null)
-            {
-                return NotFound();
-            }
-
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
         }
@@ -78,7 +73,7 @@
                     customisationId,
                     centreId,
                     categoryId.Value
-                )!.AdminFields
+                ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();

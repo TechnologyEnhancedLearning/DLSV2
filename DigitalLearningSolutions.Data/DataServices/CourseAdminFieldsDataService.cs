@@ -8,24 +8,24 @@
 
     public interface ICourseAdminFieldsDataService
     {
-        public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
+        CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
+        void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
-        public IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
+        IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
 
-        public void UpdateCustomPromptForCourse(
+        void UpdateCustomPromptForCourse(
             int customisationId,
             int promptNumber,
             int promptId,
             string? options
         );
 
-        public string GetPromptName(int customisationId, int promptNumber);
+        string GetPromptName(int customisationId, int promptNumber);
 
-        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
+        int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
 
-        public void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
+        void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
     }
 
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
