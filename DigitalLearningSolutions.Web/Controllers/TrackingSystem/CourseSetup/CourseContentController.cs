@@ -10,7 +10,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("/TrackingSystem/CourseSetup")]
+    [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
     public class CourseContentController : Controller
     {
         private readonly ICourseDataService courseDataService;
@@ -23,12 +23,15 @@
         }
 
         [HttpGet]
-        [Route("{customisationId:int}/Content")]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId.Value);
+            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
 
             if (courseDetails == null)
             {
@@ -47,6 +50,44 @@
             );
 
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("Edit")]
+        public IActionResult Edit(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            if (courseDetails == null)
+            {
+                return NotFound();
+            }
+
+            var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
+                customisationId,
+                courseDetails.ApplicationId
+            );
+            var model = new CourseContentViewModel(
+                customisationId,
+                courseDetails.CourseName,
+                courseDetails.PostLearningAssessment,
+                courseSections
+            );
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("Edit")]
+        public IActionResult Edit(CourseContentViewModel model, int customisationId)
+        {
+            return RedirectToAction("Index", new { customisationId });
         }
     }
 }

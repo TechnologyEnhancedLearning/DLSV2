@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Course content";
+  ViewData["Title"] = "Edit course content";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
@@ -16,14 +16,10 @@
   <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-@section NavBreadcrumbs {
-  <partial name="/Views/TrackingSystem/CourseSetup/Shared/_BreadcrumbsToManageCoursePage.cshtml" model="Model.CustomisationId" />
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    <h1 class="nhsuk-heading-xl">Course content</h1>
+    <h1 class="nhsuk-heading-xl">Edit course content</h1>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter">
@@ -34,21 +30,19 @@
       </div>
     </div>
 
-    @if (Model.CourseHasContent) {
-      @foreach (var section in Model.Sections) {
-        <partial name="_CourseSectionExpandable" model="section" />
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Edit">
+      @if (Model.CourseHasContent) {
+        @foreach (var section in Model.Sections) {
+          <partial name="_EditCourseSectionExpandable" model="section" />
+        }
+      } else {
+        <p>No course content enabled.</p>
       }
-    } else {
-      <p>No course content enabled.</p>
-    }
 
-    <a class="nhsuk-button nhsuk-u-margin-top-4"
-       role="button"
-       asp-controller="CourseContent"
-       asp-action="Edit"
-       asp-route-customisationId="@Model.CustomisationId">
-      Edit course content
-    </a>
+      <button class="nhsuk-button" type="submit" value="save">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="CourseContent" asp-action="Index" />
 
   </div>
 </div>

@@ -1,0 +1,12 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
+@model CourseTutorialViewModel
+
+<div class="nhsuk-summary-list__row basic-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    @Model.TutorialName
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    <input type="checkbox" asp-for="DiagnosticEnabled" />
+    <input type="checkbox" asp-for="LearningEnabled" />
+  </dd>
+</div>
