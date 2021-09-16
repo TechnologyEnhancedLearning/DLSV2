@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @model EvaluationSummaryViewModel
 
-<div class="nhsuk-card" id="@Model.Question-card">
+<div class="nhsuk-card">
   <div class="nhsuk-card__content">
     <h3 class="nhsuk-card__heading">
       @Model.Question
@@ -10,10 +10,10 @@
     <div class="nhsuk-card__description">
       @if (Model.ResponsePercentages != null) {
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
-          @foreach (var (answer, percentage) in Model.ResponsePercentages) {
+          @foreach (var (response, percentage) in Model.ResponsePercentages) {
             <div class="nhsuk-summary-list__row">
               <dt class="nhsuk-summary-list__key eval-summary-row__key">
-                @answer
+                @response
               </dt>
               <dd class="nhsuk-summary-list__value eval-summary-row__value">
                 @percentage.ToString("0.0")%
@@ -22,7 +22,7 @@
           }
         </dl>
       } else {
-        <span>This question has not been answered yet</span>
+        <span>This question has not been answered yet.</span>
       }
     </div>
   </div>

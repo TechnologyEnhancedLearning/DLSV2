@@ -73,12 +73,12 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM Evaluations e
                     INNER JOIN Customisations c ON c.CustomisationID = e.CustomisationID
                     INNER JOIN Applications a ON a.ApplicationID = c.ApplicationID
-                    WHERE CentreID = @centreId
-                        AND EvaluatedDate >= @startDate
-                        AND EvaluatedDate <= @endDate
-                        AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
+                    WHERE c.CentreID = @centreId
+                        AND e.EvaluatedDate >= @startDate
+                        AND e.EvaluatedDate <= @endDate
+                        AND (@jobGroupId IS NULL OR e.JobGroupID = @jobGroupId)
                         AND (@customisationId IS NULL OR e.CustomisationID = @customisationId)
-                        AND (@courseCategoryId IS NULL OR CourseCategoryId = @courseCategoryId)",
+                        AND (@courseCategoryId IS NULL OR a.CourseCategoryId = @courseCategoryId)",
                 new
                 {
                     centreId,
