@@ -26,8 +26,17 @@
         {
             JobGroupId = filterData.JobGroupId;
 
-            FilterType = filterData.CustomisationId.HasValue ? CourseFilterType.Course :
-                filterData.CourseCategoryId.HasValue ? CourseFilterType.CourseCategory : CourseFilterType.None;
+            if (filterData.CustomisationId.HasValue)
+            {
+                FilterType = CourseFilterType.Course;
+            }
+            else
+            {
+                FilterType = filterData.CourseCategoryId.HasValue
+                    ? CourseFilterType.CourseCategory
+                    : CourseFilterType.None;
+            }
+
             CourseCategoryId = filterData.CourseCategoryId;
             CustomisationId = filterData.CustomisationId;
             StartDay = filterData.StartDate.Day;

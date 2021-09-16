@@ -16,9 +16,12 @@
             ActivityFilterData filterData
         );
 
-        (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> categories,
-            IEnumerable<(int id, string name)>
-            courses) GetFilterOptions(int centreId, int? courseCategoryId);
+        (
+            IEnumerable<(int id, string name)> jobGroups,
+            IEnumerable<(int id, string name)> categories,
+            IEnumerable<(int id, string name)> courses
+            )
+            GetFilterOptions(int centreId, int? courseCategoryId);
     }
 
     public class ActivityService : IActivityService

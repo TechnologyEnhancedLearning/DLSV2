@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -86,11 +87,7 @@
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
-            var (jobGroups, courseCategories, courses) =
-                activityService.GetFilterOptions(
-                    centreId,
-                    adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
-                );
+            var (jobGroups, courseCategories, courses) = GetDropdownValues(centreId, adminUser);
 
             var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
 
@@ -114,11 +111,7 @@
                 var centreId = User.GetCentreId();
                 var adminId = User.GetAdminId()!.Value;
                 var adminUser = userDataService.GetAdminUserById(adminId)!;
-                var (jobGroups, courseCategories, courses) =
-                    activityService.GetFilterOptions(
-                        centreId,
-                        adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
-                    );
+                var (jobGroups, courseCategories, courses) = GetDropdownValues(centreId, adminUser);
                 model.SetUpDropdownOptions(jobGroups, courseCategories, courses, adminUser.CategoryId);
                 return View(model);
             }
@@ -140,6 +133,20 @@
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
             return RedirectToAction("Index");
+        }
+
+        private (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> courseCategories,
+            IEnumerable<(int id, string name)> courses) GetDropdownValues(
+                int centreId,
+                AdminUser adminUser
+            )
+        {
+            var (jobGroups, courseCategories, courses) =
+                activityService.GetFilterOptions(
+                    centreId,
+                    adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                );
+            return (jobGroups, courseCategories, courses);
         }
     }
 }

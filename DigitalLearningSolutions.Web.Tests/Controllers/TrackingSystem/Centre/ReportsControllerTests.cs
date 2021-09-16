@@ -41,7 +41,7 @@
         }
 
         [Test]
-        public void EditFilters_invalid_model_returns_view()
+        public void EditFilters_invalid_model_returns_default_view_with_form()
         {
             // Given
             var model = new EditFiltersViewModel();
