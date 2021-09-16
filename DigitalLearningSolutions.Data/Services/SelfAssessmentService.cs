@@ -153,7 +153,9 @@
                                     AND SAS.SelfAssessmentID = @selfAssessmentId
                         INNER JOIN CompetencyGroups AS CG
                             ON SAS.CompetencyGroupID = CG.ID
-                                    AND SAS.SelfAssessmentID = @selfAssessmentId";
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID";
 
         private const string SpecificCompetencyTables = @"Competencies AS C INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON CAQ.CompetencyID = C.ID INNER JOIN
@@ -161,7 +163,9 @@
              CandidateAssessments AS CA ON CA.ID = @candidateAssessmentId LEFT OUTER JOIN
              LatestAssessmentResults AS LAR ON LAR.CompetencyID = C.ID AND LAR.AssessmentQuestionID = AQ.ID INNER JOIN
              SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID AND SAS.SelfAssessmentID = CA.SelfAssessmentID INNER JOIN
-             CompetencyGroups AS CG ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = CA.SelfAssessmentID";
+             CompetencyGroups AS CG ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = CA.SelfAssessmentID
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID";
 
         public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
         {
@@ -227,16 +231,21 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
                      (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
-                             CompetencyID
+                             sas.CompetencyID
                       FROM SelfAssessmentStructure as sas
-                      WHERE sas.SelfAssessmentID = @selfAssessmentId
+INNER JOIN CandidateAssessments AS CA
+                            ON CA.SelfAssessmentID = @selfAssessmentId
+                                   AND CA.CandidateID = @candidateId
+LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID
+                      WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                      ),
                      {LatestAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables}
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
-                    WHERE CRN.RowNo = @n
+                    WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND CRN.RowNo = @n
                     ORDER BY CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -320,7 +329,8 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
             var result = connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
-                    FROM {CompetencyTables} 
+                    FROM {CompetencyTables}
+                    WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -342,6 +352,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
+                    WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -363,7 +374,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)
+                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -385,7 +396,7 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, CAST(CASE WHEN SA.Supervi
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables}
-                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL))
+                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
