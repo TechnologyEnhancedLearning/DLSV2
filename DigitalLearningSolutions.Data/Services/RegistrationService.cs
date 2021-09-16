@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     using Microsoft.Extensions.Configuration;
     using MimeKit;
 
@@ -14,7 +15,8 @@ namespace DigitalLearningSolutions.Data.Services
         (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
-            bool refactoredTrackingSystemEnabled
+            bool refactoredTrackingSystemEnabled,
+            int? inviteId = null
         );
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
@@ -30,6 +32,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -37,7 +40,8 @@ namespace DigitalLearningSolutions.Data.Services
             IPasswordResetService passwordResetService,
             IEmailService emailService,
             ICentresDataService centresDataService,
-            IConfiguration config
+            IConfiguration config,
+            ISupervisorDelegateService supervisorDelegateService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -46,17 +50,23 @@ namespace DigitalLearningSolutions.Data.Services
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.config = config;
+            this.supervisorDelegateService = supervisorDelegateService;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
-            bool refactoredTrackingSystemEnabled
+            bool refactoredTrackingSystemEnabled,
+            int? supervisorDelegateId = null
         )
         {
+            var (supervisorDelegateRecord, approved) = GetSupervisorDelegateRecordByIdOrEmail(supervisorDelegateId, delegateRegistrationModel.Email);
+
+            // TODO 602
+
             var centreIpPrefixes =
                 centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
-            delegateRegistrationModel.Approved =
+            delegateRegistrationModel.Approved = approved ||
                 centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";
 
             var candidateNumber =
@@ -180,6 +190,21 @@ namespace DigitalLearningSolutions.Data.Services
             };
 
             return new Email(emailSubject, body, emailAddress);
+        }
+
+        private (SupervisorDelegate? record, bool approved) GetSupervisorDelegateRecordByIdOrEmail(int? supervisorDelegateId, string email)
+        {
+            SupervisorDelegate? supervisorDelegateRecord = null;
+            if (supervisorDelegateId.HasValue)
+            {
+                supervisorDelegateRecord = supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(supervisorDelegateId.Value, email);
+            }
+
+            var approved = supervisorDelegateRecord != null;
+
+            // TODO: supervisorDelegateRecord ??= supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(email);
+
+            return (supervisorDelegateRecord, approved);
         }
     }
 }

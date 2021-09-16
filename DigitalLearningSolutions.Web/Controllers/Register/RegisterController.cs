@@ -230,7 +230,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 registrationService.RegisterDelegate(
                     RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
                     userIp,
-                    refactoredTrackingSystemEnabled
+                    refactoredTrackingSystemEnabled,
+                    data.SupervisorDelegateId
                 );
 
             if (candidateNumber == "-1")
