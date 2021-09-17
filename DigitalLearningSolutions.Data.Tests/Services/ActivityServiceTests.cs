@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
@@ -16,6 +18,8 @@
     {
         private IActivityDataService activityDataService = null!;
         private IActivityService activityService = null!;
+
+        public const string ActivityDataDownloadRelativeFilePath = "\\TestData\\ActivityDataDownloadTest.xlsx";
 
         [SetUp]
         public void SetUp()
@@ -165,6 +169,72 @@
                     )
                 )
                 .MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public void GetActivityDataFileForCentre_returns_expected_excel_data()
+        {
+            // given
+            using var expectedWorkbook = new XLWorkbook(
+                TestContext.CurrentContext.TestDirectory + ActivityDataDownloadRelativeFilePath
+            );
+            var expectedActivityResult = new List<ActivityLog>
+            {
+                new ActivityLog
+                {
+                    Completed = true,
+                    Evaluated = false,
+                    Registered = false,
+                    LogDate = DateTime.Parse("2020-12-22"),
+                    LogYear = 2020,
+                    LogQuarter = 4,
+                    LogMonth = 12
+                }
+            };
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        A<int>._,
+                        A<DateTime>._,
+                        A<DateTime>._,
+                        A<int?>._,
+                        A<int?>._,
+                        A<int?>._
+                    )
+                )
+                .Returns(expectedActivityResult);
+
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2020-9-1"),
+                DateTime.Parse("2021-9-1"),
+                null,
+                null,
+                null,
+                ReportInterval.Months
+            );
+
+            // when
+            var resultBytes = activityService.GetActivityDataFileForCentre(101, filterData);
+
+            using var resultsStream = new MemoryStream(resultBytes);
+            using var resultWorkbook = new XLWorkbook(resultsStream);
+
+            // Then
+            using (new AssertionScope())
+            {
+                resultWorkbook.Worksheets.Count.Should().Be(expectedWorkbook.Worksheets.Count);
+                foreach (var resultWorksheet in resultWorkbook.Worksheets)
+                {
+                    var expectedWorksheet = expectedWorkbook.Worksheets.Worksheet(resultWorksheet.Name);
+                    var cells = resultWorksheet.CellsUsed();
+                    cells.Count().Should().Be(expectedWorksheet.CellsUsed().Count());
+
+                    foreach (var cell in cells)
+                    {
+                        var expectedCell = expectedWorksheet.Cell(cell.Address);
+                        cell.Value.Should().BeEquivalentTo(expectedCell.Value);
+                    }
+                }
+            }
         }
 
         private void ValidatePeriodData(
