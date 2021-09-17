@@ -72,7 +72,7 @@
   </div>
 
   @if (Model.FormData.IsDelegateUser) {
-    <input type="hidden" asp-for="FormData.IsDelegateUser" />
+    <input type="hidden" id="IsDelegateUser" name="IsDelegateUser" value="@Model.FormData.IsDelegateUser.ToString()" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
         <vc:select-list-with-configurable-model
@@ -120,7 +120,10 @@
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
                               To remove your profile picture click the remove button.
                               Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="FormData.ProfileImage" />
+      <input type="hidden"
+             id="ProfileImage"
+             name="ProfileImage"
+             value="@(Model.FormData.ProfileImage != null ? Convert.ToBase64String(Model.FormData.ProfileImage) : null)" />
       <vc:file-input-with-configurable-model
         model="@Model.FormData"
         asp-for="ProfileImageFile"
