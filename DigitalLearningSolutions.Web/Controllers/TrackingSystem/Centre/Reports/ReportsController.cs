@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -79,19 +80,37 @@
 
         [HttpGet]
         [Route("Download")]
-        public IActionResult DownloadUsageData()
+        public IActionResult DownloadUsageData(
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId,
+            string startDate,
+            string endDate,
+            ReportInterval reportInterval
+        )
         {
+            var parsedStartDate = DateTime.Parse(startDate);
+            var parsedEndDate = DateTime.Parse(endDate);
+
             var centreId = User.GetCentreId();
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+            var filterData = new ActivityFilterData(
+                parsedStartDate,
+                parsedEndDate,
+                jobGroupId,
+                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                customisationId,
+                reportInterval
+            );
 
             var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
 
-            return File(dataFile,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // TODO HEEDLS-460 do I want to make the content type a centrally managed constant?
-                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx" // TODO HEEDLS-460 what title? include filters?
+            return File(
+                dataFile,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx" // TODO HEEDLS-460 what title?
             );
         }
     }

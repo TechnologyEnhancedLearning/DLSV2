@@ -43,6 +43,7 @@
       class="nhsuk-button nhsuk-u-margin-top-6"
       asp-controller="Reports"
       asp-action="DownloadUsageData"
+      asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
       role="button"
     >Download usage data</a>
 
