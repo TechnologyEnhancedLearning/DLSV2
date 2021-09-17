@@ -83,6 +83,8 @@
             var adminUserAssociatedWithDelegates = userDataService.GetAdminUserByEmailAddress(delegateEmail);
 
             var isSuitableAdmin = adminUserAssociatedWithDelegates != null &&
+                                  adminUserAssociatedWithDelegates.Active &&
+                                  adminUserAssociatedWithDelegates.Approved &&
                                   cryptoService.VerifyHashedPassword(
                                       adminUserAssociatedWithDelegates.Password,
                                       password

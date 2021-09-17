@@ -80,6 +80,31 @@
         }
 
         [Test]
+        public void
+            AttemptLogin_does_not_throw_LoginWithMultipleEmailsException_when_emails_match_except_case_and_successfully_logs_in()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: "EMAIL@test.com");
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(3);
+            var delegateUsers = new List<DelegateUser> { delegateUser };
+            GivenAdminUserAndDelegateUserAreVerified(adminUser, delegateUser);
+            GivenResetFailedLoginCountDoesNothing(adminUser);
+            GivenNoLinkedAccountsFound();
+            GivenSingleActiveCentreIsFound(adminUser, delegateUsers);
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
+                result.Accounts.AdminAccount.Should().Be(adminUser);
+                result.Accounts.DelegateAccounts.Should().BeEquivalentTo(delegateUsers);
+            }
+        }
+
+        [Test]
         public void AttemptLogin_returns_invalid_password_with_no_verified_delegate_accounts_and_no_admin_account()
         {
             // Given

@@ -8,6 +8,10 @@
 
         public string CentreName { get; set; }
 
+        public bool Active { get; set; }
+
+        public bool Approved { get; set; }
+
         public bool CentreActive { get; set; }
 
         public string? FirstName { get; set; }
