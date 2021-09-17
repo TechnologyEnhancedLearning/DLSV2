@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.DelegateId-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.DelegateId-name" name="name">
+      <span class="nhsuk-details__summary-text searchable-element-title word-break" id="@Model.DelegateId-name" name="name">
         @Model.TitleName
       </span>
     </summary>
@@ -73,9 +73,11 @@
           Unlock progress
         </a>
       }
-      <a class="nhsuk-button delete-button expander-card__button" role="button">
-        Remove from course
-      </a>
+      @if (Model.RemovedDate == null) {
+        <a class="nhsuk-button delete-button expander-card__button" role="button">
+          Remove from course
+        </a>
+      }
     </div>
   </details>
 </div>

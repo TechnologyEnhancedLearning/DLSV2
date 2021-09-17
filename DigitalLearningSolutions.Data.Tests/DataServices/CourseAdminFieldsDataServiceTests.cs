@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -24,16 +25,17 @@
             // Given
             var expectedCourseAdminFieldsResult =
                 CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    "System Access Granted",
+                    "Test",
+                    "Priority Access",
                     null,
-                    "Yes\nNo\nNot sure",
-                    true,
                     null,
-                    "Yes\nNo\nNot sure",
-                    courseCategoryId: 2
+                    null,
+                    2
                 );
 
             // When
-            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0);
 
             // Then
             returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
@@ -49,14 +51,13 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(1379, 1, 1, false, options);
-                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(1379, 101, 0);
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 1, 1, options);
+                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0);
 
                 // Then
                 using (new AssertionScope())
                 {
-                    courseAdminFields.CustomField1Mandatory.Should().BeFalse();
-                    courseAdminFields.CustomField1Options.Should().BeEquivalentTo(options);
+                    courseAdminFields!.CustomField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
@@ -73,6 +74,35 @@
 
             // Then
             result.Should().BeEquivalentTo("System Access Granted");
+        }
+
+        [Test]
+        public void UpdateCustomPromptForCourse_correctly_adds_custom_prompt()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string? options = "options";
+
+                // When
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
+                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2);
+                var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
+                    .Single(c => c.id == 1)
+                    .name;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseCustomPrompts!.CustomField3Prompt.Should().BeEquivalentTo(customPrompt);
+                    courseCustomPrompts.CustomField3Options.Should().BeEquivalentTo(options);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
 
         [Test]
