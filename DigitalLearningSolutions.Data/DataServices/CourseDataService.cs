@@ -25,6 +25,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int completionValidFor,
+            bool mandatory,
+            bool autoRefresh
+        );
     }
 
     public class CourseDataService : ICourseDataService
@@ -393,6 +400,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int completionValidFor,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            connection.Execute(
+                @$"UPDATE Customisations
+                    SET
+                        CompleteWithinMonths = @completeWithinMonths,
+                        CompletionValidFor = @completionValidFor,
+                        Mandatory = @mandatory,
+                        AutoRefresh = @autoRefresh
+                    WHERE CustomisationID = @customisationId",
+                new { completeWithinMonths, completionValidFor, mandatory, autoRefresh, customisationId }
             );
         }
     }

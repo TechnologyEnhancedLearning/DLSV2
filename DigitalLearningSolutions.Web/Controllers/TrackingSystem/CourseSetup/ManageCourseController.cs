@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
@@ -12,10 +14,12 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class ManageCourseController : Controller
     {
+        private readonly ICourseService courseService;
         private readonly ICourseDataService courseDataService;
 
-        public ManageCourseController(ICourseDataService courseDataService)
+        public ManageCourseController(ICourseService courseService, ICourseDataService courseDataService)
         {
+            this.courseService = courseService;
             this.courseDataService = courseDataService;
         }
 
@@ -60,9 +64,24 @@
                 return NotFound();
             }
 
-            var model = new LearningPathwayDefaultsViewModel(courseDetails);
+            var model = new EditLearningPathwayDefaultsViewModel(courseDetails);
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("{customisationId}/Manage/LearningPathwayDefaults")]
+        public IActionResult SaveLearningPathwayDefaults(int customisationId, EditLearningPathwayDefaultsViewModel model)
+        {
+            courseService.UpdateLearningPathwayDefaultsForCourse(
+                model.CustomisationId,
+                model.CompleteWithinMonths,
+                model.CompletionValidFor,
+                model.Mandatory,
+                model.AutoRefresh
+            );
+
+            return RedirectToAction("Index", new { customisationId = model.CustomisationId });
         }
     }
 }

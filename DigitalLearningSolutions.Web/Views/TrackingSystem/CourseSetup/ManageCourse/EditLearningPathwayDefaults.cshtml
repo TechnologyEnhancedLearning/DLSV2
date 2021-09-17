@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 @using Microsoft.Extensions.Configuration
-@model LearningPathwayDefaultsViewModel
+@model EditLearningPathwayDefaultsViewModel
 
 @{
   ViewData["Title"] = "Edit Learning Pathway defaults";
@@ -29,7 +29,7 @@
         <div class="nhsuk-hint">
           Within how many months of enrolment should the learner complete the course?
         </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" inputmode="numeric">
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" spellcheck="false" pattern="[0-9]*" inputmode="numeric">
       </div>
 
       <div class="nhsuk-form-group">
@@ -40,7 +40,7 @@
           For how many months after completion will the completion remain valid
           (before the learner is expected to complete the course again)?
         </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" inputmode="numeric">
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" spellcheck="false" pattern="[0-9]*" inputmode="numeric">
       </div>
 
       <div class="nhsuk-checkboxes nhsuk-u-margin-bottom-3">
