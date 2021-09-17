@@ -572,5 +572,19 @@
             };
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary, ManageOptionalCompetenciesViewModel model)
+        {
+            int candidateId = User.GetCandidateIdKnownNotNull();
+            selfAssessmentService.InsertCandidateAssessmentOptionalCompetenciesIfNotExist(selfAssessmentId, candidateId);
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+            foreach(var competency in optionalCompetencies)
+            {
+                bool include = (model.IncludedCompetencyIds == null ? false : model.IncludedCompetencyIds.Contains(competency.Id) ? true : false);
+                selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(competency.Id, include, selfAssessmentId, candidateId);
+            }
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId });
+        }
     }
 }

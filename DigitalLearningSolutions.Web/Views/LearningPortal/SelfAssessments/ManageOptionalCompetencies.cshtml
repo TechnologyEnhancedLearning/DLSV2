@@ -17,7 +17,7 @@
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedCompetencyIds) })" />
 }
 <h2><small>Which optional competencies would you like to include in your self-assessment?</small></h2>
-<form>
+<form method="post">
   <nhs-form-group nhs-validation-for="IncludedCompetencyIds">
     @foreach (var competencyGroup in Model.CompetencyGroups)
     {
@@ -31,7 +31,7 @@
           @foreach (var competency in competencyGroup)
           {
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="competency-check-@competency.Id" name="ResultIds" checked="@(Model.IncludedCompetencyIds != null ? Model.IncludedCompetencyIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
+              <input class="nhsuk-checkboxes__input" id="competency-check-@competency.Id" name="IncludedCompetencyIds" checked="@(Model.IncludedCompetencyIds != null ? Model.IncludedCompetencyIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
                 @competency.Name
               </label>
