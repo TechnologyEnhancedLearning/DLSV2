@@ -28,7 +28,40 @@
     </p>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-application="@Model.Application.UrlSnippet">
-      <partial name="_ChangePasswordForm" model="Model.FormData" />
+      <vc:text-input-with-configurable-model
+        model="@Model.FormData"
+        asp-for="@nameof(Model.FormData.CurrentPassword)"
+        label="Current password"
+        populate-with-current-value="false"
+        type="password"
+        spell-check="false"
+        hint-text=""
+        autocomplete="current-password"
+        css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input-with-configurable-model
+        model="@Model.FormData"
+        asp-for="@nameof(Model.FormData.Password)"
+        label="New password"
+        populate-with-current-value="false"
+        type="password"
+        spell-check="false"
+        hint-text="Your new password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
+        autocomplete="new-password"
+        css-class="nhsuk-u-width-one-half" />
+
+      <vc:text-input-with-configurable-model
+        model="@Model.FormData"
+        asp-for="@nameof(Model.FormData.ConfirmPassword)"
+        label="Re-type new password"
+        populate-with-current-value="false"
+        type="password"
+        spell-check="false"
+        hint-text=""
+        autocomplete="new-password"
+        css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Change password</button>
     </form>
 
     <vc:cancel-link asp-controller="MyAccount" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
