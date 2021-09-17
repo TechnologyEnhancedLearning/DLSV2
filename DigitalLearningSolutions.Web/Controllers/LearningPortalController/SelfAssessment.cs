@@ -274,49 +274,46 @@
             TempData.Set(sessionAddSupervisor);
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Email")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult AddNewSupervisor(int selfAssessmentId)
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
+            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(User.GetCentreId(), selfAssessmentId);
             var model = new AddSupervisorViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
-                SupervisorEmail = sessionAddSupervisor.SupervisorEmail
+                SupervisorAdminID = sessionAddSupervisor.SupervisorAdminId,
+                Supervisors = supervisors
             };
             return View("SelfAssessments/AddSupervisor", model);
         }
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Email")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult SetSupervisorName(AddSupervisorViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("SelfAssessments/AddSupervisor", model);
             }
+            var supervisor = selfAssessmentService.GetSupervisorByAdminId(model.SupervisorAdminID);
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
-            sessionAddSupervisor.SupervisorEmail = model.SupervisorEmail;
-            TempData.Set(sessionAddSupervisor);
+            sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
+            sessionAddSupervisor.SupervisorEmail = supervisor.Email;
             var roles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
             if (roles.Count() > 1)
             {
+                TempData.Set(sessionAddSupervisor);
                 return RedirectToAction("SetSupervisorRole", new { model.SelfAssessmentID });
             }
             int? supervisorRoleId = null;
             if (roles.Count() == 1)
             {
                 sessionAddSupervisor.SelfAssessmentSupervisorRoleId = roles.First().ID;
+                TempData.Set(sessionAddSupervisor);
             }
-            var summaryModel = new AddSupervisorSummaryViewModel()
-            {
-                SelfAssessmentID = model.SelfAssessmentID,
-                SelfAssessmentName = model.SelfAssessmentName,
-                SupervisorEmail = model.SupervisorEmail,
-                SelfAssessmentSupervisorRoleId = supervisorRoleId,
-                SelfAssessmentRoleName = (supervisorRoleId == null ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)supervisorRoleId).RoleName)
-            };
-            TempData.Set(sessionAddSupervisor);
+            
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
@@ -325,11 +322,12 @@
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
             var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var setRoleModel = new SetSupervisorRoleViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentSupervisorRoles = roles,
-                SupervisorEmail = sessionAddSupervisor.SupervisorEmail,
+                Supervisor = supervisor,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName
             };
             if (sessionAddSupervisor.SelfAssessmentSupervisorRoleId != null)
@@ -358,11 +356,12 @@
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
             var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var summaryModel = new AddSupervisorSummaryViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
-                SupervisorEmail = sessionAddSupervisor.SupervisorEmail,
+                Supervisor = supervisor,
                 SelfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId,
                 SelfAssessmentRoleName = (sessionAddSupervisor.SelfAssessmentSupervisorRoleId == null ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId).RoleName),
                 RoleCount = roles.Count()
@@ -375,7 +374,7 @@
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
-            var supervisorDelegateId = supervisorService.AddSuperviseDelegate(null, User.GetCandidateIdKnownNotNull(), User.GetUserEmail(), sessionAddSupervisor.SupervisorEmail, User.GetCentreId());
+            var supervisorDelegateId = supervisorService.AddSuperviseDelegate(sessionAddSupervisor.SupervisorAdminId, User.GetCandidateIdKnownNotNull(), User.GetUserEmail(), sessionAddSupervisor.SupervisorEmail, User.GetCentreId());
             supervisorService.InsertCandidateAssessmentSupervisor(User.GetCandidateIdKnownNotNull(), supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID, sessionAddSupervisor.SelfAssessmentSupervisorRoleId);
             frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID);
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });

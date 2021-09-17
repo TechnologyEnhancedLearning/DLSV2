@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using Microsoft.Extensions.Logging;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.Common.Users;
 
     public interface ISelfAssessmentService
     {
@@ -31,6 +32,8 @@
         List<int> GetCandidateAssessmentIncludedOptionalCompetencies(int selfAssessmentId, int candidateId);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
+        Administrator GetSupervisorByAdminId(int supervisorAdminId);
         //UPDATE
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -731,6 +734,29 @@ WHERE cas.ID = @candidateAssessmentSupervisorId", new { candidateAssessmentSuper
                     $"Self assessment id: {selfAssessmentId}, candidate id: {candidateId}, competencyId: {competencyId}, include: {include} "
                 );
             }
+        }
+
+        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId)
+        {
+            return connection.Query<Administrator>(
+                @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
+                    FROM   AdminUsers
+                    WHERE (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
+                       (Supervisor = 1) AND (Active = 1) AND (CategoryID =
+                   (SELECT CategoryID
+                     FROM    SelfAssessments
+                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)",
+                new { centreId, selfAssessmentId }
+                );
+        }
+
+        public Administrator GetSupervisorByAdminId(int supervisorAdminId)
+        {
+            return connection.Query<Administrator>(
+                @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
+                    FROM   AdminUsers
+                    WHERE (AdminID = @supervisorAdminId)", new { supervisorAdminId }
+                ).Single();
         }
     }
 }
