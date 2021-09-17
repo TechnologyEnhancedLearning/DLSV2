@@ -138,5 +138,36 @@
             categories = categories.Prepend("All");
             return categories;
         }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpGet]
+        public IActionResult DeactivateAdmin(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (adminUser == null)
+            {
+                return NotFound();
+            }
+
+            var model = new DeactivateAdminViewModel(adminUser);
+            return View(model);
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpPost]
+        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        {
+            if (!model.Confirm)
+            {
+                ModelState.AddModelError(
+                    nameof(DeactivateAdminViewModel.Confirm),
+                    "You must confirm before deactivating this account."
+                );
+                return View(model);
+            }
+
+            userDataService.DeactivateAdmin(adminId);
+            return RedirectToAction("Index");
+        }
     }
 }
