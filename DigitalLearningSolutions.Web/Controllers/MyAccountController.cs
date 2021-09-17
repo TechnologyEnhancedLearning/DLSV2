@@ -142,7 +142,7 @@
 
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { application = application.UrlSnippet });
+            return RedirectToAction("Index", new { application = application.UrlSegment });
         }
 
         private IActionResult EditDetailsPostPreviewImage(EditDetailsFormData formData, ApplicationType application)

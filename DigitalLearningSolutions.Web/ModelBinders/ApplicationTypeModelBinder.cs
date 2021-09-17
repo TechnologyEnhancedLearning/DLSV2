@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
             {
                 bindingContext.Result = ModelBindingResult.Success(ApplicationType.Default);
             }
-            else if (ApplicationType.TryGetFromUrlSnippet(enumerationName.FirstValue, out var result, true))
+            else if (ApplicationType.TryGetFromUrlSegment(enumerationName.FirstValue, out var result, true))
             {
                 bindingContext.Result = ModelBindingResult.Success(result!);
             }

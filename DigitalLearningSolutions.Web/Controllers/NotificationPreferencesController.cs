@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 notificationIds
             );
 
-            return RedirectToAction("Index", "NotificationPreferences", new { application = application.UrlSnippet });
+            return RedirectToAction("Index", "NotificationPreferences", new { application = application.UrlSegment });
         }
 
         private UserReference? GetUserReference(UserType? userType)

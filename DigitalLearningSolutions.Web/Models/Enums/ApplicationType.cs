@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
         public readonly string HeaderExtension;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
-        public readonly string? UrlSnippet;
+        public readonly string? UrlSegment;
 
         private ApplicationType(
             int id,
@@ -51,7 +51,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             string headerExtension,
             string? headerPath,
             string? headerPathName,
-            string? urlSnippet
+            string? urlSegment
         ) : base(id, name)
         {
             HeaderExtension = headerExtension;
@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
 
             HeaderPathName = headerPathName;
 
-            UrlSnippet = urlSnippet;
+            UrlSegment = urlSegment;
         }
 
         public static implicit operator ApplicationType(string value)
@@ -82,15 +82,15 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             return applicationType?.Name;
         }
 
-        public static bool TryGetFromUrlSnippet(
-            string urlSnippet,
+        public static bool TryGetFromUrlSegment(
+            string urlSegment,
             out ApplicationType? enumeration,
             bool ignoreCase = false
         )
         {
             var comparison =
                 ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture;
-            return TryParse(item => string.Equals(item.UrlSnippet, urlSnippet, comparison), out enumeration);
+            return TryParse(item => string.Equals(item.UrlSegment, urlSegment, comparison), out enumeration);
         }
     }
 }

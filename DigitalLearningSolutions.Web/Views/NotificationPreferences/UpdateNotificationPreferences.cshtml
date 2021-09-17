@@ -9,7 +9,7 @@
   ViewData["HeaderPath"] = Model.Application.HeaderPath;
   ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSnippet }
+    { "application", Model.Application.UrlSegment }
   };
 }
 
@@ -25,7 +25,7 @@
           asp-controller="NotificationPreferences"
           asp-action="SaveNotificationPreferences"
           asp-route-userType="@Model.UserType"
-          asp-route-application="@Model.Application.UrlSnippet">
+          asp-route-application="@Model.Application.UrlSegment">
       <div class="nhsuk-form-group">
         <div class="nhsuk-fieldset" aria-describedby="notification-hint">
           <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>
