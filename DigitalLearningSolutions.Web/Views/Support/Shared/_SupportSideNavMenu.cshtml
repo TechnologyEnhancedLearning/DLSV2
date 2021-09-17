@@ -5,7 +5,7 @@
 @model SupportViewModel
 
 @{
-  var routeData = new Dictionary<string, string?> { { "application", Model.Application.Name } };
+  var routeData = new Dictionary<string, string?> { { "application", Model.Application.UrlSegment } };
 }
 
 <h2 class="side-nav__heading">Support</h2>

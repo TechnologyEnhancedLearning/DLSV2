@@ -38,7 +38,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "LearningPortal"
         );
 
-        public static readonly ApplicationType Default = Main;
+        public static ApplicationType Default => Main;
 
         public readonly string HeaderExtension;
         public readonly string? HeaderPath;
