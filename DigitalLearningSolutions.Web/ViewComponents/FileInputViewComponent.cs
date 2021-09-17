@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
+    [Obsolete("Use <FileInputWithConfigurableModelViewComponent> instead.")]
     public class FileInputViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(

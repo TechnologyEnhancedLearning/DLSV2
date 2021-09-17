@@ -1,15 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Obsolete("Use <SelectListWithConfigurableModelViewComponent> instead.")]
-    public class SelectListViewComponent : ViewComponent
+    public class SelectListWithConfigurableModelViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
+            object model,
             string aspFor,
             string label,
             string value,
@@ -20,8 +19,6 @@
             bool? deselectable
         )
         {
-            var model = ViewData.Model;
-
             var property = model.GetType().GetProperty(aspFor);
 
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
@@ -40,7 +37,7 @@
                 hasError,
                 deselectable ?? false
             );
-            return View(selectListViewModel);
+            return View("~/Views/Shared/Components/SelectList/Default.cshtml", selectListViewModel);
         }
     }
 }
