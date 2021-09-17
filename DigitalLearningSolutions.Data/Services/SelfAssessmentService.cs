@@ -21,12 +21,14 @@
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
+        IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId);
         Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         SelfAssessmentSupervisor GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(int candidateAssessmentSupervisorId);
+        List<int> GetCandidateAssessmentIncludedOptionalCompetencies(int selfAssessmentId, int candidateId);
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
@@ -144,7 +146,7 @@
                             ON AQ.ID = CAQ.AssessmentQuestionID
                         INNER JOIN CandidateAssessments AS CA
                             ON CA.SelfAssessmentID = @selfAssessmentId
-                                   AND CA.CandidateID = @candidateId
+                                   AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
                         LEFT OUTER JOIN LatestAssessmentResults AS LAR
                             ON LAR.CompetencyID = C.ID
                                    AND LAR.AssessmentQuestionID = AQ.ID
@@ -654,6 +656,45 @@ FROM   SupervisorDelegates AS sd INNER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 WHERE cas.ID = @candidateAssessmentSupervisorId", new { candidateAssessmentSupervisorId }).FirstOrDefault();
+        }
+
+        public IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<Competency>(
+                $@"SELECT C.ID       AS Id,
+                                                  ROW_NUMBER() OVER (ORDER BY SAS.Ordering) as RowNo,
+                                                  C.Name AS Name,
+                                                  C.Description AS Description,
+                                                  CG.Name       AS CompetencyGroup,
+                                                  'Capability' AS Vocabulary,
+                                                  SAS.Optional
+                    FROM Competencies AS C
+                        INNER JOIN CandidateAssessments AS CA
+                            ON CA.SelfAssessmentID = @selfAssessmentId
+                                   AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
+                        INNER JOIN SelfAssessmentStructure AS SAS
+                            ON C.ID = SAS.CompetencyID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID
+                    WHERE (SAS.Optional = 1)
+                    ORDER BY SAS.Ordering", new { selfAssessmentId, candidateId }
+            );
+        }
+
+        public List<int> GetCandidateAssessmentIncludedOptionalCompetencies(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<int>(
+                $@"SELECT CompetencyID
+                    FROM CandidateAssessmentOptionalCompetencies AS CAOC
+                    INNER JOIN CandidateAssessments  AS CA ON CAOC.CandidateAssessmentID = CA.ID
+                            AND CA.SelfAssessmentID = @selfAssessmentId
+                                   AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL
+                    WHERE (CAOC.IncludedInSelfAssessment = 1)", new { selfAssessmentId, candidateId }
+            ).ToList();
         }
     }
 }

@@ -5,13 +5,13 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class VerificationPickResultsViewModel
+    public class ManageOptionalCompetenciesViewModel
     {
         public int SelfAssessmentId { get; set; }
         public string? Vocabulary { get; set; }
         public string? SelfAssessmentName { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
-        public List<int>? ResultIds { get; set; }
+        public List<int>? IncludedCompetencyIds { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(Vocabulary);
