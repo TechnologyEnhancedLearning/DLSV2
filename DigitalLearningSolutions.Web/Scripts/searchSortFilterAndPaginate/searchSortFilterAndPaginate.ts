@@ -49,6 +49,7 @@ export class SearchSortFilterAndPaginate {
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.page = 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
@@ -59,11 +60,13 @@ export class SearchSortFilterAndPaginate {
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.page += 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.page -= 1;
     this.searchSortAndPaginate(searchableData);
+    SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private searchSortAndPaginate(searchableData: ISearchableData): void {
@@ -73,11 +76,7 @@ export class SearchSortFilterAndPaginate {
       : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
 
-    if (this.shouldDisplayResultCount()) {
-      SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
-    } else {
-      SearchSortFilterAndPaginate.hideResultCount();
-    }
+    SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
 
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
@@ -145,12 +144,6 @@ export class SearchSortFilterAndPaginate {
     Details();
   }
 
-  private shouldDisplayResultCount(): boolean {
-    const filterString = this.filterEnabled ? getFilterByValue() : false;
-    const searchString = getQuery();
-    return !!(filterString || searchString);
-  }
-
   static updateResultCount(count: number): void {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
     resultCount.hidden = false;
@@ -158,9 +151,7 @@ export class SearchSortFilterAndPaginate {
     resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
   }
 
-  static hideResultCount(): void {
-    const resultCount = <HTMLSpanElement>document.getElementById('results-count');
-    resultCount.hidden = true;
-    resultCount.setAttribute('aria-hidden', 'true');
+  private static scrollToTop() : void {
+    window.scrollTo(0, 0);
   }
 }

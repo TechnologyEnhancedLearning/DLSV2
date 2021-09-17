@@ -2,7 +2,8 @@
 @model BaseSearchablePageViewModel
 
 <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by</label>
-<div class="js-only-block" id="filter-select">
+<div class="filter-container">
+  <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
   <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown-selector"
           id="filter-selector"
           name="filterCategorySelector"
@@ -12,29 +13,33 @@
       <option value="filter-@filter.FilterProperty">@filter.FilterName</option>
     }
   </select>
+  <div class="filters-container" id="filters-container">
+    @foreach (var filter in Model.Filters) {
+      <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
+        <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+          <input type="hidden" name="searchString" value="@Model.SearchString" />
+          <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+          <input type="hidden" name="sortBy" value="@Model.SortBy" />
+          <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+
+          <div class="filter-value-container">
+            <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
+                    name="filterValue"
+                    id="@filter.FilterProperty"
+                    aria-label="@filter.FilterName filter">
+              <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
+              @foreach (var filterOption in filter.FilterOptions) {
+                <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
+              }
+            </select>
+            <button class="nhsuk-search__submit filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">
+              Add filter
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
 </div>
-<div id="filters-container">
-  @foreach (var filter in Model.Filters) {
-    <div class="filter-dropdown-container" id="filter-@filter.FilterProperty">
-      <form method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
-        <input type="hidden" name="searchString" value="@Model.SearchString" />
-        <input type="hidden" name="filterBy" value="@Model.FilterBy" />
-        <input type="hidden" name="sortBy" value="@Model.SortBy" />
-        <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-        
-        <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
-                name="filterValue"
-                id="@filter.FilterProperty"
-                aria-label="@filter.FilterName filter">
-          <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
-          @foreach (var filterOption in filter.FilterOptions) {
-            <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
-          }
-        </select>
-        <button class="nhsuk-search__submit filter-submit" type="submit" id="@filter.FilterProperty-submit">
-          Add filter
-        </button>
-      </form>
-    </div>
-  }
-</div>
+
+<vc:current-filters searchable-page-view-model="Model" />

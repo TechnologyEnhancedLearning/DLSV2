@@ -40,5 +40,7 @@
             FrameworkSortByOptions.FrameworkCategory,
             FrameworkSortByOptions.FrameworkTopic
         };
+
+        public override bool NoDataFound => !BrandedFrameworks.Any() && NoSearchOrFilter;
     }
 }
