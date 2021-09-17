@@ -117,18 +117,19 @@
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId)
         {
+            int candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Overview";
-            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment overview for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                logger.LogWarning($"Attempt to display self assessment overview for candidate {candidateId} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+            selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
 
-            selfAssessmentService.UpdateLastAccessed(assessment.Id, User.GetCandidateIdKnownNotNull());
-
-            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, User.GetCandidateIdKnownNotNull()).ToList();
+            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             foreach (var competency in competencies)
             {
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
@@ -143,7 +144,8 @@
             {
                 SelfAssessment = assessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
-                PreviousCompetencyNumber = Math.Max(competencies.Count(), 1)
+                PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
+                NumberOfOptionalCompetencies = optionalCompetencies.Count()
             };
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -487,7 +489,7 @@
             var competencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList());
             var model = new VerificationPickResultsViewModel()
             {
-                Vocubulary = sessionRequestVerification.Vocabulary,
+                Vocabulary = sessionRequestVerification.Vocabulary,
                 SelfAssessmentId = sessionRequestVerification.SelfAssessmentID,
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
@@ -552,6 +554,37 @@
             }
 
             return RedirectToAction("SelfAssessmentOverview", new { sessionRequestVerification.SelfAssessmentID });
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary)
+        {
+            int candidateId = User.GetCandidateIdKnownNotNull();
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+            var includedCompetencyIds = selfAssessmentService.GetCandidateAssessmentIncludedOptionalCompetencies(selfAssessmentId, candidateId);
+            var model = new ManageOptionalCompetenciesViewModel()
+            {
+                SelfAssessmentId = selfAssessmentId,
+                SelfAssessmentName = assessment.Name,
+                Vocabulary = vocabulary,
+                CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
+                IncludedCompetencyIds = includedCompetencyIds
+            };
+            return View("SelfAssessments/ManageOptionalCompetencies", model);
+        }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary, ManageOptionalCompetenciesViewModel model)
+        {
+            int candidateId = User.GetCandidateIdKnownNotNull();
+            selfAssessmentService.InsertCandidateAssessmentOptionalCompetenciesIfNotExist(selfAssessmentId, candidateId);
+            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
+            foreach(var competency in optionalCompetencies)
+            {
+                bool include = (model.IncludedCompetencyIds == null ? false : model.IncludedCompetencyIds.Contains(competency.Id) ? true : false);
+                selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(competency.Id, include, selfAssessmentId, candidateId);
+            }
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId });
         }
     }
 }

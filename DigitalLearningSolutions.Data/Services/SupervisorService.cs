@@ -45,7 +45,7 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
              cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
              AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
 FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
@@ -146,7 +146,7 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                 }
                 if (supervisorAdminId != null)
                 {
-                    connection.Execute("@UPDATE AdminUsers SET Supervisor = 1 WHERE Admin ID = @supervisorAdminId AND Supervisor = 0");
+                    connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
                 }
                 var numberOfAffectedRows = connection.Execute(
          @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
