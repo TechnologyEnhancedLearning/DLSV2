@@ -4,7 +4,6 @@
 .filter-container {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   width: 100%;
 
   @include mq($until: desktop) {
@@ -30,7 +29,6 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  flex-wrap: wrap;
 }
 
 .filter-dropdown-container {
@@ -49,7 +47,6 @@
 .filter-value-container {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   width: 100%;
 }
 
@@ -81,7 +78,6 @@
 .applied-filters-container {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   width: 100%;
 
   @include mq($until: tablet) {
