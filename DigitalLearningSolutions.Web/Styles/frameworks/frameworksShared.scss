@@ -3,6 +3,8 @@
 @import "../shared/searchableElements/searchableElements";
 $nhs-dark-grey: #425563;
 
+// These overrides for the search/sort components are so that the no-js buttons can
+// be displayed when js is enabled since these pages don't use the js search/sort
 .search-box {
   .js-enabled & {
     border-right: 0;
@@ -57,10 +59,6 @@ $nhs-dark-grey: #425563;
   text-align: center;
   font-size: 12px;
   padding: 4px;
-}
-
-.nhsuk-details__text {
-  padding-bottom: 0 !important;
 }
 
 .nhsuk-details__text {

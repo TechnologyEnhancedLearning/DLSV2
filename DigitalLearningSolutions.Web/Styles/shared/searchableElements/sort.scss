@@ -14,10 +14,7 @@
 
 .sort-by-dropdown {
   @extend .left-dropdown;
-
-  @include mq($until: tablet) {
-    width: 100%;
-  }
+  width: 100%;
 
   @include mq($from: tablet) {
     flex: 1;
@@ -36,10 +33,7 @@
 
 .sort-direction-dropdown {
   @extend .input-with-no-js-submit-button;
-
-  @include mq($until: tablet) {
-    width: 100%;
-  }
+  width: 100%;
 
   @include mq($from: tablet) {
     flex: 1;
