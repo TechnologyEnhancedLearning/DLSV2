@@ -24,6 +24,7 @@
         IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
         RoleProfile GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
+        IEnumerable<SelfAssessmentSupervisorRole> GetDelegateNominatableSupervisorRolesForSelfAssessment(int selfAssessmentId);
         SelfAssessmentSupervisorRole GetSupervisorRoleById(int id);
         DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
         CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
@@ -374,6 +375,15 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
                   WHERE (SelfAssessmentID = @selfAssessmentId)
+                  ORDER BY RoleName", new { selfAssessmentId }
+               );
+        }
+        public IEnumerable<SelfAssessmentSupervisorRole> GetDelegateNominatableSupervisorRolesForSelfAssessment(int selfAssessmentId)
+        {
+            return connection.Query<SelfAssessmentSupervisorRole>(
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+                  FROM   SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowDelegateNomination = 1)
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
