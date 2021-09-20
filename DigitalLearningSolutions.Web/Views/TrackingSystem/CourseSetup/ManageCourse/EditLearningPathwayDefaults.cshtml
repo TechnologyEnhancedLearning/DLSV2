@@ -21,26 +21,29 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post"
           asp-controller="ManageCourse"
-          asp-action="EditLearningPathwayDefaults">
+          asp-action="SaveLearningPathwayDefaults"
+          asp-route-customisationId="@Model.CustomisationId">
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" asp-for="CompleteWithinMonths">
+        <label class="nhsuk-label" for="CompleteWithinMonths">
           Completion within (in months)
         </label>
         <div class="nhsuk-hint">
           Within how many months of enrolment should the learner complete the course?
         </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" spellcheck="false" pattern="[0-9]*" inputmode="numeric">
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" id="CompleteWithinMonths" asp-for="CompleteWithinMonths"
+               spellcheck="false" pattern="[0-9]*" inputmode="numeric">
       </div>
 
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" asp-for="CompleteWithinMonths">
+        <label class="nhsuk-label" for="ValidityMonths">
           Completion valid for (in months)
         </label>
         <div class="nhsuk-hint">
           For how many months after completion will the completion remain valid
           (before the learner is expected to complete the course again)?
         </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" spellcheck="false" pattern="[0-9]*" inputmode="numeric">
+        <input class="nhsuk-input nhsuk-input--width-10" type="text" id="ValidityMonths" asp-for="ValidityMonths"
+               spellcheck="false" pattern="[0-9]*" inputmode="numeric">
       </div>
 
       <div class="nhsuk-checkboxes nhsuk-u-margin-bottom-3">
@@ -48,6 +51,7 @@
         <div class="nhsuk-checkboxes__item">
           <input class="nhsuk-checkboxes__input"
                  type="checkbox"
+                 id="Mandatory"
                  asp-for="Mandatory">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="Mandatory">
             Course is mandatory
@@ -59,6 +63,7 @@
         <div class="nhsuk-checkboxes__item">
           <input class="nhsuk-checkboxes__input"
                  type="checkbox"
+                 id="AutoRefresh"
                  asp-for="AutoRefresh">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="AutoRefresh">
             Enable auto-refresh
@@ -69,9 +74,6 @@
         </div>
       </div>
       <button class="nhsuk-button" type="submit">Save</button>
-
     </form>
-
-
   </div>
 </div>

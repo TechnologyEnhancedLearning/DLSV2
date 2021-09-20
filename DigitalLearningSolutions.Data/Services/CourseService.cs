@@ -15,7 +15,7 @@
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
-            int completionValidFor,
+            int validityMonths,
             bool mandatory,
             bool autoRefresh
         );
@@ -87,7 +87,7 @@
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
-            int completionValidFor,
+            int validityMonths,
             bool mandatory,
             bool autoRefresh
         )
@@ -95,7 +95,7 @@
             courseDataService.UpdateLearningPathwayDefaultsForCourse(
                 customisationId,
                 completeWithinMonths,
-                completionValidFor,
+                validityMonths,
                 mandatory,
                 autoRefresh
             );

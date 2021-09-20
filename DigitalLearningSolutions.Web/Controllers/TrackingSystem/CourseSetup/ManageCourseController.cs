@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -14,8 +13,8 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class ManageCourseController : Controller
     {
-        private readonly ICourseService courseService;
         private readonly ICourseDataService courseDataService;
+        private readonly ICourseService courseService;
 
         public ManageCourseController(ICourseService courseService, ICourseDataService courseDataService)
         {
@@ -71,12 +70,20 @@
 
         [HttpPost]
         [Route("{customisationId}/Manage/LearningPathwayDefaults")]
-        public IActionResult SaveLearningPathwayDefaults(int customisationId, EditLearningPathwayDefaultsViewModel model)
+        public IActionResult SaveLearningPathwayDefaults(
+            int customisationId,
+            EditLearningPathwayDefaultsViewModel model
+        )
         {
+            if (customisationId != model.CustomisationId)
+            {
+                return new StatusCodeResult(500);
+            }
+
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 model.CustomisationId,
                 model.CompleteWithinMonths,
-                model.CompletionValidFor,
+                model.ValidityMonths,
                 model.Mandatory,
                 model.AutoRefresh
             );

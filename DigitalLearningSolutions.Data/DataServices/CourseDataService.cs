@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
-            int completionValidFor,
+            int validityMonths,
             bool mandatory,
             bool autoRefresh
         );
@@ -406,20 +406,20 @@ namespace DigitalLearningSolutions.Data.DataServices
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
-            int completionValidFor,
+            int validityMonths,
             bool mandatory,
             bool autoRefresh
         )
         {
             connection.Execute(
-                @$"UPDATE Customisations
+                @"UPDATE Customisations
                     SET
                         CompleteWithinMonths = @completeWithinMonths,
-                        CompletionValidFor = @completionValidFor,
+                        ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
                         AutoRefresh = @autoRefresh
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, completionValidFor, mandatory, autoRefresh, customisationId }
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
             );
         }
     }
