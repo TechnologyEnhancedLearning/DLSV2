@@ -63,20 +63,38 @@
       <div class="nhsuk-hint" id="includeComments-hint">
         When this question is presented, should the user be prompted for supporting comments by default?
       </div>
-      <div class="nhsuk-checkboxes">
-        <div class="nhsuk-radios">
-          <div class="nhsuk-radios__item">
-            <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true">
-            <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
-              Yes
+      <div class="nhsuk-radios nhsuk-radios--conditional">
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true" aria-controls="conditional-comments-options" aria-expanded="@(Model.AssessmentQuestionDetail.IncludeComments == true)">
+          <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
+            Yes
+          </label>
+        </div>
+        <div class="@(Model.AssessmentQuestionDetail.IncludeComments == true ? "nhsuk-radios__conditional" : "nhsuk-radios__conditional nhsuk-radios__conditional--hidden")" id="conditional-comments-options">
+          <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsPrompt">
+            <label class="nhsuk-label" for="comments-prompt">
+              Comments field prompt (optional)
             </label>
-          </div>
-          <div class="nhsuk-radios__item">
-            <input class="nhsuk-radios__input" id="rb-includeComments-no" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="false">
-            <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-no">
-              No
+            <div class="nhsuk-hint" id="custom-prompt-text-hint">
+              By default the comments field will be labelled "Supporting comments". If required, enter a custom label for the comments box.
+            </div>
+            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-prompt" name="CommentsPrompt" asp-for="AssessmentQuestionDetail.CommentsPrompt" type="text">
+          </nhs-form-group>
+          <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsHint">
+            <label class="nhsuk-label" for="comments-hint">
+              Comments field hint text (optional)
             </label>
-          </div>
+            <div class="nhsuk-hint" id="custom-prompt-text-hint">
+              Briefly describe what the user should include in the commments field, if required.
+            </div>
+            <input class="nhsuk-input nhsuk-u-width-two-thirds" id="comments-hint" name="CommentsHint" asp-for="AssessmentQuestionDetail.CommentsHint" type="text">
+          </nhs-form-group>
+        </div>
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input" id="rb-includeComments-no" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="false">
+          <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-no">
+            No
+          </label>
         </div>
       </div>
     </div>

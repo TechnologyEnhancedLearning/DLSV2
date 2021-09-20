@@ -7,7 +7,7 @@
         public override void Up()
         {
             Alter.Table("AssessmentQuestions").AddColumn("CommentsPrompt").AsString(50).Nullable()
-                .AddColumn("CommentsHint").AsString("255").Nullable();
+                .AddColumn("CommentsHint").AsString(255).Nullable();
         }
     }
 }
