@@ -8,6 +8,7 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
         SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
+        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, bool setConfirmed);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -63,6 +64,17 @@
                       AND sd.CandidateID IS NULL
                       AND sd.Removed IS NULL",
                 new { centreId, email }
+            );
+        }
+
+        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, bool setConfirmed)
+        {
+            connection.Execute(
+                @"UPDATE SupervisorDelegates
+                    SET CandidateID = @candidateId,
+                        Confirmed = @setConfirmed OR Confirmed
+                    WHERE ID = @supervisorDelegateId",
+                new { supervisorDelegateId, candidateId, setConfirmed }
             );
         }
     }

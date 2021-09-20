@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -55,6 +56,7 @@
         private IEmailService emailService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
+        private ISupervisorDelegateService supervisorDelegateService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
 
@@ -67,6 +69,7 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
+            supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
@@ -87,7 +90,8 @@
                 passwordResetService,
                 emailService,
                 centresDataService,
-                config
+                config,
+                supervisorDelegateService
             );
         }
 
@@ -222,6 +226,102 @@
 
             // Then
             candidateNumber.Should().Be(NewCandidateNumber);
+        }
+
+        [Test]
+        public void
+            Registering_delegate_should_update_SupervisorDelegate_record_correctly_if_valid_supervisorDelegateId_set()
+        {
+            // Given
+            const int supervisorDelegateId = 2;
+            var centreId = testRegistrationModel.Centre;
+            A.CallTo(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
+                    centreId,
+                    supervisorDelegateId,
+                    testRegistrationModel.Email
+                )
+            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, supervisorDelegateId);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                    supervisorDelegateId,
+                    centreId,
+                    NewCandidateNumber,
+                    true
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            Registering_delegate_should_update_SupervisorDelegate_record_correctly_if_invalid_supervisorDelegateId_but_record_found_using_email()
+        {
+            // Given
+            const int invalidSupervisorDelegateId = 45;
+            const int supervisorDelegateId = 2;
+            var centreId = testRegistrationModel.Centre;
+            A.CallTo(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
+                    centreId,
+                    invalidSupervisorDelegateId,
+                    testRegistrationModel.Email
+                )
+            ).Returns(null);
+            A.CallTo(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
+                    centreId,
+                    testRegistrationModel.Email
+                )
+            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+
+            // When
+            registrationService.RegisterDelegate(
+                testRegistrationModel,
+                string.Empty,
+                false,
+                invalidSupervisorDelegateId
+            );
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                    supervisorDelegateId,
+                    centreId,
+                    NewCandidateNumber,
+                    false
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            Registering_delegate_should_not_update_SupervisorDelegate_record_if_no_SupervisorDelegate_record_found()
+        {
+            // Given
+            A.CallTo(
+                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
+                    testRegistrationModel.Centre,
+                    testRegistrationModel.Email
+                )
+            ).Returns(null);
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<bool>._
+                )
+            ).MustNotHaveHappened();
         }
 
         [Test]

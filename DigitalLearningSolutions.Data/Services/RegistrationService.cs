@@ -65,26 +65,30 @@ namespace DigitalLearningSolutions.Data.Services
                 supervisorDelegateId,
                 delegateRegistrationModel.Email
             );
-
-            // TODO 602
-
-            var centreIpPrefixes =
-                centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
+            
+            var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved = foundById ||
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber =
-                registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 return (candidateNumber, false);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.PasswordHash!
-            );
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
+
+            if (supervisorDelegateRecord != null)
+            {
+                supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                    supervisorDelegateRecord.ID,
+                    delegateRegistrationModel.Centre,
+                    candidateNumber,
+                    foundById
+                );
+            }
+
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
@@ -152,8 +156,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.JobGroup,
                 registrationModel.PasswordHash!
             ) { Approved = true };
-            var candidateNumber =
-                registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 throw new Exception(
@@ -161,10 +164,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.PasswordHash!
-            );
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
         }
 
         private Email GenerateApprovalEmail(
@@ -216,7 +216,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             var foundById = supervisorDelegateRecord != null;
 
-            supervisorDelegateRecord ??= supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
+            supervisorDelegateRecord ??=
+                supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
 
             return (supervisorDelegateRecord, foundById);
         }

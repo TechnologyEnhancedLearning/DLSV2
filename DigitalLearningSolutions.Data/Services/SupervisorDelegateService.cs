@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
 
     public interface ISupervisorDelegateService
@@ -14,15 +15,19 @@
         );
 
         SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
+
+        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int centreId, string candidateNumber, bool setConfirmed);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
     {
         private readonly ISupervisorDelegateDataService supervisorDelegateDataService;
+        private readonly IUserDataService userDataService;
 
-        public SupervisorDelegateService(ISupervisorDelegateDataService supervisorDelegateDataService)
+        public SupervisorDelegateService(ISupervisorDelegateDataService supervisorDelegateDataService, IUserDataService userDataService)
         {
             this.supervisorDelegateDataService = supervisorDelegateDataService;
+            this.userDataService = userDataService;
         }
 
         public SupervisorDelegate? GetSupervisorDelegateRecord(int centreId, int supervisorDelegateId)
@@ -49,6 +54,12 @@
         public SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email)
         {
             return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
+        }
+
+        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int centreId, string candidateNumber, bool setConfirmed)
+        {
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(supervisorDelegateId, delegateUser.Id, setConfirmed);
         }
     }
 }
