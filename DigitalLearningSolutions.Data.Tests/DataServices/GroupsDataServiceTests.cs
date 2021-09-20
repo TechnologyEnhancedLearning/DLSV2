@@ -182,5 +182,27 @@
             // Then
             result.Should().BeNull();
         }
+
+        [Test]
+        public void AddDelegateGroup_sets_all_fields_correctly()
+        {
+            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var centreId = 101;
+            var groupLabel = "Group name";
+            var groupDescription = "Group description";
+            var adminUserId = 1;
+
+            // When
+            var groupId = groupsDataService.AddDelegateGroup(centreId, groupLabel, groupDescription, adminUserId);
+            var group = groupsDataService.GetGroupsForCentre(centreId).First(g => g.GroupId == groupId);
+
+            // Then
+            group.GroupLabel.Should().Be(groupLabel);
+            group.GroupDescription.Should().Be(groupDescription);
+            group.AddedByAdminId.Should().Be(adminUserId);
+            group.LinkedToField.Should().Be(0);
+        }
     }
 }
