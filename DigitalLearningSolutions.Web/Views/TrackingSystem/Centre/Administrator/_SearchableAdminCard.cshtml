@@ -14,56 +14,48 @@
 
       <dl class="nhsuk-summary-list details-list-with-button">
         <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Email
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.EmailAddress
-        </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Course category
-      </dt>
-      <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
-        @Model.CategoryName
-      </dd>
-    </div>
-    </dl>
+          <dt class="nhsuk-summary-list__key">
+            Email
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.EmailAddress
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Course category
+          </dt>
+          <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
+            @Model.CategoryName
+          </dd>
+        </div>
+      </dl>
 
-    @if (Model.IsLocked) { 
-      <p class="nhsuk-body-m">This account is currently locked out</p>
-    }
+      @if (Model.IsLocked) {
+        <p class="nhsuk-body-m">This account is currently locked out</p>
+      }
 
-    @if (Model.IsLocked) { 
-      var unlockAccountAspAllRouteData = new Dictionary<string, string> { { "adminId", Model.Id.ToString() } };
-      <form asp-action="UnlockAccount" asp-all-route-data="unlockAccountAspAllRouteData" class="unlock-account-form">
-        <button class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
-                role="button"
-                type="submit">
-          Unlock account
-        </button>
-      </form>
-    }
-    else
-    {
-      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
-         role="button"
-         asp-controller="Administrator"
-         asp-action="EditAdminRoles"
-         asp-route-adminId="@Model.Id">
-        Manage roles
-      </a>
-
-      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
-         role="button"
-         asp-controller="Administrator"
-         asp-action="DeactivateAdmin"
-         asp-route-adminId="@Model.Id">
+      @if (Model.IsLocked) {
+        var unlockAccountAspAllRouteData = new Dictionary<string, string> { { "adminId", Model.Id.ToString() } };
+        <form asp-action="UnlockAccount" asp-all-route-data="unlockAccountAspAllRouteData" class="unlock-account-form">
+          <button class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+                  role="button"
+                  type="submit">
+            Unlock account
+          </button>
+        </form>
+      } else {
+        <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1"
+           role="button"
+           asp-controller="Administrator"
+           asp-action="EditAdminRoles"
+           asp-route-adminId="@Model.Id">
+          Manage roles
+        </a>
+      }
+      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1" role="button">
         Deactivate admin account
       </a>
-    }
-
-</div>
+    </div>
   </details>
 </div>

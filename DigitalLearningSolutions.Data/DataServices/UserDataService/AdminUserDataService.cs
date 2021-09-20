@@ -247,15 +247,5 @@
                     new { adminId, updatedCount}
                 );
         }
-        public void DeactivateAdmin(int adminId)
-        {
-            connection.Execute(
-                @"UPDATE AdminUsers
-                        SET
-                            Active = 0
-                        WHERE AdminID = @adminId",
-                new { adminId }
-              );
-        }
     }
 }
