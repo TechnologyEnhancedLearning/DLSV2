@@ -23,12 +23,12 @@
         }
 
         [Test]
-        public void GetEvaluationSummaryModels_returns_list_of_models_correctly()
+        public void GetEvaluationResponseBreakdowns_returns_list_of_models_correctly()
         {
             // Given
             const int centreId = 121;
             var data = EvaluationSummaryTestHelper.GetDefaultEvaluationAnswerCounts();
-            var expectedResults = EvaluationSummaryTestHelper.GetDefaultEvaluationSummaryModels();
+            var expectedResults = EvaluationSummaryTestHelper.GetDefaultEvaluationResponseBreakdowns();
             var activityFilterData = new ActivityFilterData(
                 DateTime.Today,
                 DateTime.Today,

@@ -6,7 +6,7 @@
 
     public class EvaluationSummaryViewModel
     {
-        public EvaluationSummaryViewModel(EvaluationSummaryModel model)
+        public EvaluationSummaryViewModel(EvaluationResponseBreakdown model)
         {
             Question = model.Question;
             if (model.ResponseCounts != null)

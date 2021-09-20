@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class EvaluationSummaryModel
+    public class EvaluationResponseBreakdown
     {
-        public EvaluationSummaryModel(string question, IEnumerable<(string response, int count)> responseCounts)
+        public EvaluationResponseBreakdown(string question, IEnumerable<(string response, int count)> responseCounts)
         {
             Question = question;
             var totalResponses = responseCounts.Sum(x => x.count);

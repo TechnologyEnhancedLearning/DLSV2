@@ -54,9 +54,9 @@
                 adminUser.CategoryId == 0
             );
 
-            var evaluationSummaryModels = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
+            var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
 
-            var model = new ReportsViewModel(activity, filterModel, evaluationSummaryModels);
+            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns);
             return View(model);
         }
 

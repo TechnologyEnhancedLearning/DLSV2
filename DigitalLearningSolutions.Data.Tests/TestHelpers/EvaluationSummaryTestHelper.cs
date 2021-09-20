@@ -39,18 +39,18 @@
             };
         }
 
-        public static IEnumerable<EvaluationSummaryModel> GetDefaultEvaluationSummaryModels()
+        public static IEnumerable<EvaluationResponseBreakdown> GetDefaultEvaluationResponseBreakdowns()
         {
-            return new List<EvaluationSummaryModel>
+            return new List<EvaluationResponseBreakdown>
             {
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Increased productivity?",
                     new List<(string question, int count)>
                     {
                         ("Yes", 107), ("No", 102), ("No response", 7)
                     }
                 ),
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Gained new skills?",
                     new List<(string question, int count)>
                     {
@@ -58,7 +58,7 @@
                     }
                 ),
 
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Perform faster?",
                     new List<(string question, int count)>
                     {
@@ -66,7 +66,7 @@
                     }
                 ),
 
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Time saving per week",
                     new List<(string question, int count)>
                     {
@@ -79,11 +79,11 @@
                         ("No response", 11)
                     }
                 ),
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Pass on skills?",
                     new List<(string question, int count)> { ("Yes", 136), ("No", 64), ("No response", 16) }
                 ),
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Help with patients/clients?",
                     new List<(string question, int count)>
                     {
@@ -93,7 +93,7 @@
                         ("No response", 9)
                     }
                 ),
-                new EvaluationSummaryModel(
+                new EvaluationResponseBreakdown(
                     "Recommended materials?",
                     new List<(string question, int count)> { ("Yes", 157), ("No", 51), ("No response", 8) }
                 )

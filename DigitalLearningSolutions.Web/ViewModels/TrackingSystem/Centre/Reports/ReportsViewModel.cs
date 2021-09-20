@@ -12,13 +12,13 @@
         public ReportsViewModel(
             IEnumerable<PeriodOfActivity> activity,
             ReportsFilterModel filterModel,
-            IEnumerable<EvaluationSummaryModel> evaluationSummaryModels
+            IEnumerable<EvaluationResponseBreakdown> evaluationResponseBreakdowns
         )
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
             ReportsFilterModel = filterModel;
             EvaluationSummaryViewModels =
-                evaluationSummaryModels.Select(model => new EvaluationSummaryViewModel(model));
+                evaluationResponseBreakdowns.Select(model => new EvaluationSummaryViewModel(model));
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }

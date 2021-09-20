@@ -5,17 +5,17 @@ namespace DigitalLearningSolutions.Data.Tests.Models
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class EvaluationSummaryModelTests
+    public class EvaluationResponseBreakdownTests
     {
         [Test]
-        public void EvaluationSummaryModel_sets_values_correctly()
+        public void EvaluationResponseBreakdown_sets_values_correctly()
         {
             // Given
             const string question = "Increased productivity?";
             var responseCounts = new List<(string, int)> { ("Yes", 10), ("No", 25), ("No response", 15) };
 
             // When
-            var model = new EvaluationSummaryModel(question, responseCounts);
+            var model = new EvaluationResponseBreakdown(question, responseCounts);
 
             // Then
             model.Question.Should().Be(question);
@@ -24,14 +24,14 @@ namespace DigitalLearningSolutions.Data.Tests.Models
         }
 
         [Test]
-        public void EvaluationSummaryModel_sets_ResponseCounts_to_null_when_no_responses()
+        public void EvaluationResponseBreakdown_sets_ResponseCounts_to_null_when_no_responses()
         {
             // Given
             const string question = "Don't answer this question!";
             var responseCounts = new List<(string, int)> { ("Yes", 0), ("No", 0), ("No response", 0) };
 
             // When
-            var model = new EvaluationSummaryModel(question, responseCounts);
+            var model = new EvaluationResponseBreakdown(question, responseCounts);
 
             // Then
             model.Question.Should().Be(question);
