@@ -33,6 +33,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -41,7 +42,8 @@ namespace DigitalLearningSolutions.Data.Services
             IEmailService emailService,
             ICentresDataService centresDataService,
             IConfiguration config,
-            ISupervisorDelegateService supervisorDelegateService
+            ISupervisorDelegateService supervisorDelegateService,
+            IFrameworkNotificationService frameworkNotificationService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -51,6 +53,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.centresDataService = centresDataService;
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
+            this.frameworkNotificationService = frameworkNotificationService;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
@@ -87,6 +90,10 @@ namespace DigitalLearningSolutions.Data.Services
                     candidateNumber,
                     foundById
                 );
+                if (foundById)
+                {
+                    frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateRecord.ID);
+                }
             }
 
             if (!delegateRegistrationModel.Approved)
