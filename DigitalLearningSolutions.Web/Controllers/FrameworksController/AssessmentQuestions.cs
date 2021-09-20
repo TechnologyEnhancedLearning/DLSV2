@@ -481,7 +481,9 @@
                 MaxValue = assessmentQuestionDetail.MaxValue,
                 MinValue = assessmentQuestionDetail.MinValue,
                 IncludeComments = assessmentQuestionDetail.IncludeComments,
-                LevelDescriptors = levelDescriptors
+                LevelDescriptors = levelDescriptors,
+                CommentsPrompt = assessmentQuestionDetail.CommentsPrompt,
+                CommentsHint = assessmentQuestionDetail.CommentsHint
             };
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
             var model = new AssessmentQuestionConfirmViewModel()
@@ -502,7 +504,7 @@
             int newId = assessmentQuestion.ID;
             if (newId > 0)
             {
-                frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
+                frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId, assessmentQuestion.CommentsPrompt, assessmentQuestion.CommentsHint);
                 if(assessmentQuestion.AssessmentQuestionInputTypeID != 2)
                 {
                     foreach(var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
@@ -520,7 +522,7 @@
             }
             else
             {
-                newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId);
+                newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId, assessmentQuestion.CommentsPrompt, assessmentQuestion.CommentsHint);
                 if(newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID != 2)
                 {
                     foreach (var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)

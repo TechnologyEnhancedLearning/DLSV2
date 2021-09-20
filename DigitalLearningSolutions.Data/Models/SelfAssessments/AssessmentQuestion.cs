@@ -26,5 +26,7 @@
         public bool? SignedOff { get; set; }
         public bool? UserIsVerifier { get; set; }
         public int ResultRAG { get; set; }
+        public string? CommentsPrompt { get; set; }
+        public string? CommentsHint { get; set; }
     }
 }
