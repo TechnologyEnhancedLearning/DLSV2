@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
-@model CourseContentViewModel
+@model EditCourseContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
@@ -32,8 +32,39 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Edit">
       @if (Model.CourseHasContent) {
-        @foreach (var section in Model.Sections) {
-          <partial name="_EditCourseSectionExpandable" model="section" />
+        <input type="hidden" asp-for="CustomisationId" />
+        <input type="hidden" asp-for="CourseName" />
+        @foreach (var (courseSection, sectIndex) in Model.Sections.Select((s, i) => (s, i))) {
+          <div class="nhsuk-panel">
+            <details class="nhsuk-details nhsuk-expander">
+              <summary class="nhsuk-details__summary">
+                <span class="nhsuk-details__summary-text">
+                  @courseSection.SectionName
+                </span>
+              </summary>
+              <div class="nhsuk-details__text nhsuk-u-margin-bottom-0">
+                <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.SectionId)}")" value="@courseSection.SectionId" />
+                <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.SectionName)}")" value="@courseSection.SectionName" />
+                <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.PostLearningAssessment)}")" checked="@courseSection.PostLearningAssessment" value="true" />
+                <dl class="nhsuk-summary-list">
+
+                  @foreach (var (tutorial, tutIndex) in courseSection.Tutorials.Select((t, i) => (t, i))) {
+                    <div class="nhsuk-summary-list__row basic-summary-list__row">
+                      <dt class="nhsuk-summary-list__key">
+                        @tutorial.TutorialName
+                      </dt>
+                      <dd class="nhsuk-summary-list__value">
+                        <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
+                        <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
+                        <input type="checkbox" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")" checked="@tutorial.DiagnosticEnabled" value="true" />
+                        <input type="checkbox" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")" checked="@tutorial.LearningEnabled" value="true" />
+                      </dd>
+                    </div>
+                  }
+                </dl>
+              </div>
+            </details>
+          </div>
         }
       } else {
         <p>No course content enabled.</p>

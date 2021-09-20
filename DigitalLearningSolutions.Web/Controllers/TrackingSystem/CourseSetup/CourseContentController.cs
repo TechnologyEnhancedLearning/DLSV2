@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Text.Json;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -73,7 +74,7 @@
                 customisationId,
                 courseDetails.ApplicationId
             );
-            var model = new CourseContentViewModel(
+            var model = new EditCourseContentViewModel(
                 customisationId,
                 courseDetails.CourseName,
                 courseDetails.PostLearningAssessment,
@@ -85,8 +86,37 @@
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit(CourseContentViewModel model, int customisationId)
+        public IActionResult Edit(EditCourseContentViewModel model, int customisationId)
         {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            if (courseDetails == null)
+            {
+                return NotFound();
+            }
+
+            var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
+                customisationId,
+                courseDetails.ApplicationId
+            );
+            var comparisonModel = new EditCourseContentViewModel(
+                customisationId,
+                courseDetails.CourseName,
+                courseDetails.PostLearningAssessment,
+                courseSections
+            );
+
+            var postedString = JsonSerializer.Serialize(model);
+            var comparisonString = JsonSerializer.Serialize(comparisonModel);
+
+            var areEqual = string.Equals(postedString, comparisonString);
+
             return RedirectToAction("Index", new { customisationId });
         }
     }
