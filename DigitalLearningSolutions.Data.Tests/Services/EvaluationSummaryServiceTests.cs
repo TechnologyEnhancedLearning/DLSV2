@@ -49,7 +49,7 @@
             ).Returns(data);
 
             // When
-            var result = evaluationSummaryService.GetEvaluationSummaryModels(centreId, activityFilterData);
+            var result = evaluationSummaryService.GetEvaluationSummary(centreId, activityFilterData);
 
             // Then
             result.Should().BeEquivalentTo(expectedResults);

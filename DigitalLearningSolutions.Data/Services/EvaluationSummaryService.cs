@@ -6,7 +6,7 @@
 
     public interface IEvaluationSummaryService
     {
-        IEnumerable<EvaluationSummaryModel> GetEvaluationSummaryModels(int centreId, ActivityFilterData filterData);
+        IEnumerable<EvaluationSummaryModel> GetEvaluationSummary(int centreId, ActivityFilterData filterData);
     }
 
     public class EvaluationSummaryService : IEvaluationSummaryService
@@ -18,7 +18,7 @@
             this.evaluationSummaryDataService = evaluationSummaryDataService;
         }
 
-        public IEnumerable<EvaluationSummaryModel> GetEvaluationSummaryModels(
+        public IEnumerable<EvaluationSummaryModel> GetEvaluationSummary(
             int centreId,
             ActivityFilterData filterData
         )
@@ -81,8 +81,7 @@
                 new List<(string response, int count)>
                     { ("Yes", data.Q7Yes), ("No", data.Q7No), ("No response", data.Q7NoResponse) }
             );
-            return new List<EvaluationSummaryModel>
-                { q1, q2, q3, q4, q5, q6, q7 };
+            return new List<EvaluationSummaryModel> { q1, q2, q3, q4, q5, q6, q7 };
         }
     }
 }

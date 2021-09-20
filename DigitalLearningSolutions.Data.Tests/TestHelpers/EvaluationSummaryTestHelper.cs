@@ -70,8 +70,12 @@
                     "Time saving per week",
                     new List<(string question, int count)>
                     {
-                        ("0 hrs", 95), ("<1 hr", 54), ("1-2 hrs", 30),
-                        ("2-4 hrs", 16), ("4-6 hrs", 7), (">6 hrs", 3),
+                        ("0 hrs", 95),
+                        ("<1 hr", 54),
+                        ("1-2 hrs", 30),
+                        ("2-4 hrs", 16),
+                        ("4-6 hrs", 7),
+                        (">6 hrs", 3),
                         ("No response", 11)
                     }
                 ),
