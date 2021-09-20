@@ -1,4 +1,5 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
+@import "../shared/searchableElements/common";
 
 .summary-list-right-align-tags {
   @include mq($from: tablet) {
@@ -33,5 +34,37 @@
 .tutorial-name {
   @include mq($from: desktop) {
     width: 40%;
+  }
+}
+
+.select-all-button {
+  @extend .right-submit-button;
+  background-color: $button-dark-blue;
+  border-radius: 4px;
+  margin-right: nhsuk-spacing(2);
+}
+
+.button-name {
+  @include mq($from: desktop) {
+    vertical-align: middle;
+    width: 40%;
+  }
+}
+
+.select-deselect-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  box-sizing: border-box;
+
+  @include mq($from: desktop) {
+    justify-content: flex-end;
+  }
+}
+
+.button-container {
+  @include mq($from: tablet) {
+    width: 50%;
+    margin-bottom: 0;
   }
 }

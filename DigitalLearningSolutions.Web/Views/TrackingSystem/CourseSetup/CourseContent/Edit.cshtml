@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
 @model EditCourseContentViewModel
@@ -32,6 +33,9 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Edit">
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
+      </div>
       <input type="hidden" asp-for="CustomisationId" />
       <input type="hidden" asp-for="CourseName" />
       @foreach (var (courseSection, sectIndex) in Model.Sections.Select((s, i) => (s, i))) {
@@ -68,7 +72,7 @@
                             Diagnostic
                           </label>
                         </div>
-                        <div class="nhsuk-checkboxes__item">
+                        <div class="nhsuk-checkboxes__item course-content-checkbox">
                           <input class="nhsuk-checkboxes__input"
                                  type="checkbox"
                                  name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
@@ -83,12 +87,42 @@
                     </dd>
                   </div>
                 }
+                <div class="nhsuk-summary-list__row basic-summary-list__row">
+                  <dt class="nhsuk-summary-list__key button-name">
+                    Diagnostic
+                  </dt>
+                  <dd class="nhsuk-summary-list__value">
+                    <div class="select-deselect-container">
+                      <div class="button-container">
+                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.SelectAllDiagnosticPrefix + courseSection.SectionId)">Select all</button>
+                      </div>
+                      <div class="button-container">
+                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllDiagnosticPrefix + courseSection.SectionId)">Deselect all</button>
+                      </div>
+                    </div>
+                  </dd>
+                </div>
+                <div class="nhsuk-summary-list__row basic-summary-list__row">
+                  <dt class="nhsuk-summary-list__key button-name">
+                    Learning
+                  </dt>
+                  <dd class="nhsuk-summary-list__value">
+                    <div class="select-deselect-container">
+                      <div class="button-container">
+                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.SelectAllLearningPrefix + courseSection.SectionId)">Select all</button>
+                      </div>
+                      <div class="button-container">
+                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllLearningPrefix + courseSection.SectionId)">Deselect all</button>
+                      </div>
+                    </div>
+                  </dd>
+                </div>
               </dl>
             </div>
           </details>
         </div>
       }
-      <button class="nhsuk-button" type="submit" value="save">Save</button>
+      <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
     </form>
 
     <vc:cancel-link asp-controller="CourseContent" asp-action="Index" asp-all-route-data="@cancelRouteData" />
