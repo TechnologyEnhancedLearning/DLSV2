@@ -15,9 +15,11 @@
             int sectionId,
             int tutorialId
         );
+
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+        void UpdateTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -49,7 +51,6 @@
                 // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
                 // and if there are other sections (valid tutorials with a different tutorial ID, or with assessments or
                 // consolidation material. See the SectionContentDataService for the definition of a valid section.
-
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,
                          Tutorials.OrderByNumber,
@@ -204,7 +205,8 @@
                      AND CustomisationTutorials.Status = 1
                      AND Sections.ArchivedDate IS NULL
                      AND Tutorials.ArchivedDate IS NULL;",
-            new { candidateId, customisationId, sectionId, tutorialId });
+                new { candidateId, customisationId, sectionId, tutorialId }
+            );
         }
 
         public TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId)
@@ -235,7 +237,8 @@
                          AND CustomisationTutorials.Status = 1
                          AND Sections.ArchivedDate IS NULL
                          AND Tutorials.ArchivedDate IS NULL;",
-                new { customisationId, sectionId, tutorialId });
+                new { customisationId, sectionId, tutorialId }
+            );
         }
 
         public TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId)
@@ -267,7 +270,8 @@
                          AND Sections.ArchivedDate IS NULL
                          AND CustomisationTutorials.Status = 1
                          AND Tutorials.ArchivedDate IS NULL;",
-                    new { customisationId, sectionId, tutorialId });
+                    new { customisationId, sectionId, tutorialId }
+                );
             }
             catch (DataException e)
             {
@@ -275,7 +279,8 @@
                 {
                     return null;
                 }
-                else throw;
+
+                throw;
             }
         }
 
@@ -293,6 +298,30 @@
                     WHERE SectionID = @sectionId
                     AND ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public void UpdateTutorialStatuses(
+            int tutorialId,
+            int customisationId,
+            bool diagnosticEnabled,
+            bool learningEnabled
+        )
+        {
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                    SET
+                        Status = @learningEnabled,
+                        DiagStatus = @diagnosticEnabled
+                    WHERE CustomisationID = @customisationId
+                        AND TutorialID = @TutorialID
+
+                    IF @@ROWCOUNT = 0
+                    BEGIN
+                        INSERT INTO CustomisationTutorials (CustomisationID, TutorialID, [Status], DiagStatus)
+                        VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
+                    END",
+                new { tutorialId, customisationId, diagnosticEnabled, learningEnabled }
             );
         }
     }

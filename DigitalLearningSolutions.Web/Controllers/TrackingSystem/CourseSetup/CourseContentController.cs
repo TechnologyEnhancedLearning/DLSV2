@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System.Text.Json;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
@@ -77,7 +78,6 @@
             var model = new EditCourseContentViewModel(
                 customisationId,
                 courseDetails.CourseName,
-                courseDetails.PostLearningAssessment,
                 courseSections
             );
 
@@ -88,34 +88,17 @@
         [Route("Edit")]
         public IActionResult Edit(EditCourseContentViewModel model, int customisationId)
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
-                customisationId,
-                centreId,
-                categoryId.Value
+            var sections = model.Sections.Select(
+                s => new Section(
+                    s.SectionId,
+                    s.SectionName,
+                    s.Tutorials.Select(
+                        t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
+                    )
+                )
             );
 
-            if (courseDetails == null)
-            {
-                return NotFound();
-            }
-
-            var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
-                customisationId,
-                courseDetails.ApplicationId
-            );
-            var comparisonModel = new EditCourseContentViewModel(
-                customisationId,
-                courseDetails.CourseName,
-                courseDetails.PostLearningAssessment,
-                courseSections
-            );
-
-            var postedString = JsonSerializer.Serialize(model);
-            var comparisonString = JsonSerializer.Serialize(comparisonModel);
-
-            var areEqual = string.Equals(postedString, comparisonString);
+            sectionService.UpdateSectionTutorialDiagnosticsAndLearningEnabled(sections, customisationId);
 
             return RedirectToAction("Index", new { customisationId });
         }

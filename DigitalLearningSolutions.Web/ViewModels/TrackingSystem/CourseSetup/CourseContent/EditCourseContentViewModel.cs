@@ -11,27 +11,16 @@
         public EditCourseContentViewModel(
             int customisationId,
             string courseName,
-            bool postLearningAssessment,
             IEnumerable<Section> sections
         )
         {
             CustomisationId = customisationId;
             CourseName = courseName;
-            Sections = sections.Select(s => new EditCourseSectionViewModel(s, postLearningAssessment));
+            Sections = sections.Select(s => new EditCourseSectionViewModel(s));
         }
 
         public int CustomisationId { get; set; }
         public string CourseName { get; set; }
         public IEnumerable<EditCourseSectionViewModel> Sections { get; set; }
-
-        public bool CourseHasContent
-        {
-            get
-            {
-                return Sections.Any(
-                    s => s.Tutorials.Any(t => t.DiagnosticEnabled || t.LearningEnabled) || s.PostLearningAssessment
-                );
-            }
-        }
     }
 }
