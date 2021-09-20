@@ -116,7 +116,7 @@
             }
 
             var progressId = groupsDataService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
-            
+
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
 
             return View(model);
@@ -180,6 +180,26 @@
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
+        }
+
+        [Route("Add")]
+        [HttpGet]
+        public IActionResult AddDelegateGroup()
+        {
+            return View(new AddDelegateGroupViewModel());
+        }
+
+        [Route("Add")]
+        [HttpPost]
+        public IActionResult AddDelegateGroup(AddDelegateGroupViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // QQ insert into database
+            return RedirectToAction("Index");
         }
     }
 }
