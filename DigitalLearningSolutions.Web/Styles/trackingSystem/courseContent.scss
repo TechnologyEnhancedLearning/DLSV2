@@ -1,7 +1,37 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 
-dd.nhsuk-summary-list__value {
+.summary-list-right-align-tags {
   @include mq($from: tablet) {
     text-align: right;
+  }
+}
+
+.course-content-checkboxes {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+
+  @include mq($from: tablet) {
+    flex-direction: row;
+  }
+
+  @include mq($from: desktop) {
+    justify-content: flex-end;
+  }
+}
+
+.course-content-checkbox {
+  width: 100%;
+
+  @include mq($from: tablet) {
+    width: 50%;
+    margin-bottom: 0;
+  }
+}
+
+.tutorial-name {
+  @include mq($from: desktop) {
+    width: 40%;
   }
 }

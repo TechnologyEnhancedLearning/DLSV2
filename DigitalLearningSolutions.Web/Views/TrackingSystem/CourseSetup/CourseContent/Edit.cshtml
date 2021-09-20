@@ -10,6 +10,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var cancelRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 @section NavMenuItems {
@@ -42,20 +43,43 @@
               </span>
             </summary>
             <div class="nhsuk-details__text nhsuk-u-margin-bottom-0">
+
               <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.SectionId)}")" value="@courseSection.SectionId" />
               <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.SectionName)}")" value="@courseSection.SectionName" />
               <dl class="nhsuk-summary-list">
 
                 @foreach (var (tutorial, tutIndex) in courseSection.Tutorials.Select((t, i) => (t, i))) {
                   <div class="nhsuk-summary-list__row basic-summary-list__row">
-                    <dt class="nhsuk-summary-list__key">
+                    <dt class="nhsuk-summary-list__key tutorial-name">
                       @tutorial.TutorialName
                     </dt>
                     <dd class="nhsuk-summary-list__value">
                       <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
                       <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
-                      <input type="checkbox" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")" checked="@tutorial.DiagnosticEnabled" value="true" />
-                      <input type="checkbox" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")" checked="@tutorial.LearningEnabled" value="true" />
+                      <div class="nhsuk-checkboxes course-content-checkboxes">
+                        <div class="nhsuk-checkboxes__item course-content-checkbox">
+                          <input class="nhsuk-checkboxes__input"
+                                 type="checkbox"
+                                 name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
+                                 id="diagnostic-enabled-@tutorial.TutorialId"
+                                 checked="@tutorial.DiagnosticEnabled"
+                                 value="true" />
+                          <label class="nhsuk-label nhsuk-checkboxes__label" for="diagnostic-enabled-@tutorial.TutorialId">
+                            Diagnostic
+                          </label>
+                        </div>
+                        <div class="nhsuk-checkboxes__item">
+                          <input class="nhsuk-checkboxes__input"
+                                 type="checkbox"
+                                 name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
+                                 id="learning-enabled-@tutorial.TutorialId"
+                                 checked="@tutorial.LearningEnabled"
+                                 value="true" />
+                          <label class="nhsuk-label nhsuk-checkboxes__label" for="learning-enabled-@tutorial.TutorialId">
+                            Learning
+                          </label>
+                        </div>
+                      </div>
                     </dd>
                   </div>
                 }
@@ -67,7 +91,7 @@
       <button class="nhsuk-button" type="submit" value="save">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="CourseContent" asp-action="Index" />
+    <vc:cancel-link asp-controller="CourseContent" asp-action="Index" asp-all-route-data="@cancelRouteData" />
 
   </div>
 </div>
