@@ -47,25 +47,29 @@
                     "Increased productivity?",
                     new List<(string question, int count)>
                     {
-                        ("Yes", 107), ("No", 102), ("No response", 7)
+                        ("Yes", 107),
+                        ("No", 102),
+                        ("No response", 7)
                     }
                 ),
                 new EvaluationResponseBreakdown(
                     "Gained new skills?",
                     new List<(string question, int count)>
                     {
-                        ("Yes", 102), ("No", 107), ("No response", 7)
+                        ("Yes", 102),
+                        ("No", 107),
+                        ("No response", 7)
                     }
                 ),
-
                 new EvaluationResponseBreakdown(
                     "Perform faster?",
                     new List<(string question, int count)>
                     {
-                        ("Yes", 112), ("No", 95), ("No response", 9)
+                        ("Yes", 112),
+                        ("No", 95),
+                        ("No response", 9)
                     }
                 ),
-
                 new EvaluationResponseBreakdown(
                     "Time saving per week",
                     new List<(string question, int count)>
@@ -81,7 +85,12 @@
                 ),
                 new EvaluationResponseBreakdown(
                     "Pass on skills?",
-                    new List<(string question, int count)> { ("Yes", 136), ("No", 64), ("No response", 16) }
+                    new List<(string question, int count)>
+                    {
+                        ("Yes", 136),
+                        ("No", 64),
+                        ("No response", 16)
+                    }
                 ),
                 new EvaluationResponseBreakdown(
                     "Help with patients/clients?",
@@ -95,7 +104,12 @@
                 ),
                 new EvaluationResponseBreakdown(
                     "Recommended materials?",
-                    new List<(string question, int count)> { ("Yes", 157), ("No", 51), ("No response", 8) }
+                    new List<(string question, int count)>
+                    {
+                        ("Yes", 157),
+                        ("No", 51),
+                        ("No response", 8)
+                    }
                 )
             };
         }
