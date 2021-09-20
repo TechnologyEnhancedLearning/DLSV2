@@ -21,7 +21,7 @@
 
         public EditRolesViewModel() { }
 
-        public EditRolesViewModel(AdminUser user, int centreId, IEnumerable<Category> categories, NumberOfAdministrators numberOfAdmins)
+        public EditRolesViewModel(AdminUser user, int centreId, IEnumerable<Category> categories, CentreContractAdminUsage numberOfAdmins)
         {
             CentreId = centreId;
             FullName = $"{user.FirstName} {user.LastName}";
@@ -66,7 +66,7 @@
         public bool NotAllRolesDisplayed => Radios.Count < 3 || Checkboxes.Count < 4;
         public bool NoContentManagerOptionsAvailable => Radios.Count == 1;
 
-        private void SetUpCheckboxesAndRadioButtons(AdminUser user, NumberOfAdministrators numberOfAdmins)
+        private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
         {
             if (!numberOfAdmins.TrainersAtOrOverLimit || user.IsTrainer)
             {

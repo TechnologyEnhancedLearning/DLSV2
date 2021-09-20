@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -12,7 +13,6 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -21,22 +21,19 @@
     public class AdministratorController : Controller
     {
         private const string AdminFilterCookieName = "AdminFilter";
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ILogger<AdministratorController> logger;
-        private readonly INumberOfAdministratorsService numberOfAdministratorsService;
         private readonly IUserDataService userDataService;
 
         public AdministratorController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            INumberOfAdministratorsService numberOfAdministratorsService,
-            ILogger<AdministratorController> logger
+            ICentreContractAdminUsageService centreContractAdminUsageService
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
-            this.numberOfAdministratorsService = numberOfAdministratorsService;
-            this.logger = logger;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
         }
 
         [Route("{page=1:int}")]
@@ -100,7 +97,7 @@
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
-            var numberOfAdmins = numberOfAdministratorsService.GetCentreAdministratorNumbers(centreId);
+            var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
             var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins);
             return View(model);
@@ -120,11 +117,10 @@
 
             if (NewUserRolesExceedAvailableSpots(model, adminUser))
             {
-                logger.LogWarning(
+                throw new AdminRoleFullException(
                     "Failed to update admin roles for admin " + adminId +
-                    " as one or more roles have reached their limit"
+                    " as one or more of the roles being added to have reached their limit"
                 );
-                return new StatusCodeResult(500);
             }
 
             userDataService.UpdateAdminUserPermissions(
@@ -169,7 +165,7 @@
         private bool NewUserRolesExceedAvailableSpots(EditRolesViewModel newRoles, AdminUser oldUserDetails)
         {
             var currentNumberOfAdmins =
-                numberOfAdministratorsService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
+                centreContractAdminUsageService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
 
             if (newRoles.IsTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
             {

@@ -33,7 +33,7 @@
                 importOnly: true,
                 categoryId: 0
             );
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -61,7 +61,7 @@
                 isContentManager: true,
                 importOnly: false
             );
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -78,7 +78,7 @@
                 isContentManager: false,
                 importOnly: false
             );
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -92,7 +92,7 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -121,7 +121,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(isTrainer: false);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -141,7 +141,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(isTrainer: true);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -162,7 +162,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(isContentCreator: false);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -183,7 +183,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(isContentCreator: true);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -204,7 +204,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                     cmsAdministrators: 5,
                     cmsAdministratorSpots: 5
                 );
@@ -229,7 +229,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: true, isContentManager: true);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                     cmsAdministrators: 5,
                     cmsAdministratorSpots: 5
                 );
@@ -254,7 +254,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -276,7 +276,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: true);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
 
             // When
             var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
@@ -298,7 +298,7 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(importOnly: false, isContentManager: false);
             var numberOfAdmins =
-                NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+                CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                     cmsManagers: 5,
                     cmsManagerSpots: 5,
                     cmsAdministrators: 5,
@@ -312,8 +312,6 @@
             using (new AssertionScope())
             {
                 result.Radios.Count.Should().Be(1);
-                result.Radios.Contains(AdminRoleInputs.CmsManagerRadioButton).Should().BeFalse();
-                result.Radios.Contains(AdminRoleInputs.CmsAdministratorRadioButton).Should().BeFalse();
                 result.Radios.Contains(AdminRoleInputs.NoCmsPermissionsRadioButton).Should().BeTrue();
                 result.NotAllRolesDisplayed.Should().BeTrue();
                 result.NoContentManagerOptionsAvailable.Should().BeTrue();

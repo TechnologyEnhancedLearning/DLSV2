@@ -8,7 +8,7 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class NumberOfAdministratorsTests
+    public class CentreContractAdminUsageTests
     {
         [Test]
         public void Numbers_are_retrieved_correctly()
@@ -23,17 +23,17 @@
             );
 
             // When
-            var result = new NumberOfAdministrators(centre, adminUsers);
+            var result = new CentreContractAdminUsage(centre, adminUsers);
 
             // Then
             using (new AssertionScope())
             {
-                result.Admins.Should().Be(7);
-                result.Supervisors.Should().Be(6);
-                result.Trainers.Should().Be(1);
-                result.CcLicences.Should().Be(2);
-                result.CmsAdministrators.Should().Be(3);
-                result.CmsManagers.Should().Be(2);
+                result.AdminCount.Should().Be(7);
+                result.SupervisorCount.Should().Be(6);
+                result.TrainerCount.Should().Be(1);
+                result.CcLicenceCount.Should().Be(2);
+                result.CmsAdministratorCount.Should().Be(3);
+                result.CmsManagerCount.Should().Be(2);
                 result.TrainerSpots.Should().Be(5);
                 result.CcLicenceSpots.Should().Be(10);
                 result.CmsAdministratorSpots.Should().Be(11);
@@ -45,7 +45,7 @@
         public void Limits_not_reached_when_no_limits_set()
         {
             // When
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators();
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // Then
             using (new AssertionScope())
@@ -61,7 +61,7 @@
         public void Limits_not_reached_when_numbers_under_total_spots()
         {
             // When
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                 trainerSpots: 2,
                 trainers: 1,
                 cmsAdministratorSpots: 3,
@@ -86,7 +86,7 @@
         public void Limits_reached_when_numbers_exactly_match_total_spots()
         {
             // When
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                 trainerSpots: 2,
                 trainers: 2,
                 cmsAdministratorSpots: 3,
@@ -111,7 +111,7 @@
         public void Limits_reached_when_numbers_exceed_total_spots()
         {
             // When
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                 trainerSpots: 2,
                 trainers: 3,
                 cmsAdministratorSpots: 3,

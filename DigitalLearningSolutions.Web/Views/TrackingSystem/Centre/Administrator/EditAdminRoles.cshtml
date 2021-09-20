@@ -47,7 +47,9 @@
       </div>
     }
 
-    <vc:number-of-administrators centre-id="Model.CentreId" />
+    <div class="nhsuk-u-margin-bottom-8 nhsuk-u-margin-top-8">
+      <vc:number-of-administrators centre-id="Model.CentreId" />
+    </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
 
@@ -56,7 +58,7 @@
                      checkboxes="@Model.Checkboxes"
                      hint-text="" />
 
-      <div class="@(Model.NoContentManagerOptionsAvailable ? "hidden" : null)">
+      <div class="@(Model.NoContentManagerOptionsAvailable ? "display-none" : null)">
         <vc:radios asp-for="@nameof(Model.ContentManagementRole)"
                    label="Please select a content manager role for this user."
                    populate-with-current-values="true"

@@ -6,18 +6,18 @@
 
     public class NumberOfAdministratorsViewComponent : ViewComponent
     {
-        private readonly INumberOfAdministratorsService numberOfAdministratorsService;
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
 
         public NumberOfAdministratorsViewComponent(
-            INumberOfAdministratorsService numberOfAdministratorsService
+            ICentreContractAdminUsageService centreContractAdminUsageService
         )
         {
-            this.numberOfAdministratorsService = numberOfAdministratorsService;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
         }
 
         public IViewComponentResult Invoke(int centreId)
         {
-            var numberOfAdministrators = numberOfAdministratorsService.GetCentreAdministratorNumbers(centreId);
+            var numberOfAdministrators = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
             var numberOfAdminsViewModel = new NumberOfAdministratorsViewModel(numberOfAdministrators);
 

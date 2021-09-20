@@ -5,25 +5,25 @@
 
     public class NumberOfAdministratorsViewModel
     {
-        public NumberOfAdministratorsViewModel(NumberOfAdministrators numberOfAdministrators)
+        public NumberOfAdministratorsViewModel(CentreContractAdminUsage numberOfAdministrators)
         {
-            Admins = numberOfAdministrators.Admins.ToString();
-            Supervisors = numberOfAdministrators.Supervisors.ToString();
+            Admins = numberOfAdministrators.AdminCount.ToString();
+            Supervisors = numberOfAdministrators.SupervisorCount.ToString();
 
             Trainers = DisplayStringHelper.FormatNumberWithLimit(
-                numberOfAdministrators.Trainers,
+                numberOfAdministrators.TrainerCount,
                 numberOfAdministrators.TrainerSpots
             );
             CmsAdministrators = DisplayStringHelper.FormatNumberWithLimit(
-                numberOfAdministrators.CmsAdministrators,
+                numberOfAdministrators.CmsAdministratorCount,
                 numberOfAdministrators.CmsAdministratorSpots
             );
             CmsManagers = DisplayStringHelper.FormatNumberWithLimit(
-                numberOfAdministrators.CmsManagers,
+                numberOfAdministrators.CmsManagerCount,
                 numberOfAdministrators.CmsManagerSpots
             );
             CcLicences = DisplayStringHelper.FormatNumberWithLimit(
-                numberOfAdministrators.CcLicences,
+                numberOfAdministrators.CcLicenceCount,
                 numberOfAdministrators.CcLicenceSpots
             );
         }

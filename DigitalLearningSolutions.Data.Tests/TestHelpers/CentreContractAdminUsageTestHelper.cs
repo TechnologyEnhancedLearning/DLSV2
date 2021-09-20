@@ -2,9 +2,9 @@
 {
     using DigitalLearningSolutions.Data.Models;
 
-    public static class NumberOfAdministratorsTestHelper
+    public static class CentreContractAdminUsageTestHelper
     {
-        public static NumberOfAdministrators GetDefaultNumberOfAdministrators(
+        public static CentreContractAdminUsage GetDefaultNumberOfAdministrators(
             int admins = 1,
             int supervisors = 2,
             int trainers = 3,
@@ -17,14 +17,14 @@
             int cmsManagerSpots = -1
         )
         {
-            return new NumberOfAdministrators
+            return new CentreContractAdminUsage
             {
-                Admins = admins,
-                Supervisors = supervisors,
-                Trainers = trainers,
-                CcLicences = ccLicences,
-                CmsAdministrators = cmsAdministrators,
-                CmsManagers = cmsManagers,
+                AdminCount = admins,
+                SupervisorCount = supervisors,
+                TrainerCount = trainers,
+                CcLicenceCount = ccLicences,
+                CmsAdministratorCount = cmsAdministrators,
+                CmsManagerCount = cmsManagers,
                 TrainerSpots = trainerSpots,
                 CcLicenceSpots = ccLicenceSpots,
                 CmsAdministratorSpots = cmsAdministratorSpots,

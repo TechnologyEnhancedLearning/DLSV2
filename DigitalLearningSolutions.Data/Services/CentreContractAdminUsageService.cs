@@ -4,17 +4,17 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models;
 
-    public interface INumberOfAdministratorsService
+    public interface ICentreContractAdminUsageService
     {
-        NumberOfAdministrators GetCentreAdministratorNumbers(int centreId);
+        CentreContractAdminUsage GetCentreAdministratorNumbers(int centreId);
     }
 
-    public class NumberOfAdministratorsService: INumberOfAdministratorsService
+    public class CentreContractAdminUsageService : ICentreContractAdminUsageService
     {
         private readonly ICentresDataService centresDataService;
         private readonly IUserDataService userDataService;
 
-        public NumberOfAdministratorsService(
+        public CentreContractAdminUsageService(
             ICentresDataService centresDataService,
             IUserDataService userDataService
         )
@@ -23,12 +23,12 @@
             this.userDataService = userDataService;
         }
 
-        public NumberOfAdministrators GetCentreAdministratorNumbers(int centreId)
+        public CentreContractAdminUsage GetCentreAdministratorNumbers(int centreId)
         {
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
 
-            return new NumberOfAdministrators(centreDetails, adminUsersAtCentre);
+            return new CentreContractAdminUsage(centreDetails, adminUsersAtCentre);
         }
     }
 }

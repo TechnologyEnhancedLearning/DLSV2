@@ -34,7 +34,6 @@
             "No CMS permissions"
         );
 
-
         public static RadiosListItemViewModel CmsAdministratorRadioButton = new RadiosListItemViewModel(
             ContentManagementRole.CmsAdministrator,
             "CMS administrator",

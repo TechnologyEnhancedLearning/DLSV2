@@ -11,7 +11,7 @@
         public void ViewModel_populates_expected_values()
         {
             // Given
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                 7,
                 6,
                 1,
@@ -40,7 +40,7 @@
         public void No_limit_should_be_displayed_when_centre_has_no_limit_on_spots_available()
         {
             // Given
-            var numberOfAdmins = NumberOfAdministratorsTestHelper.GetDefaultNumberOfAdministrators(
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
                 trainers: 1,
                 trainerSpots: -1,
                 cmsAdministrators: 3,
