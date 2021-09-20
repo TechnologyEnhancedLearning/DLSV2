@@ -305,7 +305,7 @@
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
             sessionAddSupervisor.SupervisorEmail = supervisor.Email;
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
+            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
             if (roles.Count() > 1)
             {
                 TempData.Set(sessionAddSupervisor);
@@ -325,7 +325,7 @@
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var setRoleModel = new SetSupervisorRoleViewModel()
             {
@@ -359,7 +359,7 @@
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
-            var roles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var summaryModel = new AddSupervisorSummaryViewModel()
             {
