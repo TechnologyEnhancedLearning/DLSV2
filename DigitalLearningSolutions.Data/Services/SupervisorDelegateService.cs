@@ -6,7 +6,14 @@
     public interface ISupervisorDelegateService
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int centreId, int supervisorDelegateId);
-        SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(int centreId, int supervisorDelegateId, string email);
+
+        SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(
+            int centreId,
+            int supervisorDelegateId,
+            string email
+        );
+
+        SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
@@ -37,6 +44,11 @@
             }
 
             return null;
+        }
+
+        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email)
+        {
+            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
         }
     }
 }

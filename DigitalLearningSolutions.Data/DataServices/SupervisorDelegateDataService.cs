@@ -7,6 +7,7 @@
     public interface ISupervisorDelegateDataService
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
+        SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -20,7 +21,7 @@
 
         public SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId)
         {
-            return connection.QuerySingle<SupervisorDelegate?>(
+            return connection.QuerySingleOrDefault<SupervisorDelegate?>(
                 @"SELECT
                         sd.ID,
                         sd.SupervisorAdminID,
@@ -37,6 +38,31 @@
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE ID = @supervisorDelegateId",
                 new { supervisorDelegateId }
+            );
+        }
+
+        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email)
+        {
+            return connection.QuerySingleOrDefault<SupervisorDelegate?>(
+                @"SELECT
+                        sd.ID,
+                        sd.SupervisorAdminID,
+                        sd.SupervisorEmail,
+                        sd.CandidateID,
+                        sd.DelegateEmail,
+                        sd.Added,
+                        sd.AddedByDelegate,
+                        sd.NotificationSent,
+                        sd.Confirmed,
+                        sd.Removed,
+                        au.CentreID
+                    FROM SupervisorDelegates sd
+                    INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
+                    WHERE au.CentreID = @centreId
+                      AND sd.DelegateEmail = @email
+                      AND sd.CandidateID IS NULL
+                      AND sd.Removed IS NULL",
+                new { centreId, email }
             );
         }
     }

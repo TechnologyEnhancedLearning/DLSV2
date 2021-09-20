@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            var (supervisorDelegateRecord, approved) = GetSupervisorDelegateRecordByIdOrEmail(
+            var (supervisorDelegateRecord, foundById) = GetSupervisorDelegateRecordByIdOrEmail(
                 delegateRegistrationModel.Centre,
                 supervisorDelegateId,
                 delegateRegistrationModel.Email
@@ -70,7 +70,7 @@ namespace DigitalLearningSolutions.Data.Services
 
             var centreIpPrefixes =
                 centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
-            delegateRegistrationModel.Approved = approved ||
+            delegateRegistrationModel.Approved = foundById ||
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
@@ -197,7 +197,7 @@ namespace DigitalLearningSolutions.Data.Services
             return new Email(emailSubject, body, emailAddress);
         }
 
-        private (SupervisorDelegate? record, bool approved) GetSupervisorDelegateRecordByIdOrEmail(
+        private (SupervisorDelegate? record, bool foundById) GetSupervisorDelegateRecordByIdOrEmail(
             int centreId,
             int? supervisorDelegateId,
             string email
@@ -214,11 +214,11 @@ namespace DigitalLearningSolutions.Data.Services
                     );
             }
 
-            var approved = supervisorDelegateRecord != null;
+            var foundById = supervisorDelegateRecord != null;
 
-            // TODO: supervisorDelegateRecord ??= supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(email);
+            supervisorDelegateRecord ??= supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
 
-            return (supervisorDelegateRecord, approved);
+            return (supervisorDelegateRecord, foundById);
         }
     }
 }
