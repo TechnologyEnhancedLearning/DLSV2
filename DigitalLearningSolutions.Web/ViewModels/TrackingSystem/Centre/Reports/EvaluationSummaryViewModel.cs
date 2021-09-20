@@ -12,12 +12,17 @@
             if (model.ResponseCounts != null)
             {
                 ResponsePercentages = model.ResponseCounts
-                    .Select(x => (question: x.response, percentage: 100f * x.count / model.TotalResponses));
+                    .Select(x => (x.response, FormatAsPercentageString(x.count, model.TotalResponses)));
             }
         }
 
         public string Question { get; set; }
 
-        public IEnumerable<(string response, float percentage)>? ResponsePercentages { get; set; }
+        public IEnumerable<(string response, string percentageString)>? ResponsePercentages { get; set; }
+
+        private static string FormatAsPercentageString(int count, int total)
+        {
+            return ((float)count / total).ToString("0.0%");
+        }
     }
 }

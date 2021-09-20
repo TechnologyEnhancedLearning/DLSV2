@@ -103,5 +103,6 @@ $light-blue: #8EBAFF;
 
   @include mq($from: tablet) {
     text-align: end;
+    padding-right: 0;
   }
 }

@@ -13,8 +13,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
         {
             // Given
             const string question = "Increased productivity?";
-            var responseCounts = new List<(string, int)> { ("Yes", 10), ("No", 25), ("No response", 15) };
-            var expectedPercentages = new List<(string, float)> { ("Yes", 20f), ("No", 50f), ("No response", 30f) };
+            var responseCounts = new List<(string, int)> { ("Yes", 4), ("No", 76), ("No response", 80) };
+            var expectedPercentages = new List<(string, string)>
+            {
+                ("Yes", "2.5%"),
+                ("No", "47.5%"),
+                ("No response", "50.0%")
+            };
             var model = new EvaluationResponseBreakdown(question, responseCounts);
 
             // When

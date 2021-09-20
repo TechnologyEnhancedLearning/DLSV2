@@ -8,15 +8,15 @@
     </h3>
 
     <div class="nhsuk-card__description">
-      @if (Model.ResponsePercentages != null) {
+      @if (Model.ResponsePercentages != null && Model.ResponsePercentages.Any()) {
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
-          @foreach (var (response, percentage) in Model.ResponsePercentages) {
+          @foreach (var (response, percentageString) in Model.ResponsePercentages) {
             <div class="nhsuk-summary-list__row">
               <dt class="nhsuk-summary-list__key eval-summary-row__key">
                 @response
               </dt>
               <dd class="nhsuk-summary-list__value eval-summary-row__value">
-                @percentage.ToString("0.0")%
+                @percentageString
               </dd>
             </div>
           }
