@@ -25,7 +25,7 @@
         public void ProcessQuery_with_null_action_returns_NullAction_response()
         {
             // Given
-            var query = new TrackerEndpointQueryParams();
+            var query = new TrackerEndpointQueryParams { Action = null };
 
             // When
             var result = trackerService.ProcessQuery(query);

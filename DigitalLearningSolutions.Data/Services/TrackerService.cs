@@ -25,13 +25,18 @@
             {
                 return TrackerEndpointErrorResponse.NullAction;
             }
-            
+
             try
             {
-                return query.Action! switch
+                if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
                 {
-                    _ => TrackerEndpointErrorResponse.InvalidAction
-                };
+                    return action switch
+                    {
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
+                }
+
+                return TrackerEndpointErrorResponse.InvalidAction;
             }
             catch (Exception ex)
             {
