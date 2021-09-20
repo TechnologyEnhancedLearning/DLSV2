@@ -22,6 +22,8 @@
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
+
+        int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -178,6 +180,29 @@
                     WHERE GroupID = @groupId
                       AND DelegateID = @delegateId",
                 new {groupId, delegateId}
+            );
+        }
+
+        public int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId)
+        {
+            var values = new
+            {
+                centreId,
+                groupLabel,
+                groupDescription,
+                linkedToField = 0,
+                syncFieldChanges = 0,
+                addNewRegistrants = 0,
+                populateExisting = 0,
+                createdDate = DateTime.UtcNow,
+                adminUserId
+            };
+
+            return connection.QuerySingle<int>(
+                @"INSERT INTO Groups (CentreID, GroupLabel, GroupDescription, LinkedToField, SyncFieldChanges, AddNewRegistrants, PopulateExisting, CreatedDate, CreatedByAdminUserID)
+                        OUTPUT inserted.GroupID
+                        VALUES (@centreId, @groupLabel, @groupDescription, @linkedToField, @syncFieldChanges, @addNewRegistrants, @populateExisting, @createdDate, @adminUserId)",
+                values
             );
         }
     }

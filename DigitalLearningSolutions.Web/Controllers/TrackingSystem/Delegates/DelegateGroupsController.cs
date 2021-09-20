@@ -198,7 +198,12 @@
                 return View(model);
             }
 
-            // QQ insert into database
+            groupsDataService.AddDelegateGroup(
+                User.GetCentreId(),
+                model.GroupName!,
+                model.GroupDescription,
+                (int)User.GetAdminId()!
+            );
             return RedirectToAction("Index");
         }
     }
