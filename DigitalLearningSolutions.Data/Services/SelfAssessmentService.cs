@@ -136,6 +136,8 @@
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
                                                   AQ.IncludeComments,
+                                                  AQ.CommentsPrompt,
+                                                  AQ.CommentsHint,
                                                   LAR.ResultId,
                                                   LAR.Result,
                                                   LAR.SupportingComments,
