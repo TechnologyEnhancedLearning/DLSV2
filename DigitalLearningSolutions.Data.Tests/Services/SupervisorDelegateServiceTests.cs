@@ -118,9 +118,8 @@
             result.Should().Be(null);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void UpdateSupervisorDelegateRecordStatus_updates_record_with_correct_values(bool setConfirmed)
+        [Test]
+        public void UpdateSupervisorDelegateRecordStatus_updates_record_with_correct_values_confirmed()
         {
             // Given
             const string candidateNumber = "HI";
@@ -133,7 +132,7 @@
                 RecordId,
                 CentreId,
                 candidateNumber,
-                setConfirmed
+                true
             );
 
             // Then
@@ -141,7 +140,34 @@
                 () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(
                     RecordId,
                     candidateId,
-                    setConfirmed
+                    A<DateTime>.That.Matches(dateTime => (DateTime.Now - dateTime).TotalSeconds < 1)
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateSupervisorDelegateRecordStatus_updates_record_with_correct_values_not_confirmed()
+        {
+            // Given
+            const string candidateNumber = "HI";
+            const int candidateId = 1;
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
+                .Returns(new DelegateUser { Id = candidateId });
+
+            // When
+            supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                RecordId,
+                CentreId,
+                candidateNumber,
+                false
+            );
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(
+                    RecordId,
+                    candidateId,
+                    null
                 )
             ).MustHaveHappened();
         }

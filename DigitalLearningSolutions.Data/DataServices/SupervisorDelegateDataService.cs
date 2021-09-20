@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -8,7 +9,7 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
         SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
-        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, bool setConfirmed);
+        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, DateTime? confirmed);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -67,14 +68,14 @@
             );
         }
 
-        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, bool setConfirmed)
+        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, DateTime? confirmed)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
                     SET CandidateID = @candidateId,
-                        Confirmed = @setConfirmed OR Confirmed
+                        Confirmed = @confirmed
                     WHERE ID = @supervisorDelegateId",
-                new { supervisorDelegateId, candidateId, setConfirmed }
+                new { supervisorDelegateId, candidateId, confirmed }
             );
         }
     }

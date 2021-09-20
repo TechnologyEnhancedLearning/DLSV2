@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -59,7 +60,8 @@
         public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int centreId, string candidateNumber, bool setConfirmed)
         {
             var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
-            supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(supervisorDelegateId, delegateUser.Id, setConfirmed);
+            var confirmed = setConfirmed ? DateTime.Now : (DateTime?)null;
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(supervisorDelegateId, delegateUser.Id, confirmed);
         }
     }
 }
