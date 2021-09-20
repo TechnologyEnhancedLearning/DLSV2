@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.TrackingSystem
 {
-    public class EvaluationSummaryData
+    public class EvaluationAnswerCounts
     {
         public int Q1Yes { get; set; }
         public int Q1No { get; set; }

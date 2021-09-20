@@ -36,7 +36,7 @@
         }
 
         private static IEnumerable<EvaluationSummaryModel> MapDataToEvaluationSummaryModels(
-            EvaluationSummaryData data
+            EvaluationAnswerCounts data
         )
         {
             var q1 = new EvaluationSummaryModel(

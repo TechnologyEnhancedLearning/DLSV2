@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
     public interface IEvaluationSummaryDataService
     {
-        EvaluationSummaryData GetEvaluationSummaryData(
+        EvaluationAnswerCounts GetEvaluationSummaryData(
             int centreId,
             DateTime startDate,
             DateTime endDate,
@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             this.connection = connection;
         }
 
-        public EvaluationSummaryData GetEvaluationSummaryData(
+        public EvaluationAnswerCounts GetEvaluationSummaryData(
             int centreId,
             DateTime startDate,
             DateTime endDate,
@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int? customisationId
         )
         {
-            return connection.QuerySingle<EvaluationSummaryData>(
+            return connection.QuerySingle<EvaluationAnswerCounts>(
                 @"SELECT
 					    SUM(CASE WHEN Q1 = 0 THEN 1 ELSE 0 END) AS Q1No,
 					    SUM(CASE WHEN Q1 = 1 THEN 1 ELSE 0 END) AS Q1Yes,

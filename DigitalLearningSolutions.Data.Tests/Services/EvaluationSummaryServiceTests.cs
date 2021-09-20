@@ -27,7 +27,7 @@
         {
             // Given
             const int centreId = 121;
-            var data = EvaluationSummaryTestHelper.GetDefaultEvaluationSummaryData();
+            var data = EvaluationSummaryTestHelper.GetDefaultEvaluationAnswerCounts();
             var expectedResults = EvaluationSummaryTestHelper.GetDefaultEvaluationSummaryModels();
             var activityFilterData = new ActivityFilterData(
                 DateTime.Today,

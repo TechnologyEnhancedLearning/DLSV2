@@ -5,9 +5,9 @@
 
     public static class EvaluationSummaryTestHelper
     {
-        public static EvaluationSummaryData GetDefaultEvaluationSummaryData()
+        public static EvaluationAnswerCounts GetDefaultEvaluationAnswerCounts()
         {
-            return new EvaluationSummaryData
+            return new EvaluationAnswerCounts
             {
                 Q1No = 102,
                 Q1Yes = 107,

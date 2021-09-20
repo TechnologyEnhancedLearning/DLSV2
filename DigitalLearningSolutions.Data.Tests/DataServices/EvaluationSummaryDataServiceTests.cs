@@ -21,7 +21,7 @@
         public void GetEvaluationSummaryData_fetches_data_correctly()
         {
             // Given
-            var expectedResult = EvaluationSummaryTestHelper.GetDefaultEvaluationSummaryData();
+            var expectedResult = EvaluationSummaryTestHelper.GetDefaultEvaluationAnswerCounts();
 
             // When
             var result = service.GetEvaluationSummaryData(
