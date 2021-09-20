@@ -17,13 +17,13 @@
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
             ReportsFilterModel = filterModel;
-            EvaluationSummaryViewModels =
+            EvaluationSummaryBreakdown =
                 evaluationResponseBreakdowns.Select(model => new EvaluationSummaryViewModel(model));
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
         public ReportsFilterModel ReportsFilterModel { get; set; }
-        public IEnumerable<EvaluationSummaryViewModel> EvaluationSummaryViewModels { get; set; }
+        public IEnumerable<EvaluationSummaryViewModel> EvaluationSummaryBreakdown { get; set; }
     }
 
     public class UsageStatsTableViewModel
