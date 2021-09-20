@@ -29,11 +29,11 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
-        private readonly IFrameworkNotificationService frameworkNotificationService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -68,7 +68,7 @@ namespace DigitalLearningSolutions.Data.Services
                 supervisorDelegateId,
                 delegateRegistrationModel.Email
             );
-            
+
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved = foundById ||
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
@@ -147,6 +147,21 @@ namespace DigitalLearningSolutions.Data.Services
                     baseUrl,
                     delegateRegistrationModel.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"
+                );
+            }
+
+            var supervisorDelegateRecord = supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
+                delegateRegistrationModel.Centre,
+                delegateRegistrationModel.Email
+            );
+
+            if (supervisorDelegateRecord != null)
+            {
+                supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
+                    supervisorDelegateRecord.ID,
+                    delegateRegistrationModel.Centre,
+                    candidateNumber,
+                    false
                 );
             }
 
