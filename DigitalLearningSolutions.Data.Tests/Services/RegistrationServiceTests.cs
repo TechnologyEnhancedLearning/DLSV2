@@ -579,6 +579,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     testRegistrationModel.Email
                 )
             ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(testRegistrationModel)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
