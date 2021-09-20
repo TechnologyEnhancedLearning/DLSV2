@@ -410,7 +410,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
                 @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
                         SELECT @competencyId AS Expr1, AssessmentQuestionId
                     FROM   FrameworkDefaultQuestions
-                    WHERE (FrameworkId = @frameworkId)",
+                    WHERE (FrameworkId = @frameworkId) AND (NOT EXISTS  (SELECT * FROM CompetencyAssessmentQuestions WHERE AssessmentQuestionID = FrameworkDefaultQuestions.AssessmentQuestionID AND CompetencyID = @competencyId))",
                 new { competencyId, frameworkId }
                 );
         }
