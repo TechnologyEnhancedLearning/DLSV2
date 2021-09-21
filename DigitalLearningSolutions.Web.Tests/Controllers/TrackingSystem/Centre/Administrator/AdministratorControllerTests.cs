@@ -3,15 +3,11 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FakeItEasy;
@@ -55,6 +51,7 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -62,6 +59,7 @@
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            userService = A.Fake<IUserService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -75,7 +73,8 @@
             administratorController = new AdministratorController(
                     userDataService,
                     courseCategoriesDataService,
-                    centreContractAdminUsageService
+                    centreContractAdminUsageService,
+                    userService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
@@ -198,160 +197,6 @@
             // Then
             A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public void EditAdminRoles_edits_roles_when_spaces_available()
-        {
-            // Given
-            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
-                isContentCreator: false,
-                isTrainer: false,
-                importOnly: false,
-                isContentManager: false
-            );
-            var newRoles = new EditRolesViewModel
-            {
-                CentreId = 1,
-                IsCentreAdmin = true,
-                IsContentCreator = true,
-                IsTrainer = true,
-                IsSupervisor = true,
-                ContentManagementRole = ContentManagementRole.CmsAdministrator
-            };
-            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
-            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-
-            // When
-            var result = administratorController.EditAdminRoles(newRoles, currentAdminUser.Id);
-
-            // Then
-            AssertAdminPermissionsUpdatedCorrectly(currentAdminUser.Id, newRoles);
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        [TestCase(false, true, 1)]
-        [TestCase(true, true, 2)]
-        public void EditAdminRoles_edits_roles_when_spaces_unavailable_but_user_already_on_role(
-            bool oldImportOnly,
-            bool oldIsContentManager,
-            int newContentManagementRoleId
-        )
-        {
-            // Given
-            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
-                isContentCreator: true,
-                isTrainer: true,
-                importOnly: oldImportOnly,
-                isContentManager: oldIsContentManager
-            );
-            var newRoles = new EditRolesViewModel
-            {
-                CentreId = 1,
-                IsCentreAdmin = true,
-                IsContentCreator = true,
-                IsTrainer = true,
-                IsSupervisor = true,
-                ContentManagementRole = Enumeration.FromId<ContentManagementRole>(newContentManagementRoleId)
-            };
-            var numberOfAdmins = GetFullCentreContractAdminUsage();
-            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-
-            // When
-            var result = administratorController.EditAdminRoles(newRoles, currentAdminUser.Id);
-
-            // Then
-            AssertAdminPermissionsUpdatedCorrectly(currentAdminUser.Id, newRoles);
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        [TestCase(true, false, 0)]
-        [TestCase(false, true, 0)]
-        [TestCase(false, false, 1)]
-        [TestCase(false, false, 2)]
-        public void EditAdminRoles_returns_status_code_500_when_spaces_unavailable_and_user_not_on_role(
-            bool newIsTrainer,
-            bool newIsContentCreator,
-            int newContentManagementRoleId
-        )
-        {
-            // Given
-            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
-                isContentCreator: false,
-                isTrainer: false,
-                importOnly: false,
-                isContentManager: false
-            );
-            var newRoles = new EditRolesViewModel
-            {
-                CentreId = 1,
-                IsCentreAdmin = true,
-                IsContentCreator = true,
-                IsTrainer = newIsTrainer,
-                IsSupervisor = newIsContentCreator,
-                ContentManagementRole = Enumeration.FromId<ContentManagementRole>(newContentManagementRoleId)
-            };
-            var numberOfAdmins = GetFullCentreContractAdminUsage();
-            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-
-            // Then
-            Assert.Throws<AdminRoleFullException>(() => administratorController.EditAdminRoles(newRoles, currentAdminUser.Id));
-            AssertAdminPermissionUpdateMustNotHaveHappened();
-        }
-
-        private void AssertAdminPermissionsUpdatedCorrectly(int id, EditRolesViewModel newRoles)
-        {
-            A.CallTo(
-                () => userDataService.UpdateAdminUserPermissions(
-                    id,
-                    newRoles.IsCentreAdmin,
-                    newRoles.IsSupervisor,
-                    newRoles.IsTrainer,
-                    newRoles.IsContentCreator,
-                    newRoles.ContentManagementRole.IsContentManager,
-                    newRoles.ContentManagementRole.ImportOnly,
-                    newRoles.LearningCategory
-                )
-            ).MustHaveHappened();
-        }
-
-        private void AssertAdminPermissionUpdateMustNotHaveHappened()
-        {
-            A.CallTo(
-                () => userDataService.UpdateAdminUserPermissions(
-                    A<int>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<int>._
-                )
-            ).MustNotHaveHappened();
-        }
-
-        private void GivenAdminDataReturned(CentreContractAdminUsage numberOfAdmins, AdminUser adminUser)
-        {
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(adminUser);
-            A.CallTo(() => centreContractAdminUsageService.GetCentreAdministratorNumbers(A<int>._))
-                .Returns(numberOfAdmins);
-        }
-
-        private CentreContractAdminUsage GetFullCentreContractAdminUsage()
-        {
-            return CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
-                trainerSpots: 3,
-                trainers: 3,
-                ccLicenceSpots: 4,
-                ccLicences: 4,
-                cmsAdministrators: 5,
-                cmsAdministratorSpots: 5,
-                cmsManagerSpots: 6,
-                cmsManagers: 6
-            );
         }
     }
 }

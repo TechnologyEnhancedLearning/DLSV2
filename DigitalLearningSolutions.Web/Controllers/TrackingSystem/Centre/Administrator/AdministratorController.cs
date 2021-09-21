@@ -4,12 +4,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -24,16 +21,19 @@
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public AdministratorController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
-            ICentreContractAdminUsageService centreContractAdminUsageService
+            ICentreContractAdminUsageService centreContractAdminUsageService,
+            IUserService userService
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
+            this.userService = userService;
         }
 
         [Route("{page=1:int}")]
@@ -115,15 +115,7 @@
                 return NotFound();
             }
 
-            if (NewUserRolesExceedAvailableSpots(model, adminUser))
-            {
-                throw new AdminRoleFullException(
-                    "Failed to update admin roles for admin " + adminId +
-                    " as one or more of the roles being added to have reached their limit"
-                );
-            }
-
-            userDataService.UpdateAdminUserPermissions(
+            userService.UpdateAdminUserPermissions(
                 adminId,
                 model.IsCentreAdmin,
                 model.IsSupervisor,
@@ -160,37 +152,6 @@
                 .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
-        }
-
-        private bool NewUserRolesExceedAvailableSpots(EditRolesViewModel newRoles, AdminUser oldUserDetails)
-        {
-            var currentNumberOfAdmins =
-                centreContractAdminUsageService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
-
-            if (newRoles.IsTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
-            {
-                return true;
-            }
-
-            if (newRoles.IsContentCreator && !oldUserDetails.IsContentCreator &&
-                currentNumberOfAdmins.CcLicencesAtOrOverLimit)
-            {
-                return true;
-            }
-
-            if (newRoles.ContentManagementRole.Equals(ContentManagementRole.CmsAdministrator) &&
-                !oldUserDetails.IsCmsAdministrator && currentNumberOfAdmins.CmsAdministratorsAtOrOverLimit)
-            {
-                return true;
-            }
-
-            if (newRoles.ContentManagementRole.Equals(ContentManagementRole.CmsManager) &&
-                !oldUserDetails.IsCmsManager && currentNumberOfAdmins.CmsManagersAtOrOverLimit)
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

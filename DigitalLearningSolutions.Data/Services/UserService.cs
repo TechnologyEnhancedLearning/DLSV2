@@ -3,8 +3,8 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.User;
-    
 
     public interface IUserService
     {
@@ -39,17 +39,34 @@ namespace DigitalLearningSolutions.Data.Services
         void IncrementFailedLoginCount(AdminUser adminUser);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
+
+        void UpdateAdminUserPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int categoryId
+        );
     }
 
     public class UserService : IUserService
     {
-        private readonly IUserVerificationService userVerificationService;
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly IUserDataService userDataService;
+        private readonly IUserVerificationService userVerificationService;
 
-        public UserService(IUserDataService userDataService, IUserVerificationService userVerificationService)
+        public UserService(
+            IUserDataService userDataService,
+            IUserVerificationService userVerificationService,
+            ICentreContractAdminUsageService centreContractAdminUsageService
+        )
         {
             this.userDataService = userDataService;
             this.userVerificationService = userVerificationService;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
@@ -242,9 +259,77 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
+        public void UpdateAdminUserPermissions(
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int categoryId
+        )
+        {
+            if (NewUserRolesExceedAvailableSpots(adminId, isTrainer, isContentCreator, isContentManager, importOnly))
+            {
+                throw new AdminRoleFullException(
+                    "Failed to update admin roles for admin " + adminId +
+                    " as one or more of the roles being added to have reached their limit"
+                );
+            }
+
+            userDataService.UpdateAdminUserPermissions(
+                adminId,
+                isCentreAdmin,
+                isSupervisor,
+                isTrainer,
+                isContentCreator,
+                isContentManager,
+                importOnly,
+                categoryId
+            );
+        }
+
         private static bool UserEmailHasChanged(User? user, string emailAddress)
         {
             return user != null && user.EmailAddress != emailAddress;
+        }
+
+        private bool NewUserRolesExceedAvailableSpots(
+            int adminId,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly
+        )
+        {
+            var oldUserDetails = userDataService.GetAdminUserById(adminId)!;
+            var currentNumberOfAdmins =
+                centreContractAdminUsageService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
+
+            if (isTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (isContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (isContentManager && importOnly & !oldUserDetails.IsCmsAdministrator &&
+                currentNumberOfAdmins.CmsAdministratorsAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (isContentManager && !importOnly && !oldUserDetails.IsCmsManager &&
+                currentNumberOfAdmins.CmsManagersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

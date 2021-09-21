@@ -4,6 +4,8 @@
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -17,13 +19,15 @@
         private IUserVerificationService userVerificationService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
             userVerificationService = A.Fake<IUserVerificationService>();
-            userService = new UserService(userDataService, userVerificationService);
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            userService = new UserService(userDataService, userVerificationService, centreContractAdminUsageService);
         }
 
         [Test]
@@ -560,6 +564,152 @@
             result.Should().HaveCount(2);
             result[0].AliasId.Should().Be("include");
             result[1].AliasId.Should().Be("include");
+        }
+
+        [Test]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_available()
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, true, true, true, true, true, true, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, true, true, true, true, true, true, 0);
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_unavailable_but_user_already_on_role(
+            bool importOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: true,
+                isTrainer: true,
+                importOnly: importOnly,
+                isContentManager: true
+            );
+
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, true, true, true, true, true, importOnly, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, true, true, true, true, true, importOnly, 0);
+        }
+
+        [Test]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, false, true)]
+        public void UpdateAdminUserPermissions_throws_exception_when_spaces_unavailable_and_user_not_on_role(
+            bool newIsTrainer,
+            bool newIsContentCreator,
+            bool newImportOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+
+            // Then
+            Assert.Throws<AdminRoleFullException>(
+                () => userService.UpdateAdminUserPermissions(
+                    currentAdminUser.Id,
+                    true,
+                    true,
+                    newIsTrainer,
+                    newIsContentCreator,
+                    true,
+                    newImportOnly,
+                    0
+                )
+            );
+            AssertAdminPermissionUpdateMustNotHaveHappened();
+        }
+
+        private void AssertAdminPermissionsCalledCorrectly
+        (
+            int adminId,
+            bool isCentreAdmin,
+            bool isSupervisor,
+            bool isTrainer,
+            bool isContentCreator,
+            bool isContentManager,
+            bool importOnly,
+            int categoryId
+        )
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    adminId,
+                    isCentreAdmin,
+                    isSupervisor,
+                    isTrainer,
+                    isContentCreator,
+                    isContentManager,
+                    importOnly,
+                    categoryId
+                )
+            ).MustHaveHappened();
+        }
+
+        private void AssertAdminPermissionUpdateMustNotHaveHappened()
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        private void GivenAdminDataReturned(CentreContractAdminUsage numberOfAdmins, AdminUser adminUser)
+        {
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(adminUser);
+            A.CallTo(() => centreContractAdminUsageService.GetCentreAdministratorNumbers(A<int>._))
+                .Returns(numberOfAdmins);
+        }
+
+        private CentreContractAdminUsage GetFullCentreContractAdminUsage()
+        {
+            return CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
+                trainerSpots: 3,
+                trainers: 3,
+                ccLicenceSpots: 4,
+                ccLicences: 4,
+                cmsAdministrators: 5,
+                cmsAdministratorSpots: 5,
+                cmsManagerSpots: 6,
+                cmsManagers: 6
+            );
         }
     }
 }
