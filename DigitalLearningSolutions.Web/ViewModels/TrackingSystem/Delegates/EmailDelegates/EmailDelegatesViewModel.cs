@@ -49,6 +49,8 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new List<(string, string)>();
 
+        public override bool NoDataFound => Delegates != null && !Delegates.Any() && NoSearchOrFilter;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             return DateValidator.ValidateDate(Day, Month, Year, "Email delivery date", true)
