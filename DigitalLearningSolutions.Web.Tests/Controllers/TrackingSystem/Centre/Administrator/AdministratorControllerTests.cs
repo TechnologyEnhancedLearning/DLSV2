@@ -193,12 +193,13 @@
         public void DeactivateAdminUser_does_not_deactivate_admin_user_without_confirmation()
         {
             // Given
-            var adminUser = new AdminUser() { Id = 1 };
-            var removeViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
             const string expectedErrorMessage = "You must confirm before deactivating this account.";
 
             // When
-            var result = administratorController.DeactivateAdmin(1, removeViewModel);
+            var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
@@ -210,14 +211,17 @@
         public void DeactivateAdminUser_deactivate_admin_user_with_confirmation()
         {
             // Given
-            var adminUser = new AdminUser() { Id = 1 };
-            var removeViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = true };
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = true };
 
             // When
-            var result = administratorController.DeactivateAdmin(1, removeViewModel);
+            var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
+            var deactivatedAdminUser = result.Should().BeViewResult().Model as AdminUser;
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("DeactivateAdminConfirmation");
+            deactivatedAdminUser?.Active.Should().Be(false);
+            result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
         }
     }
 }

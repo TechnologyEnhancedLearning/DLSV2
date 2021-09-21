@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -151,33 +150,26 @@
         [HttpPost]
         public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
         {
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
             if (!model.Confirm)
             {
                 ModelState.AddModelError(
                     nameof(DeactivateAdminViewModel.Confirm),
                     "You must confirm before deactivating this account."
                 );
+
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
-            userDataService.DeactivateAdmin(adminId, centreId);
-
-            return RedirectToAction(nameof(DeactivateAdminConfirmation), new { adminId });
-        }
-
-        [Route("{adminId:int}/DeactivateAdminConfirmation")]
-        [HttpGet]
-        public IActionResult DeactivateAdminConfirmation(int adminId)
-        {
-            var adminUser = userDataService.GetAdminUserById(adminId);
-            if (adminUser is {Active: true})
+            if (adminUser == null || adminUser.CentreId != centreId)
             {
                 return NotFound();
             }
 
-            var model = new DeactivateAdminConfirmationViewModel();
-            return View(model);
+            userDataService.DeactivateAdmin(adminId);
+            return View("DeactivateAdminConfirmation", adminUser);
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)

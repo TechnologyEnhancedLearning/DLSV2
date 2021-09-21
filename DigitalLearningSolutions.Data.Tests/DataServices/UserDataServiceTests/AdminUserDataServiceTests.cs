@@ -202,7 +202,7 @@
             try
             {
                 // When
-                userDataService.DeactivateAdmin(7, 2);
+                userDataService.DeactivateAdmin(7);
                 var updatedUser = userDataService.GetAdminUserById(7)!;
 
                 // Then

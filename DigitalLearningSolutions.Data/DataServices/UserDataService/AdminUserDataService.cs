@@ -40,8 +40,7 @@
                         au.IsWorkforceContributor,
                         au.IsLocalWorkforceManager,
                         au.ImportOnly,
-                        au.FailedLoginCount,
-                        au.Active
+                        au.FailedLoginCount
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
@@ -249,14 +248,14 @@
             );
         }
 
-        public void DeactivateAdmin(int adminId, int centreId)
+        public void DeactivateAdmin(int adminId)
         {
             connection.Execute(
                 @"UPDATE AdminUsers
                         SET
                             Active = 0
-                        WHERE AdminID = @adminId AND CentreID = @centreId",
-                new { adminId, centreId }
+                        WHERE AdminID = @adminId",
+                new { adminId }
             );
         }
     }
