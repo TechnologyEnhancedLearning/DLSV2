@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             bool selectAll = false
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+            var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
@@ -52,11 +52,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 delegateUsers,
                 jobGroups,
                 customPrompts,
-                filterBy,
+                newFilterBy,
                 selectAll
             );
 
-            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, newFilterBy);
 
             return View(model);
         }
@@ -68,10 +68,10 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (!ModelState.IsValid)
             {
-                filterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+                var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
-                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, filterBy)
+                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterBy)
                 {
                     SelectedDelegateIds = model.SelectedDelegateIds,
                     Day = model.Day,

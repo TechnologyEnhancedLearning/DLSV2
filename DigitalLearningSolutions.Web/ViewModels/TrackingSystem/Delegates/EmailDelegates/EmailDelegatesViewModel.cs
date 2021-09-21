@@ -70,9 +70,9 @@
             Delegates = filteredItems.Select(
                 delegateUser =>
                 {
-                    var preChecked = selectAll ||
+                    var delegateSelected = selectAll ||
                                      SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
-                    return new EmailDelegatesItemViewModel(delegateUser, preChecked);
+                    return new EmailDelegatesItemViewModel(delegateUser, delegateSelected);
                 }
             );
             MatchingSearchResults = Delegates.Count();

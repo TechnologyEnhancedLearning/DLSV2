@@ -10,8 +10,8 @@
     public class EmailDelegatesItemViewModel
     {
         public EmailDelegatesItemViewModel(
-            DelegateUserCard delegateUser,
-            bool preChecked
+            DelegateUser delegateUser,
+            bool delegateSelected
         )
         {
             Id = delegateUser.Id;
@@ -22,12 +22,12 @@
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
 
-            PreChecked = preChecked;
+            PreChecked = delegateSelected;
             CustomPromptFilters = new Dictionary<int, string>();
         }
 
         public EmailDelegatesItemViewModel(
-            DelegateUserCard delegateUser,
+            DelegateUser delegateUser,
             bool preChecked,
             IEnumerable<CustomFieldViewModel> customFields,
             IEnumerable<CustomPrompt> promptsWithOptions
@@ -66,10 +66,10 @@
             IEnumerable<CustomPrompt> promptsWithOptions
         )
         {
-            var closedCustomPromptIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
-            var closedCustomFields = customFields
-                .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId));
-            return closedCustomFields
+            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
+            var customFieldsWithOptions = customFields
+                .Where(customField => promptsWithOptionsIds.Contains(customField.CustomFieldId));
+            return customFieldsWithOptions
                 .Select(
                     customField => new KeyValuePair<int, string>(
                         customField.CustomFieldId,
