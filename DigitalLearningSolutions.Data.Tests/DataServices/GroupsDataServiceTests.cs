@@ -186,23 +186,30 @@
         [Test]
         public void AddDelegateGroup_sets_all_fields_correctly()
         {
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int centreId = 101;
+                const string groupLabel = "Group name";
+                const string groupDescription = "Group description";
+                const int adminUserId = 1;
 
-            // Given
-            var centreId = 101;
-            var groupLabel = "Group name";
-            var groupDescription = "Group description";
-            var adminUserId = 1;
+                // When
+                var groupId = groupsDataService.AddDelegateGroup(centreId, groupLabel, groupDescription, adminUserId);
 
-            // When
-            var groupId = groupsDataService.AddDelegateGroup(centreId, groupLabel, groupDescription, adminUserId);
-            var group = groupsDataService.GetGroupsForCentre(centreId).First(g => g.GroupId == groupId);
+                // Then
+                var group = groupsDataService.GetGroupsForCentre(centreId).First(g => g.GroupId == groupId);
+                group.GroupLabel.Should().Be(groupLabel);
+                group.GroupDescription.Should().Be(groupDescription);
+                group.AddedByAdminId.Should().Be(adminUserId);
+                group.LinkedToField.Should().Be(0);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
 
-            // Then
-            group.GroupLabel.Should().Be(groupLabel);
-            group.GroupDescription.Should().Be(groupDescription);
-            group.AddedByAdminId.Should().Be(adminUserId);
-            group.LinkedToField.Should().Be(0);
         }
     }
 }
