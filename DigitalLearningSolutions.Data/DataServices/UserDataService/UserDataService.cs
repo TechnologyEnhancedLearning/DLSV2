@@ -19,6 +19,7 @@
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         int GetNumberOfActiveAdminsAtCentre(int centreId);
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
+        void DeactivateAdmin(int adminId, int centerId);
 
         void UpdateAdminUserPermissions(
             int adminId,

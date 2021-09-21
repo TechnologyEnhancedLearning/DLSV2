@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -187,6 +188,25 @@
 
                 // Then
                 updatedUser.FailedLoginCount.Should().Be(3);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void DeactivateAdminUser_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                userDataService.DeactivateAdmin(7, 2);
+                var updatedUser = userDataService.GetAdminUserById(7)!;
+
+                // Then
+                updatedUser.Active.Should().Be(false);
             }
             finally
             {

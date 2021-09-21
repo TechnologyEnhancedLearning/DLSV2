@@ -188,5 +188,36 @@
             A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
+
+        [Test]
+        public void DeactivateAdminUser_does_not_deactivate_admin_user_without_confirmation()
+        {
+            // Given
+            var adminUser = new AdminUser() { Id = 1 };
+            var removeViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
+            const string expectedErrorMessage = "You must confirm before deactivating this account.";
+
+            // When
+            var result = administratorController.DeactivateAdmin(1, removeViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
+            administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo(expectedErrorMessage);
+        }
+
+        [Test]
+        public void DeactivateAdminUser_deactivate_admin_user_with_confirmation()
+        {
+            // Given
+            var adminUser = new AdminUser() { Id = 1 };
+            var removeViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = true };
+
+            // When
+            var result = administratorController.DeactivateAdmin(1, removeViewModel);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("DeactivateAdminConfirmation");
+        }
     }
 }

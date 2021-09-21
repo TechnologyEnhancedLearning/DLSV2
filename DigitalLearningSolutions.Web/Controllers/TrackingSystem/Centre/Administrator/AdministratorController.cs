@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -129,6 +130,54 @@
             userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpGet]
+        public IActionResult DeactivateAdmin(int adminId)
+        {
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
+            var model = new DeactivateAdminViewModel(adminUser);
+            return View(model);
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpPost]
+        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        {
+            if (!model.Confirm)
+            {
+                ModelState.AddModelError(
+                    nameof(DeactivateAdminViewModel.Confirm),
+                    "You must confirm before deactivating this account."
+                );
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            userDataService.DeactivateAdmin(adminId, centreId);
+
+            return RedirectToAction(nameof(DeactivateAdminConfirmation), new { adminId });
+        }
+
+        [Route("{adminId:int}/DeactivateAdminConfirmation")]
+        [HttpGet]
+        public IActionResult DeactivateAdminConfirmation(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (adminUser is {Active: true})
+            {
+                return NotFound();
+            }
+
+            var model = new DeactivateAdminConfirmationViewModel();
+            return View(model);
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
