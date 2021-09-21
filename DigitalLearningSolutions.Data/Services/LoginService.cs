@@ -156,12 +156,12 @@
 
         private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            var emails = delegateUsers.Select(du => du.EmailAddress?.ToLower())
+            var emails = delegateUsers.Select(du => du.EmailAddress?.ToLowerInvariant())
                 .ToList();
 
             if (adminUser != null)
             {
-                emails.Add(adminUser.EmailAddress?.ToLower());
+                emails.Add(adminUser.EmailAddress?.ToLowerInvariant());
             }
 
             var uniqueEmails = emails.Distinct().ToList();
