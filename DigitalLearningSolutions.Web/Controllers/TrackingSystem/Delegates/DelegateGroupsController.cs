@@ -202,7 +202,7 @@
                 User.GetCentreId(),
                 model.GroupName!,
                 model.GroupDescription,
-                (int)User.GetAdminId()!
+                User.GetAdminId()!.Value
             );
             return RedirectToAction("Index");
         }
