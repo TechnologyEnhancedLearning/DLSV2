@@ -44,11 +44,12 @@
         {
             if (filterBy == null && filterValue == null)
             {
-                filterBy = request.Cookies.ContainsKey(cookieName)
+                return request.Cookies.ContainsKey(cookieName)
                     ? request.Cookies[cookieName]
                     : defaultFilterValue;
             }
-            else if (filterBy?.ToUpper() == ClearString)
+
+            if (filterBy?.ToUpper() == ClearString)
             {
                 filterBy = null;
             }
