@@ -317,5 +317,33 @@
                 result.NoContentManagerOptionsAvailable.Should().BeTrue();
             }
         }
+
+        [Test]
+        public void GetAdminRoles_maps_admin_roles_correctly()
+        {
+            // Given
+            var viewModel = new EditRolesViewModel
+            {
+                IsCentreAdmin = true,
+                IsSupervisor = true,
+                IsContentCreator = true,
+                IsTrainer = true,
+                ContentManagementRole = ContentManagementRole.CmsAdministrator
+            };
+
+            // When
+            var result = viewModel.GetAdminRoles();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.IsCentreAdmin.Should().BeTrue();
+                result.IsSupervisor.Should().BeTrue();
+                result.IsContentCreator.Should().BeTrue();
+                result.IsTrainer.Should().BeTrue();
+                result.ImportOnly.Should().BeTrue();
+                result.IsContentManager.Should().BeTrue();
+            }
+        }
     }
 }
