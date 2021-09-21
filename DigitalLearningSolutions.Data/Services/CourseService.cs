@@ -10,12 +10,13 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public bool VerifyUserCanAccessCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
     {
-        private readonly ICourseDataService courseDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseDataService courseDataService;
 
         public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService)
         {
@@ -51,6 +52,18 @@
                     return new DelegateCourseDetails(info, customPrompts, attemptStats);
                 }
             );
+        }
+
+        public bool VerifyUserCanAccessCourse(int customisationId, int centreId, int categoryId)
+        {
+            var ids = courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);
+
+            if (centreId != ids.centreId || categoryId != ids.categoryId)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

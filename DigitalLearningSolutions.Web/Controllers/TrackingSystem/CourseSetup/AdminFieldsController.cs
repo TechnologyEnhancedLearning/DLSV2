@@ -28,22 +28,28 @@
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseService courseService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseAdminFieldsDataService courseAdminFieldsDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService,
+            ICourseService courseService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
+            this.courseService = courseService;
         }
 
         [HttpGet]
         [Route("{customisationId}/AdminFields")]
         public IActionResult Index(int customisationId)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
+
             var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
                 customisationId,
                 centreId,
@@ -67,8 +73,11 @@
         [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit")]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
+
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId,
                     centreId,
@@ -106,6 +115,8 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulk(int customisationId, int promptNumber)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var data = TempData.Peek<EditAdminFieldData>()!;
 
             var model = new BulkAdminFieldAnswersViewModel(
@@ -160,6 +171,8 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
             SetViewBagAdminFieldNameOptions(addAdminFieldData.AddModel.AdminFieldId);
@@ -200,6 +213,8 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var data = TempData.Peek<AddAdminFieldData>()!;
             var model = new BulkAdminFieldAnswersViewModel(
                 data.AddModel.OptionsString,
@@ -238,6 +253,8 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
+            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+
             var answerCount =
                 courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
 
@@ -517,6 +534,19 @@
                     "Each answer must be 100 characters or fewer"
                 );
             }
+        }
+
+        private NotFoundResult? ReturnNotFoundIfUserCannotAccessCourse(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+
+            if (!courseService.VerifyUserCanAccessCourse(customisationId, centreId, categoryId.Value))
+            {
+                return NotFound();
+            }
+
+            return null;
         }
     }
 }
