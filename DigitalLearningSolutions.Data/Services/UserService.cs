@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
@@ -42,12 +43,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void UpdateAdminUserPermissions(
             int adminId,
-            bool isCentreAdmin,
-            bool isSupervisor,
-            bool isTrainer,
-            bool isContentCreator,
-            bool isContentManager,
-            bool importOnly,
+            AdminRoles adminRoles,
             int categoryId
         );
     }
@@ -261,16 +257,11 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateAdminUserPermissions(
             int adminId,
-            bool isCentreAdmin,
-            bool isSupervisor,
-            bool isTrainer,
-            bool isContentCreator,
-            bool isContentManager,
-            bool importOnly,
+            AdminRoles adminRoles,
             int categoryId
         )
         {
-            if (NewUserRolesExceedAvailableSpots(adminId, isTrainer, isContentCreator, isContentManager, importOnly))
+            if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
             {
                 throw new AdminRoleFullException(
                     "Failed to update admin roles for admin " + adminId +
@@ -280,12 +271,12 @@ namespace DigitalLearningSolutions.Data.Services
 
             userDataService.UpdateAdminUserPermissions(
                 adminId,
-                isCentreAdmin,
-                isSupervisor,
-                isTrainer,
-                isContentCreator,
-                isContentManager,
-                importOnly,
+                adminRoles.IsCentreAdmin,
+                adminRoles.IsSupervisor,
+                adminRoles.IsTrainer,
+                adminRoles.IsContentCreator,
+                adminRoles.IsContentManager,
+                adminRoles.ImportOnly,
                 categoryId
             );
         }
@@ -297,33 +288,30 @@ namespace DigitalLearningSolutions.Data.Services
 
         private bool NewUserRolesExceedAvailableSpots(
             int adminId,
-            bool isTrainer,
-            bool isContentCreator,
-            bool isContentManager,
-            bool importOnly
+            AdminRoles adminRoles
         )
         {
             var oldUserDetails = userDataService.GetAdminUserById(adminId)!;
             var currentNumberOfAdmins =
                 centreContractAdminUsageService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
 
-            if (isTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
+            if (adminRoles.IsTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
             {
                 return true;
             }
 
-            if (isContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
             {
                 return true;
             }
 
-            if (isContentManager && importOnly & !oldUserDetails.IsCmsAdministrator &&
+            if (adminRoles.IsCmsAdministrator && !oldUserDetails.IsCmsAdministrator &&
                 currentNumberOfAdmins.CmsAdministratorsAtOrOverLimit)
             {
                 return true;
             }
 
-            if (isContentManager && !importOnly && !oldUserDetails.IsCmsManager &&
+            if (adminRoles.IsCmsManager && !oldUserDetails.IsCmsManager &&
                 currentNumberOfAdmins.CmsManagersAtOrOverLimit)
             {
                 return true;

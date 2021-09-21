@@ -576,15 +576,15 @@
                 importOnly: false,
                 isContentManager: false
             );
-
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = UserTestHelper.GetDefaultAdminRoles();
 
             // When
-            userService.UpdateAdminUserPermissions(currentAdminUser.Id, true, true, true, true, true, true, 0);
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
 
             // Then
-            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, true, true, true, true, true, true, 0);
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
         }
 
         [Test]
@@ -604,12 +604,13 @@
 
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = UserTestHelper.GetDefaultAdminRoles(importOnly: importOnly);
 
             // When
-            userService.UpdateAdminUserPermissions(currentAdminUser.Id, true, true, true, true, true, importOnly, 0);
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
 
             // Then
-            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, true, true, true, true, true, importOnly, 0);
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
         }
 
         [Test]
@@ -632,17 +633,13 @@
             );
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = UserTestHelper.GetDefaultAdminRoles(isContentCreator: newIsContentCreator, isTrainer: newIsTrainer, importOnly: newImportOnly);
 
             // Then
             Assert.Throws<AdminRoleFullException>(
                 () => userService.UpdateAdminUserPermissions(
                     currentAdminUser.Id,
-                    true,
-                    true,
-                    newIsTrainer,
-                    newIsContentCreator,
-                    true,
-                    newImportOnly,
+                    adminRoles,
                     0
                 )
             );
@@ -652,24 +649,19 @@
         private void AssertAdminPermissionsCalledCorrectly
         (
             int adminId,
-            bool isCentreAdmin,
-            bool isSupervisor,
-            bool isTrainer,
-            bool isContentCreator,
-            bool isContentManager,
-            bool importOnly,
+            AdminRoles adminRoles,
             int categoryId
         )
         {
             A.CallTo(
                 () => userDataService.UpdateAdminUserPermissions(
                     adminId,
-                    isCentreAdmin,
-                    isSupervisor,
-                    isTrainer,
-                    isContentCreator,
-                    isContentManager,
-                    importOnly,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
                     categoryId
                 )
             ).MustHaveHappened();

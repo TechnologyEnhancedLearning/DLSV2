@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -115,14 +116,18 @@
                 return NotFound();
             }
 
-            userService.UpdateAdminUserPermissions(
-                adminId,
+            var adminRoles = new AdminRoles(
                 model.IsCentreAdmin,
                 model.IsSupervisor,
-                model.IsTrainer,
                 model.IsContentCreator,
+                model.IsTrainer,
                 model.ContentManagementRole.IsContentManager,
-                model.ContentManagementRole.ImportOnly,
+                model.ContentManagementRole.ImportOnly
+            );
+
+            userService.UpdateAdminUserPermissions(
+                adminId,
+                adminRoles,
                 model.LearningCategory
             );
 
