@@ -16,6 +16,8 @@
 
         public readonly string? SearchString;
 
+        public readonly string? SearchLabel;
+
         protected BaseSearchablePageViewModel(
             string? searchString,
             int page,
@@ -23,12 +25,14 @@
             string sortBy = DefaultSortOption,
             string sortDirection = Ascending,
             string? filterBy = null,
-            int itemsPerPage = DefaultItemsPerPage
+            int itemsPerPage = DefaultItemsPerPage,
+            string? searchLabel = null
         ) : base(page, itemsPerPage)
         {
             SortBy = sortBy;
             SortDirection = sortDirection;
             SearchString = searchString;
+            SearchLabel = searchLabel;
             FilterBy = filterBy;
             FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
@@ -42,6 +46,10 @@
             SelectListHelper.MapOptionsToSelectListItems(SortOptions);
 
         public abstract IEnumerable<(string, string)> SortOptions { get; }
+
+        public abstract bool NoDataFound { get; }
+
+        public bool NoSearchOrFilter => SearchString == null && FilterBy == null;
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
     }
