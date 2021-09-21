@@ -1,0 +1,51 @@
+﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model ConfirmDeleteGroupViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Groups - Delete group";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmDeleteGroup">
+      @if (errorHasOccurred) {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteEnrolments) })"/>
+      }
+
+      <div class="nhsuk-u-margin-bottom-8">
+        <h1 class="nhsuk-heading-xl">Delete delegate group</h1>
+      </div>
+
+      <input type="hidden" asp-for="GroupLabel" />
+      <input type="hidden" asp-for="DelegateCount" />
+      <input type="hidden" asp-for="CourseCount" />
+
+      @{
+        // QQ group name and warning text about number of delegates and courses
+      }
+
+
+      <vc:checkboxes label=""
+                     populate-with-current-values="true"
+                     checkboxes="@Model.Checkboxes"
+                     hint-text="" />
+    </form>
+  </div>
+</div>

@@ -116,7 +116,7 @@
             }
 
             var progressId = groupsDataService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
-            
+
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
 
             return View(model);
@@ -174,6 +174,60 @@
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 
             return View(model);
+        }
+
+        [Route("{groupId:int}/Delete")]
+        public IActionResult DeleteGroup(int groupId)
+        {
+            var delegates = groupsDataService.GetGroupDelegates(groupId);
+            var courses = groupsDataService.GetGroupCourses(groupId, User.GetCentreId());
+
+            if (!delegates.Any() && !courses.Any())
+            {
+                // QQ delete group
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                // QQ redirect to deletion confirmation
+                return RedirectToAction("ConfirmDeleteGroup", new { groupId });
+            }
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Delete/Confirm")]
+        public IActionResult ConfirmDeleteGroup(int groupId)
+        {
+            var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
+            var delegateCount = groupsDataService.GetGroupDelegates(groupId).Count();
+            var courseCount = groupsDataService.GetGroupCourses(groupId, User.GetCentreId()).Count();
+
+            var model = new ConfirmDeleteGroupViewModel
+            {
+                GroupLabel = groupLabel,
+                DelegateCount = delegateCount,
+                CourseCount = courseCount
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Delete/Confirm")]
+        public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            if (model.DeleteEnrolments)
+            {
+                // QQ delete enrolments
+            }
+
+            // QQ delete group
+            return RedirectToAction("Index");
         }
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
