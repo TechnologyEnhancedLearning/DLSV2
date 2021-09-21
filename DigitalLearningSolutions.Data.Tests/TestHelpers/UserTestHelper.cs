@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
@@ -219,26 +218,6 @@
             );
 
             return users.Single();
-        }
-
-        public static AdminRoles GetDefaultAdminRoles
-        (
-            bool isCentreAdmin = true,
-            bool isSupervisor = true,
-            bool isContentCreator = true,
-            bool isTrainer = true,
-            bool isContentManager = true,
-            bool importOnly = true
-        )
-        {
-            return new AdminRoles(
-                isCentreAdmin,
-                isSupervisor,
-                isContentCreator,
-                isTrainer,
-                isContentManager,
-                importOnly
-            );
         }
     }
 }

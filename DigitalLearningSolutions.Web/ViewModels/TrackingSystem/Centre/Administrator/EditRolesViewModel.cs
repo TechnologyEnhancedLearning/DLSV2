@@ -12,16 +12,21 @@
 
     public class EditRolesViewModel
     {
+        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
+
         public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
             AdminRoleInputs.CentreAdminCheckbox, AdminRoleInputs.SupervisorCheckbox
         };
 
-        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
-
         public EditRolesViewModel() { }
 
-        public EditRolesViewModel(AdminUser user, int centreId, IEnumerable<Category> categories, CentreContractAdminUsage numberOfAdmins)
+        public EditRolesViewModel(
+            AdminUser user,
+            int centreId,
+            IEnumerable<Category> categories,
+            CentreContractAdminUsage numberOfAdmins
+        )
         {
             CentreId = centreId;
             FullName = $"{user.FirstName} {user.LastName}";
@@ -65,6 +70,18 @@
 
         public bool NotAllRolesDisplayed => Radios.Count < 3 || Checkboxes.Count < 4;
         public bool NoContentManagerOptionsAvailable => Radios.Count == 1;
+
+        public AdminRoles GetAdminRoles()
+        {
+            return new AdminRoles(
+                IsCentreAdmin,
+                IsSupervisor,
+                IsContentCreator,
+                IsTrainer,
+                ContentManagementRole.IsContentManager,
+                ContentManagementRole.ImportOnly
+            );
+        }
 
         private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
         {

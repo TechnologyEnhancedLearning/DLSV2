@@ -16,10 +16,10 @@
 
     public class UserServiceTests
     {
-        private IUserVerificationService userVerificationService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
-        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private IUserVerificationService userVerificationService = null!;
 
         [SetUp]
         public void Setup()
@@ -578,7 +578,7 @@
             );
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = UserTestHelper.GetDefaultAdminRoles();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -604,7 +604,7 @@
 
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = UserTestHelper.GetDefaultAdminRoles(importOnly: importOnly);
+            var adminRoles = new AdminRoles(true, true, true, true, true, importOnly);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -633,7 +633,7 @@
             );
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = UserTestHelper.GetDefaultAdminRoles(isContentCreator: newIsContentCreator, isTrainer: newIsTrainer, importOnly: newImportOnly);
+            var adminRoles = new AdminRoles(true, true, newIsContentCreator, newIsTrainer, true, newImportOnly);
 
             // Then
             Assert.Throws<AdminRoleFullException>(
@@ -646,8 +646,7 @@
             AssertAdminPermissionUpdateMustNotHaveHappened();
         }
 
-        private void AssertAdminPermissionsCalledCorrectly
-        (
+        private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,
             int categoryId
