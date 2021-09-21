@@ -29,10 +29,36 @@
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(courseAdminFieldsService, courseAdminFieldsDataService, courseService)
+            controller = new AdminFieldsController(
+                    courseAdminFieldsService,
+                    courseAdminFieldsDataService,
+                    courseService
+                )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
+        }
+
+        [Test]
+        public void All_admin_field_pages_return_not_found_if_user_cannot_access_course()
+        {
+            // Given
+            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(false);
+
+            // When
+            var indexResult = controller.Index(2);
+            var editResult = controller.EditAdminField(2, 1);
+            var editBulkResult = controller.EditAdminFieldBulk(2, 1);
+            var addResult = controller.AddAdminField(2);
+            var removeResult = controller.RemoveAdminField(2, 1);
+
+            // Then
+            indexResult.Should().BeNotFoundResult();
+            editResult.Should().BeNotFoundResult();
+            editBulkResult.Should().BeNotFoundResult();
+            addResult.Should().BeNotFoundResult();
+            removeResult.Should().BeNotFoundResult();
         }
 
         [Test]
@@ -41,6 +67,8 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
+            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
             A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
@@ -195,6 +223,8 @@
             var expectedPromptModel = new AddAdminFieldViewModel(1);
             var initialTempData = new AddAdminFieldData(expectedPromptModel);
             controller.TempData.Set(initialTempData);
+            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
 
             // When
             var result = controller.AddAdminField(1);
@@ -213,6 +243,8 @@
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
 
+            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
@@ -457,6 +489,10 @@
         [Test]
         public void RemoveAdminField_removes_admin_field_with_no_user_answers()
         {
+            // Given
+            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
+
             // When
             var result = controller.RemoveAdminField(100, 2);
 

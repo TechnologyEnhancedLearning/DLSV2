@@ -56,14 +56,10 @@
 
         public bool VerifyUserCanAccessCourse(int customisationId, int centreId, int categoryId)
         {
-            var ids = courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);
+            var (courseCentreId, courseCategoryId) =
+                courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);
 
-            if (centreId != ids.centreId || (categoryId != ids.categoryId && categoryId != 0))
-            {
-                return false;
-            }
-
-            return true;
+            return centreId == courseCentreId && (categoryId == courseCategoryId || categoryId == 0);
         }
     }
 }

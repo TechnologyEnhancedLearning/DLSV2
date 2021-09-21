@@ -364,5 +364,16 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
+
+        [Test]
+        public void GetCentreIdAndCategoryIdForCourse_returns_expected_values()
+        {
+            // When
+            var (centreId, categoryId) = courseDataService.GetCentreIdAndCategoryIdForCourse(1);
+
+            // Then
+            centreId.Should().Be(2);
+            categoryId.Should().Be(2);
+        }
     }
 }

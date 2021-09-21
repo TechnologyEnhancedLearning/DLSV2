@@ -149,5 +149,21 @@
             results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
             results[0].AttemptStats.Should().Be((0, 0));
         }
+
+        [Test]
+        public void VerifyUserCanAccessCourse_should_call_correct_data_service_method()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .Returns((2, 2));
+
+            // When
+            var result = courseService.VerifyUserCanAccessCourse(1, 2, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().Be(true);
+        }
     }
 }
