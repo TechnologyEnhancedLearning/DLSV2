@@ -13,6 +13,8 @@
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model.Application.UrlSegment }
   };
+  var isDelegateUser = Model.FormData.IsDelegateUser;
+  var profileImage = Model.FormData.ProfileImage;
 }
 
 @section NavMenuItems {
@@ -72,7 +74,7 @@
   </div>
 
   @if (Model.FormData.IsDelegateUser) {
-    <input type="hidden" id="IsDelegateUser" name="IsDelegateUser" value="@Model.FormData.IsDelegateUser.ToString()" />
+    <input type="hidden" asp-for="@isDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
         <vc:select-list-with-configurable-model
@@ -120,10 +122,7 @@
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
                               To remove your profile picture click the remove button.
                               Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden"
-             id="ProfileImage"
-             name="ProfileImage"
-             value="@(Model.FormData.ProfileImage != null ? Convert.ToBase64String(Model.FormData.ProfileImage) : null)" />
+      <input type="hidden"asp-for="@profileImage" />
       <vc:file-input-with-configurable-model
         model="@Model.FormData"
         asp-for="ProfileImageFile"
