@@ -16,10 +16,9 @@
 
     public class ActivityServiceTests
     {
+        public const string ActivityDataDownloadRelativeFilePath = "\\TestData\\ActivityDataDownloadTest.xlsx";
         private IActivityDataService activityDataService = null!;
         private IActivityService activityService = null!;
-
-        public const string ActivityDataDownloadRelativeFilePath = "\\TestData\\ActivityDataDownloadTest.xlsx";
 
         [SetUp]
         public void SetUp()

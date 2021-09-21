@@ -23,13 +23,12 @@
 
     public class ActivityService : IActivityService
     {
+        private const string SheetName = "Usage Statistics";
+        private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IActivityDataService activityDataService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
-
-        private const string SheetName = "UsageStats"; // TODO HEEDLS-460 is this actually needed?
-        private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
 
         public ActivityService(
             IActivityDataService activityDataService,
@@ -84,6 +83,24 @@
             return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
+        }
+
+        public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
+        {
+            using var workbook = new XLWorkbook();
+
+            var activityData = GetFilteredActivity(centreId, filterData).Select(
+                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
+            );
+
+            var sheet = workbook.Worksheets.Add(SheetName);
+            var table = sheet.Cell(1, 1).InsertTable(activityData);
+            table.Theme = TableTheme;
+            sheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
@@ -148,24 +165,6 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
-        }
-
-        public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
-        {
-            using var workbook = new XLWorkbook();
-
-            var activityData = GetFilteredActivity(centreId, filterData).Select(
-                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
-            );
-
-            var sheet = workbook.Worksheets.Add(SheetName);
-            var table = sheet.Cell(1, 1).InsertTable(activityData);
-            table.Theme = TableTheme;
-            sheet.Columns().AdjustToContents();
-
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
         }
     }
 }

@@ -110,7 +110,7 @@
             return File(
                 dataFile,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx" // TODO HEEDLS-460 what title?
+                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
             );
         }
     }
