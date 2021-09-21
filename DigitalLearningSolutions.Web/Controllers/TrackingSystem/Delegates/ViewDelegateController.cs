@@ -68,5 +68,20 @@
 
             return View("WelcomeEmailSent", model);
         }
+
+        [Route("DeactivateDelegate")]
+        public IActionResult DeactivateDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            userDataService.DeactivateDelegateUser(delegateId);
+
+            return RedirectToAction("Index");
+        }
     }
 }
