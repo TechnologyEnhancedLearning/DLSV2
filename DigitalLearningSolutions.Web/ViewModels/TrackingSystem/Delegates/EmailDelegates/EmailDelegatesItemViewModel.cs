@@ -12,7 +12,7 @@
     {
         public EmailDelegatesItemViewModel(
             DelegateUser delegateUser,
-            bool delegateSelected
+            bool isDelegateSelected
         )
         {
             Id = delegateUser.Id;
@@ -23,13 +23,13 @@
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
 
-            PreChecked = delegateSelected;
+            IsDelegateSelected = isDelegateSelected;
             CustomPromptFilters = new Dictionary<int, string>();
         }
 
         public EmailDelegatesItemViewModel(
             DelegateUser delegateUser,
-            bool preChecked,
+            bool isDelegateSelected,
             IEnumerable<CustomFieldViewModel> customFields,
             IEnumerable<CustomPrompt> promptsWithOptions
         )
@@ -42,7 +42,7 @@
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
 
-            PreChecked = preChecked;
+            IsDelegateSelected = isDelegateSelected;
             JobGroupId = delegateUser.JobGroupId;
             CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(customFields, promptsWithOptions);
         }
@@ -51,7 +51,7 @@
         public string Name { get; set; }
         public string? Email { get; set; }
         public string? RegistrationDate { get; set; }
-        public bool PreChecked { get; set; }
+        public bool IsDelegateSelected { get; set; }
         private int JobGroupId { get; }
 
         public string JobGroupFilter => FilteringHelper.BuildFilterValueString(

@@ -7,7 +7,7 @@
          type="checkbox"
          name="SelectedDelegateIds"
          value="@Model.Id"
-         @(Model.PreChecked ? "checked" : string.Empty) />
+         @(Model.IsDelegateSelected ? "checked" : string.Empty) />
   <label class="nhsuk-label nhsuk-checkboxes__label searchable-element-title" for="@Model.Id-checkbox">
     @Model.Name (@Model.Email)
   </label>

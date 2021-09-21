@@ -23,9 +23,9 @@
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
-                    var preChecked = selectedDelegateIds.Contains(delegateUser.Id);
+                    var isDelegateSelected = selectedDelegateIds.Contains(delegateUser.Id);
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new EmailDelegatesItemViewModel(delegateUser, preChecked, customFields, promptsWithOptions);
+                    return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, customFields, promptsWithOptions);
                 }
             );
 
