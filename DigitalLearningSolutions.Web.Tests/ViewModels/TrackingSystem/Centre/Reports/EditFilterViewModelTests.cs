@@ -91,7 +91,7 @@
             var expectedFirstError = new ValidationResult("End date must not precede start date", new[] { "EndDay" });
             var expectedSecondError = new ValidationResult(
                 "",
-                new[] { "StartDay", "StartMonth", "StartYear", "EndMonth", "EndYear" }
+                new[] { "EndMonth", "EndYear" }
             );
 
             // When

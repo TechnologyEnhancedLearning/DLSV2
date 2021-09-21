@@ -152,7 +152,6 @@
                         "",
                         new[]
                         {
-                            nameof(StartDay), nameof(StartMonth), nameof(StartYear),
                             nameof(EndMonth), nameof(EndYear)
                         }
                     )
