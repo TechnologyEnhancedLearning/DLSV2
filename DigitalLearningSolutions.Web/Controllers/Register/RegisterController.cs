@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.supervisorDelegateService = supervisorDelegateService;
         }
 
-        public IActionResult Index(int? centreId = null, int? inviteId = null)
+        public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -60,9 +60,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 return NotFound();
             }
-
-            var supervisorDelegateRecord = centreId.HasValue && inviteId.HasValue
-                ? supervisorDelegateService.GetSupervisorDelegateRecord(centreId.Value, inviteId.Value)
+            
+            var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) && Guid.TryParse(inviteId, out var inviteHash)
+                ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(centreId.Value, inviteHash)
                 : null;
 
             SetDelegateRegistrationData(

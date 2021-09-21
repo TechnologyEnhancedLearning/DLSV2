@@ -8,7 +8,7 @@
 
     public interface ISupervisorDelegateDataService
     {
-        SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
+        SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
         IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email);
 
@@ -26,7 +26,7 @@
             this.connection = connection;
         }
 
-        public SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId)
+        public SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash)
         {
             return connection.QuerySingleOrDefault<SupervisorDelegate?>(
                 @"SELECT
@@ -43,8 +43,8 @@
                         au.CentreID
                     FROM SupervisorDelegates sd
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
-                    WHERE ID = @supervisorDelegateId",
-                new { supervisorDelegateId }
+                    WHERE sd.InviteHash = @inviteHash",
+                new { inviteHash }
             );
         }
 

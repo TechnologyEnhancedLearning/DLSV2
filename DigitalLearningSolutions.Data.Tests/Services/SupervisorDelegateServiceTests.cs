@@ -14,6 +14,7 @@
     {
         private const int CentreId = 1;
         private const int RecordId = 2;
+        private readonly Guid inviteHash = new Guid();
         private ISupervisorDelegateDataService supervisorDelegateDataService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
@@ -27,28 +28,30 @@
         }
 
         [Test]
-        public void GetSupervisorDelegateRecord_returns_matching_record()
+        public void GetSupervisorDelegateRecordByInviteHash_returns_matching_record()
         {
             // Given
             var record = new SupervisorDelegate { ID = RecordId, CentreId = CentreId };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
+            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
+                .Returns(record);
 
             // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecord(CentreId, RecordId);
+            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(CentreId, inviteHash);
 
             // Then
             result.Should().Be(record);
         }
 
         [Test]
-        public void GetSupervisorDelegateRecord_returns_null_if_matching_record_is_wrong_centre()
+        public void GetSupervisorDelegateRecordByInviteHash_returns_null_if_matching_record_is_wrong_centre()
         {
             // Given
             var record = new SupervisorDelegate { ID = RecordId, CentreId = 4 };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
+            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
+                .Returns(record);
 
             // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecord(CentreId, RecordId);
+            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(CentreId, inviteHash);
 
             // Then
             result.Should().Be(null);
