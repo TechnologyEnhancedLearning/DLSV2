@@ -14,7 +14,6 @@
     {
         private const int CentreId = 1;
         private const int RecordId = 2;
-        private const string Email = "test@email.com";
         private ISupervisorDelegateDataService supervisorDelegateDataService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
@@ -56,118 +55,35 @@
         }
 
         [Test]
-        public void GetPendingSupervisorDelegateRecordByIdAndEmail_returns_matching_record()
-        {
-            // Given
-            var record = new SupervisorDelegate { ID = RecordId, CentreId = CentreId, DelegateEmail = Email };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
-
-            // When
-            var result =
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(CentreId, RecordId, Email);
-
-            // Then
-            result.Should().Be(record);
-        }
-
-        [Test]
-        public void GetPendingSupervisorDelegateRecordByIdAndEmail_returns_null_if_record_has_removed_value()
-        {
-            // Given
-            var record = new SupervisorDelegate
-                { ID = RecordId, CentreId = CentreId, DelegateEmail = Email, Removed = new DateTime() };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
-
-            // When
-            var result =
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(CentreId, RecordId, Email);
-
-            // Then
-            result.Should().Be(null);
-        }
-
-        [Test]
-        public void GetPendingSupervisorDelegateRecordByIdAndEmail_returns_null_if_record_has_wrong_email()
-        {
-            // Given
-            var record = new SupervisorDelegate
-                { ID = RecordId, CentreId = CentreId, DelegateEmail = "wrong@email.com" };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
-
-            // When
-            var result =
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(CentreId, RecordId, Email);
-
-            // Then
-            result.Should().Be(null);
-        }
-
-        [Test]
-        public void GetPendingSupervisorDelegateRecordByIdAndEmail_returns_null_if_record_has_candidateId_value()
-        {
-            // Given
-            var record = new SupervisorDelegate
-                { ID = RecordId, CentreId = CentreId, DelegateEmail = Email, CandidateID = 25 };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecord(RecordId)).Returns(record);
-
-            // When
-            var result =
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(CentreId, RecordId, Email);
-
-            // Then
-            result.Should().Be(null);
-        }
-
-        [Test]
-        public void UpdateSupervisorDelegateRecordStatus_updates_record_with_correct_values_confirmed()
+        public void AddCandidateIdToSupervisorDelegateRecords_updates_records_with_correct_candidateId()
         {
             // Given
             const string candidateNumber = "HI";
             const int candidateId = 1;
+            var recordIds = new[] { 1, 2, 3, 4, 5 };
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(new DelegateUser { Id = candidateId });
 
             // When
-            supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                RecordId,
-                CentreId,
-                candidateNumber,
-                true
-            );
+            supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(recordIds, CentreId, candidateNumber);
 
             // Then
             A.CallTo(
-                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(
-                    RecordId,
-                    candidateId,
-                    A<DateTime>.That.Matches(dateTime => (DateTime.Now - dateTime).TotalSeconds < 1)
-                )
+                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(recordIds, candidateId)
             ).MustHaveHappened();
         }
 
         [Test]
-        public void UpdateSupervisorDelegateRecordStatus_updates_record_with_correct_values_not_confirmed()
+        public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
         {
-            // Given
-            const string candidateNumber = "HI";
-            const int candidateId = 1;
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(new DelegateUser { Id = candidateId });
-
             // When
-            supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                RecordId,
-                CentreId,
-                candidateNumber,
-                false
-            );
+            supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(RecordId);
 
             // Then
             A.CallTo(
-                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(
+                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
                     RecordId,
-                    candidateId,
-                    null
+                    A<DateTime>.That.Matches(dateTime => (DateTime.UtcNow - dateTime).TotalSeconds < 1)
                 )
             ).MustHaveHappened();
         }

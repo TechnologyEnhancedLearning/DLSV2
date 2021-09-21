@@ -1,6 +1,8 @@
 namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -231,94 +233,81 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void Registering_delegate_should_update_SupervisorDelegate_record_correctly_if_found_by_id()
+        public void Registering_delegate_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
         {
             // Given
-            const int supervisorDelegateId = 2;
             var centreId = testRegistrationModel.Centre;
-            A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
-                    centreId,
-                    supervisorDelegateId,
-                    testRegistrationModel.Email
-                )
-            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
-
-            // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, supervisorDelegateId);
-
-            // Then
-            A.CallTo(
-                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    supervisorDelegateId,
-                    centreId,
-                    NewCandidateNumber,
-                    true
-                )
-            ).MustHaveHappened();
-        }
-
-        [Test]
-        public void Registering_delegate_should_update_SupervisorDelegate_record_correctly_if_found_by_email()
-        {
-            // Given
-            const int supervisorDelegateId = 2;
-            var centreId = testRegistrationModel.Centre;
-            ACallToGetPendingSupervisorDelegateRecordByIdAndEmailReturnsNull();
-            A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
-                    centreId,
-                    testRegistrationModel.Email
-                )
-            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsList(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    supervisorDelegateId,
+                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
                     centreId,
-                    NewCandidateNumber,
-                    false
+                    NewCandidateNumber
                 )
             ).MustHaveHappened();
         }
 
         [Test]
-        public void Registering_delegate_should_not_update_SupervisorDelegate_record_if_not_found()
+        public void Registering_delegate_should_add_Confirmed_only_to_SupervisorDelegate_record_with_matching_id()
         {
             // Given
-            ACallToGetPendingSupervisorDelegateRecordByIdAndEmailReturnsNull();
-            ACallToGetPendingSupervisorDelegateRecordByEmailReturnsNull();
+            const int matchingSupervisorDelegateId = 2;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsList(supervisorDelegateIds);
 
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
+            registrationService.RegisterDelegate(
+                testRegistrationModel,
+                string.Empty,
+                false,
+                matchingSupervisorDelegateId
+            );
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<bool>._
+                () => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(matchingSupervisorDelegateId)
+            ).MustHaveHappened();
+            A.CallTo(
+                () => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(
+                    A<int>.That.Matches(id => id != matchingSupervisorDelegateId)
                 )
             ).MustNotHaveHappened();
         }
 
         [Test]
-        public void Registering_delegate_should_send_SupervisorDelegate_email_if_found_by_id()
+        public void Registering_delegate_should_not_update_any_SupervisorDelegate_records_if_none_found()
+        {
+            // Given
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsEmpty();
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>._,
+                    A<int>._,
+                    A<string>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(() => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
         {
             // Given
             const int supervisorDelegateId = 2;
-            A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
-                    testRegistrationModel.Centre,
-                    supervisorDelegateId,
-                    testRegistrationModel.Email
-                )
-            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsList(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, supervisorDelegateId);
@@ -326,41 +315,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId))
                 .MustHaveHappened();
-        }
-
-        [Test]
-        public void Registering_delegate_should_not_send_SupervisorDelegate_email_if_found_by_email()
-        {
-            // Given
-            ACallToGetPendingSupervisorDelegateRecordByIdAndEmailReturnsNull();
             A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
-                    testRegistrationModel.Centre,
-                    testRegistrationModel.Email
+                () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
+                    A<int>.That.Matches(id => id != supervisorDelegateId)
                 )
-            ).Returns(new SupervisorDelegate());
-
-            // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public void Registering_delegate_should_not_send_SupervisorDelegate_email_if_not_found()
-        {
-            // Given
-            ACallToGetPendingSupervisorDelegateRecordByIdAndEmailReturnsNull();
-            ACallToGetPendingSupervisorDelegateRecordByEmailReturnsNull();
-
-            // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
-
-            // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
-                .MustNotHaveHappened();
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -568,17 +527,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void RegisterDelegateByCentre_should_update_SupervisorDelegate_record_correctly_if_found_by_email()
+        public void RegisterDelegateByCentre_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
         {
             // Given
-            const int supervisorDelegateId = 2;
             const string baseUrl = "base.com";
-            A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
-                    testRegistrationModel.Centre,
-                    testRegistrationModel.Email
-                )
-            ).Returns(new SupervisorDelegate { ID = supervisorDelegateId });
+            var centreId = testRegistrationModel.Centre;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsList(supervisorDelegateIds);
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(testRegistrationModel)).Returns(NewCandidateNumber);
 
             // When
@@ -586,34 +541,27 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    supervisorDelegateId,
-                    testRegistrationModel.Centre,
-                    NewCandidateNumber,
-                    false
+                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    centreId,
+                    NewCandidateNumber
                 )
             ).MustHaveHappened();
         }
 
         [Test]
-        public void RegisterDelegateByCentre_should_not_update_SupervisorDelegate_record_if_not_found()
+        public void RegisterDelegateByCentre_should_not_add_Confirmed_to_any_SupervisorDelegate_record()
         {
             // Given
             const string baseUrl = "base.com";
-            ACallToGetPendingSupervisorDelegateRecordByEmailReturnsNull();
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsEmpty();
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
 
             // Then
-            A.CallTo(
-                () => supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<bool>._
-                )
-            ).MustNotHaveHappened();
+            A.CallTo(() => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
@@ -621,7 +569,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             const string baseUrl = "base.com";
-            ACallToGetPendingSupervisorDelegateRecordByEmailReturnsNull();
+            ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsEmpty();
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
@@ -631,21 +579,19 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustNotHaveHappened();
         }
 
-        private void ACallToGetPendingSupervisorDelegateRecordByIdAndEmailReturnsNull()
+        private void ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsEmpty()
         {
-            A.CallTo(
-                () => supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._
-                )
-            ).Returns(null);
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(A<int>._, A<string>._))
+                .Returns(new List<SupervisorDelegate>());
         }
 
-        private void ACallToGetPendingSupervisorDelegateRecordByEmailReturnsNull()
+        private void ACallToGetPendingSupervisorDelegateRecordsByEmailReturnsList(
+            IEnumerable<int> supervisorDelegateIds
+        )
         {
-            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(A<int>._, A<string>._))
-                .Returns(null);
+            var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(A<int>._, A<string>._))
+                .Returns(supervisorDelegates);
         }
     }
 }

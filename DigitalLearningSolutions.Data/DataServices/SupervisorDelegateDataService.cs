@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -8,8 +9,12 @@
     public interface ISupervisorDelegateDataService
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int supervisorDelegateId);
-        SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
-        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, DateTime? confirmed);
+
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email);
+
+        void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
+
+        void UpdateSupervisorDelegateRecordConfirmed(int supervisorDelegateId, DateTime? confirmed);
     }
 
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
@@ -43,9 +48,9 @@
             );
         }
 
-        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email)
         {
-            return connection.QuerySingleOrDefault<SupervisorDelegate?>(
+            return connection.Query<SupervisorDelegate>(
                 @"SELECT
                         sd.ID,
                         sd.SupervisorAdminID,
@@ -68,14 +73,24 @@
             );
         }
 
-        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int candidateId, DateTime? confirmed)
+        public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId)
         {
             connection.Execute(
                 @"UPDATE SupervisorDelegates
                     SET CandidateID = @candidateId,
-                        Confirmed = @confirmed
+                        Confirmed = NULL
+                    WHERE ID IN @supervisorDelegateIds",
+                new { supervisorDelegateIds, candidateId }
+            );
+        }
+
+        public void UpdateSupervisorDelegateRecordConfirmed(int supervisorDelegateId, DateTime? confirmed)
+        {
+            connection.Execute(
+                @"UPDATE SupervisorDelegates
+                    SET Confirmed = @confirmed
                     WHERE ID = @supervisorDelegateId",
-                new { supervisorDelegateId, candidateId, confirmed }
+                new { supervisorDelegateId, confirmed }
             );
         }
     }

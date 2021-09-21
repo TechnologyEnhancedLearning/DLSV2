@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -9,15 +10,15 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecord(int centreId, int supervisorDelegateId);
 
-        SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email);
+
+        void AddCandidateIdToSupervisorDelegateRecords(
+            IEnumerable<int> supervisorDelegateIds,
             int centreId,
-            int supervisorDelegateId,
-            string email
+            string candidateNumber
         );
 
-        SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email);
-
-        void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int centreId, string candidateNumber, bool setConfirmed);
+        void AddConfirmedToSupervisorDelegateRecord(int supervisorDelegateId);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
@@ -25,7 +26,10 @@
         private readonly ISupervisorDelegateDataService supervisorDelegateDataService;
         private readonly IUserDataService userDataService;
 
-        public SupervisorDelegateService(ISupervisorDelegateDataService supervisorDelegateDataService, IUserDataService userDataService)
+        public SupervisorDelegateService(
+            ISupervisorDelegateDataService supervisorDelegateDataService,
+            IUserDataService userDataService
+        )
         {
             this.supervisorDelegateDataService = supervisorDelegateDataService;
             this.userDataService = userDataService;
@@ -37,31 +41,30 @@
             return record?.CentreId == centreId ? record : null;
         }
 
-        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByIdAndEmail(
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email)
+        {
+            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmail(centreId, email);
+        }
+
+        public void AddCandidateIdToSupervisorDelegateRecords(
+            IEnumerable<int> supervisorDelegateIds,
             int centreId,
-            int supervisorDelegateId,
-            string email
+            string candidateNumber
         )
         {
-            var record = GetSupervisorDelegateRecord(centreId, supervisorDelegateId);
-            if (record != null && record.DelegateEmail == email && record.CandidateID == null && record.Removed == null)
-            {
-                return record;
-            }
-
-            return null;
-        }
-
-        public SupervisorDelegate? GetPendingSupervisorDelegateRecordByEmail(int centreId, string email)
-        {
-            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
-        }
-
-        public void UpdateSupervisorDelegateRecordStatus(int supervisorDelegateId, int centreId, string candidateNumber, bool setConfirmed)
-        {
             var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
-            var confirmed = setConfirmed ? DateTime.Now : (DateTime?)null;
-            supervisorDelegateDataService.UpdateSupervisorDelegateRecordStatus(supervisorDelegateId, delegateUser.Id, confirmed);
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(
+                supervisorDelegateIds,
+                delegateUser.Id
+            );
+        }
+
+        public void AddConfirmedToSupervisorDelegateRecord(int supervisorDelegateId)
+        {
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
+                supervisorDelegateId,
+                DateTime.UtcNow
+            );
         }
     }
 }

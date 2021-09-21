@@ -6,7 +6,6 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
     using Microsoft.Extensions.Configuration;
     using MimeKit;
 
@@ -63,14 +62,15 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            var (supervisorDelegateRecord, foundById) = GetSupervisorDelegateRecordByIdOrEmail(
+            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(
                 delegateRegistrationModel.Centre,
-                supervisorDelegateId,
                 delegateRegistrationModel.Email
-            );
+            ).Select(record => record.ID).ToList();
+            var foundRecordForSupervisorDelegateId = supervisorDelegateId.HasValue &&
+                                                     supervisorDelegateRecordIds.Contains(supervisorDelegateId.Value);
 
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
-            delegateRegistrationModel.Approved = foundById ||
+            delegateRegistrationModel.Approved = foundRecordForSupervisorDelegateId ||
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
@@ -82,17 +82,17 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
 
-            if (supervisorDelegateRecord != null)
+            if (supervisorDelegateRecordIds.Any())
             {
-                supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    supervisorDelegateRecord.ID,
+                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIds,
                     delegateRegistrationModel.Centre,
-                    candidateNumber,
-                    foundById
+                    candidateNumber
                 );
-                if (foundById)
+                if (foundRecordForSupervisorDelegateId)
                 {
-                    frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateRecord.ID);
+                    supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(supervisorDelegateId!.Value);
+                    frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
                 }
             }
 
@@ -150,18 +150,17 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var supervisorDelegateRecord = supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(
+            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.Email
-            );
+            ).Select(record => record.ID).ToList();
 
-            if (supervisorDelegateRecord != null)
+            if (supervisorDelegateRecordIds.Any())
             {
-                supervisorDelegateService.UpdateSupervisorDelegateRecordStatus(
-                    supervisorDelegateRecord.ID,
+                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIds,
                     delegateRegistrationModel.Centre,
-                    candidateNumber,
-                    false
+                    candidateNumber
                 );
             }
 
@@ -217,31 +216,6 @@ namespace DigitalLearningSolutions.Data.Services
             };
 
             return new Email(emailSubject, body, emailAddress);
-        }
-
-        private (SupervisorDelegate? record, bool foundById) GetSupervisorDelegateRecordByIdOrEmail(
-            int centreId,
-            int? supervisorDelegateId,
-            string email
-        )
-        {
-            SupervisorDelegate? supervisorDelegateRecord = null;
-            if (supervisorDelegateId.HasValue)
-            {
-                supervisorDelegateRecord =
-                    supervisorDelegateService.GetPendingSupervisorDelegateRecordByIdAndEmail(
-                        centreId,
-                        supervisorDelegateId.Value,
-                        email
-                    );
-            }
-
-            var foundById = supervisorDelegateRecord != null;
-
-            supervisorDelegateRecord ??=
-                supervisorDelegateService.GetPendingSupervisorDelegateRecordByEmail(centreId, email);
-
-            return (supervisorDelegateRecord, foundById);
         }
     }
 }
