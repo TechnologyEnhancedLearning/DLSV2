@@ -76,6 +76,7 @@
                 null,
                 null,
                 null,
+                CourseFilterType.None,
                 interval
             );
 
@@ -112,6 +113,7 @@
                 null,
                 null,
                 null,
+                CourseFilterType.None,
                 ReportInterval.Months
             );
             A.CallTo(
@@ -147,6 +149,7 @@
                 1,
                 2,
                 3,
+                CourseFilterType.CourseCategory,
                 ReportInterval.Months
             );
 
@@ -161,7 +164,7 @@
                         filterData.EndDate,
                         filterData.JobGroupId,
                         filterData.CourseCategoryId,
-                        filterData.CustomisationId
+                        null
                     )
                 )
                 .MustHaveHappened(1, Times.Exactly);

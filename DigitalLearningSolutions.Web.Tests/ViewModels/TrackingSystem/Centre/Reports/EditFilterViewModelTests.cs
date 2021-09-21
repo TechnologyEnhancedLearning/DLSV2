@@ -88,10 +88,10 @@
                 EndYear = endYear,
                 EndDate = true
             };
-            var expectedFirstError = new ValidationResult("End date must not precede start date", new[] { "StartDay" });
+            var expectedFirstError = new ValidationResult("End date must not precede start date", new[] { "EndDay" });
             var expectedSecondError = new ValidationResult(
                 "",
-                new[] { "StartMonth", "StartYear", "EndDay", "EndMonth", "EndYear" }
+                new[] { "StartDay", "StartMonth", "StartYear", "EndMonth", "EndYear" }
             );
 
             // When
@@ -132,34 +132,6 @@
 
             // Then
             result.Should().BeEmpty();
-        }
-
-        [Test]
-        public void CustomisationId_does_not_have_value_when_FilterType_is_not_course()
-        {
-            // Given
-            var model = new EditFiltersViewModel
-            {
-                CustomisationId = 1,
-                FilterType = CourseFilterType.None
-            };
-
-            // Then
-            model.CustomisationId.Should().BeNull();
-        }
-
-        [Test]
-        public void CourseCategoryId_does_not_have_value_when_FilterType_is_not_course_category()
-        {
-            // Given
-            var model = new EditFiltersViewModel
-            {
-                CourseCategoryId = 1,
-                FilterType = CourseFilterType.None
-            };
-
-            // Then
-            model.CustomisationId.Should().BeNull();
         }
     }
 }
