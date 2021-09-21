@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class DateRangeInputViewComponent : ViewComponent
     {
@@ -40,37 +42,16 @@
         {
             var model = ViewData.Model;
 
-            var startDayProperty = model.GetType().GetProperty(startDayId);
-            var startMonthProperty = model.GetType().GetProperty(startMonthId);
-            var startYearProperty = model.GetType().GetProperty(startYearId);
-            var startDayValue = startDayProperty?.GetValue(model)?.ToString();
-            var startMonthValue = startMonthProperty?.GetValue(model)?.ToString();
-            var startYearValue = startYearProperty?.GetValue(model)?.ToString();
-            var startDayErrors = ViewData.ModelState[startDayProperty?.Name]?.Errors;
-            var startMonthErrors = ViewData.ModelState[startMonthProperty?.Name]?.Errors;
-            var startYearErrors = ViewData.ModelState[startYearProperty?.Name]?.Errors;
+            var (startDayValue, startDayErrors) = GetStringValueAndErrorsForProperty(model, startDayId);
+            var (startMonthValue, startMonthErrors) = GetStringValueAndErrorsForProperty(model, startMonthId);
+            var (startYearValue, startYearErrors) = GetStringValueAndErrorsForProperty(model, startYearId);
 
-            var endDayProperty = model.GetType().GetProperty(endDayId);
-            var endMonthProperty = model.GetType().GetProperty(endMonthId);
-            var endYearProperty = model.GetType().GetProperty(endYearId);
-            var endDayValue = endDayProperty?.GetValue(model)?.ToString();
-            var endMonthValue = endMonthProperty?.GetValue(model)?.ToString();
-            var endYearValue = endYearProperty?.GetValue(model)?.ToString();
-            var endDayErrors = ViewData.ModelState[endDayProperty?.Name]?.Errors;
-            var endMonthErrors = ViewData.ModelState[endMonthProperty?.Name]?.Errors;
-            var endYearErrors = ViewData.ModelState[endYearProperty?.Name]?.Errors;
+            var (endDayValue, endDayErrors) = GetStringValueAndErrorsForProperty(model, endDayId);
+            var (endMonthValue, endMonthErrors) = GetStringValueAndErrorsForProperty(model, endMonthId);
+            var (endYearValue, endYearErrors) = GetStringValueAndErrorsForProperty(model, endYearId);
 
             var checkboxProperty = model.GetType().GetProperty(endDateCheckboxId);
             var checkboxValue = (bool)checkboxProperty?.GetValue(model)!;
-            var checkboxErrors = ViewData.ModelState[checkboxProperty?.Name]?.Errors;
-
-            var errorMessage = checkboxErrors?.Count > 0 ? checkboxErrors[0].ErrorMessage :
-                startDayErrors?.Count > 0 ? startDayErrors[0].ErrorMessage :
-                startMonthErrors?.Count > 0 ? startMonthErrors[0].ErrorMessage :
-                startYearErrors?.Count > 0 ? startYearErrors[0].ErrorMessage :
-                endDayErrors?.Count > 0 ? endDayErrors[0].ErrorMessage :
-                endMonthErrors?.Count > 0 ? endMonthErrors[0].ErrorMessage :
-                endYearErrors?.Count > 0 ? endYearErrors[0].ErrorMessage : null;
 
             var checkboxViewModel = new CheckboxesItemViewModel(
                 endDateCheckboxId,
@@ -78,34 +59,50 @@
                 endDateCheckboxLabel,
                 checkboxValue,
                 endDateCheckboxHintText
-                );
+            );
 
-            var startDateModel = new DateRangeInputDateInputViewModel(
+            var allStartDateErrors = (startDayErrors ?? new ModelErrorCollection())
+                .Concat(startMonthErrors ?? new ModelErrorCollection())
+                .Concat(startYearErrors ?? new ModelErrorCollection());
+            var nonEmptyStartDateErrors = allStartDateErrors.Where(e => !string.IsNullOrWhiteSpace(e.ErrorMessage))
+                .Select(e => e.ErrorMessage);
+
+            var startDateModel = new DateInputViewModel(
+                "start-date",
                 "Start date",
-                startDayErrors?.Count > 0,
-                startMonthErrors?.Count > 0,
-                startYearErrors?.Count > 0,
                 startDayId,
                 startMonthId,
                 startYearId,
                 startDayValue,
                 startMonthValue,
-                startYearValue
+                startYearValue,
+                startDayErrors?.Count > 0,
+                startMonthErrors?.Count > 0,
+                startYearErrors?.Count > 0,
+                nonEmptyStartDateErrors,
+                "nhsuk-u-margin-bottom-2"
             );
 
-            var endDateModel = new DateRangeInputDateInputViewModel(
+            var allEndDateErrors = (endDayErrors ?? new ModelErrorCollection())
+                .Concat(endMonthErrors ?? new ModelErrorCollection())
+                .Concat(endYearErrors ?? new ModelErrorCollection());
+            var nonEmptyEndDateErrors = allEndDateErrors.Where(e => !string.IsNullOrWhiteSpace(e.ErrorMessage))
+                .Select(e => e.ErrorMessage);
+
+            var endDateModel = new DateInputViewModel(
+                "conditional-end-date",
                 "End date",
-                endDayErrors?.Count > 0,
-                endMonthErrors?.Count > 0,
-                endYearErrors?.Count > 0,
                 endDayId,
                 endMonthId,
                 endYearId,
                 endDayValue,
                 endMonthValue,
                 endYearValue,
-                !checkboxValue,
-                true
+                endDayErrors?.Count > 0,
+                endMonthErrors?.Count > 0,
+                endYearErrors?.Count > 0,
+                nonEmptyEndDateErrors,
+                "nhsuk-checkboxes__conditional" + (!checkboxValue ? " nhsuk-checkboxes__conditional--hidden" : "")
             );
 
             var viewModel = new DateRangeInputViewModel(
@@ -114,12 +111,21 @@
                 startDateModel,
                 endDateModel,
                 checkboxViewModel,
-                checkboxErrors?.Count > 0,
-                errorMessage,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );
             return View(viewModel);
+        }
+
+        private (string? Value, ModelErrorCollection? Errors) GetStringValueAndErrorsForProperty(
+            object model,
+            string propertyId
+        )
+        {
+            var property = model.GetType().GetProperty(propertyId);
+            var value = property?.GetValue(model)?.ToString();
+            var errors = ViewData.ModelState[property?.Name]?.Errors;
+            return (value, errors);
         }
     }
 }

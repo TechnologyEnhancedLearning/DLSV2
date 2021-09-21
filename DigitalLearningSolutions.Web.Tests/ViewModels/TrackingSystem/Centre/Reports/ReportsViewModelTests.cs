@@ -75,7 +75,6 @@
 
             // then
             model.Rows.First().Period.Should().Be("2/02/2002");
-            model.Rows.Last().Period.Should().Be("1/01/2001");
         }
 
         [Test]
@@ -99,7 +98,6 @@
 
             // then
             model.Rows.First().Period.Should().Be("Week commencing 2/02/2002");
-            model.Rows.Last().Period.Should().Be("Week commencing 1/01/2001");
         }
 
         [Test]
@@ -123,7 +121,6 @@
 
             // then
             model.Rows.First().Period.Should().Be("Quarter 1, 2002");
-            model.Rows.Last().Period.Should().Be("Quarter 1, 2001");
         }
 
         [Test]
@@ -147,7 +144,6 @@
 
             // then
             model.Rows.First().Period.Should().Be("2002");
-            model.Rows.Last().Period.Should().Be("2001");
         }
     }
 }

@@ -20,18 +20,15 @@
     [Route("/TrackingSystem/Centre/Reports")]
     public class ReportsController : Controller
     {
-        private readonly IActivityDataService activityDataService;
         private readonly IActivityService activityService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
-            IActivityDataService activityDataService,
             IUserDataService userDataService
         )
         {
             this.activityService = activityService;
-            this.activityDataService = activityDataService;
             this.userDataService = userDataService;
         }
 
@@ -87,16 +84,14 @@
 
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
-            var (jobGroups, courseCategories, courses) = GetDropdownValues(centreId, adminUser);
+            var filterOptions = GetDropdownValues(centreId, adminUser);
 
-            var dataStartDate = activityDataService.GetStartOfActivityForCentre(centreId);
+            var dataStartDate = activityService.GetStartOfActivityForCentre(centreId);
 
             var model = new EditFiltersViewModel(
                 filterData,
                 adminUser.CategoryId,
-                jobGroups,
-                courseCategories,
-                courses,
+                filterOptions,
                 dataStartDate
             );
             return View(model);
@@ -111,8 +106,8 @@
                 var centreId = User.GetCentreId();
                 var adminId = User.GetAdminId()!.Value;
                 var adminUser = userDataService.GetAdminUserById(adminId)!;
-                var (jobGroups, courseCategories, courses) = GetDropdownValues(centreId, adminUser);
-                model.SetUpDropdownOptions(jobGroups, courseCategories, courses, adminUser.CategoryId);
+                var filterOptions = GetDropdownValues(centreId, adminUser);
+                model.SetUpDropdowns(filterOptions, adminUser.CategoryId);
                 return View(model);
             }
 
@@ -127,6 +122,7 @@
                 model.JobGroupId,
                 model.CourseCategoryId,
                 model.CustomisationId,
+                model.FilterType,
                 model.ReportInterval
             );
 
@@ -135,18 +131,15 @@
             return RedirectToAction("Index");
         }
 
-        private (IEnumerable<(int id, string name)> jobGroups, IEnumerable<(int id, string name)> courseCategories,
-            IEnumerable<(int id, string name)> courses) GetDropdownValues(
-                int centreId,
-                AdminUser adminUser
-            )
+        private ReportsFilterOptions GetDropdownValues(
+            int centreId,
+            AdminUser adminUser
+        )
         {
-            var (jobGroups, courseCategories, courses) =
-                activityService.GetFilterOptions(
-                    centreId,
-                    adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
-                );
-            return (jobGroups, courseCategories, courses);
+            return activityService.GetFilterOptions(
+                centreId,
+                adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+            );
         }
     }
 }

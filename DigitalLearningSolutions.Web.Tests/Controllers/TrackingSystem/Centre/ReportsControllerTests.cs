@@ -18,14 +18,12 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IActivityService activityService = null!;
-        private IActivityDataService activityDataService = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             activityService = A.Fake<IActivityService>();
-            activityDataService = A.Fake<IActivityDataService>();
             userDataService = A.Fake<IUserDataService>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -33,7 +31,7 @@
             const string cookieName = "ReportsFilterCookie";
             const string cookieValue = "";
 
-            reportsController = new ReportsController(activityService, activityDataService, userDataService)
+            reportsController = new ReportsController(activityService, userDataService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
@@ -55,7 +53,7 @@
         }
 
         [Test]
-        public void EditFilters_post_sets_cookie_reads_value_from_cookie()
+        public void EditFilters_post_sets_cookie_value()
         {
             // Given
             var model = new EditFiltersViewModel

@@ -1,11 +1,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model DateRangeInputViewModel
 
-@{
-  var errorCss = Model.HasError ? "nhsuk-form-group--error" : "";
-}
-
-<div class="@Model.CssClass @errorCss" id="@Model.Id">
+<div class="@Model.CssClass" id="@Model.Id">
   <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
     <legend class="nhsuk-fieldset__legend nhsuk-label nhsuk-heading-m">
       @Model.Label
@@ -16,13 +12,7 @@
       </div>
     }
 
-    @if (Model.HasError) {
-      <span class="error-message--margin-bottom-1 nhsuk-error-message">
-        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-      </span>
-    }
-
-    <partial name="Components/DateRangeInput/_DateInput" model="Model.StartDateModel" />
+    <partial name="Components/DateInput/Default" model="Model.StartDateModel" />
     <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input"
@@ -44,7 +34,7 @@
         }
       </div>
 
-      <partial name="Components/DateRangeInput/_DateInput" model="Model.EndDateModel" />
+      <partial name="Components/DateInput/Default" model="Model.EndDateModel" />
     </div>
 
   </fieldset>

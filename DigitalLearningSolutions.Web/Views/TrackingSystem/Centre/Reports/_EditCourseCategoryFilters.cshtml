@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
+@model EditFiltersViewModel
+
+@{
+  var courseSelected = Model.CustomisationId.HasValue;
+  var categorySelected = Model.CourseCategoryId.HasValue;
+}
+
+@if (Model.CanFilterCourseCategories) {
+  <div class="nhsuk-form-group">
+    <fieldset class="nhsuk-fieldset" aria-describedby="course-course-category-hint">
+      <div class="nhsuk-hint" id="course-course-category-hint">
+        Choose whether to filter based on course or course category
+      </div>
+
+      <div class="nhsuk-radios nhsuk-radios--conditional">
+        <div class="nhsuk-radios__item">
+          <input name="@nameof(Model.FilterType)"
+                 class="nhsuk-radios__input"
+                 id="course-filter-type-1"
+                 type="radio"
+                 value="@CourseFilterType.Course"
+                 aria-controls="conditional-course-filter-type-1"
+                 aria-expanded="@(courseSelected ? "true" : "false")"
+                 @(courseSelected ? "checked" : "")>
+          <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
+            Course
+          </label>
+        </div>
+        <div class="nhsuk-radios__conditional @(courseSelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-1">
+
+          <vc:select-list asp-for="@nameof(Model.CustomisationId)"
+                          label="Choose a course"
+                          value="@Model.CustomisationId.ToString()"
+                          hint-text=""
+                          deselectable="true"
+                          css-class="nhsuk-u-width-one-half"
+                          default-option="All"
+                          select-list-options="@Model.CustomisationOptions" />
+
+        </div>
+
+        <div class="nhsuk-radios__item">
+          <input name="@nameof(Model.FilterType)"
+                 class="nhsuk-radios__input"
+                 id="course-filter-type-2"
+                 type="radio"
+                 value="@CourseFilterType.CourseCategory"
+                 aria-controls="conditional-course-filter-type-2"
+                 aria-expanded="@(categorySelected ? "true" : "false")"
+                 @(categorySelected ? "checked" : "")>
+          <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
+            Course category
+          </label>
+        </div>
+        <div class="nhsuk-radios__conditional @(categorySelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter-type-2">
+          <vc:select-list asp-for="@nameof(Model.CourseCategoryId)"
+                          label="Choose course category from the list below"
+                          value="@Model.CourseCategoryId.ToString()"
+                          hint-text=""
+                          deselectable="true"
+                          css-class="nhsuk-u-width-one-half"
+                          default-option="All"
+                          select-list-options="@Model.CourseCategoryOptions" />
+        </div>
+      </div>
+    </fieldset>
+  </div>
+} else {
+  <input type="hidden" asp-for="FilterType" value="@CourseFilterType.CourseCategory" />
+  <vc:select-list asp-for="@nameof(Model.CustomisationId)"
+                  label="Choose a course filter"
+                  value="@Model.CustomisationId.ToString()"
+                  hint-text=""
+                  deselectable="true"
+                  css-class="nhsuk-u-width-one-half"
+                  default-option="All"
+                  select-list-options="@Model.CustomisationOptions" />
+}

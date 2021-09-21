@@ -12,14 +12,15 @@
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId,
+            CourseFilterType courseFilterType,
             ReportInterval reportInterval
         )
         {
             StartDate = startDate;
             EndDate = endDate;
             JobGroupId = jobGroupId;
-            CourseCategoryId = courseCategoryId;
-            CustomisationId = customisationId;
+            CourseCategoryId = courseFilterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
+            CustomisationId = courseFilterType == CourseFilterType.Course ? customisationId : null;
             ReportInterval = reportInterval;
         }
 
@@ -40,6 +41,7 @@
                 null,
                 categoryIdFilter,
                 null,
+                CourseFilterType.CourseCategory,
                 ReportInterval.Months
             );
         }

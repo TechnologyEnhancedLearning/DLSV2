@@ -7,20 +7,16 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class EditFiltersViewModel : IValidatableObject
     {
-        private int? courseCategoryId;
         public EditFiltersViewModel() { }
 
         public EditFiltersViewModel(
             ActivityFilterData filterData,
             int userCategoryId,
-            IEnumerable<(int, string)> jobGroupOptions,
-            IEnumerable<(int, string)> courseCategoryOptions,
-            IEnumerable<(int, string)> courseOptions,
+            ReportsFilterOptions filterOptions,
             DateTime dataStartDate
         )
         {
@@ -30,11 +26,13 @@
             {
                 FilterType = CourseFilterType.Course;
             }
+            else if (filterData.CourseCategoryId.HasValue)
+            {
+                FilterType = CourseFilterType.CourseCategory;
+            }
             else
             {
-                FilterType = filterData.CourseCategoryId.HasValue
-                    ? CourseFilterType.CourseCategory
-                    : CourseFilterType.None;
+                FilterType = CourseFilterType.None;
             }
 
             CourseCategoryId = filterData.CourseCategoryId;
@@ -49,25 +47,13 @@
             ReportInterval = filterData.ReportInterval;
             DataStart = dataStartDate;
 
-            SetUpDropdownOptions(jobGroupOptions, courseCategoryOptions, courseOptions, userCategoryId);
+            SetUpDropdowns(filterOptions, userCategoryId);
         }
 
         public int? JobGroupId { get; set; }
         public CourseFilterType FilterType { get; set; }
-
-        public int? CourseCategoryId
-        {
-            get => FilterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
-            set => courseCategoryId = value;
-        }
-
-        public int? CustomisationId
-        {
-            get => FilterType == CourseFilterType.Course ? customisationId : null;
-            set => customisationId = value;
-        }
-
-        private int? customisationId { get; set; }
+        public int? CourseCategoryId { get; set; }
+        public int? CustomisationId { get; set; }
         public int? StartDay { get; set; }
         public int? StartMonth { get; set; }
         public int? StartYear { get; set; }
@@ -88,6 +74,32 @@
         {
             var validationResults = new List<ValidationResult>();
 
+            ValidateStartDate(validationResults);
+
+            if (EndDate)
+            {
+                ValidateEndDate(validationResults);
+            }
+
+            return validationResults;
+        }
+
+        public void SetUpDropdowns(ReportsFilterOptions filterOptions, int userCategoryId)
+        {
+            CanFilterCourseCategories = userCategoryId == 0;
+
+            JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.JobGroups, JobGroupId);
+            CourseCategoryOptions =
+                SelectListHelper.MapOptionsToSelectListItems(filterOptions.Categories, CourseCategoryId);
+            CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.Courses, CustomisationId);
+            var reportIntervals = Enum.GetValues(typeof(ReportInterval))
+                .Cast<int>()
+                .Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
+            ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
+        }
+
+        private void ValidateStartDate(List<ValidationResult> validationResults)
+        {
             var startDateValidationResults = DateValidator.ValidateDate(
                     StartDay,
                     StartMonth,
@@ -100,68 +112,52 @@
                 .ToValidationResultList(nameof(StartDay), nameof(StartMonth), nameof(StartYear));
 
             validationResults.AddRange(startDateValidationResults);
-
-            if (EndDate)
-            {
-                var endDateValidationResults = DateValidator.ValidateDate(
-                        EndDay,
-                        EndMonth,
-                        EndYear,
-                        "End date",
-                        true,
-                        false,
-                        true
-                    )
-                    .ToValidationResultList(nameof(EndDay), nameof(EndMonth), nameof(EndYear));
-
-                if (StartYear > EndYear
-                    || StartYear == EndYear && StartMonth > EndMonth
-                    || StartYear == EndYear && StartMonth == EndMonth && StartDay > EndDay)
-                {
-                    endDateValidationResults.Add(
-                        new ValidationResult(
-                            "End date must not precede start date",
-                            new[]
-                            {
-                                nameof(StartDay)
-                            }
-                        )
-                    );
-                    endDateValidationResults.Add(
-                        new ValidationResult(
-                            "",
-                            new[]
-                            {
-                                nameof(StartMonth), nameof(StartYear), nameof(EndDay),
-                                nameof(EndMonth), nameof(EndYear)
-                            }
-                        )
-                    );
-                }
-
-                validationResults.AddRange(endDateValidationResults);
-            }
-
-            return validationResults;
         }
 
-        public void SetUpDropdownOptions(
-            IEnumerable<(int, string)> jobGroupOptions,
-            IEnumerable<(int, string)> courseCategoryOptions,
-            IEnumerable<(int, string)> courseOptions,
-            int userCategoryId
-        )
+        private void ValidateEndDate(List<ValidationResult> validationResults)
         {
-            CanFilterCourseCategories = userCategoryId == 0;
+            var endDateValidationResults = DateValidator.ValidateDate(
+                    EndDay,
+                    EndMonth,
+                    EndYear,
+                    "End date",
+                    true,
+                    false,
+                    true
+                )
+                .ToValidationResultList(nameof(EndDay), nameof(EndMonth), nameof(EndYear));
 
-            JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(jobGroupOptions, JobGroupId);
-            CourseCategoryOptions =
-                SelectListHelper.MapOptionsToSelectListItems(courseCategoryOptions, CourseCategoryId);
-            CustomisationOptions = SelectListHelper.MapOptionsToSelectListItems(courseOptions, CustomisationId);
-            var reportIntervals = Enum.GetValues(typeof(ReportInterval))
-                .Cast<int>()
-                .Select(i => (i, Enum.GetName(typeof(ReportInterval), i)));
-            ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
+            ValidateEndDateIsAfterStartDate(endDateValidationResults);
+
+            validationResults.AddRange(endDateValidationResults);
+        }
+
+        private void ValidateEndDateIsAfterStartDate(List<ValidationResult> endDateValidationResults)
+        {
+            if (StartYear > EndYear
+                || StartYear == EndYear && StartMonth > EndMonth
+                || StartYear == EndYear && StartMonth == EndMonth && StartDay > EndDay)
+            {
+                endDateValidationResults.Add(
+                    new ValidationResult(
+                        "End date must not precede start date",
+                        new[]
+                        {
+                            nameof(EndDay)
+                        }
+                    )
+                );
+                endDateValidationResults.Add(
+                    new ValidationResult(
+                        "",
+                        new[]
+                        {
+                            nameof(StartDay), nameof(StartMonth), nameof(StartYear),
+                            nameof(EndMonth), nameof(EndYear)
+                        }
+                    )
+                );
+            }
         }
     }
 }

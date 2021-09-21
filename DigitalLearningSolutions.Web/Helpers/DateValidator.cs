@@ -30,7 +30,7 @@
             return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
-        private static DateValidationResult ValidateDate(int day, int month, int year, string name, bool validateNonPast, bool validateNonFuture)
+        private static DateValidationResult ValidateDate(int day, int month, int year, string name, bool dateMustNotBeInPast, bool dateMustNotBeInFuture)
         {
             // note: the minimum year the DB can store is 1753
             var invalidDay = day < 1 || day > 31;
@@ -46,12 +46,12 @@
             try
             {
                 var date = new DateTime(year, month, day);
-                if (validateNonPast && date < DateTime.Today)
+                if (dateMustNotBeInPast && date < DateTime.Today)
                 {
                     return new DateValidationResult(name + " must not be in the past");
                 }
 
-                if (validateNonFuture && date > DateTime.Today)
+                if (dateMustNotBeInFuture && date > DateTime.Today)
                 {
                     return new DateValidationResult(name + " must not be in the future");
                 }

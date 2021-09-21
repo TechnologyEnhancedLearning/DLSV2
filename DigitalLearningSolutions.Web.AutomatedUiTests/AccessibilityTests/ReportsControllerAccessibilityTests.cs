@@ -12,7 +12,7 @@
         public ReportsControllerAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
-        public void Registration_by_centre_journey_with_set_password_has_no_accessibility_errors()
+        public void Edit_reports_filters_page_has_no_accessibility_errors()
         {
             // given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);

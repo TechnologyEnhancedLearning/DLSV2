@@ -16,12 +16,9 @@
             ActivityFilterData filterData
         );
 
-        (
-            IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<(int id, string name)> categories,
-            IEnumerable<(int id, string name)> courses
-            )
-            GetFilterOptions(int centreId, int? courseCategoryId);
+        ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
+
+        DateTime GetStartOfActivityForCentre(int centreId);
     }
 
     public class ActivityService : IActivityService
@@ -86,9 +83,7 @@
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
         }
 
-        public (IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<(int id, string name)> categories,
-            IEnumerable<(int id, string name)> courses) GetFilterOptions(int centreId, int? courseCategoryId)
+        public ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var courseCategories = courseCategoriesDataService
@@ -99,7 +94,12 @@
                 .OrderBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseName));
 
-            return (jobGroups, courseCategories, courses);
+            return new ReportsFilterOptions(jobGroups, courseCategories, courses);
+        }
+
+        public DateTime GetStartOfActivityForCentre(int centreId)
+        {
+            return activityDataService.GetStartOfActivityForCentre(centreId);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
