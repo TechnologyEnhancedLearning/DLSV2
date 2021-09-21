@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public class EmailDelegatesItemViewModel
     {
@@ -43,7 +44,7 @@
 
             PreChecked = preChecked;
             JobGroupId = delegateUser.JobGroupId;
-            CustomPromptFilters = GetCustomPromptFilters(customFields, promptsWithOptions);
+            CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(customFields, promptsWithOptions);
         }
 
         public int Id { get; set; }
@@ -60,36 +61,5 @@
         );
 
         public Dictionary<int, string> CustomPromptFilters { get; set; }
-
-        private Dictionary<int, string> GetCustomPromptFilters(
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
-        )
-        {
-            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
-            var customFieldsWithOptions = customFields
-                .Where(customField => promptsWithOptionsIds.Contains(customField.CustomFieldId));
-            return customFieldsWithOptions
-                .Select(
-                    customField => new KeyValuePair<int, string>(
-                        customField.CustomFieldId,
-                        GetFilterValueForCustomField(customField)
-                    )
-                ).ToDictionary(x => x.Key, x => x.Value);
-        }
-
-        private string GetFilterValueForCustomField(CustomFieldViewModel customField)
-        {
-            string filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-            string propertyValue = string.IsNullOrEmpty(customField.Answer)
-                ? FilteringHelper.EmptyValue.ToString()
-                : customField.Answer;
-            return FilteringHelper.BuildFilterValueString(
-                filterValueName,
-                filterValueName,
-                propertyValue
-            );
-        }
     }
 }

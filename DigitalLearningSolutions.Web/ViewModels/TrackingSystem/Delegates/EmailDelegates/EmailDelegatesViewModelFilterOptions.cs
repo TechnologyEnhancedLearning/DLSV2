@@ -18,7 +18,7 @@
                 new FilterViewModel(
                     "JobGroupId",
                     "Job Group",
-                    DelegatesViewModelFilterOptions.GetJobGroupOptions(jobGroups)
+                    DelegatesViewModelFilters.GetJobGroupOptions(jobGroups)
                 )
             };
             filters.AddRange(
@@ -26,7 +26,7 @@
                     customPrompt => new FilterViewModel(
                         $"CustomPrompt{customPrompt.CustomPromptNumber}",
                         customPrompt.CustomPromptText,
-                        DelegatesViewModelFilterOptions.GetCustomPromptOptions(customPrompt)
+                        DelegatesViewModelFilters.GetCustomPromptOptions(customPrompt)
                     )
                 )
             );
