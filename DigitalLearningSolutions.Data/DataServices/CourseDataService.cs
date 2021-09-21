@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
-        (int centreId, int categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId);
+        (int? centreId, int? categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -347,11 +347,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int centreId, int categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId)
+        public (int? centreId, int? categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId)
         {
             return connection.QueryFirstOrDefault<(int, int)>(
                 @"SELECT c.CentreID,
-                        a.CategoryID
+                        a.CourseCategoryID
                     FROM Customisations AS c
                     JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                     WHERE CustomisationID = @customisationId",

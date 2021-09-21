@@ -58,7 +58,7 @@
         {
             var ids = courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);
 
-            if (centreId != ids.centreId || categoryId != ids.categoryId)
+            if (centreId != ids.centreId || (categoryId != ids.categoryId && categoryId != 0))
             {
                 return false;
             }

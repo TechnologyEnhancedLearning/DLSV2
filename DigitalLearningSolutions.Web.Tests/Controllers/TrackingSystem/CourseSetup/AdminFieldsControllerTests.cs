@@ -23,12 +23,13 @@
             A.Fake<ICourseAdminFieldsDataService>();
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private AdminFieldsController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new AdminFieldsController(courseAdminFieldsService, courseAdminFieldsDataService)
+            controller = new AdminFieldsController(courseAdminFieldsService, courseAdminFieldsDataService, courseService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
