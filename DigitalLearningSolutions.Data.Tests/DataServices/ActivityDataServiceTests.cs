@@ -73,13 +73,13 @@
         {
             // when
             var result = service.GetFilteredActivity(
-                    101,
-                    DateTime.Parse("2014-01-01 00:00:00.000"),
-                    DateTime.Parse("2014-03-31 23:59:59.999"),
-                    jobGroupId,
-                    courseCategoryId,
-                    customisationId
-                );
+                101,
+                DateTime.Parse("2014-01-01 00:00:00.000"),
+                DateTime.Parse("2014-03-31 23:59:59.999"),
+                jobGroupId,
+                courseCategoryId,
+                customisationId
+            );
 
             // then
             result.Count().Should().Be(expectedCount);
