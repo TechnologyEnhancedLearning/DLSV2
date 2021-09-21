@@ -2,7 +2,7 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
 
 const selectedElements = document.querySelectorAll('.delegate-checkbox:checked') as NodeListOf<HTMLInputElement>;
 const selectedIds = Array.from(selectedElements).map((el) => el.value);
-const queryString = '?selectedIds='.concat(selectedIds.join('&selectedIds='));
+const queryString = `?selectedIds=${selectedIds.join('&selectedIds=')}`;
 const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems${queryString}`;
 
 // eslint-disable-next-line no-new
@@ -10,11 +10,16 @@ new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter'
 
 function selectAll(): void {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => { if (!checkbox.checked) checkbox.click(); });
+  allCheckboxes.forEach((checkbox) => {
+    if (!checkbox.checked) checkbox.click();
+  });
 }
+
 function deselectAll(): void {
   const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => { if (checkbox.checked) checkbox.click(); });
+  allCheckboxes.forEach((checkbox) => {
+    if (checkbox.checked) checkbox.click();
+  });
 }
 
 const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
