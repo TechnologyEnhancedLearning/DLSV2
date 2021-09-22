@@ -40,5 +40,7 @@
             FrameworkSortByOptions.FrameworkCreatedDate,
             FrameworkSortByOptions.FrameworkPublishStatus
         };
+
+        public override bool NoDataFound => !BrandedFrameworks.Any() && NoSearchOrFilter;
     }
 }

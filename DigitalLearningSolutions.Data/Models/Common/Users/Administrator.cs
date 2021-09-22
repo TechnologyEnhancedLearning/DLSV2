@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Models.Common.Users
+﻿namespace DigitalLearningSolutions.Data.Models.Common.Users
 {
     public class Administrator
     {
@@ -12,5 +8,6 @@ namespace DigitalLearningSolutions.Data.Models.Common.Users
         public string? Forename { get; set; }
         public string? Surname { get; set; }
         public bool IsFrameworkDeveloper { get; set; }
+        public byte[]? ProfileImage { get; set; }
     }
 }
