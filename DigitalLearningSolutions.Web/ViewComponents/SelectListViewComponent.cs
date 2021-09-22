@@ -6,7 +6,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Obsolete("Use <SelectListWithConfigurableModelViewComponent> instead.")]
+    [Obsolete("Use SelectListWithConfigurableModelViewComponent instead.")]
     public class SelectListViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(

@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    [Obsolete("Use <TextInputWithConfigurableModelViewComponent> instead.")]
+    [Obsolete("Use TextInputWithConfigurableModelViewComponent instead.")]
     public class TextInputViewComponent : ViewComponent
     {
         /// <summary>
