@@ -6,6 +6,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
@@ -21,7 +22,7 @@
         );
 
         void EnrolDelegateOnGroupCourses(
-            DelegateUser oldDetails,
+            DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
             int groupId,
             string baseUrl,
@@ -64,7 +65,7 @@
             string baseUrl
         )
         {
-            var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldNumbersWithValuesFromChangedAnswers(
+            var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 oldDelegateDetails,
                 newCentreAnswers,
                 jobGroupsDataService
@@ -111,14 +112,14 @@
         }
 
         public void EnrolDelegateOnGroupCourses(
-            DelegateUser oldDetails,
+            DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
             int groupId,
             string baseUrl,
             int? addedByAdminId = null
         )
         {
-            var groupCourses = groupsDataService.GetGroupCourses(groupId, oldDetails.CentreId);
+            var groupCourses = groupsDataService.GetGroupCourses(groupId, delegateAccountWithOldDetails.CentreId);
 
             foreach (var groupCourse in groupCourses)
             {
@@ -129,10 +130,9 @@
                 }
 
                 var candidateProgressOnCourse =
-                    progressDataService.GetDelegateProgressForCourse(oldDetails.Id, groupCourse.CustomisationId);
-                var existingRecordToUpdate = candidateProgressOnCourse.FirstOrDefault(
-                    p => !p.SystemRefreshed && p.Completed == null && p.RemovedDate == null
-                );
+                    progressDataService.GetDelegateProgressForCourse(delegateAccountWithOldDetails.Id, groupCourse.CustomisationId);
+                var existingRecordToUpdate =
+                    candidateProgressOnCourse.FirstOrDefault(ProgressShouldBeUpdatedByAutomaticEnrolment);
 
                 if (existingRecordToUpdate != null)
                 {
@@ -148,7 +148,7 @@
                 else
                 {
                     var newProgressId = progressDataService.CreateNewDelegateProgress(
-                        oldDetails.Id,
+                        delegateAccountWithOldDetails.Id,
                         groupCourse.CustomisationId,
                         groupCourse.CurrentVersion,
                         clockService.UtcNow,
@@ -159,7 +159,7 @@
                     );
 
                     var tutorialsForCourse =
-                        tutorialContentDataService.GetTutorialsForCourse(groupCourse.CustomisationId);
+                        tutorialContentDataService.GetTutorialIdsForCourse(groupCourse.CustomisationId);
 
                     foreach (var tutorial in tutorialsForCourse)
                     {
@@ -180,6 +180,11 @@
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
+        }
+
+        private static bool ProgressShouldBeUpdatedByAutomaticEnrolment(Progress progress)
+        {
+            return progress.Completed == null && progress.RemovedDate == null;
         }
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)

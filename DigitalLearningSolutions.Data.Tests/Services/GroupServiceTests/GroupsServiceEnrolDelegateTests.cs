@@ -146,47 +146,6 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_existing_progress_record_is_refreshed()
-        {
-            // Given
-            var existingProgressRecord = ProgressTestHelper.GetDefaultProgress(systemRefreshed: true);
-            SetupEnrolProcessFakes(
-                GenericNewProgressId,
-                GenericRelatedTutorialId,
-                reusableGroupCourse,
-                existingProgressRecord
-            );
-
-            // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableAccountDetailsData,
-                1,
-                "baseUrl"
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                DelegateProgressRecordMustNotHaveBeenUpdated();
-                A.CallTo(
-                    () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
-                        reusableGroupCourse.CustomisationId,
-                        reusableGroupCourse.CurrentVersion,
-                        testDate,
-                        3,
-                        null,
-                        A<DateTime?>._,
-                        A<int>._
-                    )
-                ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
-            }
-        }
-
-        [Test]
         public void
             EnrolDelegateOnGroupCourses_add_new_progress_record_uses_zero_for_supervisor_id_if_course_supervisor_is_null()
         {
@@ -219,7 +178,7 @@
                         3,
                         null,
                         A<DateTime?>._,
-                        A<int>._
+                        0
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))

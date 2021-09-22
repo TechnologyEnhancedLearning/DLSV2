@@ -12,7 +12,6 @@
 
     public class ProgressDataServiceTests
     {
-
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
         private TutorialContentTestHelper tutorialContentTestHelper = null!;
@@ -45,7 +44,6 @@
                 delegateProgress?.ProgressId.Should().Be(1);
                 delegateProgress?.Completed.Should().BeNull();
                 delegateProgress?.RemovedDate.Should().BeNull();
-                delegateProgress?.SystemRefreshed.Should().BeFalse();
                 delegateProgress?.SupervisorAdminId.Should().Be(0);
             }
         }
@@ -73,9 +71,9 @@
                     candidateIdForProgressRecord,
                     customisationIdForProgressRecord
                 );
-                var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
 
                 // Then
+                var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
                 updatedProgressRecord.SupervisorAdminId.Should().Be(supervisorAdminId);
                 updatedProgressRecord.CompleteByDate.Should().Be(completeByDate);
             }
@@ -116,9 +114,9 @@
                     delegateId,
                     customisationId
                 );
-                var newProgressRecord = progressRecords.First(p => p.ProgressId == newProgressId);
 
                 // Then
+                var newProgressRecord = progressRecords.First(p => p.ProgressId == newProgressId);
                 using (new AssertionScope())
                 {
                     newProgressRecord.CandidateId.Should().Be(delegateId);
@@ -131,7 +129,6 @@
                     newProgressRecord.CompleteByDate.Should().Be(completeByDate);
                     newProgressRecord.Completed.Should().BeNull();
                     newProgressRecord.RemovedDate.Should().BeNull();
-                    newProgressRecord.SystemRefreshed.Should().BeFalse();
                 }
             }
             finally

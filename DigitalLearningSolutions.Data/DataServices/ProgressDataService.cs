@@ -12,7 +12,6 @@
 
         void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
-
         int CreateNewDelegateProgress(
             int delegateId,
             int customisationId,

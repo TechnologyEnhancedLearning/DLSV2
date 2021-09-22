@@ -120,9 +120,9 @@
         public static AdminUser GetDefaultCategoryNameAllAdminUser()
         {
             return GetDefaultAdminUser(
-                11,
-                59,
-                "Guy's and St Thomas' NHS Foundation Trust",
+                centreName: "Guy's and St Thomas' NHS Foundation Trust",
+                id: 11,
+                centreId: 59,
                 firstName: "xxxxxxx",
                 lastName: "xxxxxx",
                 emailAddress: "ub.e@onlrxghciatsk",

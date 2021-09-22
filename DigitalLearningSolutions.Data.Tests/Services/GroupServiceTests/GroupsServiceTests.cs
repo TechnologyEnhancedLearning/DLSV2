@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -11,7 +10,6 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
-    using FluentAssertions;
     using NUnit.Framework;
 
     public partial class GroupsServiceTests
@@ -155,7 +153,7 @@
                     A<int>._
                 )
             ).Returns(newProgressId);
-            A.CallTo(() => tutorialContentDataService.GetTutorialsForCourse(A<int>._))
+            A.CallTo(() => tutorialContentDataService.GetTutorialIdsForCourse(A<int>._))
                 .Returns(new List<int> { relatedTutorialId });
         }
     }

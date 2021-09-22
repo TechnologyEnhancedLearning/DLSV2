@@ -9,7 +9,6 @@
         public int CustomisationId { get; set; }
         public DateTime? Completed { get; set; }
         public DateTime? RemovedDate { get; set; }
-        public bool SystemRefreshed { get; set; }
         public int SupervisorAdminId { get; set; }
         public DateTime? CompleteByDate { get; set; }
         public DateTime SubmittedTime { get; set; }

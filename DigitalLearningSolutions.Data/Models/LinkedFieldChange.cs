@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
-    public class LinkedFieldNumberWithValues
+    public class LinkedFieldChange
     {
-        public LinkedFieldNumberWithValues(int linkedFieldNumber, string? oldValue, string? newValue)
+        public LinkedFieldChange(int linkedFieldNumber, string? oldValue, string? newValue)
         {
             LinkedFieldNumber = linkedFieldNumber;
             OldValue = oldValue;

@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -166,6 +167,8 @@
                 // Given
                 var removedDate = DateTime.Now;
                 const int delegateId = 299228;
+                AddDelegateToGroupWithSharedCourse();
+                AddProgressRecordForGroupWithSharedCourse();
 
                 // When
                 groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
@@ -209,7 +212,7 @@
         }
 
         [Test]
-        public void AddedDelegateToGroup_adds_the_delegate_to_the_expected_group()
+        public void AddDelegateToGroup_adds_the_delegate_to_the_expected_group()
         {
             // Given
             const int delegateId = 10;
@@ -232,6 +235,23 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        private void AddDelegateToGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"INSERT INTO dbo.GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                    VALUES (8, 299228, GETUTCDATE(), 1)"
+            );
+        }
+
+        private void AddProgressRecordForGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"SET IDENTITY_INSERT dbo.Progress ON
+                    INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
+                    VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
+                    SET IDENTITY_INSERT dbo.Progress OFF");
         }
     }
 }

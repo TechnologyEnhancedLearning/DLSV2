@@ -19,7 +19,7 @@
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
-        IEnumerable<int> GetTutorialsForCourse(int customisationId);
+        IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -301,7 +301,7 @@
             );
         }
 
-        public IEnumerable<int> GetTutorialsForCourse(int customisationId)
+        public IEnumerable<int> GetTutorialIdsForCourse(int customisationId)
         {
             return connection.Query<int>(
                 @"SELECT t.TutorialID

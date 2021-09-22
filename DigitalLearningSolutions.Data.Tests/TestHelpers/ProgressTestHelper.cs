@@ -12,7 +12,6 @@
             DateTime? completed = null,
             DateTime? removedDate = null,
             int supervisorAdminId = 1,
-            bool systemRefreshed = false,
             DateTime? completeByDate = null
         )
         {
@@ -24,7 +23,6 @@
                 Completed = completed,
                 RemovedDate = removedDate,
                 SupervisorAdminId = supervisorAdminId,
-                SystemRefreshed = systemRefreshed,
                 CompleteByDate = completeByDate
             };
         }
