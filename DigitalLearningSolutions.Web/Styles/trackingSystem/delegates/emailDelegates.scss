@@ -1,0 +1,7 @@
+﻿@import "../../shared/searchableElements/searchableElements";
+
+.select-all-button {
+  @extend .right-submit-button;
+  border-radius: 4px;
+  margin-right: nhsuk-spacing(2);
+}
