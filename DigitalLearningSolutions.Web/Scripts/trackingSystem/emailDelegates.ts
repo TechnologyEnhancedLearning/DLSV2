@@ -2,8 +2,8 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
 
 const selectedElements = document.querySelectorAll('.delegate-checkbox:checked') as NodeListOf<HTMLInputElement>;
 const selectedIds = Array.from(selectedElements).map((el) => el.value);
-const queryString = `?selectedIds=${selectedIds.join('&selectedIds=')}`;
-const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems${queryString}`;
+const queryParams = selectedIds.map((id, index) => `selectedIds[${index}]=${id}`);
+const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParams.join('&')}`;
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
