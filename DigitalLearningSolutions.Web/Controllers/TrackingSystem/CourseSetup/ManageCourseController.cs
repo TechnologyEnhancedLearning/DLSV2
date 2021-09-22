@@ -80,6 +80,11 @@
                 return new StatusCodeResult(500);
             }
 
+            if (!ModelState.IsValid)
+            {
+                return View("EditLearningPathwayDefaults", model);
+            }
+
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 model.CustomisationId,
                 model.CompleteWithinMonths,

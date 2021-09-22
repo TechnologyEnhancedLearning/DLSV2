@@ -4,10 +4,12 @@
 @model EditLearningPathwayDefaultsViewModel
 
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Edit Learning Pathway defaults";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 @section NavMenuItems {
@@ -16,6 +18,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditLearningPathwayDefaultsViewModel.CompleteWithinMonths), nameof(EditLearningPathwayDefaultsViewModel.ValidityMonths) }" />
+    }
 
     <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>
 
@@ -24,26 +29,30 @@
           asp-action="SaveLearningPathwayDefaults"
           asp-route-customisationId="@Model.CustomisationId">
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="CompleteWithinMonths">
-          Completion within (in months)
-        </label>
-        <div class="nhsuk-hint">
-          Within how many months of enrolment should the learner complete the course?
-        </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" id="CompleteWithinMonths" asp-for="CompleteWithinMonths"
-               spellcheck="false" pattern="[0-9]*" inputmode="numeric">
+        <vc:text-input asp-for="@nameof(Model.CompleteWithinMonths)"
+                       label="Completion valid for (in months)"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       pattern="[0-9]*"
+                       inputmode="numeric"
+                       autocomplete=""
+                       hint-text="Within how many months of enrolment should the learner complete the course?"
+                       css-class="nhsuk-input nhsuk-input--width-10" />
       </div>
 
       <div class="nhsuk-form-group">
-        <label class="nhsuk-label" for="ValidityMonths">
-          Completion valid for (in months)
-        </label>
-        <div class="nhsuk-hint">
-          For how many months after completion will the completion remain valid
-          (before the learner is expected to complete the course again)?
-        </div>
-        <input class="nhsuk-input nhsuk-input--width-10" type="text" id="ValidityMonths" asp-for="ValidityMonths"
-               spellcheck="false" pattern="[0-9]*" inputmode="numeric">
+        <vc:text-input asp-for="@nameof(Model.ValidityMonths)"
+                       label="Completion valid for (in months)"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       pattern="[0-9]*"
+                       inputmode="numeric"
+                       autocomplete=""
+                       hint-text="For how many months after completion will the completion remain valid
+                                                      (before the learner is expected to complete the course again)?"
+                       css-class="nhsuk-input nhsuk-input--width-10" />
       </div>
 
       <div class="nhsuk-checkboxes nhsuk-u-margin-bottom-3">
@@ -75,5 +84,7 @@
       </div>
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
+
+    <vc:cancel-link asp-controller="AdminFields" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>
