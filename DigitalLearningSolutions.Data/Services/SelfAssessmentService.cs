@@ -252,7 +252,7 @@ INNER JOIN CandidateAssessments AS CA
                             ON CA.SelfAssessmentID = @selfAssessmentId
                                    AND CA.CandidateID = @candidateId
 LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
-                            ON CA.ID = CAOC.CandidateAssessmentID
+                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.ID = CAOC.CompetencyID AND sas.ID = CAOC.CompetencyGroupID
                       WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                      ),
                      {LatestAssessmentResults}
