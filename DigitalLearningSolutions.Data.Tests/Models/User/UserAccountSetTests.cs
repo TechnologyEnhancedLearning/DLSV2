@@ -38,11 +38,10 @@
         public void Any_returns_true_if_delegateUsers_not_empty()
         {
             // Given
-            AdminUser? adminUser = null;
             var delegates = new List<DelegateUser> { Builder<DelegateUser>.CreateNew().Build() };
 
             // When
-            var result = new UserAccountSet(adminUser, delegates).Any();
+            var result = new UserAccountSet(null, delegates).Any();
 
             // Then
             result.Should().BeTrue();

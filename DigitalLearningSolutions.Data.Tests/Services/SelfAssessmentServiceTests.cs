@@ -7,7 +7,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using NUnit.Framework;
@@ -45,7 +44,8 @@
                 new DateTime(2020, 09, 01, 14, 10, 37, 447), null, null,
                 false,
                 true,
-                false
+                false,
+                true
             );
 
             result.Should().BeEquivalentTo(expectedSelfAssessment);
@@ -90,6 +90,7 @@
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
+                competencyGroupId: 7,
                 name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()
@@ -173,7 +174,7 @@
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1, null);
                 selfAssessmentService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
 
-                //Then
+                // Then
                 var competency = selfAssessmentService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
                 var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId).Result;
                 result.Should().Be(actualResult);
@@ -361,7 +362,7 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
-                //Then
+                // Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);
@@ -398,7 +399,7 @@
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
                 selfAssessmentService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
 
-                //Then
+                // Then
                 var results = selfAssessmentService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);

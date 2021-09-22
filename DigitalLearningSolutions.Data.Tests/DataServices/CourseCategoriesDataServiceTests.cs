@@ -5,7 +5,9 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CourseCategoriesDataServiceTests
@@ -16,7 +18,8 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            courseCategoriesDataService = new CourseCategoriesDataService(connection);
+            var logger = A.Fake<ILogger<CourseCategoriesDataService>>();
+            courseCategoriesDataService = new CourseCategoriesDataService(connection, logger);
         }
 
         [Test]
@@ -38,6 +41,26 @@
 
             // Then
             result.Should().BeEquivalentTo(expectedCategories);
+        }
+
+        [Test]
+        public void GetCourseCategoryName_returns_course_category_name()
+        {
+            // When
+            var result = courseCategoriesDataService.GetCourseCategoryName(3);
+
+            // Then
+            result!.Should().Be("Office 2010");
+        }
+
+        [Test]
+        public void GetCourseCategoryName_returns_null_for_nonexistent_category()
+        {
+            // When
+            var result = courseCategoriesDataService.GetCourseCategoryName(-1);
+
+            // Then
+            result.Should().BeNull();
         }
     }
 }

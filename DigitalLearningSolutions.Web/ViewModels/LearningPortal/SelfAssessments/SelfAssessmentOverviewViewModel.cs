@@ -3,11 +3,21 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SelfAssessmentOverviewViewModel
     {
         public CurrentSelfAssessment SelfAssessment { get; set; }
         public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
         public int PreviousCompetencyNumber { get; set; }
+        public int NumberOfOptionalCompetencies { get; set; }
+        public string VocabSingular()
+        {
+            return CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower();
+        }
+        public string VocabPlural()
+        {
+            return FrameworkVocabularyHelper.VocabularyPlural(VocabSingular());
+        }
     }
 }

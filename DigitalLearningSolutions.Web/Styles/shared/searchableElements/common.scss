@@ -42,20 +42,6 @@ $button-hover-colour: #4c6272;
     &:focus {
       border-right: 4px solid $color_nhsuk-black;
     }
-
-    @include mq($until: tablet) {
-      width: 100%;
-    }
-  }
-}
-
-.sort-and-search {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-
-  @include mq($from: desktop) {
-    flex-direction: row;
   }
 }
 
@@ -72,7 +58,6 @@ $button-hover-colour: #4c6272;
   float: left;
   margin-bottom: nhsuk-spacing(4);
   outline: none;
-  width: 100%;
 
   &:focus {
     border: 4px solid $color_nhsuk_black;
@@ -86,24 +71,46 @@ $button-hover-colour: #4c6272;
 
   @include mq($from: tablet) {
     height: 40px;
-    width: 70%;
-  }
-
-  @include mq($from: desktop) {
-    width: 41%;
-    float: left;
     margin-right: nhsuk-spacing(2);
   }
 }
 
 .right-submit-button {
   float: left;
-  width: 18%;
   color: $color_nhsuk-white;
   min-width: 100px;
   padding: 8px 4px;
 
   &:hover {
     background-color: $button-hover-colour;
+  }
+}
+
+.search-sort-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  @include mq($from: large-desktop) {
+    flex-direction: row;
+  }
+
+  .search-container {
+    width: 100%;
+
+    @include mq($from: large-desktop) {
+      width: 40%;
+      margin-right: 8px;
+    }
+  }
+
+  .sort-container {
+    @include mq($from: large-desktop) {
+      flex: 1;
+    }
+
+    @include mq($until: large-desktop) {
+      width: 100%;
+    }
   }
 }

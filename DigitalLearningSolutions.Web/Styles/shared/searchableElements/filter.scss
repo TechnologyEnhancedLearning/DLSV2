@@ -1,35 +1,59 @@
 ﻿@import "common";
 @import "tags";
 
-.filter-dropdown {
-  @extend .input-with-submit-button;
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 
-  width: 63%;
-
-  @include mq($from: $xl-desktop) {
-    .js-enabled & {
-      width: 74%;
-    }
-
-    width: 80%;
+  @include mq($until: desktop) {
+    flex-direction: column;
   }
 }
 
 .filter-dropdown-selector {
-  @extend .left-dropdown
+  @extend .left-dropdown;
+  display: none;
+
+  .js-enabled & {
+    display: flex;
+    width: 100%;
+
+    @include mq($from: desktop) {
+      width: 40%;
+    }
+  }
+}
+
+.filters-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
 .filter-dropdown-container {
+  width: 100%;
+  display: flex;
+
   .js-enabled & {
     display: none;
   }
+}
 
-  @include mq($from: desktop) {
-    .js-enabled & {
-      width: calc(59% - 12px);
-      float: left;
-    }
-  }
+.filter-form {
+  width: 100%;
+}
+
+.filter-value-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.filter-dropdown {
+  @extend .input-with-submit-button;
+  display: flex;
+  flex: 1;
 }
 
 .filter-submit {
@@ -38,32 +62,46 @@
   &__dropdown {
     @extend .right-submit-button;
     background-color: $button-dark-blue;
-  }
 
-  &__clear {
-    @extend .right-submit-button;
-    border-radius: 4px;
-    background-color: $color_nhsuk-red;
+    @include mq($from: tablet) {
+      width: 20%;
+    }
+
+    @include mq($from: desktop) {
+      .js-enabled & {
+        width: 33.3333%;
+      }
+    }
+  }
+}
+
+.applied-filters-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  @include mq($until: tablet) {
+    flex-direction: column;
   }
 }
 
 .applied-filter-container {
-  height: auto;
-  width: 100%;
-  float: left;
+  flex: 1;
 
-  @include mq($from: tablet) {
-    width: 70%;
-  }
-
-  @include mq($from: desktop) {
-    width: 80%;
+  @include mq($until: tablet) {
+    width: 100%;
   }
 }
 
-.clear-filter-button-container {
-  width: 18%;
-  float: left;
+.filter-submit__clear {
+  @extend .right-submit-button;
+  width: 20%;
+  border-radius: 4px;
+  background-color: $color_nhsuk-red;
+
+  @include mq($until: tablet) {
+    margin-top: nhsuk-spacing(2);
+  }
 }
 
 .filter-tag {

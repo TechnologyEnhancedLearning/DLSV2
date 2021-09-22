@@ -198,7 +198,7 @@
                                                    // When
             var result = diagnosticAssessmentDataService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.Should().NotBeNull();
             result!.NextSectionId.Should().Be(expectedNextSectionId);
         }
@@ -221,7 +221,7 @@
                 // When
                 var result = diagnosticAssessmentDataService.GetDiagnosticAssessment(customisationId, candidateId, sectionId);
 
-                //Then
+                // Then
                 result.Should().NotBeNull();
                 result!.NextSectionId.Should().Be(expectedNextSectionId);
             }

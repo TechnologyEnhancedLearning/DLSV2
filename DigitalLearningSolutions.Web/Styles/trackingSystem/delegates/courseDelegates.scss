@@ -1,0 +1,18 @@
+﻿@import '../../shared/searchableElements/searchableElements';
+@import '../../shared/headingButtons';
+@import '../../shared/cardWithThreeButtons';
+
+// TODO Fix this to match the new styles for the filter components from 580
+.course-dropdown {
+  @extend .input-with-submit-button;
+  width: 63%;
+
+  @include mq($from: $xl-desktop) {
+    width: 80%;
+  }
+}
+
+.course-submit {
+  @extend .right-submit-button;
+  background-color: $button-dark-blue;
+}

@@ -38,15 +38,15 @@
     </div>
   </nav>
 }
-
+<h1>@Model.AssessmentQuestionDetail.Question</h1>
 <form method="post">
   <fieldset class="nhsuk-fieldset">
     @if (Model.AssessmentQuestionDetail.AssessmentQuestionInputTypeID == 2)
     {
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-        <h1 class="nhsuk-fieldset__heading">
-          @Model.AssessmentQuestionDetail.Question - @Model.AssessmentQuestionDetail.Question - Scoring range
-        </h1>
+        <span class="nhsuk-fieldset__heading">
+          Scoring range
+        </span>
       </legend>
       <div class="nhsuk-form-group">
         <label class="nhsuk-label" for="tb-minValue">
@@ -90,9 +90,9 @@
     else
     {
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-        <h1 class="nhsuk-fieldset__heading">
-          @Model.AssessmentQuestionDetail.Question - Radio button options
-        </h1>
+        <span class="nhsuk-fieldset__heading">
+          Radio button options
+        </span>
       </legend>
       <input name="MinValue" type="hidden" asp-for="AssessmentQuestionDetail.MinValue" value="1" />
       <input name="MinValueDescription" type="hidden" asp-for="AssessmentQuestionDetail.MinValueDescription" />
@@ -112,8 +112,12 @@
     <input name="UserIsOwner" type="hidden" asp-for="AssessmentQuestionDetail.UserIsOwner" />
     <input name="IncludeComments" type="hidden" asp-for="AssessmentQuestionDetail.IncludeComments" />
     <input name="ScoringInstructions" type="hidden" asp-for="AssessmentQuestionDetail.ScoringInstructions" />
+    <input name="CommentsPrompt" type="hidden" asp-for="AssessmentQuestionDetail.CommentsPrompt" />
+    <input name="CommentsHint" type="hidden" asp-for="AssessmentQuestionDetail.CommentsHint" />
   </fieldset>
-
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="EditAssessmentQuestion" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-assessmentQuestionId="@ViewContext.RouteData.Values["assessmentQuestionId"]"  asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+    Back
+  </a>
   <button class="nhsuk-button" type="submit">
     Next
   </button>

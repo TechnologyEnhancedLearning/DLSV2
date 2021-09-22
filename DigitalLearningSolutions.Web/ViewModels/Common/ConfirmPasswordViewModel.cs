@@ -1,15 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class ConfirmPasswordViewModel
     {
-        [Required(ErrorMessage = "Enter a password")]
-        [MinLength(8, ErrorMessage = "Password must be 8 characters or more")]
-        [MaxLength(100, ErrorMessage = "Password must be 100 characters or fewer")]
+        [Required(ErrorMessage = CommonValidationErrorMessages.PasswordRequired)]
+        [MinLength(8, ErrorMessage = CommonValidationErrorMessages.PasswordMinLength)]
+        [MaxLength(100, ErrorMessage = CommonValidationErrorMessages.PasswordMaxLength)]
         [RegularExpression(
-            @"(?=.*?[^\w\s])(?=.*?[0-9])(?=.*?[A-Za-z]).*",
-            ErrorMessage = "Password must contain at least 1 letter, 1 number and 1 symbol"
+            CommonValidationErrorMessages.PasswordRegex,
+            ErrorMessage = CommonValidationErrorMessages.PasswordInvalidCharacters
         )]
         [DataType(DataType.Password)]
         public string? Password { get; set; }

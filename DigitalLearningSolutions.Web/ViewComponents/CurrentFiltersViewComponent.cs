@@ -42,7 +42,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
+            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
         }
 
         private static string GetFilterValue(
@@ -50,7 +50,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.Single(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
+            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
         }
 
         private static bool FilterOptionsContainsFilter(

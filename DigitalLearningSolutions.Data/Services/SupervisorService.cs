@@ -24,26 +24,29 @@
         IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
         RoleProfile GetRoleProfileById(int selfAssessmentId);
         IEnumerable<SelfAssessmentSupervisorRole> GetSupervisorRolesForSelfAssessment(int selfAssessmentId);
+        IEnumerable<SelfAssessmentSupervisorRole> GetDelegateNominatableSupervisorRolesForSelfAssessment(int selfAssessmentId);
         SelfAssessmentSupervisorRole GetSupervisorRoleById(int id);
         DelegateSelfAssessment GetSelfAssessmentBySupervisorDelegateSelfAssessmentId(int selfAssessmentId, int supervisorDelegateId);
+        CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId);
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool RemoveCandidateAssessment(int candidateAssessmentId);
+        void UpdateNotificationSent(int supervisorDelegateId);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId);
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
+        bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
-
-
+        bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
     }
     public class SupervisorService : ISupervisorService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
              cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
              AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
 FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
@@ -141,6 +144,10 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                     supervisorAdminId = (int?)connection.ExecuteScalar(
                     @"SELECT AdminID FROM AdminUsers WHERE Email = @supervisorEmail AND Active = 1 AND CentreID = @centreId", new { supervisorEmail, centreId }
                     );
+                }
+                if (supervisorAdminId != null)
+                {
+                    connection.Execute(@"UPDATE AdminUsers SET Supervisor = 1 WHERE AdminID = @supervisorAdminId AND Supervisor = 0", new { supervisorAdminId });
                 }
                 var numberOfAffectedRows = connection.Execute(
          @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, CandidateID, SupervisorEmail, AddedByDelegate)
@@ -371,6 +378,15 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
+        public IEnumerable<SelfAssessmentSupervisorRole> GetDelegateNominatableSupervisorRolesForSelfAssessment(int selfAssessmentId)
+        {
+            return connection.Query<SelfAssessmentSupervisorRole>(
+               $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
+                  FROM   SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowDelegateNomination = 1)
+                  ORDER BY RoleName", new { selfAssessmentId }
+               );
+        }
         public SelfAssessmentSupervisorRole GetSupervisorRoleById(int id)
         {
             return connection.Query<SelfAssessmentSupervisorRole>(
@@ -450,6 +466,65 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
                 return false;
             }
             return true;
+        }
+
+        public bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId)
+        {
+            var supervisorDelegateId = (int)connection.ExecuteScalar(
+                 @"SELECT SupervisorDelegateId
+                  FROM    CandidateAssessmentSupervisors
+                   WHERE (ID = @candidateAssessmentSupervisorId)",
+               new { candidateAssessmentSupervisorId });
+            var numberOfAffectedRows = connection.Execute(
+         @"DELETE CandidateAssessmentSupervisors 
+            WHERE ID = @candidateAssessmentSupervisorId",
+        new { candidateAssessmentSupervisorId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not removing Candidate Assessment Supervisor as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                );
+                return false;
+            }
+            connection.Execute(
+         @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
+            WHERE ID = @supervisorDelegateId AND (SELECT COUNT(*) FROM CandidateAssessmentSupervisors WHERE SupervisorDelegateId = @supervisorDelegateId) = 0",
+        new { supervisorDelegateId });
+            return true;
+        }
+
+        public void UpdateNotificationSent(int supervisorDelegateId)
+        {
+            connection.Execute(
+        @"UPDATE SupervisorDelegates SET NotificationSent = getUTCDate() 
+            WHERE ID = @supervisorDelegateId",
+       new { supervisorDelegateId });
+        }
+
+        public bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId)
+        {
+            //Set any existing verification requests to superceded:
+            connection.Execute(@"UPDATE SelfAssessmentResultSupervisorVerifications SET Superceded = 1 WHERE CandidateAssessmentSupervisorID = @candidateAssessmentSupervisorId AND SelfAssessmentResultId = @resultId", new { candidateAssessmentSupervisorId, resultId });
+            //Insert a new SelfAssessmentResultSupervisorVerifications record:
+            var numberOfAffectedRows = connection.Execute(
+                     @"INSERT INTO SelfAssessmentResultSupervisorVerifications (CandidateAssessmentSupervisorID, SelfAssessmentResultId, EmailSent) VALUES (@candidateAssessmentSupervisorId, @resultId, GETUTCDATE())",  new { candidateAssessmentSupervisorId, resultId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting Self Assessment Result Supervisor Verification as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}, resultId: {resultId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public CandidateAssessmentSupervisor GetCandidateAssessmentSupervisorById(int candidateAssessmentSupervisorId)
+        {
+            return connection.Query<CandidateAssessmentSupervisor>(
+               $@"SELECT *
+                  FROM   CandidateAssessmentSupervisors
+                  WHERE (ID = @candidateAssessmentSupervisorId)", new { candidateAssessmentSupervisorId }
+               ).FirstOrDefault();
         }
     }
 }

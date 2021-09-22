@@ -4,6 +4,8 @@
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -14,16 +16,18 @@
 
     public class UserServiceTests
     {
-        private ILoginService loginService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IUserVerificationService userVerificationService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
-            loginService = A.Fake<ILoginService>();
-            userService = new UserService(userDataService, loginService);
+            userVerificationService = A.Fake<IUserVerificationService>();
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            userService = new UserService(userDataService, userVerificationService, centreContractAdminUsageService);
         }
 
         [Test]
@@ -31,17 +35,18 @@
         {
             // Given
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
-            var expectedDelegateUsers = UserTestHelper.GetDefaultDelegateUser();
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._)).Returns(expectedAdminUser);
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._))
+                .Returns(expectedAdminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser> { expectedDelegateUsers });
+                .Returns(new List<DelegateUser> { expectedDelegateUser });
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUsers) = userService.GetUsersByUsername("Username");
 
             // Then
             returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
-            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUsers);
+            returnedDelegateUsers.FirstOrDefault().Should().BeEquivalentTo(expectedDelegateUser);
         }
 
         [Test]
@@ -53,7 +58,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, 2);
 
             // Then
@@ -68,7 +73,7 @@
             var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(expectedAdminUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(1, null);
 
             // Then
@@ -83,7 +88,7 @@
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(expectedDelegateUser);
 
-            //When
+            // When
             var (returnedAdminUser, returnedDelegateUser) = userService.GetUsersById(null, 2);
 
             // Then
@@ -101,24 +106,6 @@
             // Then
             returnedAdminUser.Should().BeNull();
             returnedDelegateUser.Should().BeNull();
-        }
-
-        [Test]
-        public void GetUsersByUsername_with_admin_id_fetches_associated_delegate_users()
-        {
-            // Given
-            var testAdmin = UserTestHelper.GetDefaultAdminUser(emailAddress: "TestAccountAssociation@email.com");
-            A.CallTo(() => userDataService.GetAdminUserByUsername(A<string>._))
-                .Returns(testAdmin);
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername(A<string>._))
-                .Returns(new List<DelegateUser>());
-
-            // When
-            userService.GetUsersByUsername("Admin Id");
-
-            // Then
-            A.CallTo(() => userDataService.GetDelegateUsersByUsername("TestAccountAssociation@email.com"))
-                .MustHaveHappened();
         }
 
         [Test]
@@ -205,7 +192,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress!)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(adminUser.EmailAddress!))
                 .Returns(new List<DelegateUser>());
-            A.CallTo(() => loginService.VerifyUsers(password, adminUser, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(adminUser, new List<DelegateUser>()));
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
@@ -238,7 +225,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress!)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(delegateUser.EmailAddress!))
                 .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => loginService.VerifyUsers(password, null, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
@@ -276,8 +263,10 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(signedInEmail)).Returns(adminUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser> { delegateUser });
-            A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
-                .Returns(new UserAccountSet(adminUser, new List<DelegateUser> { delegateUser }));
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
+                .Returns(
+                    new UserAccountSet(adminUser, new List<DelegateUser> { delegateUser })
+                );
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
@@ -315,7 +304,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(signedInEmail)).Returns(null);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(signedInEmail))
                 .Returns(new List<DelegateUser>());
-            A.CallTo(() => loginService.VerifyUsers(password, A<AdminUser>._, A<List<DelegateUser>>._))
+            A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
 
             // When
@@ -541,7 +530,8 @@
             userService.IncrementFailedLoginCount(adminUser);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount)).MustHaveHappened();
+            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(adminUser.Id, expectedCount))
+                .MustHaveHappened();
         }
 
         [Test]
@@ -574,6 +564,143 @@
             result.Should().HaveCount(2);
             result[0].AliasId.Should().Be("include");
             result[1].AliasId.Should().Be("include");
+        }
+
+        [Test]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_available()
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_unavailable_but_user_already_on_role(
+            bool importOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: true,
+                isTrainer: true,
+                importOnly: importOnly,
+                isContentManager: true
+            );
+
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, true, true, true, importOnly);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
+        }
+
+        [Test]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, false, true)]
+        public void UpdateAdminUserPermissions_throws_exception_when_spaces_unavailable_and_user_not_on_role(
+            bool newIsTrainer,
+            bool newIsContentCreator,
+            bool newImportOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, newIsContentCreator, newIsTrainer, true, newImportOnly);
+
+            // Then
+            Assert.Throws<AdminRoleFullException>(
+                () => userService.UpdateAdminUserPermissions(
+                    currentAdminUser.Id,
+                    adminRoles,
+                    0
+                )
+            );
+            AssertAdminPermissionUpdateMustNotHaveHappened();
+        }
+
+        private void AssertAdminPermissionsCalledCorrectly(
+            int adminId,
+            AdminRoles adminRoles,
+            int categoryId
+        )
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    adminId,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
+                    categoryId
+                )
+            ).MustHaveHappened();
+        }
+
+        private void AssertAdminPermissionUpdateMustNotHaveHappened()
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        private void GivenAdminDataReturned(CentreContractAdminUsage numberOfAdmins, AdminUser adminUser)
+        {
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(adminUser);
+            A.CallTo(() => centreContractAdminUsageService.GetCentreAdministratorNumbers(A<int>._))
+                .Returns(numberOfAdmins);
+        }
+
+        private CentreContractAdminUsage GetFullCentreContractAdminUsage()
+        {
+            return CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
+                trainerSpots: 3,
+                trainers: 3,
+                ccLicenceSpots: 4,
+                ccLicences: 4,
+                cmsAdministrators: 5,
+                cmsAdministratorSpots: 5,
+                cmsManagerSpots: 6,
+                cmsManagers: 6
+            );
         }
     }
 }

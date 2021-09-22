@@ -15,20 +15,23 @@
   Supervisor Role
 </h1>
 <form method="post">
-  <div class="nhsuk-form-group">
+  @if (errorHasOccurred)
+  {
+    <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SelfAssessmentSupervisorRoleId) })" />
+  }
+<nhs-form-group nhs-validation-for="SelfAssessmentSupervisorRoleId">
 
-    <fieldset class="nhsuk-fieldset">
-      <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-        <span class="nhsuk-fieldset__heading">
-          Choose a role for this supervisor
-        </span>
-      </legend>
-      <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
-      <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
-      <input type="hidden" asp-for="SupervisorEmail" value="@Model.SupervisorEmail" />
-      <div class="nhsuk-radios">
-        @foreach (var role in Model.SelfAssessmentSupervisorRoles)
-        {
+  <fieldset class="nhsuk-fieldset">
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <span class="nhsuk-fieldset__heading">
+        Choose a role for this supervisor
+      </span>
+    </legend>
+    <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+    <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
+    <div class="nhsuk-radios">
+      @foreach (var role in Model.SelfAssessmentSupervisorRoles)
+      {
         <div class="nhsuk-radios__item">
           <input class="nhsuk-radios__input" id="role-@role.ID" checked="@(Model.SelfAssessmentSupervisorRoleId == role.ID)" name="SelfAssessmentSupervisorRoleId" asp-for="SelfAssessmentSupervisorRoleId" type="radio" value="@role.ID">
           <label class="nhsuk-label nhsuk-radios__label" for="role-@role.ID">
@@ -41,17 +44,18 @@
             </div>
           }
         </div>
-        }
+      }
 
-      </div>
-    </fieldset>
-    <div class=" nhsuk-u-margin-top-5">
-      <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-supervisorEmail="@Model.SupervisorEmail">
-        Back
-      </a>
-      <button class="nhsuk-button" id="save-button" type="submit">Next</button>
     </div>
+  </fieldset>
+</nhs-form-group>
+  <div class=" nhsuk-u-margin-top-5">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+      Back
+    </a>
+    <button class="nhsuk-button" id="save-button" type="submit">Next</button>
   </div>
+  
 </form>
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link"

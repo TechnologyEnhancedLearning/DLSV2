@@ -1,13 +1,3 @@
 ﻿@import '../../shared/searchableElements/searchableElements';
 @import '../../shared/headingButtons';
-
-.nhsuk-button.expander-card__button {
-  margin-right: nhsuk-spacing(2);
-  margin-bottom: nhsuk-spacing(3);
-  margin-top: nhsuk-spacing(0);
-
-  @include govuk-media-query($until: tablet) {
-    margin-top: nhsuk-spacing(2);
-    margin-bottom: nhsuk-spacing(2);
-  }
-}
+@import '../../shared/cardWithThreeButtons';

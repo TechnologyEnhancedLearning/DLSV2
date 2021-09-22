@@ -10,7 +10,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("TrackingSystem/Delegates/View/{delegateId:int}")]
+    [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;

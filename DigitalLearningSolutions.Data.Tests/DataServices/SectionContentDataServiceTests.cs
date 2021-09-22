@@ -84,7 +84,7 @@
         [Test]
         public void Get_section_content_should_return_null_if_customisation_id_is_invalid()
         {
-            //When
+            // When
             const int customisationId = 0;
             const int candidateId = 1;
             const int sectionId = 382;
@@ -97,7 +97,7 @@
         [Test]
         public void Get_section_content_should_return_null_if_section_id_does_not_exist()
         {
-            //When
+            // When
             const int customisationId = 15853;
             const int candidateId = 1;
             const int sectionId = 1;
@@ -110,7 +110,7 @@
         [Test]
         public void Get_section_content_should_return_null_if_section_is_not_in_this_course()
         {
-            //When
+            // When
             const int customisationId = 15853;
             const int candidateId = 1;
             const int sectionId = 0;
@@ -668,7 +668,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -684,7 +684,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -718,7 +718,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -734,7 +734,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -750,7 +750,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -771,7 +771,7 @@
                 // When
                 var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-                //Then
+                // Then
                 result.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
@@ -788,7 +788,7 @@
             // When
             var result = sectionContentDataService.GetSectionContent(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 

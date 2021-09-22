@@ -2,13 +2,8 @@
 {
     using System;
 
-    public class CourseDetails
+    public class CourseDetails : Course
     {
-        public int CustomisationId { get; set; }
-        public int CentreId { get; set; }
-        public int ApplicationId { get; set; }
-        public string ApplicationName { get; set; }
-        public string CustomisationName { get; set; }
         public int CurrentVersion { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? LastAccessed { get; set; }
@@ -22,7 +17,6 @@
         public bool SelfRegister { get; set; }
         public bool DiagObjSelect { get; set; }
         public bool HideInLearnerPortal { get; set; }
-        public bool Active { get; set; }
         public int DelegateCount { get; set; }
         public int CompletedCount { get; set; }
         public int CompleteWithinMonths { get; set; }
@@ -36,10 +30,6 @@
         public bool ApplyLpDefaultsToSelfEnrol { get; set; }
 
         public int InProgressCount => DelegateCount - CompletedCount;
-
-        public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
-            ? ApplicationName
-            : ApplicationName + " - " + CustomisationName;
 
         public string? RefreshToCourseName
         {

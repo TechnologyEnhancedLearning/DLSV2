@@ -15,12 +15,15 @@
 <h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
 @if (Model.Supervisors.Any())
 {
-  <table class="nhsuk-table">
+  <table class="nhsuk-table-responsive">
     <caption class="nhsuk-table__caption">Activity supervisors</caption>
     <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
         <th role="columnheader" class="" scope="col">
-          Name / role
+          Name/role
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Status
         </th>
         <th role="columnheader" class="" scope="col">
           Action
@@ -31,25 +34,36 @@
       @foreach (var supervisor in Model.Supervisors)
       {
         <tr role="row" class="nhsuk-table__row">
-          <td class="nhsuk-table__cell">@supervisor.SupervisorName, @supervisor.RoleName@(supervisor.SupervisorAdminID == null ? ", Not confirmed" : "" )</td>
-          <td class="nhsuk-table__cell ">
-            @if (supervisor.AddedByDelegate)
+          <td class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Name/role </span>
+            @supervisor.SupervisorName, @supervisor.RoleName
+
+          </td>
+          <td class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Status </span>
+            @if (supervisor.Confirmed == null)
             {
-              <a asp-action="RemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
-            }
-            else if (supervisor.Confirmed == null)
-            {
-              <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Reject</a>
+              <span class='nhsuk-tag nhsuk-tag--grey'>Unconfirmed</span>
             }
             else
             {
-              <a asp-action="RequestRemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Request removal <span class="nhsuk-u-visually-hidden">of supervisor</span></a>
+              <span class='nhsuk-tag'>Confirmed</span>
             }
-            @if (supervisor.SupervisorAdminID == null)
+          </td>
+          <td class="nhsuk-table__cell">
+            <span class="nhsuk-table-responsive__heading">Actions </span>
+            @if (supervisor.AddedByDelegate)
             {
-              <a asp-action="SendSupervisorReminder" asp-route-supervisorDelegateId="@supervisor.ID">Send reminder</a>
+              <a asp-action="RemoveSupervisor" asp-route-supervisorDelegateId="@supervisor.ID">Remove</a>
+              @if (supervisor.Confirmed == null && supervisor.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+              {
+                <a asp-action="SendSupervisorReminder" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Send reminder</a>
+              }
             }
-
+            else if (supervisor.Confirmed == null)
+            {
+              <a asp-action="ConfirmSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Confirm</a> <a asp-action="RejectSupervisor" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Reject</a>
+            }
           </td>
         </tr>
       }
@@ -82,14 +96,23 @@ else
         <tr role="row" class="nhsuk-table__row">
           <td class="nhsuk-table__cell">@supervisor.SupervisorName</td>
           <td class="nhsuk-table__cell ">
-              <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
+            <a asp-action="QuickAddSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Add</a>
           </td>
         </tr>
       }
     </tbody>
-    </table>
-      }
-<a class="nhsuk-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartAddNewSupervisor">
-  Add new supervisor
-</a>
+  </table>
+}
+@if (Model.SelfAssessment.HasDelegateNominatedRoles)
+{
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartAddNewSupervisor">
+        Add new supervisor
+      </a>
+    </div>
+  </div>
+}
+
+
 

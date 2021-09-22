@@ -44,12 +44,17 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969", "Are you sure you would like to remove xxxxx xxxx from this group?")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
+            "Are you sure you would like to remove xxxxx xxxx from this group?"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
-        [InlineData("/TrackingSystem/Delegates/View/3", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
+        [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
