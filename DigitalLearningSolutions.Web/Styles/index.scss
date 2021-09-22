@@ -106,18 +106,19 @@ h1#page-heading {
   height: 100%;
   flex: 1 1 auto;
   display: flex;
+  min-height: 400px;
 
   @include govuk-media-query($from: desktop) {
-    min-height: 500px;
+    min-height: 550px;
   }
 }
 
 .responsive-iframe-wrapper-padding {
-  padding-bottom: $iframe-padding-bottom;
+  padding-bottom: $iframe-padding-bottom * 2;
 }
 
 .responsive-iframe-wrapper-extra-padding {
-  padding-bottom: $iframe-padding-bottom * 2;
+  padding-bottom: $iframe-padding-bottom * 3;
 }
 
 .nhsuk-heading-xl.heading-margin-2 {
