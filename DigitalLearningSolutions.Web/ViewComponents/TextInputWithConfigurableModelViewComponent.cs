@@ -1,16 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    [Obsolete("Use TextInputWithConfigurableModelViewComponent instead.")]
-    public class TextInputViewComponent : ViewComponent
+    public class TextInputWithConfigurableModelViewComponent : ViewComponent
     {
         /// <summary>
-        /// Render TextInput view component.
+        ///     Render TextInputWithConfigurableModel view component.
         /// </summary>
+        /// <param name="model"></param>
         /// <param name="aspFor"></param>
         /// <param name="label"></param>
         /// <param name="populateWithCurrentValue"></param>
@@ -21,6 +20,7 @@
         /// <param name="cssClass"></param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
+            object model,
             string aspFor,
             string label,
             bool populateWithCurrentValue,
@@ -31,8 +31,6 @@
             string cssClass
         )
         {
-            var model = ViewData.Model;
-
             var property = model.GetType().GetProperty(aspFor);
             var valueToSet = populateWithCurrentValue ? property?.GetValue(model)?.ToString() : null;
 
@@ -48,10 +46,10 @@
                 spellCheck,
                 string.IsNullOrEmpty(autocomplete) ? null : autocomplete,
                 errorMessages,
-                cssClass: string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                hintText: string.IsNullOrEmpty(hintText) ? null : hintText
+                string.IsNullOrEmpty(cssClass) ? null : cssClass,
+                string.IsNullOrEmpty(hintText) ? null : hintText
             );
-            return View(textBoxViewModel);
+            return View("~/Views/Shared/Components/TextInput/Default.cshtml", textBoxViewModel);
         }
     }
 }

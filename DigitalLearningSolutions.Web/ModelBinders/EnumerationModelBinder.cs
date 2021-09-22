@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
                 bindingContext.Result = ModelBindingResult.Failed();
 
                 bindingContext.ModelState.AddModelError(
-                    nameof(bindingContext.FieldName),
+                    bindingContext.FieldName,
                     $"{enumerationName.FirstValue} is not supported.");
             }
 
