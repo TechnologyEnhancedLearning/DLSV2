@@ -1208,6 +1208,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
+                                                  CG.ID AS CompetencyGroupID,
                                                   AQ.ID         AS Id,
                                                   AQ.Question,
                                                   AQ.MaxValueDescription,

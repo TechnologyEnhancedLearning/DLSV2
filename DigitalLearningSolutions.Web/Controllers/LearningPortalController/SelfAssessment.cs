@@ -317,7 +317,7 @@
                 sessionAddSupervisor.SelfAssessmentSupervisorRoleId = roles.First().ID;
                 TempData.Set(sessionAddSupervisor);
             }
-            
+
             return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
@@ -564,14 +564,14 @@
             int candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
-            var includedCompetencyIds = selfAssessmentService.GetCandidateAssessmentIncludedOptionalCompetencies(selfAssessmentId, candidateId);
+            var includedSelfAssessmentStructureIds = selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(selfAssessmentId, candidateId);
             var model = new ManageOptionalCompetenciesViewModel()
             {
                 SelfAssessmentId = selfAssessmentId,
                 SelfAssessmentName = assessment.Name,
                 Vocabulary = vocabulary,
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
-                IncludedCompetencyIds = includedCompetencyIds
+                IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds
             };
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
@@ -581,12 +581,14 @@
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
             selfAssessmentService.InsertCandidateAssessmentOptionalCompetenciesIfNotExist(selfAssessmentId, candidateId);
-            var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
-            foreach(var competency in optionalCompetencies)
+            if (model.IncludedSelfAssessmentStructureIds != null)
             {
-                bool include = (model.IncludedCompetencyIds == null ? false : model.IncludedCompetencyIds.Contains(competency.Id) ? true : false);
-                selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(competency.Id, include, selfAssessmentId, candidateId);
+                foreach (int selfAssessmentStructureId in model.IncludedSelfAssessmentStructureIds)
+                {
+                    selfAssessmentService.UpdateCandidateAssessmentOptionalCompetencies(selfAssessmentStructureId, candidateId);
+                }
             }
+
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId });
         }
     }
