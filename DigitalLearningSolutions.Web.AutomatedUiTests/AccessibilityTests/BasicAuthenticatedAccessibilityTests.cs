@@ -49,7 +49,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
-        [InlineData("/TrackingSystem/Delegates/View/3", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
+        [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]

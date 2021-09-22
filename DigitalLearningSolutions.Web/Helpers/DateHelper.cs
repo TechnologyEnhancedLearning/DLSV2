@@ -6,7 +6,7 @@
     {
         public static string StandardDateFormat = "dd/MM/yyyy";
 
-        public static string StandardDateAndTimeFormat = "dd/MM/yyyy hh:mm";
+        public static string StandardDateAndTimeFormat = "dd/MM/yyyy HH:mm";
 
         public static string GetFormatStringForGraphLabel(ReportInterval interval)
         {

@@ -1,0 +1,107 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model VerificationPickResultsViewModel
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
+}
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item">Request verification</li>
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>Request @Model.Vocabulary verification</h1>
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@(new[] {nameof(Model.ResultIds) })" />
+}
+@if (Model.CompetencyGroups.Any())
+{ 
+  <h3>Tick each self assessment result that you wish to verify and sign-off and then click Submit</h3>
+<form method="post">
+  <nhs-form-group nhs-validation-for="ResultIds">
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+      <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
+        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              @competencyGroup.First().Vocabulary
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Question
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Response
+            </th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          @foreach (var competency in competencyGroup)
+          {
+            @foreach (var question in competency.AssessmentQuestions)
+            {
+              <tr role="row" class="nhsuk-table__row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                  <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="ResultIds" checked="@(Model.ResultIds != null ? Model.ResultIds.Contains((int)question.ResultId) : false)" type="checkbox" value="@question.ResultId">
+                    <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
+                      @competency.Name
+                    </label>
+                  </div>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Questions </span>
+                  <span class="status-tag">
+
+                    @question.Question
+
+                  </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                  <span class="nhsuk-table-responsive__heading">Responses </span>
+                  <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
+                </td>
+
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    }
+  </nhs-form-group>
+  <input type="hidden" asp-for="SelfAssessmentName" />
+  <input type="hidden" asp-for="Vocabulary" />
+  <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+        Back
+      </a>
+      <button class="nhsuk-button" type="submit">Next</button>
+    </div>
+  </div>
+</form>
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link"
+     asp-action="SelfAssessmentOverview"
+     asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>
+}
+else
+{
+<p>
+  There are no self assessment results ready for supervisor verification.
+</p>
+<a class="nhsuk-button nhsuk-button--secondary" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">Cancel</a>
+<a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+  Cancel
+</a>
+}
