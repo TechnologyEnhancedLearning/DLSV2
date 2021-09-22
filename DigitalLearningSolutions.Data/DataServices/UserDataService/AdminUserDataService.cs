@@ -40,7 +40,8 @@
                         au.IsWorkforceContributor,
                         au.IsLocalWorkforceManager,
                         au.ImportOnly,
-                        au.FailedLoginCount
+                        au.FailedLoginCount,
+                        au.Active
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID

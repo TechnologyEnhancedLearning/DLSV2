@@ -119,7 +119,7 @@
             };
         }
 
-        public static AdminUser GetDefaultCategoryNameAllAdminUser()
+        public static AdminUser GetDefaultCategoryNameAllAdminUser(bool active = false)
         {
             return GetDefaultAdminUser(
                 id: 11,
@@ -138,7 +138,8 @@
                 isTrainer: false,
                 isFrameworkDeveloper: false,
                 importOnly: false,
-                failedLoginCount: 5
+                failedLoginCount: 5,
+                active: active
             );
         }
 

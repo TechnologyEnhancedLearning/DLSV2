@@ -1,5 +1,12 @@
-﻿@{
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
+@using Microsoft.Extensions.Configuration
+
+@{
   ViewData["Title"] = "User deactivated";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {

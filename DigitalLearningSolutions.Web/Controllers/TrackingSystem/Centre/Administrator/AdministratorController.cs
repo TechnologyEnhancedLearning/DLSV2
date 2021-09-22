@@ -153,6 +153,11 @@
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
 
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
             if (!model.Confirm)
             {
                 ModelState.AddModelError(
@@ -161,11 +166,6 @@
                 );
 
                 return View(model);
-            }
-
-            if (adminUser == null || adminUser.CentreId != centreId)
-            {
-                return NotFound();
             }
 
             userDataService.DeactivateAdmin(adminId);
