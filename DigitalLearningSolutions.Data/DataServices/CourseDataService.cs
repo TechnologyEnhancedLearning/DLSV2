@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
+        bool UpdateCourseOptions(CourseDetails courseDetails);
     }
 
     public class CourseDataService : ICourseDataService
@@ -343,6 +344,29 @@ namespace DigitalLearningSolutions.Data.DataServices
 	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
                 new { centreId, categoryId }
             );
+        }
+
+        public bool UpdateCourseOptions(CourseDetails courseDetails)
+        {
+            var affectedRows = connection.Execute(
+                @"UPDATE Customisations
+                    SET Active = @Active,
+                        SelfRegister = @SelfRegister,
+                        HideInLearnerPortal = @HideInLearnerPortal,
+                        DiagObjSelect = @DiagObjSelect
+                    WHERE CustomisationID = @CustomisationId 
+                    AND CentreID = @CentreId",
+                new
+                {
+                    courseDetails.Active,
+                    courseDetails.SelfRegister,
+                    courseDetails.HideInLearnerPortal,
+                    courseDetails.DiagObjSelect,
+                    courseDetails.CustomisationId,
+                    courseDetails.CentreId,
+                }
+            );
+            return affectedRows > 0;
         }
     }
 }

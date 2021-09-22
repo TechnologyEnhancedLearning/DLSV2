@@ -49,5 +49,51 @@
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ManageCourseViewModel>();
         }
+
+        [Test]
+        public void Edit_Course_Options_with_course_details_page_opens()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+                .Returns(new CourseDetails());
+
+            // When
+            var result = controller.EditCourseOptions(1);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseOptionsViewModel>();
+        }
+
+        [Test]
+        public void Edit_Course_Options_page_when_coursed_details_are_not_updated()
+        {
+            // Given
+            var courseDetails = new CourseDetails();
+            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseDetails);
+            A.CallTo(() => courseDataService.UpdateCourseOptions(A<CourseDetails>._))
+                .Returns(false);
+
+            // When
+            var result = controller.EditCourseOptions(editCourseOptionsViewModel);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void Edit_Course_Options_page_when_coursed_details_are_successfully_updated()
+        {
+            // Given
+            var courseDetails = new CourseDetails();
+            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseDetails);
+            A.CallTo(() => courseDataService.UpdateCourseOptions(A<CourseDetails>._))
+                .Returns(true);
+
+            // When
+            var result = controller.EditCourseOptions(editCourseOptionsViewModel);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
+        }
     }
 }
