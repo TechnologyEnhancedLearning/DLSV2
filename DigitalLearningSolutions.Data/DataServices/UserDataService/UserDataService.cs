@@ -69,6 +69,7 @@
         int UpdateDelegateRecord(DelegateRecord record);
         DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
+        void DeactivateDelegateUser(int delegateId);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
@@ -86,8 +87,6 @@
 
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
-
-        void DeactivateDelegateUser(int delegateId);
     }
 
     public partial class UserDataService : IUserDataService

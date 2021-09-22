@@ -109,7 +109,12 @@
           Promote to admin
         </a>
         <div>
-          <a class="nhsuk-button delete-button view-delegate-button" role="button" asp-controller="ViewDelegate" asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+          <a
+            class="nhsuk-button delete-button view-delegate-button"
+            role="button"
+            asp-controller="ViewDelegate"
+            asp-action="DeactivateDelegate"
+            asp-route-delegateId="@Model.DelegateInfo.Id">
             Deactivate account
           </a>
         </div>
