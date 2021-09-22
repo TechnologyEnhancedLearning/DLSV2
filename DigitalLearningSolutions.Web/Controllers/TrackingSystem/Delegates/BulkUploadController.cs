@@ -37,7 +37,7 @@
             var content = delegateDownloadFileService.GetDelegateDownloadFileForCentre(User.GetCentreId());
             return File(
                 content,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                FileHelper.ExcelContentType,
                 $"DLS Delegates for Bulk Update {DateTime.Today:yyyy-MM-dd}.xlsx"
             );
         }

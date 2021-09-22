@@ -109,7 +109,7 @@
 
             return File(
                 dataFile,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                FileHelper.ExcelContentType,
                 $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
             );
         }
