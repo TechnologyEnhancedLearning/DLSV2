@@ -45,6 +45,7 @@
             int rowNo = 1,
             string name = "name",
             string? description = "description",
+            int competencyGroupId = 1,
             string competencyGroup = "competencyGroup",
             string? vocabulary = "Capability",
             List<AssessmentQuestion> assessmentQuestions = null
@@ -56,6 +57,7 @@
                 RowNo = rowNo,
                 Name = name,
                 Description = description,
+                CompetencyGroupID = competencyGroupId,
                 CompetencyGroup = competencyGroup,
                 Vocabulary = vocabulary,
                 AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()

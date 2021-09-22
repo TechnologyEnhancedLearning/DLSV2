@@ -11,7 +11,7 @@
         public string? Vocabulary { get; set; }
         public string? SelfAssessmentName { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
-        public List<int>? IncludedCompetencyIds { get; set; }
+        public List<int>? IncludedSelfAssessmentStructureIds { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(Vocabulary);

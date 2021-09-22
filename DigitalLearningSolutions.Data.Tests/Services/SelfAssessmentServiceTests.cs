@@ -89,6 +89,7 @@
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
+                competencyGroupId: 7,
                 name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()
