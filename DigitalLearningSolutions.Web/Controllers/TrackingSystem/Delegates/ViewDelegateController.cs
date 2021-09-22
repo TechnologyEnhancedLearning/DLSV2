@@ -81,7 +81,7 @@
 
             userDataService.DeactivateDelegateUser(delegateId);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { delegateId } );
         }
     }
 }
