@@ -85,7 +85,7 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: "EMAIL@test.com");
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(3);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: "email@test.com");
             var delegateUsers = new List<DelegateUser> { delegateUser };
             GivenAdminUserAndDelegateUserAreVerified(adminUser, delegateUser);
             GivenResetFailedLoginCountDoesNothing(adminUser);
@@ -498,21 +498,21 @@
         private void GivenNoLinkedDelegateAccountsFound()
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
             ).Returns(new List<DelegateUser>());
         }
 
         private void GivenLinkedDelegateAccountsFound(List<DelegateUser> delegateUsers)
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
             ).Returns(delegateUsers);
         }
 
         private void GivenNoLinkedAdminUserIsFound()
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                () => userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                     A<List<DelegateUser>>._,
                     Password
                 )
@@ -522,7 +522,7 @@
         private void GivenLinkedAdminUserIsFound(AdminUser? linkedAdminUser)
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                () => userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                     A<List<DelegateUser>>._,
                     Password
                 )

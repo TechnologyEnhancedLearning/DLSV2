@@ -13,13 +13,13 @@
             List<DelegateUser> unverifiedDelegateUsers
         );
 
-        List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
+        List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(AdminUser? adminUser, string password);
 
         /// <summary>
         /// Gets a single verified admin associated with a set of delegate users.
         /// This method should only be called with a set of delegate users with the same email address.
         /// </summary>
-        AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password);
+        AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(List<DelegateUser> delegateUsers, string password);
     }
 
     public class UserVerificationService : IUserVerificationService
@@ -50,7 +50,7 @@
             return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
         }
 
-        public List<DelegateUser> GetVerifiedDelegateUsersAssociatedWithAdminUser(
+        public List<DelegateUser> GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
             AdminUser? adminUser,
             string password
         )
@@ -68,7 +68,7 @@
             return suitableDelegates.ToList();
         }
 
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUsers(
+        public AdminUser? GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
             List<DelegateUser> delegateUsers,
             string password
         )

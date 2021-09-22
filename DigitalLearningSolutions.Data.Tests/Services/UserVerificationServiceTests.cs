@@ -162,7 +162,7 @@
             var delegateUsers = new List<DelegateUser> { delegateUser };
 
             // When
-            var returnedAdminUser = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 delegateUsers,
                 "password"
             );
@@ -181,7 +181,7 @@
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
 
             // When
-            var returnedAdminUser = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 delegateUsers,
                 "password"
             );
@@ -202,7 +202,7 @@
                 .Returns(associatedAdminUser);
 
             // When
-            var returnedAdminUser = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 delegateUsers,
                 "password"
             );
@@ -223,7 +223,7 @@
                 .Returns(associatedAdminUser);
 
             // When
-            var returnedAdminUser = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 delegateUsers,
                 "password"
             );
@@ -244,7 +244,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedAdminUser = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var returnedAdminUser = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 delegateUsers,
                 "password"
             );
@@ -261,7 +261,7 @@
             const string password = "password";
 
             // When
-            var returnedDelegates = userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
                 adminUser,
                 password
             );
@@ -283,7 +283,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(false);
 
             // When
-            var returnedDelegates = userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
                 adminUser,
                 "password"
             );
@@ -305,7 +305,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedDelegates = userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
                 adminUser,
                 "password"
             );
@@ -327,7 +327,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedDelegates = userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
                 adminUser,
                 "password"
             );
@@ -348,7 +348,7 @@
             A.CallTo(() => cryptoService.VerifyHashedPassword(A<string>._, A<string>._)).Returns(true);
 
             // When
-            var returnedDelegates = userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(
+            var returnedDelegates = userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(
                 adminUser,
                 "password"
             );

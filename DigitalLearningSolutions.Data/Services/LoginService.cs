@@ -135,7 +135,7 @@
             AdminUser? verifiedAdminUser
         )
         {
-            var verifiedAssociatedAdmin = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var verifiedAssociatedAdmin = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 approvedVerifiedDelegates,
                 password
             );
@@ -150,7 +150,7 @@
             var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
 
             var verifiedLinkedDelegates =
-                userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
         }
 
