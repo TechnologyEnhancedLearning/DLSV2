@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model SingleCheckboxViewModel
+
+<div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
+  <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-error">
+    @if (Model.HasError) {
+      <span class="nhsuk-error-message" id="@Model.Id-error">
+        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
+      </span>
+    }
+    <div class="nhsuk-checkboxes">
+      <div class="nhsuk-checkboxes__item">
+        <input class="nhsuk-checkboxes__input"
+               id="@Model.Id"
+               name="@Model.Name"
+               type="checkbox"
+               aria-describedby="@Model.Id-item-hint"
+               value="true"
+               @(Model.Value ? "checked" : string.Empty) />
+        <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id">
+          @Model.Label
+        </label>
+        @if (Model.HintText != null) {
+          <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-item-hint">
+            @Model.HintText
+          </div>
+        }
+      </div>
+    </div>
+  </fieldset>
+</div>
