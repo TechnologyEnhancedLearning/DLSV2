@@ -105,7 +105,11 @@
            asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+           role="button"
+           asp-controller="PromoteToAdmin"
+           asp-action="Index"
+           asp-route-delegateId="@Model.DelegateInfo.Id">
           Promote to admin
         </a>
         <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
