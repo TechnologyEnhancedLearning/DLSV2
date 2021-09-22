@@ -62,7 +62,7 @@
                       <input type="hidden" name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
                       <div class="nhsuk-checkboxes course-content-checkboxes">
                         <div class="nhsuk-checkboxes__item course-content-checkbox">
-                          <input class="nhsuk-checkboxes__input"
+                          <input class="nhsuk-checkboxes__input @($"diagnostic-checkbox-{courseSection.SectionId}")"
                                  type="checkbox"
                                  name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
                                  id="diagnostic-enabled-@tutorial.TutorialId"
@@ -73,7 +73,7 @@
                           </label>
                         </div>
                         <div class="nhsuk-checkboxes__item course-content-checkbox">
-                          <input class="nhsuk-checkboxes__input"
+                          <input class="nhsuk-checkboxes__input @($"learning-checkbox-{courseSection.SectionId}")"
                                  type="checkbox"
                                  name="@($"{nameof(Model.Sections)}[{sectIndex}].{nameof(courseSection.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
                                  id="learning-enabled-@tutorial.TutorialId"
@@ -97,7 +97,7 @@
                         <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.SelectAllDiagnosticPrefix + courseSection.SectionId)">Select all</button>
                       </div>
                       <div class="button-container">
-                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllDiagnosticPrefix + courseSection.SectionId)">Deselect all</button>
+                        <button name="action" class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllDiagnosticPrefix + courseSection.SectionId)">Deselect all</button>
                       </div>
                     </div>
                   </dd>
@@ -112,7 +112,7 @@
                         <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.SelectAllLearningPrefix + courseSection.SectionId)">Select all</button>
                       </div>
                       <div class="button-container">
-                        <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllLearningPrefix + courseSection.SectionId)">Deselect all</button>
+                        <button name="action" class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16" value="@(CourseContentController.DeselectAllLearningPrefix + courseSection.SectionId)">Deselect all</button>
                       </div>
                     </div>
                   </dd>
@@ -129,3 +129,7 @@
 
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/editCourseContent.js")" asp-append-version="true"></script>
+}
