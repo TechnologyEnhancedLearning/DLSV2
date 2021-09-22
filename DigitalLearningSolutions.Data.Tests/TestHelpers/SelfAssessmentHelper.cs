@@ -17,7 +17,8 @@
             DateTime? completeByDate = null,
             bool useFilteredApi = false,
             bool unprocessedUpdates = false,
-            bool linearNavigation = true
+            bool linearNavigation = true,
+            bool useDescriptionExpanders = true
         )
         {
             return new CurrentSelfAssessment()
@@ -31,7 +32,8 @@
                 CompleteByDate = completeByDate,
                 UseFilteredApi = useFilteredApi,
                 UnprocessedUpdates = unprocessedUpdates,
-                LinearNavigation = linearNavigation
+                LinearNavigation = linearNavigation,
+                UseDescriptionExpanders = useDescriptionExpanders
             };
         }
 
