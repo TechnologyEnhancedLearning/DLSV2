@@ -6,5 +6,6 @@
         public int NumberOfCompetencies { get; set; }
         public bool LinearNavigation { get; set; }
         public bool HasDelegateNominatedRoles { get; set; }
+        public bool UseDescriptionExpanders { get; set; }
     }
 }

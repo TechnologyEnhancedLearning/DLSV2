@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
 <div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
-  @if (Model.Competency.Description != null)
+  @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders)
   {
     <details class="nhsuk-details">
       <summary class="nhsuk-details__summary">
@@ -32,8 +32,14 @@
     <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
       @Model.Competency.Name
     </h2>
-  }
-</div>
+    @if (Model.Competency.Description != null)
+    {
+<p class="nhsuk-body-l">
+  @(Html.Raw(@Model.Competency.Description))
+</p>
+        }
+        }
+    </div>
 <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id">
   @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
   {
