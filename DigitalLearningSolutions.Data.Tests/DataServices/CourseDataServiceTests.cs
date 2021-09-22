@@ -420,5 +420,34 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             result.Should().BeFalse();
         }
+
+        [Test]
+        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                    1,
+                    2,
+                    0
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CompleteWithinMonths.Should().Be(6);
+                    courseDetails!.ValidityMonths.Should().Be(12);
+                    courseDetails!.Mandatory.Should().Be(true);
+                    courseDetails!.AutoRefresh.Should().Be(true);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

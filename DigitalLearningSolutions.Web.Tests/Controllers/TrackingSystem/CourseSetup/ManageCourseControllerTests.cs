@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -12,12 +13,13 @@
     internal class ManageCourseControllerTests
     {
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
+        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ManageCourseController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new ManageCourseController(courseDataService)
+            controller = new ManageCourseController(courseService, courseDataService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
         }
@@ -48,6 +50,38 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ManageCourseViewModel>();
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_save_calls_correct_method()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, 6, 12, false, false);
+
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    6,
+                    12,
+                    true,
+                    true
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }
