@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("DigitalLearningSolutions.Data.Tests")]
+
 namespace DigitalLearningSolutions.Data.Services
 {
     using System;
@@ -154,22 +155,30 @@ namespace DigitalLearningSolutions.Data.Services
 
         private void UpdateDelegate(DelegateTableRow delegateRow, DelegateUser delegateUser)
         {
-            userDataService.UpdateDelegate(
-                delegateUser.Id,
-                delegateRow.FirstName!,
-                delegateRow.LastName!,
-                delegateRow.JobGroupId!.Value,
-                delegateRow.Active!.Value,
-                delegateRow.Answer1,
-                delegateRow.Answer2,
-                delegateRow.Answer3,
-                delegateRow.Answer4,
-                delegateRow.Answer5,
-                delegateRow.Answer6,
-                delegateRow.AliasId,
-                delegateRow.Email!
-            );
-            delegateRow.RowStatus = RowStatus.Updated;
+            try
+            {
+                userDataService.UpdateDelegate(
+                    delegateUser.Id,
+                    delegateRow.FirstName!,
+                    delegateRow.LastName!,
+                    delegateRow.JobGroupId!.Value,
+                    delegateRow.Active!.Value,
+                    delegateRow.Answer1,
+                    delegateRow.Answer2,
+                    delegateRow.Answer3,
+                    delegateRow.Answer4,
+                    delegateRow.Answer5,
+                    delegateRow.Answer6,
+                    delegateRow.AliasId,
+                    delegateRow.Email!
+                );
+
+                delegateRow.RowStatus = RowStatus.Updated;
+            }
+            catch
+            {
+                delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForUpdate;
+            }
         }
 
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
@@ -179,6 +188,8 @@ namespace DigitalLearningSolutions.Data.Services
             switch (status)
             {
                 case "-1":
+                    delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
+                    break;
                 case "-2":
                 case "-3":
                 case "-4":

@@ -30,7 +30,7 @@
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetDelegateUsersByUsername("SV1234");
 
             // Then
@@ -43,7 +43,7 @@
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("SV1234");
 
             // Then
@@ -53,7 +53,7 @@
         [Test]
         public void GetAllDelegateUsersByUsername_includes_inactive_users()
         {
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("OS35");
 
             // Then
@@ -63,7 +63,7 @@
         [Test]
         public void GetAllDelegateUsersByUsername_search_includes_CandidateNumber()
         {
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("ND107");
 
             // Then
@@ -73,7 +73,7 @@
         [Test]
         public void GetAllDelegateUsersByUsername_search_includes_EmailAddress()
         {
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("saudnhb@.5lpyk");
 
             // Then
@@ -83,7 +83,7 @@
         [Test]
         public void GetAllDelegateUsersByUsername_searches_AliasID()
         {
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetAllDelegateUsersByUsername("aldn y");
 
             // Then
@@ -96,7 +96,7 @@
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
 
-            //When
+            // When
             var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
 
             // Then

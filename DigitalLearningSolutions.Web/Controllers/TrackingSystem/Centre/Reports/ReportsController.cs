@@ -20,15 +20,18 @@
     public class ReportsController : Controller
     {
         private readonly IActivityService activityService;
+        private readonly IEvaluationSummaryService evaluationSummaryService;
         private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IEvaluationSummaryService evaluationSummaryService
         )
         {
             this.activityService = activityService;
             this.userDataService = userDataService;
+            this.evaluationSummaryService = evaluationSummaryService;
         }
 
         public IActionResult Index()
@@ -53,7 +56,9 @@
                 adminUser.CategoryId == 0
             );
 
-            var model = new ReportsViewModel(activity, filterModel);
+            var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
+
+            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns);
             return View(model);
         }
 

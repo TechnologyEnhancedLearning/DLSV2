@@ -3,11 +3,13 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface IUserService
     {
-        (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByUsername(string username);
+        (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
@@ -38,25 +40,35 @@ namespace DigitalLearningSolutions.Data.Services
         void IncrementFailedLoginCount(AdminUser adminUser);
 
         public IEnumerable<DelegateUserCard> GetDelegateUserCardsForWelcomeEmail(int centreId);
+
+        void UpdateAdminUserPermissions(
+            int adminId,
+            AdminRoles adminRoles,
+            int categoryId
+        );
     }
 
     public class UserService : IUserService
     {
-        private readonly ILoginService loginService;
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly IUserDataService userDataService;
+        private readonly IUserVerificationService userVerificationService;
 
-        public UserService(IUserDataService userDataService, ILoginService loginService)
+        public UserService(
+            IUserDataService userDataService,
+            IUserVerificationService userVerificationService,
+            ICentreContractAdminUsageService centreContractAdminUsageService
+        )
         {
             this.userDataService = userDataService;
-            this.loginService = loginService;
+            this.userVerificationService = userVerificationService;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
         {
             var adminUser = userDataService.GetAdminUserByUsername(username);
-            var delegateUsername =
-                string.IsNullOrWhiteSpace(adminUser?.EmailAddress) ? username : adminUser.EmailAddress;
-            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(delegateUsername);
+            List<DelegateUser> delegateUsers = userDataService.GetDelegateUsersByUsername(username);
 
             return (adminUser, delegateUsers);
         }
@@ -199,12 +211,12 @@ namespace DigitalLearningSolutions.Data.Services
                     ? new List<DelegateUser> { loggedInDelegateUser }
                     : new List<DelegateUser>();
 
-                return loginService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
+                return userVerificationService.VerifyUsers(password, loggedInAdminUser, loggedInDelegateUsers);
             }
 
             var (adminUser, delegateUsers) = GetUsersByEmailAddress(signedInEmailIfAny);
 
-            return loginService.VerifyUsers(password, adminUser, delegateUsers);
+            return userVerificationService.VerifyUsers(password, adminUser, delegateUsers);
         }
 
         public bool IsPasswordValid(int? adminId, int? delegateId, string password)
@@ -243,9 +255,69 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
+        public void UpdateAdminUserPermissions(
+            int adminId,
+            AdminRoles adminRoles,
+            int categoryId
+        )
+        {
+            if (NewUserRolesExceedAvailableSpots(adminId, adminRoles))
+            {
+                throw new AdminRoleFullException(
+                    "Failed to update admin roles for admin " + adminId +
+                    " as one or more of the roles being added to have reached their limit"
+                );
+            }
+
+            userDataService.UpdateAdminUserPermissions(
+                adminId,
+                adminRoles.IsCentreAdmin,
+                adminRoles.IsSupervisor,
+                adminRoles.IsTrainer,
+                adminRoles.IsContentCreator,
+                adminRoles.IsContentManager,
+                adminRoles.ImportOnly,
+                categoryId
+            );
+        }
+
         private static bool UserEmailHasChanged(User? user, string emailAddress)
         {
             return user != null && user.EmailAddress != emailAddress;
+        }
+
+        private bool NewUserRolesExceedAvailableSpots(
+            int adminId,
+            AdminRoles adminRoles
+        )
+        {
+            var oldUserDetails = userDataService.GetAdminUserById(adminId)!;
+            var currentNumberOfAdmins =
+                centreContractAdminUsageService.GetCentreAdministratorNumbers(oldUserDetails.CentreId);
+
+            if (adminRoles.IsTrainer && !oldUserDetails.IsTrainer && currentNumberOfAdmins.TrainersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (adminRoles.IsCmsAdministrator && !oldUserDetails.IsCmsAdministrator &&
+                currentNumberOfAdmins.CmsAdministratorsAtOrOverLimit)
+            {
+                return true;
+            }
+
+            if (adminRoles.IsCmsManager && !oldUserDetails.IsCmsManager &&
+                currentNumberOfAdmins.CmsManagersAtOrOverLimit)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

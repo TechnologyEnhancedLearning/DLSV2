@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.Models.PostLearningAssessment;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -218,7 +216,7 @@
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -234,7 +232,7 @@
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -249,7 +247,7 @@
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().BeNull();
         }
 
@@ -268,7 +266,7 @@
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 
@@ -287,7 +285,7 @@
                 // When
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-                //Then
+                // Then
                 result.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
@@ -307,7 +305,7 @@
                 // When
                 var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-                //Then
+                // Then
                 result.NextSectionId.Should().Be(expectedNextSectionId);
             }
         }
@@ -324,7 +322,7 @@
             // When
             var result = postLearningAssessmentService.GetPostLearningAssessment(customisationId, candidateId, sectionId);
 
-            //Then
+            // Then
             result.NextSectionId.Should().Be(expectedNextSectionId);
         }
 

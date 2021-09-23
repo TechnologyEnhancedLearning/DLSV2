@@ -15,6 +15,8 @@
                         au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
+                        au.Active,
+                        au.Approved,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -53,12 +55,14 @@
 
         public AdminUser? GetAdminUserByUsername(string username)
         {
-            var user = connection.Query<AdminUser>(
+            return connection.Query<AdminUser>(
                 @"SELECT
                         au.AdminID AS Id,
                         au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
+                        au.Active,
+                        au.Approved,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -90,9 +94,7 @@
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
                     WHERE au.Active = 1 AND au.Approved = 1 AND (au.Login = @username OR au.Email = @username)",
                 new { username }
-            ).FirstOrDefault();
-
-            return user;
+            ).SingleOrDefault();
         }
 
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
@@ -103,6 +105,8 @@
                         au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
+                        au.Active,
+                        au.Approved,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,
@@ -145,6 +149,8 @@
                         au.CentreID,
                         ct.CentreName,
                         ct.Active AS CentreActive,
+                        au.Active,
+                        au.Approved,
                         au.Email AS EmailAddress,
                         au.Forename AS FirstName,
                         au.Surname AS LastName,

@@ -54,5 +54,7 @@
             DelegateGroupsSortByOptions.NumberOfDelegates,
             DelegateGroupsSortByOptions.NumberOfCourses
         };
+
+        public override bool NoDataFound => !DelegateGroups.Any() && NoSearchOrFilter;
     }
 }

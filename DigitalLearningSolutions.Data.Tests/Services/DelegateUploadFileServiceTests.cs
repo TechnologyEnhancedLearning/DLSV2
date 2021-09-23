@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     {
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
-        
+
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationDataService registrationDataService = null!;
@@ -114,81 +114,120 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         [Test]
         public void ProcessDelegateTable_has_job_group_error_for_invalid_job_group()
         {
-            // Given
             var row = GetSampleDelegateDataRow(jobGroupId: "999");
-            var table = CreateTableFromData(new[] { row });
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidJobGroupId);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidJobGroupId);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_lastname_error_for_missing_lastname()
+        public void ProcessDelegateTable_has_missing_lastname_error_for_missing_lastname()
         {
-            // Given
             var row = GetSampleDelegateDataRow(lastName: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidLastName);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingLastName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_firstname_error_for_missing_firstname()
+        public void ProcessDelegateTable_has_missing_firstname_error_for_missing_firstname()
         {
-            // Given
             var row = GetSampleDelegateDataRow(string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidFirstName);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingFirstName);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_email_error_for_missing_email()
+        public void ProcessDelegateTable_has_missing_email_error_for_missing_email()
         {
-            // Given
             var row = GetSampleDelegateDataRow(emailAddress: string.Empty);
-            var table = CreateTableFromData(new[] { row });
-
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
-
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidEmail);
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.MissingEmail);
         }
 
         [Test]
-        public void ProcessDelegateTable_has_active_error_for_invalid_active_status()
+        public void ProcessDelegateTable_has_invalid_active_error_for_invalid_active_status()
         {
-            // Given
             var row = GetSampleDelegateDataRow(active: "hello");
-            var table = CreateTableFromData(new[] { row });
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.InvalidActive);
+        }
 
-            // When
-            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+        [Test]
+        public void ProcessDelegateTable_has_too_long_firstname_error_for_too_long_firstname()
+        {
+            var row = GetSampleDelegateDataRow(new string('x', 251));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongFirstName);
+        }
 
-            // Then
-            AssertBulkUploadResultHasOnlyOneError(result);
-            result.Errors.First().RowNumber.Should().Be(2);
-            result.Errors.First().Reason.Should().Be(BulkUploadResult.ErrorReason.InvalidActive);
+        [Test]
+        public void ProcessDelegateTable_has_too_long_lastname_error_for_too_long_lastname()
+        {
+            var row = GetSampleDelegateDataRow(lastName: new string('x', 251));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongLastName);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_email_error_for_too_long_email()
+        {
+            var row = GetSampleDelegateDataRow(emailAddress: $"test@{new string('x', 250)}");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongEmail);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_alias_id_error_for_too_long_alias_id()
+        {
+            var row = GetSampleDelegateDataRow(aliasId: new string('x', 251));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAliasId);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer1_error_for_too_long_answer1()
+        {
+            var row = GetSampleDelegateDataRow(answer1: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer2_error_for_too_long_answer2()
+        {
+            var row = GetSampleDelegateDataRow(answer2: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer2);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer3_error_for_too_long_answer3()
+        {
+            var row = GetSampleDelegateDataRow(answer3: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer3);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer4_error_for_too_long_answer4()
+        {
+            var row = GetSampleDelegateDataRow(answer4: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer4);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer5_error_for_too_long_answer5()
+        {
+            var row = GetSampleDelegateDataRow(answer5: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer5);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_too_long_answer6_error_for_too_long_answer6()
+        {
+            var row = GetSampleDelegateDataRow(answer6: new string('x', 101));
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.TooLongAnswer6);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_bad_format_email_error_for_wrong_format_email()
+        {
+            var row = GetSampleDelegateDataRow(emailAddress: "bademail");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.BadFormatEmail);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_has_whitespace_in_email_error_for_email_with_whitespace()
+        {
+            var row = GetSampleDelegateDataRow(emailAddress: "white space@test.com");
+            Test_ProcessDelegateTable_row_has_error(row, BulkUploadResult.ErrorReason.WhitespaceInEmail);
         }
 
         [Test]
@@ -678,7 +717,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 jobGroupId: 1
             );
 
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(skipDelegateId, CentreId)).Returns(skipDelegate);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(skipDelegateId, CentreId))
+                .Returns(skipDelegate);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(updateDelegateId, CentreId))
                 .Returns(updateDelegate);
 
@@ -687,7 +727,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
                 .Returns("ANY");
             ACallToUserDataServiceUpdateDelegateDoesNothing();
-            
+
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
@@ -700,6 +740,23 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 result.RegisteredCount.Should().Be(2);
                 result.Errors.Should().HaveCount(1);
             }
+        }
+
+        private void Test_ProcessDelegateTable_row_has_error(
+            DelegateDataRow row,
+            BulkUploadResult.ErrorReason errorReason
+        )
+        {
+            // Given
+            var table = CreateTableFromData(new[] { row });
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            AssertBulkUploadResultHasOnlyOneError(result);
+            result.Errors.First().RowNumber.Should().Be(2);
+            result.Errors.First().Reason.Should().Be(errorReason);
         }
 
         private IXLTable CreateTableFromData(IEnumerable<DelegateDataRow> data)

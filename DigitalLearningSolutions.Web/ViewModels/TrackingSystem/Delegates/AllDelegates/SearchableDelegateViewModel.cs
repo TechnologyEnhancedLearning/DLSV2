@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,7 +18,10 @@
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
-            CustomPromptFilters = GetCustomPromptFilters(promptsWithOptions);
+            CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(
+                DelegateInfo.CustomFields,
+                promptsWithOptions
+            );
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
@@ -31,33 +33,5 @@
         );
 
         public Dictionary<int, string> CustomPromptFilters { get; set; }
-
-        private Dictionary<int, string> GetCustomPromptFilters(IEnumerable<CustomPrompt> promptsWithOptions)
-        {
-            var closedCustomPromptIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
-            var closedCustomFields = DelegateInfo.CustomFields
-                .Where(customField => closedCustomPromptIds.Contains(customField.CustomFieldId));
-            return closedCustomFields
-                .Select(
-                    customField => new KeyValuePair<int, string>(
-                        customField.CustomFieldId,
-                        GetFilterValueForCustomField(customField)
-                    )
-                ).ToDictionary(x => x.Key, x => x.Value);
-        }
-
-        private string GetFilterValueForCustomField(CustomFieldViewModel customField)
-        {
-            string filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-            string propertyValue = string.IsNullOrEmpty(customField.Answer)
-                ? FilteringHelper.EmptyValue.ToString()
-                : customField.Answer;
-            return FilteringHelper.BuildFilterValueString(
-                filterValueName,
-                filterValueName,
-                propertyValue
-            );
-        }
     }
 }

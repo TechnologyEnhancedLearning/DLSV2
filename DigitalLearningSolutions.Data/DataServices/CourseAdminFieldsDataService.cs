@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
@@ -7,23 +8,24 @@
 
     public interface ICourseAdminFieldsDataService
     {
-        public CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
+        CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+        void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
-        public void UpdateCustomPromptForCourse(
+        IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
+
+        void UpdateCustomPromptForCourse(
             int customisationId,
             int promptNumber,
             int promptId,
-            bool mandatory,
             string? options
         );
 
-        public string GetPromptName(int customisationId, int promptNumber);
+        string GetPromptName(int customisationId, int promptNumber);
 
-        public int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
+        int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
 
-        public void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
+        void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
     }
 
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
@@ -67,15 +69,25 @@
             return result;
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
         {
             connection.Execute(
                 @$"UPDATE Customisations
                     SET
-                        Q{promptNumber}Mandatory = @mandatory,
                         Q{promptNumber}Options = @options
                     WHERE CustomisationID = @customisationId",
-                new { mandatory, options, customisationId }
+                new { options, customisationId }
+            );
+        }
+
+        public IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical()
+        {
+            return connection.Query<(int, string)>
+            (
+                @"SELECT CoursePromptID, CoursePrompt
+                        FROM CoursePrompts
+                        WHERE Active = 1
+                        ORDER BY CoursePrompt"
             );
         }
 
@@ -83,7 +95,6 @@
             int customisationId,
             int promptNumber,
             int promptId,
-            bool mandatory,
             string? options
         )
         {
@@ -91,10 +102,9 @@
                 @$"UPDATE Customisations
                     SET
                         CourseField{promptNumber}PromptID = @promptId,
-                        Q{promptNumber}Mandatory = @mandatory,
                         Q{promptNumber}Options = @options
                     WHERE CustomisationID = @customisationId",
-                new { promptId, mandatory, options, customisationId }
+                new { promptId, options, customisationId }
             );
         }
 

@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
+    [Obsolete("Use SelectListWithConfigurableModelViewComponent instead.")]
     public class SelectListViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
@@ -36,7 +38,8 @@
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,
                 hasError,
-                deselectable ?? false);
+                deselectable ?? false
+            );
             return View(selectListViewModel);
         }
     }

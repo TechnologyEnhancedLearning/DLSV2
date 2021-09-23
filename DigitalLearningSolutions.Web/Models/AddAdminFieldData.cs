@@ -5,13 +5,14 @@
 
     public class AddAdminFieldData
     {
-        public AddAdminFieldData()
+        public AddAdminFieldData(AddAdminFieldViewModel model)
         {
             Id = Guid.NewGuid();
-            ConfigureAnswersViewModel = new AdminFieldAnswersViewModel();
+            AddModel = model;
         }
 
         public Guid Id { get; set; }
-        public AdminFieldAnswersViewModel ConfigureAnswersViewModel { get; set; }
+
+        public AddAdminFieldViewModel AddModel { get; set; }
     }
 }
