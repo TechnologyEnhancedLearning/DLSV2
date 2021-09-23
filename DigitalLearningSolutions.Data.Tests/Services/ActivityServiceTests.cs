@@ -62,17 +62,8 @@
                     LogMonth = 12
                 }
             };
-            A.CallTo(
-                    () => activityDataService.GetFilteredActivity(
-                        A<int>._,
-                        A<DateTime>._,
-                        A<DateTime>._,
-                        A<int?>._,
-                        A<int?>._,
-                        A<int?>._
-                    )
-                )
-                .Returns(expectedActivityResult);
+            GivenActivityDataServiceReturnsSpecifiedResult(expectedActivityResult);
+
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2014-6-22"),
                 DateTime.Parse("2016-6-22"),
@@ -177,30 +168,7 @@
             using var expectedWorkbook = new XLWorkbook(
                 TestContext.CurrentContext.TestDirectory + ActivityDataDownloadRelativeFilePath
             );
-            var expectedActivityResult = new List<ActivityLog>
-            {
-                new ActivityLog
-                {
-                    Completed = true,
-                    Evaluated = false,
-                    Registered = false,
-                    LogDate = DateTime.Parse("2020-12-22"),
-                    LogYear = 2020,
-                    LogQuarter = 4,
-                    LogMonth = 12
-                }
-            };
-            A.CallTo(
-                    () => activityDataService.GetFilteredActivity(
-                        A<int>._,
-                        A<DateTime>._,
-                        A<DateTime>._,
-                        A<int?>._,
-                        A<int?>._,
-                        A<int?>._
-                    )
-                )
-                .Returns(expectedActivityResult);
+            GivenActivityDataServiceReturnsDataInExampleSheet();
 
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2020-9-1"),
@@ -234,6 +202,39 @@
                     }
                 }
             }
+        }
+
+        private void GivenActivityDataServiceReturnsDataInExampleSheet()
+        {
+            var activityResult = new List<ActivityLog>
+            {
+                new ActivityLog
+                {
+                    Completed = true,
+                    Evaluated = false,
+                    Registered = false,
+                    LogDate = DateTime.Parse("2020-12-22"),
+                    LogYear = 2020,
+                    LogQuarter = 4,
+                    LogMonth = 12
+                }
+            };
+            GivenActivityDataServiceReturnsSpecifiedResult(activityResult);
+        }
+
+        private void GivenActivityDataServiceReturnsSpecifiedResult(IEnumerable<ActivityLog> resultToReturn)
+        {
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        A<int>._,
+                        A<DateTime>._,
+                        A<DateTime>._,
+                        A<int?>._,
+                        A<int?>._,
+                        A<int?>._
+                    )
+                )
+                .Returns(resultToReturn);
         }
 
         private void ValidatePeriodData(

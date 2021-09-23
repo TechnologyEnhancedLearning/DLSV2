@@ -37,14 +37,15 @@
       <partial name="_ActivityGraph.cshtml" />
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
-    
+
     <a
       class="nhsuk-button nhsuk-u-margin-top-6"
       asp-controller="Reports"
       asp-action="DownloadUsageData"
       asp-all-route-data="@Model.ReportsFilterModel.FilterValues"
-      role="button"
-    >Download usage data</a>
+      role="button">
+      Download usage data
+    </a>
 
     <hr />
     <h2 class="nhsuk-heading-m">Evaluation summary</h2>
