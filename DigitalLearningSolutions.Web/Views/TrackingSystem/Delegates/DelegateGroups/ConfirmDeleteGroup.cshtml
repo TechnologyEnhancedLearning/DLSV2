@@ -41,8 +41,8 @@
       </div>
 
       <p>
-        This group has @Model.DelegateCount delegates and @Model.CourseCount
-        courses. Deleting this group will permanently remove all the delegates
+        This group has @Model.DelegateCount delegate@(Model.DelegateCount == 1 ? "" : "s") and @Model.CourseCount
+        course@(Model.CourseCount == 1 ? "" : "s"). Deleting this group will permanently remove all the delegates
         and courses from this group.
       </p>
       @{

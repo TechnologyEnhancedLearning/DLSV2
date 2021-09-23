@@ -17,11 +17,15 @@
 
         string? GetGroupName(int groupId, int centreId);
 
+        int? GetGroupCentreId(int groupId);
+
         void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
+
+        void DeleteGroup(int groupId, bool deleteStartedEnrolment);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -136,6 +140,16 @@
             ).SingleOrDefault();
         }
 
+        public int? GetGroupCentreId(int groupId)
+        {
+            return connection.Query<int>(
+                @"SELECT CentreID
+                        FROM Groups
+                        WHERE GroupID = @groupId",
+                new { groupId }
+            ).SingleOrDefault();
+        }
+
         public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
             connection.Execute(
@@ -152,7 +166,7 @@
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
                                 AND P.RemovedDate IS NULL)",
-                new {groupId, delegateId, removedDate}
+                new { groupId, delegateId, removedDate }
             );
         }
 
@@ -177,8 +191,39 @@
                 @"DELETE FROM GroupDelegates
                     WHERE GroupID = @groupId
                       AND DelegateID = @delegateId",
-                new {groupId, delegateId}
+                new { groupId, delegateId }
             );
+        }
+
+        public void DeleteGroup(int groupId, bool deleteStartedEnrolment)
+        {
+            var removedDate = DateTime.UtcNow;
+
+            connection.Execute(
+                @"UPDATE Progress
+                        SET
+                            RemovedDate = @removedDate,
+                            RemovalMethodID = 3
+                        WHERE ProgressID IN
+                            (SELECT ProgressID
+                        FROM Progress AS P
+                        INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                        WHERE P.Completed IS NULL
+                        AND P.EnrollmentMethodID = 3
+                        AND GC.GroupID = @groupId
+                        AND P.RemovedDate IS NULL
+                        AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
+                        AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
+                                            INNER JOIN GroupDelegates AS GD ON GCInner.GroupID = GD.GroupID
+                                            WHERE GCInner.CustomisationID = P.CustomisationID
+                                            AND GD.DelegateID = P.CandidateID
+                                            AND GCInner.GroupID != GC.GroupID))",
+                new { groupId, removedDate, deleteStartedEnrolment }
+            );
+
+            // QQ delete all records in GroupDelegates
+            // QQ delete all records in GroupCustomisations
+            // QQ delete group
         }
     }
 }

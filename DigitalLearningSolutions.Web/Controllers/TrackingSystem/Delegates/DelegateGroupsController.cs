@@ -179,25 +179,35 @@
         [Route("{groupId:int}/Delete")]
         public IActionResult DeleteGroup(int groupId)
         {
+            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
+            if (User.GetCentreId() != groupCentreId)
+            {
+                return new StatusCodeResult(404); // QQ change this probably
+            }
+
             var delegates = groupsDataService.GetGroupDelegates(groupId);
             var courses = groupsDataService.GetGroupCourses(groupId, User.GetCentreId());
 
-            if (!delegates.Any() && !courses.Any())
+            if (delegates.Any() || courses.Any())
             {
-                // QQ delete group
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                // QQ redirect to deletion confirmation
                 return RedirectToAction("ConfirmDeleteGroup", new { groupId });
             }
+
+            groupsDataService.DeleteGroup(groupId, false);
+            return RedirectToAction("Index");
+
         }
 
         [HttpGet]
         [Route("{groupId:int}/Delete/Confirm")]
         public IActionResult ConfirmDeleteGroup(int groupId)
         {
+            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
+            if (User.GetCentreId() != groupCentreId)
+            {
+                return new StatusCodeResult(404); // QQ change this probably
+            }
+
             var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsDataService.GetGroupDelegates(groupId).Count();
             var courseCount = groupsDataService.GetGroupCourses(groupId, User.GetCentreId()).Count();
@@ -216,17 +226,19 @@
         [Route("{groupId:int}/Delete/Confirm")]
         public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
         {
+            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
+            if (User.GetCentreId() != groupCentreId)
+            {
+                return new StatusCodeResult(404); // QQ change this probably
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            if (model.DeleteEnrolments)
-            {
-                // QQ delete enrolments
-            }
+            groupsDataService.DeleteGroup(groupId, model.DeleteEnrolments);
 
-            // QQ delete group
             return RedirectToAction("Index");
         }
 
