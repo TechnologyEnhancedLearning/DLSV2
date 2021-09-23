@@ -69,6 +69,7 @@
             return View("WelcomeEmailSent", model);
         }
 
+        [HttpPost]
         [Route("DeactivateDelegate")]
         public IActionResult DeactivateDelegate(int delegateId)
         {
