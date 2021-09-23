@@ -62,10 +62,6 @@
             var dailyData = new[]
             {
                 new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Days),
-                    null
-                ),
-                new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Days),
                     null
                 )
@@ -84,10 +80,6 @@
             // given
             var dailyData = new[]
             {
-                new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Weeks),
-                    null
-                ),
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Weeks),
                     null
@@ -108,10 +100,6 @@
             var dailyData = new[]
             {
                 new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Quarters),
-                    null
-                ),
-                new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Quarters),
                     null
                 )
@@ -130,10 +118,6 @@
             // given
             var dailyData = new[]
             {
-                new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Years),
-                    null
-                ),
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Years),
                     null
