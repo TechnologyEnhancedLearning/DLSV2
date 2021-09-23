@@ -20,7 +20,6 @@
         /// <param name="endYearId"></param>
         /// <param name="endDateCheckboxId"></param>
         /// <param name="endDateCheckboxLabel"></param>
-        /// <param name="cssClass">Leave blank for no custom css class.</param>
         /// <param name="hintText">Leave blank for no hint.</param>
         /// <param name="endDateCheckboxHintText">Leave blank for no hint.</param>
         /// <returns></returns>
@@ -35,7 +34,6 @@
             string endYearId,
             string endDateCheckboxId,
             string endDateCheckboxLabel,
-            string cssClass,
             string hintText,
             string endDateCheckboxHintText
         )
@@ -111,7 +109,6 @@
                 startDateModel,
                 endDateModel,
                 checkboxViewModel,
-                string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );
             return View(viewModel);

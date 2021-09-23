@@ -8,7 +8,6 @@
             DateInputViewModel startDateModel,
             DateInputViewModel endDateModel,
             CheckboxesItemViewModel endDateCheckboxViewModel,
-            string? cssClass = null,
             string? hintText = null
         )
         {
@@ -17,13 +16,11 @@
             StartDateModel = startDateModel;
             EndDateModel = endDateModel;
             EndDateCheckbox = endDateCheckboxViewModel;
-            CssClass = cssClass;
             HintText = hintText;
         }
 
         public string Id { get; set; }
         public string Label { get; set; }
-        public string? CssClass { get; set; }
         public string? HintText { get; set; }
 
         public DateInputViewModel StartDateModel { get; set; }
