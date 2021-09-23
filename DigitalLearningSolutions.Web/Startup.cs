@@ -123,6 +123,7 @@ namespace DigitalLearningSolutions.Web
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new ApplicationTypeModelBinderProvider());
                     }
                 );
 
