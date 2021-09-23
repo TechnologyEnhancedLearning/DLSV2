@@ -23,7 +23,7 @@
   asp-controller="NotificationPreferences"
   asp-action="UpdateNotificationPreferences"
   asp-route-userType="@Model.UserType"
-  role="button"
->
+  asp-route-application="@Model.Application.UrlSegment"
+  role="button">
   Update preferences
 </a>

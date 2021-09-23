@@ -22,16 +22,19 @@
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
+        private readonly IGroupsService groupsService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
-            IClockService clockService
+            IClockService clockService,
+            IGroupsService groupsService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
+            this.groupsService = groupsService;
         }
 
         [Route("{page=1:int}")]
@@ -246,6 +249,31 @@
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
+        }
+
+        [Route("Add")]
+        [HttpGet]
+        public IActionResult AddDelegateGroup()
+        {
+            return View(new AddDelegateGroupViewModel());
+        }
+
+        [Route("Add")]
+        [HttpPost]
+        public IActionResult AddDelegateGroup(AddDelegateGroupViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            groupsService.AddDelegateGroup(
+                User.GetCentreId(),
+                model.GroupName!,
+                model.GroupDescription,
+                User.GetAdminId()!.Value
+            );
+            return RedirectToAction("Index");
         }
     }
 }

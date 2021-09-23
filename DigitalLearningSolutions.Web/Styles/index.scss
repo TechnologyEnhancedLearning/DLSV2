@@ -1,6 +1,6 @@
 @import "~nhsuk-frontend/packages/core/all";
 
-$iframe-padding-bottom: nhsuk-spacing(8);
+$iframe-padding-bottom: nhsuk-spacing(8) * 2;
 
 @mixin word-break-ie-fix {
   // IE11 hack
@@ -106,9 +106,10 @@ h1#page-heading {
   height: 100%;
   flex: 1 1 auto;
   display: flex;
+  min-height: 400px;
 
   @include govuk-media-query($from: desktop) {
-    min-height: 500px;
+    min-height: 550px;
   }
 }
 
@@ -117,7 +118,7 @@ h1#page-heading {
 }
 
 .responsive-iframe-wrapper-extra-padding {
-  padding-bottom: $iframe-padding-bottom * 2;
+  padding-bottom: $iframe-padding-bottom * 1.5;
 }
 
 .nhsuk-heading-xl.heading-margin-2 {
@@ -295,4 +296,8 @@ ul.no-bullets {
 
 .nhsuk-error-message.error-message--margin-bottom-1 {
   margin-bottom: nhsuk-spacing(1);
+}
+
+.display-none {
+  display: none;
 }

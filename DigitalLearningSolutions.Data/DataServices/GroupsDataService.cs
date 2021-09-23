@@ -25,6 +25,8 @@
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
 
+        int AddDelegateGroup(GroupDetails groupDetails);
+
         void DeleteGroup(int groupId, bool deleteStartedEnrolment);
     }
 
@@ -192,6 +194,16 @@
                     WHERE GroupID = @groupId
                       AND DelegateID = @delegateId",
                 new { groupId, delegateId }
+            );
+        }
+
+        public int AddDelegateGroup(GroupDetails groupDetails)
+        {
+            return connection.QuerySingle<int>(
+                @"INSERT INTO Groups (CentreID, GroupLabel, GroupDescription, LinkedToField, SyncFieldChanges, AddNewRegistrants, PopulateExisting, CreatedDate, CreatedByAdminUserID)
+                        OUTPUT inserted.GroupID
+                        VALUES (@CentreId, @GroupLabel, @GroupDescription, @LinkedToField, @SyncFieldChanges, @AddNewRegistrants, @PopulateExisting, @CreatedDate, @AdminUserId)",
+                groupDetails
             );
         }
 

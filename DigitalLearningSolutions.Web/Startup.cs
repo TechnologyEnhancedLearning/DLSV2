@@ -123,6 +123,7 @@ namespace DigitalLearningSolutions.Web
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new ApplicationTypeModelBinderProvider());
                     }
                 );
 
@@ -185,6 +186,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
+            services.AddScoped<IGroupsService, GroupsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -204,6 +206,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();

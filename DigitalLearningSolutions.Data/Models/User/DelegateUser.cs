@@ -5,8 +5,6 @@
 
     public class DelegateUser : User
     {
-        public bool Active { get; set; }
-        public bool Approved { get; set; }
         public string CandidateNumber { get; set; }
         public DateTime? DateRegistered { get; set; }
         public int JobGroupId { get; set; }

@@ -20,11 +20,17 @@ export interface ISearchableData {
 export class SearchSortFilterAndPaginate {
   private page: number;
 
+  private readonly searchEnabled: boolean;
+
+  private readonly paginationEnabled: boolean;
+
   private readonly filterEnabled: boolean;
 
   // Route proved should be a relative path with no leading /
-  constructor(route: string, filterEnabled = false, filterCookieName = '') {
+  constructor(route: string, searchEnabled: boolean, paginationEnabled: boolean, filterEnabled: boolean, filterCookieName = '') {
     this.page = 1;
+    this.searchEnabled = searchEnabled;
+    this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
 
     SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
@@ -35,13 +41,18 @@ export class SearchSortFilterAndPaginate {
       if (filterEnabled) {
         setUpFilter(() => this.onFilterUpdated(searchableData), filterCookieName);
       }
+      if (searchEnabled) {
+        setUpSearch(() => this.onSearchUpdated(searchableData));
+      }
 
-      setUpSearch(() => this.onSearchUpdated(searchableData));
       setUpSort(() => this.searchSortAndPaginate(searchableData));
-      setUpPagination(
-        () => this.onNextPagePressed(searchableData),
-        () => this.onPreviousPagePressed(searchableData),
-      );
+
+      if (paginationEnabled) {
+        setUpPagination(
+          () => this.onNextPagePressed(searchableData),
+          () => this.onPreviousPagePressed(searchableData),
+        );
+      }
       this.searchSortAndPaginate(searchableData);
     });
   }
@@ -70,7 +81,9 @@ export class SearchSortFilterAndPaginate {
   }
 
   private searchSortAndPaginate(searchableData: ISearchableData): void {
-    const searchedElements = search(searchableData.searchableElements);
+    const searchedElements = this.searchEnabled
+      ? search(searchableData.searchableElements)
+      : searchableData.searchableElements;
     const filteredElements = this.filterEnabled
       ? filterSearchableElements(searchedElements, searchableData.possibleFilters)
       : searchedElements;
@@ -79,7 +92,9 @@ export class SearchSortFilterAndPaginate {
     SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
 
     const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
-    const paginatedElements = paginateResults(sortedElements, this.page, totalPages);
+    const paginatedElements = this.paginationEnabled
+      ? paginateResults(sortedElements, this.page, totalPages)
+      : sortedElements;
     SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
 

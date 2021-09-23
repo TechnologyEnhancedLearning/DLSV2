@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FakeItEasy;
@@ -39,7 +40,7 @@
             authenticatedController.ModelState.AddModelError("key", "Invalid for testing.");
 
             // When
-            var result = await authenticatedController.Index(new ChangePasswordViewModel());
+            var result = await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -52,7 +53,7 @@
             GivenPasswordVerificationFails();
 
             // When
-            var result = await authenticatedController.Index(new ChangePasswordViewModel());
+            var result = await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ChangePasswordViewModel>();
@@ -65,7 +66,7 @@
             GivenPasswordVerificationFails();
 
             // When
-            await authenticatedController.Index(new ChangePasswordViewModel());
+            await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
 
             // Then
             ThenMustNotHaveChangedPassword();
@@ -80,12 +81,13 @@
 
             // When
             var result = await authenticatedController.Index(
-                new ChangePasswordViewModel
+                new ChangePasswordFormData
                 {
                     Password = "new-password",
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
-                }
+                },
+                ApplicationType.Default
             );
 
             // Then
@@ -105,12 +107,13 @@
 
             // When
             await authenticatedController.Index(
-                new ChangePasswordViewModel
+                new ChangePasswordFormData
                 {
                     Password = "new-password",
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
-                }
+                },
+                ApplicationType.Default
             );
 
             ThenMustHaveChangedPasswordForUserRefsOnce("new-password", verifiedUsers.GetUserRefs());
@@ -131,12 +134,13 @@
 
             // When
             await authenticatedController.Index(
-                new ChangePasswordViewModel
+                new ChangePasswordFormData
                 {
                     Password = "new-password",
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
-                }
+                },
+                ApplicationType.Default
             );
 
             // Then
