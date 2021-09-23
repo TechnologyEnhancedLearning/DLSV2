@@ -190,26 +190,34 @@
             try
             {
                 // Given
-                const int centreId = 101;
-                const string groupLabel = "Group name";
-                const string groupDescription = "Group description";
-                const int adminUserId = 1;
+
+                var groupDetails = new GroupDetails
+                {
+                    CentreId = 101,
+                    GroupLabel = "Group name",
+                    GroupDescription = "Group description",
+                    AdminUserId = 1,
+                    CreatedDate = DateTime.UtcNow,
+                    LinkedToField = 0,
+                    SyncFieldChanges = false,
+                    AddNewRegistrants = false,
+                    PopulateExisting = false
+                };
 
                 // When
-                var groupId = groupsDataService.AddDelegateGroup(centreId, groupLabel, groupDescription, adminUserId);
+                var groupId = groupsDataService.AddDelegateGroup(groupDetails);
 
                 // Then
-                var group = groupsDataService.GetGroupsForCentre(centreId).First(g => g.GroupId == groupId);
-                group.GroupLabel.Should().Be(groupLabel);
-                group.GroupDescription.Should().Be(groupDescription);
-                group.AddedByAdminId.Should().Be(adminUserId);
-                group.LinkedToField.Should().Be(0);
+                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId).First(g => g.GroupId == groupId);
+                group.GroupLabel.Should().Be(groupDetails.GroupLabel);
+                group.GroupDescription.Should().Be(groupDetails.GroupDescription);
+                group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
+                group.LinkedToField.Should().Be(groupDetails.LinkedToField);
             }
             finally
             {
                 transaction.Dispose();
             }
-
         }
     }
 }

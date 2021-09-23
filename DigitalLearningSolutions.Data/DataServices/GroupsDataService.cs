@@ -23,7 +23,7 @@
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
 
-        int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
+        int AddDelegateGroup(GroupDetails groupDetails);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -154,7 +154,7 @@
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
                                 AND P.RemovedDate IS NULL)",
-                new {groupId, delegateId, removedDate}
+                new { groupId, delegateId, removedDate }
             );
         }
 
@@ -179,30 +179,17 @@
                 @"DELETE FROM GroupDelegates
                     WHERE GroupID = @groupId
                       AND DelegateID = @delegateId",
-                new {groupId, delegateId}
+                new { groupId, delegateId }
             );
         }
 
-        public int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId)
+        public int AddDelegateGroup(GroupDetails groupDetails)
         {
-            var values = new
-            {
-                centreId,
-                groupLabel,
-                groupDescription,
-                linkedToField = 0,
-                syncFieldChanges = 0,
-                addNewRegistrants = 0,
-                populateExisting = 0,
-                createdDate = DateTime.UtcNow,
-                adminUserId
-            };
-
             return connection.QuerySingle<int>(
                 @"INSERT INTO Groups (CentreID, GroupLabel, GroupDescription, LinkedToField, SyncFieldChanges, AddNewRegistrants, PopulateExisting, CreatedDate, CreatedByAdminUserID)
                         OUTPUT inserted.GroupID
-                        VALUES (@centreId, @groupLabel, @groupDescription, @linkedToField, @syncFieldChanges, @addNewRegistrants, @populateExisting, @createdDate, @adminUserId)",
-                values
+                        VALUES (@CentreId, @GroupLabel, @GroupDescription, @LinkedToField, @SyncFieldChanges, @AddNewRegistrants, @PopulateExisting, @CreatedDate, @AdminUserId)",
+                groupDetails
             );
         }
     }

@@ -22,16 +22,19 @@
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
+        private readonly IGroupsService groupsService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
-            IClockService clockService
+            IClockService clockService,
+            IGroupsService groupsService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
+            this.groupsService = groupsService;
         }
 
         [Route("{page=1:int}")]
@@ -198,7 +201,7 @@
                 return View(model);
             }
 
-            groupsDataService.AddDelegateGroup(
+            groupsService.AddDelegateGroup(
                 User.GetCentreId(),
                 model.GroupName!,
                 model.GroupDescription,
