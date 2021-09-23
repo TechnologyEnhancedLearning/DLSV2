@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Common;
     using NUnit.Framework;
 
     public class GroupsServiceTests
@@ -26,22 +27,51 @@
         public void AddDelegateGroup_sets_GroupDetails_correctly()
         {
             // Given
-            const int centreId = 101;
-            const string groupLabel = "Group name";
-            const string groupDescription = "Group description";
-            const int adminUserId = 1;
             var timeNow = DateTime.UtcNow;
             GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = 101,
+                GroupLabel = "Group name",
+                GroupDescription = "Group description",
+                AdminUserId = 1,
+                CreatedDate = timeNow,
+                LinkedToField = 0,
+                SyncFieldChanges = false,
+                AddNewRegistrants = false,
+                PopulateExisting = false
+            };
 
             const int returnId = 1;
             A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(returnId);
 
             // When
-            var result = groupsService.AddDelegateGroup(centreId, groupLabel, groupDescription, adminUserId);
+            var result = groupsService.AddDelegateGroup(
+                groupDetails.CentreId,
+                groupDetails.GroupLabel,
+                groupDetails.GroupDescription,
+                groupDetails.AdminUserId
+            );
 
             // Then
             result.Should().Be(returnId);
-            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => groupsDataService.AddDelegateGroup(
+                    A<GroupDetails>.That.Matches(
+                        gd =>
+                            gd.CentreId == groupDetails.CentreId &&
+                            gd.GroupLabel == groupDetails.GroupLabel &&
+                            gd.GroupDescription == groupDetails.GroupDescription &&
+                            gd.AdminUserId == groupDetails.AdminUserId &&
+                            gd.CreatedDate == groupDetails.CreatedDate &&
+                            gd.LinkedToField == groupDetails.LinkedToField &&
+                            gd.SyncFieldChanges == groupDetails.SyncFieldChanges &&
+                            gd.AddNewRegistrants == groupDetails.AddNewRegistrants &&
+                            gd.PopulateExisting == groupDetails.PopulateExisting
+                    )
+                )
+            ).MustHaveHappenedOnceExactly();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
