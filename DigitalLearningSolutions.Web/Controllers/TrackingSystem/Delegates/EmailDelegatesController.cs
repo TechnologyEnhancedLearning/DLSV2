@@ -1,8 +1,9 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
+namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,33 +17,68 @@
     [Route("TrackingSystem/Delegates/Email")]
     public class EmailDelegatesController : Controller
     {
+        private const string EmailDelegateFilterCookieName = "EmailDelegateFilter";
+        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
 
-        public EmailDelegatesController(IUserService userService, IPasswordResetService passwordResetService)
+        public EmailDelegatesController(
+            CentreCustomPromptHelper centreCustomPromptHelper,
+            IJobGroupsDataService jobGroupsDataService,
+            IPasswordResetService passwordResetService,
+            IUserService userService
+        )
         {
-            this.userService = userService;
+            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.jobGroupsDataService = jobGroupsDataService;
             this.passwordResetService = passwordResetService;
+            this.userService = userService;
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(
+            string? filterBy = null,
+            string? filterValue = null,
+            bool selectAll = false
+        )
         {
+            var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
-            var model = new EmailDelegatesViewModel(delegateUsers);
+
+            var model = new EmailDelegatesViewModel(
+                delegateUsers,
+                jobGroups,
+                customPrompts,
+                newFilterBy,
+                selectAll
+            );
+
+            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, newFilterBy);
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Index(EmailDelegatesViewModel model)
+        public IActionResult Index(EmailDelegatesViewModel model, string? filterBy = null, string? filterValue = null)
         {
             var delegateUsers = GetDelegateUserCards();
 
             if (!ModelState.IsValid)
             {
-                model.SetDelegates(delegateUsers);
-                return View(model);
+                var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+                var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterBy)
+                {
+                    SelectedDelegateIds = model.SelectedDelegateIds,
+                    Day = model.Day,
+                    Month = model.Month,
+                    Year = model.Year
+                };
+                return View(viewModel);
             }
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
@@ -52,6 +88,18 @@
             passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
 
             return View("Confirmation", selectedUsers.Count);
+        }
+
+        [Route("AllEmailDelegateItems")]
+        public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+            var delegateUsers = GetDelegateUserCards();
+
+            var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts, selectedIds);
+
+            return View(model);
         }
 
         private IEnumerable<DelegateUserCard> GetDelegateUserCards()

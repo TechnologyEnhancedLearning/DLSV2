@@ -17,7 +17,8 @@
             DateTime? completeByDate = null,
             bool useFilteredApi = false,
             bool unprocessedUpdates = false,
-            bool linearNavigation = true
+            bool linearNavigation = true,
+            bool useDescriptionExpanders = true
         )
         {
             return new CurrentSelfAssessment()
@@ -31,7 +32,8 @@
                 CompleteByDate = completeByDate,
                 UseFilteredApi = useFilteredApi,
                 UnprocessedUpdates = unprocessedUpdates,
-                LinearNavigation = linearNavigation
+                LinearNavigation = linearNavigation,
+                UseDescriptionExpanders = useDescriptionExpanders
             };
         }
 
@@ -45,6 +47,7 @@
             int rowNo = 1,
             string name = "name",
             string? description = "description",
+            int competencyGroupId = 1,
             string competencyGroup = "competencyGroup",
             string? vocabulary = "Capability",
             List<AssessmentQuestion> assessmentQuestions = null
@@ -56,6 +59,7 @@
                 RowNo = rowNo,
                 Name = name,
                 Description = description,
+                CompetencyGroupID = competencyGroupId,
                 CompetencyGroup = competencyGroup,
                 Vocabulary = vocabulary,
                 AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()
