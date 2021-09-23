@@ -13,6 +13,8 @@
     {
         SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
         IEnumerable<Section> GetSectionsByApplicationId(int applicationId);
+
+        Section? GetSectionById(int sectionId);
     }
 
     public class SectionContentDataService : ISectionContentDataService
@@ -202,6 +204,18 @@
                     AND ArchivedDate IS NULL",
                 new { applicationId }
             );
+        }
+
+        public Section? GetSectionById(int sectionId)
+        {
+            return connection.Query<Section>(
+                @"SELECT 
+                        SectionID,
+                        SectionName
+                    FROM dbo.Sections 
+                    WHERE SectionId = @sectionId",
+                new { sectionId }
+            ).SingleOrDefault();
         }
     }
 }

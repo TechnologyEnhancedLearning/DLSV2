@@ -33,6 +33,14 @@
             }
           }
         </dl>
+        <a class="nhsuk-button"
+           role="button"
+           asp-controller="CourseContent"
+           asp-action="EditSection"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-sectionId = "@Model.SectionId">
+          Edit section content
+        </a>
       </div>
     </details>
   </div>
@@ -46,6 +54,14 @@
       </summary>
       <div class="nhsuk-details__text">
         <p>No learning or diagnostic has been selected for this section. However, the post-learning assessment is enabled.</p>
+        <a class="nhsuk-button"
+           role="button"
+           asp-controller="CourseContent"
+           asp-action="EditSection"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-sectionId="@Model.SectionId">
+          Edit section content
+        </a>
       </div>
     </details>
   </div>

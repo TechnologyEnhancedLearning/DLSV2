@@ -15,10 +15,10 @@
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
     public class CourseContentController : Controller
     {
-        public const string SelectAllDiagnosticPrefix = "diagnostic-select-all-";
-        public const string DeselectAllDiagnosticPrefix = "diagnostic-deselect-all-";
-        public const string SelectAllLearningPrefix = "learning-select-all-";
-        public const string DeselectAllLearningPrefix = "learning-deselect-all-";
+        public const string SelectAllDiagnosticAction = "diagnostic-select-all";
+        public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
+        public const string SelectAllLearningAction = "learning-select-all";
+        public const string DeselectAllLearningAction = "learning-deselect-all";
         public const string SaveAction = "Save";
 
         private readonly ICourseDataService courseDataService;
@@ -61,8 +61,8 @@
         }
 
         [HttpGet]
-        [Route("Edit")]
-        public IActionResult Edit(int customisationId)
+        [Route("Edit/{sectionId:int}")]
+        public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
@@ -71,53 +71,51 @@
                 centreId,
                 categoryId.Value
             );
+            var section = sectionService.GetSectionAndTutorialsBySectionId(customisationId, sectionId);
 
-            if (courseDetails == null)
+            if (courseDetails == null || section == null)
             {
                 return NotFound();
             }
 
-            var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
-                customisationId,
-                courseDetails.ApplicationId
-            );
-            var model = new EditCourseContentViewModel(
+            var model = new EditCourseSectionViewModel(
                 customisationId,
                 courseDetails.CourseName,
-                courseSections
+                section
             );
 
             return View(model);
         }
 
         [HttpPost]
-        [Route("Edit")]
-        public IActionResult Edit(EditCourseContentViewModel model, int customisationId, string action)
+        [Route("Edit/{sectionId:int}")]
+        public IActionResult EditSection(
+            EditCourseSectionViewModel model,
+            int customisationId,
+            int sectionId,
+            string action
+        )
         {
             return action == SaveAction
-                ? EditSave(model, customisationId)
-                : ProcessBulkSelect(model, customisationId, action);
+                ? EditSave(model, customisationId, sectionId)
+                : ProcessBulkSelect(model, action);
         }
 
-        private IActionResult ProcessBulkSelect(EditCourseContentViewModel model, int customisationId, string action)
+        private IActionResult ProcessBulkSelect(EditCourseSectionViewModel model, string action)
         {
-            var lastDashIndex = action.LastIndexOf('-') + 1;
-            var actionPrefix = action.Substring(0, lastDashIndex);
-            var sectionId = int.Parse(action.Substring(lastDashIndex));
-
-            switch (actionPrefix)
+            switch (action)
             {
-                case SelectAllDiagnosticPrefix:
-                    SelectAllDiagnosticsInSection(sectionId, model);
+                case SelectAllDiagnosticAction:
+                    SelectAllDiagnostics(model);
                     break;
-                case DeselectAllDiagnosticPrefix:
-                    DeselectAllDiagnosticsInSection(sectionId, model);
+                case DeselectAllDiagnosticAction:
+                    DeselectAllDiagnostics(model);
                     break;
-                case SelectAllLearningPrefix:
-                    SelectAllLearningInSection(sectionId, model);
+                case SelectAllLearningAction:
+                    SelectAllLearning(model);
                     break;
-                case DeselectAllLearningPrefix:
-                    DeselectAllLearningInSection(sectionId, model);
+                case DeselectAllLearningAction:
+                    DeselectAllLearning(model);
                     break;
                 default:
                     return new StatusCodeResult(500);
@@ -126,51 +124,49 @@
             return View(model);
         }
 
-        public void SelectAllDiagnosticsInSection(int sectionId, EditCourseContentViewModel model)
+        private void SelectAllDiagnostics(EditCourseSectionViewModel model)
         {
-           foreach (var tutorial in model.Sections.Single(s => s.SectionId == sectionId).Tutorials)
-           {
-               tutorial.DiagnosticEnabled = true;
-           }
+            foreach (var tutorial in model.Tutorials)
+            {
+                tutorial.DiagnosticEnabled = true;
+            }
         }
 
-        public void DeselectAllDiagnosticsInSection(int sectionId, EditCourseContentViewModel model)
+        private void DeselectAllDiagnostics(EditCourseSectionViewModel model)
         {
-            foreach (var tutorial in model.Sections.Single(s => s.SectionId == sectionId).Tutorials)
+            foreach (var tutorial in model.Tutorials)
             {
                 tutorial.DiagnosticEnabled = false;
             }
         }
 
-        public void SelectAllLearningInSection(int sectionId, EditCourseContentViewModel model)
+        private void SelectAllLearning(EditCourseSectionViewModel model)
         {
-            foreach (var tutorial in model.Sections.Single(s => s.SectionId == sectionId).Tutorials)
+            foreach (var tutorial in model.Tutorials)
             {
                 tutorial.LearningEnabled = true;
             }
         }
 
-        public void DeselectAllLearningInSection(int sectionId, EditCourseContentViewModel model)
+        private void DeselectAllLearning(EditCourseSectionViewModel model)
         {
-            foreach (var tutorial in model.Sections.Single(s => s.SectionId == sectionId).Tutorials)
+            foreach (var tutorial in model.Tutorials)
             {
                 tutorial.LearningEnabled = false;
             }
         }
 
-        private IActionResult EditSave(EditCourseContentViewModel model, int customisationId)
+        private IActionResult EditSave(EditCourseSectionViewModel model, int customisationId, int sectionId)
         {
-            var sections = model.Sections.Select(
-                s => new Section(
-                    s.SectionId,
-                    s.SectionName,
-                    s.Tutorials.Select(
-                        t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
-                    )
+            var section = new Section(
+                model.SectionId,
+                model.SectionName,
+                model.Tutorials.Select(
+                    t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
                 )
             );
 
-            sectionService.UpdateSectionTutorialDiagnosticsAndLearningEnabled(sections, customisationId);
+            sectionService.UpdateSectionTutorialsStatuses(section, customisationId);
 
             return RedirectToAction("Index", new { customisationId });
         }

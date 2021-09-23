@@ -6,17 +6,26 @@
 
     public class EditCourseSectionViewModel
     {
-        public EditCourseSectionViewModel() {}
+        public EditCourseSectionViewModel() { }
 
-        public EditCourseSectionViewModel(Section section)
+        public EditCourseSectionViewModel(
+            int customisationId,
+            string courseName,
+            Section section
+        )
         {
+            CustomisationId = customisationId;
+            CourseName = courseName;
             SectionId = section.SectionId;
             SectionName = section.SectionName;
             Tutorials = section.Tutorials.Select(t => new EditCourseTutorialViewModel(t));
         }
 
+        public int CustomisationId { get; set; }
+        public string CourseName { get; set; }
         public int SectionId { get; set; }
         public string SectionName { get; set; }
+
         public IEnumerable<EditCourseTutorialViewModel> Tutorials { get; set; }
     }
 }

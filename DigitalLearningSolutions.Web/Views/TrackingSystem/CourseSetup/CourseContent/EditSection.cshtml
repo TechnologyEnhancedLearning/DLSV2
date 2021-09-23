@@ -1,0 +1,120 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
+@using Microsoft.Extensions.Configuration
+@model EditCourseSectionViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Edit section content";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var cancelRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+@section NavMenuItems {
+  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">Edit section content</h1>
+
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content basic-card-content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Course
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CourseName" />
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Section
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.SectionName" />
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSection">
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
+      </div>
+      <input type="hidden" asp-for="CustomisationId" />
+      <input type="hidden" asp-for="CourseName" />
+
+      <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-1">Diagnostic</h2>
+      <p class="nhsuk-body-m nhsuk-u-margin-bottom-1">Select all tutorials that should have diagnostic enabled.</p>
+
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+        <div class="nhsuk-grid-column-full">
+          <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@CourseContentController.SelectAllDiagnosticAction">Select all</button>
+          <button name="action" class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16" value="@CourseContentController.DeselectAllDiagnosticAction">Deselect all</button>
+        </div>
+      </div>
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+        <div class="nhsuk-grid-column-one-half">
+          <div class="nhsuk-checkboxes">
+            @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i))) {
+              <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
+              <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input"
+                       type="checkbox"
+                       name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
+                       id="diagnostic-enabled-@tutorial.TutorialId"
+                       checked="@tutorial.DiagnosticEnabled"
+                       value="true" />
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="diagnostic-enabled-@tutorial.TutorialId">
+                  @tutorial.TutorialName
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <h2 class="nhsuk-heading-l nhsuk-u-margin-top-5 nhsuk-u-margin-bottom-1">Learning</h2>
+      <p class="nhsuk-body-m nhsuk-u-margin-bottom-1">Select all tutorials that should have learning enabled.</p>
+
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
+        <div class="nhsuk-grid-column-full">
+          <button name="action" class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16" value="@CourseContentController.SelectAllLearningAction">Select all</button>
+          <button name="action" class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16" value="@CourseContentController.DeselectAllLearningAction">Deselect all</button>
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-grid-column-one-half">
+          <div class="nhsuk-checkboxes">
+            @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i))) {
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input"
+                       type="checkbox"
+                       name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
+                       id="learning-enabled-@tutorial.TutorialId"
+                       checked="@tutorial.LearningEnabled"
+                       value="true" />
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="learning-enabled-@tutorial.TutorialId">
+                  @tutorial.TutorialName
+                </label>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+
+      <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="CourseContent" asp-action="Index" asp-all-route-data="@cancelRouteData" />
+
+  </div>
+</div>

@@ -7,36 +7,6 @@
   }
 }
 
-.course-content-checkboxes {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-sizing: border-box;
-
-  @include mq($from: tablet) {
-    flex-direction: row;
-  }
-
-  @include mq($from: desktop) {
-    justify-content: flex-end;
-  }
-}
-
-.course-content-checkbox {
-  width: 100%;
-
-  @include mq($from: tablet) {
-    width: 50%;
-    margin-bottom: 0;
-  }
-}
-
-.tutorial-name {
-  @include mq($from: desktop) {
-    width: 40%;
-  }
-}
-
 .select-all-button {
   @extend .right-submit-button;
   background-color: $button-dark-blue;
@@ -49,29 +19,4 @@
   background-color: $button-dark-blue;
   border-radius: 4px;
   margin-right: nhsuk-spacing(2);
-}
-
-.button-name {
-  @include mq($from: desktop) {
-    vertical-align: middle;
-    width: 40%;
-  }
-}
-
-.select-deselect-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  box-sizing: border-box;
-
-  @include mq($from: desktop) {
-    justify-content: flex-end;
-  }
-}
-
-.button-container {
-  @include mq($from: tablet) {
-    width: 50%;
-    margin-bottom: 0;
-  }
 }
