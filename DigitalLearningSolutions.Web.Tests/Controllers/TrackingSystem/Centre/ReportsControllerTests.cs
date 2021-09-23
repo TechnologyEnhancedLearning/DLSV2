@@ -17,19 +17,21 @@
         private HttpResponse httpResponse = null!;
         private IActivityService activityService = null!;
         private IUserDataService userDataService = null!;
+        private IEvaluationSummaryService evaluationSummaryService = null!;
 
         [SetUp]
         public void Setup()
         {
             activityService = A.Fake<IActivityService>();
             userDataService = A.Fake<IUserDataService>();
+            evaluationSummaryService = A.Fake<IEvaluationSummaryService>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "ReportsFilterCookie";
             const string cookieValue = "";
 
-            reportsController = new ReportsController(activityService, userDataService)
+            reportsController = new ReportsController(activityService, userDataService, evaluationSummaryService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
