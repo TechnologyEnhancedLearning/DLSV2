@@ -139,8 +139,7 @@
             }
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
-            var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
-            userService.UpdateUserAccountDetails(accountDetailsData, baseUrl, centreAnswersData);
+            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", new { application = application.UrlSegment });
         }

@@ -29,7 +29,7 @@
         [Test]
         [TestCaseSource(nameof(GetTestItems))]
         public void Changed_answer_maps_to_linked_field_correctly(
-            DelegateUser oldDelegateDetails,
+            CentreAnswersData oldAnswers,
             CentreAnswersData newAnswers,
             int expectedLinkedFieldNumber,
             string expectedOldValue,
@@ -42,7 +42,7 @@
 
             // When
             var result = LinkedFieldHelper.GetLinkedFieldChanges(
-                oldDelegateDetails,
+                oldAnswers,
                 newAnswers,
                 jobGroupsDataService
             );
@@ -55,43 +55,43 @@
         {
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer1: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer1: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer1: NewAnswer),
                 1, OldAnswer, NewAnswer
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer2: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer2: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer2: NewAnswer),
                 2, OldAnswer, NewAnswer
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer3: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer3: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer3: NewAnswer),
                 3, OldAnswer, NewAnswer
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(jobGroupId: 1),
+                UserTestHelper.GetDefaultCentreAnswersData(jobGroupId: 1),
                 UserTestHelper.GetDefaultCentreAnswersData(jobGroupId: 2),
                 4, OldJobGroupName, NewJobGroupName
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer4: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer4: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer4: NewAnswer),
                 5, OldAnswer, NewAnswer
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer5: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer5: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer5: NewAnswer),
                 6, OldAnswer, NewAnswer
             };
             yield return new object[]
             {
-                UserTestHelper.GetDefaultDelegateUser(answer6: OldAnswer),
+                UserTestHelper.GetDefaultCentreAnswersData(answer6: OldAnswer),
                 UserTestHelper.GetDefaultCentreAnswersData(answer6: NewAnswer),
                 7, OldAnswer, NewAnswer
             };

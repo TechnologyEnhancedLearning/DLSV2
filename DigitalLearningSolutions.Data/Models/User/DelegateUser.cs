@@ -23,5 +23,19 @@
         {
             return new UserReference(Id, UserType.DelegateUser);
         }
+
+        public CentreAnswersData GetCentreAnswersData()
+        {
+            return new CentreAnswersData(
+                CentreId,
+                JobGroupId,
+                Answer1,
+                Answer2,
+                Answer3,
+                Answer4,
+                Answer5,
+                Answer6
+            );
+        }
     }
 }

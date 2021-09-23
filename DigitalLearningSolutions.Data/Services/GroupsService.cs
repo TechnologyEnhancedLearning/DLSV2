@@ -10,22 +10,21 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Extensions.Configuration;
     using MimeKit;
 
     public interface IGroupsService
     {
         void SynchroniseUserChangesWithGroups(
-            DelegateUser oldDelegateDetails,
+            DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers,
-            string baseUrl
+            CentreAnswersData newCentreAnswers
         );
 
         void EnrolDelegateOnGroupCourses(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
             int groupId,
-            string baseUrl,
             int? addedByAdminId = null
         );
     }
@@ -35,11 +34,12 @@
         private const string AddedByProcess = "AddDelegateToGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
         private readonly IClockService clockService;
+        private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
-        private readonly ITutorialContentDataService tutorialContentDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly ITutorialContentDataService tutorialContentDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -47,7 +47,8 @@
             ITutorialContentDataService tutorialContentDataService,
             IEmailService emailService,
             IJobGroupsDataService jobGroupsDataService,
-            IProgressDataService progressDataService
+            IProgressDataService progressDataService,
+            IConfiguration configuration
         )
         {
             this.groupsDataService = groupsDataService;
@@ -56,23 +57,23 @@
             this.emailService = emailService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.progressDataService = progressDataService;
+            this.configuration = configuration;
         }
 
         public void SynchroniseUserChangesWithGroups(
-            DelegateUser oldDelegateDetails,
+            DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDelegateDetails,
-            CentreAnswersData newCentreAnswers,
-            string baseUrl
+            CentreAnswersData newCentreAnswers
         )
         {
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
-                oldDelegateDetails,
+                delegateAccountWithOldDetails.GetCentreAnswersData(),
                 newCentreAnswers,
                 jobGroupsDataService
             );
 
             var allSynchronisedGroupsAtCentre =
-                GetSynchronisedGroupsForCentre(oldDelegateDetails.CentreId).ToList();
+                GetSynchronisedGroupsForCentre(delegateAccountWithOldDetails.CentreId).ToList();
 
             foreach (var changedAnswer in changedLinkedFields)
             {
@@ -87,23 +88,22 @@
                 using var transaction = new TransactionScope();
                 if (groupToRemoveDelegateFrom != null)
                 {
-                    RemoveDelegateFromGroup(oldDelegateDetails.Id, groupToRemoveDelegateFrom.GroupId);
+                    RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
                 }
 
                 if (groupToAddDelegateTo != null)
                 {
                     groupsDataService.AddDelegateToGroup(
-                        oldDelegateDetails.Id,
+                        delegateAccountWithOldDetails.Id,
                         groupToAddDelegateTo.GroupId,
                         clockService.UtcNow,
                         1
                     );
 
                     EnrolDelegateOnGroupCourses(
-                        oldDelegateDetails,
+                        delegateAccountWithOldDetails,
                         newDelegateDetails,
-                        groupToAddDelegateTo.GroupId,
-                        baseUrl
+                        groupToAddDelegateTo.GroupId
                     );
                 }
 
@@ -115,7 +115,6 @@
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDetails,
             int groupId,
-            string baseUrl,
             int? addedByAdminId = null
         )
         {
@@ -123,27 +122,31 @@
 
             foreach (var groupCourse in groupCourses)
             {
-                DateTime? completeByDate = null;
-                if (groupCourse.CompleteWithinMonths != 0)
-                {
-                    completeByDate = clockService.UtcNow.AddMonths(groupCourse.CompleteWithinMonths);
-                }
+                var completeByDate = groupCourse.CompleteWithinMonths != 0
+                    ? (DateTime?)clockService.UtcNow.AddMonths(groupCourse.CompleteWithinMonths)
+                    : null;
 
                 var candidateProgressOnCourse =
-                    progressDataService.GetDelegateProgressForCourse(delegateAccountWithOldDetails.Id, groupCourse.CustomisationId);
-                var existingRecordToUpdate =
-                    candidateProgressOnCourse.FirstOrDefault(ProgressShouldBeUpdatedByAutomaticEnrolment);
-
-                if (existingRecordToUpdate != null)
-                {
-                    var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0
-                        ? groupCourse.SupervisorAdminId.Value
-                        : existingRecordToUpdate.SupervisorAdminId;
-                    progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        existingRecordToUpdate.ProgressId,
-                        updatedSupervisorAdminId,
-                        completeByDate
+                    progressDataService.GetDelegateProgressForCourse(
+                        delegateAccountWithOldDetails.Id,
+                        groupCourse.CustomisationId
                     );
+                var existingRecordsToUpdate =
+                    candidateProgressOnCourse.Where(ProgressShouldBeUpdatedOnEnrolment).ToList();
+
+                if (existingRecordsToUpdate.Any())
+                {
+                    foreach (var progressRecord in existingRecordsToUpdate)
+                    {
+                        var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0
+                            ? groupCourse.SupervisorAdminId.Value
+                            : progressRecord.SupervisorAdminId;
+                        progressDataService.UpdateProgressSupervisorAndCompleteByDate(
+                            progressRecord.ProgressId,
+                            updatedSupervisorAdminId,
+                            completeByDate
+                        );
+                    }
                 }
                 else
                 {
@@ -170,7 +173,7 @@
                 if (newDetails.Email != null)
                 {
                     var fullName = newDetails.FirstName + " " + newDetails.Surname;
-                    var email = BuildEnrolmentEmail(newDetails.Email, fullName, groupCourse, baseUrl, completeByDate);
+                    var email = BuildEnrolmentEmail(newDetails.Email, fullName, groupCourse, completeByDate);
                     emailService.ScheduleEmail(email, AddedByProcess);
                 }
             }
@@ -182,7 +185,7 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private static bool ProgressShouldBeUpdatedByAutomaticEnrolment(Progress progress)
+        private static bool ProgressShouldBeUpdatedOnEnrolment(Progress progress)
         {
             return progress.Completed == null && progress.RemovedDate == null;
         }
@@ -197,10 +200,10 @@
             string emailAddress,
             string fullName,
             GroupCourse course,
-            string baseUrl,
             DateTime? completeByDate
         )
         {
+            var baseUrl = configuration.GetAppRootPath();
             var linkToLearningPortal = baseUrl + "/LearningPortal/Current";
             var linkToCourse = baseUrl + "/LearningMenu/" + course.CustomisationId;
             string emailBodyText = $@"

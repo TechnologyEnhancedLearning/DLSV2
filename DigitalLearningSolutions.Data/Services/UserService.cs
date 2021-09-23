@@ -24,7 +24,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
-            string baseUrl,
             CentreAnswersData? centreAnswersData = null
         );
 
@@ -51,10 +50,10 @@ namespace DigitalLearningSolutions.Data.Services
 
     public class UserService : IUserService
     {
-        private readonly IGroupsService groupsService;
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
-        private readonly IUserVerificationService userVerificationService;
+        private readonly IGroupsService groupsService;
         private readonly IUserDataService userDataService;
+        private readonly IUserVerificationService userVerificationService;
 
         public UserService(
             IUserDataService userDataService,
@@ -138,7 +137,6 @@ namespace DigitalLearningSolutions.Data.Services
 
         public void UpdateUserAccountDetails(
             AccountDetailsData accountDetailsData,
-            string baseUrl,
             CentreAnswersData? centreAnswersData = null
         )
         {
@@ -190,8 +188,7 @@ namespace DigitalLearningSolutions.Data.Services
                     groupsService.SynchroniseUserChangesWithGroups(
                         oldDelegateDetails,
                         accountDetailsData,
-                        centreAnswersData,
-                        baseUrl
+                        centreAnswersData
                     );
                 }
             }
@@ -315,7 +312,8 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator &&
+                currentNumberOfAdmins.CcLicencesAtOrOverLimit)
             {
                 return true;
             }

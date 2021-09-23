@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -10,6 +11,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public partial class GroupsServiceTests
@@ -25,12 +27,13 @@
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
         private IClockService clockService = null!;
+        private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
-        private ITutorialContentDataService tutorialContentDataService = null!;
         private IProgressDataService progressDataService = null!;
+        private ITutorialContentDataService tutorialContentDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -41,6 +44,8 @@
             emailService = A.Fake<IEmailService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             progressDataService = A.Fake<IProgressDataService>();
+            configuration = A.Fake<IConfiguration>();
+            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
             groupsService = new GroupsService(
                 groupsDataService,
@@ -48,10 +53,11 @@
                 tutorialContentDataService,
                 emailService,
                 jobGroupsDataService,
-                progressDataService
+                progressDataService,
+                configuration
             );
         }
-        
+
         private void DelegateMustNotHaveBeenRemovedFromAGroup()
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))

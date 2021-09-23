@@ -29,8 +29,7 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails,
                 reusableAccountDetailsData,
-                centreAnswersData,
-                "baseUrl"
+                centreAnswersData
             );
 
             // Then
@@ -63,8 +62,7 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
                 reusableAccountDetailsData,
-                centreAnswersData,
-                "baseUrl"
+                centreAnswersData
             );
 
             // Then
@@ -98,8 +96,7 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
                 reusableAccountDetailsData,
-                centreAnswersData,
-                "baseUrl"
+                centreAnswersData
             );
 
             // Then
@@ -133,8 +130,7 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
                 reusableAccountDetailsData,
-                centreAnswersData,
-                "baseUrl"
+                centreAnswersData
             );
 
             // Then
@@ -173,8 +169,7 @@
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
                 reusableAccountDetailsData,
-                centreAnswersData,
-                "baseUrl"
+                centreAnswersData
             );
 
             // Then
