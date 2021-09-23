@@ -10,7 +10,7 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
-        public bool VerifyUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -54,7 +54,7 @@
             );
         }
 
-        public bool VerifyUserCanAccessCourse(int customisationId, int centreId, int categoryId)
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId)
         {
             var (courseCentreId, courseCategoryId) =
                 courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);

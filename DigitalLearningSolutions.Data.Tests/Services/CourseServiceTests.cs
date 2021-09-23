@@ -151,19 +151,50 @@
         }
 
         [Test]
-        public void VerifyUserCanAccessCourse_should_call_correct_data_service_method()
+        public void VerifyAdminUserCanAccessCourse_should_call_correct_data_service_method()
         {
             // Given
             A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyUserCanAccessCourse(1, 2, 2);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
 
             // Then
             A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
                 .MustHaveHappened(1, Times.Exactly);
             result.Should().Be(true);
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_centreId()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .Returns((2, 2));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().Be(false);
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_categoryId()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .Returns((2, 2));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 1);
+            // Then
+            A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().Be(false);
         }
     }
 }

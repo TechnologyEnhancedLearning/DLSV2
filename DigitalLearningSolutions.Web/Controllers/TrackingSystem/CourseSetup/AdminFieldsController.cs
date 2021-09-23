@@ -45,7 +45,10 @@
         [Route("{customisationId}/AdminFields")]
         public IActionResult Index(int customisationId)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
@@ -73,7 +76,10 @@
         [Route("{customisationId}/AdminFields/{promptNumber:int}/Edit")]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
@@ -115,7 +121,10 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulk(int customisationId, int promptNumber)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var data = TempData.Peek<EditAdminFieldData>()!;
 
@@ -171,7 +180,10 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var addAdminFieldData = TempData.Peek<AddAdminFieldData>()!;
 
@@ -213,7 +225,10 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var data = TempData.Peek<AddAdminFieldData>()!;
             var model = new BulkAdminFieldAnswersViewModel(
@@ -253,7 +268,10 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
-            ReturnNotFoundIfUserCannotAccessCourse(customisationId);
+            if (!VerifyAdminUserCanAccessCourse(customisationId))
+            {
+                return NotFound();
+            }
 
             var answerCount =
                 courseAdminFieldsDataService.GetAnswerCountForCourseAdminField(customisationId, promptNumber);
@@ -536,17 +554,12 @@
             }
         }
 
-        private NotFoundResult? ReturnNotFoundIfUserCannotAccessCourse(int customisationId)
+        private bool VerifyAdminUserCanAccessCourse(int customisationId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            if (!courseService.VerifyUserCanAccessCourse(customisationId, centreId, categoryId.Value))
-            {
-                return NotFound();
-            }
-
-            return null;
+            return courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value);
         }
     }
 }

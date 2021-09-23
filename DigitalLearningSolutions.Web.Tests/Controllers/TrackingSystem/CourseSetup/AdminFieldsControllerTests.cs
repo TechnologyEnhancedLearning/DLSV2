@@ -43,7 +43,7 @@
         public void All_admin_field_pages_return_not_found_if_user_cannot_access_course()
         {
             // Given
-            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(false);
 
             // When
@@ -67,7 +67,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
             A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
@@ -223,7 +223,7 @@
             var expectedPromptModel = new AddAdminFieldViewModel(1);
             var initialTempData = new AddAdminFieldData(expectedPromptModel);
             controller.TempData.Set(initialTempData);
-            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
@@ -243,7 +243,7 @@
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
 
-            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
@@ -490,7 +490,7 @@
         public void RemoveAdminField_removes_admin_field_with_no_user_answers()
         {
             // Given
-            A.CallTo(() => courseService.VerifyUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
