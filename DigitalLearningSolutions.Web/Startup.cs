@@ -278,10 +278,10 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var applicationPath = new Uri(config["AppRootPath"]).AbsolutePath.TrimEnd('/');
+            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
-            context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}&queryString={queryString}");
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 

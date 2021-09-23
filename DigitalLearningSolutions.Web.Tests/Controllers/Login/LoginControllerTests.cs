@@ -129,19 +129,17 @@
             // Given
             GivenSignInIsSuccessful();
 
-            var returnUrl = "/some/other/page";
-            var queryString = "?query=true&other=false";
+            var returnUrl = "/some/other/page?query=true&other=false";
             var urlHelper = controller.Url;
             A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
-
-            // When
             var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
             loginViewModel.ReturnUrl = returnUrl;
-            loginViewModel.QueryString = queryString;
+
+            // When
             var result = await controller.Index(loginViewModel);
 
             // Then
-            result.Should().BeRedirectResult().WithUrl(returnUrl + queryString);
+            result.Should().BeRedirectResult().WithUrl(returnUrl);
         }
 
         [Test]
