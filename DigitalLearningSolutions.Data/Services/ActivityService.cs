@@ -7,20 +7,34 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Helpers;
 
     public interface IActivityService
     {
-        public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
+        IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData);
+
+        (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
+            ActivityFilterData filterData
+        );
     }
 
     public class ActivityService : IActivityService
     {
         private readonly IActivityDataService activityDataService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseDataService courseDataService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
 
-        public ActivityService(IActivityDataService activityDataService)
+        public ActivityService(
+            IActivityDataService activityDataService,
+            IJobGroupsDataService jobGroupsDataService,
+            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseDataService courseDataService
+        )
         {
             this.activityDataService = activityDataService;
+            this.jobGroupsDataService = jobGroupsDataService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.courseDataService = courseDataService;
         }
 
         public IEnumerable<PeriodOfActivity> GetFilteredActivity(int centreId, ActivityFilterData filterData)
@@ -47,13 +61,46 @@
             return dateSlots.Select(
                 slot =>
                 {
-                    var dateInformation = new DateInformation ( slot, filterData.ReportInterval );
+                    var dateInformation = new DateInformation(slot, filterData.ReportInterval);
                     var periodData = dataByPeriod.SingleOrDefault(
                         data => data.DateInformation.Date == slot.Date
                     );
                     return new PeriodOfActivity(dateInformation, periodData);
                 }
             );
+        }
+
+        public (string jobGroupName, string courseCategoryName, string courseName) GetFilterNames(
+            ActivityFilterData filterData
+        )
+        {
+            return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
+                GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
+                GetCourseNameForActivityFilter(filterData.CustomisationId));
+        }
+
+        private string GetJobGroupNameForActivityFilter(int? jobGroupId)
+        {
+            var jobGroupName = jobGroupId.HasValue
+                ? jobGroupsDataService.GetJobGroupName(jobGroupId.Value)
+                : "All";
+            return jobGroupName ?? "All";
+        }
+
+        private string GetCourseCategoryNameForActivityFilter(int? courseCategoryId)
+        {
+            var courseCategoryName = courseCategoryId.HasValue
+                ? courseCategoriesDataService.GetCourseCategoryName(courseCategoryId.Value)
+                : "All";
+            return courseCategoryName ?? "All";
+        }
+
+        private string GetCourseNameForActivityFilter(int? courseId)
+        {
+            var courseNames = courseId.HasValue
+                ? courseDataService.GetCourseNameAndApplication(courseId.Value)
+                : null;
+            return courseNames?.CourseName ?? "All";
         }
 
         private IEnumerable<PeriodOfActivity> GroupActivityData(
@@ -80,8 +127,7 @@
 
             return groupedActivityLogs.Select(
                 groupingOfLogs => new PeriodOfActivity(
-                    new DateInformation
-                    (
+                    new DateInformation(
                         new DateTime(groupingOfLogs.Key),
                         interval
                     ),

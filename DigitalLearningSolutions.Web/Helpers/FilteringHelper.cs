@@ -5,6 +5,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Extensions;
+    using Microsoft.AspNetCore.Http;
 
     public static class FilteringHelper
     {
@@ -25,12 +26,35 @@
                 return newFilterValue;
             }
 
-            if (newFilterValue == null || filterBy.Contains(newFilterValue))
+            if (newFilterValue == null || filterBy.Split(FilterSeparator).Contains(newFilterValue))
             {
                 return filterBy;
             }
 
             return filterBy + FilterSeparator + newFilterValue;
+        }
+
+        public static string? GetFilterBy(
+            string? filterBy,
+            string? filterValue,
+            HttpRequest request,
+            string cookieName,
+            string? defaultFilterValue = null
+        )
+        {
+            if (filterBy == null && filterValue == null)
+            {
+                return request.Cookies.ContainsKey(cookieName)
+                    ? request.Cookies[cookieName]
+                    : defaultFilterValue;
+            }
+
+            if (filterBy?.ToUpper() == ClearString)
+            {
+                filterBy = null;
+            }
+
+            return AddNewFilterToFilterBy(filterBy, filterValue);
         }
 
         public static IEnumerable<T> FilterItems<T>(

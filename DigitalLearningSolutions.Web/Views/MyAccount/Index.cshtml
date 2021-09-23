@@ -1,4 +1,3 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.Extensions.Configuration
 @model MyAccountViewModel
@@ -9,29 +8,27 @@
 
 @{
   ViewData["Title"] = "My Account";
+  ViewData["Application"] = Model.Application.HeaderExtension;
+  ViewData["HeaderPath"] = Model.Application.HeaderPath;
+  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
 }
 
-@if (User.IsDelegateOnlyAccount()) {
-  ViewData["Application"] = "Learning Portal";
 @section NavMenuItems {
-  <partial name="../LearningPortal/Shared/_NavMenuItems" />
-}} else {
-@section NavMenuItems {
-  <partial name="_NavMenuItems" />
-}}
+  <partial name="_AutoNavMenuItems" model="Model.Application" />
+}
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl" id="app-page-heading">My account</h1>
 
-    <partial name="_AccountSummaryCard" model ="Model"/>
+    <partial name="_AccountSummaryCard" model="Model" />
 
-    <partial name="_MyDetailsCard" model="Model"/>
+    <partial name="_MyDetailsCard" model="Model" />
   </div>
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" asp-controller="NotificationPreferences" asp-action="Index" role="button">
+    <a class="nhsuk-button" asp-controller="NotificationPreferences" asp-action="Index" asp-route-application="@Model.Application.UrlSegment" role="button">
       View notification preferences
     </a>
   </div>

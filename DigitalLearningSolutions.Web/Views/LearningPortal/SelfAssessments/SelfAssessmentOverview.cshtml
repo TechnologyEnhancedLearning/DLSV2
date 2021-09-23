@@ -13,45 +13,52 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - Overview</h1>
-
+@if (Model.NumberOfOptionalCompetencies > 0)
+{
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="ManageOptionalCompetencies">
+    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural()
+  </a>
+}
+@if (Model.SelfAssessment.IsSupervised)
+{
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="StartRequestVerification">
+    Request @Model.VocabSingular() verification
+  </a>
+}
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
   {
-    @if (Model.SelfAssessment.LinearNavigation)
-    {
-      <div class="nhsuk-panel competency-group-panel">
-        <details class="nhsuk-details nhsuk-expander">
-          <summary class="nhsuk-details__summary">
-            <span class="competency-group-title nhsuk-details__summary-text">
-              @competencyGroup.Key
-            </span>
-          </summary>
-          <div class="nhsuk-details__text">
-            <partial name="SelfAssessments/_MeanScores"
-                     view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
 
-            <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
+<div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
+  <details class="nhsuk-details nhsuk-expander" @((int)Model.CompetencyGroups.Count() == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("competencyGroupId") ? (ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : "") : ""))>
+    <summary class="nhsuk-details__summary">
+      <span class="competency-group-title nhsuk-details__summary-text">
+        @competencyGroup.Key
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+      @if (Model.SelfAssessment.LinearNavigation)
+      {
+        <partial name="SelfAssessments/_MeanScores"
+                 view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+      }
 
-          </div>
-        </details>
-        <div class="outer-score-container">
-          <partial name="SelfAssessments/_MeanScores"
-                   view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-        </div>
-      </div>
-    }
-    else
-    {
-      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
-        <div class="nhsuk-grid-column-full">
-          <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
-        </div>
-      </div>
+      <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
 
-    }
+    </div>
+  </details>
+  @if (Model.SelfAssessment.LinearNavigation)
+  {
+    <div class="outer-score-container nhsuk-u-padding-bottom-4">
+      <partial name="SelfAssessments/_MeanScores"
+               view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+    </div>}
+  </div>
+   
   }
 }
+
 
 @if (Model.SelfAssessment.UseFilteredApi)
 {

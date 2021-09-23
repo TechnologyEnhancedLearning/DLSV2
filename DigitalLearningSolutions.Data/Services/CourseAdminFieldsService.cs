@@ -1,15 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using Microsoft.Extensions.Logging;
 
     public interface ICourseAdminFieldsService
     {
-        public CourseAdminFields? GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+        public CourseAdminFields GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
@@ -18,7 +20,17 @@
             int categoryId = 0
         );
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options);
+        public void UpdateCustomPromptForCourse(int customisationId, int promptId, string? options);
+
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList();
+
+        public bool AddCustomPromptToCourse(
+            int customisationId,
+            int centreId,
+            int categoryId,
+            int promptId,
+            string? options
+        );
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber);
 
@@ -28,15 +40,18 @@
     public class CourseAdminFieldsService : ICourseAdminFieldsService
     {
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
+        private readonly ILogger<CourseAdminFieldsService> logger;
 
         public CourseAdminFieldsService(
-            ICourseAdminFieldsDataService courseAdminFieldsDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService,
+            ILogger<CourseAdminFieldsService> logger
         )
         {
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
+            this.logger = logger;
         }
 
-        public CourseAdminFields? GetCustomPromptsForCourse(
+        public CourseAdminFields GetCustomPromptsForCourse(
             int customisationId,
             int centreId,
             int categoryId = 0
@@ -62,9 +77,47 @@
             return PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCustomPromptForCourse(int customisationId, int promptId, string? options)
         {
-            courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptNumber, mandatory, options);
+            courseAdminFieldsDataService.UpdateCustomPromptForCourse(customisationId, promptId, options);
+        }
+
+        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList()
+        {
+            return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
+        }
+
+        public bool AddCustomPromptToCourse(
+            int customisationId,
+            int centreId,
+            int categoryId,
+            int promptId,
+            string? options
+        )
+        {
+            var courseAdminFields = GetCustomPromptsForCourse(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            var promptNumber = GetNextPromptNumber(courseAdminFields);
+
+            if (promptNumber != null)
+            {
+                courseAdminFieldsDataService.UpdateCustomPromptForCourse(
+                    customisationId,
+                    promptNumber.Value,
+                    promptId,
+                    options
+                );
+                return true;
+            }
+
+            logger.LogWarning(
+                $"Admin field not added to customisation {customisationId}. The course already had 3 admin fields"
+            );
+            return false;
         }
 
         public void RemoveCustomPromptFromCourse(int customisationId, int promptNumber)
@@ -77,7 +130,6 @@
                     customisationId,
                     promptNumber,
                     0,
-                    false,
                     null
                 );
                 transaction.Complete();
@@ -91,6 +143,16 @@
         public string GetPromptName(int customisationId, int promptNumber)
         {
             return courseAdminFieldsDataService.GetPromptName(customisationId, promptNumber);
+        }
+
+        private static int? GetNextPromptNumber(CourseAdminFields courseAdminFields)
+        {
+            var existingPromptNumbers = courseAdminFields.AdminFields
+                .Select(c => c.CustomPromptNumber);
+
+            var promptNumbers = new List<int> { 1, 2, 3 };
+            var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
+            return unusedPromptNumbers.Any() ? unusedPromptNumbers.Min() : (int?)null;
         }
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
@@ -108,7 +170,7 @@
             return result;
         }
 
-        private List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
+        private static List<CustomPrompt> PopulateCustomPromptListFromCourseCustomPromptsResult(
             CourseAdminFieldsResult? result
         )
         {
@@ -123,7 +185,7 @@
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
-                result.CustomField1Mandatory
+                false
             );
             if (prompt1 != null)
             {
@@ -134,7 +196,7 @@
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
-                result.CustomField2Mandatory
+                false
             );
             if (prompt2 != null)
             {
@@ -145,7 +207,7 @@
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
-                result.CustomField3Mandatory
+                false
             );
             if (prompt3 != null)
             {
@@ -171,7 +233,7 @@
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
-                result.CustomField1Mandatory,
+                false,
                 delegateCourseInfo.Answer1
             );
             if (prompt1 != null)
@@ -183,7 +245,7 @@
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
-                result.CustomField2Mandatory,
+                false,
                 delegateCourseInfo.Answer2
             );
             if (prompt2 != null)
@@ -195,7 +257,7 @@
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
-                result.CustomField3Mandatory,
+                false,
                 delegateCourseInfo.Answer3
             );
             if (prompt3 != null)

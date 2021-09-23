@@ -19,7 +19,8 @@
             string? answer5,
             string? answer6,
             string? aliasId = null,
-            DateTime? notifyDate = null
+            DateTime? notifyDate = null,
+            bool active = true
         ) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
         {
             Answer1 = answer1;
@@ -30,6 +31,7 @@
             Answer6 = answer6;
             AliasId = aliasId;
             NotifyDate = notifyDate;
+            Active = active;
         }
 
         public DelegateRegistrationModel(
@@ -59,7 +61,8 @@
             row.Answer5,
             row.Answer6,
             row.AliasId,
-            welcomeEmailDate
+            welcomeEmailDate,
+            row.Active!.Value
         ) { }
 
         public string? Answer1 { get; set; }
@@ -77,5 +80,7 @@
         public string? AliasId { get; set; }
 
         public DateTime? NotifyDate { get; set; }
+
+        public bool Active { get; set; }
     }
 }

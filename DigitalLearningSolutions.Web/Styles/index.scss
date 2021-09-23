@@ -1,5 +1,7 @@
 @import "~nhsuk-frontend/packages/core/all";
 
+$iframe-padding-bottom: nhsuk-spacing(8) * 2;
+
 @mixin word-break-ie-fix {
   // IE11 hack
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
@@ -54,16 +56,16 @@ ul > li > ul > li {
 }
 
 .small-edit-button, a.small-edit-button {
-    margin-bottom: nhsuk-spacing(2);
-    margin-top: nhsuk-spacing(0);
-    padding-bottom: 0;
-    padding-top: 0;
+  margin-bottom: nhsuk-spacing(2);
+  margin-top: nhsuk-spacing(0);
+  padding-bottom: 0;
+  padding-top: 0;
 }
 
 .nhsuk-button {
-    @include mq($until: tablet) {
-        margin-top: nhsuk-spacing(3);
-    }
+  @include mq($until: tablet) {
+    margin-top: nhsuk-spacing(3);
+  }
 }
 
 input:invalid {
@@ -87,6 +89,7 @@ input[type=file].nhsuk-input--error {
 h1#page-heading {
   margin-bottom: 16px;
 }
+
 .page-subheading {
   margin-bottom: 16px;
 }
@@ -103,14 +106,19 @@ h1#page-heading {
   height: 100%;
   flex: 1 1 auto;
   display: flex;
+  min-height: 400px;
 
   @include govuk-media-query($from: desktop) {
-    min-height: 500px;
+    min-height: 550px;
   }
 }
 
 .responsive-iframe-wrapper-padding {
-  padding-bottom: nhsuk-spacing(7);
+  padding-bottom: $iframe-padding-bottom;
+}
+
+.responsive-iframe-wrapper-extra-padding {
+  padding-bottom: $iframe-padding-bottom * 1.5;
 }
 
 .nhsuk-heading-xl.heading-margin-2 {
@@ -166,8 +174,8 @@ h1#page-heading {
   text-align: center;
   margin-bottom: 0;
 
-  @include govuk-media-query($until: desktop){
-      margin-top: nhsuk-spacing(2);
+  @include govuk-media-query($until: desktop) {
+    margin-top: nhsuk-spacing(2);
   }
 }
 
@@ -195,8 +203,8 @@ ul.no-bullets {
   margin-bottom: 0;
 }
 
-.nhsuk-details__text>.nhsuk-button{
-    margin-bottom: 0;
+.nhsuk-details__text > .nhsuk-button {
+  margin-bottom: 0;
 }
 
 @mixin hidden-submit-ie-fix {
@@ -224,7 +232,7 @@ ul.no-bullets {
 }
 
 .vertical-align-centre {
-    vertical-align: middle
+  vertical-align: middle
 }
 
 .side-nav-menu {
@@ -253,22 +261,22 @@ ul.no-bullets {
   }
 }
 
- .side-nav__link {
-   text-decoration: none;
+.side-nav__link {
+  text-decoration: none;
 
-   &:visited {
-     color: $nhsuk-link-color;
-   }
+  &:visited {
+    color: $nhsuk-link-color;
+  }
 
-   &:hover {
-     color: $nhsuk-link-hover-color;
-     text-decoration: underline;
-   }
- }
+  &:hover {
+    color: $nhsuk-link-hover-color;
+    text-decoration: underline;
+  }
+}
 
- .side-nav__list {
-   @include nhsuk-responsive-margin(0, "bottom");
- }
+.side-nav__list {
+  @include nhsuk-responsive-margin(0, "bottom");
+}
 
 .side-nav__item {
   @include nhsuk-responsive-padding(1, "bottom");
@@ -287,5 +295,9 @@ ul.no-bullets {
 }
 
 .nhsuk-error-message.error-message--margin-bottom-1 {
-    margin-bottom: nhsuk-spacing(1);
+  margin-bottom: nhsuk-spacing(1);
+}
+
+.display-none {
+  display: none;
 }

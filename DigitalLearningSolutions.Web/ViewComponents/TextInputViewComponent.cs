@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
+    [Obsolete("Use TextInputWithConfigurableModelViewComponent instead.")]
     public class TextInputViewComponent : ViewComponent
     {
         /// <summary>

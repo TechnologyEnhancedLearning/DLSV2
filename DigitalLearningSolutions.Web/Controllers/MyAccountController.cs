@@ -8,12 +8,16 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
+    [Route("/{application}/MyAccount", Order = 1)]
+    [Route("/MyAccount", Order = 2)]
+    [ValidateAllowedApplicationType]
     [Authorize]
     public class MyAccountController : Controller
     {
@@ -39,7 +43,7 @@
         }
 
         [NoCaching]
-        public IActionResult Index()
+        public IActionResult Index(ApplicationType application)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -51,20 +55,15 @@
                     delegateUser
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts);
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, application);
 
             return View(model);
         }
 
         [NoCaching]
-        [HttpGet]
-        public IActionResult EditDetails()
+        [HttpGet("EditDetails")]
+        public IActionResult EditDetails(ApplicationType application)
         {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
@@ -74,101 +73,107 @@
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
 
-            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups);
+            var formData = new EditDetailsFormData(adminUser, delegateUser, jobGroups);
+            var model = new EditDetailsViewModel(formData, application);
 
             return View(model);
         }
 
         [NoCaching]
-        [HttpPost]
-        public IActionResult EditDetails(EditDetailsViewModel model, string action)
+        [HttpPost("EditDetails")]
+        public IActionResult EditDetails(EditDetailsFormData formData, string action, ApplicationType application)
         {
-            ViewBag.JobGroupOptions = GetJobGroupItems(model.JobGroupId);
-            ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(model);
+            ViewBag.JobGroupOptions = GetJobGroupItems(formData.JobGroupId);
+            ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(formData);
             return action switch
             {
-                "save" => EditDetailsPostSave(model),
-                "previewImage" => EditDetailsPostPreviewImage(model),
-                "removeImage" => EditDetailsPostRemoveImage(model),
+                "save" => EditDetailsPostSave(formData, application),
+                "previewImage" => EditDetailsPostPreviewImage(formData, application),
+                "removeImage" => EditDetailsPostRemoveImage(formData, application),
                 _ => new StatusCodeResult(500)
             };
         }
 
-        private IActionResult EditDetailsPostSave(EditDetailsViewModel model)
+        private IActionResult EditDetailsPostSave(EditDetailsFormData formData, ApplicationType application)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
 
             if (userDelegateId.HasValue)
             {
-                ValidateJobGroup(model);
-                ValidateCustomPrompts(model);
+                ValidateJobGroup(formData);
+                ValidateCustomPrompts(formData);
             }
 
-            if (model.ProfileImageFile != null)
+            if (formData.ProfileImageFile != null)
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsViewModel.ProfileImageFile),
+                    nameof(EditDetailsFormData.ProfileImageFile),
                     "Preview your new profile picture before saving"
                 );
             }
 
-            if (model.Password != null && !userService.IsPasswordValid(userAdminId, userDelegateId, model.Password))
+            if (formData.Password != null &&
+                !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsViewModel.Password),
+                    nameof(EditDetailsFormData.Password),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
             }
 
             if (!ModelState.IsValid)
             {
+                var model = new EditDetailsViewModel(formData, application);
                 return View(model);
             }
 
-            if (!userService.NewEmailAddressIsValid(model.Email!, userAdminId, userDelegateId, User.GetCentreId()))
+            if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsViewModel.Email),
+                    nameof(EditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
+                var model = new EditDetailsViewModel(formData, application);
                 return View(model);
             }
 
-            var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(model, userAdminId, userDelegateId);
+            var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
             var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
-
             userService.UpdateUserAccountDetails(accountDetailsData, baseUrl, centreAnswersData);
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { application = application.UrlSegment });
         }
 
-        private IActionResult EditDetailsPostPreviewImage(EditDetailsViewModel model)
+        private IActionResult EditDetailsPostPreviewImage(EditDetailsFormData formData, ApplicationType application)
         {
             // We don't want to display validation errors on other fields in this case
-            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsViewModel.ProfileImageFile));
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
+            var model = new EditDetailsViewModel(formData, application);
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            if (model.ProfileImageFile != null)
+            if (formData.ProfileImageFile != null)
             {
-                ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
-                model.ProfileImage = imageResizeService.ResizeProfilePicture(model.ProfileImageFile);
+                ModelState.Remove(nameof(EditDetailsFormData.ProfileImage));
+                formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
             return View(model);
         }
 
-        private IActionResult EditDetailsPostRemoveImage(EditDetailsViewModel model)
+        private IActionResult EditDetailsPostRemoveImage(EditDetailsFormData formData, ApplicationType application)
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearAllErrors();
 
-            ModelState.Remove(nameof(EditDetailsViewModel.ProfileImage));
-            model.ProfileImage = null;
+            ModelState.Remove(nameof(EditDetailsFormData.ProfileImage));
+            formData.ProfileImage = null;
+
+            var model = new EditDetailsViewModel(formData, application);
             return View(model);
         }
 
@@ -178,16 +183,16 @@
             return SelectListHelper.MapOptionsToSelectListItems(jobGroups, selectedId);
         }
 
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsViewModel model)
+        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsFormData formData)
         {
             return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
                 User.GetCentreId(),
-                model.Answer1,
-                model.Answer2,
-                model.Answer3,
-                model.Answer4,
-                model.Answer5,
-                model.Answer6
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
             );
         }
 
@@ -204,30 +209,30 @@
             );
         }
 
-        private void ValidateJobGroup(EditDetailsViewModel model)
+        private void ValidateJobGroup(EditDetailsFormData formData)
         {
-            if (!model.JobGroupId.HasValue)
+            if (!formData.JobGroupId.HasValue)
             {
-                ModelState.AddModelError(nameof(EditDetailsViewModel.JobGroupId), "Select a job group");
+                ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
             }
         }
 
-        private void ValidateCustomPrompts(EditDetailsViewModel model)
+        private void ValidateCustomPrompts(EditDetailsFormData formData)
         {
             centreCustomPromptHelper.ValidateCustomPrompts(
                 User.GetCentreId(),
-                model.Answer1,
-                model.Answer2,
-                model.Answer3,
-                model.Answer4,
-                model.Answer5,
-                model.Answer6,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6,
                 ModelState
             );
         }
 
         private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(
-            EditDetailsViewModel model,
+            EditDetailsFormData formData,
             int? userAdminId,
             int? userDelegateId
         )
@@ -235,24 +240,24 @@
             var accountDetailsData = new AccountDetailsData(
                 userAdminId,
                 userDelegateId,
-                model.Password!,
-                model.FirstName!,
-                model.LastName!,
-                model.Email!,
-                model.ProfileImage
+                formData.Password!,
+                formData.FirstName!,
+                formData.LastName!,
+                formData.Email!,
+                formData.ProfileImage
             );
 
             var centreAnswersData = userDelegateId == null
                 ? null
                 : new CentreAnswersData(
                     User.GetCentreId(),
-                    model.JobGroupId!.Value,
-                    model.Answer1,
-                    model.Answer2,
-                    model.Answer3,
-                    model.Answer4,
-                    model.Answer5,
-                    model.Answer6
+                    formData.JobGroupId!.Value,
+                    formData.Answer1,
+                    formData.Answer2,
+                    formData.Answer3,
+                    formData.Answer4,
+                    formData.Answer5,
+                    formData.Answer6
                 );
             return (accountDetailsData, centreAnswersData);
         }

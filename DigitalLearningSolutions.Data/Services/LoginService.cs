@@ -2,64 +2,175 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
 
     public interface ILoginService
     {
-        public UserAccountSet VerifyUsers(
-            string password,
-            AdminUser? unverifiedAdminUser,
-            List<DelegateUser> unverifiedDelegateUsers
-        );
-
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(
-            DelegateUser delegateUser,
-            string password
-        );
+        LoginResult AttemptLogin(string username, string password);
     }
 
     public class LoginService : ILoginService
     {
-        private readonly ICryptoService cryptoService;
-        private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
+        private readonly IUserVerificationService userVerificationService;
 
-        public LoginService(IUserDataService userDataService, ICryptoService cryptoService)
+        public LoginService(IUserService userService, IUserVerificationService userVerificationService)
         {
-            this.userDataService = userDataService;
-            this.cryptoService = cryptoService;
+            this.userService = userService;
+            this.userVerificationService = userVerificationService;
         }
 
-        public UserAccountSet VerifyUsers(
-            string password,
-            AdminUser? unverifiedAdminUser,
-            List<DelegateUser> unverifiedDelegateUsers
-        )
+        public LoginResult AttemptLogin(string username, string password)
         {
-            var verifiedAdminUser =
-                cryptoService.VerifyHashedPassword(unverifiedAdminUser?.Password, password)
-                    ? unverifiedAdminUser
-                    : null;
-            var verifiedDelegateUsers =
-                unverifiedDelegateUsers.Where(du => cryptoService.VerifyHashedPassword(du.Password, password))
-                    .ToList();
+            var (unverifiedAdminUser, unverifiedDelegateUsers) = userService.GetUsersByUsername(username);
 
-            return new UserAccountSet(verifiedAdminUser, verifiedDelegateUsers);
-        }
-
-        public AdminUser? GetVerifiedAdminUserAssociatedWithDelegateUser(DelegateUser delegateUser, string password)
-        {
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
+            if (NoAccounts(unverifiedAdminUser, unverifiedDelegateUsers))
             {
-                return null;
+                return new LoginResult(LoginAttemptResult.InvalidUsername);
             }
 
-            var adminUserAssociatedWithDelegate = userDataService.GetAdminUserByUsername(delegateUser.EmailAddress);
+            var (verifiedAdminUser, verifiedDelegateUsers) = userVerificationService.VerifyUsers(
+                password,
+                unverifiedAdminUser,
+                unverifiedDelegateUsers
+            );
 
-            return adminUserAssociatedWithDelegate?.CentreId == delegateUser.CentreId &&
-                   cryptoService.VerifyHashedPassword(adminUserAssociatedWithDelegate.Password, password)
-                ? adminUserAssociatedWithDelegate
-                : null;
+            if (MultipleEmailsUsedAcrossAccounts(verifiedAdminUser, verifiedDelegateUsers))
+            {
+                throw new LoginWithMultipleEmailsException("Not all accounts have the same email");
+            }
+
+            var adminAccountVerificationAttemptedAndFailed = unverifiedAdminUser != null && verifiedAdminUser == null;
+            var delegateAccountVerificationSuccessful = verifiedDelegateUsers.Any();
+            var shouldIncreaseFailedLoginCount =
+                adminAccountVerificationAttemptedAndFailed &&
+                !delegateAccountVerificationSuccessful;
+
+            var adminAccountIsAlreadyLocked = unverifiedAdminUser?.IsLocked == true;
+            var adminAccountHasJustBecomeLocked = unverifiedAdminUser?.FailedLoginCount == 4 &&
+                                                  shouldIncreaseFailedLoginCount;
+
+            var adminAccountIsLocked = adminAccountIsAlreadyLocked || adminAccountHasJustBecomeLocked;
+
+            if (shouldIncreaseFailedLoginCount)
+            {
+                userService.IncrementFailedLoginCount(unverifiedAdminUser!);
+            }
+
+            if (adminAccountIsLocked)
+            {
+                if (delegateAccountVerificationSuccessful)
+                {
+                    verifiedAdminUser = null;
+                }
+                else
+                {
+                    return new LoginResult(LoginAttemptResult.AccountLocked, unverifiedAdminUser);
+                }
+            }
+
+            if (verifiedAdminUser == null && !delegateAccountVerificationSuccessful)
+            {
+                return new LoginResult(LoginAttemptResult.InvalidPassword);
+            }
+
+            if (verifiedAdminUser != null)
+            {
+                userService.ResetFailedLoginCount(verifiedAdminUser);
+            }
+
+            var approvedVerifiedDelegates = verifiedDelegateUsers.Where(du => du.Approved).ToList();
+            if (verifiedAdminUser == null && !approvedVerifiedDelegates.Any())
+            {
+                return new LoginResult(LoginAttemptResult.AccountNotApproved);
+            }
+
+            var (verifiedLinkedAdmin, verifiedLinkedDelegates) = GetVerifiedLinkedAccounts(
+                password,
+                approvedVerifiedDelegates,
+                verifiedAdminUser
+            );
+
+            var adminUserToLoginIfCentreActive = verifiedLinkedAdmin;
+            if (adminUserToLoginIfCentreActive?.IsLocked == true)
+            {
+                adminUserToLoginIfCentreActive = null;
+            }
+
+            var delegateUsersToLogInIfCentreActive =
+                approvedVerifiedDelegates.Concat(verifiedLinkedDelegates)
+                    .GroupBy(du => du.Id)
+                    .Select(g => g.First())
+                    .ToList();
+
+            var (adminUserToLogIn, delegateUsersToLogIn) = userService.GetUsersWithActiveCentres(
+                adminUserToLoginIfCentreActive,
+                delegateUsersToLogInIfCentreActive
+            );
+            var availableCentres = userService.GetUserCentres(adminUserToLogIn, delegateUsersToLogIn);
+
+            return availableCentres.Count switch
+            {
+                0 => new LoginResult(LoginAttemptResult.InactiveCentre),
+                1 => new LoginResult(
+                    LoginAttemptResult.LogIntoSingleCentre,
+                    adminUserToLogIn,
+                    delegateUsersToLogIn
+                ),
+                _ => new LoginResult(
+                    LoginAttemptResult.ChooseACentre,
+                    adminUserToLogIn,
+                    delegateUsersToLogIn,
+                    availableCentres
+                )
+            };
+        }
+
+        private (AdminUser? verifiedLinkedAdmin, List<DelegateUser> verifiedLinkedDelegates) GetVerifiedLinkedAccounts(
+            string password,
+            List<DelegateUser> approvedVerifiedDelegates,
+            AdminUser? verifiedAdminUser
+        )
+        {
+            var verifiedAssociatedAdmin = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                approvedVerifiedDelegates,
+                password
+            );
+
+            // If we find a new linked admin we must be logging in by CandidateNumber or AliasID.
+            // In this case, we are trying to log directly into a centre so we discard an admin at a different centre.
+            if (approvedVerifiedDelegates.All(du => du.CentreId != verifiedAssociatedAdmin?.CentreId))
+            {
+                verifiedAssociatedAdmin = null;
+            }
+
+            var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
+
+            var verifiedLinkedDelegates =
+                userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+            return (verifiedLinkedAdmin, verifiedLinkedDelegates);
+        }
+
+        private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        {
+            var emails = delegateUsers.Select(du => du.EmailAddress)
+                .ToList();
+
+            if (adminUser != null)
+            {
+                emails.Add(adminUser.EmailAddress);
+            }
+
+            var uniqueEmails = emails.Distinct().ToList();
+            return uniqueEmails.Count > 1;
+        }
+
+        private static bool NoAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
+        {
+            return adminUser == null && delegateUsers.Count == 0;
         }
     }
 }

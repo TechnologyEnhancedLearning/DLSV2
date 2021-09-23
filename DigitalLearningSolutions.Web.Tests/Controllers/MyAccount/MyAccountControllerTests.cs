@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FakeItEasy;
@@ -48,16 +49,16 @@
                 jobGroupsDataService,
                 centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true);
-            var model = new EditDetailsViewModel();
-            myAccountController.ModelState.AddModelError(nameof(EditDetailsViewModel.Email), "Required");
+            var model = new EditDetailsFormData();
+            myAccountController.ModelState.AddModelError(nameof(EditDetailsFormData.Email), "Required");
 
             // When
-            var result = myAccountController.EditDetails(model, "save");
+            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
-            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
+            result.As<ViewResult>().Model.As<EditDetailsViewModel>().FormData.Should().BeEquivalentTo(model);
         }
 
         [Test]
@@ -77,18 +78,18 @@
                 (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
-            var model = new EditDetailsViewModel();
+            var model = new EditDetailsFormData();
 
             // When
-            var result = myAccountController.EditDetails(model, "save");
+            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
-            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            myAccountController.ModelState[nameof(EditDetailsViewModel.JobGroupId)].ValidationState.Should().Be
+            result.As<ViewResult>().Model.As<EditDetailsViewModel>().FormData.Should().BeEquivalentTo(model);
+            myAccountController.ModelState[nameof(EditDetailsFormData.JobGroupId)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
-            myAccountController.ModelState[nameof(EditDetailsViewModel.Answer1)].ValidationState.Should().Be
+            myAccountController.ModelState[nameof(EditDetailsFormData.Answer1)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
@@ -105,9 +106,8 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, A<string>._, null))
-                .DoesNothing();
-            var model = new EditDetailsViewModel
+            A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, "baseUrl", null)).DoesNothing();
+            var model = new EditDetailsFormData
             {
                 FirstName = "Test",
                 LastName = "User",
@@ -116,7 +116,7 @@
             };
 
             // When
-            var result = myAccountController.EditDetails(model, "save");
+            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
@@ -142,19 +142,19 @@
                 (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
-            var model = new EditDetailsViewModel
+            var model = new EditDetailsFormData
             {
                 ProfileImageFile = A.Fake<FormFile>()
             };
 
             // When
-            var result = myAccountController.EditDetails(model, "save");
+            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
-            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            myAccountController.ModelState[nameof(EditDetailsViewModel.ProfileImageFile)].ValidationState.Should().Be
+            result.As<ViewResult>().Model.As<EditDetailsViewModel>().FormData.Should().BeEquivalentTo(model);
+            myAccountController.ModelState[nameof(EditDetailsFormData.ProfileImageFile)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
@@ -174,7 +174,7 @@
             A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, A<string>._, null))
                 .DoesNothing();
 
-            var model = new EditDetailsViewModel
+            var model = new EditDetailsFormData
             {
                 FirstName = "Test",
                 LastName = "User",
@@ -183,18 +183,18 @@
             };
 
             // When
-            var result = myAccountController.EditDetails(model, "save");
+            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
-            result.As<ViewResult>().Model.Should().BeEquivalentTo(model);
-            myAccountController.ModelState[nameof(EditDetailsViewModel.Password)].ValidationState.Should().Be
+            result.As<ViewResult>().Model.As<EditDetailsViewModel>().FormData.Should().BeEquivalentTo(model);
+            myAccountController.ModelState[nameof(EditDetailsFormData.Password)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
 
         [Test]
-        public void PostEditRegistrationPrompt_returns_error_with_unexpected_action()
+        public void EditDetailsPost_returns_error_with_unexpected_action()
         {
             // Given
             var myAccountController = new MyAccountController(
@@ -205,10 +205,10 @@
                 centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             const string action = "unexpectedString";
-            var model = new EditDetailsViewModel();
+            var model = new EditDetailsFormData();
 
             // When
-            var result = myAccountController.EditDetails(model, action);
+            var result = myAccountController.EditDetails(model, action, ApplicationType.Default);
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
