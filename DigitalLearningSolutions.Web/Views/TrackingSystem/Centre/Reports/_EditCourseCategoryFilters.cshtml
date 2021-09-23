@@ -5,6 +5,8 @@
 @{
   var courseSelected = Model.CustomisationId.HasValue;
   var categorySelected = Model.CourseCategoryId.HasValue;
+  var courseConditionalId = "conditional-course-filter";
+  var categoryConditionalId = "conditional-category-filter";
 }
 
 @if (Model.CanFilterCourseCategories) {
@@ -21,14 +23,14 @@
                  id="course-filter-type-1"
                  type="radio"
                  value="@CourseFilterType.Course"
-                 aria-controls="conditional-course-filter"
+                 aria-controls="@courseConditionalId"
                  aria-expanded="@(courseSelected ? "true" : "false")"
                  @(courseSelected ? "checked" : "")>
           <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-1">
             Course
           </label>
         </div>
-        <div class="nhsuk-radios__conditional @(courseSelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-course-filter">
+        <div class="nhsuk-radios__conditional @(courseSelected ? "" : "nhsuk-radios__conditional--hidden")" id="@courseConditionalId">
 
           <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                           label="Choose a course"
@@ -47,14 +49,14 @@
                  id="course-filter-type-2"
                  type="radio"
                  value="@CourseFilterType.CourseCategory"
-                 aria-controls="conditional-category-filter"
+                 aria-controls="@categoryConditionalId"
                  aria-expanded="@(categorySelected ? "true" : "false")"
                  @(categorySelected ? "checked" : "")>
           <label class="nhsuk-label nhsuk-radios__label" for="course-filter-type-2">
             Course category
           </label>
         </div>
-        <div class="nhsuk-radios__conditional @(categorySelected ? "" : "nhsuk-radios__conditional--hidden")" id="conditional-category-filter">
+        <div class="nhsuk-radios__conditional @(categorySelected ? "" : "nhsuk-radios__conditional--hidden")" id="@categoryConditionalId">
           <vc:select-list asp-for="@nameof(Model.CourseCategoryId)"
                           label="Choose course category from the list below"
                           value="@Model.CourseCategoryId.ToString()"

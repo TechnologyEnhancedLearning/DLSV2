@@ -80,7 +80,7 @@
                 startMonthErrors?.Count > 0,
                 startYearErrors?.Count > 0,
                 nonEmptyStartDateErrors,
-                "nhsuk-u-margin-bottom-2"
+                "nhsuk-u-margin-bottom-3"
             );
 
             var allEndDateErrors = (endDayErrors ?? new ModelErrorCollection())

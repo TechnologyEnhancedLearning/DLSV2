@@ -16,10 +16,10 @@
         {
             // given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
-            const string registerUrl = "/TrackingSystem/Centre/Reports/EditFilters";
+            const string reportsEditFiltersUrl = "/TrackingSystem/Centre/Reports/EditFilters";
 
             // when
-            Driver.Navigate().GoToUrl(BaseUrl + registerUrl);
+            Driver.Navigate().GoToUrl(BaseUrl + reportsEditFiltersUrl);
             var result = new AxeBuilder(Driver).Analyze();
 
             // then

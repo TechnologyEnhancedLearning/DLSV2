@@ -98,6 +98,18 @@
             ReportIntervalOptions = SelectListHelper.MapOptionsToSelectListItems(reportIntervals!, (int)ReportInterval);
         }
 
+        public DateTime GetValidatedStartDate()
+        {
+            return new DateTime(StartYear!.Value, StartMonth!.Value, StartDay!.Value);
+        }
+
+        public DateTime? GetValidatedEndDate()
+        {
+            return EndDate
+                ? new DateTime(EndYear!.Value, EndMonth!.Value, EndDay!.Value)
+                : (DateTime?)null;
+        }
+
         private void ValidateStartDate(List<ValidationResult> validationResults)
         {
             var startDateValidationResults = DateValidator.ValidateDate(

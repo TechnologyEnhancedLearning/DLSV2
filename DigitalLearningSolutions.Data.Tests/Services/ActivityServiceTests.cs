@@ -5,8 +5,11 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -16,14 +19,17 @@
     {
         private IActivityDataService activityDataService = null!;
         private IActivityService activityService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseDataService courseDataService = null!;
+        private IJobGroupsDataService jobGroupsDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             activityDataService = A.Fake<IActivityDataService>();
-            var jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            var courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
-            var courseDataService = A.Fake<ICourseDataService>();
+            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            courseDataService = A.Fake<ICourseDataService>();
             activityService = new ActivityService(
                 activityDataService,
                 jobGroupsDataService,
@@ -168,6 +174,132 @@
                     )
                 )
                 .MustHaveHappened(1, Times.Exactly);
+        }
+
+        [Test]
+        public void GetFilterOptions_returns_populated_filter_options()
+        {
+            // Given
+            var jobGroups = JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical().ToList();
+            var expectedFilterOptions = new ReportsFilterOptions(
+                jobGroups,
+                new[] { (1, "Category 1"), (2, "Category 2") },
+                new[] { (2, "A Course"), (1, "B Course") }
+            );
+
+            const int centreId = 1;
+            const int categoryId = 1;
+            var categories = new List<Category>
+            {
+                new Category { CourseCategoryID = 1, CategoryName = "Category 1" },
+                new Category { CourseCategoryID = 2, CategoryName = "Category 2" }
+            };
+            var courses = new List<Course>
+            {
+                new Course { CustomisationId = 1, ApplicationName = "B Course" },
+                new Course { CustomisationId = 2, ApplicationName = "A Course" }
+            };
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(jobGroups);
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId))
+                .Returns(categories);
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+                .Returns(courses);
+
+            // When
+            var result = activityService.GetFilterOptions(centreId, categoryId);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedFilterOptions);
+        }
+
+        [Test]
+        public void GetFilterNames_returns_all_with_all_ids_null()
+        {
+            // Given
+            var filterData = new ActivityFilterData(
+                DateTime.Now,
+                null,
+                null,
+                null,
+                null,
+                CourseFilterType.None,
+                ReportInterval.Days
+            );
+            const string all = "All";
+
+            // When
+            var result = activityService.GetFilterNames(filterData);
+
+            // Then
+            result.jobGroupName.Should().Be(all);
+            result.courseCategoryName.Should().Be(all);
+            result.courseName.Should().Be(all);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseCategoriesDataService.GetCourseCategoryName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void GetFilterNames_returns_expected_filter_names_with_non_null_category_filter()
+        {
+            // Given
+            var filterData = new ActivityFilterData(
+                DateTime.Now,
+                null,
+                1,
+                1,
+                0,
+                CourseFilterType.CourseCategory,
+                ReportInterval.Days
+            );
+            const string job = "Job";
+            const string category = "Category";
+            const string all = "All";
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).Returns(job);
+            A.CallTo(() => courseCategoriesDataService.GetCourseCategoryName(A<int>._)).Returns(category);
+
+            // When
+            var result = activityService.GetFilterNames(filterData);
+
+            // Then
+            result.jobGroupName.Should().Be(job);
+            result.courseCategoryName.Should().Be(category);
+            result.courseName.Should().Be(all);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).MustHaveHappened();
+            A.CallTo(() => courseCategoriesDataService.GetCourseCategoryName(A<int>._)).MustHaveHappened();
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(A<int>._)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void GetFilterNames_returns_expected_filter_names_with_non_null_course_filter()
+        {
+            // Given
+            var filterData = new ActivityFilterData(
+                DateTime.Now,
+                null,
+                1,
+                null,
+                1,
+                CourseFilterType.Course,
+                ReportInterval.Days
+            );
+            const string job = "Job";
+            const string course = "Course";
+            const string all = "All";
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).Returns(job);
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(A<int>._))
+                .Returns(new CourseNameInfo { ApplicationName = course });
+
+            // When
+            var result = activityService.GetFilterNames(filterData);
+
+            // Then
+            result.jobGroupName.Should().Be(job);
+            result.courseCategoryName.Should().Be(all);
+            result.courseName.Should().Be(course);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupName(A<int>._)).MustHaveHappened();
+            A.CallTo(() => courseCategoriesDataService.GetCourseCategoryName(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(A<int>._)).MustHaveHappened();
         }
 
         private void ValidatePeriodData(

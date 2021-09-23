@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Models.User;
@@ -108,17 +107,13 @@
                 var adminUser = userDataService.GetAdminUserById(adminId)!;
                 var filterOptions = GetDropdownValues(centreId, adminUser);
                 model.SetUpDropdowns(filterOptions, adminUser.CategoryId);
+                model.DataStart = activityService.GetStartOfActivityForCentre(centreId);
                 return View(model);
             }
-
-            var startDate = new DateTime(model.StartYear!.Value, model.StartMonth!.Value, model.StartDay!.Value);
-            var endDate = model.EndDate
-                ? new DateTime(model.EndYear!.Value, model.EndMonth!.Value, model.EndDay!.Value)
-                : (DateTime?)null;
-
+            
             var filterData = new ActivityFilterData(
-                startDate,
-                endDate,
+                model.GetValidatedStartDate(),
+                model.GetValidatedEndDate(),
                 model.JobGroupId,
                 model.CourseCategoryId,
                 model.CustomisationId,

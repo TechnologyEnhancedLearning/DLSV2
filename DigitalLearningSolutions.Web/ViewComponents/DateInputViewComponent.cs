@@ -36,12 +36,11 @@
             var dayValue = dayProperty?.GetValue(model)?.ToString();
             var monthValue = monthProperty?.GetValue(model)?.ToString();
             var yearValue = yearProperty?.GetValue(model)?.ToString();
-            var dayErrors = ViewData.ModelState[dayProperty?.Name]?.Errors;
-            var monthErrors = ViewData.ModelState[monthProperty?.Name]?.Errors;
-            var yearErrors = ViewData.ModelState[yearProperty?.Name]?.Errors;
+            var dayErrors = ViewData.ModelState[dayProperty?.Name]?.Errors ?? new ModelErrorCollection();
+            var monthErrors = ViewData.ModelState[monthProperty?.Name]?.Errors ?? new ModelErrorCollection();
+            var yearErrors = ViewData.ModelState[yearProperty?.Name]?.Errors ?? new ModelErrorCollection();
 
-            var allErrors = (dayErrors ?? new ModelErrorCollection()).Concat(monthErrors ?? new ModelErrorCollection())
-                .Concat(yearErrors ?? new ModelErrorCollection());
+            var allErrors = dayErrors.Concat(monthErrors).Concat(yearErrors);
             var nonEmptyErrors = allErrors.Where(e => !string.IsNullOrWhiteSpace(e.ErrorMessage))
                 .Select(e => e.ErrorMessage);
 

@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports;
@@ -14,7 +13,6 @@
     public class ReportsControllerTests
     {
         private ReportsController reportsController = null!;
-        
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IActivityService activityService = null!;
