@@ -101,43 +101,6 @@
             return View(model);
         }
 
-        [HttpGet]
-        [Route("Download")]
-        public IActionResult DownloadUsageData(
-            int? jobGroupId,
-            int? courseCategoryId,
-            int? customisationId,
-            string startDate,
-            string endDate,
-            ReportInterval reportInterval
-        )
-        {
-            var parsedStartDate = DateTime.Parse(startDate);
-            var parsedEndDate = DateTime.Parse(endDate);
-
-            var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
-
-            var filterData = new ActivityFilterData(
-                parsedStartDate,
-                parsedEndDate,
-                jobGroupId,
-                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
-                customisationId,
-                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
-                reportInterval
-            );
-
-            var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
-
-            return File(
-                dataFile,
-                FileHelper.ExcelContentType,
-                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
-            );
-        }
-
         [HttpPost]
         [Route("EditFilters")]
         public IActionResult EditFilters(EditFiltersViewModel model)
@@ -166,6 +129,52 @@
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("Download")]
+        public IActionResult DownloadUsageData(
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId,
+            string startDate,
+            string endDate,
+            ReportInterval reportInterval
+        )
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var parsedStartDate = DateTime.Parse(startDate);
+            if (parsedStartDate < activityService.GetStartOfActivityForCentre(centreId))
+            {
+                return new NotFoundResult();
+            }
+
+            if (DateTime.TryParse(endDate, out var parsedEndDate) &&
+                (parsedEndDate < parsedStartDate || parsedEndDate > DateTime.Now))
+            {
+                return new NotFoundResult();
+            }
+
+            var filterData = new ActivityFilterData(
+                parsedStartDate,
+                parsedEndDate > DateTime.MinValue ? (DateTime?)parsedEndDate : null,
+                jobGroupId,
+                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                customisationId,
+                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                reportInterval
+            );
+
+            var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
+
+            return File(
+                dataFile,
+                FileHelper.ExcelContentType,
+                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
+            );
         }
 
         private ReportsFilterOptions GetDropdownValues(
