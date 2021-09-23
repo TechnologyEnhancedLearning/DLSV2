@@ -1,0 +1,59 @@
+﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model AddDelegateGroupViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/delegateGroups.css")" asp-append-version="true">
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Add new delegate group";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="AddDelegateGroup">
+      @if (errorHasOccurred) {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.GroupName), nameof(Model.GroupDescription) })" />
+      }
+
+      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Add new delegate group</h1>
+
+      <vc:text-input asp-for="@nameof(Model.GroupName)"
+                     label="Group name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="true"
+                     hint-text=""
+                     autocomplete=""
+                     css-class="nhsuk-u-width-two-thirds" />
+
+      <vc:text-area asp-for="@nameof(Model.GroupDescription)"
+                    label="Group description (optional)"
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="true"
+                    hint-text=""
+                    css-class="nhsuk-u-width-two-thirds"
+                    character-count="null" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+  </div>
+</div>

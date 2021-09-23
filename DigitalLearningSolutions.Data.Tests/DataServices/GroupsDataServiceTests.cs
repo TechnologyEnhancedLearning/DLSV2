@@ -182,5 +182,42 @@
             // Then
             result.Should().BeNull();
         }
+
+        [Test]
+        public void AddDelegateGroup_sets_all_fields_correctly()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+
+                var groupDetails = new GroupDetails
+                {
+                    CentreId = 101,
+                    GroupLabel = "Group name",
+                    GroupDescription = "Group description",
+                    AdminUserId = 1,
+                    CreatedDate = DateTime.UtcNow,
+                    LinkedToField = 0,
+                    SyncFieldChanges = false,
+                    AddNewRegistrants = false,
+                    PopulateExisting = false
+                };
+
+                // When
+                var groupId = groupsDataService.AddDelegateGroup(groupDetails);
+
+                // Then
+                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId).First(g => g.GroupId == groupId);
+                group.GroupLabel.Should().Be(groupDetails.GroupLabel);
+                group.GroupDescription.Should().Be(groupDetails.GroupDescription);
+                group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
+                group.LinkedToField.Should().Be(groupDetails.LinkedToField);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }
