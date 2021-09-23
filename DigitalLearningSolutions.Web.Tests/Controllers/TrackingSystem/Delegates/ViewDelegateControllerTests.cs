@@ -26,16 +26,9 @@
             var courseService = A.Fake<ICourseService>();
             var passwordResetService = A.Fake<IPasswordResetService>();
 
-            var httpRequest = A.Fake<HttpRequest>();
-            var httpResponse = A.Fake<HttpResponse>();
-            const string cookieName = "";
-            const string cookieValue = "";
-
             viewDelegateController = new ViewDelegateController(userDataService, centreCustomPromptsHelper, courseService, passwordResetService)
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
-                .WithMockUser(true)
-                .WithMockServices()
-                .WithMockTempData();
+                .WithDefaultContext()
+                .WithMockUser(true);
 
         }
 
