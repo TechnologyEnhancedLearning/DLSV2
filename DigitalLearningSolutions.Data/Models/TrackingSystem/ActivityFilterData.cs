@@ -8,18 +8,19 @@
     {
         public ActivityFilterData(
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId,
+            CourseFilterType courseFilterType,
             ReportInterval reportInterval
         )
         {
             StartDate = startDate;
             EndDate = endDate;
             JobGroupId = jobGroupId;
-            CourseCategoryId = courseCategoryId;
-            CustomisationId = customisationId;
+            CourseCategoryId = courseFilterType == CourseFilterType.CourseCategory ? courseCategoryId : null;
+            CustomisationId = courseFilterType == CourseFilterType.Course ? customisationId : null;
             ReportInterval = reportInterval;
         }
 
@@ -27,7 +28,7 @@
         public int? CourseCategoryId { get; set; }
         public int? CustomisationId { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public ReportInterval ReportInterval { get; set; }
 
         public static ActivityFilterData GetDefaultFilterData(AdminUser user)
@@ -36,10 +37,11 @@
 
             return new ActivityFilterData(
                 DateTime.UtcNow.Date.AddYears(-1),
-                DateTime.UtcNow,
+                null,
                 null,
                 categoryIdFilter,
                 null,
+                CourseFilterType.CourseCategory,
                 ReportInterval.Months
             );
         }
