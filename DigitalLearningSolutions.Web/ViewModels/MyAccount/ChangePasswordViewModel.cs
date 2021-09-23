@@ -1,12 +1,22 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
+namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
-    using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class ChangePasswordViewModel : ConfirmPasswordViewModel
+    public class ChangePasswordViewModel
     {
-        [Required(ErrorMessage = "Enter your password")]
-        [DataType(DataType.Password)]
-        public string? CurrentPassword { get; set; }
+        public ChangePasswordViewModel(ApplicationType application) : this(
+            new ChangePasswordFormData(),
+            application
+        ) { }
+
+        public ChangePasswordViewModel(ChangePasswordFormData formData, ApplicationType application)
+        {
+            FormData = formData;
+            Application = application;
+        }
+
+        public ChangePasswordFormData FormData { get; set; }
+
+        public ApplicationType Application { get; set; }
     }
 }

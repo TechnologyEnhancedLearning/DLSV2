@@ -18,6 +18,10 @@
             ActivityFilterData filterData
         );
 
+        ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
+
+        DateTime GetStartOfActivityForCentre(int centreId);
+
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
     }
 
@@ -60,7 +64,7 @@
 
             var dateSlots = DateHelper.GetPeriodsBetweenDates(
                 filterData.StartDate,
-                filterData.EndDate,
+                filterData.EndDate ?? DateTime.UtcNow,
                 filterData.ReportInterval
             );
 
@@ -83,6 +87,25 @@
             return (GetJobGroupNameForActivityFilter(filterData.JobGroupId),
                 GetCourseCategoryNameForActivityFilter(filterData.CourseCategoryId),
                 GetCourseNameForActivityFilter(filterData.CustomisationId));
+        }
+
+        public ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId)
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+            var courseCategories = courseCategoriesDataService
+                .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
+            var courses = courseDataService
+                .GetCentrallyManagedAndCentreCourses(centreId, courseCategoryId)
+                .OrderBy(c => c.CourseName)
+                .Select(c => (c.CustomisationId, c.CourseName));
+
+            return new ReportsFilterOptions(jobGroups, courseCategories, courses);
+        }
+
+        public DateTime GetStartOfActivityForCentre(int centreId)
+        {
+            return activityDataService.GetStartOfActivityForCentre(centreId);
         }
 
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)

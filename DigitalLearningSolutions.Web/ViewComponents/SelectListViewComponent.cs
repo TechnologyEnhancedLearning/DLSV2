@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
+    [Obsolete("Use SelectListWithConfigurableModelViewComponent instead.")]
     public class SelectListViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
@@ -25,7 +27,7 @@
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
-            var textBoxViewModel = new SelectListViewModel(
+            var selectListViewModel = new SelectListViewModel(
                 aspFor,
                 aspFor,
                 label,
@@ -36,8 +38,9 @@
                 string.IsNullOrEmpty(hintText) ? null : hintText,
                 errorMessage,
                 hasError,
-                deselectable ?? false);
-            return View(textBoxViewModel);
+                deselectable ?? false
+            );
+            return View(selectListViewModel);
         }
     }
 }

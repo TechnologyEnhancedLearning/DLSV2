@@ -6,7 +6,9 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
@@ -39,7 +41,7 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = ActivityFilterData.GetDefaultFilterData(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
@@ -61,6 +63,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [Route("Data")]
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
@@ -68,7 +71,7 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var filterData = Request.Cookies.ParseReportsFilterCookie(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -76,12 +79,27 @@
             );
         }
 
-        // [HttpGet]
-        // [Route("EditFilters")]
-        // public IActionResult EditFilters()
-        // {
-        //     return View();
-        // }
+        [HttpGet]
+        [Route("EditFilters")]
+        public IActionResult EditFilters()
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
+
+            var filterOptions = GetDropdownValues(centreId, adminUser);
+
+            var dataStartDate = activityService.GetStartOfActivityForCentre(centreId);
+
+            var model = new EditFiltersViewModel(
+                filterData,
+                adminUser.CategoryId,
+                filterOptions,
+                dataStartDate
+            );
+            return View(model);
+        }
 
         [HttpGet]
         [Route("Download")]
@@ -107,6 +125,7 @@
                 jobGroupId,
                 adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
                 customisationId,
+                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
                 reportInterval
             );
 
@@ -116,6 +135,47 @@
                 dataFile,
                 FileHelper.ExcelContentType,
                 $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
+            );
+        }
+
+        [HttpPost]
+        [Route("EditFilters")]
+        public IActionResult EditFilters(EditFiltersViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var centreId = User.GetCentreId();
+                var adminId = User.GetAdminId()!.Value;
+                var adminUser = userDataService.GetAdminUserById(adminId)!;
+                var filterOptions = GetDropdownValues(centreId, adminUser);
+                model.SetUpDropdowns(filterOptions, adminUser.CategoryId);
+                model.DataStart = activityService.GetStartOfActivityForCentre(centreId);
+                return View(model);
+            }
+
+            var filterData = new ActivityFilterData(
+                model.GetValidatedStartDate(),
+                model.GetValidatedEndDate(),
+                model.JobGroupId,
+                model.CourseCategoryId,
+                model.CustomisationId,
+                model.FilterType,
+                model.ReportInterval
+            );
+
+            Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
+
+            return RedirectToAction("Index");
+        }
+
+        private ReportsFilterOptions GetDropdownValues(
+            int centreId,
+            AdminUser adminUser
+        )
+        {
+            return activityService.GetFilterOptions(
+                centreId,
+                adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
             );
         }
     }

@@ -35,6 +35,7 @@
                 null,
                 null,
                 null,
+                CourseFilterType.None,
                 ReportInterval.Months
             );
             A.CallTo(

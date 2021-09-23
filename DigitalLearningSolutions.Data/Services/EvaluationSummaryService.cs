@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
@@ -70,11 +70,11 @@
                 new List<(string response, int count)>
                 {
                     ("0 hrs", data.Q4Hrs0),
-                    ("<1 hr", data.Q4HrsLt1),
-                    ("1-2 hrs", data.Q4Hrs1To2),
-                    ("2-4 hrs", data.Q4Hrs2To4),
-                    ("4-6 hrs", data.Q4Hrs4To6),
-                    (">6 hrs", data.Q4HrsGt6),
+                    ("Less than 1 hr", data.Q4HrsLt1),
+                    ("1 to 2 hrs", data.Q4Hrs1To2),
+                    ("2 to 4 hrs", data.Q4Hrs2To4),
+                    ("4 to 6 hrs", data.Q4Hrs4To6),
+                    ("More than 6 hrs", data.Q4HrsGt6),
                     ("No response", data.Q4NoResponse)
                 }
             );
