@@ -73,16 +73,26 @@
         {
             // when
             var result = service.GetFilteredActivity(
-                    101,
-                    DateTime.Parse("2014-01-01 00:00:00.000"),
-                    DateTime.Parse("2014-03-31 23:59:59.999"),
-                    jobGroupId,
-                    courseCategoryId,
-                    customisationId
-                );
+                101,
+                DateTime.Parse("2014-01-01 00:00:00.000"),
+                DateTime.Parse("2014-03-31 23:59:59.999"),
+                jobGroupId,
+                courseCategoryId,
+                customisationId
+            );
 
             // then
             result.Count().Should().Be(expectedCount);
+        }
+
+        [Test]
+        public void GetStartOfActivityForCentre_returns_earliest_activity_date_for_centre()
+        {
+            // when
+            var result = service.GetStartOfActivityForCentre(101);
+
+            // then
+            result.Should().Be(DateTime.Parse("2010-09-22 06:52:21.880"));
         }
     }
 }

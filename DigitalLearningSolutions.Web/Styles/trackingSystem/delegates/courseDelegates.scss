@@ -11,3 +11,8 @@
     width: 80%;
   }
 }
+
+.course-submit {
+  @extend .right-submit-button;
+  background-color: $button-dark-blue;
+}

@@ -4,7 +4,7 @@
 <div class="nhsuk-card">
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-0">
     <h2 class="nhsuk-card__heading">
-      My Details
+      My details
     </h2>
     <div class="nhsuk-card__description">
       <dl class="nhsuk-summary-list details-list-with-button">
@@ -56,10 +56,10 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" role="button">
+      <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" asp-controller="MyAccount" asp-action="EditDetails" asp-route-application="@Model.Application.UrlSegment" role="button">
         Edit details
       </a>
-      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ChangePassword" asp-action="Index" role="button">
+      <a class="nhsuk-button nhsuk-button--secondary" asp-controller="ChangePassword" asp-action="Index" asp-route-application="@Model.Application.UrlSegment" role="button">
         Change password
       </a>
     </div>

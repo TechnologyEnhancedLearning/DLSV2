@@ -6,7 +6,7 @@
     {
         public static string StandardDateFormat = "dd/MM/yyyy";
 
-        public static string StandardDateAndTimeFormat = "dd/MM/yyyy hh:mm";
+        public static string StandardDateAndTimeFormat = "dd/MM/yyyy HH:mm";
 
         public static string GetFormatStringForGraphLabel(ReportInterval interval)
         {
@@ -25,7 +25,7 @@
             return interval switch
             {
                 ReportInterval.Days => "d/MM/yyyy",
-                ReportInterval.Weeks => "Week commencing d/MM/yyyy",
+                ReportInterval.Weeks => "'Week commencing' d/MM/yyyy",
                 ReportInterval.Months => "MMMM, yyyy",
                 ReportInterval.Quarters => "Q, yyyy",
                 _ => "yyyy"

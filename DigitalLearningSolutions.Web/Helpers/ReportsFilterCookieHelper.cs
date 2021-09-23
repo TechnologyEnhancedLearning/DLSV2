@@ -28,9 +28,14 @@
             );
         }
 
-        public static ActivityFilterData ParseReportsFilterCookie(this IRequestCookieCollection cookies, AdminUser user)
+        public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, AdminUser user)
         {
             var cookie = cookies[CookieName];
+
+            if (cookie == null)
+            {
+                return ActivityFilterData.GetDefaultFilterData(user);
+            }
 
             try
             {
