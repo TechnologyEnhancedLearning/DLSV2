@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
@@ -80,6 +81,8 @@
                 return new StatusCodeResult(500);
             }
 
+            ValidateNumberInputs(model);
+
             if (!ModelState.IsValid)
             {
                 return View("EditLearningPathwayDefaults", model);
@@ -87,13 +90,38 @@
 
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 model.CustomisationId,
-                model.CompleteWithinMonths,
-                model.ValidityMonths,
+                Int32.Parse(model.CompleteWithinMonths!),
+                Int32.Parse(model.ValidityMonths!),
                 model.Mandatory,
                 model.AutoRefresh
             );
 
             return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+        }
+
+        private void ValidateNumberInputs(EditLearningPathwayDefaultsViewModel model)
+        {
+            if (model.CompleteWithinMonths == null)
+            {
+                ModelState.AddModelError(nameof(model.CompleteWithinMonths), "Enter the number of months that the course must be completed within");
+            } else if (!Int32.TryParse(model.CompleteWithinMonths, out _))
+            {
+                ModelState.AddModelError(nameof(model.CompleteWithinMonths), "Value must only contain numbers");
+            } else if (Int32.Parse(model.CompleteWithinMonths) < 0 || Int32.Parse(model.CompleteWithinMonths) > 48)
+            {
+                ModelState.AddModelError(nameof(model.CompleteWithinMonths), "Value must be a number between 0 and 48");
+            }
+
+            if (model.ValidityMonths == null)
+            {
+                ModelState.AddModelError(nameof(model.ValidityMonths), "Enter the number of months that the completion will remain valid for");
+            } else if (!Int32.TryParse(model.ValidityMonths, out _))
+            {
+                ModelState.AddModelError(nameof(model.ValidityMonths), "Value must only contain numbers.");
+            } else if (Int32.Parse(model.ValidityMonths) < 0 || Int32.Parse(model.ValidityMonths) > 48)
+            {
+                ModelState.AddModelError(nameof(model.ValidityMonths), "Value must be a number between 0 and 48");
+            }
         }
     }
 }

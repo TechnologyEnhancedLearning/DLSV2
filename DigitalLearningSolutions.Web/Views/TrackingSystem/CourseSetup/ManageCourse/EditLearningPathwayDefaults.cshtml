@@ -30,12 +30,10 @@
           asp-route-customisationId="@Model.CustomisationId">
       <div class="nhsuk-form-group">
         <vc:text-input asp-for="@nameof(Model.CompleteWithinMonths)"
-                       label="Completion valid for (in months)"
+                       label="Completion within (in months)"
                        populate-with-current-value="true"
                        type="text"
                        spell-check="false"
-                       pattern="[0-9]*"
-                       inputmode="numeric"
                        autocomplete=""
                        hint-text="Within how many months of enrolment should the learner complete the course?"
                        css-class="nhsuk-input nhsuk-input--width-10" />
@@ -47,8 +45,6 @@
                        populate-with-current-value="true"
                        type="text"
                        spell-check="false"
-                       pattern="[0-9]*"
-                       inputmode="numeric"
                        autocomplete=""
                        hint-text="For how many months after completion will the completion remain valid
                                                       (before the learner is expected to complete the course again)?"
@@ -85,6 +81,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="AdminFields" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

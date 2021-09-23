@@ -10,8 +10,8 @@
         public EditLearningPathwayDefaultsViewModel(CourseDetails courseDetails)
         {
             CustomisationId = courseDetails.CustomisationId;
-            CompleteWithinMonths = courseDetails.CompleteWithinMonths;
-            ValidityMonths = courseDetails.ValidityMonths;
+            CompleteWithinMonths = courseDetails.CompleteWithinMonths.ToString();
+            ValidityMonths = courseDetails.ValidityMonths.ToString();
             Mandatory = courseDetails.Mandatory;
             AutoRefresh = courseDetails.AutoRefresh;
         }
@@ -25,21 +25,17 @@
         )
         {
             CustomisationId = customisationId;
-            CompleteWithinMonths = completeWithinMonths;
-            ValidityMonths = validityMonths;
+            CompleteWithinMonths = completeWithinMonths.ToString();
+            ValidityMonths = validityMonths.ToString();
             Mandatory = mandatory;
             AutoRefresh = autoRefresh;
         }
 
         public int CustomisationId { get; set; }
 
-        [Required(ErrorMessage = "Select a field name")]
-        [Range(0, 48, ErrorMessage = "Value must be between 0 and 48 months.")]
-        public int CompleteWithinMonths { get; set; }
+        public string? CompleteWithinMonths { get; set; }
 
-        [Required(ErrorMessage = "Select a field name")]
-        [Range(0, 48, ErrorMessage = "Value must be between 0 and 48 months.")]
-        public int ValidityMonths { get; set; }
+        public string? ValidityMonths { get; set; }
 
         public bool Mandatory { get; set; }
 
