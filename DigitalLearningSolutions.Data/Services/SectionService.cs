@@ -12,7 +12,7 @@
 
         Section? GetSectionAndTutorialsBySectionId(int customisationId, int sectionId);
 
-        void UpdateSectionTutorialsStatuses(Section section, int customisationId);
+        void UpdateSectionTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId);
     }
 
     public class SectionService : ISectionService
@@ -59,11 +59,11 @@
             return section;
         }
 
-        public void UpdateSectionTutorialsStatuses(Section section, int customisationId)
+        public void UpdateSectionTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId)
         {
             using var transaction = new TransactionScope();
 
-            foreach (var tutorial in section.Tutorials)
+            foreach (var tutorial in tutorials)
             {
                 tutorialContentDataService.UpdateTutorialStatuses(
                     tutorial.TutorialId,

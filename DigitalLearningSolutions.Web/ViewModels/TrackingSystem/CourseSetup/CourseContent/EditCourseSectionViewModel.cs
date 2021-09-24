@@ -1,31 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models;
 
-    public class EditCourseSectionViewModel
+    public class EditCourseSectionViewModel : EditCourseSectionFormData
     {
-        public EditCourseSectionViewModel() { }
-
         public EditCourseSectionViewModel(
             int customisationId,
             string courseName,
             Section section
-        )
+        ) : base(section, courseName)
         {
             CustomisationId = customisationId;
-            CourseName = courseName;
-            SectionId = section.SectionId;
-            SectionName = section.SectionName;
-            Tutorials = section.Tutorials.Select(t => new EditCourseTutorialViewModel(t));
+        }
+
+        public EditCourseSectionViewModel(
+            EditCourseSectionFormData formData,
+            int customisationId
+        ) : base(formData)
+        {
+            CustomisationId = customisationId;
         }
 
         public int CustomisationId { get; set; }
-        public string CourseName { get; set; }
-        public int SectionId { get; set; }
-        public string SectionName { get; set; }
-
-        public IEnumerable<EditCourseTutorialViewModel> Tutorials { get; set; }
     }
 }

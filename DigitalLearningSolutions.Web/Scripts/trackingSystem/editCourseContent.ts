@@ -1,16 +1,4 @@
-﻿function selectAll(selectorClass: string): void {
-  const allCheckboxes = document.querySelectorAll(selectorClass)as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (!checkbox.checked) checkbox.click();
-  });
-}
-
-function deselectAll(selectorClass: string): void {
-  const allCheckboxes = document.querySelectorAll(selectorClass) as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (checkbox.checked) checkbox.click();
-  });
-}
+﻿import { selectAll, deselectAll } from '../common';
 
 function setUpSelectAllButtons() {
   const submits = Array.from(

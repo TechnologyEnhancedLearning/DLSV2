@@ -46,8 +46,8 @@
       <div class="hidden-submit">
         <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
       </div>
-      <input type="hidden" asp-for="CustomisationId" />
       <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="SectionName" />
 
       <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
         <div class="nhsuk-grid-column-one-half">
@@ -66,7 +66,7 @@
               <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
               <input type="hidden" name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
               <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
+                <input class="nhsuk-checkboxes__input diagnostic-checkbox"
                        type="checkbox"
                        name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
                        id="diagnostic-enabled-@tutorial.TutorialId"
@@ -95,7 +95,7 @@
           <div class="nhsuk-checkboxes">
             @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i))) {
               <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input"
+                <input class="nhsuk-checkboxes__input learning-checkbox"
                        type="checkbox"
                        name="@($"{nameof(Model.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
                        id="learning-enabled-@tutorial.TutorialId"
@@ -117,3 +117,7 @@
 
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/editCourseContent.js")" asp-append-version="true"></script>
+}
