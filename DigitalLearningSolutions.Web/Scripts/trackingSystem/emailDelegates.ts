@@ -7,8 +7,10 @@ const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParam
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+setupSelectAndDeselectButtons();
 
 function alertResultCount(): void {
+  // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
   resultCount.setAttribute('role', '');
   resultCount.setAttribute('role', 'alert');
@@ -28,16 +30,22 @@ function deselectAll(): void {
   });
 }
 
-const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
-const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
-const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
+function setupSelectAndDeselectButtons(): void {
+  const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
+  const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
+  const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
 
-selectAllForm.addEventListener('submit', (e) => e.preventDefault());
-selectAllButton.addEventListener('click', () => {
-  selectAll();
-  alertResultCount();
-});
-deselectAllButton.addEventListener('click', () => {
-  deselectAll();
-  alertResultCount();
-});
+  selectAllForm.addEventListener('submit', (e) => e.preventDefault());
+
+  selectAllButton.addEventListener('click',
+    () => {
+      selectAll();
+      alertResultCount();
+    });
+
+  deselectAllButton.addEventListener('click',
+    () => {
+      deselectAll();
+      alertResultCount();
+    });
+}
