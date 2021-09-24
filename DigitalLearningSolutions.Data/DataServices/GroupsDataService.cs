@@ -25,6 +25,8 @@
         Group? GetGroup(int groupId, int centreId);
 
         bool UpdateGroupDescription(int groupId, int centreId, string groupDescription);
+
+        bool UpdateGroupName(int groupId, int centreId, string groupName);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -159,6 +161,18 @@
                         GroupDescription = @groupDescription
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupDescription, groupId, centreId }
+            );
+            return numberOfAffectedRows > 0;
+        }
+
+        public bool UpdateGroupName(int groupId, int centreId, string groupName)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE Groups
+                    SET
+                        GroupLabel = @groupName
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupName, groupId, centreId }
             );
             return numberOfAffectedRows > 0;
         }

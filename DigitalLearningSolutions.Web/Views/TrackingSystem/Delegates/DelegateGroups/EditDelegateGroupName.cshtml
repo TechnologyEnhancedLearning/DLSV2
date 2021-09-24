@@ -1,10 +1,10 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
-@model EditDelegateGroupDescriptionViewModel
+@model EditDelegateGroupNameViewModel
 
 @{
-  ViewData["Title"] = $"Edit description for {Model.GroupLabel} group (optional)";
+  ViewData["Title"] = "Edit group name";
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
@@ -20,16 +20,16 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-l">@ViewData["Title"]</h1>
     <div class="nhsuk-grid-column-two-thirds">
-      <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDelegateGroupDescription">
+      <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDelegateGroupName">
 
-        <vc:text-area asp-for="@nameof(Model.Description)"
-                      label=""
-                      populate-with-current-value="true"
-                      rows="8"
-                      spell-check="true"
-                      hint-text=""
-                      css-class=""
-                      character-count="1000" />
+        <vc:text-input asp-for="@nameof(Model.GroupLabel)"
+                       label=""
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       hint-text=""
+                       autocomplete=""
+                       css-class="nhsuk-u-width-one-half" />
 
         <button class="nhsuk-button" type="submit" value="save">Save</button>
       </form>

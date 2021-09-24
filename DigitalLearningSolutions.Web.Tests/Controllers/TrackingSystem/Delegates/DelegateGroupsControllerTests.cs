@@ -315,7 +315,7 @@
         }
 
         [Test]
-        public void EditGroupDelegates_should_return_not_found_with_invalid_group_for_centre()
+        public void EditDelegatesGroupDescription_should_return_not_found_with_invalid_group_for_centre()
         {
             // Given
             var model = new EditDelegateGroupDescriptionViewModel();
@@ -332,7 +332,7 @@
         }
 
         [Test]
-        public void EditGroupDelegates_should_redirect_to__index_action()
+        public void EditDelegatesGroupDescription_should_redirect_to__index_action()
         {
             // Given
             var model = new EditDelegateGroupDescriptionViewModel();
@@ -344,6 +344,40 @@
 
             // Them
             A.CallTo(() => groupsDataService.UpdateGroupDescription(A<int>._, A<int>._, A<string>._))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void EditDelegatesGroupName_should_return_not_found_with_invalid_group_for_centre()
+        {
+            // Given
+            var model = new EditDelegateGroupNameViewModel();
+            A.CallTo(() => groupsDataService.UpdateGroupName(A<int>._, A<int>._, A<string>._))
+                .Returns(false);
+
+            // When
+            var result = delegateGroupsController.EditDelegateGroupName(model, 6);
+
+            // Them
+            A.CallTo(() => groupsDataService.UpdateGroupName(A<int>._, A<int>._, A<string>._))
+                .MustHaveHappened();
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void EditDelegatesGroupName_should_redirect_to__index_action()
+        {
+            // Given
+            var model = new EditDelegateGroupNameViewModel();
+            A.CallTo(() => groupsDataService.UpdateGroupName(A<int>._, A<int>._, A<string>._))
+                .Returns(true);
+
+            // When
+            var result = delegateGroupsController.EditDelegateGroupName(model, 6);
+
+            // Them
+            A.CallTo(() => groupsDataService.UpdateGroupName(A<int>._, A<int>._, A<string>._))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }

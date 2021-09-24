@@ -214,5 +214,37 @@
             var result = groupsDataService.GetGroup(groupId, centerId);
             result?.GroupDescription.Should().NotBe(expectedDescription);
         }
+
+        [Test]
+        public void UpdateGroupName_updates_record()
+        {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string expectedGroupName = "Activities worker or coordinator";
+
+            // When
+            groupsDataService.UpdateGroupName(groupId, centerId, expectedGroupName);
+
+            //Then
+            var result = groupsDataService.GetGroup(groupId, centerId);
+            result?.GroupLabel.Should().Be(expectedGroupName);
+        }
+
+        [Test]
+        public void UpdateGroupName_with_incorrect_centreId_does_not_update_record()
+        {
+            // Given
+            const int centerId = 107;   //Incorrect centre id
+            const int groupId = 5;
+            const string expectedGroupName = "Activities worker or coordinator";
+
+            // When
+            groupsDataService.UpdateGroupName(groupId, centerId, expectedGroupName);
+
+            //Then
+            var result = groupsDataService.GetGroup(groupId, centerId);
+            result?.GroupLabel.Should().NotBe(expectedGroupName);
+        }
     }
 }
