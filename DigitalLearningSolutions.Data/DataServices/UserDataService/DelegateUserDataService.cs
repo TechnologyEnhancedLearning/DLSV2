@@ -386,5 +386,15 @@
                 }
             );
         }
+
+        public void DeactivateDelegateUser(int delegateId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET Active = 0
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+        }
     }
 }

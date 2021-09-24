@@ -97,17 +97,24 @@
         <a class="nhsuk-button view-delegate-button" role="button">
           Edit details
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
+        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+           role="button"
+           asp-controller="SetDelegatePassword"
+           asp-action="Index"
+           asp-route-delegateId="@Model.DelegateInfo.Id"
+           asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
         <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
           Promote to admin
         </a>
-        <div>
-          <a class="nhsuk-button delete-button view-delegate-button" role="button">
+        <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+          <button
+            class="nhsuk-button delete-button view-delegate-button"
+            type="submit">
             Deactivate account
-          </a>
-        </div>
+          </button>
+        </form>
       } else {
         <a class="nhsuk-button view-delegate-button" role="button">
           Reactivate account

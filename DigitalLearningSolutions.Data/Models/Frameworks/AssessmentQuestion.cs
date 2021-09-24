@@ -12,5 +12,9 @@ using System.ComponentModel.DataAnnotations;
         public string? InputTypeName { get; set; }
         public int AddedByAdminId { get; set; }
         public bool UserIsOwner { get; set; }
+        [StringLength(50)]
+        public string? CommentsPrompt { get; set; }
+        [StringLength(255)]
+        public string? CommentsHint { get; set; }
     }
 }

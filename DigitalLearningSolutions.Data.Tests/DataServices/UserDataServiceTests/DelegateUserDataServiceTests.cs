@@ -257,5 +257,20 @@
             // Then
             returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUsers);
         }
+
+        [Test]
+        public void DeactivateDelegateUser_deactivates_delegate_user()
+        {
+            using var transaction = new TransactionScope();
+
+            // given
+            userDataService.GetDelegateUserById(1)!.Active.Should().BeTrue();
+
+            // when
+            userDataService.DeactivateDelegateUser(1);
+
+            // then
+            userDataService.GetDelegateUserById(1)!.Active.Should().BeFalse();
+        }
     }
 }
