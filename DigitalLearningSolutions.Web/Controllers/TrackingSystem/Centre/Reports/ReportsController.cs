@@ -146,21 +146,17 @@
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
 
-            var parsedStartDate = DateTime.Parse(startDate);
-            if (parsedStartDate < activityService.GetStartOfActivityForCentre(centreId))
-            {
-                return new NotFoundResult();
-            }
+            var dateRange =
+                activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
 
-            if (DateTime.TryParse(endDate, out var parsedEndDate) &&
-                (parsedEndDate < parsedStartDate || parsedEndDate > DateTime.Now))
+            if (dateRange == null)
             {
                 return new NotFoundResult();
             }
 
             var filterData = new ActivityFilterData(
-                parsedStartDate,
-                parsedEndDate > DateTime.MinValue ? (DateTime?)parsedEndDate : null,
+                dateRange.Value.startDate,
+                dateRange.Value.endDate,
                 jobGroupId,
                 adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
                 customisationId,

@@ -23,6 +23,12 @@
         DateTime GetStartOfActivityForCentre(int centreId);
 
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
+
+        (DateTime startDate, DateTime? endDate)? GetValidatedUsageStatsDateRange(
+            string startDateString,
+            string endDateString,
+            int centreId
+        );
     }
 
     public class ActivityService : IActivityService
@@ -124,6 +130,28 @@
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
+        }
+
+        public (DateTime startDate, DateTime? endDate)? GetValidatedUsageStatsDateRange(
+            string startDateString,
+            string endDateString,
+            int centreId
+        )
+        {
+            var parsedStartDate = DateTime.Parse(startDateString);
+            var start = GetStartOfActivityForCentre(centreId);
+            if (parsedStartDate < GetStartOfActivityForCentre(centreId))
+            {
+                return null;
+            }
+
+            if (DateTime.TryParse(endDateString, out var parsedEndDate) &&
+                (parsedEndDate < parsedStartDate || parsedEndDate > DateTime.Now))
+            {
+                return null;
+            }
+
+            return (parsedStartDate, parsedEndDate > DateTime.MinValue ? (DateTime?)parsedEndDate : null);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)

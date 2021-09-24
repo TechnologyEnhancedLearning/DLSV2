@@ -77,7 +77,7 @@
                 { "courseCategoryId", filterData.CourseCategoryId?.ToString() ?? "" },
                 { "customisationId", filterData.CustomisationId?.ToString() ?? "" },
                 { "startDate", filterData.StartDate.ToString() },
-                { "endDate", filterData.EndDate.ToString() },
+                { "endDate", filterData.EndDate?.ToString() ?? "" },
                 { "reportInterval", filterData.ReportInterval.ToString() },
             };
         }
