@@ -7,7 +7,7 @@ const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParam
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
-setupSelectAndDeselectButtons();
+setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
   // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
@@ -30,7 +30,7 @@ function deselectAll(): void {
   });
 }
 
-function setupSelectAndDeselectButtons(): void {
+function setUpSelectAndDeselectButtons(): void {
   const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
   const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
   const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
