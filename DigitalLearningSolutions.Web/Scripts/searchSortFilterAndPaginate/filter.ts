@@ -116,7 +116,7 @@ function filterElements(
 
 function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): string {
   const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
-  addNewFilterValueToFilterBy(filterValue);
+  if (filterValue) addNewFilterValueToFilterBy(filterValue);
   return filterValue;
 }
 
