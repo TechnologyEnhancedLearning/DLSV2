@@ -213,16 +213,14 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            A.CallTo(() => userDataService.GetAdminUserById(1)).Returns(UserTestHelper.GetDefaultAdminUser());
             var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = true };
 
             // When
             var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
-            var deactivatedAdminUser = result.Should().BeViewResult().Model as AdminUser;
 
             // Then
-            A.CallTo(() => userDataService.DeactivateAdmin(A<int>._)).MustHaveHappened();
-            deactivatedAdminUser?.Active.Should().Be(false);
+            A.CallTo(() => userDataService.GetAdminUserById(1)).MustHaveHappened();
             result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
         }
     }
