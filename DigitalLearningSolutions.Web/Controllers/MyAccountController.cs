@@ -139,7 +139,6 @@
             }
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
-
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", new { application = application.UrlSegment });

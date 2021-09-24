@@ -5,6 +5,9 @@
     using Microsoft.Extensions.Configuration;
     using static System.String;
 
+    [Obsolete(
+        "We are moving to the ConfigHelper in the Data project. Copy the methods you need into there. This class will be removed in HEEDLS-609"
+    )]
     public static class ConfigHelper
     {
         public const string DefaultConnectionStringName = "DefaultConnection";
