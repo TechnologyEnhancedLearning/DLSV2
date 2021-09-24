@@ -169,7 +169,7 @@
             }
 
             userDataService.DeactivateAdmin(adminId);
-            return View("DeactivateAdminConfirmation", adminUser);
+            return View("DeactivateAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
