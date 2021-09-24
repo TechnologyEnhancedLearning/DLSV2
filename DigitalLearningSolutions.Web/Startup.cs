@@ -170,6 +170,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEvaluationSummaryService, EvaluationSummaryService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
+            services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -209,6 +210,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
@@ -278,9 +280,10 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var applicationPath = new Uri(config["AppRootPath"]).AbsolutePath.TrimEnd('/');
+            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
-            context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}");
+            var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 

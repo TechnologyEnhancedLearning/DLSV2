@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -158,6 +159,33 @@
         }
 
         [Test]
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.Now;
+                const int delegateId = 299228;
+                AddDelegateToGroupWithSharedCourse();
+                AddProgressRecordForGroupWithSharedCourse();
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(285172);
+
+                // Then
+                progressFields.Item1.Should().Be(0);
+                progressFields.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+
+        [Test]
         public void GetRelatedProgressIdForGroupDelegate_returns_expected_value()
         {
             // Given
@@ -218,6 +246,49 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        [Test]
+        public void AddDelegateToGroup_adds_the_delegate_to_the_expected_group()
+        {
+            // Given
+            const int delegateId = 10;
+            const int groupId = 5;
+            const int addedByFieldLink = 1;
+            var addedDate = new DateTime(2021, 12, 25);
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.AddDelegateToGroup(delegateId, groupId, addedDate, addedByFieldLink);
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+                // Then
+                groupDelegates.Count.Should().Be(25);
+                groupDelegates.Any(gd => gd.DelegateId == delegateId).Should().BeTrue();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        private void AddDelegateToGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"INSERT INTO dbo.GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                    VALUES (8, 299228, GETUTCDATE(), 1)"
+            );
+        }
+
+        private void AddProgressRecordForGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"SET IDENTITY_INSERT dbo.Progress ON
+                    INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
+                    VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
+                    SET IDENTITY_INSERT dbo.Progress OFF");
         }
     }
 }

@@ -12,6 +12,8 @@
         public bool IsMandatory { get; set; }
         public bool IsAssessed { get; set; }
         public DateTime AddedToGroup { get; set; }
+        public int CurrentVersion { get; set; }
+        public int? SupervisorAdminId { get; set; }
         public string? SupervisorFirstName { get; set; }
         public string? SupervisorLastName { get; set; }
         public int CompleteWithinMonths { get; set; }

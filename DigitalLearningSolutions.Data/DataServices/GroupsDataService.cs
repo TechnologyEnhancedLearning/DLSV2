@@ -24,6 +24,8 @@
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
 
         int AddDelegateGroup(GroupDetails groupDetails);
+
+        void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -109,6 +111,8 @@
                         Mandatory AS IsMandatory,
                         IsAssessed,
                         AddedDate AS AddedToGroup,
+                        c.CurrentVersion,
+                        gc.SupervisorAdminID,
                         au.Forename AS SupervisorFirstName,
                         au.Surname AS SupervisorLastName,
                         gc.CompleteWithinMonths,
@@ -140,8 +144,15 @@
 
         public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
+            const string numberOfGroupsWhereDelegateIsEnrolledOnThisCourse =
+                @"SELECT COUNT(DISTINCT(gd.GroupId))
+                    FROM dbo.Progress AS pr
+                    INNER JOIN dbo.GroupCustomisations AS gc ON gc.CustomisationID = pr.CustomisationID
+                    INNER JOIN dbo.GroupDelegates AS gd ON gd.DelegateID = pr.CandidateID AND gd.GroupID = gc.GroupID
+                    WHERE pr.CustomisationID = Progress.CustomisationID AND pr.CandidateID = Progress.CandidateID";
+
             connection.Execute(
-                @"UPDATE Progress
+                $@"UPDATE Progress
                     SET
                         RemovedDate = @removedDate,
                         RemovalMethodID = 3
@@ -153,7 +164,9 @@
                                 AND p.EnrollmentMethodID  = 3
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL)",
+                                AND P.RemovedDate IS NULL
+                                AND p.LoginCount = 0)
+                        AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
                 new { groupId, delegateId, removedDate }
             );
         }
@@ -190,6 +203,19 @@
                         OUTPUT inserted.GroupID
                         VALUES (@CentreId, @GroupLabel, @GroupDescription, @LinkedToField, @SyncFieldChanges, @AddNewRegistrants, @PopulateExisting, @CreatedDate, @AdminUserId)",
                 groupDetails
+            );
+        }
+
+        public void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink)
+        {
+            connection.Execute(
+                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                    VALUES (
+                        @groupId, 
+                        @delegateId, 
+                        @addedDate, 
+                        @addedByFieldLink)",
+                new { groupId, delegateId, addedDate, addedByFieldLink }
             );
         }
     }
