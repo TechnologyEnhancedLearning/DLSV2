@@ -15,6 +15,8 @@
 
     public interface IGroupsService
     {
+        int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
+
         void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDelegateDetails,
@@ -177,6 +179,24 @@
                     emailService.ScheduleEmail(email, AddedByProcess);
                 }
             }
+        }
+
+        public int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId)
+        {
+            var groupDetails = new GroupDetails
+            {
+                CentreId = centreId,
+                GroupLabel = groupLabel,
+                GroupDescription = groupDescription,
+                AdminUserId = adminUserId,
+                CreatedDate = clockService.UtcNow,
+                LinkedToField = 0,
+                SyncFieldChanges = false,
+                AddNewRegistrants = false,
+                PopulateExisting = false
+            };
+
+            return groupsDataService.AddDelegateGroup(groupDetails);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)

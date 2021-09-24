@@ -567,8 +567,7 @@
             var includedSelfAssessmentStructureIds = selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(selfAssessmentId, candidateId);
             var model = new ManageOptionalCompetenciesViewModel()
             {
-                SelfAssessmentId = selfAssessmentId,
-                SelfAssessmentName = assessment.Name,
+               SelfAssessment = assessment,
                 Vocabulary = vocabulary,
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds
