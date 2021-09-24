@@ -166,7 +166,7 @@
         {
             // Given
             const int tutorialId = 12732;
-            const int customisationId = 24286;
+            const int customisationId = 14019;
 
             using var transaction = new TransactionScope();
             try
@@ -180,7 +180,7 @@
                 using (new AssertionScope())
                 {
                     initialAspProgressIds.Count.Should().Be(3);
-                    resultAspProgressIds.Count.Should().Be(12);
+                    resultAspProgressIds.Count.Should().Be(6);
                 }
             }
             finally

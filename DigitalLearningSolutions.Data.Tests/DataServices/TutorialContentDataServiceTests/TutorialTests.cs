@@ -46,39 +46,57 @@
         [Test]
         public void UpdateTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
         {
-            using var transaction = new TransactionScope();
-
             // When
-            tutorialContentDataService.UpdateTutorialStatuses(49, CustomisationId, false, false);
-            var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
-
-            using (new AssertionScope())
+            using var transaction = new TransactionScope();
+            try
             {
-                result.First().TutorialId.Should().Be(49);
-                result.First().TutorialName.Should().Be("View documents");
-                result.First().Status.Should().BeFalse();
-                result.First().DiagStatus.Should().BeFalse();
+                tutorialContentDataService.UpdateTutorialStatuses(49, CustomisationId, false, false);
+                var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
+
+                using (new AssertionScope())
+                {
+                    result.First().TutorialId.Should().Be(49);
+                    result.First().TutorialName.Should().Be("View documents");
+                    result.First().Status.Should().BeFalse();
+                    result.First().DiagStatus.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
 
         [Test]
         public void UpdateTutorialStatuses_inserts_new_CustomisationTutorial()
         {
-            using var transaction = new TransactionScope();
+            // Given
+            const int sectionId = 3059;
+            const int tutorialId = 12732;
+            const int customisationId = 14019;
 
             // When
-            var initialResult = tutorialContentDataService.GetTutorialsBySectionId(3059, 24286).ToList();
-            tutorialContentDataService.UpdateTutorialStatuses(12732, 24286, true, true);
-            var result = tutorialContentDataService.GetTutorialsBySectionId(3059, 24286).ToList();
-
-            using (new AssertionScope())
+            using var transaction = new TransactionScope();
+            try
             {
-                initialResult.First().Status.Should().BeNull();
-                initialResult.First().DiagStatus.Should().BeNull();
-                result.First().TutorialId.Should().Be(12732);
-                result.First().TutorialName.Should().Be("Create a presentation from an outline");
-                result.First().Status.Should().BeTrue();
-                result.First().DiagStatus.Should().BeTrue();
+                var initialResult = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId)
+                    .ToList();
+                tutorialContentDataService.UpdateTutorialStatuses(tutorialId, customisationId, true, true);
+                var result = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId).ToList();
+
+                using (new AssertionScope())
+                {
+                    initialResult.First().Status.Should().BeNull();
+                    initialResult.First().DiagStatus.Should().BeNull();
+                    result.First().TutorialId.Should().Be(tutorialId);
+                    result.First().TutorialName.Should().Be("Create a presentation from an outline");
+                    result.First().Status.Should().BeTrue();
+                    result.First().DiagStatus.Should().BeTrue();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
     }
