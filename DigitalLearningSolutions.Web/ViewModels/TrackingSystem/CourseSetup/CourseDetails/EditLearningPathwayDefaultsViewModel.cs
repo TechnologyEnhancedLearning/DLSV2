@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
-    using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public class EditLearningPathwayDefaultsViewModel
@@ -18,15 +17,15 @@
 
         public EditLearningPathwayDefaultsViewModel(
             int customisationId,
-            int completeWithinMonths,
-            int validityMonths,
+            string? completeWithinMonths,
+            string? validityMonths,
             bool mandatory,
             bool autoRefresh
         )
         {
             CustomisationId = customisationId;
-            CompleteWithinMonths = completeWithinMonths.ToString();
-            ValidityMonths = validityMonths.ToString();
+            CompleteWithinMonths = completeWithinMonths;
+            ValidityMonths = validityMonths;
             Mandatory = mandatory;
             AutoRefresh = autoRefresh;
         }

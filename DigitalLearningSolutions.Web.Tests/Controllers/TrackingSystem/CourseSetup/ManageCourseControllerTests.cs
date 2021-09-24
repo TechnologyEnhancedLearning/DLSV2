@@ -56,7 +56,7 @@
         public void SaveLearningPathwayDefaults_save_calls_correct_method()
         {
             // Given
-            var model = new EditLearningPathwayDefaultsViewModel(1, 6, 12, false, false);
+            var model = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
 
             A.CallTo(
                 () => courseService.UpdateLearningPathwayDefaultsForCourse(
@@ -77,11 +77,52 @@
                     1,
                     6,
                     12,
-                    true,
-                    true
+                    false,
+                    false
                 )
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_saves_if_number_input_is_null()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, null, null, false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_shows_validation_errors_if_number_input_contains_non_numbers()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "9.0", "asdfg", false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_shows_validation_errors_if_number_input_is_outside_range()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "-1", "49", false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
         }
     }
 }
