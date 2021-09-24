@@ -5,9 +5,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -62,6 +64,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -74,6 +77,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             config = A.Fake<IConfiguration>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
@@ -95,7 +99,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 centresDataService,
                 config,
                 supervisorDelegateService,
-                frameworkNotificationService
+                frameworkNotificationService,
+                userDataService
             );
         }
 
@@ -238,6 +243,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
             GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
+                .Returns(new DelegateUser { Id = 777 });
 
             // When
             registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
@@ -246,8 +253,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    testRegistrationModel.Centre,
-                    NewCandidateNumber
+                    777
                 )
             ).MustHaveHappened();
         }
@@ -292,8 +298,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>._,
-                    A<int>._,
-                    A<string>._
+                    A<int>._
                 )
             ).MustNotHaveHappened();
             A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
@@ -531,6 +536,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(testRegistrationModel))
                 .Returns(NewCandidateNumber);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
+                .Returns(new DelegateUser { Id = 777 });
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
@@ -539,8 +546,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
-                    testRegistrationModel.Centre,
-                    NewCandidateNumber
+                    777
                 )
             ).MustHaveHappened();
         }

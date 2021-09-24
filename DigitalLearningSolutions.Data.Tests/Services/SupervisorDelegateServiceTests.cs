@@ -43,25 +43,6 @@
         }
 
         [Test]
-        public void AddCandidateIdToSupervisorDelegateRecords_updates_records_with_correct_candidateId()
-        {
-            // Given
-            const string candidateNumber = "HI";
-            const int candidateId = 1;
-            var recordIds = new[] { 1, 2, 3, 4, 5 };
-            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
-                .Returns(new DelegateUser { Id = candidateId });
-
-            // When
-            supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(recordIds, CentreId, candidateNumber);
-
-            // Then
-            A.CallTo(
-                () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(recordIds, candidateId)
-            ).MustHaveHappened();
-        }
-
-        [Test]
         public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
         {
             // When

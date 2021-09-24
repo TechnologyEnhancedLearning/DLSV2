@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using Microsoft.Extensions.Configuration;
@@ -33,6 +34,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
+        private readonly IUserDataService userDataService;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -42,7 +44,8 @@ namespace DigitalLearningSolutions.Data.Services
             ICentresDataService centresDataService,
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
-            IFrameworkNotificationService frameworkNotificationService
+            IFrameworkNotificationService frameworkNotificationService,
+            IUserDataService userDataService
         )
         {
             this.registrationDataService = registrationDataService;
@@ -53,6 +56,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
             this.frameworkNotificationService = frameworkNotificationService;
+            this.userDataService = userDataService;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
@@ -84,11 +88,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (supervisorDelegateRecordIds.Any())
             {
-                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
-                    supervisorDelegateRecordIds,
-                    delegateRegistrationModel.Centre,
-                    candidateNumber
-                );
+                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre)!;
+                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(supervisorDelegateRecordIds, delegateUser.Id);
                 if (foundRecordForSupervisorDelegateId)
                 {
                     supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
@@ -157,11 +158,8 @@ namespace DigitalLearningSolutions.Data.Services
 
             if (supervisorDelegateRecordIds.Any())
             {
-                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
-                    supervisorDelegateRecordIds,
-                    delegateRegistrationModel.Centre,
-                    candidateNumber
-                );
+                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre)!;
+                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(supervisorDelegateRecordIds, delegateUser.Id);
             }
 
             return candidateNumber;

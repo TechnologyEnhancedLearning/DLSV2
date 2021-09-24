@@ -12,11 +12,7 @@
 
         IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
 
-        void AddCandidateIdToSupervisorDelegateRecords(
-            IEnumerable<int> supervisorDelegateIds,
-            int centreId,
-            string candidateNumber
-        );
+        void AddCandidateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId);
 
         void ConfirmSupervisorDelegateRecord(int supervisorDelegateId);
     }
@@ -45,17 +41,9 @@
             return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(centreId, email);
         }
 
-        public void AddCandidateIdToSupervisorDelegateRecords(
-            IEnumerable<int> supervisorDelegateIds,
-            int centreId,
-            string candidateNumber
-        )
+        public void AddCandidateIdToSupervisorDelegateRecords(IEnumerable<int> supervisorDelegateIds, int delegateId)
         {
-            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
-            supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(
-                supervisorDelegateIds,
-                delegateUser.Id
-            );
+            supervisorDelegateDataService.UpdateSupervisorDelegateRecordsCandidateId(supervisorDelegateIds, delegateId);
         }
 
         public void ConfirmSupervisorDelegateRecord(int supervisorDelegateId)
