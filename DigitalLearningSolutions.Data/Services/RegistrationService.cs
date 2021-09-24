@@ -68,7 +68,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             var supervisorDelegateRecordIdsMatchingDelegate =
-                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel);
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
             var foundRecordForSupervisorDelegateId = supervisorDelegateId.HasValue &&
                                                      supervisorDelegateRecordIdsMatchingDelegate.Contains(
