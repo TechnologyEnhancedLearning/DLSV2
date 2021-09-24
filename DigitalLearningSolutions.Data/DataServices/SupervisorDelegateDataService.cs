@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Supervisor;
+    using Microsoft.Extensions.Logging;
 
     public interface ISupervisorDelegateDataService
     {
@@ -20,16 +21,20 @@
     public class SupervisorDelegateDataService : ISupervisorDelegateDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<SupervisorDelegateDataService> logger;
 
-        public SupervisorDelegateDataService(IDbConnection connection)
+        public SupervisorDelegateDataService(IDbConnection connection, ILogger<SupervisorDelegateDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash)
         {
-            return connection.QuerySingleOrDefault<SupervisorDelegate?>(
-                @"SELECT
+            try
+            {
+                return connection.QuerySingleOrDefault<SupervisorDelegate?>(
+                    @"SELECT
                         sd.ID,
                         sd.SupervisorAdminID,
                         sd.SupervisorEmail,
@@ -44,8 +49,14 @@
                     FROM SupervisorDelegates sd
                     INNER JOIN AdminUsers au ON sd.SupervisorAdminID = au.AdminID
                     WHERE sd.InviteHash = @inviteHash",
-                new { inviteHash }
-            );
+                    new { inviteHash }
+                );
+            }
+            catch (InvalidOperationException)
+            {
+                logger.LogError($"Multiple SupervisorDelegate records found with InviteHash {inviteHash}");
+                return null;
+            }
         }
 
         public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email)
