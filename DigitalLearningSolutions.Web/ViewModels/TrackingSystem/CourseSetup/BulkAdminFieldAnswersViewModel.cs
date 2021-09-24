@@ -17,6 +17,17 @@
             PromptNumber = promptNumber;
         }
 
+        public BulkAdminFieldAnswersViewModel(
+            string? optionsString,
+            bool isAddPromptJourney,
+            int customisationId
+        )
+        {
+            OptionsString = optionsString;
+            IsAddPromptJourney = isAddPromptJourney;
+            CustomisationId = customisationId;
+        }
+
         public string? OptionsString { get; set; }
 
         public bool IsAddPromptJourney { get; set; }

@@ -1,9 +1,17 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@model ApplicationType
+@{
   ViewData["Title"] = "Password Changed Successfully";
+  ViewData["Application"] = Model.HeaderExtension;
+  ViewData["HeaderPath"] = Model.HeaderPath;
+  ViewData["HeaderPathName"] = Model.HeaderPathName;
+  var routeParamsForIndexLink = new Dictionary<string, string?> {
+    { "application", Model.UrlSegment }
+  };
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <partial name="_AutoNavMenuItems" model="Model" />
 }
 
 <div class="nhsuk-grid-row">
@@ -11,6 +19,6 @@
     <h1 class="nhsuk-heading-xl">Change password</h1>
     <div class="nhsuk-body-m">Your password was successfully changed.</div>
 
-    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" />
+    <vc:action-link asp-controller="MyAccount" asp-action="Index" link-text="My Account" asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>

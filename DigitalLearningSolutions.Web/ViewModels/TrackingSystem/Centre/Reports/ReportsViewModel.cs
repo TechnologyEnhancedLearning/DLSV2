@@ -9,14 +9,21 @@
 
     public class ReportsViewModel
     {
-        public ReportsViewModel(IEnumerable<PeriodOfActivity> activity, ReportsFilterModel filterModel)
+        public ReportsViewModel(
+            IEnumerable<PeriodOfActivity> activity,
+            ReportsFilterModel filterModel,
+            IEnumerable<EvaluationResponseBreakdown> evaluationResponseBreakdowns
+        )
         {
             UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
             ReportsFilterModel = filterModel;
+            EvaluationSummaryBreakdown =
+                evaluationResponseBreakdowns.Select(model => new EvaluationSummaryViewModel(model));
         }
 
         public UsageStatsTableViewModel UsageStatsTableViewModel { get; set; }
         public ReportsFilterModel ReportsFilterModel { get; set; }
+        public IEnumerable<EvaluationSummaryViewModel> EvaluationSummaryBreakdown { get; set; }
     }
 
     public class UsageStatsTableViewModel
@@ -62,7 +69,7 @@
             CourseName = courseNameString;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             DateRange =
-                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate.ToString(DateHelper.StandardDateFormat)}";
+                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today"}";
             ShowCourseCategoryFilter = userManagingAllCourses;
         }
 

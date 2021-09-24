@@ -1,0 +1,81 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Configuration
+@model AddAdminFieldViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Add Course Admin Field";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(AddAdminFieldViewModel.AdminFieldId), nameof(AddAdminFieldViewModel.Answer) }" />
+    }
+    <h1 class="nhsuk-heading-xl">Add course admin field</h1>
+
+    <form method="post" novalidate asp-action="AddAdminField">
+      <vc:select-list asp-for="@nameof(Model.AdminFieldId)"
+                      label="Field name"
+                      value="@Model.AdminFieldId.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a field name"
+                      select-list-options="@ViewBag.AdminFieldNameOptions" />
+
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
+      </div>
+
+      <input type="hidden" asp-for="OptionsString" />
+
+      @if (string.IsNullOrEmpty(Model.OptionsString)) {
+        <partial name="_NoConfiguredAnswers" />
+      } else {
+        <partial name="_AdminFieldAnswerTable" model="Model" />
+      }
+
+      <div class="nhsuk-grid-row divider">
+        <div class="nhsuk-grid-column-one-half">
+          <vc:text-input asp-for="@nameof(Model.Answer)"
+                         label="Add a new answer?"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="true"
+                         autocomplete=""
+                         hint-text=""
+                         css-class="nhsuk-u-width-full nhsuk-u-font-weight-bold" />
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.AddPromptAction">Add</button>
+        </div>
+      </div>
+
+      <div class="nhsuk-grid-row divider">
+        <div class="nhsuk-grid-column-one-half">
+          <p class="nhsuk-label">Want to edit answers in bulk?</p>
+          <button name="action" class="nhsuk-button nhsuk-button--secondary" value="@AdminFieldsController.BulkAction">Bulk edit</button>
+        </div>
+      </div>
+
+      <div class="nhsuk-u-margin-bottom-3">
+        <button name="action" class="nhsuk-button" value="@AdminFieldsController.SaveAction">Save</button>
+      </div>
+    </form>
+
+    <vc:cancel-link asp-controller="AdminFields" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+  </div>
+</div>

@@ -23,7 +23,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
-        bool UpdateCourseOptions(CourseDetails courseDetails);
+        bool UpdateCourseOptions(CourseDetails courseDetails)
+        IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -310,7 +311,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
-                @"SELECT cu.CustomisationName, ap.ApplicationName
+                @"SELECT cu.CustomisationId, cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
                         JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
                         WHERE cu.CustomisationId = @customisationId",
@@ -326,22 +327,23 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        // Admins have a non-nullable category ID where 0 = all. This is why we have the
-        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
-        public IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId)
+        public IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
                 @"SELECT
                         c.CustomisationID,
                         c.CentreID,
                         c.ApplicationID,
-                        a.ApplicationName,
+                        ap.ApplicationName,
                         c.CustomisationName,
                         c.Active
                     FROM Customisations AS c
-                    JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                    WHERE (CentreID = @centreId OR CentreID = 0)
-	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    WHERE (c.CentreID = @centreId OR (c.AllCentres = 1 AND ca.Active = 1))
+	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    AND ca.CentreID = @centreId
+                    AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
         }

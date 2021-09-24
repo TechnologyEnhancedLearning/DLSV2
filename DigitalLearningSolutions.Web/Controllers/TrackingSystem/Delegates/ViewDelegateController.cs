@@ -10,7 +10,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("TrackingSystem/Delegates/View/{delegateId:int}")]
+    [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
@@ -67,6 +67,22 @@
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
             return View("WelcomeEmailSent", model);
+        }
+
+        [HttpPost]
+        [Route("DeactivateDelegate")]
+        public IActionResult DeactivateDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            userDataService.DeactivateDelegateUser(delegateId);
+
+            return RedirectToAction("Index", new { delegateId } );
         }
     }
 }

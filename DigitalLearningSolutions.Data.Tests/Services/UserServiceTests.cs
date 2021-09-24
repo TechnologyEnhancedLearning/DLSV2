@@ -4,6 +4,8 @@
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -14,16 +16,25 @@
 
     public class UserServiceTests
     {
-        private IUserVerificationService userVerificationService = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private IGroupsService groupsService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IUserVerificationService userVerificationService = null!;
 
         [SetUp]
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
+            groupsService = A.Fake<IGroupsService>();
             userVerificationService = A.Fake<IUserVerificationService>();
-            userService = new UserService(userDataService, userVerificationService);
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            userService = new UserService(
+                userDataService,
+                groupsService,
+                userVerificationService,
+                centreContractAdminUsageService
+            );
         }
 
         [Test]
@@ -225,6 +236,13 @@
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -236,6 +254,13 @@
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
                 .MustHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    delegateUser,
+                    accountDetailsData,
+                    centreAnswersData
+                )
+            ).MustHaveHappened();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
         }
 
@@ -267,6 +292,13 @@
                 .DoesNothing();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -278,6 +310,13 @@
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
                 .MustHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    delegateUser,
+                    accountDetailsData,
+                    centreAnswersData
+                )
+            ).MustHaveHappened();
         }
 
         [Test]
@@ -302,6 +341,13 @@
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -324,6 +370,13 @@
                     )
                 )
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -560,6 +613,143 @@
             result.Should().HaveCount(2);
             result[0].AliasId.Should().Be("include");
             result[1].AliasId.Should().Be("include");
+        }
+
+        [Test]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_available()
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+            var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void UpdateAdminUserPermissions_edits_roles_when_spaces_unavailable_but_user_already_on_role(
+            bool importOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: true,
+                isTrainer: true,
+                importOnly: importOnly,
+                isContentManager: true
+            );
+
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, true, true, true, importOnly);
+
+            // When
+            userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
+
+            // Then
+            AssertAdminPermissionsCalledCorrectly(currentAdminUser.Id, adminRoles, 0);
+        }
+
+        [Test]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        [TestCase(false, false, true)]
+        public void UpdateAdminUserPermissions_throws_exception_when_spaces_unavailable_and_user_not_on_role(
+            bool newIsTrainer,
+            bool newIsContentCreator,
+            bool newImportOnly
+        )
+        {
+            // Given
+            var currentAdminUser = UserTestHelper.GetDefaultAdminUser(
+                isContentCreator: false,
+                isTrainer: false,
+                importOnly: false,
+                isContentManager: false
+            );
+            var numberOfAdmins = GetFullCentreContractAdminUsage();
+            GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
+            var adminRoles = new AdminRoles(true, true, newIsContentCreator, newIsTrainer, true, newImportOnly);
+
+            // Then
+            Assert.Throws<AdminRoleFullException>(
+                () => userService.UpdateAdminUserPermissions(
+                    currentAdminUser.Id,
+                    adminRoles,
+                    0
+                )
+            );
+            AssertAdminPermissionUpdateMustNotHaveHappened();
+        }
+
+        private void AssertAdminPermissionsCalledCorrectly(
+            int adminId,
+            AdminRoles adminRoles,
+            int categoryId
+        )
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    adminId,
+                    adminRoles.IsCentreAdmin,
+                    adminRoles.IsSupervisor,
+                    adminRoles.IsTrainer,
+                    adminRoles.IsContentCreator,
+                    adminRoles.IsContentManager,
+                    adminRoles.ImportOnly,
+                    categoryId
+                )
+            ).MustHaveHappened();
+        }
+
+        private void AssertAdminPermissionUpdateMustNotHaveHappened()
+        {
+            A.CallTo(
+                () => userDataService.UpdateAdminUserPermissions(
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        private void GivenAdminDataReturned(CentreContractAdminUsage numberOfAdmins, AdminUser adminUser)
+        {
+            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(adminUser);
+            A.CallTo(() => centreContractAdminUsageService.GetCentreAdministratorNumbers(A<int>._))
+                .Returns(numberOfAdmins);
+        }
+
+        private CentreContractAdminUsage GetFullCentreContractAdminUsage()
+        {
+            return CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(
+                trainerSpots: 3,
+                trainers: 3,
+                ccLicenceSpots: 4,
+                ccLicences: 4,
+                cmsAdministrators: 5,
+                cmsAdministratorSpots: 5,
+                cmsManagerSpots: 6,
+                cmsManagers: 6
+            );
         }
     }
 }

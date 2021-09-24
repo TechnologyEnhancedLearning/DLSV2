@@ -1,0 +1,68 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model ManageOptionalCompetenciesViewModel
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+}
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
+}
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+<h1>Choose optional @Model.VocabPlural()</h1>
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedSelfAssessmentStructureIds) })" />
+}
+<h2><small>Which optional @Model.VocabPlural() would you like to include in your self-assessment?</small></h2>
+@if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
+{
+<div class="nhsuk-body-l">
+  @Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)
+</div>
+}
+<form method="post">
+  <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+      <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+          <span class="nhsuk-fieldset__heading">
+            @competencyGroup.Key
+          </span>
+        </legend>
+        <div class="nhsuk-checkboxes">
+          @foreach (var competency in competencyGroup)
+          {
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="competency-check-@competency.Id" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
+                @competency.Name
+              </label>
+              @if (competency.Description != null)
+              {
+                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="competency-check-@competency.Id-hint">
+                  @Html.Raw(competency.Description)
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </fieldset>
+    }
+  </nhs-form-group>
+  <button class="nhsuk-button" type="submit">Submit</button>
+</form>
+
+<div class="nhsuk-back-link">
+  <a class="nhsuk-back-link__link"
+     asp-action="SelfAssessmentOverview"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>
