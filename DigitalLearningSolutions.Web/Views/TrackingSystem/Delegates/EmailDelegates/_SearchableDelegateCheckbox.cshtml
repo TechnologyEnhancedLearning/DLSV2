@@ -8,7 +8,7 @@
          name="SelectedDelegateIds"
          value="@Model.Id"
          @(Model.IsDelegateSelected ? "checked" : string.Empty) />
-  <label class="nhsuk-label nhsuk-checkboxes__label searchable-element-title delegate-label" for="@Model.Id-checkbox">
+  <label class="nhsuk-label nhsuk-checkboxes__label searchable-element-title word-break" for="@Model.Id-checkbox">
     @Model.Name (@Model.Email)
   </label>
   <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-hint">

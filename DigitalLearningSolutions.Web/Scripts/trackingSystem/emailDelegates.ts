@@ -19,7 +19,6 @@ function selectAll(): void {
   allCheckboxes.forEach((checkbox) => {
     if (!checkbox.checked) checkbox.click();
   });
-  alertResultCount();
 }
 
 function deselectAll(): void {
@@ -27,7 +26,6 @@ function deselectAll(): void {
   allCheckboxes.forEach((checkbox) => {
     if (checkbox.checked) checkbox.click();
   });
-  alertResultCount();
 }
 
 const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
@@ -35,5 +33,11 @@ const selectAllButton = document.getElementById('select-all-button') as HTMLButt
 const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
 
 selectAllForm.addEventListener('submit', (e) => e.preventDefault());
-selectAllButton.addEventListener('click', selectAll);
-deselectAllButton.addEventListener('click', deselectAll);
+selectAllButton.addEventListener('click', () => {
+  selectAll();
+  alertResultCount();
+});
+deselectAllButton.addEventListener('click', () => {
+  deselectAll();
+  alertResultCount();
+});
