@@ -8,7 +8,7 @@
 
     public interface ISupervisorDelegateService
     {
-        SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(int centreId, Guid inviteHash);
+        SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
         IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
 
@@ -35,10 +35,9 @@
             this.userDataService = userDataService;
         }
 
-        public SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(int centreId, Guid inviteHash)
+        public SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash)
         {
-            var record = supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
-            return record?.CentreId == centreId ? record : null;
+            return supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
         }
 
         public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)

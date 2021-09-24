@@ -31,30 +31,15 @@
         public void GetSupervisorDelegateRecordByInviteHash_returns_matching_record()
         {
             // Given
-            var record = new SupervisorDelegate { ID = RecordId, CentreId = CentreId };
+            var record = new SupervisorDelegate { ID = RecordId };
             A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
                 .Returns(record);
 
             // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(CentreId, inviteHash);
+            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
 
             // Then
             result.Should().Be(record);
-        }
-
-        [Test]
-        public void GetSupervisorDelegateRecordByInviteHash_returns_null_if_matching_record_is_wrong_centre()
-        {
-            // Given
-            var record = new SupervisorDelegate { ID = RecordId, CentreId = 4 };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
-                .Returns(record);
-
-            // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(CentreId, inviteHash);
-
-            // Then
-            result.Should().Be(null);
         }
 
         [Test]

@@ -62,8 +62,13 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
             
             var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) && Guid.TryParse(inviteId, out var inviteHash)
-                ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(centreId.Value, inviteHash)
+                ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
                 : null;
+
+            if (supervisorDelegateRecord?.CentreId != centreId)
+            {
+                supervisorDelegateRecord = null;
+            }
 
             SetDelegateRegistrationData(
                 centreId,
