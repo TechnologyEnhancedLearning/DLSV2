@@ -24,7 +24,9 @@
         public IActionResult Index(int? customisationId = null)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!.Value;
+            int? categoryId = User.GetAdminCategoryId()!.Value;
+            // admins have a non-nullable category ID where 0 = all categories
+            categoryId = categoryId == 0 ? null : categoryId;
             var courseDelegatesData =
                 courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
 

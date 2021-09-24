@@ -11,7 +11,9 @@
             int? month,
             int? year,
             string name = "Date",
-            bool required = false
+            bool required = false,
+            bool validateNonPast = true,
+            bool validateNonFuture = false
         )
         {
             if (!day.HasValue && !month.HasValue && !year.HasValue)
@@ -21,14 +23,14 @@
 
             if (day.HasValue && month.HasValue && year.HasValue)
             {
-                return ValidateDate(day.Value, month.Value, year.Value, name);
+                return ValidateDate(day.Value, month.Value, year.Value, name, validateNonPast, validateNonFuture);
             }
 
             var errorMessage = GetMissingValuesErrorMessage(day, month, year, name);
             return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
-        private static DateValidationResult ValidateDate(int day, int month, int year, string name)
+        private static DateValidationResult ValidateDate(int day, int month, int year, string name, bool dateMustNotBeInPast, bool dateMustNotBeInFuture)
         {
             // note: the minimum year the DB can store is 1753
             var invalidDay = day < 1 || day > 31;
@@ -44,9 +46,14 @@
             try
             {
                 var date = new DateTime(year, month, day);
-                if (date < DateTime.Today)
+                if (dateMustNotBeInPast && date < DateTime.Today)
                 {
                     return new DateValidationResult(name + " must not be in the past");
+                }
+
+                if (dateMustNotBeInFuture && date > DateTime.Today)
+                {
+                    return new DateValidationResult(name + " must not be in the future");
                 }
             }
             catch (ArgumentOutOfRangeException)
