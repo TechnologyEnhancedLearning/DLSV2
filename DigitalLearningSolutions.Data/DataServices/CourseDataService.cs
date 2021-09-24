@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
-        bool UpdateCourseOptions(CourseDetails courseDetails)
+        bool UpdateCourseOptions(CourseDetails courseDetails);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
     }
 
