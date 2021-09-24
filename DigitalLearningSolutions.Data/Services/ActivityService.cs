@@ -144,16 +144,14 @@
                 return null;
             }
 
-            var validEndDateIsSet = DateTime.TryParse(endDateString, out var endDate);
-            // DateTime.TryParse outputs DateTime.MinValue for invalid or empty strings
-            var nullableEndDate = endDate > DateTime.MinValue ? (DateTime?)endDate : null;
+            var endDateIsSet = DateTime.TryParse(endDateString, out var endDate);
 
-            if (validEndDateIsSet && (nullableEndDate < startDate || nullableEndDate > DateTime.Now))
+            if (endDateIsSet && (endDate < startDate || endDate > DateTime.Now))
             {
                 return null;
             }
 
-            return (startDate, nullableEndDate);
+            return (startDate, endDateIsSet ? endDate : (DateTime?)null);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
