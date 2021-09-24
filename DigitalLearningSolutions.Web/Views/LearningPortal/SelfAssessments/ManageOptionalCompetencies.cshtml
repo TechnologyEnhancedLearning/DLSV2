@@ -8,7 +8,7 @@
 }
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
-  <li class="nhsuk-breadcrumb__item">Request verification</li>
+  <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>Choose optional @Model.VocabPlural()</h1>
@@ -16,7 +16,7 @@
 {
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedSelfAssessmentStructureIds) })" />
 }
-<h2><small>Which optional competencies would you like to include in your self-assessment?</small></h2>
+<h2><small>Which optional @Model.VocabPlural() would you like to include in your self-assessment?</small></h2>
 @if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
 {
 <div class="nhsuk-body-l">
@@ -47,7 +47,6 @@
                   @Html.Raw(competency.Description)
                 </div>
               }
-
             </div>
           }
         </div>
