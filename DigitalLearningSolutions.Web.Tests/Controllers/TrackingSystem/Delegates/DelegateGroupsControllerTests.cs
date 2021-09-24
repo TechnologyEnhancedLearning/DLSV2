@@ -313,5 +313,39 @@
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }
+
+        [Test]
+        public void EditGroupDelegates_should_return_not_found_with_invalid_group_for_centre()
+        {
+            // Given
+            var model = new EditDelegateGroupDescriptionViewModel();
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(A<int>._, A<int>._, A<string>._))
+                .Returns(false);
+
+            // When
+            var result = delegateGroupsController.EditDelegateGroupDescription(model, 6);
+
+            // Them
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(A<int>._, A<int>._, A<string>._))
+                .MustHaveHappened();
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void EditGroupDelegates_should_redirect_to__index_action()
+        {
+            // Given
+            var model = new EditDelegateGroupDescriptionViewModel();
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(A<int>._, A<int>._, A<string>._))
+                .Returns(true);
+
+            // When
+            var result = delegateGroupsController.EditDelegateGroupDescription(model, 6);
+
+            // Them
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(A<int>._, A<int>._, A<string>._))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
     }
 }
