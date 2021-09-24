@@ -333,7 +333,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [Test]
         public void GetCourseNameAndApplication_returns_null_for_nonexistent_course()
         {
-
             // When
             var result = courseDataService.GetCourseNameAndApplication(-1);
 
@@ -342,28 +341,28 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCoursesAtCentreForAdminCategoryId_returns_expected_values()
+        public void GetCentrallyManagedAndCentreCourses_returns_expected_values()
         {
             // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
+
+            // Then
             var expectedFirstCourse = new Course
             {
-                CustomisationId = 1,
-                CentreId = 2,
+                CustomisationId = 100,
+                CentreId = 101,
                 ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
                 Active = false
             };
 
-            // When
-            var result = courseDataService.GetCoursesAtCentreForAdminCategoryId(2, 0).ToList();
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.Should().HaveCount(69);
-                result.First(c => c.CustomisationId == 1).Should().BeEquivalentTo(expectedFirstCourse);
-            }
+            result.Should().HaveCount(260);
+            result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
     }
 }

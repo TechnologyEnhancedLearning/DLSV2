@@ -6,20 +6,27 @@
   @if (Model.FilterEnabled) {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
   }
-  <div class="nhsuk-grid-column-full nhsuk-form-group">
-    <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
-    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown" id="select-sort-by" asp-for="SortBy" asp-items="Model.SortBySelectListItems" aria-label="Sort by"></select>
-    <div class="sort-direction-dropdown-container">
-      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown" id="select-sort-direction" asp-for="SortDirection" aria-label="Sort direction">
+  <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>
+  <div class="sort-box-container">
+    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown"
+            id="select-sort-by"
+            asp-for="SortBy"
+            asp-items="Model.SortBySelectListItems"
+            aria-label="Sort by">
+    </select>
+
+    <div class="sort-order-button-container">
+      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-direction-dropdown"
+              id="select-sort-direction"
+              asp-for="SortDirection"
+              aria-label="Sort direction">
         <option value="Ascending">Ascending</option>
         <option value="Descending">Descending</option>
       </select>
 
-      <div class="non-js-only">
-        <button class="nhsuk-search__submit sort-submit" type="submit">
-          Sort
-        </button>
-      </div>
+      <button class="non-js-only nhsuk-search__submit sort-submit" type="submit">
+        Sort
+      </button>
     </div>
   </div>
 </form>

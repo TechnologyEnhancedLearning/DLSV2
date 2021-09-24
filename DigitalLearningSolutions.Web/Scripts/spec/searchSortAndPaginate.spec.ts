@@ -137,28 +137,6 @@ describe('updateResultCount', () => {
   });
 });
 
-describe('hideResultCount', () => {
-  it('should make the result count invisible', () => {
-    // Given
-    global.document = new JSDOM(`
-      <html>
-      <head></head>
-      <body>
-        <span aria-hidden="false" aria-live="polite" id="results-count">0 matching results</span>
-      </body>
-      </html>
-    `).window.document;
-
-    // When
-    SearchSortFilterAndPaginate.hideResultCount();
-
-    // Then
-    const resultCountElements = document.getElementById('results-count');
-    expect(resultCountElements?.hidden).toBeTruthy();
-    expect(resultCountElements?.getAttribute('aria-hidden')).toBe('true');
-  });
-});
-
 function createCourseCards() {
   global.document = new JSDOM(`
       <html>

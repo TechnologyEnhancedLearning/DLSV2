@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -44,17 +45,21 @@
         };
 
         private AdministratorController administratorController = null!;
+        private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserDataService userDataService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
             userDataService = A.Fake<IUserDataService>();
+            centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            userService = A.Fake<IUserService>();
 
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -65,7 +70,12 @@
             const string cookieName = "AdminFilter";
             const string cookieValue = "Role|IsCentreAdmin|true";
 
-            administratorController = new AdministratorController(userDataService, courseCategoriesDataService)
+            administratorController = new AdministratorController(
+                    userDataService,
+                    courseCategoriesDataService,
+                    centreContractAdminUsageService,
+                    userService
+                )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()

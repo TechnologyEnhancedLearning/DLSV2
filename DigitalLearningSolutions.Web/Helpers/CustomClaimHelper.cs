@@ -80,6 +80,11 @@
                    && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false);
         }
 
+        public static bool HasLearningPortalPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
+        }
+
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||

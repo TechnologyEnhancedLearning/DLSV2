@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Common;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -18,17 +18,22 @@
     public class AdministratorController : Controller
     {
         private const string AdminFilterCookieName = "AdminFilter";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
+        private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly IUserDataService userDataService;
+        private readonly IUserService userService;
 
         public AdministratorController(
             IUserDataService userDataService,
-            ICourseCategoriesDataService courseCategoriesDataService
+            ICourseCategoriesDataService courseCategoriesDataService,
+            ICentreContractAdminUsageService centreContractAdminUsageService,
+            IUserService userService
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
+            this.centreContractAdminUsageService = centreContractAdminUsageService;
+            this.userService = userService;
         }
 
         [Route("{page=1:int}")]
@@ -82,17 +87,19 @@
         [HttpGet]
         public IActionResult EditAdminRoles(int adminId)
         {
+            var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
-            if (adminUser == null)
+
+            if (adminUser == null || adminUser.CentreId != centreId)
             {
                 return NotFound();
             }
 
-            var centreId = User.GetCentreId();
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
+            var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser, centreId, categories);
+            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins);
             return View(model);
         }
 
@@ -100,14 +107,17 @@
         [HttpPost]
         public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
         {
-            userDataService.UpdateAdminUserPermissions(
+            var centreId = User.GetCentreId();
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (adminUser == null || adminUser.CentreId != centreId)
+            {
+                return NotFound();
+            }
+
+            userService.UpdateAdminUserPermissions(
                 adminId,
-                model.IsCentreAdmin,
-                model.IsSupervisor,
-                model.IsTrainer,
-                model.IsContentCreator,
-                model.ContentManagementRole.IsContentManager,
-                model.ContentManagementRole.ImportOnly,
+                model.GetAdminRoles(),
                 model.LearningCategory
             );
 

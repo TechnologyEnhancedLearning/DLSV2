@@ -9,7 +9,7 @@
     {
         CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
-            int categoryId,
+            int? categoryId,
             int? customisationId
         );
     }
@@ -30,11 +30,11 @@
 
         public CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
-            int categoryId,
+            int? categoryId,
             int? customisationId
         )
         {
-            var courses = courseDataService.GetCoursesAtCentreForAdminCategoryId(centreId, categoryId).ToList();
+            var courses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
             var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);
             var inactiveCoursesAlphabetical =
                 courses.Where(c => !c.Active).OrderBy(c => c.CourseName);

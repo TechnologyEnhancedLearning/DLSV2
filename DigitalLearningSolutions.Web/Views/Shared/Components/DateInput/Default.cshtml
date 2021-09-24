@@ -20,9 +20,11 @@
     }
 
     @if (Model.HasError) {
-      <span class="error-message--margin-bottom-1 nhsuk-error-message">
-        <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-      </span>
+      @foreach (var message in Model.ErrorMessages) {
+        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+          <span class="nhsuk-u-visually-hidden">Error:</span> @message
+        </span>
+      }
     }
 
     <div class="nhsuk-date-input">
