@@ -1,4 +1,4 @@
-﻿import { selectAll, deselectAll } from '../common';
+import { selectAll, deselectAll } from '../common';
 
 function setUpSelectAllButtons() {
   const submits = Array.from(
