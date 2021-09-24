@@ -69,6 +69,7 @@
         int UpdateDelegateRecord(DelegateRecord record);
         DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
+        void DeactivateDelegateUser(int delegateId);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);

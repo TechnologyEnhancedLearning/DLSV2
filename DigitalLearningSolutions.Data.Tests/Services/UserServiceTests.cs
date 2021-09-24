@@ -17,6 +17,7 @@
     public class UserServiceTests
     {
         private ICentreContractAdminUsageService centreContractAdminUsageService = null!;
+        private IGroupsService groupsService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
@@ -25,9 +26,15 @@
         public void Setup()
         {
             userDataService = A.Fake<IUserDataService>();
+            groupsService = A.Fake<IGroupsService>();
             userVerificationService = A.Fake<IUserVerificationService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
-            userService = new UserService(userDataService, userVerificationService, centreContractAdminUsageService);
+            userService = new UserService(
+                userDataService,
+                groupsService,
+                userVerificationService,
+                centreContractAdminUsageService
+            );
         }
 
         [Test]
@@ -229,6 +236,13 @@
                 .Returns(new UserAccountSet(null, new List<DelegateUser> { delegateUser }));
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
                 .DoesNothing();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -240,6 +254,13 @@
                 .MustNotHaveHappened();
             A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
                 .MustHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    delegateUser,
+                    accountDetailsData,
+                    centreAnswersData
+                )
+            ).MustHaveHappened();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
         }
 
@@ -271,6 +292,13 @@
                 .DoesNothing();
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
                 .DoesNothing();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -282,6 +310,13 @@
                 .MustHaveHappened();
             A.CallTo(() => userDataService.UpdateDelegateUserCentrePrompts(2, 1, null, null, null, null, null, null))
                 .MustHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    delegateUser,
+                    accountDetailsData,
+                    centreAnswersData
+                )
+            ).MustHaveHappened();
         }
 
         [Test]
@@ -306,6 +341,13 @@
                 .Returns(new List<DelegateUser>());
             A.CallTo(() => userVerificationService.VerifyUsers(password, A<AdminUser?>._, A<List<DelegateUser>>._))
                 .Returns(new UserAccountSet());
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).DoesNothing();
 
             // When
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
@@ -328,6 +370,13 @@
                     )
                 )
                 .MustNotHaveHappened();
+            A.CallTo(
+                () => groupsService.SynchroniseUserChangesWithGroups(
+                    A<DelegateUser>._,
+                    A<AccountDetailsData>._,
+                    A<CentreAnswersData>._
+                )
+            ).MustNotHaveHappened();
         }
 
         [Test]

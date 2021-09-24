@@ -80,6 +80,31 @@
         }
 
         [Test]
+        public void
+            AttemptLogin_does_not_throw_LoginWithMultipleEmailsException_when_emails_match_except_case_and_successfully_logs_in()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: "EMAIL@test.com");
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: "email@test.com");
+            var delegateUsers = new List<DelegateUser> { delegateUser };
+            GivenAdminUserAndDelegateUserAreVerified(adminUser, delegateUser);
+            GivenResetFailedLoginCountDoesNothing(adminUser);
+            GivenNoLinkedAccountsFound();
+            GivenSingleActiveCentreIsFound(adminUser, delegateUsers);
+
+            // When
+            var result = loginService.AttemptLogin(Username, Password);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.LoginAttemptResult.Should().Be(LoginAttemptResult.LogIntoSingleCentre);
+                result.Accounts.AdminAccount.Should().Be(adminUser);
+                result.Accounts.DelegateAccounts.Should().BeEquivalentTo(delegateUsers);
+            }
+        }
+
+        [Test]
         public void AttemptLogin_returns_invalid_password_with_no_verified_delegate_accounts_and_no_admin_account()
         {
             // Given
@@ -473,21 +498,21 @@
         private void GivenNoLinkedDelegateAccountsFound()
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
             ).Returns(new List<DelegateUser>());
         }
 
         private void GivenLinkedDelegateAccountsFound(List<DelegateUser> delegateUsers)
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
+                () => userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(A<AdminUser?>._, Password)
             ).Returns(delegateUsers);
         }
 
         private void GivenNoLinkedAdminUserIsFound()
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                () => userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                     A<List<DelegateUser>>._,
                     Password
                 )
@@ -497,7 +522,7 @@
         private void GivenLinkedAdminUserIsFound(AdminUser? linkedAdminUser)
         {
             A.CallTo(
-                () => userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+                () => userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                     A<List<DelegateUser>>._,
                     Password
                 )

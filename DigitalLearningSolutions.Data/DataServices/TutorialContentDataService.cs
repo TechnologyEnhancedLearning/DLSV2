@@ -19,6 +19,7 @@
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+        IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
         void UpdateTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
     }
 
@@ -298,6 +299,19 @@
                     WHERE SectionID = @sectionId
                     AND ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<int> GetTutorialIdsForCourse(int customisationId)
+        {
+            return connection.Query<int>(
+                @"SELECT t.TutorialID
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS a ON c.ApplicationID = a.ApplicationID
+                    INNER JOIN Sections AS s ON a.ApplicationID = s.ApplicationID
+                    INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
+                    WHERE (c.CustomisationID = @customisationId)  ",
+                new { customisationId }
             );
         }
 

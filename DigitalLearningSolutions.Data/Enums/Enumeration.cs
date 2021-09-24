@@ -61,7 +61,7 @@ namespace DigitalLearningSolutions.Data.Enums
                    TryParse(item => item.Id == id, out enumeration);
         }
 
-        private static bool TryParse<TEnumeration>(
+        protected static bool TryParse<TEnumeration>(
             Func<TEnumeration, bool> predicate,
             out TEnumeration? enumeration)
             where TEnumeration : Enumeration

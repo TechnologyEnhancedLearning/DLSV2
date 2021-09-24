@@ -165,6 +165,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
+            const int competencyGroupId = 1;
             const int assessmentQuestionId = 2;
             const int assessmentQuestionResult = 4;
             const int minValue = 0;
@@ -184,7 +185,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SelfAssessmentCompetency(SelfAssessmentId, assessmentQuestions, competencyNumber, competencyId);
+            controller.SelfAssessmentCompetency(SelfAssessmentId, assessmentQuestions, competencyNumber, competencyId, competencyGroupId);
 
             // Then
             A.CallTo(() => selfAssessmentService.SetResultForCompetency(
@@ -204,6 +205,7 @@
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             const int competencyNumber = 1;
             const int competencyId = 3;
+            const int competencyGroupId = 1;
             const int assessmentQuestionId = 2;
             const int assessmentQuestionResult = 4;
             var assessmentQuestions = new Collection<AssessmentQuestion>()
@@ -217,7 +219,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            var result = controller.SelfAssessmentCompetency(SelfAssessmentId, assessmentQuestions, competencyNumber, competencyId);
+            var result = controller.SelfAssessmentCompetency(SelfAssessmentId, assessmentQuestions, competencyNumber, competencyId, competencyGroupId);
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -232,7 +234,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SelfAssessmentCompetency(1, null, 1, 1);
+            var result = controller.SelfAssessmentCompetency(1, null, 1, 1, 1);
 
             // Then
             result.Should()

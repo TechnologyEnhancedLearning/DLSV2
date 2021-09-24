@@ -79,7 +79,7 @@
 
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{competencyNumber:int}")]
-        public IActionResult SelfAssessmentCompetency(int selfAssessmentId, ICollection<AssessmentQuestion> assessmentQuestions, int competencyNumber, int competencyId)
+        public IActionResult SelfAssessmentCompetency(int selfAssessmentId, ICollection<AssessmentQuestion> assessmentQuestions, int competencyNumber, int competencyId, int? competencyGroupId)
         {
             var candidateID = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateID, selfAssessmentId);
@@ -110,12 +110,12 @@
             }
             else
             {
-                return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId }) + "#comp-" + competencyNumber.ToString());
+                return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, competencyGroupId = competencyGroupId }) + "#comp-" + competencyNumber.ToString());
             }
         }
-
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview")]
-        public IActionResult SelfAssessmentOverview(int selfAssessmentId)
+        public IActionResult SelfAssessmentOverview(int selfAssessmentId, int? competencyGroupId = null)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Overview";
@@ -567,8 +567,7 @@
             var includedSelfAssessmentStructureIds = selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(selfAssessmentId, candidateId);
             var model = new ManageOptionalCompetenciesViewModel()
             {
-                SelfAssessmentId = selfAssessmentId,
-                SelfAssessmentName = assessment.Name,
+               SelfAssessment = assessment,
                 Vocabulary = vocabulary,
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds
