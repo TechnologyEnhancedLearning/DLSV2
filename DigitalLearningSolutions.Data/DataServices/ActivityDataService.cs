@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Collections.Generic;
@@ -11,11 +11,13 @@
         IEnumerable<ActivityLog> GetFilteredActivity(
             int centreId,
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId
         );
+
+        DateTime GetStartOfActivityForCentre(int centreId);
     }
 
     public class ActivityDataService : IActivityDataService
@@ -30,7 +32,7 @@
         public IEnumerable<ActivityLog> GetFilteredActivity(
             int centreId,
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId
@@ -47,7 +49,7 @@
                         Evaluated
                     FROM tActivityLog
                         WHERE (LogDate >= @startDate
-                            AND LogDate <= @endDate
+                            AND (@endDate IS NULL OR LogDate <= @endDate)
                             AND CentreID = @centreId
                             AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
                             AND (@customisationId IS NULL OR CustomisationID = @customisationId)
@@ -62,6 +64,16 @@
                     customisationId,
                     courseCategoryId
                 }
+            );
+        }
+
+        public DateTime GetStartOfActivityForCentre(int centreId)
+        {
+            return connection.QuerySingleOrDefault<DateTime>(
+                @"SELECT MIN(LogDate)
+                    FROM tActivityLog
+                    WHERE CentreID = @centreId",
+                new { centreId }
             );
         }
     }

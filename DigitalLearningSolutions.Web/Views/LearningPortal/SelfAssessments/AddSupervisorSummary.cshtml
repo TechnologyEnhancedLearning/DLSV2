@@ -16,10 +16,10 @@
 <dl class="nhsuk-summary-list">
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    Email
+    Supervisor
   </dt>
   <dd class="nhsuk-summary-list__value">
-    @Model.SupervisorEmail
+    @Model.Supervisor.Forename @Model.Supervisor.Surname (@Model.Supervisor.Email) 
   </dd>
   <dd class="nhsuk-summary-list__actions">
     <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">

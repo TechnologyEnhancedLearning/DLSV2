@@ -44,6 +44,7 @@
                 null,
                 null,
                 null,
+                CourseFilterType.None,
                 ReportInterval.Years
             );
 
@@ -52,6 +53,82 @@
 
             // then
             model.DateRange.Should().Be("01/01/2001 - 02/02/2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_day_interval_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Days),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(dailyData);
+
+            // then
+            model.Rows.First().Period.Should().Be("2/02/2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_week_interval_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Weeks),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(dailyData);
+
+            // then
+            model.Rows.First().Period.Should().Be("Week commencing 2/02/2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_quarter_interval_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Quarters),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(dailyData);
+
+            // then
+            model.Rows.First().Period.Should().Be("Quarter 1, 2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_year_interval_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Years),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(dailyData);
+
+            // then
+            model.Rows.First().Period.Should().Be("2002");
         }
     }
 }

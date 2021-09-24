@@ -15,9 +15,11 @@
             int sectionId,
             int tutorialId
         );
+
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+        IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -49,7 +51,6 @@
                 // section (if there is an viewable tutorial, or a post learning assessment, or consolidation material),
                 // and if there are other sections (valid tutorials with a different tutorial ID, or with assessments or
                 // consolidation material. See the SectionContentDataService for the definition of a valid section.
-
                 @"  WITH OtherTutorials AS (
                   SELECT Tutorials.TutorialID,
                          Tutorials.OrderByNumber,
@@ -204,7 +205,8 @@
                      AND CustomisationTutorials.Status = 1
                      AND Sections.ArchivedDate IS NULL
                      AND Tutorials.ArchivedDate IS NULL;",
-            new { candidateId, customisationId, sectionId, tutorialId });
+                new { candidateId, customisationId, sectionId, tutorialId }
+            );
         }
 
         public TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId)
@@ -235,7 +237,8 @@
                          AND CustomisationTutorials.Status = 1
                          AND Sections.ArchivedDate IS NULL
                          AND Tutorials.ArchivedDate IS NULL;",
-                new { customisationId, sectionId, tutorialId });
+                new { customisationId, sectionId, tutorialId }
+            );
         }
 
         public TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId)
@@ -267,7 +270,8 @@
                          AND Sections.ArchivedDate IS NULL
                          AND CustomisationTutorials.Status = 1
                          AND Tutorials.ArchivedDate IS NULL;",
-                    new { customisationId, sectionId, tutorialId });
+                    new { customisationId, sectionId, tutorialId }
+                );
             }
             catch (DataException e)
             {
@@ -275,7 +279,8 @@
                 {
                     return null;
                 }
-                else throw;
+
+                throw;
             }
         }
 
@@ -293,6 +298,19 @@
                     WHERE SectionID = @sectionId
                     AND ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<int> GetTutorialIdsForCourse(int customisationId)
+        {
+            return connection.Query<int>(
+                @"SELECT t.TutorialID
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS a ON c.ApplicationID = a.ApplicationID
+                    INNER JOIN Sections AS s ON a.ApplicationID = s.ApplicationID
+                    INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
+                    WHERE (c.CustomisationID = @customisationId)  ",
+                new { customisationId }
             );
         }
     }

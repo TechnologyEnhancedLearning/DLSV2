@@ -39,7 +39,13 @@
       }
 
       @if (canAddNewField) {
-        <a class="nhsuk-button" role="button" href="#">Add admin field</a>
+        <a class="nhsuk-button"
+           role="button"
+           asp-controller="AdminFields"
+           asp-action="AddAdminFieldNew"
+           asp-route-customisationId="@Model.CustomisationId">
+          Add admin field
+        </a>
       }
     </div>
 

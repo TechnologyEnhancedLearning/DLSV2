@@ -29,7 +29,6 @@
     </legend>
     <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
     <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
-    <input type="hidden" asp-for="SupervisorEmail" value="@Model.SupervisorEmail" />
     <div class="nhsuk-radios">
       @foreach (var role in Model.SelfAssessmentSupervisorRoles)
       {
@@ -51,7 +50,7 @@
   </fieldset>
 </nhs-form-group>
   <div class=" nhsuk-u-margin-top-5">
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-supervisorEmail="@Model.SupervisorEmail">
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
       Back
     </a>
     <button class="nhsuk-button" id="save-button" type="submit">Next</button>

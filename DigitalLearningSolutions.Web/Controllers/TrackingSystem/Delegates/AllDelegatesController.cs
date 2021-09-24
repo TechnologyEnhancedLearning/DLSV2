@@ -41,19 +41,14 @@
             string? filterValue = null
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies.ContainsKey(DelegateFilterCookieName)
-                    ? Request.Cookies[DelegateFilterCookieName]
-                    : DelegateActiveStatusFilterOptions.IsActive.FilterValue;
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                DelegateFilterCookieName,
+                DelegateActiveStatusFilterOptions.IsActive.FilterValue
+            );
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();

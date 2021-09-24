@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
+    using System.Collections.Generic;
+
     public class DateInputViewModel
     {
         public readonly bool HasDayError;
@@ -18,7 +20,7 @@
             bool hasDayError,
             bool hasMonthError,
             bool hasYearError,
-            string? errorMessage,
+            IEnumerable<string> errorMessages,
             string? cssClass = null,
             string? hintText = null
         )
@@ -36,7 +38,7 @@
             HasDayError = hasDayError;
             HasMonthError = hasMonthError;
             HasYearError = hasYearError;
-            ErrorMessage = errorMessage;
+            ErrorMessages = errorMessages;
         }
 
         public string Id { get; set; }
@@ -50,6 +52,6 @@
         public string? CssClass { get; set; }
         public string? HintText { get; set; }
         public bool HasError => HasDayError || HasMonthError || HasYearError;
-        public string? ErrorMessage { get; set; }
+        public IEnumerable<string> ErrorMessages { get; set; }
     }
 }

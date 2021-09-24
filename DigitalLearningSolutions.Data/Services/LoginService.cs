@@ -135,7 +135,7 @@
             AdminUser? verifiedAdminUser
         )
         {
-            var verifiedAssociatedAdmin = userVerificationService.GetVerifiedAdminUserAssociatedWithDelegateUsers(
+            var verifiedAssociatedAdmin = userVerificationService.GetActiveApprovedVerifiedAdminUserAssociatedWithDelegateUsers(
                 approvedVerifiedDelegates,
                 password
             );
@@ -150,18 +150,18 @@
             var verifiedLinkedAdmin = verifiedAdminUser ?? verifiedAssociatedAdmin;
 
             var verifiedLinkedDelegates =
-                userVerificationService.GetVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
+                userVerificationService.GetActiveApprovedVerifiedDelegateUsersAssociatedWithAdminUser(verifiedAdminUser, password);
             return (verifiedLinkedAdmin, verifiedLinkedDelegates);
         }
 
         private static bool MultipleEmailsUsedAcrossAccounts(AdminUser? adminUser, List<DelegateUser> delegateUsers)
         {
-            var emails = delegateUsers.Select(du => du.EmailAddress)
+            var emails = delegateUsers.Select(du => du.EmailAddress?.ToLowerInvariant())
                 .ToList();
 
             if (adminUser != null)
             {
-                emails.Add(adminUser.EmailAddress);
+                emails.Add(adminUser.EmailAddress?.ToLowerInvariant());
             }
 
             var uniqueEmails = emails.Distinct().ToList();

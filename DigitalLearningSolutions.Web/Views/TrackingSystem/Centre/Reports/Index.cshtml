@@ -1,8 +1,7 @@
-﻿@inject IConfiguration Configuration
+@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @using Microsoft.Extensions.Configuration
-
 @model ReportsViewModel
 
 @{
@@ -16,7 +15,7 @@
   <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")" asp-append-version="true">
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
@@ -39,10 +38,22 @@
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
+    <hr />
+    <h2 class="nhsuk-heading-m">Evaluation summary</h2>
+    <p>Summary of evaluation responses collected from delegates on completion of learning activities.</p>
+
+    <ul class="nhsuk-grid-row nhsuk-card-group">
+      @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown) {
+        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+          <partial name="_EvaluationSummaryCard.cshtml" model="evaluationSummary" />
+        </li>
+      }
+    </ul>
+
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Centre/Shared/_CentreSideNavMenu.cshtml" model="CentrePage.Reports" />
     </nav>
   </div>
 </div>
 
-<script src="@Url.Content("~/js/trackingSystem/reports.js")"></script>
+<script src="@Url.Content("~/js/trackingSystem/reports.js")" asp-append-version="true"></script>
