@@ -18,7 +18,7 @@
         {
             var quarter = Date.Month / 3 + 1;
 
-            format = format.Replace("Q", $"Quarter {quarter}").Replace("q", $"Q{quarter}");
+            format = format.Replace("Q", $"'Quarter' {quarter}").Replace("q", $"Q{quarter}");
 
             return Date.ToString(format);
         }

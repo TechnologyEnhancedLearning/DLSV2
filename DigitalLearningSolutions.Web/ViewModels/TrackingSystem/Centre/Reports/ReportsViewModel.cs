@@ -69,7 +69,7 @@
             CourseName = courseNameString;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
             DateRange =
-                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate.ToString(DateHelper.StandardDateFormat)}";
+                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today"}";
             ShowCourseCategoryFilter = userManagingAllCourses;
         }
 
