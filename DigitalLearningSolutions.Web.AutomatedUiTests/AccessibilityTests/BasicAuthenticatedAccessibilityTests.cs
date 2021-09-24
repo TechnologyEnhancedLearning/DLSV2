@@ -40,6 +40,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Delete course admin field"
         )]
         [InlineData("/TrackingSystem/CourseSetup/10716/Content", "Course content")]
+        [InlineData("/TrackingSystem/CourseSetup/10716/Content/EditSection/203", "Edit section content")]
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage", "Level 1 - Microsoft Excel 2010 - Inductions")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]

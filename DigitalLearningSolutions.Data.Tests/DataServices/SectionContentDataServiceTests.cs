@@ -1359,5 +1359,18 @@
                 result.First().Tutorials.Should().BeEmpty();
             }
         }
+
+        [Test]
+        public void GetSectionById_returns_expected_section()
+        {
+            // Given
+            const string expectedName = "Mouse skills";
+
+            // When
+            var result = sectionContentDataService.GetSectionById(1);
+
+            // Then
+            result?.SectionName.Should().Be(expectedName);
+        }
     }
 }

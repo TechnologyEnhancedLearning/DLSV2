@@ -2,7 +2,7 @@
 {
     public class Tutorial
     {
-        public Tutorial(int tutorialId, string tutorialName, bool status, bool diagStatus)
+        public Tutorial(int tutorialId, string tutorialName, bool? status, bool? diagStatus)
         {
             TutorialId = tutorialId;
             TutorialName = tutorialName;
