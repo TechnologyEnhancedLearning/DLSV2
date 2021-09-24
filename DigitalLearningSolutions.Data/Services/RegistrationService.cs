@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -66,12 +67,13 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
-                delegateRegistrationModel.Centre,
-                delegateRegistrationModel.Email
-            ).Select(record => record.ID).ToList();
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel);
+
             var foundRecordForSupervisorDelegateId = supervisorDelegateId.HasValue &&
-                                                     supervisorDelegateRecordIds.Contains(supervisorDelegateId.Value);
+                                                     supervisorDelegateRecordIdsMatchingDelegate.Contains(
+                                                         supervisorDelegateId.Value
+                                                     );
 
             var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
             delegateRegistrationModel.Approved = foundRecordForSupervisorDelegateId ||
@@ -86,15 +88,16 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
 
-            if (supervisorDelegateRecordIds.Any())
+            UpdateSupervisorDelegateRecordsWithNewCandidateId(
+                candidateNumber,
+                delegateRegistrationModel.Centre,
+                supervisorDelegateRecordIdsMatchingDelegate
+            );
+
+            if (foundRecordForSupervisorDelegateId)
             {
-                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre)!;
-                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(supervisorDelegateRecordIds, delegateUser.Id);
-                if (foundRecordForSupervisorDelegateId)
-                {
-                    supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
-                    frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
-                }
+                supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
+                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
             }
 
             if (!delegateRegistrationModel.Approved)
@@ -151,18 +154,40 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
-                delegateRegistrationModel.Centre,
-                delegateRegistrationModel.Email
-            ).Select(record => record.ID).ToList();
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel);
 
-            if (supervisorDelegateRecordIds.Any())
-            {
-                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, delegateRegistrationModel.Centre)!;
-                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(supervisorDelegateRecordIds, delegateUser.Id);
-            }
+            UpdateSupervisorDelegateRecordsWithNewCandidateId(
+                candidateNumber,
+                delegateRegistrationModel.Centre,
+                supervisorDelegateRecordIdsMatchingDelegate
+            );
 
             return candidateNumber;
+        }
+
+        private void UpdateSupervisorDelegateRecordsWithNewCandidateId(
+            string candidateNumber,
+            int centreId,
+            IEnumerable<int> recordIds
+        )
+        {
+            if (recordIds.Any())
+            {
+                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
+                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(recordIds, delegateUser.Id);
+            }
+        }
+
+        private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
+            DelegateRegistrationModel delegateRegistrationModel
+        )
+        {
+            return supervisorDelegateService
+                .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.Email
+                ).Select(record => record.ID);
         }
 
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)

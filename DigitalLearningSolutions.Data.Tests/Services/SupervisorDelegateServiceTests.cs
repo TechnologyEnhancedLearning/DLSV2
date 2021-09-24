@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -12,9 +11,6 @@
 
     public class SupervisorDelegateServiceTests
     {
-        private const int CentreId = 1;
-        private const int RecordId = 2;
-        private readonly Guid inviteHash = new Guid();
         private ISupervisorDelegateDataService supervisorDelegateDataService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
@@ -31,12 +27,13 @@
         public void GetSupervisorDelegateRecordByInviteHash_returns_matching_record()
         {
             // Given
-            var record = new SupervisorDelegate { ID = RecordId };
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
+            var record = new SupervisorDelegate { ID = 2 };
+            var inviteHash1 = new Guid();
+            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash1))
                 .Returns(record);
 
             // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
+            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash1);
 
             // Then
             result.Should().Be(record);
@@ -46,12 +43,12 @@
         public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
         {
             // When
-            supervisorDelegateService.ConfirmSupervisorDelegateRecord(RecordId);
+            supervisorDelegateService.ConfirmSupervisorDelegateRecord(2);
 
             // Then
             A.CallTo(
                 () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
-                    RecordId,
+                    2,
                     A<DateTime>.That.Matches(dateTime => (DateTime.UtcNow - dateTime).TotalSeconds < 1)
                 )
             ).MustHaveHappened();
