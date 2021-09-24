@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         EvaluationAnswerCounts GetEvaluationSummaryData(
             int centreId,
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId
@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public EvaluationAnswerCounts GetEvaluationSummaryData(
             int centreId,
             DateTime startDate,
-            DateTime endDate,
+            DateTime? endDate,
             int? jobGroupId,
             int? courseCategoryId,
             int? customisationId
@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Applications a ON a.ApplicationID = c.ApplicationID
                     WHERE c.CentreID = @centreId
                         AND e.EvaluatedDate >= @startDate
-                        AND e.EvaluatedDate <= @endDate
+                        AND (@endDate IS NULL OR e.EvaluatedDate <= @endDate)
                         AND (@jobGroupId IS NULL OR e.JobGroupID = @jobGroupId)
                         AND (@customisationId IS NULL OR e.CustomisationID = @customisationId)
                         AND (@courseCategoryId IS NULL OR a.CourseCategoryId = @courseCategoryId)",

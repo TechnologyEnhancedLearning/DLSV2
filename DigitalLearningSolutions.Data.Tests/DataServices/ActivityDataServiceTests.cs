@@ -84,5 +84,15 @@
             // then
             result.Count().Should().Be(expectedCount);
         }
+
+        [Test]
+        public void GetStartOfActivityForCentre_returns_earliest_activity_date_for_centre()
+        {
+            // when
+            var result = service.GetStartOfActivityForCentre(101);
+
+            // then
+            result.Should().Be(DateTime.Parse("2010-09-22 06:52:21.880"));
+        }
     }
 }
