@@ -1,5 +1,5 @@
-@using DigitalLearningSolutions.Web.Extensions
-<li class="nhsuk-header__navigation-item @Html.IsSelected("Index")">
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Models.Enums
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "Supervisor", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="Index">
     Dashboard
@@ -19,7 +19,7 @@
   </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
-  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
+  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.Supervisor.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />
   </a>
