@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -11,48 +12,21 @@
 
     public class EditRolesViewModel
     {
-        public readonly CheckboxListItemViewModel[] Checkboxes =
-        {
-            new CheckboxListItemViewModel(
-                nameof(IsCentreAdmin),
-                "Centre administrator",
-                "Manage delegates, courses and course groups. Enrol users on courses. View reports."
-            ),
-            new CheckboxListItemViewModel(
-                nameof(IsSupervisor),
-                "Supervisor",
-                "Oversees individual and groups of delegates. Assigns and reviews self-assessments. Arranges supervision sessions."
-            ),
-            new CheckboxListItemViewModel(
-                nameof(IsTrainer),
-                "Trainer",
-                "Delivers face to face or online training sessions and records attendance. Not yet implemented in the system."
-            ),
-            new CheckboxListItemViewModel(
-                nameof(IsContentCreator),
-                "Content creator license",
-                "Assigned a Content Creator license number and has access to download and install Content Creator in CMS."
-            )
-        };
+        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
 
-        public readonly RadiosListItemViewModel[] Radios =
+        public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
-            new RadiosListItemViewModel(
-                ContentManagementRole.CmsAdministrator,
-                "CMS administrator",
-                "Create bespoke courses in the Content Management System by importing content from other DLS courses."
-            ),
-            new RadiosListItemViewModel(
-                ContentManagementRole.CmsManager,
-                "CMS manager",
-                "Can create courses in the Content Management System by uploading local digital learning content."
-            ),
-            new RadiosListItemViewModel(ContentManagementRole.NoContentManagementRole, "No CMS permissions")
+            AdminRoleInputs.CentreAdminCheckbox, AdminRoleInputs.SupervisorCheckbox
         };
 
         public EditRolesViewModel() { }
 
-        public EditRolesViewModel(AdminUser user, int centreId, IEnumerable<Category> categories)
+        public EditRolesViewModel(
+            AdminUser user,
+            int centreId,
+            IEnumerable<Category> categories,
+            CentreContractAdminUsage numberOfAdmins
+        )
         {
             CentreId = centreId;
             FullName = $"{user.FirstName} {user.LastName}";
@@ -80,6 +54,8 @@
                 categories.Select(c => (c.CourseCategoryID, c.CategoryName)),
                 user.CategoryId
             );
+
+            SetUpCheckboxesAndRadioButtons(user, numberOfAdmins);
         }
 
         public int CentreId { get; set; }
@@ -91,5 +67,45 @@
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
         public IEnumerable<SelectListItem> LearningCategories { get; set; }
+
+        public bool NotAllRolesDisplayed => Radios.Count < 3 || Checkboxes.Count < 4;
+        public bool NoContentManagerOptionsAvailable => Radios.Count == 1;
+
+        public AdminRoles GetAdminRoles()
+        {
+            return new AdminRoles(
+                IsCentreAdmin,
+                IsSupervisor,
+                IsContentCreator,
+                IsTrainer,
+                ContentManagementRole.IsContentManager,
+                ContentManagementRole.ImportOnly
+            );
+        }
+
+        private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
+        {
+            if (!numberOfAdmins.TrainersAtOrOverLimit || user.IsTrainer)
+            {
+                Checkboxes.Add(AdminRoleInputs.TrainerCheckbox);
+            }
+
+            if (!numberOfAdmins.CcLicencesAtOrOverLimit || user.IsContentCreator)
+            {
+                Checkboxes.Add(AdminRoleInputs.ContentCreatorCheckbox);
+            }
+
+            if (!numberOfAdmins.CmsAdministratorsAtOrOverLimit || user.IsCmsAdministrator)
+            {
+                Radios.Add(AdminRoleInputs.CmsAdministratorRadioButton);
+            }
+
+            if (!numberOfAdmins.CmsManagersAtOrOverLimit || user.IsCmsManager)
+            {
+                Radios.Add(AdminRoleInputs.CmsManagerRadioButton);
+            }
+
+            Radios.Add(AdminRoleInputs.NoCmsPermissionsRadioButton);
+        }
     }
 }

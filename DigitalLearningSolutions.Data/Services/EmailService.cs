@@ -15,8 +15,8 @@
     {
         void SendEmail(Email email);
         void SendEmails(IEnumerable<Email> emails);
-        void ScheduleEmail(Email email, string addedByProcess, DateTime deliveryDate);
-        void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime deliveryDate);
+        void ScheduleEmail(Email email, string addedByProcess, DateTime? deliveryDate = null);
+        void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime? deliveryDate = null);
     }
 
     public class EmailService : IEmailService
@@ -68,15 +68,15 @@
             }
         }
 
-        public void ScheduleEmail(Email email, string addedByProcess, DateTime deliveryDate)
+        public void ScheduleEmail(Email email, string addedByProcess, DateTime? deliveryDate = null)
         {
             ScheduleEmails(new[] { email }, addedByProcess, deliveryDate);
         }
 
-        public void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime deliveryDate)
+        public void ScheduleEmails(IEnumerable<Email> emails, string addedByProcess, DateTime? deliveryDate = null)
         {
             var senderAddress = GetMailConfig().MailSenderAddress;
-            var urgent = deliveryDate.Date.Equals(DateTime.Today);
+            var urgent = deliveryDate?.Date.Equals(DateTime.Today) ?? false;
             emailDataService.ScheduleEmails(emails, senderAddress, addedByProcess, urgent, deliveryDate);
         }
 

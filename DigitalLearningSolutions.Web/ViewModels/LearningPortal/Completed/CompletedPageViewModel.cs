@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             string sortDirection,
             string? bannerText,
             int page
-        ) : base(searchString, page, false, sortBy, sortDirection)
+        ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your completed courses")
         {
             BannerText = bannerText;
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -46,5 +46,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             CourseSortByOptions.LastAccessed,
             CourseSortByOptions.CompletedDate
         };
+
+        public override bool NoDataFound => !CompletedCourses.Any() && NoSearchOrFilter;
     }
 }

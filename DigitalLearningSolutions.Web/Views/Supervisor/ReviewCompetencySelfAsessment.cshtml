@@ -144,11 +144,11 @@
 
           <nhs-form-group nhs-validation-for="SignedOff">
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="cb-sign-off" name="SignedOff" asp-for="SignedOff" type="checkbox">
+              <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-                Sign-off self-assessment result
+                Verify self-assessment result
               </label>
-              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-sign-off-item-hint">
+              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
                 I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
               </div>
             </div>
@@ -187,7 +187,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
 
       <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        Signed off
+        Verified
       </dt>
       <dd class="nhsuk-summary-list__value">
         @if (Model.SignedOff)

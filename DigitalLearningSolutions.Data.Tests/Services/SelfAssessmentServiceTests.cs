@@ -44,7 +44,8 @@
                 new DateTime(2020, 09, 01, 14, 10, 37, 447), null, null,
                 false,
                 true,
-                false
+                false,
+                true
             );
 
             result.Should().BeEquivalentTo(expectedSelfAssessment);
@@ -89,6 +90,7 @@
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 id: 32,
                 competencyGroup: "General questions",
+                competencyGroupId: 7,
                 name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
                 assessmentQuestions: new List<AssessmentQuestion>()

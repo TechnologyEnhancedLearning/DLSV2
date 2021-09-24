@@ -3,9 +3,8 @@
 @inject IConfiguration Configuration
 
 @{
-  var application = (string)ViewData["Application"] ?? "";
-  var shouldDisplayLogoutMenuItem = false;
-  var shouldDisplayHelpMenuItem = application != "Tracking System";
+  var headerExtension = (string)ViewData["Application"];
+  var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
 }
 
 <!DOCTYPE html>
@@ -58,7 +57,7 @@
             <image src="https://assets.nhs.uk/images/nhs-logo.png" xlink:href=""></image>
           </svg>
 
-          <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(ViewData["Application"] ?? "")</span>
+          <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(headerExtension)</span>
         </a>
       </div>
 
@@ -101,44 +100,13 @@
                 </a>
               </li>
             }
-            @if (!User.Identity.IsAuthenticated) {
+            @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
               <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
-                  Log in
+                <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
+                  Switch application
                   <partial name="_NhsChevronRight" />
                 </a>
               </li>
-              <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Index">
-                  Register
-                  <partial name="_NhsChevronRight" />
-                </a>
-              </li>
-            }
-            @if (User.Identity.IsAuthenticated) {
-              <li class="nhsuk-header__navigation-item">
-                <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
-                  My account
-                  <partial name="_NhsChevronRight" />
-                </a>
-              </li>
-              @if (User.GetAdminId() != null) {
-                <li class="nhsuk-header__navigation-item">
-                  <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
-                    Switch application
-                    <partial name="_NhsChevronRight" />
-                  </a>
-                </li>
-              }
-
-              if (shouldDisplayLogoutMenuItem) {
-                <li class="nhsuk-header__navigation-item">
-                  <a class="nhsuk-header__navigation-link" asp-controller="Logout" asp-action="Index">
-                    Log out
-                    <partial name="_NhsChevronRight" />
-                  </a>
-                </li>
-              }
             }
           </ul>
         </div>

@@ -124,6 +124,25 @@
         }
 
         [Test]
+        public async Task Successful_sign_in_with_query_string_should_redirect_with_correct_query()
+        {
+            // Given
+            GivenSignInIsSuccessful();
+
+            var returnUrl = "/some/other/page?query=true&other=false";
+            var urlHelper = controller.Url;
+            A.CallTo(() => urlHelper.IsLocalUrl(returnUrl)).Returns(true);
+            var loginViewModel = LoginTestHelper.GetDefaultLoginViewModel();
+            loginViewModel.ReturnUrl = returnUrl;
+
+            // When
+            var result = await controller.Index(loginViewModel);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(returnUrl);
+        }
+
+        [Test]
         public async Task Successful_sign_in_with_nonlocal_return_url_should_render_home_page()
         {
             // Given

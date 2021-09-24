@@ -32,8 +32,14 @@
   </li>
 }
 <li class="nhsuk-header__navigation-item">
-  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-application="@ApplicationType.TrackingSystem">
+  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-application="@ApplicationType.TrackingSystem.UrlSegment">
     Support
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item">
+  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.TrackingSystem.UrlSegment">
+    My account
     <partial name="_NhsChevronRight" />
   </a>
 </li>

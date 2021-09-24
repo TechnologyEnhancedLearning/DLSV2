@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     public class DateInputViewComponent : ViewComponent
     {
@@ -34,13 +36,13 @@
             var dayValue = dayProperty?.GetValue(model)?.ToString();
             var monthValue = monthProperty?.GetValue(model)?.ToString();
             var yearValue = yearProperty?.GetValue(model)?.ToString();
-            var dayErrors = ViewData.ModelState[dayProperty?.Name]?.Errors;
-            var monthErrors = ViewData.ModelState[monthProperty?.Name]?.Errors;
-            var yearErrors = ViewData.ModelState[yearProperty?.Name]?.Errors;
+            var dayErrors = ViewData.ModelState[dayProperty?.Name]?.Errors ?? new ModelErrorCollection();
+            var monthErrors = ViewData.ModelState[monthProperty?.Name]?.Errors ?? new ModelErrorCollection();
+            var yearErrors = ViewData.ModelState[yearProperty?.Name]?.Errors ?? new ModelErrorCollection();
 
-            var errorMessage = dayErrors?.Count > 0 ? dayErrors[0].ErrorMessage :
-                               monthErrors?.Count > 0 ? monthErrors[0].ErrorMessage :
-                               yearErrors?.Count > 0 ? yearErrors[0].ErrorMessage : null;
+            var allErrors = dayErrors.Concat(monthErrors).Concat(yearErrors);
+            var nonEmptyErrors = allErrors.Where(e => !string.IsNullOrWhiteSpace(e.ErrorMessage))
+                .Select(e => e.ErrorMessage);
 
             var viewModel = new DateInputViewModel(
                 id,
@@ -54,7 +56,7 @@
                 dayErrors?.Count > 0,
                 monthErrors?.Count > 0,
                 yearErrors?.Count > 0,
-                errorMessage,
+                nonEmptyErrors,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );

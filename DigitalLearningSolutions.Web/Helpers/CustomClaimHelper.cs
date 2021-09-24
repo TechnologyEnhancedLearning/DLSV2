@@ -80,6 +80,11 @@
                    && (user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false);
         }
 
+        public static bool HasLearningPortalPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;
+        }
+
         public static bool HasCentreAdminPermissions(this ClaimsPrincipal user)
         {
             return (user.GetCustomClaimAsBool(CustomClaimTypes.UserCentreAdmin) ?? false) ||
@@ -103,6 +108,11 @@
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) == true ||
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true ||
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true;
+        }
+
+        public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
         }
     }
 }

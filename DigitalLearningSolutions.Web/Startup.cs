@@ -123,6 +123,7 @@ namespace DigitalLearningSolutions.Web
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new ApplicationTypeModelBinderProvider());
                     }
                 );
 
@@ -166,8 +167,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDelegateUploadFileService, DelegateUploadFileService>();
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IEvaluationSummaryService, EvaluationSummaryService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
+            services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -185,6 +188,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
+            services.AddScoped<IGroupsService, GroupsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -199,12 +203,15 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
+            services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
+            services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
             services.AddScoped<IPasswordDataService, PasswordDataService>();
             services.AddScoped<IPasswordResetDataService, PasswordResetDataService>();
+            services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
@@ -275,9 +282,10 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            var applicationPath = new Uri(config["AppRootPath"]).AbsolutePath.TrimEnd('/');
+            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
-            context.HttpContext.Response.Redirect(config["AppRootPath"] + $"/Login?returnUrl={url}");
+            var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 
