@@ -138,20 +138,22 @@
             int centreId
         )
         {
-            var parsedStartDate = DateTime.Parse(startDateString);
-            var start = GetStartOfActivityForCentre(centreId);
-            if (parsedStartDate < GetStartOfActivityForCentre(centreId))
+            var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
+            if (startDateInvalid || startDate < GetStartOfActivityForCentre(centreId))
             {
                 return null;
             }
 
-            if (DateTime.TryParse(endDateString, out var parsedEndDate) &&
-                (parsedEndDate < parsedStartDate || parsedEndDate > DateTime.Now))
+            var validEndDateIsSet = DateTime.TryParse(endDateString, out var endDate);
+            // DateTime.TryParse outputs DateTime.MinValue for invalid or empty strings
+            var nullableEndDate = endDate > DateTime.MinValue ? (DateTime?)endDate : null;
+
+            if (validEndDateIsSet && (nullableEndDate < startDate || nullableEndDate > DateTime.Now))
             {
                 return null;
             }
 
-            return (parsedStartDate, parsedEndDate > DateTime.MinValue ? (DateTime?)parsedEndDate : null);
+            return (startDate, nullableEndDate);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)

@@ -413,6 +413,37 @@
         }
 
         [Test]
+        public void GetValidatedUsageStatsDateRange_returns_null_for_invalid_start_date()
+        {
+            // given
+            var startDateString = "once upon a time";
+            var endDateString = "2021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_tuple_for_invalid_end_date()
+        {
+            // given
+            var startDateString = "2012-06-06";
+            var endDateString = "happily ever after";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange!.Value.startDate.Should().Be(DateTime.Parse(startDateString));
+            dateRange!.Value.endDate.Should().BeNull();
+        }
+
+        [Test]
         public void GetValidatedUsageStatsDateRange_returns_date_range()
         {
             // given
