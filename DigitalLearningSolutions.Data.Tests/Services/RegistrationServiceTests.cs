@@ -270,10 +270,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(matchingSupervisorDelegateId)
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(matchingSupervisorDelegateId)
             ).MustHaveHappened();
             A.CallTo(
-                () => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(
                     A<int>.That.Matches(id => id != matchingSupervisorDelegateId)
                 )
             ).MustNotHaveHappened();
@@ -296,7 +296,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     A<string>._
                 )
             ).MustNotHaveHappened();
-            A.CallTo(() => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(A<int>._))
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
                 .MustNotHaveHappened();
         }
 
@@ -557,7 +557,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
 
             // Then
-            A.CallTo(() => supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(A<int>._))
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
                 .MustNotHaveHappened();
         }
 
@@ -579,14 +579,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
         private void GiveNoPendingSupervisorDelegateRecordsForEmail()
         {
-            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(A<int>._, A<string>._))
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))
                 .Returns(new List<SupervisorDelegate>());
         }
 
         private void GivePendingSupervisorDelegateIdsForEmailAre(IEnumerable<int> supervisorDelegateIds)
         {
             var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
-            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(A<int>._, A<string>._))
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))
                 .Returns(supervisorDelegates);
         }
     }

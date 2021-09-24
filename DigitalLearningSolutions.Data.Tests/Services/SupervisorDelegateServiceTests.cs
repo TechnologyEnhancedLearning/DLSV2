@@ -80,7 +80,7 @@
         public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
         {
             // When
-            supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(RecordId);
+            supervisorDelegateService.ConfirmSupervisorDelegateRecord(RecordId);
 
             // Then
             A.CallTo(

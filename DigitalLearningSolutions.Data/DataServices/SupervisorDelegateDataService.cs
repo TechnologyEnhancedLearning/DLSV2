@@ -11,7 +11,7 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash);
 
-        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email);
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
 
         void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int candidateId);
 
@@ -59,7 +59,7 @@
             }
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)
         {
             return connection.Query<SupervisorDelegate>(
                 @"SELECT

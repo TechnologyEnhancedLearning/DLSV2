@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Data.Services
             int? supervisorDelegateId = null
         )
         {
-            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(
+            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.Email
             ).Select(record => record.ID).ToList();
@@ -91,7 +91,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
                 if (foundRecordForSupervisorDelegateId)
                 {
-                    supervisorDelegateService.AddConfirmedToSupervisorDelegateRecord(supervisorDelegateId!.Value);
+                    supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
                     frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
                 }
             }
@@ -150,7 +150,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmail(
+            var supervisorDelegateRecordIds = supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
                 delegateRegistrationModel.Centre,
                 delegateRegistrationModel.Email
             ).Select(record => record.ID).ToList();

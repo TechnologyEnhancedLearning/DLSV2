@@ -10,7 +10,7 @@
     {
         SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(int centreId, Guid inviteHash);
 
-        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email);
+        IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email);
 
         void AddCandidateIdToSupervisorDelegateRecords(
             IEnumerable<int> supervisorDelegateIds,
@@ -18,7 +18,7 @@
             string candidateNumber
         );
 
-        void AddConfirmedToSupervisorDelegateRecord(int supervisorDelegateId);
+        void ConfirmSupervisorDelegateRecord(int supervisorDelegateId);
     }
 
     public class SupervisorDelegateService : ISupervisorDelegateService
@@ -41,9 +41,9 @@
             return record?.CentreId == centreId ? record : null;
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmail(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)
         {
-            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmail(centreId, email);
+            return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(centreId, email);
         }
 
         public void AddCandidateIdToSupervisorDelegateRecords(
@@ -59,7 +59,7 @@
             );
         }
 
-        public void AddConfirmedToSupervisorDelegateRecord(int supervisorDelegateId)
+        public void ConfirmSupervisorDelegateRecord(int supervisorDelegateId)
         {
             supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
                 supervisorDelegateId,
