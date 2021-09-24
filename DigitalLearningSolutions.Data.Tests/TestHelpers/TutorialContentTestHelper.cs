@@ -1,12 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
     public class TutorialContentTestHelper
     {
-        private SqlConnection connection;
+        private readonly SqlConnection connection;
 
         public TutorialContentTestHelper(SqlConnection connection)
         {
@@ -95,6 +96,16 @@
                     AND TutorialID = @tutorialId;",
                 new { progressId, tutorialId }
             ).FirstOrDefault();
+        }
+
+        public IEnumerable<int> GetAspProgressFromTutorialId(int tutorialId)
+        {
+            return connection.Query<int>(
+                @"SELECT aspProgressId
+                    FROM aspProgress
+                    WHERE TutorialID = @tutorialId;",
+                new { tutorialId }
+            );
         }
     }
 }

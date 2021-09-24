@@ -160,5 +160,33 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void InsertNewAspProgressForTutorialIfNoneExist_inserts_new_record()
+        {
+            // Given
+            const int tutorialId = 12732;
+            const int customisationId = 24286;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var initialAspProgressIds = tutorialContentTestHelper.GetAspProgressFromTutorialId(tutorialId).ToList();
+                progressDataService.InsertNewAspProgressForTutorialIfNoneExist(tutorialId, customisationId);
+                var resultAspProgressIds = tutorialContentTestHelper.GetAspProgressFromTutorialId(tutorialId).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    initialAspProgressIds.Count.Should().Be(3);
+                    resultAspProgressIds.Count.Should().Be(12);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }
