@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -189,7 +190,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 const int candidateId = 1;
 
                 // When
-                courseDataService.RemoveCurrentCourse(progressId, candidateId);
+                courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.RemovedByDelegate);
                 var courseReturned = courseDataService.GetCurrentCourses(candidateId).ToList()
                     .Any(c => c.ProgressID == progressId);
 
