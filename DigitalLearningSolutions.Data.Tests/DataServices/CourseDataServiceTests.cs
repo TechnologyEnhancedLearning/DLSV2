@@ -439,9 +439,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 using (new AssertionScope())
                 {
                     courseDetails!.CompleteWithinMonths.Should().Be(6);
-                    courseDetails!.ValidityMonths.Should().Be(12);
-                    courseDetails!.Mandatory.Should().Be(true);
-                    courseDetails!.AutoRefresh.Should().Be(true);
+                    courseDetails.ValidityMonths.Should().Be(12);
+                    courseDetails.Mandatory.Should().Be(true);
+                    courseDetails.AutoRefresh.Should().Be(true);
                 }
             }
             finally
