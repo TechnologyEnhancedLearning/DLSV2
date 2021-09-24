@@ -176,6 +176,38 @@
             return View(model);
         }
 
+        [Route("{groupId:int}/EditDelegateGroupDescription")]
+        [HttpGet]
+        public IActionResult EditDelegateGroupDescription(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroup(groupId, centreId);
+
+            if (group is null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditDelegateGroupDescriptionViewModel(group);
+            return View(model);
+        }
+
+        [Route("{groupId:int}/EditDelegateGroupDescription")]
+        [HttpPost]
+        public IActionResult EditDelegateGroupDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
+        {
+            var centreId = User.GetCentreId();
+            if (!groupsDataService.UpdateGroupDescription(
+                groupId,
+                centreId,
+                model.Description!))
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index");
+        }
+
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts

@@ -22,6 +22,10 @@
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
+
+        Group? GetGroup(int groupId, int centreId);
+
+        bool UpdateGroupDescription(int groupId, int centreId, string groupDescription);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -179,6 +183,30 @@
                       AND DelegateID = @delegateId",
                 new {groupId, delegateId}
             );
+        }
+
+        public Group? GetGroup(int groupId, int centreId)
+        {
+            return connection.Query<Group>(
+                @"SELECT
+                        GroupLabel,
+                        GroupDescription
+                    FROM Groups
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupId, centreId }
+            ).SingleOrDefault();
+        }
+
+        public bool UpdateGroupDescription(int groupId, int centreId, string groupDescription)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE Groups
+                    SET
+                        GroupDescription = @groupDescription
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupDescription, groupId, centreId }
+            );
+            return numberOfAffectedRows > 0;
         }
     }
 }

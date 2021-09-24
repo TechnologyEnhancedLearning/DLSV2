@@ -182,5 +182,37 @@
             // Then
             result.Should().BeNull();
         }
+
+        [Test]
+        public void UpdateGroupDescription_updates_record()
+        {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string expectedDescription = "Test group description";
+
+            // When
+            groupsDataService.UpdateGroupDescription(groupId, centerId, expectedDescription);
+
+            //Then
+            var result = groupsDataService.GetGroup(groupId, centerId);
+            result?.GroupDescription.Should().Be(expectedDescription);
+        }
+
+        [Test]
+        public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
+        {
+            // Given
+            const int centerId = 107;   //Incorrect centre id
+            const int groupId = 5;
+            const string expectedDescription = "Test group description";
+
+            // When
+            groupsDataService.UpdateGroupDescription(groupId, centerId, expectedDescription);
+
+            //Then
+            var result = groupsDataService.GetGroup(groupId, centerId);
+            result?.GroupDescription.Should().NotBe(expectedDescription);
+        }
     }
 }
