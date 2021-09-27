@@ -6,9 +6,11 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
@@ -36,6 +38,7 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
+        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -46,7 +49,8 @@ namespace DigitalLearningSolutions.Data.Services
             IConfiguration config,
             ISupervisorDelegateService supervisorDelegateService,
             IFrameworkNotificationService frameworkNotificationService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            ILogger<RegistrationService> logger
         )
         {
             this.registrationDataService = registrationDataService;
@@ -58,6 +62,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.supervisorDelegateService = supervisorDelegateService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.userDataService = userDataService;
+            this.logger = logger;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
@@ -88,11 +93,25 @@ namespace DigitalLearningSolutions.Data.Services
 
             passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
 
-            UpdateSupervisorDelegateRecordsWithNewCandidateId(
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.Centre,
-                supervisorDelegateRecordIdsMatchingDelegate
+                delegateRegistrationModel.Centre
             );
+
+            if (delegateUser == null)
+            {
+                logger.LogError("Delegate account was not successfully created after registration.");
+            }
+            else
+            {
+                if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+                {
+                    supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                        supervisorDelegateRecordIdsMatchingDelegate,
+                        delegateUser.Id
+                    );
+                }
+            }
 
             if (foundRecordForSupervisorDelegateId)
             {
@@ -155,28 +174,29 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             var supervisorDelegateRecordIdsMatchingDelegate =
-                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel);
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
-            UpdateSupervisorDelegateRecordsWithNewCandidateId(
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
                 candidateNumber,
-                delegateRegistrationModel.Centre,
-                supervisorDelegateRecordIdsMatchingDelegate
+                delegateRegistrationModel.Centre
             );
 
-            return candidateNumber;
-        }
-
-        private void UpdateSupervisorDelegateRecordsWithNewCandidateId(
-            string candidateNumber,
-            int centreId,
-            IEnumerable<int> recordIds
-        )
-        {
-            if (recordIds.Any())
+            if (delegateUser == null)
             {
-                var delegateUser = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
-                supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(recordIds, delegateUser.Id);
+                logger.LogError("Delegate account was not successfully created after registration.");
             }
+            else
+            {
+                if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+                {
+                    supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                        supervisorDelegateRecordIdsMatchingDelegate,
+                        delegateUser.Id
+                    );
+                }
+            }
+
+            return candidateNumber;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(

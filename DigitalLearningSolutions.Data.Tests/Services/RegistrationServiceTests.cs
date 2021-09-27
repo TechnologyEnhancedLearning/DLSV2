@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -100,7 +101,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 config,
                 supervisorDelegateService,
                 frameworkNotificationService,
-                userDataService
+                userDataService,
+                new NullLogger<RegistrationService>()
             );
         }
 
@@ -242,7 +244,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
                 .Returns(new DelegateUser { Id = 777 });
 
@@ -251,7 +253,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
                     777
                 )
@@ -264,7 +266,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const int matchingSupervisorDelegateId = 2;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegate(
@@ -289,14 +291,14 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         public void Registering_delegate_should_not_update_any_SupervisorDelegate_records_if_none_found()
         {
             // Given
-            GiveNoPendingSupervisorDelegateRecordsForEmail();
+            GivenNoPendingSupervisorDelegateRecordsForEmail();
 
             // When
             registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>._,
                     A<int>._
                 )
@@ -311,7 +313,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const int supervisorDelegateId = 2;
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, supervisorDelegateId);
@@ -533,7 +535,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string baseUrl = "base.com";
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
             A.CallTo(() => registrationDataService.RegisterDelegateByCentre(testRegistrationModel))
                 .Returns(NewCandidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
@@ -544,7 +546,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // Then
             A.CallTo(
-                () => supervisorDelegateService.AddCandidateIdToSupervisorDelegateRecords(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                     A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
                     777
                 )
@@ -557,7 +559,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string baseUrl = "base.com";
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
@@ -573,7 +575,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string baseUrl = "base.com";
             var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
-            GivePendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
 
             // When
             registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
@@ -583,13 +585,13 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustNotHaveHappened();
         }
 
-        private void GiveNoPendingSupervisorDelegateRecordsForEmail()
+        private void GivenNoPendingSupervisorDelegateRecordsForEmail()
         {
             A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))
                 .Returns(new List<SupervisorDelegate>());
         }
 
-        private void GivePendingSupervisorDelegateIdsForEmailAre(IEnumerable<int> supervisorDelegateIds)
+        private void GivenPendingSupervisorDelegateIdsForEmailAre(IEnumerable<int> supervisorDelegateIds)
         {
             var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
             A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))

@@ -28,12 +28,12 @@
         {
             // Given
             var record = new SupervisorDelegate { ID = 2 };
-            var inviteHash1 = new Guid();
-            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash1))
+            var inviteHash = new Guid();
+            A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
                 .Returns(record);
 
             // When
-            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash1);
+            var result = supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
 
             // Then
             result.Should().Be(record);
@@ -42,14 +42,20 @@
         [Test]
         public void AddConfirmedToSupervisorDelegateRecord_updates_record_with_correct_values_not_confirmed()
         {
+            // Given
+            var timeBeforeConfirmCalled = DateTime.UtcNow;
+
             // When
             supervisorDelegateService.ConfirmSupervisorDelegateRecord(2);
 
             // Then
+            var timeAfterConfirmCalled = DateTime.UtcNow;
             A.CallTo(
                 () => supervisorDelegateDataService.UpdateSupervisorDelegateRecordConfirmed(
                     2,
-                    A<DateTime>.That.Matches(dateTime => (DateTime.UtcNow - dateTime).TotalSeconds < 1)
+                    A<DateTime>.That.Matches(
+                        dateTime => timeBeforeConfirmCalled < dateTime && dateTime < timeAfterConfirmCalled
+                    )
                 )
             ).MustHaveHappened();
         }
