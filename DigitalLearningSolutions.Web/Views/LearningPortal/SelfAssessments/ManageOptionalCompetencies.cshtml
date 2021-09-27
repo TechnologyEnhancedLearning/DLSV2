@@ -19,9 +19,15 @@
 <h2><small>Which optional @Model.VocabPlural() would you like to include in your self-assessment?</small></h2>
 @if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
 {
-<div class="nhsuk-body-l">
-  @Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)
-</div>
+  <div class="nhsuk-warning-callout">
+    <h3 class="nhsuk-warning-callout__label">
+      <span role="text">
+        <span class="nhsuk-u-visually-hidden">Important: </span>
+        How to choose your optional @Model.VocabPlural()
+      </span>
+    </h3>
+    <p>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</p>
+  </div>
 }
 <form method="post">
   <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
