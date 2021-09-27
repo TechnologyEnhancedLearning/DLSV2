@@ -28,7 +28,7 @@
         {
             // Given
             var record = new SupervisorDelegate { ID = 2 };
-            var inviteHash = new Guid();
+            var inviteHash = Guid.NewGuid();
             A.CallTo(() => supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash))
                 .Returns(record);
 
