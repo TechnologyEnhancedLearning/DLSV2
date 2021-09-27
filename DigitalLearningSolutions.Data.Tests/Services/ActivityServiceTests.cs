@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Common;
@@ -17,6 +19,7 @@
 
     public class ActivityServiceTests
     {
+        public const string ActivityDataDownloadRelativeFilePath = "\\TestData\\ActivityDataDownloadTest.xlsx";
         private IActivityDataService activityDataService = null!;
         private IActivityService activityService = null!;
         private ICourseCategoriesDataService courseCategoriesDataService = null!;
@@ -65,17 +68,8 @@
                     LogMonth = 12
                 }
             };
-            A.CallTo(
-                    () => activityDataService.GetFilteredActivity(
-                        A<int>._,
-                        A<DateTime>._,
-                        A<DateTime>._,
-                        A<int?>._,
-                        A<int?>._,
-                        A<int?>._
-                    )
-                )
-                .Returns(expectedActivityResult);
+            GivenActivityDataServiceReturnsSpecifiedResult(expectedActivityResult);
+
             var filterData = new ActivityFilterData(
                 DateTime.Parse("2014-6-22"),
                 DateTime.Parse("2016-6-22"),
@@ -215,7 +209,7 @@
         {
             // Given
             var expectedCourses = new[] { (2, "A Course"), (1, "B Course") };
-            
+
             const int centreId = 1;
             const int categoryId = 1;
             GivenDataServicesReturnData(centreId, categoryId);
@@ -342,6 +336,160 @@
                 .Returns(categories);
             A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
                 .Returns(courses);
+        }
+
+        [Test]
+        public void GetActivityDataFileForCentre_returns_expected_excel_data()
+        {
+            // given
+            using var expectedWorkbook = new XLWorkbook(
+                TestContext.CurrentContext.TestDirectory + ActivityDataDownloadRelativeFilePath
+            );
+            GivenActivityDataServiceReturnsDataInExampleSheet();
+
+            var filterData = new ActivityFilterData(
+                DateTime.Parse("2020-9-1"),
+                DateTime.Parse("2021-9-1"),
+                null,
+                null,
+                null,
+                CourseFilterType.None,
+                ReportInterval.Months
+            );
+
+            // when
+            var resultBytes = activityService.GetActivityDataFileForCentre(101, filterData);
+
+            using var resultsStream = new MemoryStream(resultBytes);
+            using var resultWorkbook = new XLWorkbook(resultsStream);
+
+            // Then
+            SpreadsheetTestHelper.AssertSpreadsheetsAreEquivalent(expectedWorkbook, resultWorkbook);
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_null_for_start_date_before_activity_start()
+        {
+            // given
+            var startDateString = "2012-06-06";
+            var endDateString = "2021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2012-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_null_for_end_date_before_start_date()
+        {
+            // given
+            var startDateString = "2022-06-06";
+            var endDateString = "2021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_null_for_end_date_in_future()
+        {
+            // given
+            var startDateString = "2012-06-06";
+            var endDateString = "3021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_null_for_invalid_start_date()
+        {
+            // given
+            var startDateString = "once upon a time";
+            var endDateString = "2021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_tuple_for_invalid_end_date()
+        {
+            // given
+            var startDateString = "2012-06-06";
+            var endDateString = "happily ever after";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange!.Value.startDate.Should().Be(DateTime.Parse(startDateString));
+            dateRange!.Value.endDate.Should().BeNull();
+        }
+
+        [Test]
+        public void GetValidatedUsageStatsDateRange_returns_date_range()
+        {
+            // given
+            var startDateString = "2012-06-06";
+            var endDateString = "2021-06-06";
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(101)).Returns(DateTime.Parse("2000-06-07"));
+
+            // when
+            var dateRange = activityService.GetValidatedUsageStatsDateRange(startDateString, endDateString, 101);
+
+            // then
+            dateRange!.Value.startDate.Should().Be(DateTime.Parse(startDateString));
+            dateRange!.Value.endDate.Should().Be(DateTime.Parse(endDateString));
+        }
+
+        private void GivenActivityDataServiceReturnsDataInExampleSheet()
+        {
+            var activityResult = new List<ActivityLog>
+            {
+                new ActivityLog
+                {
+                    Completed = true,
+                    Evaluated = false,
+                    Registered = false,
+                    LogDate = DateTime.Parse("2020-12-22"),
+                    LogYear = 2020,
+                    LogQuarter = 4,
+                    LogMonth = 12
+                }
+            };
+            GivenActivityDataServiceReturnsSpecifiedResult(activityResult);
+        }
+
+        private void GivenActivityDataServiceReturnsSpecifiedResult(IEnumerable<ActivityLog> resultToReturn)
+        {
+            A.CallTo(
+                    () => activityDataService.GetFilteredActivity(
+                        A<int>._,
+                        A<DateTime>._,
+                        A<DateTime>._,
+                        A<int?>._,
+                        A<int?>._,
+                        A<int?>._
+                    )
+                )
+                .Returns(resultToReturn);
         }
 
         private void ValidatePeriodData(
