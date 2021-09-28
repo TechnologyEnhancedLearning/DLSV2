@@ -46,13 +46,13 @@
                 Bulk = 0
             };
 
-            var candidateNumber = connection.QueryFirstOrDefault<string>(
+            var candidateNumberOrErrorCode = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType: CommandType.StoredProcedure
             );
 
-            return candidateNumber;
+            return candidateNumberOrErrorCode;
         }
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
@@ -114,8 +114,8 @@
             connection.Execute(
                 @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
                 SELECT N.NotificationId, @adminUserId
-                FROM Notifications N INNER JOIN NotificationRoles NR 
-                ON N.NotificationID = NR.NotificationID 
+                FROM Notifications N INNER JOIN NotificationRoles NR
+                ON N.NotificationID = NR.NotificationID
                 WHERE RoleID IN (1,2) AND AutoOptIn = 1",
                 new { adminUserId }
             );
