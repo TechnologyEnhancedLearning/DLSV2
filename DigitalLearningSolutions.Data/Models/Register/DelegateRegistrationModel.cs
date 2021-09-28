@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
+    using DocumentFormat.OpenXml.Presentation;
 
     public class DelegateRegistrationModel : RegistrationModel
     {
@@ -20,8 +21,9 @@
             string? answer6,
             string? aliasId = null,
             DateTime? notifyDate = null,
-            bool active = true
-        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
+            bool active = true,
+            bool approved = false
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -31,7 +33,7 @@
             Answer6 = answer6;
             AliasId = aliasId;
             NotifyDate = notifyDate;
-            Active = active;
+            JobGroup = jobGroup;
         }
 
         public DelegateRegistrationModel(
@@ -40,8 +42,13 @@
             string email,
             int centre,
             int jobGroup,
-            string? passwordHash
-        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
+            string? passwordHash,
+            bool active,
+            bool approved
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+        {
+            JobGroup = jobGroup;
+        }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,
@@ -81,6 +88,10 @@
 
         public DateTime? NotifyDate { get; set; }
 
-        public bool Active { get; set; }
+        public int JobGroup { get; set; }
+
+        public bool IsSelfRegistered { get; set; }
+
+        public bool IsExternalRegistered { get; set; }
     }
 }

@@ -5,15 +5,23 @@
 
     public static class RegistrationMappingHelper
     {
-        public static RegistrationModel MapToRegistrationModel(RegistrationData data)
+        public static AdminRegistrationModel MapToCentreManagerAdminRegistrationModel(RegistrationData data)
         {
-            return new RegistrationModel(
+            return new AdminRegistrationModel(
                 data.FirstName!,
                 data.LastName!,
                 data.Email!,
                 data.Centre!.Value,
-                data.JobGroup!.Value,
-                data.PasswordHash!
+                data.PasswordHash!,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
             );
         }
 

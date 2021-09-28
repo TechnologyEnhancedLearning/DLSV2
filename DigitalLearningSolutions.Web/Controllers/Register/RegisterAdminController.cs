@@ -174,8 +174,8 @@
                 return new StatusCodeResult(500);
             }
 
-            var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
-            registrationService.RegisterCentreManager(registrationModel);
+            var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
+            registrationService.RegisterCentreManager(registrationModel, data.JobGroup!.Value);
 
             return RedirectToAction("Confirmation");
         }

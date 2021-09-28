@@ -60,7 +60,7 @@
             var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
 
             // When
-            service.RegisterCentreManagerAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
@@ -81,7 +81,7 @@
             var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
 
             // When
-            service.RegisterCentreManagerAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
