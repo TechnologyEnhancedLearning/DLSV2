@@ -15,7 +15,7 @@
 <h1>@Model.SelfAssessment.Name - Overview</h1>
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="ManageOptionalCompetencies">
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
     Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural().ToLower()
   </a>
 }
