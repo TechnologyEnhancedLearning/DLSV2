@@ -21,7 +21,7 @@
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary.ToLower()" asp-action="StartRequestVerification">
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartRequestVerification">
     Request @Model.SelfAssessment.Vocabulary.ToLower() verification
   </a>
 }

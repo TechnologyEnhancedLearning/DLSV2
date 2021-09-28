@@ -405,7 +405,7 @@
             frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
-        public IActionResult StartRequestVerification(int selfAssessmentId, string vocabulary)
+        public IActionResult StartRequestVerification(int selfAssessmentId)
         {
             TempData.Clear();
             var sessionRequestVerification = new SessionRequestVerification();
@@ -444,9 +444,10 @@
                     sessionRequestVerification.Id = id;
                 }
             }
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
             sessionRequestVerification.SelfAssessmentID = selfAssessmentId;
-            sessionRequestVerification.Vocabulary = vocabulary;
-            sessionRequestVerification.SelfAssessmentName = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId).Name;
+            sessionRequestVerification.Vocabulary = selfAssessment.Vocabulary;
+            sessionRequestVerification.SelfAssessmentName = selfAssessment.Name;
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
@@ -458,7 +459,7 @@
             var supervisors = selfAssessmentService.GetResultReviewSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
             var model = new VerificationPickSupervisorViewModel()
             {
-                Vocubulary = sessionRequestVerification.Vocabulary,
+                Vocabulary = sessionRequestVerification.Vocabulary,
                 SelfAssessmentId = sessionRequestVerification.SelfAssessmentID,
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
                 Supervisors = supervisors,
@@ -474,7 +475,7 @@
             TempData.Set(sessionRequestVerification);
             if (!ModelState.IsValid)
             {
-                model.Vocubulary = sessionRequestVerification.Vocabulary;
+                model.Vocabulary = sessionRequestVerification.Vocabulary;
                 model.SelfAssessmentId = sessionRequestVerification.SelfAssessmentID;
                 model.SelfAssessmentName = sessionRequestVerification.SelfAssessmentName;
                 model.Supervisors = selfAssessmentService.GetResultReviewSupervisorsForSelfAssessmentId(sessionRequestVerification.SelfAssessmentID, User.GetCandidateIdKnownNotNull()).ToList(); ;
@@ -529,7 +530,7 @@
                 SelfAssessmentId = selfAssessmentId,
                 ResultCount = sessionRequestVerification.ResultIds.Count(),
                 SelfAssessmentName = sessionRequestVerification.SelfAssessmentName,
-                Vocubulary = sessionRequestVerification.Vocabulary
+                Vocabulary = sessionRequestVerification.Vocabulary
             };
             return View("SelfAssessments/VerificationSummary", model);
         }

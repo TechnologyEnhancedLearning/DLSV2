@@ -12,14 +12,14 @@
   <li class="nhsuk-breadcrumb__item">Request verification</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Request @Model.Vocabulary verification</h1>
+<h1>Request @Model.Vocabulary.ToLower() verification</h1>
 @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.ResultIds) })" />
 }
 @if (Model.CompetencyGroups.Any())
 { 
-  <h3>Tick each self assessment result that you wish to verify and sign-off and then click Submit</h3>
+<h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to verify.</h2>
 <form method="post">
   <nhs-form-group nhs-validation-for="ResultIds">
     @foreach (var competencyGroup in Model.CompetencyGroups)

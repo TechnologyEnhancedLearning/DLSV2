@@ -12,7 +12,7 @@
   <li class="nhsuk-breadcrumb__item">Request verification</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Request @Model.Vocubulary verification</h1>
+<h1>Request @Model.Vocabulary.ToLower() verification</h1>
 @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.CandidateAssessmentSupervisorId) })" />
