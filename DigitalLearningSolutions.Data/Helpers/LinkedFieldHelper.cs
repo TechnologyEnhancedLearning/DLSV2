@@ -4,35 +4,43 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Services;
 
     public static class LinkedFieldHelper
     {
         public static List<LinkedFieldChange> GetLinkedFieldChanges(
             CentreAnswersData oldAnswers,
             CentreAnswersData newAnswers,
-            IJobGroupsDataService jobGroupsDataService
+            IJobGroupsDataService jobGroupsDataService,
+            ICentreCustomPromptsService centreCustomPromptsService
         )
         {
             var changedLinkedFieldsWithAnswers = new List<LinkedFieldChange>();
 
             if (newAnswers.Answer1 != oldAnswers.Answer1)
             {
+                var prompt1Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 1);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(1, oldAnswers.Answer1, newAnswers.Answer1)
+                    new LinkedFieldChange(1, prompt1Name, oldAnswers.Answer1, newAnswers.Answer1)
                 );
             }
 
             if (newAnswers.Answer2 != oldAnswers.Answer2)
             {
+                var prompt2Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 2);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(2, oldAnswers.Answer2, newAnswers.Answer2)
+                    new LinkedFieldChange(2, prompt2Name, oldAnswers.Answer2, newAnswers.Answer2)
                 );
             }
 
             if (newAnswers.Answer3 != oldAnswers.Answer3)
             {
+                var prompt3Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 3);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(3, oldAnswers.Answer3, newAnswers.Answer3)
+                    new LinkedFieldChange(3, prompt3Name, oldAnswers.Answer3, newAnswers.Answer3)
                 );
             }
 
@@ -40,27 +48,33 @@
             {
                 var oldJobGroup = jobGroupsDataService.GetJobGroupName(oldAnswers.JobGroupId);
                 var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
-                changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(4, oldJobGroup, newJobGroup));
+                changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(4, "Job Group", oldJobGroup, newJobGroup));
             }
 
             if (newAnswers.Answer4 != oldAnswers.Answer4)
             {
+                var prompt4Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 4);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(5, oldAnswers.Answer4, newAnswers.Answer4)
+                    new LinkedFieldChange(5, prompt4Name, oldAnswers.Answer4, newAnswers.Answer4)
                 );
             }
 
             if (newAnswers.Answer5 != oldAnswers.Answer5)
             {
+                var prompt5Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 5);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(6, oldAnswers.Answer5, newAnswers.Answer5)
+                    new LinkedFieldChange(6, prompt5Name, oldAnswers.Answer5, newAnswers.Answer5)
                 );
             }
 
             if (newAnswers.Answer6 != oldAnswers.Answer6)
             {
+                var prompt6Name =
+                    centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(oldAnswers.CentreId, 6);
                 changedLinkedFieldsWithAnswers.Add(
-                    new LinkedFieldChange(7, oldAnswers.Answer6, newAnswers.Answer6)
+                    new LinkedFieldChange(7, prompt6Name, oldAnswers.Answer6, newAnswers.Answer6)
                 );
             }
 
