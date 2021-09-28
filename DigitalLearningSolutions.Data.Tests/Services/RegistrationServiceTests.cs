@@ -1,14 +1,20 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -53,10 +59,13 @@
         private ICentresDataService centresDataService = null!;
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
+        private ISupervisorDelegateService supervisorDelegateService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -67,6 +76,9 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
+            supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
@@ -78,8 +90,7 @@
 
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(NewCandidateNumber);
-            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel))
-                .Returns("-1");
+            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel)).Returns("-1");
 
             registrationService = new RegistrationService(
                 registrationDataService,
@@ -87,7 +98,11 @@
                 passwordResetService,
                 emailService,
                 centresDataService,
-                config
+                config,
+                supervisorDelegateService,
+                frameworkNotificationService,
+                userDataService,
+                new NullLogger<RegistrationService>()
             );
         }
 
@@ -222,6 +237,95 @@
 
             // Then
             candidateNumber.Should().Be(NewCandidateNumber);
+        }
+
+        [Test]
+        public void Registering_delegate_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
+        {
+            // Given
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
+                .Returns(new DelegateUser { Id = 777 });
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    777
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_add_Confirmed_only_to_SupervisorDelegate_record_with_matching_id()
+        {
+            // Given
+            const int matchingSupervisorDelegateId = 2;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegate(
+                testRegistrationModel,
+                string.Empty,
+                false,
+                matchingSupervisorDelegateId
+            );
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(matchingSupervisorDelegateId)
+            ).MustHaveHappened();
+            A.CallTo(
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(
+                    A<int>.That.Matches(id => id != matchingSupervisorDelegateId)
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_not_update_any_SupervisorDelegate_records_if_none_found()
+        {
+            // Given
+            GivenNoPendingSupervisorDelegateRecordsForEmail();
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, 999);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
+        {
+            // Given
+            const int supervisorDelegateId = 2;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false, supervisorDelegateId);
+
+            // Then
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId))
+                .MustHaveHappened();
+            A.CallTo(
+                () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
+                    A<int>.That.Matches(id => id != supervisorDelegateId)
+                )
+            ).MustNotHaveHappened();
         }
 
         [Test]
@@ -386,11 +490,9 @@
         public void RegisterDelegateByCentre_schedules_welcome_email_if_notify_date_set()
         {
             // Given
-            var notifyDate = new DateTime(2200, 1, 1);
-            const string emailAddress = "email@test.com";
             const string baseUrl = "base.com";
-            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null)
-                { NotifyDate = notifyDate };
+            var model = new DelegateRegistrationModel("firstName", "lastName", "email@test.com", 0, 0, null)
+                { NotifyDate = new DateTime(2200, 1, 1) };
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -398,9 +500,9 @@
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    emailAddress,
+                    model.Email,
                     baseUrl,
-                    notifyDate,
+                    model.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"
                 )
             ).MustHaveHappened(1, Times.Exactly);
@@ -410,9 +512,8 @@
         public void RegisterDelegateByCentre_does_not_schedule_welcome_email_if_notify_date_not_set()
         {
             // Given
-            const string emailAddress = "email@test.com";
             const string baseUrl = "base.com";
-            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null);
+            var model = new DelegateRegistrationModel("firstName", "lastName", "email@test.com", 0, 0, null);
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -426,6 +527,75 @@
                     A<string>._
                 )
             ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(testRegistrationModel))
+                .Returns(NewCandidateNumber);
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(NewCandidateNumber, testRegistrationModel.Centre))
+                .Returns(new DelegateUser { Id = 777 });
+
+            // When
+            registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    777
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_not_add_Confirmed_to_any_SupervisorDelegate_record()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
+
+            // Then
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_not_send_SupervisorDelegate_email()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegateByCentre(testRegistrationModel, baseUrl);
+
+            // Then
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        private void GivenNoPendingSupervisorDelegateRecordsForEmail()
+        {
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))
+                .Returns(new List<SupervisorDelegate>());
+        }
+
+        private void GivenPendingSupervisorDelegateIdsForEmailAre(IEnumerable<int> supervisorDelegateIds)
+        {
+            var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
+            A.CallTo(() => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(A<int>._, A<string>._))
+                .Returns(supervisorDelegates);
         }
     }
 }

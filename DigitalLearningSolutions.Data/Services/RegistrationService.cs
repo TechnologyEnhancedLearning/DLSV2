@@ -1,12 +1,15 @@
 namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IRegistrationService
@@ -14,7 +17,8 @@ namespace DigitalLearningSolutions.Data.Services
         (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
-            bool refactoredTrackingSystemEnabled
+            bool refactoredTrackingSystemEnabled,
+            int? inviteId = null
         );
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
@@ -27,9 +31,13 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
+        private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
+        private readonly IUserDataService userDataService;
+        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -37,7 +45,11 @@ namespace DigitalLearningSolutions.Data.Services
             IPasswordResetService passwordResetService,
             IEmailService emailService,
             ICentresDataService centresDataService,
-            IConfiguration config
+            IConfiguration config,
+            ISupervisorDelegateService supervisorDelegateService,
+            IFrameworkNotificationService frameworkNotificationService,
+            IUserDataService userDataService,
+            ILogger<RegistrationService> logger
         )
         {
             this.registrationDataService = registrationDataService;
@@ -46,30 +58,68 @@ namespace DigitalLearningSolutions.Data.Services
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.config = config;
+            this.supervisorDelegateService = supervisorDelegateService;
+            this.frameworkNotificationService = frameworkNotificationService;
+            this.userDataService = userDataService;
+            this.logger = logger;
         }
 
         public (string candidateNumber, bool approved) RegisterDelegate(
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
-            bool refactoredTrackingSystemEnabled
+            bool refactoredTrackingSystemEnabled,
+            int? supervisorDelegateId = null
         )
         {
-            var centreIpPrefixes =
-                centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
-            delegateRegistrationModel.Approved =
-                centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) || userIp == "::1";
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
-            var candidateNumber =
-                registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+            var foundRecordForSupervisorDelegateId = supervisorDelegateId.HasValue &&
+                                                     supervisorDelegateRecordIdsMatchingDelegate.Contains(
+                                                         supervisorDelegateId.Value
+                                                     );
+
+            var centreIpPrefixes = centresDataService.GetCentreIpPrefixes(delegateRegistrationModel.Centre);
+            delegateRegistrationModel.Approved = foundRecordForSupervisorDelegateId ||
+                                                 centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
+                                                 userIp == "::1";
+
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+
+            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
+            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
             {
-                return (candidateNumber, false);
+                return (candidateNumberOrErrorCode, false);
             }
+
+            var candidateNumber = candidateNumberOrErrorCode;
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
                 delegateRegistrationModel.PasswordHash!
             );
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            )!;
+
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+            {
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
+            }
+
+            if (foundRecordForSupervisorDelegateId)
+            {
+                supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
+                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
+            }
+
             if (!delegateRegistrationModel.Approved)
             {
                 var contactInfo = centresDataService.GetCentreManagerDetails(delegateRegistrationModel.Centre);
@@ -101,11 +151,15 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            var candidateNumber = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
+
+            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
+            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
             {
-                return candidateNumber;
+                return candidateNumberOrErrorCode;
             }
+
+            var candidateNumber = candidateNumberOrErrorCode;
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -124,7 +178,36 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
+            var supervisorDelegateRecordIdsMatchingDelegate =
+                GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
+            var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.Centre
+            )!;
+
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
+            {
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
+            }
+
             return candidateNumber;
+        }
+
+        private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
+            DelegateRegistrationModel delegateRegistrationModel
+        )
+        {
+            return supervisorDelegateService
+                .GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    delegateRegistrationModel.Centre,
+                    delegateRegistrationModel.Email
+                ).Select(record => record.ID);
         }
 
         private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
@@ -137,8 +220,7 @@ namespace DigitalLearningSolutions.Data.Services
                 registrationModel.JobGroup,
                 registrationModel.PasswordHash!
             ) { Approved = true };
-            var candidateNumber =
-                registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
             if (candidateNumber == "-1" || candidateNumber == "-4")
             {
                 throw new Exception(
@@ -146,10 +228,7 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(
-                candidateNumber,
-                delegateRegistrationModel.PasswordHash!
-            );
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
         }
 
         private Email GenerateApprovalEmail(
