@@ -559,7 +559,7 @@
             return RedirectToAction("SelfAssessmentOverview", new { sessionRequestVerification.SelfAssessmentID });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
-        public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary)
+        public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
@@ -568,7 +568,6 @@
             var model = new ManageOptionalCompetenciesViewModel()
             {
                SelfAssessment = assessment,
-                Vocabulary = vocabulary,
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds
             };
