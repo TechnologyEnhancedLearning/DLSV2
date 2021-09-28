@@ -63,7 +63,7 @@
     Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
   </div>
   <button class="nhsuk-button nhsuk-u-margin-top-1" type="submit">
-    Save and continue
+    Submit
   </button>
 </form>
 <div class="nhsuk-grid-row">
@@ -85,10 +85,10 @@
           </div>
         </div>
         <div class="page-indicator-container">
-          <a class="nhsuk-back-link__link nhsuk-u-margin-left-9 nhsuk-u-margin-left-9"
+          <a class="nhsuk-back-link__link"
              asp-action="SelfAssessmentOverview"
              asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
-            Return to Overview
+            Return to @Model.VocabPlural()
           </a>
         </div>
         <div class="pagination-button-container">
