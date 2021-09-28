@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
+        DelegateCourseInfo? GetDelegateCourseInfo(int progressId);
         (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
@@ -64,6 +65,46 @@ namespace DigitalLearningSolutions.Data.DataServices
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL
                 ORDER BY SubmittedTime DESC) AS LastAccessed";
+
+        private const string SelectDelegateCourseDetailsQuery =
+            @"SELECT
+                        cu.CustomisationID AS CustomisationId,
+						cu.CentreID AS CustomisationCentreId,
+						cu.AllCentres AS AllCentresCourse,
+						ap.CourseCategoryID,
+                        ap.ApplicationName,
+                        cu.CustomisationName,
+						auSupervisor.AdminID AS SupervisorAdminId,
+                        auSupervisor.Forename AS SupervisorForename,
+                        auSupervisor.Surname AS SupervisorSurname,
+                        pr.FirstSubmittedTime AS Enrolled,
+                        pr.SubmittedTime AS LastUpdated,
+                        pr.CompleteByDate AS CompleteBy,
+                        pr.Completed AS Completed,
+                        pr.Evaluated AS Evaluated,
+                        pr.RemovedDate,
+                        pr.EnrollmentMethodID AS EnrolmentMethodId,
+						auEnrolledBy.AdminID AS EnrolledByAdminId,
+						auEnrolledBy.Forename AS EnrolledByForename,
+						auEnrolledBy.Surname AS EnrolledBySurname,
+                        pr.LoginCount,
+                        pr.Duration AS LearningTime,
+                        pr.DiagnosticScore,
+                        cu.IsAssessed,
+                        pr.Answer1,
+                        pr.Answer2,
+                        pr.Answer3,
+						ca.CandidateID AS DelegateId,
+						ca.FirstName AS DelegateFirstName,
+						ca.LastName AS DelegateLastName,
+						ca.EmailAddress AS DelegateEmail,
+						ca.CentreID AS DelegateCentreId
+                    FROM Customisations cu
+                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
+                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+                    LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
+					LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
+					INNER JOIN dbo.Candidates AS ca ON ca.CandidateID = pr.CandidateID";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -210,33 +251,21 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
-                @"SELECT
-                        cu.CustomisationID AS CustomisationId,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-                        au.Forename AS SupervisorForename,
-                        au.Surname AS SupervisorSurname,
-                        pr.FirstSubmittedTime AS Enrolled,
-                        pr.SubmittedTime AS LastUpdated,
-                        pr.CompleteByDate AS CompleteBy,
-                        pr.Completed AS Completed,
-                        pr.Evaluated AS Evaluated,
-                        pr.EnrollmentMethodID AS EnrolmentMethodId,
-                        pr.LoginCount,
-                        pr.Duration AS LearningTime,
-                        pr.DiagnosticScore,
-                        cu.IsAssessed,
-                        pr.Answer1,
-                        pr.Answer2,
-                        pr.Answer3
-                    FROM Customisations cu
-                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-                    LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
+                $@"{SelectDelegateCourseDetailsQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
                 new { delegateId }
+            );
+        }
+
+        public DelegateCourseInfo? GetDelegateCourseInfo(int progressId)
+        {
+            return connection.QuerySingleOrDefault<DelegateCourseInfo>(
+                $@"{SelectDelegateCourseDetailsQuery}
+                    WHERE pr.ProgressID = @progressId
+                        AND ap.ArchivedDate IS NULL",
+                new { progressId }
             );
         }
 
@@ -251,8 +280,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM AssessAttempts aa
                     INNER JOIN Progress AS pr ON pr.ProgressID = aa.ProgressID
                     WHERE pr.CustomisationID = @customisationId
-                        AND pr.CandidateID = @delegateId
-                        AND pr.RemovedDate IS NULL",
+                        AND pr.CandidateID = @delegateId",
                 new { delegateId, customisationId }
             );
         }

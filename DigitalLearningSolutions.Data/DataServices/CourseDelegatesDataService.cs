@@ -12,21 +12,21 @@
 
     public class CourseDelegatesDataService : ICourseDelegatesDataService
     {
-        private readonly IDbConnection connection;
-
         private const string AllAttemptsQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
-                AND can.CentreID = @centreId) AS AllAttempts";
+                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AllAttempts";
 
         private const string AttemptsPassedQuery =
             @"(SELECT COUNT(aa.AssessAttemptID)
                 FROM dbo.AssessAttempts AS aa
                 INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
                 WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
-                AND can.CentreID = @centreId) AS AttemptsPassed";
+                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AttemptsPassed";
+
+        private readonly IDbConnection connection;
 
         public CourseDelegatesDataService(IDbConnection connection)
         {

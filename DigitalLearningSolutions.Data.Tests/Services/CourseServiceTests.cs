@@ -87,67 +87,61 @@
         }
 
         [Test]
-        public void GetAllCoursesForDelegate_should_call_correct_data_service_and_helper_methods()
+        public void GetDelegateAttemptsAndCourseCustomPrompts_should_call_correct_data_service_and_helper_methods()
         {
             // Given
             const int delegateId = 20;
             const int customisationId = 111;
-            var attemptStats = (7, 4);
+            var returnedAttemptStats = (10, 5);
+            var expectedAttemptStats = (10, 5, 50);
             var info = new DelegateCourseInfo
-                { CustomisationId = customisationId, IsAssessed = true };
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
-                .Returns(new List<DelegateCourseInfo> { info });
+                { DelegateId = delegateId, CustomisationId = customisationId, IsAssessed = true };
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .Returns(attemptStats);
+                .Returns(returnedAttemptStats);
 
             // When
-            var results = courseService.GetAllCoursesForDelegate(delegateId, CentreId).ToList();
+            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
 
             // Then
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,
-                    0
+                    0,
+                    false
                 )
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
                 .MustHaveHappened(1, Times.Exactly);
-            results.Should().HaveCount(1);
-            results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results[0].AttemptStats.Should().Be(attemptStats);
+            results.DelegateCourseInfo.Should().BeEquivalentTo(info);
+            results.AttemptStats.Should().Be(expectedAttemptStats);
         }
 
         [Test]
-        public void GetAllCoursesForDelegate_should_not_fetch_attempt_stats_if_course_not_assessed()
+        public void GetDelegateAttemptsAndCourseCustomPrompts_should_not_fetch_attempt_stats_if_course_not_assessed()
         {
             // Given
-            const int delegateId = 20;
             const int customisationId = 111;
             var info = new DelegateCourseInfo
                 { CustomisationId = customisationId, IsAssessed = false };
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
-                .Returns(new List<DelegateCourseInfo> { info });
 
             // When
-            var results = courseService.GetAllCoursesForDelegate(delegateId, CentreId).ToList();
+            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
 
             // Then
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,
-                    0
+                    0,
+                    false
                 )
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
-            results.Should().HaveCount(1);
-            results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results[0].AttemptStats.Should().Be((0, 0));
+            result.DelegateCourseInfo.Should().BeEquivalentTo(info);
+            result.AttemptStats.Should().Be((0, 0, 0));
         }
     }
 }

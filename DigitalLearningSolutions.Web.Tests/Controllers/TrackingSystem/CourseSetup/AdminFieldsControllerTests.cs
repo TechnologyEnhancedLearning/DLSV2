@@ -40,7 +40,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
@@ -216,7 +216,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     "Test"
                 )
@@ -246,7 +245,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     null
                 )
@@ -276,7 +274,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     "Test"
                 )
@@ -326,8 +323,7 @@
             const string action = "addPrompt";
 
             // When
-            var result =
-                controller.AddAdminField(1, initialViewModel, action);
+            controller.AddAdminField(1, initialViewModel, action);
 
             // Then
             using (new AssertionScope())

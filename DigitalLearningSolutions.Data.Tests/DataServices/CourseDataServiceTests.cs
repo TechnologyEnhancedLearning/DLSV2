@@ -9,12 +9,47 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class CourseDataServiceTests
     {
+        private static readonly DateTime EnrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
+
+        private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
+            27915,
+            101,
+            false,
+            4,
+            "LinkedIn",
+            "Cohort Testing",
+            1,
+            "Kevin",
+            "Whittaker (Developer)",
+            EnrollmentDate,
+            EnrollmentDate,
+            null,
+            null,
+            null,
+            null,
+            3,
+            1,
+            "Kevin",
+            "Whittaker (Developer)",
+            0,
+            0,
+            null,
+            true,
+            null,
+            null,
+            null,
+            20,
+            "xxxx",
+            "xxxxxx",
+            "",
+            101
+        );
+
         private CourseDataService courseDataService = null!;
 
         [OneTimeSetUp]
@@ -283,29 +318,18 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var results = courseDataService.GetDelegateCoursesInfo(20).ToList();
 
             // Then
-            var enrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
-            var expected = new DelegateCourseInfo(
-                27915,
-                "LinkedIn",
-                "Cohort Testing",
-                "Kevin",
-                "Whittaker (Developer)",
-                enrollmentDate,
-                enrollmentDate,
-                null,
-                null,
-                null,
-                3,
-                0,
-                0,
-                null,
-                true,
-                null,
-                null,
-                null
-            );
             results.Should().HaveCount(4);
-            results[3].Should().BeEquivalentTo(expected);
+            results[3].Should().BeEquivalentTo(ExpectedCourseInfo);
+        }
+
+        [Test]
+        public void GetDelegateCourseInfo_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var result = courseDataService.GetDelegateCourseInfo(284998);
+
+            // Then
+            result.Should().BeEquivalentTo(ExpectedCourseInfo);
         }
 
         [Test]

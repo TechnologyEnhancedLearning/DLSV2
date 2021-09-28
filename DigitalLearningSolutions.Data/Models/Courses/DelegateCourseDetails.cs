@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
@@ -13,11 +14,14 @@
         {
             DelegateCourseInfo = delegateCourseInfo;
             CustomPrompts = customPrompts;
-            AttemptStats = attemptStats;
+            var passRate = attemptStats.totalAttempts == 0
+                ? 0
+                : Math.Round(100 * attemptStats.attemptsPassed / (double)attemptStats.totalAttempts);
+            AttemptStats = (attemptStats.totalAttempts, attemptStats.attemptsPassed, passRate);
         }
 
         public DelegateCourseInfo DelegateCourseInfo { get; set; }
         public List<CustomPromptWithAnswer> CustomPrompts { get; set; }
-        public (int totalAttempts, int attemptsPassed) AttemptStats { get; set; }
+        public (int totalAttempts, int attemptsPassed, double passRate) AttemptStats { get; set; }
     }
 }
