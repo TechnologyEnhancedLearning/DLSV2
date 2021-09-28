@@ -9,6 +9,8 @@ _Attach screenshots on mobile, tablet and desktop._
 
 -----
 ### Developer checks
+(Leave tasks unticked if they haven't been appropriate for your ticket.)
+
 I have:
 - [ ] Run the formatter and made sure there are no IDE errors.
 - [ ] Written tests for the changes (controller, data services, services, view models etc) and manually tested my work with and without JavaScript. Full manual testing guidelines can be found here: https://softwiretech.atlassian.net/wiki/spaces/HEE/pages/6703648740/Testing
