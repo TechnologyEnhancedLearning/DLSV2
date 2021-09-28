@@ -46,13 +46,13 @@
                 Bulk = 0
             };
 
-            var candidateNumber = connection.QueryFirstOrDefault<string>(
+            var candidateNumberOrErrorCode = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType: CommandType.StoredProcedure
             );
 
-            return candidateNumber;
+            return candidateNumberOrErrorCode;
         }
 
         public int RegisterAdmin(AdminRegistrationModel registrationModel)

@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
@@ -89,15 +90,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-
-            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
-            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
-            {
-                return (candidateNumberOrErrorCode, false);
-            }
-
-            var candidateNumber = candidateNumberOrErrorCode;
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -143,15 +136,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
-
-            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
-            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
-            {
-                return candidateNumberOrErrorCode;
-            }
-
-            var candidateNumber = candidateNumberOrErrorCode;
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -189,6 +174,24 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             return candidateNumber;
+        }
+
+        private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        {
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+
+            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
+
+            if (failureIfAny != null)
+            {
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {failureIfAny.Name}."
+                );
+
+                throw new DelegateCreationFailedException(failureIfAny);
+            }
+
+            return candidateNumberOrErrorCode;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
