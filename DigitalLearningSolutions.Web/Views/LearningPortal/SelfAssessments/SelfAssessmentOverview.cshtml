@@ -12,7 +12,7 @@
   <li class="nhsuk-breadcrumb__item">@Model.VocabPlural()</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>@Model.SelfAssessment.Name - Overview</h1>
+<h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
