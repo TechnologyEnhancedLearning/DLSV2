@@ -35,10 +35,12 @@
 
             Driver.ClickButtonByText("Submit");
             ValidatePageHeading("Add course admin field");
+            var bulkPostResult = new AxeBuilder(Driver).Analyze();
 
             addPageResult.Violations.Should().BeEmpty();
             bulkAdditionResult.Violations.Should().BeEmpty();
             addAnswersResult.Violations.Should().BeEmpty();
+            bulkPostResult.Violations.Should().BeEmpty();
         }
 
         private void AddAnswer(string answerString)

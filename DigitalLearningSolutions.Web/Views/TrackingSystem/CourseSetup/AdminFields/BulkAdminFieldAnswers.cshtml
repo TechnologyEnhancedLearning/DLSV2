@@ -33,6 +33,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddAdminFieldAnswersBulk" : "EditAdminFieldBulkPost")">
 
       <input type="hidden" asp-for="IsAddPromptJourney" />
+      <input type="hidden" asp-for="CustomisationId" />
       <input type="hidden" asp-for="PromptNumber" />
 
       <vc:text-area asp-for="@nameof(Model.OptionsString)"
@@ -43,7 +44,7 @@
                     hint-text=""
                     css-class=""
                     character-count="1000" />
-      <input type="hidden" asp-for="CustomisationId" />
+
       <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 

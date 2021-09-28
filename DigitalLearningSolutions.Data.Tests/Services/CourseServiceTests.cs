@@ -163,7 +163,7 @@
             // Then
             A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
                 .MustHaveHappened(1, Times.Exactly);
-            result.Should().Be(true);
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -179,7 +179,7 @@
             // Then
             A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
                 .MustHaveHappened(1, Times.Exactly);
-            result.Should().Be(false);
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -194,7 +194,7 @@
             // Then
             A.CallTo(() => courseDataService.GetCentreIdAndCategoryIdForCourse(A<int>._))
                 .MustHaveHappened(1, Times.Exactly);
-            result.Should().Be(false);
+            result.Should().BeFalse();
         }
     }
 }

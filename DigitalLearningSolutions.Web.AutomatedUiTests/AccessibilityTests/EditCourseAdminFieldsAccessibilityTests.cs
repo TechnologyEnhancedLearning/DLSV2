@@ -29,9 +29,11 @@
 
             Driver.ClickButtonByText("Submit");
             ValidatePageHeading("Edit course admin field");
+            var bulkPostResult = new AxeBuilder(Driver).Analyze();
 
             editPageResult.Violations.Should().BeEmpty();
             bulkAdditionResult.Violations.Should().BeEmpty();
+            bulkPostResult.Violations.Should().BeEmpty();
         }
     }
 }
