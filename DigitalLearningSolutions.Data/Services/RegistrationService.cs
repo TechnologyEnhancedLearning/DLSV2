@@ -84,32 +84,34 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+
+            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
+            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
             {
-                return (candidateNumber, false);
+                return (candidateNumberOrErrorCode, false);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
+            var candidateNumber = candidateNumberOrErrorCode;
 
+            passwordDataService.SetPasswordByCandidateNumber(
+                candidateNumber,
+                delegateRegistrationModel.PasswordHash!
+            );
+
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
             var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
                 candidateNumber,
                 delegateRegistrationModel.Centre
-            );
+            )!;
 
-            if (delegateUser == null)
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
-                logger.LogError("Delegate account was not successfully created after registration.");
-            }
-            else
-            {
-                if (supervisorDelegateRecordIdsMatchingDelegate.Any())
-                {
-                    supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                        supervisorDelegateRecordIdsMatchingDelegate,
-                        delegateUser.Id
-                    );
-                }
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
             }
 
             if (foundRecordForSupervisorDelegateId)
@@ -149,11 +151,15 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
-            var candidateNumber = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
+
+            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
+            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
             {
-                return candidateNumber;
+                return candidateNumberOrErrorCode;
             }
+
+            var candidateNumber = candidateNumberOrErrorCode;
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -175,24 +181,19 @@ namespace DigitalLearningSolutions.Data.Services
             var supervisorDelegateRecordIdsMatchingDelegate =
                 GetPendingSupervisorDelegateIdsMatchingDelegate(delegateRegistrationModel).ToList();
 
+            // We know this will give us a non-null user.
+            // If the delegate hadn't successfully been added we would have errored out of this method earlier.
             var delegateUser = userDataService.GetDelegateUserByCandidateNumber(
                 candidateNumber,
                 delegateRegistrationModel.Centre
-            );
+            )!;
 
-            if (delegateUser == null)
+            if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
-                logger.LogError("Delegate account was not successfully created after registration.");
-            }
-            else
-            {
-                if (supervisorDelegateRecordIdsMatchingDelegate.Any())
-                {
-                    supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
-                        supervisorDelegateRecordIdsMatchingDelegate,
-                        delegateUser.Id
-                    );
-                }
+                supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    supervisorDelegateRecordIdsMatchingDelegate,
+                    delegateUser.Id
+                );
             }
 
             return candidateNumber;
