@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Web.Controllers
                 new MiniHubSection(sectionTitle: "Welcome", controllerName: "Home", actionName: "Welcome"),
                 new MiniHubSection(sectionTitle: "Products", controllerName: "Home", actionName: "Products"),
                 new MiniHubSection(
-                    sectionTitle: "Learning Content",
+                    sectionTitle: "Learning content",
                     controllerName: "Home",
                     actionName: "LearningContent"),
             });

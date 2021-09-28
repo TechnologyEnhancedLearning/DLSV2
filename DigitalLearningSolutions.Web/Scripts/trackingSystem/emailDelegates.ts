@@ -9,11 +9,31 @@ const checkboxSelector = '.delegate-checkbox';
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
+setUpSelectAndDeselectButtons();
 
-const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
-const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
-const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
+function alertResultCount(): void {
+  // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
+  const resultCount = document.getElementById('results-count') as HTMLSpanElement;
+  resultCount.setAttribute('role', '');
+  resultCount.setAttribute('role', 'alert');
+}
 
-selectAllForm.addEventListener('submit', (e) => e.preventDefault());
-selectAllButton.addEventListener('click', () => selectAll(checkboxSelector));
-deselectAllButton.addEventListener('click', () => deselectAll(checkboxSelector));
+function setUpSelectAndDeselectButtons(): void {
+  const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
+  const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
+  const deselectAllButton = document.getElementById('deselect-all-button') as HTMLButtonElement;
+
+  selectAllForm.addEventListener('submit', (e) => e.preventDefault());
+
+  selectAllButton.addEventListener('click',
+    () => {
+      selectAll(checkboxSelector);
+      alertResultCount();
+    });
+
+  deselectAllButton.addEventListener('click',
+    () => {
+      deselectAll(checkboxSelector);
+      alertResultCount();
+    });
+}

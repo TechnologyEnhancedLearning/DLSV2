@@ -8,15 +8,15 @@
     public class LearningContentController : Controller
     {
         private const string ItSkillsPathwayBrand = "ITSkillsPathway";
-        private const string ItSkillsPathwayTitle = "IT skills pathway";
+        private const string ItSkillsPathwayTitle = "IT Skills Pathway";
         private const string ReasonableAdjustmentFlagBrand = "ReasonableAdjustmentFlag";
-        private const string ReasonableAdjustmentFlagTitle = "Reasonable adjustment flag";
+        private const string ReasonableAdjustmentFlagTitle = "Reasonable Adjustment Flag";
 
         private const string TerminologyAndClassificationsDeliveryServiceBrand =
             "TerminologyandClassificationsDeliveryService";
 
         private const string TerminologyAndClassificationsDeliveryServiceTitle =
-            "Terminology and classifications delivery service";
+            "Terminology and Classifications Delivery Service";
 
         public IActionResult ItSkillsPathway()
         {
