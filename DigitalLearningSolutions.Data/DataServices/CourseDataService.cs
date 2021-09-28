@@ -68,43 +68,43 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         private const string SelectDelegateCourseDetailsQuery =
             @"SELECT
-                        cu.CustomisationID AS CustomisationId,
-						cu.CentreID AS CustomisationCentreId,
-						cu.AllCentres AS AllCentresCourse,
-						ap.CourseCategoryID,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-						auSupervisor.AdminID AS SupervisorAdminId,
-                        auSupervisor.Forename AS SupervisorForename,
-                        auSupervisor.Surname AS SupervisorSurname,
-                        pr.FirstSubmittedTime AS Enrolled,
-                        pr.SubmittedTime AS LastUpdated,
-                        pr.CompleteByDate AS CompleteBy,
-                        pr.Completed AS Completed,
-                        pr.Evaluated AS Evaluated,
-                        pr.RemovedDate,
-                        pr.EnrollmentMethodID AS EnrolmentMethodId,
-						auEnrolledBy.AdminID AS EnrolledByAdminId,
-						auEnrolledBy.Forename AS EnrolledByForename,
-						auEnrolledBy.Surname AS EnrolledBySurname,
-                        pr.LoginCount,
-                        pr.Duration AS LearningTime,
-                        pr.DiagnosticScore,
-                        cu.IsAssessed,
-                        pr.Answer1,
-                        pr.Answer2,
-                        pr.Answer3,
-						ca.CandidateID AS DelegateId,
-						ca.FirstName AS DelegateFirstName,
-						ca.LastName AS DelegateLastName,
-						ca.EmailAddress AS DelegateEmail,
-						ca.CentreID AS DelegateCentreId
-                    FROM Customisations cu
-                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-                    LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
-					LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
-					INNER JOIN dbo.Candidates AS ca ON ca.CandidateID = pr.CandidateID";
+                cu.CustomisationID AS CustomisationId,
+                cu.CentreID AS CustomisationCentreId,
+                cu.AllCentres AS AllCentresCourse,
+                ap.CourseCategoryID,
+                ap.ApplicationName,
+                cu.CustomisationName,
+                auSupervisor.AdminID AS SupervisorAdminId,
+                auSupervisor.Forename AS SupervisorForename,
+                auSupervisor.Surname AS SupervisorSurname,
+                pr.FirstSubmittedTime AS Enrolled,
+                pr.SubmittedTime AS LastUpdated,
+                pr.CompleteByDate AS CompleteBy,
+                pr.Completed AS Completed,
+                pr.Evaluated AS Evaluated,
+                pr.RemovedDate,
+                pr.EnrollmentMethodID AS EnrolmentMethodId,
+                auEnrolledBy.AdminID AS EnrolledByAdminId,
+                auEnrolledBy.Forename AS EnrolledByForename,
+                auEnrolledBy.Surname AS EnrolledBySurname,
+                pr.LoginCount,
+                pr.Duration AS LearningTime,
+                pr.DiagnosticScore,
+                cu.IsAssessed,
+                pr.Answer1,
+                pr.Answer2,
+                pr.Answer3,
+                ca.CandidateID AS DelegateId,
+                ca.FirstName AS DelegateFirstName,
+                ca.LastName AS DelegateLastName,
+                ca.EmailAddress AS DelegateEmail,
+                ca.CentreID AS DelegateCentreId
+            FROM Customisations cu
+            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
+            LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
+            INNER JOIN dbo.Candidates AS ca ON ca.CandidateID = pr.CandidateID";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -280,7 +280,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     FROM AssessAttempts aa
                     INNER JOIN Progress AS pr ON pr.ProgressID = aa.ProgressID
                     WHERE pr.CustomisationID = @customisationId
-                        AND pr.CandidateID = @delegateId",
+                        AND pr.CandidateID = @delegateId
+                        AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
         }
