@@ -7,23 +7,24 @@
   ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Choose optional @Model.VocabPlural()</h1>
+<h1>Choose optional @Model.VocabPlural().ToLower()</h1>
 @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedSelfAssessmentStructureIds) })" />
 }
-<h2><small>Which optional @Model.VocabPlural() would you like to include in your self-assessment?</small></h2>
+<h2><small>Which optional @Model.VocabPlural().ToLower() would you like to include in your self-assessment?</small></h2>
 @if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
 {
   <div class="nhsuk-warning-callout">
     <h3 class="nhsuk-warning-callout__label">
       <span role="text">
         <span class="nhsuk-u-visually-hidden">Important: </span>
-        How to choose your optional @Model.VocabPlural()
+        How to choose your optional @Model.VocabPlural().ToLower()
       </span>
     </h3>
     <div>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</div>
@@ -43,8 +44,8 @@
         {
           <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
             <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button nhsuk-search__submit select-all-button status-tag" data-group="@competencyGroup.Key" id="select-all-button" name="selectAll" value="true">Select all @Model.VocabPlural()</a>
-              <a class="nhsuk-button nhsuk-search__submit select-all-button status-tag" data-group="@competencyGroup.Key" id="deselect-all-button" name="selectAll" value="false">Deselect all @Model.VocabPlural()</a>
+              <a class="nhsuk-button nhsuk-search__submit select-all-button status-tag" data-group="@competencyGroup.Key" id="select-all-button" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button nhsuk-search__submit select-all-button status-tag" data-group="@competencyGroup.Key" id="deselect-all-button" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
             </div>
           </div>
         }

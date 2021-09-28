@@ -7,14 +7,15 @@
   ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@Model.SelfAssessmentName</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Request verification</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>Request @Model.Vocubulary verification</h1>
 <h2>Summary</h2>
 <dl class="nhsuk-summary-list">
-<div class="nhsuk-summary-list__row">
+  <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     Supervisor
   </dt>
@@ -26,8 +27,8 @@
       Change
     </a>
   </dd>
-</div>
-<div class="nhsuk-summary-list__row">
+  </div>
+  <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     Results to verify
   </dt>
@@ -36,11 +37,11 @@
   </dd>
   <dd class="nhsuk-summary-list__actions">
 
-      <a asp-action="VerificationPickResults" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
-        Change
-      </a>
+    <a asp-action="VerificationPickResults" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+      Change
+    </a>
   </dd>
-</div>
+  </div>
 </dl>
 <form method="post">
   <button class="nhsuk-button" type="submit">Submit</button>
