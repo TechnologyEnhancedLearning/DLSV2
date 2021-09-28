@@ -20,7 +20,7 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
-        void UpdateTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
+        void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -296,8 +296,8 @@
                     FROM dbo.Tutorials AS tu
                     LEFT JOIN dbo.CustomisationTutorials AS ct
                         ON ct.TutorialID = tu.TutorialID AND ct.CustomisationID = @customisationId
-                    WHERE SectionID = @sectionId
-                    AND ArchivedDate IS NULL",
+                    WHERE tu.SectionID = @sectionId
+                    AND tu.ArchivedDate IS NULL",
                 new { sectionId, customisationId }
             );
         }
@@ -310,12 +310,12 @@
                     INNER JOIN Applications AS a ON c.ApplicationID = a.ApplicationID
                     INNER JOIN Sections AS s ON a.ApplicationID = s.ApplicationID
                     INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
-                    WHERE (c.CustomisationID = @customisationId)  ",
+                    WHERE (c.CustomisationID = @customisationId)",
                 new { customisationId }
             );
         }
 
-        public void UpdateTutorialStatuses(
+        public void UpdateOrInsertCustomisationTutorialStatuses(
             int tutorialId,
             int customisationId,
             bool diagnosticEnabled,

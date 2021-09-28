@@ -9,7 +9,6 @@
     public interface IProgressDataService
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
-
         void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
         int CreateNewDelegateProgress(
@@ -35,7 +34,7 @@
         {
             this.connection = connection;
         }
-        
+
         public IEnumerable<Progress> GetDelegateProgressForCourse(
             int delegateId,
             int customisationId

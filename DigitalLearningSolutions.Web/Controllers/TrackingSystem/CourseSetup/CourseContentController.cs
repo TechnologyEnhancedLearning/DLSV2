@@ -19,15 +19,21 @@
         public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
         public const string SelectAllLearningAction = "learning-select-all";
         public const string DeselectAllLearningAction = "learning-deselect-all";
-        public const string SaveAction = "Save";
+        public const string SaveAction = "save";
 
         private readonly ICourseDataService courseDataService;
         private readonly ISectionService sectionService;
+        private readonly ITutorialService tutorialService;
 
-        public CourseContentController(ICourseDataService courseDataService, ISectionService sectionService)
+        public CourseContentController(
+            ICourseDataService courseDataService,
+            ISectionService sectionService,
+            ITutorialService tutorialService
+        )
         {
             this.courseDataService = courseDataService;
             this.sectionService = sectionService;
+            this.tutorialService = tutorialService;
         }
 
         [HttpGet]
@@ -71,7 +77,7 @@
                 centreId,
                 categoryId.Value
             );
-            var section = sectionService.GetSectionAndTutorialsBySectionId(customisationId, sectionId);
+            var section = sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(customisationId, sectionId);
 
             if (courseDetails == null || section == null)
             {
@@ -106,7 +112,7 @@
                 t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
             );
 
-            sectionService.UpdateSectionTutorialsStatuses(tutorials, customisationId);
+            tutorialService.UpdateSectionTutorialsStatuses(tutorials, customisationId);
 
             return RedirectToAction("Index", new { customisationId });
         }
@@ -132,7 +138,7 @@
                     DeselectAllLearning(formData);
                     break;
                 default:
-                    return new StatusCodeResult(500);
+                    return new StatusCodeResult(400);
             }
 
             var viewModel = new EditCourseSectionViewModel(formData, customisationId);

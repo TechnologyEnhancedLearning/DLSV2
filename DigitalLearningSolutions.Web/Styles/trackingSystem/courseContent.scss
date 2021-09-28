@@ -7,18 +7,20 @@
   }
 }
 
-.select-all-button {
+.select-deselect-all-button {
   @extend .right-submit-button;
+  @include nhsuk-font(16);
   background-color: $button-dark-blue;
   border-radius: 4px;
   margin-right: nhsuk-spacing(2);
 }
 
+.select-all-button {
+  @extend .select-deselect-all-button;
+}
+
 .deselect-all-button {
-  @extend .right-submit-button;
-  background-color: $button-dark-blue;
-  border-radius: 4px;
-  margin-right: nhsuk-spacing(2);
+  @extend .select-deselect-all-button;
 }
 
 .tutorial-learning-column {

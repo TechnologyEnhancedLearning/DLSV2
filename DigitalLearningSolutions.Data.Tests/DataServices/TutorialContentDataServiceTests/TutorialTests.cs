@@ -44,13 +44,13 @@
         }
 
         [Test]
-        public void UpdateTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
+        public void UpdateOrInsertCustomisationTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
         {
             // When
             using var transaction = new TransactionScope();
             try
             {
-                tutorialContentDataService.UpdateTutorialStatuses(49, CustomisationId, false, false);
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(49, CustomisationId, false, false);
                 var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
 
                 using (new AssertionScope())
@@ -68,7 +68,7 @@
         }
 
         [Test]
-        public void UpdateTutorialStatuses_inserts_new_CustomisationTutorial()
+        public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial()
         {
             // Given
             const int sectionId = 3059;
@@ -81,7 +81,7 @@
             {
                 var initialResult = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId)
                     .ToList();
-                tutorialContentDataService.UpdateTutorialStatuses(tutorialId, customisationId, true, true);
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(tutorialId, customisationId, true, true);
                 var result = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId).ToList();
 
                 using (new AssertionScope())

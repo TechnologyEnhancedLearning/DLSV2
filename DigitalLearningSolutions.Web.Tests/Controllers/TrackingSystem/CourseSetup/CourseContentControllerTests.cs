@@ -19,12 +19,13 @@
     {
         private readonly ICourseDataService courseDataService = A.Fake<ICourseDataService>();
         private readonly ISectionService sectionService = A.Fake<ISectionService>();
+        private readonly ITutorialService tutorialService = A.Fake<ITutorialService>();
         private CourseContentController controller = null!;
 
         [SetUp]
         public void Setup()
         {
-            controller = new CourseContentController(courseDataService, sectionService)
+            controller = new CourseContentController(courseDataService, sectionService, tutorialService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
         }
@@ -65,7 +66,7 @@
             // Given
             A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
                 .Returns(null);
-            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(new Section(1, "Section"));
 
             // When
@@ -81,7 +82,7 @@
             // Given
             A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
-            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(null);
 
             // When
@@ -97,7 +98,7 @@
             // Given
             A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
-            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(new Section(1, "Section", new List<Tutorial>()));
 
             // When
@@ -112,7 +113,7 @@
         {
             // Given
             var postData = GetDefaultEditCourseSectionFormData();
-            A.CallTo(() => sectionService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
+            A.CallTo(() => tutorialService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
                 .DoesNothing();
 
             // When
@@ -120,7 +121,7 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-            A.CallTo(() => sectionService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
+            A.CallTo(() => tutorialService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
                 .MustHaveHappened();
         }
 
@@ -142,7 +143,7 @@
 
         [Test]
         public void
-            EditSection_post_with_select_all_diagnostic_action_returns_EditSection_page_with_all_learning_selected()
+            EditSection_post_with_select_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_selected()
         {
             // Given
             var postData = GetDefaultEditCourseSectionFormData();
@@ -158,7 +159,7 @@
 
         [Test]
         public void
-            EditSection_post_with_deselect_all_learning_action_returns_EditSection_page_with_all_learning_selected()
+            EditSection_post_with_deselect_all_learning_action_returns_EditSection_page_with_all_learning_deselected()
         {
             // Given
             var postData = GetDefaultEditCourseSectionFormData();
@@ -175,7 +176,7 @@
 
         [Test]
         public void
-            EditSection_post_with_deselect_all_diagnostic_action_returns_EditSection_page_with_all_learning_selected()
+            EditSection_post_with_deselect_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_deselected()
         {
             // Given
             var postData = GetDefaultEditCourseSectionFormData();
@@ -200,7 +201,7 @@
             var result = controller.EditSection(postData, 1, "Incorrect string");
 
             // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(500);
+            result.Should().BeStatusCodeResult().WithStatusCode(400);
         }
 
         private EditCourseSectionFormData GetDefaultEditCourseSectionFormData()

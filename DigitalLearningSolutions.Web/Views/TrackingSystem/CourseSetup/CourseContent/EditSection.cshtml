@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
 @model EditCourseSectionViewModel
@@ -8,14 +9,14 @@
 
 @{
   ViewData["Title"] = "Edit section content";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Application"] = ApplicationType.TrackingSystem.HeaderExtension;
+  ViewData["HeaderPath"] = ApplicationType.TrackingSystem.HeaderPath;
+  ViewData["HeaderPathName"] = ApplicationType.TrackingSystem.HeaderPathName;
   var cancelRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 @section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem"/>
 }
 
 <div class="nhsuk-grid-row">
@@ -57,12 +58,12 @@
           <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
             <div class="nhsuk-grid-column-full">
               <button name="action"
-                      class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16"
+                      class="nhsuk-search__submit select-all-button"
                       value="@CourseContentController.SelectAllDiagnosticAction">
                 Select all
               </button>
               <button name="action"
-                      class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16"
+                      class="nhsuk-search__submit deselect-all-button"
                       value="@CourseContentController.DeselectAllDiagnosticAction">
                 Deselect all
               </button>
@@ -96,12 +97,12 @@
           <div class="nhsuk-grid-row nhsuk-u-margin-bottom-3">
             <div class="nhsuk-grid-column-full">
               <button name="action"
-                      class="nhsuk-search__submit select-all-button nhsuk-u-font-size-16"
+                      class="nhsuk-search__submit select-all-button"
                       value="@CourseContentController.SelectAllLearningAction">
                 Select all
               </button>
               <button name="action"
-                      class="nhsuk-search__submit deselect-all-button nhsuk-u-font-size-16"
+                      class="nhsuk-search__submit deselect-all-button"
                       value="@CourseContentController.DeselectAllLearningAction">
                 Deselect all
               </button>

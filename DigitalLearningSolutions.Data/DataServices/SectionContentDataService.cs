@@ -13,7 +13,6 @@
     {
         SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
         IEnumerable<Section> GetSectionsByApplicationId(int applicationId);
-
         Section? GetSectionById(int sectionId);
     }
 
