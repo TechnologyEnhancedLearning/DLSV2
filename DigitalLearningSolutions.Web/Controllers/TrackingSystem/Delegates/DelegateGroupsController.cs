@@ -195,7 +195,6 @@
             var removedDate = clockService.UtcNow;
             groupsDataService.DeleteGroup(groupId, false, removedDate);
             return RedirectToAction("Index");
-
         }
 
         [HttpGet]

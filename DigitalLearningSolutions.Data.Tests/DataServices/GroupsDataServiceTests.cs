@@ -166,7 +166,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        public async Task
+            RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -190,7 +191,6 @@
                 transaction.Dispose();
             }
         }
-
 
         [Test]
         public void GetRelatedProgressIdForGroupDelegate_returns_expected_value()
@@ -243,7 +243,8 @@
                 var groupId = groupsDataService.AddDelegateGroup(groupDetails);
 
                 // Then
-                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId).First(g => g.GroupId == groupId);
+                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId)
+                    .First(g => g.GroupId == groupId);
                 group.GroupLabel.Should().Be(groupDetails.GroupLabel);
                 group.GroupDescription.Should().Be(groupDetails.GroupDescription);
                 group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
@@ -295,7 +296,8 @@
                 @"SET IDENTITY_INSERT dbo.Progress ON
                     INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
                     VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
-                    SET IDENTITY_INSERT dbo.Progress OFF");
+                    SET IDENTITY_INSERT dbo.Progress OFF"
+            );
         }
 
         [Test]
@@ -332,7 +334,6 @@
                 groupCustomisations.Should().BeEmpty();
                 var groupName = groupsDataService.GetGroupName(groupId, centreId);
                 groupName.Should().BeNull();
-
             }
             finally
             {
@@ -374,7 +375,6 @@
                 groupCustomisations.Should().BeEmpty();
                 var groupName = groupsDataService.GetGroupName(groupId, centreId);
                 groupName.Should().BeNull();
-
             }
             finally
             {
