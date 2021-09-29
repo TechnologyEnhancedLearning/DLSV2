@@ -35,7 +35,7 @@
                 );
 
             // When
-            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0);
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
 
             // Then
             returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
@@ -52,7 +52,7 @@
 
                 // When
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 1, 1, options);
-                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 0);
+                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
 
                 // Then
                 using (new AssertionScope())
@@ -87,7 +87,7 @@
 
                 // When
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
-                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101, 2);
+                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
                 var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
                     .Single(c => c.id == 1)
                     .name;

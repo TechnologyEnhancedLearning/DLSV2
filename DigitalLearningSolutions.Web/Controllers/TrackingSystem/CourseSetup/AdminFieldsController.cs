@@ -28,14 +28,17 @@
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseService courseService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseAdminFieldsDataService courseAdminFieldsDataService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService,
+            ICourseService courseService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
+            this.courseService = courseService;
         }
 
         [HttpGet]
@@ -44,12 +47,10 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
 
             var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
                 customisationId,
-                centreId,
-                categoryId.Value
+                centreId
             );
 
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
@@ -75,8 +76,7 @@
 
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId,
-                    centreId,
-                    categoryId.Value
+                    centreId
                 ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
@@ -130,12 +130,17 @@
         }
 
         [HttpPost]
-        [Route("AdminFieldsEdit/Bulk")]
+        [Route("AdminFields/Edit/Bulk")]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulkPost(
             BulkAdminFieldAnswersViewModel model
         )
         {
+            if (!VerifyAdminUserCanAccessCourse(model.CustomisationId))
+            {
+                return NotFound();
+            }
+
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
             {
@@ -338,7 +343,6 @@
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 model.CustomisationId,
                 centreId,
-                categoryId.Value,
                 model.AdminFieldId!.Value,
                 model.OptionsString
             ))
@@ -530,6 +534,19 @@
                     "Each answer must be 100 characters or fewer"
                 );
             }
+        }
+
+        private bool VerifyAdminUserCanAccessCourse(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+
+            if (courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

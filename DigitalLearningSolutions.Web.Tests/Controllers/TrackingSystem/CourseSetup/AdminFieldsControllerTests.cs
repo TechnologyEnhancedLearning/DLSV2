@@ -23,6 +23,7 @@
             A.Fake<ICourseAdminFieldsDataService>();
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
+        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private AdminFieldsController controller = null!;
 
         [SetUp]
@@ -30,7 +31,8 @@
         {
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
-                    courseAdminFieldsDataService
+                    courseAdminFieldsDataService,
+                    courseService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -43,7 +45,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
 
             // When
@@ -169,6 +171,9 @@
 
             controller.TempData.Set(initialTempData);
 
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
+
             // When
             var result = controller.EditAdminFieldBulkPost(inputViewModel);
 
@@ -219,7 +224,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     "Test"
                 )
@@ -249,7 +253,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     null
                 )
@@ -279,7 +282,6 @@
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
                     101,
-                    0,
                     1,
                     "Test"
                 )

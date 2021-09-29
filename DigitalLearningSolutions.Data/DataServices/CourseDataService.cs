@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
-        (int? centreId, int? categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId);
+        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -347,15 +347,20 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? categoryId) GetCentreIdAndCategoryIdForCourse(int customisationId)
+        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
         {
-            return connection.QueryFirstOrDefault<(int, int)>(
-                @"SELECT c.CentreID,
-                        a.CourseCategoryID
-                    FROM Customisations AS c
-                    JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                    WHERE CustomisationID = @customisationId",
-                new { customisationId }
+            return connection.QueryFirstOrDefault<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT *
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId
+                        AND c.CentreID = @centreId
+                        AND (a.CourseCategoryID = 0 OR @categoryId IS NULL)
+                    )
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, centreId, categoryId }
             );
         }
     }

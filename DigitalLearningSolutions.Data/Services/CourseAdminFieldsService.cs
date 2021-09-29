@@ -11,13 +11,12 @@
 
     public interface ICourseAdminFieldsService
     {
-        public CourseAdminFields GetCustomPromptsForCourse(int customisationId, int centreId, int categoryId);
+        public CourseAdminFields GetCustomPromptsForCourse(int customisationId, int centreId);
 
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
-            int centreId,
-            int categoryId = 0
+            int centreId
         );
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptId, string? options);
@@ -27,7 +26,6 @@
         public bool AddCustomPromptToCourse(
             int customisationId,
             int centreId,
-            int categoryId,
             int promptId,
             string? options
         );
@@ -53,11 +51,10 @@
 
         public CourseAdminFields GetCustomPromptsForCourse(
             int customisationId,
-            int centreId,
-            int categoryId = 0
+            int centreId
         )
         {
-            var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId, centreId, categoryId);
+            var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId, centreId);
             return new CourseAdminFields(
                 customisationId,
                 centreId,
@@ -68,11 +65,10 @@
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
-            int centreId,
-            int categoryId = 0
+            int centreId
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId, categoryId);
+            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId);
 
             return PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
         }
@@ -90,15 +86,13 @@
         public bool AddCustomPromptToCourse(
             int customisationId,
             int centreId,
-            int categoryId,
             int promptId,
             string? options
         )
         {
             var courseAdminFields = GetCustomPromptsForCourse(
                 customisationId,
-                centreId,
-                categoryId
+                centreId
             );
 
             var promptNumber = GetNextPromptNumber(courseAdminFields);
@@ -157,12 +151,11 @@
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
             int customisationId,
-            int centreId,
-            int categoryId
+            int centreId
         )
         {
-            var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId, centreId, categoryId);
-            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
+            var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId, centreId);
+            if (result == null)
             {
                 return null;
             }

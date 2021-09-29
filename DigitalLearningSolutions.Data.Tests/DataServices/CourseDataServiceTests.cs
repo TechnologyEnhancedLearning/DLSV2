@@ -9,7 +9,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -366,14 +365,13 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCentreIdAndCategoryIdForCourse_returns_expected_values()
+        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
         {
             // When
-            var (centreId, categoryId) = courseDataService.GetCentreIdAndCategoryIdForCourse(1);
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
 
             // Then
-            centreId.Should().Be(2);
-            categoryId.Should().Be(2);
+            result.Should().Be(true);
         }
     }
 }

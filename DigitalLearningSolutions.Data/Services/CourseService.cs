@@ -10,7 +10,7 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? categoryId);
     }
 
     public class CourseService : ICourseService
@@ -54,12 +54,10 @@
             );
         }
 
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId)
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? categoryId)
         {
-            var (courseCentreId, courseCategoryId) =
-                courseDataService.GetCentreIdAndCategoryIdForCourse(customisationId);
-
-            return centreId == courseCentreId && (categoryId == courseCategoryId || categoryId == 0);
+            var nullableCategoryId = categoryId == 0 ? null : categoryId;
+            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, nullableCategoryId);
         }
     }
 }
