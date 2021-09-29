@@ -61,7 +61,7 @@
             var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, User.GetCandidateIdKnownNotNull());
             if (competency == null)
             {
-                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id });
+                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id, vocabulary = assessment.Vocabulary });
             }
             else
             {
@@ -110,15 +110,15 @@
             }
             else
             {
-                return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, competencyGroupId = competencyGroupId }) + "#comp-" + competencyNumber.ToString());
+                return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = assessment.Vocabulary, competencyGroupId = competencyGroupId }) + "#comp-" + competencyNumber.ToString());
             }
         }
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview/{competencyGroupId}")]
-        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/Overview")]
-        public IActionResult SelfAssessmentOverview(int selfAssessmentId, int? competencyGroupId = null)
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
+        public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Overview";
+            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
             if (assessment == null)
@@ -557,7 +557,7 @@
                 }
             }
 
-            return RedirectToAction("SelfAssessmentOverview", new { sessionRequestVerification.SelfAssessmentID });
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = sessionRequestVerification.SelfAssessmentID, vocabulary = sessionRequestVerification.Vocabulary });
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
@@ -575,7 +575,7 @@
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
         [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary, ManageOptionalCompetenciesViewModel model)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
@@ -588,7 +588,7 @@
                 }
             }
 
-            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId });
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }
     }
 }
