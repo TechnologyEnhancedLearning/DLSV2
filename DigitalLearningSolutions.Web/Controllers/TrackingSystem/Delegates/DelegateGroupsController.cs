@@ -185,7 +185,7 @@
             var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
             if (User.GetCentreId() != groupCentreId)
             {
-                return new StatusCodeResult(404); // QQ change this probably
+                return NotFound();
             }
 
             var delegates = groupsDataService.GetGroupDelegates(groupId);
@@ -196,7 +196,8 @@
                 return RedirectToAction("ConfirmDeleteGroup", new { groupId });
             }
 
-            groupsDataService.DeleteGroup(groupId, false);
+            var removedDate = clockService.UtcNow;
+            groupsDataService.DeleteGroup(groupId, false, removedDate);
             return RedirectToAction("Index");
 
         }
@@ -208,7 +209,7 @@
             var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
             if (User.GetCentreId() != groupCentreId)
             {
-                return new StatusCodeResult(404); // QQ change this probably
+                return NotFound();
             }
 
             var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
@@ -232,7 +233,7 @@
             var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
             if (User.GetCentreId() != groupCentreId)
             {
-                return new StatusCodeResult(404); // QQ change this probably
+                return NotFound();
             }
 
             if (!ModelState.IsValid)
@@ -240,7 +241,8 @@
                 return View(model);
             }
 
-            groupsDataService.DeleteGroup(groupId, model.DeleteEnrolments);
+            var removedDate = clockService.UtcNow;
+            groupsDataService.DeleteGroup(groupId, model.DeleteEnrolments, removedDate);
 
             return RedirectToAction("Index");
         }

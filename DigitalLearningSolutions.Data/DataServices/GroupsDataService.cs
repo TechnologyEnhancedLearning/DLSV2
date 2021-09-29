@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
@@ -27,7 +28,7 @@
 
         int AddDelegateGroup(GroupDetails groupDetails);
 
-        void DeleteGroup(int groupId, bool deleteStartedEnrolment);
+        void DeleteGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -207,9 +208,9 @@
             );
         }
 
-        public void DeleteGroup(int groupId, bool deleteStartedEnrolment)
+        public void DeleteGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
         {
-            var removedDate = DateTime.UtcNow;
+            using var transaction = new TransactionScope();
 
             connection.Execute(
                 @"UPDATE Progress
@@ -233,9 +234,25 @@
                 new { groupId, removedDate, deleteStartedEnrolment }
             );
 
-            // QQ delete all records in GroupDelegates
-            // QQ delete all records in GroupCustomisations
-            // QQ delete group
+            connection.Execute(
+                @"DELETE FROM GroupDelegates
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+
+            connection.Execute(
+                @"DELETE FROM GroupCustomisations
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+
+            connection.Execute(
+                @"DELETE FROM Groups
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+
+            transaction.Complete();
         }
     }
 }
