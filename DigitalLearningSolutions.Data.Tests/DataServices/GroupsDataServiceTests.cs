@@ -219,5 +219,89 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public async Task DeleteGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 8;
+                const int centreId = 101;
+                const bool deleteStartedEnrolment = false;
+                var removedDate = DateTime.UtcNow;
+
+                // When
+                groupsDataService.DeleteGroup(groupId, deleteStartedEnrolment, removedDate);
+
+                // Then
+                var notStartedProgress = await connection.GetProgressRemovedFields(271518);
+                notStartedProgress.Item1.Should().Be(3);
+                notStartedProgress.Item2.Should().BeCloseTo(removedDate);
+
+                var startedProgress = await connection.GetProgressRemovedFields(285128);
+                startedProgress.Item1.Should().Be(0);
+                startedProgress.Item2.Should().BeNull();
+
+                var progressWithAnotherGroup = await connection.GetProgressRemovedFields(285122);
+                progressWithAnotherGroup.Item1.Should().Be(0);
+                progressWithAnotherGroup.Item2.Should().BeNull();
+
+                var groupDelegates = await connection.GetCandidatesForGroup(groupId);
+                groupDelegates.Should().BeEmpty();
+                var groupCustomisations = await connection.GetCustomisationsForGroup(groupId);
+                groupCustomisations.Should().BeEmpty();
+                var groupName = groupsDataService.GetGroupName(groupId, centreId);
+                groupName.Should().BeNull();
+
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task DeleteGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 8;
+                const int centreId = 101;
+                const bool deleteStartedEnrolment = true;
+                var removedDate = DateTime.UtcNow;
+
+                // When
+                groupsDataService.DeleteGroup(groupId, deleteStartedEnrolment, removedDate);
+
+                // Then
+                var notStartedProgress = await connection.GetProgressRemovedFields(271518);
+                notStartedProgress.Item1.Should().Be(3);
+                notStartedProgress.Item2.Should().BeCloseTo(removedDate);
+
+                var startedProgress = await connection.GetProgressRemovedFields(285128);
+                startedProgress.Item1.Should().Be(3);
+                startedProgress.Item2.Should().BeCloseTo(removedDate);
+
+                var progressWithAnotherGroup = await connection.GetProgressRemovedFields(285122);
+                progressWithAnotherGroup.Item1.Should().Be(0);
+                progressWithAnotherGroup.Item2.Should().BeNull();
+
+                var groupDelegates = await connection.GetCandidatesForGroup(groupId);
+                groupDelegates.Should().BeEmpty();
+                var groupCustomisations = await connection.GetCustomisationsForGroup(groupId);
+                groupCustomisations.Should().BeEmpty();
+                var groupName = groupsDataService.GetGroupName(groupId, centreId);
+                groupName.Should().BeNull();
+
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

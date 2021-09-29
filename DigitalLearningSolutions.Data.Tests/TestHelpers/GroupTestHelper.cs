@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
@@ -63,12 +64,12 @@
             };
         }
 
-        public static async Task<(int, DateTime)> GetProgressRemovedFields(
+        public static async Task<(int, DateTime?)> GetProgressRemovedFields(
             this DbConnection connection,
             int progressId
         )
         {
-            var progress = await connection.QueryAsync<(int, DateTime)>(
+            var progress = await connection.QueryAsync<(int, DateTime?)>(
                 @"SELECT
                         RemovalMethodID,
                         RemovedDate
@@ -78,6 +79,26 @@
             );
 
             return progress.Single();
+        }
+
+        public static async Task<IEnumerable<int>> GetCandidatesForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT DelegateID
+                    FROM GroupDelegates
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public static async Task<IEnumerable<int>> GetCustomisationsForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT GroupCustomisationID
+                    FROM GroupCustomisations
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
         }
     }
 }
