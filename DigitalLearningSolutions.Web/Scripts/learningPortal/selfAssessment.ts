@@ -17,20 +17,23 @@ inputs.forEach((e) => {
 setUpSelectAndDeselectButtons();
 
 function setUpSelectAndDeselectButtons(): void {
-  const selectAllButton = document.getElementById('select-all-button') as HTMLAnchorElement;
-  const deselectAllButton = document.getElementById('deselect-all-button') as HTMLAnchorElement;
+  const selectAllButtons = document.querySelectorAll('.select-all') as NodeListOf<HTMLAnchorElement>;
+  selectAllButtons.forEach((button) => {
+    button.addEventListener('click',
+      () => {
+        const group = button.getAttribute('data-group') as string;
+        selectAll(group);
+      });
+  });
 
-  selectAllButton.addEventListener('click',
-    () => {
-      const group = selectAllButton.getAttribute('data-group') as string;
-      selectAll(group);
-    });
-
-  deselectAllButton.addEventListener('click',
-    () => {
-      const group = deselectAllButton.getAttribute('data-group') as string;
-      deselectAll(group);
-    });
+  const deselectAllButtons = document.querySelectorAll('.deselect-all') as NodeListOf<HTMLAnchorElement>;
+  deselectAllButtons.forEach((button) => {
+    button.addEventListener('click',
+      () => {
+        const group = button.getAttribute('data-group') as string;
+        deselectAll(group);
+      });
+  });
 }
 
 function selectAll(group: string): void {
