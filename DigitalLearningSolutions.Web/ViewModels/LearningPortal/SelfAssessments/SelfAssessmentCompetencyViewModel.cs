@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class SelfAssessmentCompetencyViewModel
     {
@@ -20,6 +21,10 @@
             Competency = competency;
             CompetencyNumber = competencyNumber;
             TotalNumberOfCompetencies = totalNumberOfCompetencies;
+        }
+        public string VocabPlural()
+        {
+            return FrameworkVocabularyHelper.VocabularyPlural(Competency.Vocabulary);
         }
     }
 }

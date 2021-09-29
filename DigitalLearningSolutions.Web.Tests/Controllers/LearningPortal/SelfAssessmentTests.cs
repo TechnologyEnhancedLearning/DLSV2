@@ -264,7 +264,7 @@
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             result.Should().BeViewResult()
@@ -280,7 +280,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SelfAssessmentOverview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
@@ -291,9 +291,9 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Overview";
+            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessment.Id}/{selfAssessment.Vocabulary}";
             // When
-            controller.SelfAssessmentOverview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl)).MustHaveHappened();
@@ -314,7 +314,7 @@
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             result.Should().BeViewResult()
@@ -329,7 +329,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, Vocabulary);
 
             // Then
             result.Should()

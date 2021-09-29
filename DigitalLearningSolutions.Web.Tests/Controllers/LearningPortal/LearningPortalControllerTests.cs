@@ -26,6 +26,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
+        private const string Vocabulary = "Capabilities";
         private const int CentreId = 2;
 
         [SetUp]

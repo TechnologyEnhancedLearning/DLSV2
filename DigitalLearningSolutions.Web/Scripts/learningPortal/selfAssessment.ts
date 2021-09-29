@@ -13,3 +13,40 @@ inputs.forEach((e) => onSliderUpdate(e));
 inputs.forEach((e) => {
   e.addEventListener('change', () => onSliderUpdate(e));
 });
+
+setUpSelectAndDeselectButtons();
+
+function setUpSelectAndDeselectButtons(): void {
+  const selectAllButton = document.getElementById('select-all-button') as HTMLAnchorElement;
+  const deselectAllButton = document.getElementById('deselect-all-button') as HTMLAnchorElement;
+
+  selectAllButton.addEventListener('click',
+    () => {
+      const group = selectAllButton.getAttribute('data-group') as string;
+      selectAll(group);
+    });
+
+  deselectAllButton.addEventListener('click',
+    () => {
+      const group = deselectAllButton.getAttribute('data-group') as string;
+      deselectAll(group);
+    });
+}
+
+function selectAll(group: string): void {
+  const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
+  allCheckboxes.forEach((checkbox) => {
+    if (checkbox.getAttribute('data-group') === group) {
+      if (!checkbox.checked) checkbox.click();
+    }
+  });
+}
+
+function deselectAll(group: string): void {
+  const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
+  allCheckboxes.forEach((checkbox) => {
+    if (checkbox.getAttribute('data-group') === group) {
+      if (checkbox.checked) checkbox.click();
+    }
+  });
+}
