@@ -6,12 +6,15 @@
     {
         public DelegateRegistrationData() { }
 
-        public DelegateRegistrationData(int? centreId) : base(centreId)
+        public DelegateRegistrationData(int? centreId, int? supervisorDelegateId = null, string? email = null) : base(centreId)
         {
             IsCentreSpecificRegistration = centreId.HasValue;
+            SupervisorDelegateId = supervisorDelegateId;
+            Email = email;
         }
 
         public bool IsCentreSpecificRegistration { get; set; }
+        public int? SupervisorDelegateId { get; set; }
 
         public string? Answer1 { get; set; }
         public string? Answer2 { get; set; }

@@ -41,6 +41,8 @@
             bool isMandatory = false,
             bool isAssessed = false,
             DateTime? addedToGroup = null,
+            int currentVersion = 2,
+            int? supervisorAdminId = null,
             string? supervisorFirstName = null,
             string? supervisorLastName = null,
             int completeWithinMonths = 12,
@@ -57,6 +59,8 @@
                 IsMandatory = isMandatory,
                 IsAssessed = isAssessed,
                 AddedToGroup = addedToGroup ?? DateTime.Now,
+                CurrentVersion = currentVersion,
+                SupervisorAdminId = supervisorAdminId,
                 SupervisorFirstName = supervisorFirstName,
                 SupervisorLastName = supervisorLastName,
                 CompleteWithinMonths = completeWithinMonths,
@@ -79,6 +83,39 @@
             );
 
             return progress.Single();
+        }
+
+        public static Group GetDefaultGroup(
+            int groupId = 34,
+            string groupLabel = "Social care - unspecified",
+            string? groupDescription = null,
+            int delegateCount = 1,
+            int coursesCount = 0,
+            int addedByAdminId = 1,
+            string addedByFirstName = "Kevin",
+            string addedByLastName = "Whittaker (Developer)",
+            int linkedToField = 4,
+            string linkedToFieldName = "Job group",
+            bool shouldAddNewRegistrantsToGroup = true,
+            bool changesToRegistrationDetailsShouldChangeGroupMembership = true
+        )
+        {
+            return new Group
+            {
+                GroupId = groupId,
+                GroupLabel = groupLabel,
+                GroupDescription = groupDescription,
+                DelegateCount = delegateCount,
+                CoursesCount = coursesCount,
+                AddedByAdminId = addedByAdminId,
+                AddedByFirstName = addedByFirstName,
+                AddedByLastName = addedByLastName,
+                LinkedToField = linkedToField,
+                LinkedToFieldName = linkedToFieldName,
+                ShouldAddNewRegistrantsToGroup = shouldAddNewRegistrantsToGroup,
+                ChangesToRegistrationDetailsShouldChangeGroupMembership =
+                    changesToRegistrationDetailsShouldChangeGroupMembership
+            };
         }
 
         public static async Task<IEnumerable<int>> GetCandidatesForGroup(this DbConnection connection, int groupId)

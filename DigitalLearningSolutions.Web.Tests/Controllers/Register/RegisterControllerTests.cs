@@ -27,6 +27,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
         private IUserService userService = null!;
+        private ISupervisorDelegateService supervisorDelegateService = null!;
 
         [SetUp]
         public void Setup()
@@ -38,6 +39,7 @@
             userService = A.Fake<IUserService>();
             centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
             featureManager = A.Fake<IFeatureManager>();
+            supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
 
             controller = new RegisterController(
                     centresDataService,
@@ -46,7 +48,8 @@
                     cryptoService,
                     userService,
                     centreCustomPromptHelper,
-                    featureManager
+                    featureManager,
+                    supervisorDelegateService
                 )
                 .WithDefaultContext()
                 .WithMockTempData();

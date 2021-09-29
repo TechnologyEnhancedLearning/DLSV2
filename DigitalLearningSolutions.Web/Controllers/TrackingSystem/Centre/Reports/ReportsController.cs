@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -85,7 +86,6 @@
             var centreId = User.GetCentreId();
             var adminId = User.GetAdminId()!.Value;
             var adminUser = userDataService.GetAdminUserById(adminId)!;
-
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             var filterOptions = GetDropdownValues(centreId, adminUser);
@@ -115,7 +115,7 @@
                 model.DataStart = activityService.GetStartOfActivityForCentre(centreId);
                 return View(model);
             }
-            
+
             var filterData = new ActivityFilterData(
                 model.GetValidatedStartDate(),
                 model.GetValidatedEndDate(),
@@ -129,6 +129,48 @@
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("Download")]
+        public IActionResult DownloadUsageData(
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId,
+            string startDate,
+            string endDate,
+            ReportInterval reportInterval
+        )
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var dateRange =
+                activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
+
+            if (dateRange == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var filterData = new ActivityFilterData(
+                dateRange.Value.startDate,
+                dateRange.Value.endDate,
+                jobGroupId,
+                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                customisationId,
+                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                reportInterval
+            );
+
+            var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
+
+            return File(
+                dataFile,
+                FileHelper.ExcelContentType,
+                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
+            );
         }
 
         private ReportsFilterOptions GetDropdownValues(

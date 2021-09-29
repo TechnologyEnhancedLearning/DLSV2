@@ -51,16 +51,19 @@ namespace DigitalLearningSolutions.Data.Services
     public class UserService : IUserService
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
+        private readonly IGroupsService groupsService;
         private readonly IUserDataService userDataService;
         private readonly IUserVerificationService userVerificationService;
 
         public UserService(
             IUserDataService userDataService,
+            IGroupsService groupsService,
             IUserVerificationService userVerificationService,
             ICentreContractAdminUsageService centreContractAdminUsageService
         )
         {
             this.userDataService = userDataService;
+            this.groupsService = groupsService;
             this.userVerificationService = userVerificationService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
         }
@@ -166,7 +169,10 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateIds
                 );
 
-                if (verifiedDelegateUsers.Any(u => u.Id == accountDetailsData.DelegateId) && centreAnswersData != null)
+                var oldDelegateDetails =
+                    verifiedDelegateUsers.SingleOrDefault(u => u.Id == accountDetailsData.DelegateId);
+
+                if (oldDelegateDetails != null && centreAnswersData != null)
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
                         accountDetailsData.DelegateId!.Value,
@@ -177,6 +183,12 @@ namespace DigitalLearningSolutions.Data.Services
                         centreAnswersData.Answer4,
                         centreAnswersData.Answer5,
                         centreAnswersData.Answer6
+                    );
+
+                    groupsService.SynchroniseUserChangesWithGroups(
+                        oldDelegateDetails,
+                        accountDetailsData,
+                        centreAnswersData
                     );
                 }
             }
@@ -300,7 +312,8 @@ namespace DigitalLearningSolutions.Data.Services
                 return true;
             }
 
-            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator && currentNumberOfAdmins.CcLicencesAtOrOverLimit)
+            if (adminRoles.IsContentCreator && !oldUserDetails.IsContentCreator &&
+                currentNumberOfAdmins.CcLicencesAtOrOverLimit)
             {
                 return true;
             }
