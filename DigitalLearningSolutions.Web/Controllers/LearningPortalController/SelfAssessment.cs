@@ -559,7 +559,7 @@
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = sessionRequestVerification.SelfAssessmentID, vocabulary = sessionRequestVerification.Vocabulary });
         }
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
