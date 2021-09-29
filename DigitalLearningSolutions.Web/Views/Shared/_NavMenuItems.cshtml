@@ -1,36 +1,38 @@
-﻿<li class="nhsuk-header__navigation-item">
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<li class="nhsuk-header__navigation-item @Html.IsOneOfControllersSelected(new[] { "Home", "Products", "LearningContent" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
     Welcome
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("FindYourCentre")">
   <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
     Find your centre
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Pricing")">
   <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
     Pricing
     <partial name="_NhsChevronRight" />
   </a>
 </li>
 @if (User.Identity.IsAuthenticated) {
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.IsMyAccountTabSelected()">
     <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
       My account
       <partial name="_NhsChevronRight" />
     </a>
   </li>
 } else {
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Login")">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
       <partial name="_NhsChevronRight" />
     </a>
   </li>
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Register")">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Index">
       Register
       <partial name="_NhsChevronRight" />

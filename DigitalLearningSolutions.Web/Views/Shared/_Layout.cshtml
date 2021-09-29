@@ -1,4 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewComponents
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
@@ -101,7 +104,7 @@
               </li>
             }
             @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
-              <li class="nhsuk-header__navigation-item">
+              <li class="nhsuk-header__navigation-item @Html.IsControllerSelected("ApplicationSelector")">
                 <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                   Switch application
                   <partial name="_NhsChevronRight" />

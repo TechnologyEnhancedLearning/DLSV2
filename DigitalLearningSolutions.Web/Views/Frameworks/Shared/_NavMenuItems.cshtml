@@ -1,24 +1,24 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "Frameworks", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(controller: "Frameworks", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="Index">
     Dashboard
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("ViewFrameworks")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected("ViewFrameworks")">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="ViewFrameworks" asp-route-tabname="Mine">
     Frameworks
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("ViewRoleProfiles")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected("ViewRoleProfiles")">
   <a class="nhsuk-header__navigation-link" asp-controller="RoleProfiles" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">
     Role Profiles
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(controller: "MyAccount", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.Frameworks.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />

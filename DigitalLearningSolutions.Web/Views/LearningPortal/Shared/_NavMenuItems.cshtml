@@ -1,24 +1,24 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsSelected("Current")">
+<li class="nhsuk-header__navigation-item @Html.IsOneOfActionsSelected(new[] {"Current", "SetCurrentCourseCompleteByDate"})">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Current">
     Current activities
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("Completed")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected("Completed")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Completed">
     Completed activities
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("Available")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected("Available")">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Available">
     Available activities
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.IsMyAccountTabSelected()">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.LearningPortal.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />
