@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
@@ -180,14 +181,9 @@
         }
 
         [Route("{groupId:int}/Delete")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult DeleteGroup(int groupId)
         {
-            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
-            if (User.GetCentreId() != groupCentreId)
-            {
-                return NotFound();
-            }
-
             var delegates = groupsDataService.GetGroupDelegates(groupId);
             var courses = groupsDataService.GetGroupCourses(groupId, User.GetCentreId());
 
@@ -204,14 +200,9 @@
 
         [HttpGet]
         [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId)
         {
-            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
-            if (User.GetCentreId() != groupCentreId)
-            {
-                return NotFound();
-            }
-
             var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsDataService.GetGroupDelegates(groupId).Count();
             var courseCount = groupsDataService.GetGroupCourses(groupId, User.GetCentreId()).Count();
@@ -228,14 +219,9 @@
 
         [HttpPost]
         [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
         {
-            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
-            if (User.GetCentreId() != groupCentreId)
-            {
-                return NotFound();
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(model);

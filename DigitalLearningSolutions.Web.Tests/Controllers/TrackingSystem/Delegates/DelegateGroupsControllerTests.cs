@@ -319,20 +319,6 @@
         }
 
         [Test]
-        public void DeleteGroup_returns_NotFoundResult_if_user_centreId_doesnt_match_group_centreId()
-        {
-            // Given
-            A.CallTo(() => groupsDataService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId() + 1);
-
-            // When
-            var result = delegateGroupsController.DeleteGroup(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void DeleteGroup_redirects_to_confirmation_if_group_has_delegates()
         {
             // Given
@@ -386,20 +372,6 @@
             // Then
             A.CallTo(() => groupsDataService.DeleteGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public void ConfirmDeleteGroup_returns_NotFoundResult_if_user_centreId_doesnt_match_group_centreId()
-        {
-            // Given
-            A.CallTo(() => groupsDataService.GetGroupCentreId(A<int>._))
-                .Returns(delegateGroupsController.User.GetCentreId() + 1);
-
-            // When
-            var result = delegateGroupsController.ConfirmDeleteGroup(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
         }
 
         [Test]
