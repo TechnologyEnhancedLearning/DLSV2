@@ -291,7 +291,7 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Overview";
+            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessment.Id}/{selfAssessment.Vocabulary}";
             // When
             controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
