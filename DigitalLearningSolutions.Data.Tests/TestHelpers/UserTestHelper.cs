@@ -144,59 +144,6 @@
             );
         }
 
-        public static DelegateRegistrationModel GetDefaultDelegateRegistrationModel(
-            string firstName = "FirstName",
-            string lastName = "Test",
-            string email = "email@test.com",
-            int centre = 2,
-            int jobGroup = 3,
-            string passwordHash = "APasswordHash",
-            string? answer1 = "Answer1",
-            string? answer2 = "Answer2",
-            string? answer3 = "Answer3",
-            string? answer4 = "Answer4",
-            string? answer5 = "Answer5",
-            string? answer6 = "Answer6",
-            bool approved = false
-        )
-        {
-            return new DelegateRegistrationModel(
-                firstName,
-                lastName,
-                email,
-                centre,
-                jobGroup,
-                passwordHash,
-                answer1,
-                answer2,
-                answer3,
-                answer4,
-                answer5,
-                answer6
-            ) { Approved = approved };
-        }
-
-        public static RegistrationModel GetDefaultRegistrationModel(
-            string firstName = "FirstName",
-            string lastName = "Test",
-            string email = "email@test.com",
-            int centre = 2,
-            int jobGroup = 3,
-            string passwordHash = "APasswordHash",
-            bool approved = false
-        )
-        {
-            return new RegistrationModel(
-                    firstName,
-                    lastName,
-                    email,
-                    centre,
-                    jobGroup,
-                    passwordHash
-                )
-                { Approved = approved };
-        }
-
         public static async Task<DelegateUser> GetDelegateUserByCandidateNumberAsync(
             this DbConnection connection,
             string candidateNumber

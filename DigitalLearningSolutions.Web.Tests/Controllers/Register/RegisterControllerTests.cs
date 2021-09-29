@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -147,6 +149,56 @@
             data.Centre.Should().BeNull();
             data.IsCentreSpecificRegistration.Should().BeFalse();
             result.Should().BeRedirectToActionResult().WithActionName("PersonalInformation");
+        }
+
+        [Test]
+        public void RegisterDelegate_with_approved_IP_registers_delegate_with_expected_values()
+        {
+            // Given
+            const string CandidateNumber = "TN1";
+            var data = new DelegateRegistrationData
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Test",
+                LastName = "Name",
+                Email = "test@email.com",
+                Centre = 2,
+                JobGroup = 1,
+                PasswordHash = "hash",
+                IsCentreSpecificRegistration = false,
+                SupervisorDelegateId = 1,
+                Answer1 = "answer1",
+                Answer2 = "answer2",
+                Answer3 = "answer3",
+                Answer4 = "answer4",
+                Answer5 = "answer5",
+                Answer6 = "answer6"
+            };
+            controller.TempData.Set(data);
+            A.CallTo(() => registrationService.RegisterDelegate(A<DelegateRegistrationModel>._, A<string>._, A<bool>._, null))
+                .Returns((CandidateNumber, true));
+
+            // When
+            var result = controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegate(
+                            A<DelegateRegistrationModel>.That.Matches(
+                                d =>
+                                    d.Approved &&
+                                    d.IsSelfRegistered &&
+                                    !d.IsExternalRegistered &&
+                                    d.NotifyDate != null &&
+                                    d.AliasId == null
+                            ),
+                            "",
+                            false,
+                            null
+                        )
+                )
+                .MustHaveHappened();
         }
     }
 }

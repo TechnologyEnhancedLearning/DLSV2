@@ -239,7 +239,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 var (candidateNumber, approved) =
                     registrationService.RegisterDelegate(
-                        RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
+                        RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
                         data.SupervisorDelegateId

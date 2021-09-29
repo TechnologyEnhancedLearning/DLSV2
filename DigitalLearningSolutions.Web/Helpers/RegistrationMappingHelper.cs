@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Web.Models;
 
@@ -25,7 +26,7 @@
             );
         }
 
-        public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationData data)
+        public static DelegateRegistrationModel MapSelfRegistrationToDelegateRegistrationModel(DelegateRegistrationData data)
         {
             return new DelegateRegistrationModel(
                 data.FirstName!,
@@ -39,11 +40,13 @@
                 data.Answer3,
                 data.Answer4,
                 data.Answer5,
-                data.Answer6
+                data.Answer6,
+                true,
+                notifyDate: DateTime.Now
             );
         }
 
-        public static DelegateRegistrationModel MapToDelegateRegistrationModel(DelegateRegistrationByCentreData data)
+        public static DelegateRegistrationModel MapCentreRegistrationToDelegateRegistrationModel(DelegateRegistrationByCentreData data)
         {
             return new DelegateRegistrationModel(
                 data.FirstName!,
@@ -58,6 +61,7 @@
                 data.Answer4,
                 data.Answer5,
                 data.Answer6,
+                false,
                 data.Alias,
                 data.WelcomeEmailDate
             );
