@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -20,6 +21,7 @@
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
         private readonly ICourseDataService courseDataService;
+        private readonly IProgressDataService progressDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -90,9 +92,9 @@
             return RedirectToAction("Index", new { delegateId } );
         }
 
-        [HttpPost]
-        [Route("RemoveCourse")]
-        public IActionResult RemoveCourse(int delegateId, int courseId)
+        [HttpGet]
+        [Route("{customisationId:int}/Remove")]
+        public IActionResult ConfirmRemoveCourse(int delegateId, int customisationId)
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
@@ -101,11 +103,32 @@
                 return new NotFoundResult();
             }
 
-            // get progress id
-            // validate progress entry
-            // TODO HEEDLS-501: should I put the course data service behind a course service method?
+            var model = new RemoveDelegateFromCourseViewModel();
+            return View(model);
+        }
 
-            courseDataService.RemoveCurrentCourse(0, delegateId, RemovalMethod.RemovedByAdmin);
+        [HttpPost]
+        [Route("RemoveCourse")]
+        public IActionResult RemoveCourse(int delegateId, int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser == null || delegateUser.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            var uncompletedProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId).FirstOrDefault(
+                p => p.Completed != null && p.RemovedDate != null);
+            if (uncompletedProgress == null)
+            {
+                return new NotFoundResult();
+            }
+
+            // TODO HEEDLS-501: should I put the course data service (and for the validation step?) behind a service method?
+            // TODO HEEDLS-501: hold on, which progresses am I supposed to be removing?
+
+            courseDataService.RemoveCurrentCourse(uncompletedProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
 
             return RedirectToAction("Index", new { delegateId });
         }
