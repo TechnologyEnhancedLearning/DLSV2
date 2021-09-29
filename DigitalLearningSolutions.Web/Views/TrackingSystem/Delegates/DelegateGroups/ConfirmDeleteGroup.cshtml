@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration;
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
 @model ConfirmDeleteGroupViewModel
@@ -17,37 +16,37 @@
 }
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-one-quarter">
-    <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
-    </nav>
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteEnrolments) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Delete delegate group</h1>
   </div>
+</div>
 
-  <div class="nhsuk-grid-column-three-quarters">
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
+    Group name:
+  </div>
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+    @Model.GroupLabel
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmDeleteGroup">
-      @if (errorHasOccurred) {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteEnrolments) })" />
-      }
-
-      <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Delete delegate group</h1>
-
       <input type="hidden" asp-for="GroupLabel" />
       <input type="hidden" asp-for="DelegateCount" />
       <input type="hidden" asp-for="CourseCount" />
 
-      <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-6">
-        <div class="nhsuk-grid-column-one-half">Group name</div>
-        <div class="nhsuk-grid-column-one-half">@Model.GroupLabel</div>
-      </div>
 
       <p>
         This group has @Model.DelegateCount delegate@(Model.DelegateCount == 1 ? "" : "s") and @Model.CourseCount
         course@(Model.CourseCount == 1 ? "" : "s"). Deleting this group will permanently remove all the delegates
         and courses from this group.
       </p>
-      @{
-        // QQ fix formatting above
-      }
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                           label="I am sure that I wish to delete this group and remove all delegates and courses from it."
