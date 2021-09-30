@@ -5,29 +5,12 @@
         public BulkAdminFieldAnswersViewModel() { }
 
         public BulkAdminFieldAnswersViewModel(
-            string? optionsString,
-            bool isAddPromptJourney,
-            int promptNumber
+            string? optionsString
         )
         {
             OptionsString = optionsString;
-            IsAddPromptJourney = isAddPromptJourney;
-            PromptNumber = promptNumber;
-        }
-
-        public BulkAdminFieldAnswersViewModel(
-            string? optionsString,
-            bool isAddPromptJourney
-        )
-        {
-            OptionsString = optionsString;
-            IsAddPromptJourney = isAddPromptJourney;
         }
 
         public string? OptionsString { get; set; }
-
-        public bool IsAddPromptJourney { get; set; }
-
-        public int PromptNumber { get; set; }
     }
 }

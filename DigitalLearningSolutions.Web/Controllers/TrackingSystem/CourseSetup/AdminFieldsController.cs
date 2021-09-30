@@ -113,25 +113,25 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
-        public IActionResult EditAdminFieldBulk(int customisationId, int promptNumber)
+        public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
         {
             var data = TempData.Peek<EditAdminFieldData>()!;
 
             var model = new BulkAdminFieldAnswersViewModel(
                 data.EditModel.OptionsString,
-                false,
-                promptNumber
+                false
             );
 
             return View("BulkAdminFieldAnswers", model);
         }
 
         [HttpPost]
-        [Route("{customisationId:int}/AdminFields/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
-        public IActionResult EditAdminFieldBulkPost(
+        public IActionResult EditAdminFieldAnswersBulk(
             int customisationId,
+            int promptNumber,
             BulkAdminFieldAnswersViewModel model
         )
         {
@@ -148,7 +148,7 @@
 
             return RedirectToAction(
                 "EditAdminField",
-                new { customisationId, promptNumber = model.PromptNumber }
+                new { customisationId, promptNumber }
             );
         }
 
@@ -206,30 +206,29 @@
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
-        public IActionResult AddAdminFieldBulkPost(int customisationId)
+        public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
             var data = TempData.Peek<AddAdminFieldData>()!;
-            var model = new BulkAdminFieldAnswersViewModel(
-                data.AddModel.OptionsString,
-                true
+            var model = new AddBulkAdminFieldAnswersViewModel(
+                data.AddModel.OptionsString
             );
 
-            return View("BulkAdminFieldAnswers", model);
+            return View("AddBulkAdminFieldAnswers", model);
         }
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
-        public IActionResult AddAdminFieldBulkPost(
+        public IActionResult AddAdminFieldAnswersBulk(
             int customisationId,
-            BulkAdminFieldAnswersViewModel model
+            AddBulkAdminFieldAnswersViewModel model
         )
         {
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
             {
-                return View("BulkAdminFieldAnswers", model);
+                return View("AddBulkAdminFieldAnswers", model);
             }
 
             var addData = TempData.Peek<AddAdminFieldData>()!;
@@ -299,7 +298,7 @@
             SetEditAdminFieldTempData(model);
 
             return RedirectToAction(
-                "EditAdminFieldBulk",
+                "EditAdminFieldAnswersBulk",
                 new { customisationId, promptNumber = model.PromptNumber }
             );
         }
@@ -352,7 +351,7 @@
             SetAddAdminFieldTempData(model);
 
             return RedirectToAction(
-                "AddAdminFieldBulkPost",
+                "AddAdminFieldAnswersBulk",
                 new { customisationId }
             );
         }

@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.Extensions.Configuration
-@model BulkAdminFieldAnswersViewModel
+@model AddBulkAdminFieldAnswersViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -9,10 +9,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var cancelLinkData = new Dictionary<string, string> {
-    { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! },
-    { "promptNumber", ViewContext.HttpContext.Request.RouteValues["promptNumber"].ToString()! }
-  };
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! } };
 }
 
 @section NavMenuItems {
@@ -27,7 +24,7 @@
 
     <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminFieldAnswersBulk">
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddAdminFieldAnswersBulk">
 
       <vc:text-area asp-for="@nameof(Model.OptionsString)"
                     label="Enter each response option on a separate line (max 1000 characters in total). The order of responses will be the order they appear on the dropdown for users."
@@ -41,7 +38,7 @@
       <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 
-    <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@cancelLinkData" />
+    <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@cancelLinkData" />
 
   </div>
 </div>

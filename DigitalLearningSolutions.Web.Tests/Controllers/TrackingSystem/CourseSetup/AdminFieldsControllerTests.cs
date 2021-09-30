@@ -142,7 +142,7 @@
             using (new AssertionScope())
             {
                 AssertEditTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("EditAdminFieldBulk");
+                result.Should().BeRedirectToActionResult().WithActionName("EditAdminFieldAnswersBulk");
             }
         }
 
@@ -161,10 +161,10 @@
         }
 
         [Test]
-        public void EditAdminFieldBulkPost_updates_temp_data_and_redirects_to_edit()
+        public void EditAdminFieldAnswersBulk_updates_temp_data_and_redirects_to_edit()
         {
             // Given
-            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1);
+            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false);
             var initialEditViewModel = new EditAdminFieldViewModel(1, "Test", "Test");
             var expectedViewModel = new EditAdminFieldViewModel(1, "Test", "Test\r\nAnswer");
             var initialTempData = new EditAdminFieldData(initialEditViewModel);
@@ -175,7 +175,7 @@
                 .Returns(true);
 
             // When
-            var result = controller.EditAdminFieldBulkPost(1, inputViewModel);
+            var result = controller.EditAdminFieldAnswersBulk(1, 1, inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -395,7 +395,7 @@
             using (new AssertionScope())
             {
                 AssertAddTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldBulkPost");
+                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
             }
         }
 
@@ -415,7 +415,7 @@
             using (new AssertionScope())
             {
                 AssertAddTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldBulkPost");
+                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
             }
         }
 
@@ -436,10 +436,10 @@
         }
 
         [Test]
-        public void AddAdminFieldBulkPost_updates_temp_data_and_redirects_to_add()
+        public void AddAdminFieldAnswersBulk_updates_temp_data_and_redirects_to_add()
         {
             // Given
-            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1);
+            var inputViewModel = new AddBulkAdminFieldAnswersViewModel("Test\r\nAnswer", 1);
             var initialAddViewModel = new AddAdminFieldViewModel(1, "Test");
             var expectedViewModel = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
             var initialTempData = new AddAdminFieldData(initialAddViewModel);
@@ -447,7 +447,7 @@
             controller.TempData.Set(initialTempData);
 
             // When
-            var result = controller.AddAdminFieldBulkPost(1, inputViewModel);
+            var result = controller.AddAdminFieldAnswersBulk(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
