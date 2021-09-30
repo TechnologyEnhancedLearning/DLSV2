@@ -38,6 +38,15 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "LearningPortal"
         );
 
+        public static readonly ApplicationType Supervisor = new ApplicationType(
+            4,
+            nameof(Supervisor),
+            "Supervisor",
+            "/Supervisor",
+            "Supervisor Dashboard",
+            "Supervisor"
+        );
+
         public static ApplicationType Default => Main;
 
         public readonly string HeaderExtension;
