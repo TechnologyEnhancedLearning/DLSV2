@@ -65,7 +65,7 @@
         }
 
         [Test]
-        public void Edit_Course_Options_page_when_coursed_details_are_not_updated()
+        public void Edit_Course_Options_page_when_course_details_are_not_updated()
         {
             // Given
             var courseDetails = new CourseDetails();
@@ -81,7 +81,7 @@
         }
 
         [Test]
-        public void Edit_Course_Options_page_when_coursed_details_are_successfully_updated()
+        public void Edit_Course_Options_page_when_course_details_are_successfully_updated()
         {
             // Given
             var courseDetails = new CourseDetails();

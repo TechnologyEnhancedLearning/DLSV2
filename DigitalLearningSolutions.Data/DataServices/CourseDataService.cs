@@ -308,6 +308,26 @@ namespace DigitalLearningSolutions.Data.DataServices
             ).FirstOrDefault();
         }
 
+        // Admins have a non-nullable category ID where 0 = all.This is why we have the
+        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
+        public IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        a.ApplicationName,
+                        c.CustomisationName,
+                        c.Active
+                    FROM Customisations AS c
+                    JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                    WHERE (CentreID = @centreId OR CentreID = 0)
+	                AND (a.CourseCategoryID = @categoryId OR @categoryId = 0)",
+                new { centreId, categoryId }
+            );
+        }
+
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
@@ -365,7 +385,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     courseDetails.HideInLearnerPortal,
                     courseDetails.DiagObjSelect,
                     courseDetails.CustomisationId,
-                    courseDetails.CentreId,
+                    courseDetails.CentreId
                 }
             );
             return affectedRows > 0;
