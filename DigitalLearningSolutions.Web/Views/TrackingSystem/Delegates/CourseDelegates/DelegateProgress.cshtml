@@ -46,6 +46,10 @@
       </div>
     </div>
 
+    @if (!Model.IsCourseActive) {
+      <partial name="_InactiveCourseInset" />
+    }
+
     <partial name="_DelegateProgressSummary" model="Model" />
 
     <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button">

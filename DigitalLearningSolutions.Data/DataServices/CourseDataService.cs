@@ -70,6 +70,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             @"SELECT
                 cu.CustomisationID AS CustomisationId,
                 cu.CentreID AS CustomisationCentreId,
+                cu.Active AS IsCourseActive,
                 cu.AllCentres AS AllCentresCourse,
                 ap.CourseCategoryID,
                 ap.ApplicationName,

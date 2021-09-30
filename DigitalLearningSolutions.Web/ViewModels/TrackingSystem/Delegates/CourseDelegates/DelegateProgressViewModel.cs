@@ -14,6 +14,7 @@
         {
             CustomisationId = details.DelegateCourseInfo.CustomisationId;
             CustomisationCentreId = details.DelegateCourseInfo.CustomisationCentreId;
+            IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
             AllCentresCourse = details.DelegateCourseInfo.AllCentresCourse;
             CourseCategoryId = details.DelegateCourseInfo.CourseCategoryId;
             CourseName = details.DelegateCourseInfo.CourseName;
@@ -55,6 +56,7 @@
 
         public int CustomisationId { get; set; }
         public int CustomisationCentreId { get; set; }
+        public bool IsCourseActive { get; set; }
         public bool AllCentresCourse { get; set; }
         public int CourseCategoryId { get; set; }
         public string CourseName { get; set; }
@@ -89,7 +91,7 @@
             DelegateFirstName == null ? DelegateLastName : $"{DelegateFirstName} {DelegateLastName}";
 
         public string DelegateNameAndEmail =>
-            DelegateEmail == null ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
+            string.IsNullOrWhiteSpace(DelegateEmail) ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
 
         public string SupervisorFullName =>
             SupervisorAdminId == null ? "None" : $"{SupervisorForename} {SupervisorSurname}";

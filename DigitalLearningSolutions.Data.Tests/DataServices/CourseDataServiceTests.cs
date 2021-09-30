@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
             27915,
             101,
+            true,
             false,
             4,
             "LinkedIn",

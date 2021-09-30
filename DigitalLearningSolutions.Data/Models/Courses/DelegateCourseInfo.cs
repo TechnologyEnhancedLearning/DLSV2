@@ -9,6 +9,7 @@
         public DelegateCourseInfo(
             int customisationId,
             int customisationCentreId,
+            bool isCourseActive,
             bool allCentres,
             int courseCategoryId,
             string applicationName,
@@ -42,6 +43,7 @@
         {
             CustomisationId = customisationId;
             CustomisationCentreId = customisationCentreId;
+            IsCourseActive = isCourseActive;
             AllCentresCourse = allCentres;
             CourseCategoryId = courseCategoryId;
             ApplicationName = applicationName;
@@ -75,6 +77,7 @@
 
         public int CustomisationId { get; set; }
         public int CustomisationCentreId { get; set; }
+        public bool IsCourseActive { get; set; }
         public bool AllCentresCourse { get; set; }
         public int CourseCategoryId { get; set; }
         public int? SupervisorAdminId { get; set; }
