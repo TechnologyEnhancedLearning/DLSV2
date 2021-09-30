@@ -361,6 +361,7 @@
                                     d.Answer6 == data.Answer6 &&
                                     d.AliasId == data.Alias &&
                                     d.Active &&
+                                    d.Approved &&
                                     !d.IsSelfRegistered &&
                                     d.NotifyDate == data.WelcomeEmailDate
                             ),

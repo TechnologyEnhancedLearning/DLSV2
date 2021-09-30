@@ -13,7 +13,9 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
+    using Serilog.Core;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -24,18 +26,21 @@
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly IUserDataService userDataService;
         private readonly IRegistrationService registrationService;
+        private readonly ILogger<PromoteToAdminController> logger;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
             ICourseCategoriesDataService courseCategoriesDataService,
             ICentreContractAdminUsageService centreContractAdminUsageService,
-            IRegistrationService registrationService
+            IRegistrationService registrationService,
+            ILogger<PromoteToAdminController> logger
         )
         {
             this.userDataService = userDataService;
             this.courseCategoriesDataService = courseCategoriesDataService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
             this.registrationService = registrationService;
+            this.logger = logger;
         }
 
         [HttpGet]
@@ -62,10 +67,11 @@
         {
             try
             {
-                registrationService.PromoteDelegateToAdmin(formData.GetAdminRoles(), delegateId);
+                registrationService.PromoteDelegateToAdmin(formData.GetAdminRoles(), formData.LearningCategory, delegateId);
             }
             catch (AdminCreationFailedException e)
             {
+                logger.LogError(e, "Error creating admin account for promoted delegate");
                 var error = e.Error;
 
                 if (error.Equals(AdminCreationError.UnexpectedError))

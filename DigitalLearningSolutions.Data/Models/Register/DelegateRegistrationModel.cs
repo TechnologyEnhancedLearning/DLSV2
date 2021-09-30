@@ -19,11 +19,11 @@
             string? answer5,
             string? answer6,
             bool isSelfRegistered,
+            bool active,
+            bool approved = false,
             string? aliasId = null,
-            DateTime? notifyDate = null,
-            bool active = true,
-            bool approved = false
-        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+            DateTime? notifyDate = null
+            ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -69,10 +69,10 @@
             row.Answer5,
             row.Answer6,
             false,
-            row.AliasId,
-            welcomeEmailDate,
             row.Active!.Value,
-            true
+            true,
+            row.AliasId,
+            welcomeEmailDate
         ) { }
 
         public string? Answer1 { get; set; }

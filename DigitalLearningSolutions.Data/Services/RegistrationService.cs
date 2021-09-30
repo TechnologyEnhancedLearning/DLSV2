@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
-        void PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
 
     public class RegistrationService : IRegistrationService
@@ -189,14 +189,15 @@ namespace DigitalLearningSolutions.Data.Services
             transaction.Complete();
         }
 
-        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId)
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
         {
             var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
-                string.IsNullOrWhiteSpace(delegateUser.FirstName))
+                string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
+                string.IsNullOrWhiteSpace(delegateUser.Password))
             {
-                throw new AdminCreationFailedException("Delegate missing first name or email", AdminCreationError.UnexpectedError);
+                throw new AdminCreationFailedException("Delegate missing first name, email or password", AdminCreationError.UnexpectedError);
             }
 
             var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
@@ -214,6 +215,7 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateUser.Password,
                 true,
                 true,
+                categoryId,
                 adminRoles.IsCentreAdmin,
                 false,
                 adminRoles.IsSupervisor,

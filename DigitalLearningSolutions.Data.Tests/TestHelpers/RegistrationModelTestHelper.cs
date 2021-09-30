@@ -16,6 +16,7 @@
             string? passwordHash= PasswordHash,
             bool active=true,
             bool approved=true,
+            int categoryId = 0,
             bool isCentreAdmin=true,
             bool isCentreManager=true,
             bool isSupervisor= false,
@@ -33,6 +34,44 @@
                 passwordHash,
                 active,
                 approved,
+                categoryId,
+                isCentreAdmin,
+                isCentreManager,
+                isSupervisor,
+                isTrainer,
+                isContentCreator,
+                isCmsAdmin,
+                isCmsManager
+            );
+        }
+
+        public static AdminRegistrationModel GetDefaultAdminRegistrationModel(
+            string firstName = "Test",
+            string lastName = "User",
+            string email = "testuser@email.com",
+            int centre = Centre,
+            string? passwordHash = PasswordHash,
+            bool active = true,
+            bool approved = true,
+            int categoryId = 0,
+            bool isCentreAdmin = true,
+            bool isCentreManager = true,
+            bool isSupervisor = true,
+            bool isTrainer = true,
+            bool isContentCreator = true,
+            bool isCmsAdmin = true,
+            bool isCmsManager = false
+        )
+        {
+            return new AdminRegistrationModel(
+                firstName,
+                lastName,
+                email,
+                centre,
+                passwordHash,
+                active,
+                approved,
+                categoryId,
                 isCentreAdmin,
                 isCentreManager,
                 isSupervisor,
@@ -76,10 +115,10 @@
                 answer5,
                 answer6,
                 isSelfRegistered,
-                aliasId,
-                notifyDate,
                 active,
-                approved
+                approved,
+                aliasId,
+                notifyDate
             );
         }
     }

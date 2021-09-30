@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class UserTestHelper
@@ -16,7 +15,7 @@
             string centreName = "North West Boroughs Healthcare NHS Foundation Trust",
             bool centreActive = true,
             DateTime? dateRegistered = null,
-            string firstName = "Firstname",
+            string? firstName = "Firstname",
             string lastName = "Test",
             string? emailAddress = "email@test.com",
             string password = "password",

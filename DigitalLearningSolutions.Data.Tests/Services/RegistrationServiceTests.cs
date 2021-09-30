@@ -6,7 +6,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.Supervisor;
@@ -637,6 +639,95 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
                 .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_first_name()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.UnexpectedError);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_email()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.UnexpectedError);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_admin_already_exists()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_calls_data_service_with_expected_value()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
+
+            // When
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1);
+
+            // Then
+            A.CallTo(
+                () => registrationDataService.RegisterAdmin(
+                    A<AdminRegistrationModel>.That.Matches(
+                        a =>
+                            a.FirstName == delegateUser.FirstName &&
+                            a.LastName == delegateUser.LastName &&
+                            a.Email == delegateUser.EmailAddress &&
+                            a.Centre == delegateUser.CentreId &&
+                            a.PasswordHash == delegateUser.Password &&
+                            a.Active &&
+                            a.Approved &&
+                            a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
+                            !a.IsCentreManager &&
+                            a.IsContentManager == adminRoles.IsContentManager &&
+                            a.ImportOnly == adminRoles.IsCmsAdministrator &&
+                            a.IsContentCreator == adminRoles.IsContentCreator &&
+                            a.IsTrainer == adminRoles.IsTrainer &&
+                            a.IsSupervisor == adminRoles.IsSupervisor
+                    )
+                )
+            ).MustHaveHappened();
         }
 
         private void GivenNoPendingSupervisorDelegateRecordsForEmail()

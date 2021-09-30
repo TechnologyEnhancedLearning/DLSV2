@@ -16,6 +16,7 @@
                 data.PasswordHash!,
                 true,
                 true,
+                0,
                 true,
                 true,
                 false,
@@ -42,6 +43,7 @@
                 data.Answer5,
                 data.Answer6,
                 true,
+                true,
                 notifyDate: DateTime.Now
             );
         }
@@ -62,6 +64,8 @@
                 data.Answer5,
                 data.Answer6,
                 false,
+                true,
+                true,
                 data.Alias,
                 data.WelcomeEmailDate
             );
