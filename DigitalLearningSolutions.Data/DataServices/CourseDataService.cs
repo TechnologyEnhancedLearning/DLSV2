@@ -349,7 +349,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
         {
-            return connection.QueryFirstOrDefault<bool>(
+            return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
                         SELECT *
                         FROM Customisations AS c

@@ -14,7 +14,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! } };
 }
 
 @section NavMenuItems {

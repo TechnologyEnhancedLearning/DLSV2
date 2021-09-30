@@ -59,7 +59,7 @@
         public void PostEditAdminField_save_calls_correct_methods()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options");
             const string action = "save";
 
             A.CallTo(
@@ -71,7 +71,7 @@
             ).DoesNothing();
 
             // When
-            var result = controller.EditAdminField(model, action, 1, 1);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             A.CallTo(
@@ -88,7 +88,7 @@
         public void PostEditAdminField_add_configures_new_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options");
             const string action = "addPrompt";
 
             A.CallTo(
@@ -100,7 +100,7 @@
             ).DoesNothing();
 
             // When
-            var result = controller.EditAdminField(model, action, 1, 1);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             using (new AssertionScope())
@@ -114,11 +114,11 @@
         public void PostEditAdminField_delete_removes_configured_answer()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer");
+            var model = new EditAdminFieldViewModel(1, "Test", "Test\r\nAnswer");
             const string action = "delete0";
 
             // When
-            var result = controller.EditAdminField(model, action, 1, 1);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             using (new AssertionScope())
@@ -132,11 +132,11 @@
         public void PostAdminField_bulk_sets_up_temp_data_and_redirects()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options");
             const string action = "bulk";
 
             // When
-            var result = controller.EditAdminField(model, action, 1, 1);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             using (new AssertionScope())
@@ -150,11 +150,11 @@
         public void PostEditAdminField_returns_error_with_unexpected_action()
         {
             // Given
-            var model = new EditAdminFieldViewModel(1, 1, "Test", "Options");
+            var model = new EditAdminFieldViewModel(1, "Test", "Options");
             const string action = "deletetest";
 
             // When
-            var result = controller.EditAdminField(model, action, 1, 1);
+            var result = controller.EditAdminField(1, model, action);
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
@@ -164,9 +164,9 @@
         public void AdminFieldBulkPost_updates_temp_data_and_redirects_to_edit()
         {
             // Given
-            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1, 1);
-            var initialEditViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test");
-            var expectedViewModel = new EditAdminFieldViewModel(1, 1, "Test", "Test\r\nAnswer");
+            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1);
+            var initialEditViewModel = new EditAdminFieldViewModel(1, "Test", "Test");
+            var expectedViewModel = new EditAdminFieldViewModel(1, "Test", "Test\r\nAnswer");
             var initialTempData = new EditAdminFieldData(initialEditViewModel);
 
             controller.TempData.Set(initialTempData);
@@ -175,7 +175,7 @@
                 .Returns(true);
 
             // When
-            var result = controller.EditAdminFieldBulkPost(inputViewModel);
+            var result = controller.EditAdminFieldBulkPost(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -199,7 +199,7 @@
         [Test]
         public void AddAdminField_post_updates_temp_data_and_redirects()
         {
-            var expectedPromptModel = new AddAdminFieldViewModel(1);
+            var expectedPromptModel = new AddAdminFieldViewModel();
             var initialTempData = new AddAdminFieldData(expectedPromptModel);
             controller.TempData.Set(initialTempData);
 
@@ -215,7 +215,7 @@
         public void AddAdminField_save_clears_temp_data_and_redirects_to_index()
         {
             // Given
-            var model = new AddAdminFieldViewModel(100, 1, "Test");
+            var model = new AddAdminFieldViewModel(1, "Test");
             const string action = "save";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -244,7 +244,7 @@
         public void AddAdminField_save_redirects_successfully_without_answers_configured()
         {
             // Given
-            var model = new AddAdminFieldViewModel(100, 1, null);
+            var model = new AddAdminFieldViewModel(1, null);
             const string action = "save";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -273,7 +273,7 @@
         public void AddAdminField_calls_service_and_redirects_to_error_on_failure()
         {
             // Given
-            var model = new AddAdminFieldViewModel(100, 1, "Test");
+            var model = new AddAdminFieldViewModel(1, "Test");
             const string action = "save";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -300,11 +300,11 @@
         [Test]
         public void AddAdminField_add_configures_new_answer_and_updates_temp_data()
         {
-            var initialViewModel = new AddAdminFieldViewModel(1, 1, "Test", "Answer");
+            var initialViewModel = new AddAdminFieldViewModel(1, "Test", "Answer");
             var initialTempData = new AddAdminFieldData(initialViewModel);
             controller.TempData.Set(initialTempData);
 
-            var expectedViewModel = new AddAdminFieldViewModel(1, 1, "Test\r\nAnswer");
+            var expectedViewModel = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
             const string action = "addPrompt";
 
             // When
@@ -323,11 +323,11 @@
         [Test]
         public void AddAdminField_adds_answer_without_admin_field_selected()
         {
-            var initialViewModel = new AddAdminFieldViewModel(1, null, null, "Answer");
+            var initialViewModel = new AddAdminFieldViewModel(null, null, "Answer");
             var initialTempData = new AddAdminFieldData(initialViewModel);
             controller.TempData.Set(initialTempData);
 
-            var expectedViewModel = new AddAdminFieldViewModel(1, null, "Answer");
+            var expectedViewModel = new AddAdminFieldViewModel(null, "Answer");
             const string action = "addPrompt";
 
             // When
@@ -344,7 +344,7 @@
         public void AddAdminField_delete_removes_configured_answer()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1, 1, "Test\r\nAnswer");
+            var model = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
             const string action = "delete0";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -363,7 +363,7 @@
         [Test]
         public void AddAdminField_removes_answer_without_admin_field_selected()
         {
-            var model = new AddAdminFieldViewModel(1, null, "Test\r\nAnswer");
+            var model = new AddAdminFieldViewModel(null, "Test\r\nAnswer");
             const string action = "delete0";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -383,7 +383,7 @@
         public void AddAdminField_bulk_sets_up_temp_data_and_redirects()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1, 1, "Options");
+            var model = new AddAdminFieldViewModel(1, "Options");
             const string action = "bulk";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -403,7 +403,7 @@
         public void AddAdminField_bulk_redirects_without_admin_field_selected()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1, null, "Options");
+            var model = new AddAdminFieldViewModel(null, "Options");
             const string action = "bulk";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -423,7 +423,7 @@
         public void AddAdminField_returns_error_with_unexpected_action()
         {
             // Given
-            var model = new AddAdminFieldViewModel(1);
+            var model = new AddAdminFieldViewModel();
             const string action = "deletetest";
             var initialTempData = new AddAdminFieldData(model);
             controller.TempData.Set(initialTempData);
@@ -440,14 +440,14 @@
         {
             // Given
             var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1);
-            var initialAddViewModel = new AddAdminFieldViewModel(1, 1, "Test");
-            var expectedViewModel = new AddAdminFieldViewModel(1, 1, "Test\r\nAnswer");
+            var initialAddViewModel = new AddAdminFieldViewModel(1, "Test");
+            var expectedViewModel = new AddAdminFieldViewModel(1, "Test\r\nAnswer");
             var initialTempData = new AddAdminFieldData(initialAddViewModel);
 
             controller.TempData.Set(initialTempData);
 
             // When
-            var result = controller.AddAdminFieldAnswersBulk(inputViewModel, 1);
+            var result = controller.AddAdminFieldAnswersBulk(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -471,7 +471,7 @@
         public void RemoveAdminField_returns_remove_view_if_admin_field_has_user_answers()
         {
             // Given
-            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            var removeViewModel = new RemoveAdminFieldViewModel("System Access Granted", 1);
 
             // When
             var result = controller.RemoveAdminField(100, 1, removeViewModel);
@@ -484,7 +484,7 @@
         public void RemoveAdminField_does_not_remove_admin_field_without_confirmation()
         {
             // Given
-            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            var removeViewModel = new RemoveAdminFieldViewModel("System Access Granted", 1);
             removeViewModel.Confirm = false;
             var expectedErrorMessage = "You must confirm before deleting this field";
 
@@ -501,7 +501,7 @@
         public void RemoveAdminField_removes_admin_field_with_confirmation_and_redirects()
         {
             // Given
-            var removeViewModel = new RemoveAdminFieldViewModel(100, "System Access Granted", 1);
+            var removeViewModel = new RemoveAdminFieldViewModel("System Access Granted", 1);
             removeViewModel.Confirm = true;
 
             // When

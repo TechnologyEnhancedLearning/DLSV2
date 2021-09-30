@@ -7,9 +7,8 @@
     {
         public EditAdminFieldViewModel() { }
 
-        public EditAdminFieldViewModel(CustomPrompt customPrompt, int customisationId)
+        public EditAdminFieldViewModel(CustomPrompt customPrompt)
         {
-            CustomisationId = customisationId;
             PromptNumber = customPrompt.CustomPromptNumber;
             Prompt = customPrompt.CustomPromptText;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
@@ -17,13 +16,11 @@
         }
 
         public EditAdminFieldViewModel(
-            int customisationId,
             int customPromptNumber,
             string text,
             string? options
         )
         {
-            CustomisationId = customisationId;
             PromptNumber = customPromptNumber;
             Prompt = text;
             OptionsString = options;

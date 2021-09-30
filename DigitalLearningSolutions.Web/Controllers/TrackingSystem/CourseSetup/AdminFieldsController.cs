@@ -72,7 +72,6 @@
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
 
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId,
@@ -82,7 +81,7 @@
 
             var data = TempData.Get<EditAdminFieldData>();
 
-            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseAdminField, customisationId);
+            var model = data?.EditModel ?? new EditAdminFieldViewModel(courseAdminField);
 
             return View(model);
         }
@@ -91,10 +90,9 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult EditAdminField(
-            EditAdminFieldViewModel model,
-            string action,
             int customisationId,
-            int promptNumber
+            EditAdminFieldViewModel model,
+            string action
         )
         {
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
@@ -104,9 +102,9 @@
 
             return action switch
             {
-                SaveAction => EditAdminFieldPostSave(model),
+                SaveAction => EditAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
-                BulkAction => EditAdminFieldBulk(model),
+                BulkAction => EditAdminFieldBulk(customisationId, model),
                 _ => new StatusCodeResult(500)
             };
         }
@@ -122,7 +120,6 @@
             var model = new BulkAdminFieldAnswersViewModel(
                 data.EditModel.OptionsString,
                 false,
-                customisationId,
                 promptNumber
             );
 
@@ -130,17 +127,14 @@
         }
 
         [HttpPost]
-        [Route("AdminFields/Edit/Bulk")]
+        [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldBulkPost(
+            int customisationId,
             BulkAdminFieldAnswersViewModel model
         )
         {
-            if (!VerifyAdminUserCanAccessCourse(model.CustomisationId))
-            {
-                return NotFound();
-            }
-
             ValidateBulkOptionsString(model.OptionsString);
             if (!ModelState.IsValid)
             {
@@ -154,7 +148,7 @@
 
             return RedirectToAction(
                 "EditAdminField",
-                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+                new { customisationId, promptNumber = model.PromptNumber }
             );
         }
 
@@ -164,11 +158,11 @@
         {
             TempData.Clear();
 
-            var model = new AddAdminFieldViewModel(customisationId);
+            var model = new AddAdminFieldViewModel();
 
             SetAddAdminFieldTempData(model);
 
-            return RedirectToAction("AddAdminField", new { customisationId = model.CustomisationId });
+            return RedirectToAction("AddAdminField", new { customisationId });
         }
 
         [HttpGet]
@@ -201,9 +195,9 @@
 
             return action switch
             {
-                SaveAction => AddAdminFieldPostSave(model),
+                SaveAction => AddAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
-                BulkAction => AddAdminFieldBulk(model),
+                BulkAction => AddAdminFieldBulk(customisationId, model),
                 _ => new StatusCodeResult(500)
             };
         }
@@ -217,8 +211,7 @@
             var data = TempData.Peek<AddAdminFieldData>()!;
             var model = new BulkAdminFieldAnswersViewModel(
                 data.AddModel.OptionsString,
-                true,
-                customisationId
+                true
             );
 
             return View("BulkAdminFieldAnswers", model);
@@ -229,8 +222,8 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(
-            BulkAdminFieldAnswersViewModel model,
-            int customisationId
+            int customisationId,
+            BulkAdminFieldAnswersViewModel model
         )
         {
             ValidateBulkOptionsString(model.OptionsString);
@@ -246,7 +239,7 @@
 
             return RedirectToAction(
                 "AddAdminField",
-                new { customisationId = model.CustomisationId }
+                new { customisationId }
             );
         }
 
@@ -266,7 +259,7 @@
             var promptName =
                 courseAdminFieldsService.GetPromptName(customisationId, promptNumber);
 
-            var model = new RemoveAdminFieldViewModel(customisationId, promptName, answerCount);
+            var model = new RemoveAdminFieldViewModel(promptName, answerCount);
 
             return View(model);
         }
@@ -288,26 +281,26 @@
             return RemoveAdminFieldAndRedirect(customisationId, promptNumber);
         }
 
-        private IActionResult EditAdminFieldPostSave(EditAdminFieldViewModel model)
+        private IActionResult EditAdminFieldPostSave(int customisationId, EditAdminFieldViewModel model)
         {
             ModelState.ClearAllErrors();
 
             courseAdminFieldsService.UpdateCustomPromptForCourse(
-                model.CustomisationId,
+                customisationId,
                 model.PromptNumber,
                 model.OptionsString
             );
 
-            return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+            return RedirectToAction("Index", new { customisationId });
         }
 
-        private IActionResult EditAdminFieldBulk(EditAdminFieldViewModel model)
+        private IActionResult EditAdminFieldBulk(int customisationId, EditAdminFieldViewModel model)
         {
             SetEditAdminFieldTempData(model);
 
             return RedirectToAction(
                 "EditAdminFieldBulk",
-                new { customisationId = model.CustomisationId, promptNumber = model.PromptNumber }
+                new { customisationId, promptNumber = model.PromptNumber }
             );
         }
 
@@ -327,7 +320,7 @@
             TempData.Set(data);
         }
 
-        private IActionResult AddAdminFieldPostSave(AddAdminFieldViewModel model)
+        private IActionResult AddAdminFieldPostSave(int customisationId, AddAdminFieldViewModel model)
         {
             ModelState.ClearErrorsForAllFieldsExcept(nameof(AddAdminFieldViewModel.AdminFieldId));
 
@@ -341,26 +334,26 @@
             var categoryId = User.GetAdminCategoryId()!;
 
             if (courseAdminFieldsService.AddCustomPromptToCourse(
-                model.CustomisationId,
+                customisationId,
                 centreId,
                 model.AdminFieldId!.Value,
                 model.OptionsString
             ))
             {
                 TempData.Clear();
-                return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+                return RedirectToAction("Index", new { customisationId });
             }
 
             return new StatusCodeResult(500);
         }
 
-        private IActionResult AddAdminFieldBulk(AddAdminFieldViewModel model)
+        private IActionResult AddAdminFieldBulk(int customisationId, AddAdminFieldViewModel model)
         {
             SetAddAdminFieldTempData(model);
 
             return RedirectToAction(
                 "AddAdminFieldAnswersBulk",
-                new { customisationId = model.CustomisationId }
+                new { customisationId }
             );
         }
 
@@ -534,19 +527,6 @@
                     "Each answer must be 100 characters or fewer"
                 );
             }
-        }
-
-        private bool VerifyAdminUserCanAccessCourse(int customisationId)
-        {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-
-            if (courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

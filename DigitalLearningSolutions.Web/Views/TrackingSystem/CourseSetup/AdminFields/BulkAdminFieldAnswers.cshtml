@@ -10,11 +10,11 @@
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var editCancelLinkData = new Dictionary<string, string> {
-    { "customisationId", Model.CustomisationId.ToString() },
+    { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! },
     { "promptNumber", Model.PromptNumber.ToString() }
   };
   var addCancelLinkData = new Dictionary<string, string> {
-    { "customisationId", Model.CustomisationId.ToString() }
+    { "customisationId", ViewContext.HttpContext.Request.Query["customisationId"].ToString() }
   };
 }
 
@@ -33,7 +33,6 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddAdminFieldAnswersBulk" : "EditAdminFieldBulkPost")">
 
       <input type="hidden" asp-for="IsAddPromptJourney" />
-      <input type="hidden" asp-for="CustomisationId" />
       <input type="hidden" asp-for="PromptNumber" />
 
       <vc:text-area asp-for="@nameof(Model.OptionsString)"

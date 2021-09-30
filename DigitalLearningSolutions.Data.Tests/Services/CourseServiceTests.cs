@@ -165,30 +165,15 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_centreId()
+        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_ids()
         {
             // Given
             A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
                 .Returns(false);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 1);
 
-            // Then
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .MustHaveHappened(1, Times.Exactly);
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_categoryId()
-        {
-            // Given
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .Returns(false);
-
-            // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 1);
             // Then
             A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
                 .MustHaveHappened(1, Times.Exactly);
