@@ -28,7 +28,8 @@
             CentreCustomPromptHelper centreCustomPromptHelper,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService
+            ICourseDataService courseDataService,
+            IProgressDataService progressDataService
         )
         {
             this.userDataService = userDataService;
@@ -36,6 +37,7 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
+            this.progressDataService = progressDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -125,9 +127,9 @@
                 return new NotFoundResult();
             }
 
-            var uncompletedProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId).FirstOrDefault(
-                p => p.Completed != null && p.RemovedDate != null);
-            if (uncompletedProgress == null)
+            var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
+                .FirstOrDefault(p => p.Completed != null && p.RemovedDate != null);
+            if (currentProgress == null)
             {
                 return new NotFoundResult();
             }
@@ -135,7 +137,7 @@
             // TODO HEEDLS-501: should I put the course data service (and for the validation step?) behind a service method?
             // TODO HEEDLS-501: hold on, which progresses am I supposed to be removing?
 
-            // courseDataService.RemoveCurrentCourse(uncompletedProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
+            courseDataService.RemoveCurrentCourse(currentProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
 
             return RedirectToAction("Index", new { delegateId });
         }
