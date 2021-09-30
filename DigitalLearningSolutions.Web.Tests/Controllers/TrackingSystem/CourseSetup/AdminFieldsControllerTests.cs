@@ -164,7 +164,7 @@
         public void EditAdminFieldAnswersBulk_updates_temp_data_and_redirects_to_edit()
         {
             // Given
-            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false);
+            var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer");
             var initialEditViewModel = new EditAdminFieldViewModel(1, "Test", "Test");
             var expectedViewModel = new EditAdminFieldViewModel(1, "Test", "Test\r\nAnswer");
             var initialTempData = new EditAdminFieldData(initialEditViewModel);

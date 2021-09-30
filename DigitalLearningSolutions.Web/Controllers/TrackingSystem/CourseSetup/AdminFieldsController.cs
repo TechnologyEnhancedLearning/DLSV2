@@ -118,8 +118,7 @@
             var data = TempData.Peek<EditAdminFieldData>()!;
 
             var model = new BulkAdminFieldAnswersViewModel(
-                data.EditModel.OptionsString,
-                false
+                data.EditModel.OptionsString
             );
 
             return View("BulkAdminFieldAnswers", model);
