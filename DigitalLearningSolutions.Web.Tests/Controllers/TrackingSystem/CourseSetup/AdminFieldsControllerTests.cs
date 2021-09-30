@@ -395,7 +395,7 @@
             using (new AssertionScope())
             {
                 AssertAddTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
+                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldBulkPost");
             }
         }
 
@@ -415,7 +415,7 @@
             using (new AssertionScope())
             {
                 AssertAddTempDataIsExpected(model);
-                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldAnswersBulk");
+                result.Should().BeRedirectToActionResult().WithActionName("AddAdminFieldBulkPost");
             }
         }
 
