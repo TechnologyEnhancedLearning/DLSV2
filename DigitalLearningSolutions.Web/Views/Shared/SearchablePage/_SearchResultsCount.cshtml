@@ -5,5 +5,5 @@
   @{
     var count = Model.MatchingSearchResults;
   }
-  <span aria-live="polite" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
+  <span role="alert" aria-live="polite" id="results-count">@count matching @(count == 1 ? "result" : "results")</span>
 </p>
