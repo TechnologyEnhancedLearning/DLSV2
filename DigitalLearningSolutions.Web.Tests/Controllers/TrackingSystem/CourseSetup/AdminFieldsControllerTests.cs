@@ -161,7 +161,7 @@
         }
 
         [Test]
-        public void AdminFieldBulkPost_updates_temp_data_and_redirects_to_edit()
+        public void EditAdminFieldBulkPost_updates_temp_data_and_redirects_to_edit()
         {
             // Given
             var inputViewModel = new BulkAdminFieldAnswersViewModel("Test\r\nAnswer", false, 1);
@@ -447,7 +447,7 @@
             controller.TempData.Set(initialTempData);
 
             // When
-            var result = controller.AddAdminFieldAnswersBulk(1, inputViewModel);
+            var result = controller.AddAdminFieldBulkPost(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
