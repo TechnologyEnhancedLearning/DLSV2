@@ -12,6 +12,7 @@
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
         public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
@@ -82,6 +83,11 @@
                 : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
+        }
+
+        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
         }
 
         public void UpdateLearningPathwayDefaultsForCourse(

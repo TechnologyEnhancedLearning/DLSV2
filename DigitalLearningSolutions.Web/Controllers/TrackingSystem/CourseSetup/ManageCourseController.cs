@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -13,13 +12,11 @@
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Manage")]
     public class ManageCourseController : Controller
     {
-        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
 
-        public ManageCourseController(ICourseService courseService, ICourseDataService courseDataService)
+        public ManageCourseController(ICourseService courseService)
         {
             this.courseService = courseService;
-            this.courseDataService = courseDataService;
         }
 
         [HttpGet]
@@ -28,7 +25,7 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
                 customisationId,
                 centreId,
                 categoryId.Value
@@ -51,7 +48,7 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
                 customisationId,
                 centreId,
                 categoryId.Value
@@ -79,9 +76,6 @@
                 return new StatusCodeResult(500);
             }
 
-            ValidateNumberInput(model.CompleteWithinMonths);
-            ValidateNumberInput(model.ValidityMonths);
-
             if (!ModelState.IsValid)
             {
                 return View("EditLearningPathwayDefaults", model);
@@ -89,8 +83,7 @@
 
             if (model.AutoRefresh)
             {
-                // Redirect to "Edit auto-refresh options" page
-                // To be configured in HEEDLS-442
+                // TODO in HEEDLS-442: Redirect to "Edit auto-refresh options" page
             }
 
             var completeWithinMonthsInt =
@@ -107,23 +100,6 @@
             );
 
             return RedirectToAction("Index", new { customisationId = model.CustomisationId });
-        }
-
-        private void ValidateNumberInput(string? numberInput)
-        {
-            if (numberInput == null)
-            {
-                return;
-            }
-
-            if (!int.TryParse(numberInput, out _))
-            {
-                ModelState.AddModelError(nameof(numberInput), "Value must only contain numbers");
-            }
-            else if (int.Parse(numberInput) < 0 || int.Parse(numberInput) > 48)
-            {
-                ModelState.AddModelError(nameof(numberInput), "Value must be a number between 0 and 48");
-            }
         }
     }
 }

@@ -19,7 +19,7 @@
         [SetUp]
         public void Setup()
         {
-            controller = new ManageCourseController(courseService, courseDataService)
+            controller = new ManageCourseController(courseService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
         }
@@ -28,7 +28,7 @@
         public void Index_returns_NotFound_when_no_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
                 .Returns(null);
 
             // When
@@ -94,33 +94,130 @@
             var result = controller.SaveLearningPathwayDefaults(1, model);
 
             // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    0,
+                    0,
+                    false,
+                    false
+                )
+            ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
-        public void SaveLearningPathwayDefaults_shows_validation_errors_if_number_input_contains_non_numbers()
+        public void SaveLearningPathwayDefaults_shows_validation_errors_if_number_input_contains_non_integers()
         {
             // Given
-            var model = new EditLearningPathwayDefaultsViewModel(1, "9.0", "asdfg", false, false);
+            var model = new EditLearningPathwayDefaultsViewModel(2, "9.0", "asdfg", false, false);
 
             // When
-            var result = controller.SaveLearningPathwayDefaults(1, model);
+            var result = controller.SaveLearningPathwayDefaults(2, model);
 
             // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    2,
+                    A<int>._,
+                    A<int>._,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
             Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [Test]
-        public void SaveLearningPathwayDefaults_shows_validation_errors_if_number_input_is_outside_range()
+        public void SaveLearningPathwayDefaults_shows_validation_error_if_CompleteWithinMonths_input_is_less_than_zero()
         {
             // Given
-            var model = new EditLearningPathwayDefaultsViewModel(1, "-1", "49", false, false);
+            var model = new EditLearningPathwayDefaultsViewModel(1, "-1", "12", false, false);
 
             // When
             var result = controller.SaveLearningPathwayDefaults(1, model);
 
             // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    -1,
+                    12,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void
+            SaveLearningPathwayDefaults_shows_validation_error_if_CompleteWithinMonths_input_is_greater_than_48()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "49", "12", false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    49,
+                    12,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_shows_validation_error_if_ValidityMonths_input_is_less_than_zero()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "12", "-1", false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    12,
+                    -1,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void SaveLearningPathwayDefaults_shows_validation_errors_if_ValidityMonths_input_is_greater_than_48()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "12", "49", false, false);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    12,
+                    49,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
             Assert.IsFalse(controller.ModelState.IsValid);
         }
