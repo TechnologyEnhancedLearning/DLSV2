@@ -10,10 +10,17 @@ new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter'
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
-  // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
+  // change the content of the search results
+  // so that an "identical" result is announced by the aria-live attribute
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  resultCount.setAttribute('role', '');
-  resultCount.setAttribute('role', 'alert');
+  const resultCountMessage = resultCount.innerHTML;
+  const indexOfSpace = resultCountMessage.search('&nbsp');
+
+  if (indexOfSpace === -1) {
+    resultCount.innerHTML = `${resultCountMessage}&nbsp`;
+  } else {
+    resultCount.innerHTML = resultCountMessage.substring(0, indexOfSpace);
+  }
 }
 
 function selectAll(): void {
