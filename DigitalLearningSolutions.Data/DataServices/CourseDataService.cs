@@ -356,7 +356,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE CustomisationID = @customisationId
                         AND c.CentreID = @centreId
-                        AND (a.CourseCategoryID = 0 OR @categoryId IS NULL)
+                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     )
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
