@@ -103,13 +103,20 @@
                 return new NotFoundResult();
             }
 
-            var model = new RemoveDelegateFromCourseViewModel();
-            return View(model);
+            var model = new RemoveFromCourseViewModel
+            {
+                DelegateId = delegateId,
+                CustomisationId = customisationId,
+                CourseName = "test name",
+                Forename = "hank",
+                Surname = "hercules"
+            };
+            return View("ConfirmRemoveFromCourse", model);
         }
 
         [HttpPost]
-        [Route("RemoveCourse")]
-        public IActionResult RemoveCourse(int delegateId, int customisationId)
+        [Route("{customisationId:int}/Remove")]
+        public IActionResult RemoveFromCourse(int delegateId, int customisationId)
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
@@ -128,7 +135,7 @@
             // TODO HEEDLS-501: should I put the course data service (and for the validation step?) behind a service method?
             // TODO HEEDLS-501: hold on, which progresses am I supposed to be removing?
 
-            courseDataService.RemoveCurrentCourse(uncompletedProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
+            // courseDataService.RemoveCurrentCourse(uncompletedProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
 
             return RedirectToAction("Index", new { delegateId });
         }

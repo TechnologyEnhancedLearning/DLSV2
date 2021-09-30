@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
 
     public class DelegateCourseInfoViewModel
     {
-        public DelegateCourseInfoViewModel(DelegateCourseDetails details)
+        public DelegateCourseInfoViewModel(DelegateCourseDetails details, int delegateId)
         {
             var info = details.DelegateCourseInfo;
             CustomisationId = info.CustomisationId;
@@ -34,12 +34,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
 
+            DelegateId = delegateId;
+
             CourseCustomPromptsWithAnswers = details.CustomPrompts;
             TotalAttempts = details.AttemptStats.totalAttempts;
             AttemptsPassed = details.AttemptStats.attemptsPassed;
         }
 
         public int CustomisationId { get; set; }
+        public int DelegateId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? SupervisorForename { get; set; }
