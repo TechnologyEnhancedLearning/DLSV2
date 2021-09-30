@@ -71,6 +71,15 @@
             DateRange =
                 $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today"}";
             ShowCourseCategoryFilter = userManagingAllCourses;
+            FilterValues = new Dictionary<string, string>
+            {
+                { "jobGroupId", filterData.JobGroupId?.ToString() ?? "" },
+                { "courseCategoryId", filterData.CourseCategoryId?.ToString() ?? "" },
+                { "customisationId", filterData.CustomisationId?.ToString() ?? "" },
+                { "startDate", filterData.StartDate.ToString() },
+                { "endDate", filterData.EndDate?.ToString() ?? "" },
+                { "reportInterval", filterData.ReportInterval.ToString() },
+            };
         }
 
         public string JobGroupName { get; set; }
@@ -79,5 +88,7 @@
         public string DateRange { get; set; }
         public string ReportIntervalName { get; set; }
         public bool ShowCourseCategoryFilter { get; set; }
+
+        public Dictionary<string, string> FilterValues { get; set; }
     }
 }
