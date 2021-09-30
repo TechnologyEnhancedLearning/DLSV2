@@ -1,18 +1,18 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsOneOfActionsSelected(new[] {"Current", "SetCurrentCourseCompleteByDate"})">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] {"Current", "SetCurrentCourseCompleteByDate"})">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Current">
     Current activities
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected("Completed")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] {"Completed"})">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Completed">
     Completed activities
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected("Available")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] {"Available"})">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningPortal" asp-action="Available">
     Available activities
     <partial name="_NhsChevronRight" />

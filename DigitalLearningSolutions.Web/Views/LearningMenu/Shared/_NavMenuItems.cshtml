@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("LearningMenu")">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "LearningMenu" })">
   <a class="nhsuk-header__navigation-link" asp-controller="LearningMenu" asp-action="Close">
     Learning portal
     <partial name="_NhsChevronRight" />

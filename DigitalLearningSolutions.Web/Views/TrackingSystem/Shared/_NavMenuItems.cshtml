@@ -7,21 +7,21 @@
 
 @if (User.HasCentreAdminPermissions()) {
   <li class="nhsuk-header__navigation-item
-    @Html.IsOneOfControllersSelected(new[] { "Dashboard", "Configuration", "Administrator", "Reports" })">
+    @Html.IsControllerSelected(new[] { "Dashboard", "Configuration", "Administrator", "Reports" })">
     <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre
       <partial name="_NhsChevronRight" />
     </a>
   </li>
   <li class="nhsuk-header__navigation-item
-    @Html.IsOneOfControllersSelected(new[] { "AllDelegates", "DelegateGroups", "CourseDelegates", "DelegateApprovals" })">
+    @Html.IsControllerSelected(new[] { "AllDelegates", "DelegateGroups", "CourseDelegates", "DelegateApprovals" })">
     <a class="nhsuk-header__navigation-link" asp-controller="AllDelegates" asp-action="Index">
       Delegates
       <partial name="_NhsChevronRight" />
     </a>
   </li>
   <li class="nhsuk-header__navigation-item
-    @Html.IsOneOfControllersSelected(new[] {"CourseSetup", "ManageCourse", "CourseContent", "AdminFields"})">
+    @Html.IsControllerSelected(new[] { "CourseSetup", "ManageCourse", "CourseContent", "AdminFields" })">
     <a class="nhsuk-header__navigation-link" asp-controller="CourseSetup" asp-action="Index">
       Course setup
       <partial name="_NhsChevronRight" />
@@ -29,14 +29,14 @@
   </li>
 }
 @if (User.HasSuperAdminPermissions()) {
-  <li class="nhsuk-header__navigation-item @Html.IsActionSelected("Administrator")">
+  <li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] { "Administrator" })">
     <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
       Admin
       <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Support")">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Support" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-application="@ApplicationType.TrackingSystem.UrlSegment">
     Support
     <partial name="_NhsChevronRight" />

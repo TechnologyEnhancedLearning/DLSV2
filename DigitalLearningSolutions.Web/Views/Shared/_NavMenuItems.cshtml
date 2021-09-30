@@ -1,18 +1,18 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-<li class="nhsuk-header__navigation-item @Html.IsOneOfControllersSelected(new[] { "Home", "Products", "LearningContent" })">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Home", "Products", "LearningContent" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
     Welcome
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("FindYourCentre")">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "FindYourCentre" })">
   <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
     Find your centre
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Pricing")">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Pricing" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
     Pricing
     <partial name="_NhsChevronRight" />
@@ -26,13 +26,13 @@
     </a>
   </li>
 } else {
-  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Login")">
+  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Login" })">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
       <partial name="_NhsChevronRight" />
     </a>
   </li>
-  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected("Register")">
+  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Register" })">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Index">
       Register
       <partial name="_NhsChevronRight" />

@@ -8,21 +8,6 @@
     {
         public static string IsActionSelected(
             this IHtmlHelper htmlHelper,
-            string action,
-            string selectedCssClass = "selected",
-            string? controller = null
-        )
-        {
-            var currentController = htmlHelper.ViewContext.RouteData.Values["controller"] as string;
-            var currentAction = htmlHelper.ViewContext.RouteData.Values["action"] as string;
-
-            return (controller == null || controller == currentController) && action == currentAction
-                ? selectedCssClass
-                : string.Empty;
-        }
-
-        public static string IsOneOfActionsSelected(
-            this IHtmlHelper htmlHelper,
             IEnumerable<string> actions,
             string selectedCssClass = "selected",
             string? controller = null
@@ -38,26 +23,23 @@
 
         public static string IsControllerSelected(
             this IHtmlHelper htmlHelper,
-            string? controller,
-            string selectedCssClass = "selected"
-        )
-        {
-            var currentController = htmlHelper.ViewContext.RouteData.Values["controller"] as string;
-
-            return (controller == currentController)
-                ? selectedCssClass
-                : string.Empty;
-        }
-
-        public static string IsOneOfControllersSelected(
-            this IHtmlHelper htmlHelper,
             IEnumerable<string> controllers,
+            string? exceptAction = null,
             string selectedCssClass = "selected"
         )
         {
+            if (exceptAction != null)
+            {
+                var currentAction = htmlHelper.ViewContext.RouteData.Values["action"] as string;
+                if (currentAction == exceptAction)
+                {
+                    return "";
+                }
+            }
+
             var currentController = htmlHelper.ViewContext.RouteData.Values["controller"] as string;
 
-            return (controllers.Contains(currentController))
+            return controllers.Contains(currentController)
                 ? selectedCssClass
                 : string.Empty;
         }
@@ -69,7 +51,8 @@
         {
             var currentController = htmlHelper.ViewContext.RouteData.Values["controller"] as string;
 
-            return (currentController == "MyAccount" || currentController == "ChangePassword" || currentController == "NotificationPreferences")
+            return currentController == "MyAccount" || currentController == "ChangePassword" ||
+                   currentController == "NotificationPreferences"
                 ? selectedCssClass
                 : string.Empty;
         }

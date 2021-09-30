@@ -1,18 +1,18 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected(controller: "Supervisor", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(controller: "Supervisor", actions: new[] { "Index" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="Index">
     Dashboard
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsOneOfActionsSelected(new[] { "MyStaffList", "AddMultipleSuperviseDelegates" })">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] { "MyStaffList", "AddMultipleSuperviseDelegates" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="MyStaffList">
     My Staff
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected("SelfAssessments")">
+<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] { "SelfAssessments" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="SelfAssessments">
     Profile Assessments
     <partial name="_NhsChevronRight" />
