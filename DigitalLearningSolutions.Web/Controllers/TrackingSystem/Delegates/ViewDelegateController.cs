@@ -134,9 +134,6 @@
                 return new NotFoundResult();
             }
 
-            // TODO HEEDLS-501: should I put the course data service (and for the validation step?) behind a service method?
-            // TODO HEEDLS-501: hold on, which progresses am I supposed to be removing?
-
             courseDataService.RemoveCurrentCourse(currentProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
 
             return RedirectToAction("Index", new { delegateId });
