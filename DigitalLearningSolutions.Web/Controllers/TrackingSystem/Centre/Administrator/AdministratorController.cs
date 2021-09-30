@@ -172,7 +172,7 @@
             {
                 ModelState.AddModelError(
                     nameof(DeactivateAdminViewModel.Confirm),
-                    "You must confirm before deactivating this account."
+                    "You must confirm before deactivating this account"
                 );
 
                 return View(model);

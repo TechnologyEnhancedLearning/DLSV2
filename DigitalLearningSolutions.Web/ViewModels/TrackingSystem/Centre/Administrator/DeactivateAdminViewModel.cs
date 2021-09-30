@@ -9,7 +9,7 @@
         {
             new CheckboxListItemViewModel(
                 nameof(Confirm),
-                "I am sure that I wish to deactivate this account. I understand that if the user has never logged in, their records will be deleted.",
+                "I am sure that I wish to deactivate this account. I understand that if the user has never logged in, their admin account be deleted",
                 string.Empty
             )
         };
