@@ -109,5 +109,10 @@
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) == true ||
                    user.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) == true;
         }
+
+        public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
+        }
     }
 }

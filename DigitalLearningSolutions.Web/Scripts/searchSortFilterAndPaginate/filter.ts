@@ -131,6 +131,8 @@ function getSelectedFilterFromDropdownAndResetDropdown(
 }
 
 function addNewFilterValueToFilterBy(newFilterValue: string): void {
+  if (!newFilterValue) return;
+
   const filterBy = getFilterByValue();
   if (!filterBy.split(filterSeparator).includes(newFilterValue)) {
     const updatedFilterBy = filterBy ? filterBy + filterSeparator + newFilterValue : newFilterValue;

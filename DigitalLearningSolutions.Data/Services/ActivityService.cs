@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -19,10 +21,20 @@
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
 
         DateTime GetStartOfActivityForCentre(int centreId);
+
+        byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
+
+        (DateTime startDate, DateTime? endDate)? GetValidatedUsageStatsDateRange(
+            string startDateString,
+            string endDateString,
+            int centreId
+        );
     }
 
     public class ActivityService : IActivityService
     {
+        private const string SheetName = "Usage Statistics";
+        private static readonly XLTableTheme TableTheme = XLTableTheme.TableStyleLight9;
         private readonly IActivityDataService activityDataService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
@@ -100,6 +112,46 @@
         public DateTime GetStartOfActivityForCentre(int centreId)
         {
             return activityDataService.GetStartOfActivityForCentre(centreId);
+        }
+
+        public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
+        {
+            using var workbook = new XLWorkbook();
+
+            var activityData = GetFilteredActivity(centreId, filterData).Select(
+                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
+            );
+
+            var sheet = workbook.Worksheets.Add(SheetName);
+            var table = sheet.Cell(1, 1).InsertTable(activityData);
+            table.Theme = TableTheme;
+            sheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        public (DateTime startDate, DateTime? endDate)? GetValidatedUsageStatsDateRange(
+            string startDateString,
+            string endDateString,
+            int centreId
+        )
+        {
+            var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
+            if (startDateInvalid || startDate < GetStartOfActivityForCentre(centreId))
+            {
+                return null;
+            }
+
+            var endDateIsSet = DateTime.TryParse(endDateString, out var endDate);
+
+            if (endDateIsSet && (endDate < startDate || endDate > DateTime.Now))
+            {
+                return null;
+            }
+
+            return (startDate, endDateIsSet ? endDate : (DateTime?)null);
         }
 
         private string GetJobGroupNameForActivityFilter(int? jobGroupId)
