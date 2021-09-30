@@ -25,6 +25,7 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
@@ -32,11 +33,13 @@ namespace DigitalLearningSolutions.Data.Services
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
             IRegistrationDataService registrationDataService,
+            ISupervisorDelegateService supervisorDelegateService,
             IUserService userService
         )
         {
             this.userDataService = userDataService;
             this.registrationDataService = registrationDataService;
+            this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
         }
@@ -199,9 +202,31 @@ namespace DigitalLearningSolutions.Data.Services
                         "Unknown return value when creating delegate record."
                     );
                 default:
+                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, status);
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }
+        }
+
+        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, string candidateNumber)
+        {
+            var pendingSupervisorDelegateIds =
+                supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    centreId,
+                    emailAddress
+                ).Select(supervisor => supervisor.ID).ToList();
+
+            if (!pendingSupervisorDelegateIds.Any())
+            {
+                return;
+            }
+
+            var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
+
+            supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                pendingSupervisorDelegateIds,
+                newDelegateRecord.Id
+            );
         }
 
         private static bool ValidateHeaders(IXLTable table)
