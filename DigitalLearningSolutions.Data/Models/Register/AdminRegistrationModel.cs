@@ -18,7 +18,8 @@
             bool isTrainer,
             bool isContentCreator,
             bool isCmsAdmin,
-            bool isCmsManager
+            bool isCmsManager,
+            byte[]? profileImage = null
         ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
         {
             IsCentreAdmin = isCentreAdmin;
@@ -26,6 +27,7 @@
             IsSupervisor = isSupervisor;
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
+            ProfileImage = profileImage;
 
             if (isCmsAdmin)
             {

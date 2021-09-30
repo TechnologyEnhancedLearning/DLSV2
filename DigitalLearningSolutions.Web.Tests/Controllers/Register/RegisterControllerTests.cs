@@ -1,10 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Register
 {
-    using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.Register;
@@ -12,15 +13,21 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Primitives;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class RegisterControllerTests
     {
+        private const string IpAddress = "1.1.1.1";
+        private const int SupervisorDelegateId = 1;
+
         private CentreCustomPromptHelper centreCustomPromptHelper = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
@@ -28,8 +35,9 @@
         private IFeatureManager featureManager = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IRegistrationService registrationService = null!;
-        private IUserService userService = null!;
+        private HttpRequest request = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -42,6 +50,7 @@
             centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            request = A.Fake<HttpRequest>();
 
             controller = new RegisterController(
                     centresDataService,
@@ -54,6 +63,8 @@
                     supervisorDelegateService
                 )
                 .WithDefaultContext()
+                .WithMockRequestContext(request)
+                .WithMockServices()
                 .WithMockTempData();
         }
 
@@ -76,7 +87,8 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -100,7 +112,8 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -152,34 +165,29 @@
         }
 
         [Test]
-        public void RegisterDelegate_with_approved_IP_registers_delegate_with_expected_values()
+        public async Task Summary_post_registers_delegate_with_expected_values()
         {
             // Given
-            const string CandidateNumber = "TN1";
-            var data = new DelegateRegistrationData
-            {
-                Id = Guid.NewGuid(),
-                FirstName = "Test",
-                LastName = "Name",
-                Email = "test@email.com",
-                Centre = 2,
-                JobGroup = 1,
-                PasswordHash = "hash",
-                IsCentreSpecificRegistration = false,
-                SupervisorDelegateId = 1,
-                Answer1 = "answer1",
-                Answer2 = "answer2",
-                Answer3 = "answer3",
-                Answer4 = "answer4",
-                Answer5 = "answer5",
-                Answer6 = "answer6"
-            };
+            const string candidateNumber = "TN1";
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
             controller.TempData.Set(data);
-            A.CallTo(() => registrationService.RegisterDelegate(A<DelegateRegistrationModel>._, A<string>._, A<bool>._, null))
-                .Returns((CandidateNumber, true));
+            A.CallTo(
+                    () => registrationService.RegisterDelegate(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Returns((candidateNumber, true));
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
 
             // When
-            var result = controller.Summary(new SummaryViewModel());
+            var result = await controller.Summary(new SummaryViewModel());
 
             // Then
             A.CallTo(
@@ -187,18 +195,161 @@
                         registrationService.RegisterDelegate(
                             A<DelegateRegistrationModel>.That.Matches(
                                 d =>
-                                    d.Approved &&
+                                    d.FirstName == data.FirstName &&
+                                    d.LastName == data.LastName &&
+                                    d.Email == data.Email &&
+                                    d.Centre == data.Centre &&
+                                    d.JobGroup == data.JobGroup &&
+                                    d.PasswordHash == data.PasswordHash &&
+                                    d.Answer1 == data.Answer1 &&
+                                    d.Answer2 == data.Answer2 &&
+                                    d.Answer3 == data.Answer3 &&
+                                    d.Answer4 == data.Answer4 &&
+                                    d.Answer5 == data.Answer5 &&
+                                    d.Answer6 == data.Answer6 &&
+                                    d.Active &&
                                     d.IsSelfRegistered &&
-                                    !d.IsExternalRegistered &&
                                     d.NotifyDate != null &&
                                     d.AliasId == null
                             ),
-                            "",
+                            IpAddress,
                             false,
-                            null
+                            SupervisorDelegateId
                         )
                 )
                 .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
+        public async Task Summary_post_returns_redirect_to_index_view_with_missing_centre()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData(centre: null);
+            controller.TempData.Set(data);
+            controller.ModelState.AddModelError("", "");
+
+            // When
+            var result = await controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegate(
+                            A<DelegateRegistrationModel>._,
+                            IpAddress,
+                            false,
+                            SupervisorDelegateId
+                        )
+                )
+                .MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Summary_post_returns_redirect_to_index_view_with_missing_job_group()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData(jobGroup: null);
+            controller.TempData.Set(data);
+            controller.ModelState.AddModelError("", "");
+
+            // When
+            var result = await controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegate(
+                            A<DelegateRegistrationModel>._,
+                            IpAddress,
+                            false,
+                            SupervisorDelegateId
+                        )
+                )
+                .MustNotHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public async Task Summary_post_returns_default_view_with_invalid_model()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            controller.TempData.Set(data);
+            controller.ModelState.AddModelError("", "");
+
+            // When
+            var result = await controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegate(
+                            A<DelegateRegistrationModel>._,
+                            IpAddress,
+                            false,
+                            SupervisorDelegateId
+                        )
+                )
+                .MustNotHaveHappened();
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public async Task Summary_post_returns_500_error_with_unexpected_register_error()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            controller.TempData.Set(data);
+            A.CallTo(
+                    () => registrationService.RegisterDelegate(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
+
+            // When
+            var result = await controller.Summary(new SummaryViewModel());
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public async Task Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationData();
+            controller.TempData.Set(data);
+            A.CallTo(
+                    () => registrationService.RegisterDelegate(
+                        A<DelegateRegistrationModel>._,
+                        A<string>._,
+                        A<bool>._,
+                        A<int>._
+                    )
+                )
+                .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));
+            A.CallTo(() => request.Headers).Returns(
+                new HeaderDictionary(
+                    new Dictionary<string, StringValues> { { "X-Forwarded-For", new StringValues(IpAddress) } }
+                )
+            );
+
+            // When
+            var result = await controller.Summary(new SummaryViewModel());
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

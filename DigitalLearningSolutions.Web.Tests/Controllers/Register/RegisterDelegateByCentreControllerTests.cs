@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -13,6 +15,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
@@ -73,7 +76,8 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .MustHaveHappened();
             result.Should().BeViewResult().WithDefaultViewName();
         }
 
@@ -98,7 +102,8 @@
             var result = controller.PersonalInformation(model);
 
             // Then
-            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value)).MustHaveHappened();
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
+                .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("LearnerInformation");
         }
 
@@ -321,6 +326,81 @@
             delegateNumber.Should().Be(sampleDelegateNumber);
             emailSent.Should().Be(data.ShouldSendEmail);
             passwordSet.Should().Be(data.IsPasswordSet);
+        }
+
+        [Test]
+        public void Summary_post_registers_delegate_with_expected_values()
+        {
+            // Given
+            const string candidateNumber = "TN1";
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData(welcomeEmailDate: DateTime.Now);
+            controller.TempData.Set(data);
+            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+                .Returns(candidateNumber);
+
+            // When
+            var result = controller.Summary(new SummaryViewModel());
+
+            // Then
+            A.CallTo(
+                    () =>
+                        registrationService.RegisterDelegateByCentre(
+                            A<DelegateRegistrationModel>.That.Matches(
+                                d =>
+                                    d.FirstName == data.FirstName &&
+                                    d.LastName == data.LastName &&
+                                    d.Email == data.Email &&
+                                    d.Centre == data.Centre &&
+                                    d.JobGroup == data.JobGroup &&
+                                    d.PasswordHash == data.PasswordHash &&
+                                    d.Answer1 == data.Answer1 &&
+                                    d.Answer2 == data.Answer2 &&
+                                    d.Answer3 == data.Answer3 &&
+                                    d.Answer4 == data.Answer4 &&
+                                    d.Answer5 == data.Answer5 &&
+                                    d.Answer6 == data.Answer6 &&
+                                    d.AliasId == data.Alias &&
+                                    d.Active &&
+                                    !d.IsSelfRegistered &&
+                                    d.NotifyDate == data.WelcomeEmailDate
+                            ),
+                            A<string>._
+                        )
+                )
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+        }
+
+        [Test]
+        public void Summary_post_returns_500_error_with_unexpected_register_error()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
+            controller.TempData.Set(data);
+            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+                .Throws(new DelegateCreationFailedException(DelegateCreationError.UnexpectedError));
+
+            // When
+            var result = controller.Summary(new SummaryViewModel());
+
+            // Then
+            result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public void Summary_post_returns_redirect_to_index_with_email_in_use_register_error()
+        {
+            // Given
+            var data = RegistrationDataHelper.GetDefaultDelegateRegistrationByCentreData();
+            controller.TempData.Set(data);
+            A.CallTo(() => registrationService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._, A<string>._))
+                .Throws(new DelegateCreationFailedException(DelegateCreationError.EmailAlreadyInUse));
+
+            // When
+            var result = controller.Summary(new SummaryViewModel());
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
 
-        AdminRegistrationStatus PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId);
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId);
     }
 
     public class RegistrationService : IRegistrationService
@@ -176,6 +176,57 @@ namespace DigitalLearningSolutions.Data.Services
             return candidateNumber;
         }
 
+        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        {
+            using var transaction = new TransactionScope();
+
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+
+            registrationDataService.RegisterAdmin(registrationModel);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
+        }
+
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
+                string.IsNullOrWhiteSpace(delegateUser.FirstName))
+            {
+                throw new AdminCreationFailedException("Delegate missing first name or email", AdminCreationError.UnexpectedError);
+            }
+
+            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
+
+            if (adminUser != null)
+            {
+                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
+            }
+
+            var adminRegistrationModel = new AdminRegistrationModel(
+                delegateUser.FirstName,
+                delegateUser.LastName,
+                delegateUser.EmailAddress,
+                delegateUser.CentreId,
+                delegateUser.Password,
+                true,
+                true,
+                adminRoles.IsCentreAdmin,
+                false,
+                adminRoles.IsSupervisor,
+                adminRoles.IsTrainer,
+                adminRoles.IsContentCreator,
+                adminRoles.IsCmsAdministrator,
+                adminRoles.IsCmsManager,
+                delegateUser.ProfileImage
+            );
+
+            registrationDataService.RegisterAdmin(adminRegistrationModel);
+        }
+
         private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
         {
             var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
@@ -203,58 +254,6 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateRegistrationModel.Centre,
                     delegateRegistrationModel.Email
                 ).Select(record => record.ID);
-        }
-
-        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
-        {
-            using var transaction = new TransactionScope();
-
-            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
-
-            registrationDataService.RegisterAdmin(registrationModel);
-
-            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-            transaction.Complete();
-        }
-
-        public AdminRegistrationStatus PromoteDelegateToAdmin(AdminRoles adminRoles, int delegateId)
-        {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
-
-            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
-                string.IsNullOrWhiteSpace(delegateUser.FirstName))
-            {
-                throw new Exception();
-            }
-
-            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
-
-            if (adminUser != null)
-            {
-                return AdminRegistrationStatus.DuplicateEmail;
-            }
-
-            var adminRegistrationModel = new AdminRegistrationModel(
-                delegateUser.FirstName,
-                delegateUser.LastName,
-                delegateUser.EmailAddress,
-                delegateUser.CentreId,
-                delegateUser.Password,
-                true,
-                true,
-                adminRoles.IsCentreAdmin,
-                false,
-                adminRoles.IsSupervisor,
-                adminRoles.IsTrainer,
-                adminRoles.IsContentCreator,
-                adminRoles.IsCmsAdministrator,
-                adminRoles.IsCmsManager
-            );
-
-            registrationDataService.RegisterAdmin(adminRegistrationModel);
-
-            return AdminRegistrationStatus.Success;
         }
 
         private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)

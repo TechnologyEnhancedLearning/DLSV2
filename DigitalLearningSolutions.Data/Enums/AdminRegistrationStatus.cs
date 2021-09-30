@@ -1,9 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Data.Enums
 {
-    public enum AdminRegistrationStatus
+    public class AdminCreationError : Enumeration
     {
-        Success,
-        DuplicateEmail,
-        MissingInformation
+        public static AdminCreationError UnexpectedError = new AdminCreationError(
+            1,
+            nameof(UnexpectedError)
+        );
+        public static AdminCreationError EmailAlreadyInUse = new AdminCreationError(
+            2,
+            nameof(EmailAlreadyInUse)
+        );
+
+        public AdminCreationError(int id, string name) : base(id, name) { }
     }
 }
