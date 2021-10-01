@@ -21,6 +21,34 @@
         }
 
         [Test]
+        public void Accepts_number_equal_to_lower_bound()
+        {
+            // Given
+            const string value = "0";
+            var attribute = new WholeNumberWithinRangeAttribute(0, 10, "Test");
+
+            // When
+            var result = attribute.IsValid(value);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void Accepts_number_equal_to_upper_bound()
+        {
+            // Given
+            const string value = "10";
+            var attribute = new WholeNumberWithinRangeAttribute(0, 10, "Test");
+
+            // When
+            var result = attribute.IsValid(value);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
         public void Rejects_number_below_lower_bound()
         {
             // Given
@@ -49,7 +77,7 @@
         }
 
         [Test]
-        public void Rejects_non_whole_number()
+        public void Rejects_non_integer()
         {
             // Given
             const string value = "1.1";
