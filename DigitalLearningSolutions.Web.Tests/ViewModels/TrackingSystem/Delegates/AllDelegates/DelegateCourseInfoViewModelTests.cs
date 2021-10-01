@@ -38,7 +38,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.Enrolled.Should().Be("01/05/2021");
@@ -62,7 +62,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.EnrolmentMethod.Should().Be(enrollmentMethod);
@@ -88,7 +88,7 @@
             );
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.PassRate.Should().Be(passRate);
@@ -105,7 +105,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.CourseName.Should().Be("my application");
@@ -123,7 +123,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.CourseName.Should().Be("my application - my customisation");
@@ -140,7 +140,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.Supervisor.Should().BeNull();
@@ -158,7 +158,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.Supervisor.Should().Be("surname");
@@ -176,7 +176,7 @@
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
             // When
-            var model = new DelegateCourseInfoViewModel(details);
+            var model = new DelegateCourseInfoViewModel(details, 1);
 
             // Then
             model.Supervisor.Should().Be("firstname surname");

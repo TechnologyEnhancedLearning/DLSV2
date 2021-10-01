@@ -3,24 +3,29 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using Microsoft.AspNetCore.Mvc;
 
     public interface ICourseService
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public bool RemoveDelegateFromCourse(int delegateId, int customisationId, RemovalMethod removalMethod);
     }
 
     public class CourseService : ICourseService
     {
         private readonly ICourseDataService courseDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly IProgressDataService progressDataService;
 
-        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService)
+        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService, IProgressDataService progressDataService)
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
+            this.progressDataService = progressDataService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
@@ -51,6 +56,19 @@
                     return new DelegateCourseDetails(info, customPrompts, attemptStats);
                 }
             );
+        }
+
+        public bool RemoveDelegateFromCourse(int delegateId, int customisationId, RemovalMethod removalMethod)
+        {
+            var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
+                .FirstOrDefault(p => p.Completed == null && p.RemovedDate == null);
+            if (currentProgress == null)
+            {
+                return false;
+            }
+
+            courseDataService.RemoveCurrentCourse(currentProgress.ProgressId, delegateId, removalMethod);
+            return true;
         }
     }
 }

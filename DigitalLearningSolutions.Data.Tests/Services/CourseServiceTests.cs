@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -15,6 +17,7 @@
         private const int AdminCategoryId = 0;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
+        private IProgressDataService progressDataService = null!;
         private CourseService courseService = null!;
 
         [SetUp]
@@ -24,7 +27,8 @@
             A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-            courseService = new CourseService(courseDataService, courseAdminFieldsService);
+            progressDataService = A.Fake<IProgressDataService>();
+            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService);
         }
 
         [Test]
@@ -148,6 +152,38 @@
             results.Should().HaveCount(1);
             results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
             results[0].AttemptStats.Should().Be((0, 0));
+        }
+
+        [Test]
+        public void RemoveDelegateFromCourse_removes_delegate_from_course()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
+
+            // When
+            var result = courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeTrue();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin)).MustHaveHappened();
+        }
+
+        [Test]
+        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>()
+            );
+
+            // When
+            var result = courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeFalse();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin)).MustNotHaveHappened();
         }
     }
 }

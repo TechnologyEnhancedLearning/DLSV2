@@ -20,7 +20,6 @@
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
-        private readonly IProgressDataService progressDataService;
         private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
@@ -28,8 +27,7 @@
             CentreCustomPromptHelper centreCustomPromptHelper,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
-            ICourseDataService courseDataService,
-            IProgressDataService progressDataService
+            ICourseDataService courseDataService
         )
         {
             this.userDataService = userDataService;
@@ -37,7 +35,6 @@
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
-            this.progressDataService = progressDataService;
         }
 
         public IActionResult Index(int delegateId)
@@ -138,14 +135,10 @@
                 return new NotFoundResult();
             }
 
-            var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .FirstOrDefault(p => p.Completed == null && p.RemovedDate == null);
-            if (currentProgress == null)
+            if (!courseService.RemoveDelegateFromCourse(delegateId, customisationId, RemovalMethod.RemovedByAdmin))
             {
                 return new NotFoundResult();
             }
-
-            courseDataService.RemoveCurrentCourse(currentProgress.ProgressId, delegateId, RemovalMethod.RemovedByAdmin);
 
             return RedirectToAction("Index", new { delegateId });
         }

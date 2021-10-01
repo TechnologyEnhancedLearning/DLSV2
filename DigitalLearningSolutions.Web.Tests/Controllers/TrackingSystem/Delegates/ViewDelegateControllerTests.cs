@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -25,8 +26,14 @@
             userDataService = A.Fake<IUserDataService>();
             var courseService = A.Fake<ICourseService>();
             var passwordResetService = A.Fake<IPasswordResetService>();
+            var courseDataService = A.Fake<ICourseDataService>();
 
-            viewDelegateController = new ViewDelegateController(userDataService, centreCustomPromptsHelper, courseService, passwordResetService)
+            viewDelegateController = new ViewDelegateController(
+                    userDataService,
+                    centreCustomPromptsHelper,
+                    courseService,
+                    passwordResetService,
+                    courseDataService)
                 .WithDefaultContext()
                 .WithMockUser(true);
 
