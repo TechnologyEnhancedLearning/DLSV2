@@ -72,9 +72,8 @@
             ViewBag.JobGroupOptions =
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
-
-            var formData = new EditDetailsFormData(adminUser, delegateUser, jobGroups);
-            var model = new EditDetailsViewModel(formData, application);
+            
+            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application);
 
             return View(model);
         }
@@ -148,11 +147,10 @@
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
-            var model = new EditDetailsViewModel(formData, application);
-
+            
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(new EditDetailsViewModel(formData, application));
             }
 
             if (formData.ProfileImageFile != null)
@@ -161,6 +159,7 @@
                 formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
+            var model = new EditDetailsViewModel(formData, application);
             return View(model);
         }
 

@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    [Obsolete("Use FileInputWithConfigurableModelViewComponent instead.")]
     public class FileInputViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
@@ -21,7 +19,15 @@
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
             var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
-            var fileInputViewModel = new FileInputViewModel(aspFor, aspFor, label, cssClass, hintText, errorMessage, hasError);
+            var fileInputViewModel = new FileInputViewModel(
+                aspFor,
+                aspFor,
+                label,
+                cssClass,
+                hintText,
+                errorMessage,
+                hasError
+            );
             return View(fileInputViewModel);
         }
     }

@@ -15,6 +15,12 @@
     <UserSecretsId>7ea176d2-09f5-4e3a-a3fa-7f3229882b70</UserSecretsId>
   </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="ViewComponents\FileInputWithConfigurableModelViewComponent.cs" />
+      <Compile Remove="ViewComponents\SelectListWithConfigurableModelViewComponent.cs" />
+      <Compile Remove="ViewComponents\TextInputWithConfigurableModelViewComponent.cs" />
+    </ItemGroup>
+
   <ItemGroup>
     <Content Remove="wwwroot\README.txt" />
   </ItemGroup>

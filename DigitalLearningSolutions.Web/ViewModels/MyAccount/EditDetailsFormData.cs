@@ -35,6 +35,23 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = delegateUser?.Answer6;
         }
 
+        public EditDetailsFormData(EditDetailsFormData formData)
+        {
+            FirstName = formData.FirstName;
+            LastName = formData.LastName;
+            Email = formData.Email;
+            ProfileImageFile = formData.ProfileImageFile;
+            ProfileImage = formData.ProfileImage;
+            IsDelegateUser = formData.IsDelegateUser;
+            JobGroupId = formData.JobGroupId;
+            Answer1 = formData.Answer1;
+            Answer2 = formData.Answer2;
+            Answer3 = formData.Answer3;
+            Answer4 = formData.Answer4;
+            Answer5 = formData.Answer5;
+            Answer6 = formData.Answer6;
+        }
+
         [Required(ErrorMessage = "Enter your first name")]
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
         public string? FirstName { get; set; }
