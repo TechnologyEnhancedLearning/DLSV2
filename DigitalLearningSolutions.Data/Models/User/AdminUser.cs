@@ -41,8 +41,6 @@
         public bool IsCmsAdministrator => ImportOnly && IsContentManager;
         public bool IsCmsManager => IsContentManager && !ImportOnly;
 
-        public bool Active { get; set; }
-
         public override UserReference ToUserReference()
         {
             return new UserReference(Id, UserType.AdminUser);

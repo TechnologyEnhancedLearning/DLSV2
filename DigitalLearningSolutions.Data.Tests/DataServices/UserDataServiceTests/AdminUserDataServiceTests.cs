@@ -27,7 +27,7 @@
         public void GetAdminUserById_Returns_admin_user_category_name_all()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser(active: true);
+            var expectedAdminUser = UserTestHelper.GetDefaultCategoryNameAllAdminUser();
 
             // When
             var returnedAdminUser = userDataService.GetAdminUserById(11);

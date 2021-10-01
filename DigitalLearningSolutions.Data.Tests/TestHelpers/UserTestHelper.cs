@@ -88,7 +88,7 @@
             bool isTrainer = true,
             bool isFrameworkDeveloper = true,
             bool importOnly = true,
-            int failedLoginCount = 0 
+            int failedLoginCount = 0
         )
         {
             return new AdminUser
@@ -121,7 +121,7 @@
             };
         }
 
-        public static AdminUser GetDefaultCategoryNameAllAdminUser(bool active = true)
+        public static AdminUser GetDefaultCategoryNameAllAdminUser()
         {
             return GetDefaultAdminUser(
                 centreName: "Guy's and St Thomas' NHS Foundation Trust",
@@ -141,7 +141,7 @@
                 isFrameworkDeveloper: false,
                 importOnly: false,
                 failedLoginCount: 5,
-                active: active
+                active: true
             );
         }
 
