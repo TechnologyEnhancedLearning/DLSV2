@@ -17,8 +17,8 @@
         private const int AdminCategoryId = 0;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
-        private IProgressDataService progressDataService = null!;
         private CourseService courseService = null!;
+        private IProgressDataService progressDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -167,7 +167,8 @@
 
             // then
             result.Should().BeTrue();
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin)).MustHaveHappened();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustHaveHappened();
         }
 
         [Test]
@@ -183,7 +184,8 @@
 
             // then
             result.Should().BeFalse();
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin)).MustNotHaveHappened();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustNotHaveHappened();
         }
     }
 }

@@ -4,11 +4,11 @@
 @model RemoveFromCourseViewModel
 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
-    ViewData["Application"] = "Tracking System";
-    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-    ViewData["HeaderPathName"] = "Tracking System";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -17,8 +17,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
     <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Remove delegate enrolment from @Model.CourseName</h1>

@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using Microsoft.AspNetCore.Mvc;
 
     public interface ICourseService
     {
@@ -17,11 +16,15 @@
 
     public class CourseService : ICourseService
     {
-        private readonly ICourseDataService courseDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseDataService courseDataService;
         private readonly IProgressDataService progressDataService;
 
-        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService, IProgressDataService progressDataService)
+        public CourseService(
+            ICourseDataService courseDataService,
+            ICourseAdminFieldsService courseAdminFieldsService,
+            IProgressDataService progressDataService
+        )
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
