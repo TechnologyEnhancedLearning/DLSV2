@@ -90,7 +90,8 @@
         public IActionResult GroupDelegates(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+            var groupName = group?.GroupLabel;
 
             if (groupName == null)
             {
@@ -109,7 +110,7 @@
         public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupName = groupsDataService.GetGroupAtCentreById(groupId, centreId)?.GroupLabel;
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
@@ -130,7 +131,7 @@
         public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupName = groupsDataService.GetGroupAtCentreById(groupId, centreId)?.GroupLabel;
             var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
@@ -165,7 +166,7 @@
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupName = groupsDataService.GetGroupAtCentreById(groupId, centreId)?.GroupLabel;
 
             if (groupName == null)
             {
@@ -179,14 +180,14 @@
             return View(model);
         }
 
-        [Route("{groupId:int}/EditDelegateGroupDescription")]
+        [Route("{groupId:int}/EditDescription")]
         [HttpGet]
-        public IActionResult EditDelegateGroupDescription(int groupId)
+        public IActionResult EditDescription(int groupId)
         {
             var centreId = User.GetCentreId();
-            var group = groupsDataService.GetGroup(groupId, centreId);
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
 
-            if (group is null)
+            if (group == null)
             {
                 return NotFound();
             }
@@ -195,15 +196,21 @@
             return View(model);
         }
 
-        [Route("{groupId:int}/EditDelegateGroupDescription")]
+        [Route("{groupId:int}/EditDescription")]
         [HttpPost]
-        public IActionResult EditDelegateGroupDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
+        public IActionResult EditDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var centreId = User.GetCentreId();
-            if (!groupsDataService.UpdateGroupDescription(
+            if (!groupsDataService.IsGroupDescriptionUpdated(
                 groupId,
                 centreId,
-                model.Description!))
+                model.Description!
+            ))
             {
                 return NotFound();
             }

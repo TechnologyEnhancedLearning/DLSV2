@@ -96,7 +96,7 @@
         public void GetGroupName_returns_expected_name_with_correct_centre()
         {
             // When
-            var result = groupsDataService.GetGroupName(5, 101);
+            var result = groupsDataService.GetGroupAtCentreById(5, 101)?.GroupLabel;
 
             // Then
             result.Should().BeEquivalentTo("Activities worker or coordinator");
@@ -106,7 +106,7 @@
         public void GetGroupName_returns_null_with_incorrect_centre()
         {
             // When
-            var result = groupsDataService.GetGroupName(5, 1);
+            var result = groupsDataService.GetGroupAtCentreById(5, 1)?.GroupLabel;
 
             // Then
             result.Should().BeNull();
@@ -159,7 +159,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        public async Task
+            RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -183,7 +184,6 @@
                 transaction.Dispose();
             }
         }
-
 
         [Test]
         public void GetRelatedProgressIdForGroupDelegate_returns_expected_value()
@@ -214,35 +214,51 @@
         [Test]
         public void UpdateGroupDescription_updates_record()
         {
-            // Given
-            const int centerId = 101;
-            const int groupId = 5;
-            const string expectedDescription = "Test group description";
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int centerId = 101;
+                const int groupId = 5;
+                const string expectedDescription = "Test group description";
 
-            // When
-            groupsDataService.UpdateGroupDescription(groupId, centerId, expectedDescription);
+                // When
+                groupsDataService.IsGroupDescriptionUpdated(groupId, centerId, expectedDescription);
 
-            //Then
-            var result = groupsDataService.GetGroup(groupId, centerId);
-            result?.GroupDescription.Should().Be(expectedDescription);
+                // Then
+                var result = groupsDataService.GetGroupAtCentreById(groupId, centerId);
+                result?.GroupDescription.Should().Be(expectedDescription);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
 
         [Test]
         public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
         {
-            // Given
-            const int centerId = 107;   //Incorrect centre id
-            const int groupId = 5;
-            const string expectedDescription = "Test group description";
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int incorrectCentreId = 107;
+                const int groupId = 5;
+                const string expectedDescription = "Test group description";
 
-            // When
-            groupsDataService.UpdateGroupDescription(groupId, centerId, expectedDescription);
+                // When
+                groupsDataService.IsGroupDescriptionUpdated(groupId, incorrectCentreId, expectedDescription);
 
-            //Then
-            var result = groupsDataService.GetGroup(groupId, centerId);
-            result?.GroupDescription.Should().NotBe(expectedDescription);
+                //Then
+                var result = groupsDataService.GetGroupAtCentreById(groupId, incorrectCentreId);
+                result?.GroupDescription.Should().NotBe(expectedDescription);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
-      
+
         [Test]
         public void AddDelegateGroup_sets_all_fields_correctly()
         {
@@ -268,7 +284,8 @@
                 var groupId = groupsDataService.AddDelegateGroup(groupDetails);
 
                 // Then
-                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId).First(g => g.GroupId == groupId);
+                var group = groupsDataService.GetGroupsForCentre(groupDetails.CentreId)
+                    .First(g => g.GroupId == groupId);
                 group.GroupLabel.Should().Be(groupDetails.GroupLabel);
                 group.GroupDescription.Should().Be(groupDetails.GroupDescription);
                 group.AddedByAdminId.Should().Be(groupDetails.AdminUserId);
@@ -320,7 +337,8 @@
                 @"SET IDENTITY_INSERT dbo.Progress ON
                     INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
                     VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
-                    SET IDENTITY_INSERT dbo.Progress OFF");
+                    SET IDENTITY_INSERT dbo.Progress OFF"
+            );
         }
     }
 }

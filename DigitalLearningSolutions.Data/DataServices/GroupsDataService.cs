@@ -15,17 +15,15 @@
 
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
-        string? GetGroupName(int groupId, int centreId);
-
         void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
         void DeleteGroupDelegatesRecordForDelegate(int groupId, int delegateId);
 
-        Group? GetGroup(int groupId, int centreId);
+        Group? GetGroupAtCentreById(int groupId, int centreId);
 
-        bool UpdateGroupDescription(int groupId, int centreId, string groupDescription);
+        bool IsGroupDescriptionUpdated(int groupId, int centreId, string groupDescription);
 
         int AddDelegateGroup(GroupDetails groupDetails);
 
@@ -135,17 +133,6 @@
             );
         }
 
-        public string? GetGroupName(int groupId, int centreId)
-        {
-            return connection.Query<string>(
-                @"SELECT
-                        GroupLabel
-                    FROM Groups
-                    WHERE GroupID = @groupId AND CentreId = @centreId",
-                new { groupId, centreId }
-            ).SingleOrDefault();
-        }
-
         public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
             const string numberOfGroupsWhereDelegateIsEnrolledOnThisCourse =
@@ -157,20 +144,20 @@
 
             connection.Execute(
                 $@"UPDATE Progress
-                    SET
-                        RemovedDate = @removedDate,
-                        RemovalMethodID = 3
-                    WHERE ProgressID IN
-                          (SELECT ProgressID
-                            FROM Progress AS P
-                            INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                            WHERE p.Completed IS NULL
-                                AND p.EnrollmentMethodID  = 3
-                                AND GC.GroupID = @groupId
-                                AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL
-                                AND p.LoginCount = 0)
-                        AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
+                        SET
+                            RemovedDate = @removedDate,
+                            RemovalMethodID = 3
+                        WHERE ProgressID IN
+                              (SELECT ProgressID
+                                FROM Progress AS P
+                                INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                                WHERE p.Completed IS NULL
+                                    AND p.EnrollmentMethodID  = 3
+                                    AND GC.GroupID = @groupId
+                                    AND p.CandidateID = @delegateId
+                                    AND P.RemovedDate IS NULL
+                                    AND p.LoginCount = 0)
+                            AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
                 new { groupId, delegateId, removedDate }
             );
         }
@@ -223,19 +210,21 @@
             );
         }
 
-        public Group? GetGroup(int groupId, int centreId)
+        public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return connection.Query<Group>(
                 @"SELECT
                         GroupLabel,
-                        GroupDescription
+                        GroupDescription,
+                        AddNewRegistrants ShouldAddNewRegistrantsToGroup,
+                        CreatedByAdminUserID AddedByAdminId
                     FROM Groups
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupId, centreId }
             ).SingleOrDefault();
         }
 
-        public bool UpdateGroupDescription(int groupId, int centreId, string groupDescription)
+        public bool IsGroupDescriptionUpdated(int groupId, int centreId, string groupDescription)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Groups
