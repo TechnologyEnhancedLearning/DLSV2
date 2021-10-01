@@ -28,17 +28,14 @@
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
-        private readonly ICourseService courseService;
 
         public AdminFieldsController(
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICourseAdminFieldsDataService courseAdminFieldsDataService,
-            ICourseService courseService
+            ICourseAdminFieldsDataService courseAdminFieldsDataService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
-            this.courseService = courseService;
         }
 
         [HttpGet]

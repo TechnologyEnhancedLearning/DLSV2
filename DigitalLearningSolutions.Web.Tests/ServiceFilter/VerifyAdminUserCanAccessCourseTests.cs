@@ -19,12 +19,11 @@
     {
         private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ActionExecutingContext context = null!;
-        private HomeController homeController = null!;
 
         [SetUp]
         public void Setup()
         {
-            homeController = new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
+            var homeController = new HomeController(A.Fake<IConfiguration>()).WithDefaultContext().WithMockTempData()
                 .WithMockUser(true, 101);
             context = new ActionExecutingContext(
                 new ActionContext(

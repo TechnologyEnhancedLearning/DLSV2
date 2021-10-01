@@ -20,6 +20,6 @@
             PromptNumber = promptNumber;
         }
 
-        private int PromptNumber { get; set; }
+        private int PromptNumber { get; }
     }
 }

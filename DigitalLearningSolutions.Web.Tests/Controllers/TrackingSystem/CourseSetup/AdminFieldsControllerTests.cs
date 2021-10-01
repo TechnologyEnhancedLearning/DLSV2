@@ -31,8 +31,7 @@
         {
             controller = new AdminFieldsController(
                     courseAdminFieldsService,
-                    courseAdminFieldsDataService,
-                    courseService
+                    courseAdminFieldsDataService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
