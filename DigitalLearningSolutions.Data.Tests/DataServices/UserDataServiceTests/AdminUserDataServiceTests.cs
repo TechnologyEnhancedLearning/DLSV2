@@ -14,7 +14,7 @@
         public void GetAdminUserById_Returns_admin_user()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
             var returnedAdminUser = userDataService.GetAdminUserById(7);
