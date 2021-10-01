@@ -4,10 +4,11 @@
 @model RemoveFromCourseViewModel
 
 @{
-  ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
+    ViewData["Application"] = "Tracking System";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+    ViewData["HeaderPathName"] = "Tracking System";
 }
 
 @section NavMenuItems {
@@ -16,6 +17,10 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+    }
     <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Remove delegate enrolment from @Model.CourseName</h1>
     <h2 class="nhsuk-heading-l">Delegate: @Model.Name</h2>
     <div class="nhsuk-form-group">
@@ -23,7 +28,9 @@
         <fieldset class="nhsuk-fieldset" aria-describedby="example-hint">
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" type="checkbox" value="confirm" aria-describedby="confirm-item-hint">
+              <input type="hidden" name="name" value="@Model.Name" />
+              <input type="hidden" name="courseName" value="@Model.CourseName" />
+              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" type="checkbox" value="true" aria-describedby="confirm-item-hint">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="nationality-1">
                 I am sure that I want to remove @Model.Name from the @Model.CourseName course.
               </label>

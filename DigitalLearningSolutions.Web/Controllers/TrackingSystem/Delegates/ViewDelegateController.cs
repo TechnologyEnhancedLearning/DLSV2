@@ -17,11 +17,11 @@
     public class ViewDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
-        private readonly IUserDataService userDataService;
-        private readonly ICourseDataService courseDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly IUserDataService userDataService;
 
         public ViewDelegateController(
             IUserDataService userDataService,
@@ -91,7 +91,7 @@
 
             userDataService.DeactivateDelegateUser(delegateId);
 
-            return RedirectToAction("Index", new { delegateId } );
+            return RedirectToAction("Index", new { delegateId });
         }
 
         [HttpGet]
@@ -105,21 +105,32 @@
                 return new NotFoundResult();
             }
 
+            var course = courseDataService.GetCourseNameAndApplication(customisationId);
+            if (course == null)
+            {
+                return new NotFoundResult();
+            }
+
             var model = new RemoveFromCourseViewModel
             {
-                DelegateId = delegateId,
+                DelegateId = delegateUser.Id,
                 CustomisationId = customisationId,
-                CourseName = "test name",
-                Forename = "hank",
-                Surname = "hercules"
+                CourseName = course.CourseName,
+                Name = delegateUser.FullName,
+                Confirm = false
             };
             return View("ConfirmRemoveFromCourse", model);
         }
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        public IActionResult RemoveFromCourse(int delegateId, int customisationId)
+        public IActionResult RemoveFromCourse(int delegateId, int customisationId, RemoveFromCourseViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmRemoveFromCourse", model);
+            }
+
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
             if (delegateUser == null || delegateUser.CentreId != centreId)
@@ -128,7 +139,7 @@
             }
 
             var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .FirstOrDefault(p => p.Completed != null && p.RemovedDate != null);
+                .FirstOrDefault(p => p.Completed == null && p.RemovedDate == null);
             if (currentProgress == null)
             {
                 return new NotFoundResult();
