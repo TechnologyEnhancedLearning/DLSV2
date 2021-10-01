@@ -19,7 +19,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FormData.CurrentPassword), nameof(Model.FormData.Password), nameof(Model.FormData.ConfirmPassword) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CurrentPassword), nameof(Model.Password), nameof(Model.ConfirmPassword) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Change password</h1>
@@ -28,9 +28,8 @@
     </p>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-application="@Model.Application.UrlSegment">
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="@nameof(Model.FormData.CurrentPassword)"
+      <vc:text-input
+        asp-for="@nameof(Model.CurrentPassword)"
         label="Current password"
         populate-with-current-value="false"
         type="password"
@@ -39,9 +38,8 @@
         autocomplete="current-password"
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="@nameof(Model.FormData.Password)"
+      <vc:text-input
+        asp-for="@nameof(Model.Password)"
         label="New password"
         populate-with-current-value="false"
         type="password"
@@ -50,9 +48,8 @@
         autocomplete="new-password"
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="@nameof(Model.FormData.ConfirmPassword)"
+      <vc:text-input
+        asp-for="@nameof(Model.ConfirmPassword)"
         label="Re-type new password"
         populate-with-current-value="false"
         type="password"

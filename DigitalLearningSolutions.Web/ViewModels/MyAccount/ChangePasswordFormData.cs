@@ -5,6 +5,15 @@
 
     public class ChangePasswordFormData : ConfirmPasswordViewModel
     {
+        public ChangePasswordFormData() {}
+
+        public ChangePasswordFormData(ChangePasswordFormData formData)
+        {
+            CurrentPassword = formData.CurrentPassword;
+            Password = formData.Password;
+            ConfirmPassword = formData.ConfirmPassword;
+        }
+
         [Required(ErrorMessage = "Enter your password")]
         [DataType(DataType.Password)]
         public string? CurrentPassword { get; set; }
