@@ -128,7 +128,7 @@
             }
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-
+            IEnumerable<SupervisorSignOff>? supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             foreach (var competency in competencies)
             {
@@ -145,7 +145,8 @@
                 SelfAssessment = assessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
-                NumberOfOptionalCompetencies = optionalCompetencies.Count()
+                NumberOfOptionalCompetencies = optionalCompetencies.Count(),
+                SupervisorSignOffs = supervisorSignOffs
             };
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }

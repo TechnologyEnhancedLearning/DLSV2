@@ -34,6 +34,7 @@
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
         IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
+        IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
         //UPDATE
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -777,6 +778,22 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
                     FROM   AdminUsers
                     WHERE (AdminID = @supervisorAdminId)", new { supervisorAdminId }
                 ).Single();
+        }
+
+        public IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<SupervisorSignOff>(
+
+                @"SELECT casv.ID, casv.CandidateAssessmentSupervisorID, au.Forename + ' ' + au.Surname AS SupervisorName, au.Email AS SupervisorEmail, casv.Requested, casv.EmailSent, casv.Verified, casv.Comments, casv.SignedOff
+                    FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+                         CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+                         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                        SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+                         AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+                         SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                    WHERE (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) OR
+                         (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
+                    ORDER BY casv.Requested DESC", new { selfAssessmentId, candidateId });
         }
     }
 }
