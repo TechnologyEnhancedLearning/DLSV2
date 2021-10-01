@@ -1,5 +1,8 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model AdminFieldsViewModel
 
@@ -11,7 +14,7 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
   var canAddNewField = Model.CustomFields.Count < 3;
-  var backLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  var backLinkData = Html.GetRouteValues();
 }
 
 @section NavMenuItems {

@@ -1,5 +1,8 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model RemoveAdminFieldViewModel
 
@@ -11,7 +14,7 @@
   ViewData["HeaderPathName"] = "Tracking System";
   var confirmError = ViewData.ModelState[nameof(RemoveAdminFieldViewModel.Confirm)]?.Errors?.Count > 0;
   var confirmFormErrorClass = confirmError ? "nhsuk-form-group--error" : "";
-  var cancelLinkRouteData = new Dictionary<string, string> { { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! } };
+  var cancelLinkRouteData = Html.GetRouteValues();
 }
 
 @section NavMenuItems {

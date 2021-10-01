@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -14,7 +15,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var cancelLinkData = new Dictionary<string, string> { { "customisationId", ViewContext.HttpContext.Request.RouteValues["customisationId"].ToString()! } };
+  var cancelLinkData = Html.GetRouteValues();
 }
 
 @section NavMenuItems {
