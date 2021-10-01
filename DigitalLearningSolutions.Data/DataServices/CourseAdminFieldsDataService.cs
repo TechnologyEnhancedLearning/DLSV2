@@ -8,7 +8,7 @@
 
     public interface ICourseAdminFieldsDataService
     {
-        CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId, int categoryId);
+        CourseAdminFieldsResult? GetCourseAdminFields(int customisationId, int centreId);
 
         void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
@@ -37,7 +37,7 @@
             this.connection = connection;
         }
 
-        public CourseAdminFieldsResult GetCourseAdminFields(int customisationId, int centreId, int categoryId)
+        public CourseAdminFieldsResult GetCourseAdminFields(int customisationId, int centreId)
         {
             var result = connection.Query<CourseAdminFieldsResult>(
                 @"SELECT
@@ -63,7 +63,7 @@
                     WHERE cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
-                new { customisationId, centreId, categoryId }
+                new { customisationId, centreId }
             ).Single();
 
             return result;

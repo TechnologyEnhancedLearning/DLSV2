@@ -246,6 +246,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<VerifyAdminUserCanAccessCourse>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
