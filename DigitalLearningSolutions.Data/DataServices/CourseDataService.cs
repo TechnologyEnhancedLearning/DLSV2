@@ -105,7 +105,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
             LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
             LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
-            INNER JOIN dbo.Candidates AS ca ON ca.CandidateID = pr.CandidateID";
+            INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
