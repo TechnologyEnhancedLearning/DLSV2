@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Security.Claims;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
@@ -47,7 +49,7 @@
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
             if (courseDelegatesData == null ||
-                !ProgressRecordIsAccessibleToUser(courseDelegatesData.DelegateCourseInfo))
+                !ProgressRecordIsAccessibleToUser(courseDelegatesData.DelegateCourseInfo, User))
             {
                 return NotFound();
             }
@@ -56,9 +58,9 @@
             return View(model);
         }
 
-        private bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details)
+        private static bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details, ClaimsPrincipal user)
         {
-            var centreId = User.GetCentreId();
+            var centreId = user.GetCentreId();
 
             if (details.DelegateCentreId != centreId)
             {
@@ -70,7 +72,7 @@
                 return false;
             }
 
-            var categoryId = User.GetAdminCategoryId()!.Value;
+            var categoryId = user.GetAdminCategoryId()!.Value;
 
             if (details.CourseCategoryId != categoryId && categoryId != 0)
             {
