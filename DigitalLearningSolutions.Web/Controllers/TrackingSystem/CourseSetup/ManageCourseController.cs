@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Manage")]
     public class ManageCourseController : Controller
     {
@@ -20,6 +22,7 @@
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -42,6 +45,7 @@
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [Route("LearningPathwayDefaults")]
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
@@ -65,6 +69,7 @@
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [Route("LearningPathwayDefaults")]
         public IActionResult SaveLearningPathwayDefaults(
             int customisationId,
