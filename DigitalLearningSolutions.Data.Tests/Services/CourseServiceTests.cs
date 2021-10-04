@@ -108,7 +108,6 @@
                     info,
                     customisationId,
                     CentreId,
-                    0,
                     false
                 )
             ).MustHaveHappened(1, Times.Exactly);
@@ -135,13 +134,44 @@
                     info,
                     customisationId,
                     CentreId,
-                    0,
                     false
                 )
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
             result.DelegateCourseInfo.Should().BeEquivalentTo(info);
             result.AttemptStats.Should().Be((0, 0, 0));
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_call_correct_data_service_method()
+        {
+            // Given
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_ids()
+        {
+            // Given
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(false);
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 1);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().BeFalse();
         }
     }
 }

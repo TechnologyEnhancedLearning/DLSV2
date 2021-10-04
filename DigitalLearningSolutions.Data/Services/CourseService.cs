@@ -10,6 +10,7 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
     }
 
@@ -47,7 +48,7 @@
         {
             var info = courseDataService.GetDelegateCourseInfo(progressId);
 
-            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
+            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId,  true);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
@@ -60,7 +61,7 @@
                 info,
                 info.CustomisationId,
                 centreId,
-                allowAllCentreCourses: allowAllCentreCourses
+                allowAllCentreCourses
             );
 
             var attemptStats = info.IsAssessed
@@ -68,6 +69,12 @@
                 : (0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
+        }
+
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
+        {
+            var categoryIdFilter = adminCategoryIdClaim == 0 ? (int?)null : adminCategoryIdClaim;
+            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, categoryIdFilter);
         }
     }
 }

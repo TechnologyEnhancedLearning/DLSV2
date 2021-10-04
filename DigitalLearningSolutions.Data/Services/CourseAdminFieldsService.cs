@@ -17,7 +17,6 @@
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
             int centreId,
-            int categoryId = 0,
             bool allowAllCentreCourses = false
         );
 
@@ -68,14 +67,12 @@
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
             int centreId,
-            int categoryId = 0,
             bool allowAllCentreCourses = false
         )
         {
             var result = GetCourseCustomPromptsResultForCourse(
                 customisationId,
                 centreId,
-                categoryId,
                 allowAllCentreCourses
             );
 
@@ -161,7 +158,6 @@
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
             int customisationId,
             int centreId,
-            int categoryId,
             bool allowAllCentreCourses = false
         )
         {
@@ -170,11 +166,7 @@
                 centreId,
                 allowAllCentreCourses
             );
-            if (result == null || categoryId != 0 && result.CourseCategoryId != categoryId)
-            {
-                return null;
-            }
-
+            
             return result;
         }
 

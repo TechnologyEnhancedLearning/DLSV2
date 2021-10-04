@@ -389,5 +389,35 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 2, 0);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_with_categoryId()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
     }
 }

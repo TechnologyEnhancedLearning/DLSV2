@@ -24,6 +24,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -31,7 +32,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string DelegateCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL) AS DelegateCount";
@@ -39,7 +40,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                 AND can.CentreID = @centreId) AS CompletedCount";
 
@@ -209,7 +210,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COUNT(*)
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE Active = 1 AND CentreID = @centreId 
+                        WHERE Active = 1 AND CentreID = @centreId
 	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
                 new { centreId, adminCategoryId }
             );
@@ -241,7 +242,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
                     INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL",
@@ -328,9 +329,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
                         AND cu.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL 
+                        AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
@@ -339,9 +340,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
-                @"SELECT cu.CustomisationId, cu.CustomisationName, ap.ApplicationName
+                @"SELECT cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
-                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
+                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId
                         WHERE cu.CustomisationId = @customisationId",
                 new { customisationId }
             );
@@ -373,6 +374,23 @@ namespace DigitalLearningSolutions.Data.DataServices
                     AND ca.CentreID = @centreId
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
+            );
+        }
+
+        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT *
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId
+                        AND c.CentreID = @centreId
+                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    )
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, centreId, categoryId }
             );
         }
     }

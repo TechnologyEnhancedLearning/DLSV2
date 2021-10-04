@@ -5,12 +5,12 @@
     {
         public int SelfAssessmentId { get; set; }
         public string Supervisor { get; set; }
-        public string? Vocubulary { get; set; }
+        public string? Vocabulary { get; set; }
         public string? SelfAssessmentName { get; set; }
         public int ResultCount { get; set; }
         public string VocabPlural()
         {
-            return FrameworkVocabularyHelper.VocabularyPlural(Vocubulary);
+            return FrameworkVocabularyHelper.VocabularyPlural(Vocabulary);
         }
     }
 }
