@@ -39,9 +39,9 @@
             DelegateLastName = details.DelegateCourseInfo.DelegateLastName;
             DelegateEmail = details.DelegateCourseInfo.DelegateEmail;
             DelegateCentreId = details.DelegateCourseInfo.DelegateCentreId;
-            AllAttempts = details.AttemptStats.totalAttempts;
-            AttemptsPassed = details.AttemptStats.attemptsPassed;
-            PassRate = details.AttemptStats.passRate;
+            AllAttempts = details.AttemptStats.TotalAttempts;
+            AttemptsPassed = details.AttemptStats.AttemptsPassed;
+            PassRate = details.AttemptStats.PassRate;
             CustomFields = details.CustomPrompts.Select(
                     cp =>
                         new CustomFieldViewModel(

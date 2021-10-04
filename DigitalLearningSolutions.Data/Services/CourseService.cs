@@ -10,8 +10,8 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -46,9 +46,15 @@
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)
         {
-            var info = courseDataService.GetDelegateCourseInfo(progressId);
+            var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
 
-            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId,  true);
+            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
+        }
+
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
+        {
+            var categoryIdFilter = adminCategoryIdClaim == 0 ? (int?)null : adminCategoryIdClaim;
+            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, categoryIdFilter);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
@@ -66,15 +72,9 @@
 
             var attemptStats = info.IsAssessed
                 ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : (0, 0);
+                : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
-        }
-
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
-        {
-            var categoryIdFilter = adminCategoryIdClaim == 0 ? (int?)null : adminCategoryIdClaim;
-            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, categoryIdFilter);
         }
     }
 }

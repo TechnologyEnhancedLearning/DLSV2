@@ -49,7 +49,13 @@
                 DelegateCentreId = 1
             };
             A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(new DelegateCourseDetails(delegateCourseInfo, new List<CustomPromptWithAnswer>(), (0, 0)));
+                .Returns(
+                    new DelegateCourseDetails(
+                        delegateCourseInfo,
+                        new List<CustomPromptWithAnswer>(),
+                        new AttemptStats(0, 0)
+                    )
+                );
 
             // When
             var result = controller.DelegateProgress(1);
@@ -70,7 +76,13 @@
                 AllCentresCourse = false
             };
             A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(new DelegateCourseDetails(delegateCourseInfo, new List<CustomPromptWithAnswer>(), (0, 0)));
+                .Returns(
+                    new DelegateCourseDetails(
+                        delegateCourseInfo,
+                        new List<CustomPromptWithAnswer>(),
+                        new AttemptStats(0, 0)
+                    )
+                );
 
             // When
             var result = controller.DelegateProgress(1);
@@ -91,7 +103,13 @@
                 CourseCategoryId = 3
             };
             A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(new DelegateCourseDetails(delegateCourseInfo, new List<CustomPromptWithAnswer>(), (0, 0)));
+                .Returns(
+                    new DelegateCourseDetails(
+                        delegateCourseInfo,
+                        new List<CustomPromptWithAnswer>(),
+                        new AttemptStats(0, 0)
+                    )
+                );
 
             // When
             var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);
@@ -112,7 +130,13 @@
                 CourseCategoryId = 1
             };
             A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(new DelegateCourseDetails(delegateCourseInfo, new List<CustomPromptWithAnswer>(), (0, 0)));
+                .Returns(
+                    new DelegateCourseDetails(
+                        delegateCourseInfo,
+                        new List<CustomPromptWithAnswer>(),
+                        new AttemptStats(0, 0)
+                    )
+                );
 
             // When
             var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);
@@ -134,7 +158,13 @@
                 CourseCategoryId = 1
             };
             A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(new DelegateCourseDetails(delegateCourseInfo, new List<CustomPromptWithAnswer>(), (0, 0)));
+                .Returns(
+                    new DelegateCourseDetails(
+                        delegateCourseInfo,
+                        new List<CustomPromptWithAnswer>(),
+                        new AttemptStats(0, 0)
+                    )
+                );
 
             // When
             var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);

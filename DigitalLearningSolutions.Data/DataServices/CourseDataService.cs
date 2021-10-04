@@ -19,8 +19,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
-        DelegateCourseInfo? GetDelegateCourseInfo(int progressId);
-        (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
+        AttemptStats GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
@@ -67,7 +67,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 AND RemovedDate IS NULL
                 ORDER BY SubmittedTime DESC) AS LastAccessed";
 
-        private const string SelectDelegateCourseDetailsQuery =
+        private const string SelectDelegateCourseInfoQuery =
             @"SELECT
                 cu.CustomisationID AS CustomisationId,
                 cu.CentreID AS CustomisationCentreId,
@@ -253,7 +253,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
-                $@"{SelectDelegateCourseDetailsQuery}
+                $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
@@ -261,22 +261,22 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public DelegateCourseInfo? GetDelegateCourseInfo(int progressId)
+        public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)
         {
             return connection.QuerySingleOrDefault<DelegateCourseInfo>(
-                $@"{SelectDelegateCourseDetailsQuery}
+                $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.ProgressID = @progressId
                         AND ap.ArchivedDate IS NULL",
                 new { progressId }
             );
         }
 
-        public (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(
+        public AttemptStats GetDelegateCourseAttemptStats(
             int delegateId,
             int customisationId
         )
         {
-            return connection.QueryFirstOrDefault<(int, int)>(
+            var (totalAttempts, attemptsPassed) = connection.QueryFirstOrDefault<(int, int)>(
                 @"SELECT COUNT(aa.Status) AS TotalAttempts,
                         COUNT(CASE WHEN aa.Status=1 THEN 1 END) AS AttemptsPassed
                     FROM AssessAttempts aa
@@ -286,6 +286,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
+
+            return new AttemptStats(totalAttempts, attemptsPassed);
         }
 
         // Admins have a non-nullable category ID where 0 = all. This is why we have the

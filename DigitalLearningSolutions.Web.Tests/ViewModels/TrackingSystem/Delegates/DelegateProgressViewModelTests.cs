@@ -27,7 +27,11 @@
                 EnrolledBySurname = "Butler"
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
-                new DelegateCourseDetails(missingNamesDelegateInfo, new List<CustomPromptWithAnswer>(), (0, 0))
+                new DelegateCourseDetails(
+                    missingNamesDelegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -42,7 +46,11 @@
                 EnrolledBySurname = "Butler"
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
-                new DelegateCourseDetails(fullNamesDelegateInfo, new List<CustomPromptWithAnswer>(), (0, 0))
+                new DelegateCourseDetails(
+                    fullNamesDelegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
 
             // Then
@@ -70,7 +78,7 @@
                 DelegateEmail = null
             };
             var viewModel = new DelegateProgressViewModel(
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), (0, 0))
+                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
             );
 
             // Then
@@ -93,7 +101,7 @@
                 EnrolledBySurname = "Dio"
             };
             var viewModel = new DelegateProgressViewModel(
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), (0, 0))
+                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
             );
 
             // Then

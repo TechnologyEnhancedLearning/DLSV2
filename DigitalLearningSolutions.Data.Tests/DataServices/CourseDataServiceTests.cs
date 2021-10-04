@@ -327,7 +327,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetDelegateCourseInfo_should_return_delegate_course_info_correctly()
         {
             // When
-            var result = courseDataService.GetDelegateCourseInfo(284998);
+            var result = courseDataService.GetDelegateCourseInfoByProgressId(284998);
 
             // Then
             result.Should().BeEquivalentTo(ExpectedCourseInfo);
@@ -337,11 +337,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetDelegateCoursesAttemptStats_should_return_delegate_course_info_correctly()
         {
             // When
-            var (totalAttempts, attemptsPassed) = courseDataService.GetDelegateCourseAttemptStats(11, 100);
+            var attemptStats = courseDataService.GetDelegateCourseAttemptStats(11, 100);
 
             // Then
-            totalAttempts.Should().Be(23);
-            attemptsPassed.Should().Be(11);
+            attemptStats.TotalAttempts.Should().Be(23);
+            attemptStats.AttemptsPassed.Should().Be(11);
+            attemptStats.PassRate.Should().Be(48);
         }
 
         [Test]

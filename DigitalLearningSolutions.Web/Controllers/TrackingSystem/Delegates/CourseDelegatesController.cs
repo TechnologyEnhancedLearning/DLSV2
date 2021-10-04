@@ -46,7 +46,8 @@
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
-            if (!ProgressRecordIsValidAndAccessibleToUser(courseDelegatesData?.DelegateCourseInfo, centreId))
+            if (courseDelegatesData == null ||
+                !ProgressRecordIsAccessibleToUser(courseDelegatesData.DelegateCourseInfo))
             {
                 return NotFound();
             }
@@ -55,12 +56,9 @@
             return View(model);
         }
 
-        private bool ProgressRecordIsValidAndAccessibleToUser(DelegateCourseInfo? details, int centreId)
+        private bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details)
         {
-            if (details == null)
-            {
-                return false;
-            }
+            var centreId = User.GetCentreId();
 
             if (details.DelegateCentreId != centreId)
             {

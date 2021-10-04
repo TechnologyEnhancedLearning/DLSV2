@@ -12,20 +12,6 @@
 
     public class CourseDelegatesDataService : ICourseDelegatesDataService
     {
-        private const string AllAttemptsQuery =
-            @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
-                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
-                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AllAttempts";
-
-        private const string AttemptsPassedQuery =
-            @"(SELECT COUNT(aa.AssessAttemptID)
-                FROM dbo.AssessAttempts AS aa
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
-                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
-                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AttemptsPassed";
-
         private readonly IDbConnection connection;
 
         public CourseDelegatesDataService(IDbConnection connection)
@@ -35,6 +21,20 @@
 
         public IEnumerable<CourseDelegate> GetDelegatesOnCourse(int customisationId, int centreId)
         {
+            const string allAttemptsQuery =
+                @"(SELECT COUNT(aa.AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] IS NOT NULL
+                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AllAttempts";
+
+            const string attemptsPassedQuery =
+                @"(SELECT COUNT(aa.AssessAttemptID)
+                FROM dbo.AssessAttempts AS aa
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = aa.CandidateID
+                WHERE aa.CustomisationID = cu.CustomisationID AND aa.[Status] = 1
+                AND can.CentreID = @centreId AND can.CandidateId = c.CandidateId) AS AttemptsPassed";
+
             return connection.Query<CourseDelegate>(
                 $@"SELECT
                         c.CandidateID AS DelegateId,
@@ -50,8 +50,8 @@
                         p.CompleteByDate AS CompleteBy,
                         p.RemovedDate,
                         p.Completed,
-                        {AllAttemptsQuery},
-                        {AttemptsPassedQuery}
+                        {allAttemptsQuery},
+                        {attemptsPassedQuery}
                     FROM Candidates AS c
                     INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
                     INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID

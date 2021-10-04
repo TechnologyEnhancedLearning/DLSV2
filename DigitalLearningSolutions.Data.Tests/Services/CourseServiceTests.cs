@@ -92,12 +92,11 @@
             // Given
             const int delegateId = 20;
             const int customisationId = 111;
-            var returnedAttemptStats = (10, 5);
-            var expectedAttemptStats = (10, 5, 50);
+            var attemptStatsReturnedByDataService = new AttemptStats(10, 5);
             var info = new DelegateCourseInfo
                 { DelegateId = delegateId, CustomisationId = customisationId, IsAssessed = true };
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .Returns(returnedAttemptStats);
+                .Returns(attemptStatsReturnedByDataService);
 
             // When
             var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
@@ -114,7 +113,7 @@
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
                 .MustHaveHappened(1, Times.Exactly);
             results.DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results.AttemptStats.Should().Be(expectedAttemptStats);
+            results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
         }
 
         [Test]
@@ -139,7 +138,7 @@
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
             result.DelegateCourseInfo.Should().BeEquivalentTo(info);
-            result.AttemptStats.Should().Be((0, 0, 0));
+            result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
         }
 
         [Test]
