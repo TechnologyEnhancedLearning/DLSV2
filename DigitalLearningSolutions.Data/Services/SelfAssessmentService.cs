@@ -28,6 +28,7 @@
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         SelfAssessmentSupervisor GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(int candidateAssessmentSupervisorId);
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
@@ -783,7 +784,6 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
         public IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SupervisorSignOff>(
-
                 @"SELECT casv.ID, casv.CandidateAssessmentSupervisorID, au.Forename + ' ' + au.Surname AS SupervisorName, au.Email AS SupervisorEmail, casv.Requested, casv.EmailSent, casv.Verified, casv.Comments, casv.SignedOff
                     FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
                          CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
@@ -794,6 +794,19 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
                     WHERE (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) OR
                          (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
                     ORDER BY casv.Requested DESC", new { selfAssessmentId, candidateId });
+        }
+
+        public IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<SelfAssessmentSupervisor>(
+                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+FROM   SupervisorDelegates AS sd INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID LEFT OUTER JOIN
+             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+             SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1) AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))", new { selfAssessmentId, candidateId }
+                  );
         }
     }
 }

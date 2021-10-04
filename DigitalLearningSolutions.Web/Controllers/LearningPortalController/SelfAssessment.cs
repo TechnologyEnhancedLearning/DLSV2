@@ -591,5 +591,17 @@
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
+        public IActionResult RequestSignOff(int selfAssessmentId)
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var supervisors = selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            var model = new RequestSignOffViewModel()
+            {
+                SelfAssessment = assessment,
+                Supervisors = supervisors
+            };
+            return View("SelfAssessments/RequestSignOff", model);
+        }
     }
 }
