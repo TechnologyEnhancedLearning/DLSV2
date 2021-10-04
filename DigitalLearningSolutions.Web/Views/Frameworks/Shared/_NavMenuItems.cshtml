@@ -6,7 +6,7 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Frameworks" }, "Index")">
+<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Frameworks" }, new[] { "Index" })">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="ViewFrameworks" asp-route-tabname="Mine">
     Frameworks
     <partial name="_NhsChevronRight" />

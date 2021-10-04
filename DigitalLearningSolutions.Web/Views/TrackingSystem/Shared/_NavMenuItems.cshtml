@@ -1,13 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
 @if (User.HasCentreAdminPermissions()) {
   <li class="nhsuk-header__navigation-item
-    @Html.IsControllerSelected(new[] { "Dashboard", "Configuration", "Administrator", "Reports" })">
+    @Html.IsControllerSelected(new[] { "Dashboard", "Configuration", "Administrator", "Reports", "ContractDetails",
+      "RegistrationPrompts", "SystemNotifications", "Ranking", "TopCourses" })">
     <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre
       <partial name="_NhsChevronRight" />

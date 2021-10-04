@@ -24,16 +24,16 @@
         public static string IsControllerSelected(
             this IHtmlHelper htmlHelper,
             IEnumerable<string> controllers,
-            string? exceptAction = null,
+            IEnumerable<string>? exceptActions = null,
             string selectedCssClass = "selected"
         )
         {
-            if (exceptAction != null)
+            if (exceptActions != null)
             {
                 var currentAction = htmlHelper.ViewContext.RouteData.Values["action"] as string;
-                if (currentAction == exceptAction)
+                if (exceptActions.Contains(currentAction))
                 {
-                    return "";
+                    return string.Empty;
                 }
             }
 
