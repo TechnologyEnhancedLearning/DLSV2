@@ -1,11 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents.DigitalLearningSolutions.Web.ViewModels.Common.
-        ViewComponents;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    public class NumericInputViewComponent : ViewComponent
+    public class NumericInputWithConfigurableModelViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
             object model,
@@ -23,7 +22,7 @@
             var errorMessages = ViewData.ModelState[property?.Name]?.Errors.Select(e => e.ErrorMessage) ??
                                 new string[] { };
 
-            var numberViewModel = new NumericInputViewModel(
+            var numericInputViewModel = new NumericInputViewModel(
                 aspFor,
                 aspFor,
                 label,
@@ -33,7 +32,7 @@
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );
-            return View("~/Views/Shared/Components/NumericInput/Default.cshtml", numberViewModel);
+            return View("~/Views/Shared/Components/NumericInput/Default.cshtml", numericInputViewModel);
         }
     }
 }

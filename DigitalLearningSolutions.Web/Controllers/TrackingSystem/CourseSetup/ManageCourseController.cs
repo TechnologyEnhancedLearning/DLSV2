@@ -22,7 +22,6 @@
         }
 
         [HttpGet]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -34,18 +33,12 @@
                 categoryId.Value
             );
 
-            if (courseDetails == null)
-            {
-                return NotFound();
-            }
-
-            var model = new ManageCourseViewModel(courseDetails);
+            var model = new ManageCourseViewModel(courseDetails!);
 
             return View(model);
         }
 
         [HttpGet]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [Route("LearningPathwayDefaults")]
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
@@ -58,18 +51,12 @@
                 categoryId.Value
             );
 
-            if (courseDetails == null)
-            {
-                return NotFound();
-            }
-
-            var model = new EditLearningPathwayDefaultsViewModel(courseDetails);
+            var model = new EditLearningPathwayDefaultsViewModel(courseDetails!);
 
             return View(model);
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         [Route("LearningPathwayDefaults")]
         public IActionResult SaveLearningPathwayDefaults(
             int customisationId,

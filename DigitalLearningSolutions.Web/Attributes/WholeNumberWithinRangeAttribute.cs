@@ -2,9 +2,6 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    /// <summary>
-    ///     Specifies that a number is within the range specified (inclusive)
-    /// </summary>
     public class WholeNumberWithinRangeAttribute : ValidationAttribute
     {
         private readonly string errorMessage;

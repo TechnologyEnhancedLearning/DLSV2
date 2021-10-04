@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents.DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 @model NumericInputViewModel
 
 <div class="nhsuk-form-group @(Model.HasError ? "nhsuk-form-group--error" : "")">
@@ -24,6 +24,7 @@
          name="@Model.Name"
          value="@Model.Value"
          type="@Model.Type"
+         pattern="[0-9]*"
          inputmode="numeric"
          aria-describedby="@Model.Name-error @Model.Name-hint" />
 </div>
