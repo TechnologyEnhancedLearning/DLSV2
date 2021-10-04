@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
-    using DigitalLearningSolutions.Data.Models;
+    using global::DigitalLearningSolutions.Data.Models;
 
     public class LogoViewModel
     {

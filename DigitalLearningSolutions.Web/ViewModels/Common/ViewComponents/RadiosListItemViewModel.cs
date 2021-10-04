@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
-    using DigitalLearningSolutions.Data.Enums;
+    using global::DigitalLearningSolutions.Data.Enums;
 
     public class RadiosListItemViewModel
     {
