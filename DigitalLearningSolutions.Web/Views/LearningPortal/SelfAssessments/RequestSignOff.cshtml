@@ -64,7 +64,8 @@
 }
 else
 {
-<p>There are no supervisors identified who can sign-off the activity <strong>@Model.SelfAssessment.Name</strong>.</p>
+<p>No supervisors are identified who can sign-off the activity <strong>@Model.SelfAssessment.Name</strong> who don't have an outstanding sign-off request.</p>
+<p><a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Click here</a> to manage supervisors.</p>
   <div class="nhsuk-action-link">
     <a class="nhsuk-back-link__link"
        asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"

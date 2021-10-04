@@ -44,10 +44,12 @@
         void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
         void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId);
+        void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId);
         //INSERT
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result, string? supportingComments);
         void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId);
+        void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -807,6 +809,34 @@ FROM   SupervisorDelegates AS sd INNER JOIN
              SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1) AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))", new { selfAssessmentId, candidateId }
                   );
+        }
+
+        public void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO CandidateAssessmentSupervisorVerifications
+                          ([CandidateAssessmentSupervisorID],[EmailSent])
+                    VALUES(@candidateAssessmentSupervisorId, GETUTCDATE())",
+                new { candidateAssessmentSupervisorId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting CandidateAssessmentSupervisorVerification as db update failed. " +
+                    $"candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                );
+            }
+        }
+
+        public void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessmentSupervisorVerifications
+                    SET EmailSent = GETUTCDATE()
+                    WHERE ID = @candidateAssessmentSupervisorVerificationId",
+                new { candidateAssessmentSupervisorVerificationId }
+            );
         }
     }
 }

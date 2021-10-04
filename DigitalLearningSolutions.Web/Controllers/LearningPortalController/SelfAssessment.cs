@@ -603,5 +603,19 @@
             };
             return View("SelfAssessments/RequestSignOff", model);
         }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
+        public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
+        {
+            selfAssessmentService.InsertCandidateAssessmentSupervisorVerification(model.CandidateAssessmentSupervisorId);
+            frameworkNotificationService.SendSignOffRequest(model.CandidateAssessmentSupervisorId, selfAssessmentId);
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
+        }
+        public IActionResult SendRequestSignOffReminder(int candidateAssessmentSupervisorId, int candidateAssessmentSupervisorVerificationId, int selfAssessmentId, string vocabulary)
+        {
+            frameworkNotificationService.SendSignOffRequest(candidateAssessmentSupervisorId, selfAssessmentId);
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(candidateAssessmentSupervisorVerificationId);
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
+        }
     }
 }

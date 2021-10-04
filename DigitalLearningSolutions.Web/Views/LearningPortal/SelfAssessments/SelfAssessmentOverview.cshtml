@@ -112,9 +112,9 @@
               </td>
               <td role="cell" class="nhsuk-table__cell">
                 <span class="nhsuk-table-responsive__heading">Action </span>
-                @if (supervisorSignOff.EmailSent == null || (supervisorSignOff.Verified == null && supervisorSignOff.EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
+                @if ((supervisorSignOff.EmailSent == null || (supervisorSignOff.Verified == null) && supervisorSignOff.EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
                 {
-                  <a asp-action="SendSignOffReminder" asp-route-signOffId="@supervisorSignOff.ID" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
+                  <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@supervisorSignOff.ID" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-candidateAssessmentSupervisorId="@supervisorSignOff.CandidateAssessmentSupervisorID"  asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
                 }
               </td>
             </tr>

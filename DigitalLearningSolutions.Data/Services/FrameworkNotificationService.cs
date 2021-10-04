@@ -23,6 +23,7 @@
         void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults);
         void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID);
         void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount);
+        void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -361,6 +362,23 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) has requested that you review {resultCount.ToString()} of their self assessment results for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
                               To review these results, please visit {profileReviewUrl} (sign in using your existing DLS credentials).";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p><a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> has requested that you review {resultCount} of their self assessment results for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p><a href='{profileReviewUrl}'>Click here</a> to review these results (sign in using your existing DLS credentials).</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID)
+        {
+            var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisorById(candidateAssessmentSupervisorId);
+            int supervisorDelegateId = candidateAssessmentSupervisor.SupervisorDelegateId;
+            int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID);
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Sign-off Request - Digital Learning Solutions";
+            string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId);
+            BodyBuilder? builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
+                              {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
+                              To review and sign-off the self-assessment, please visit {profileReviewUrl} (sign in using your existing DLS credentials).";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p><a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p><a href='{profileReviewUrl}'>Click here</a> to review and sign-off the self-assessment (sign in using your existing DLS credentials).</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }
