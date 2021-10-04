@@ -105,5 +105,30 @@
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
+
+        [Test]
+        public void
+            SaveLearningPathwayDefaults_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            var model = new EditLearningPathwayDefaultsViewModel(1, "49", "12", false, false);
+            controller.ModelState.AddModelError("CompleteWithinMonths", "Enter a whole number from 0 to 48");
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    49,
+                    12,
+                    false,
+                    false
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
     }
 }
