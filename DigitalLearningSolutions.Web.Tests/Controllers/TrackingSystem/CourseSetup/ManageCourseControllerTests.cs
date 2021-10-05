@@ -25,20 +25,6 @@
         }
 
         [Test]
-        public void Index_returns_NotFound_when_no_appropriate_course_found()
-        {
-            // Given
-            A.CallTo(() => courseService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
-                .Returns(null);
-
-            // When
-            var result = controller.Index(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void Index_returns_ManageCourse_page_when_appropriate_course_found()
         {
             // Given
