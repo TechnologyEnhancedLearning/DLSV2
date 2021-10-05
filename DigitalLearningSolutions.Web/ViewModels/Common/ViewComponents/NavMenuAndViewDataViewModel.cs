@@ -6,7 +6,7 @@
     public class NavMenuAndViewDataViewModel
     {
         public NavMenuAndViewDataViewModel(
-            string selectedTab,
+            Tab selectedTab,
             ApplicationType application
         )
         {
@@ -14,7 +14,7 @@
             Application = application;
         }
 
-        public string SelectedTab { get; set; }
+        public Tab SelectedTab { get; set; }
         public ApplicationType Application { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public static class HtmlHelperExtensions
@@ -21,21 +20,6 @@
             }
 
             var returnStatement = selectedTab.ToString() == currentTab
-                ? selectedCssClass
-                : string.Empty;
-            return returnStatement;
-        }
-
-        public static string IsTabSelected(
-            this IHtmlHelper htmlHelper,
-            NavMenuAndViewDataViewModel model,
-            string currentTab,
-            string selectedCssClass = "selected"
-        )
-        {
-            var selectedTab = model.SelectedTab;
-
-            var returnStatement = selectedTab == currentTab
                 ? selectedCssClass
                 : string.Empty;
             return returnStatement;

@@ -1,10 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Data.Enums
 {
-    public class Tab
+    public enum Tab
     {
         Welcome,
         FindYourCentre,
         Pricing,
-        MyAccount
+        MyAccount,
+        ApplicationSelector,
+        Register,
+        LogIn,
+        Centre,
+        Delegates,
+        CourseSetup,
+        Admin,
+        Support,
+        Dashboard,
+        MyStaff,
+        ProfileAssessments,
+        Frameworks,
+        RoleProfiles,
+        CurrentActivities,
+        CompletedActivities,
+        AvailableActivities,
     }
 }

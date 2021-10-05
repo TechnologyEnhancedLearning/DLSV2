@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Models.Enums
 @model ApplicationType
 
 @if (ApplicationType.TrackingSystem.Equals(Model)) {
@@ -10,5 +11,5 @@
 } else if (ApplicationType.Supervisor.Equals(Model)) {
   <partial name="../Supervisor/Shared/_NavMenuItems" />
 } else {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@Model" selected-tab="@Tab.MyAccount" />
 }

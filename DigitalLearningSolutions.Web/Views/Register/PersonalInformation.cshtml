@@ -1,3 +1,4 @@
+@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Register
@@ -9,7 +10,7 @@
 }
 
 @section NavMenuItems {
-  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Register"/>
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="@Tab.Register"/>
 }
 
 <div class="nhsuk-grid-row">

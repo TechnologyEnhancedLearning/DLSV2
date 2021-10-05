@@ -8,7 +8,7 @@
     public class NavMenuAndViewDataViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            string selectedTab,
+            Tab selectedTab,
             ApplicationType application
         )
         {

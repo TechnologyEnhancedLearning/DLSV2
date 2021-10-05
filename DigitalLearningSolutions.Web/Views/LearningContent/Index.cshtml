@@ -1,7 +1,11 @@
 ﻿@inject IConfiguration Configuration
 
+@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningContent
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model LearningContentViewModel
 @{
@@ -10,7 +14,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="@Tab.Welcome"/>
 }
 
 @section NavBreadcrumbs {

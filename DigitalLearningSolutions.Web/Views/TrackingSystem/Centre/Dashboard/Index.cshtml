@@ -1,4 +1,6 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Models
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 @using Microsoft.Extensions.Configuration
@@ -11,7 +13,7 @@
 }
 
 @section NavMenuItems {
-  <vc:nav-menu-and-view-data application="@ApplicationType.TrackingSystem" selected-tab="Centre"/>
+  <vc:nav-menu-and-view-data application="@ApplicationType.TrackingSystem" selected-tab="@Tab.Centre"/>
 }
 
 <div class="nhsuk-grid-row">

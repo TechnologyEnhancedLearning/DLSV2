@@ -1,13 +1,18 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
+@using Microsoft.FeatureManagement.Mvc.TagHelpers
 
 @inject IConfiguration Configuration
 
 @model ApplicationSelectorViewModel
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems"/>
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="@Tab.ApplicationSelector"/>
 }
 
 @{

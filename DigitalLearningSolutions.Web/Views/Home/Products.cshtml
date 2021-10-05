@@ -1,3 +1,5 @@
+@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.Home
 @model LandingPageViewModel
 
@@ -8,7 +10,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/home/products.css")" />
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="@Tab.Welcome"/>
 }
 
 <div class="nhsuk-grid-row">
