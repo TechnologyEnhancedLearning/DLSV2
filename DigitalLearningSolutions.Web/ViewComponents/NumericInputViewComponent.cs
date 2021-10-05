@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    public class NumericInputWithConfigurableModelViewComponent : ViewComponent
+    public class NumericInputViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
             object model,
@@ -32,7 +32,7 @@
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
                 string.IsNullOrEmpty(hintText) ? null : hintText
             );
-            return View("~/Views/Shared/Components/NumericInput/Default.cshtml", numericInputViewModel);
+            return View(numericInputViewModel);
         }
     }
 }
