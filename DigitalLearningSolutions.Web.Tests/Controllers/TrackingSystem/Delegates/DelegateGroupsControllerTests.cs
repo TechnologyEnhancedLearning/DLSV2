@@ -322,7 +322,7 @@
         {
             // Given
             var model = new EditDelegateGroupDescriptionViewModel();
-            A.CallTo(() => groupsDataService.IsGroupDescriptionUpdated(A<int>._, A<int>._, A<string>._))
+            A.CallTo(() => groupsDataService.TryUpdateGroupDescription(A<int>._, A<int>._, A<string>._))
                 .Returns(false);
 
             // When
@@ -337,7 +337,7 @@
         {
             // Given
             var model = new EditDelegateGroupDescriptionViewModel();
-            A.CallTo(() => groupsDataService.IsGroupDescriptionUpdated(A<int>._, A<int>._, A<string>._))
+            A.CallTo(() => groupsDataService.TryUpdateGroupDescription(A<int>._, A<int>._, A<string>._))
                 .Returns(true);
 
             // When

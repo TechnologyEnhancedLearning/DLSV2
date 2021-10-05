@@ -93,20 +93,24 @@
         }
 
         [Test]
-        public void GetGroupName_returns_expected_name_with_correct_centre()
+        public void GetGroupAtCentreById_returns_expected_group()
         {
-            // When
-            var result = groupsDataService.GetGroupAtCentreById(5, 101)?.GroupLabel;
+            // Given
+            var expectedGroup = GroupTestHelper.GetDefaultGroup();
 
-            // Then
-            result.Should().BeEquivalentTo("Activities worker or coordinator");
+            // When
+            var result = groupsDataService.GetGroupAtCentreById(34, 101);
+
+            //Then
+            result.Should().BeEquivalentTo(expectedGroup);
         }
 
+
         [Test]
-        public void GetGroupName_returns_null_with_incorrect_centre()
+        public void GetGroupAtCentreById_returns_null_with_incorrect_centreId()
         {
             // When
-            var result = groupsDataService.GetGroupAtCentreById(5, 1)?.GroupLabel;
+            var result = groupsDataService.GetGroupAtCentreById(5, 1);
 
             // Then
             result.Should().BeNull();
@@ -220,12 +224,13 @@
                 // Given
                 const int centerId = 101;
                 const int groupId = 5;
-                const string expectedDescription = "Test group description";
+                const string expectedDescription = "Test group description1";
 
                 // When
-                groupsDataService.IsGroupDescriptionUpdated(groupId, centerId, expectedDescription);
+                var isUpdated = groupsDataService.TryUpdateGroupDescription(groupId, centerId, expectedDescription);
 
                 // Then
+                isUpdated.Should().Be(true);
                 var result = groupsDataService.GetGroupAtCentreById(groupId, centerId);
                 result?.GroupDescription.Should().Be(expectedDescription);
             }
@@ -236,7 +241,7 @@
         }
 
         [Test]
-        public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
+        public void TryUpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -247,9 +252,10 @@
                 const string expectedDescription = "Test group description";
 
                 // When
-                groupsDataService.IsGroupDescriptionUpdated(groupId, incorrectCentreId, expectedDescription);
+                var isUpdated = groupsDataService.TryUpdateGroupDescription(groupId, incorrectCentreId, expectedDescription);
 
                 //Then
+                isUpdated.Should().Be(false);
                 var result = groupsDataService.GetGroupAtCentreById(groupId, incorrectCentreId);
                 result?.GroupDescription.Should().NotBe(expectedDescription);
             }

@@ -206,7 +206,7 @@
             }
 
             var centreId = User.GetCentreId();
-            if (!groupsDataService.IsGroupDescriptionUpdated(
+            if (!groupsDataService.TryUpdateGroupDescription(
                 groupId,
                 centreId,
                 model.Description!
