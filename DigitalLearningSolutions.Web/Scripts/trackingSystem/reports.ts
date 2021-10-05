@@ -1,4 +1,4 @@
-import Chartist from 'chartist';
+import Chartist, { ChartDrawData } from 'chartist';
 import getPathForEndpoint from '../common';
 
 interface IActivityDataRowModel {
@@ -8,39 +8,51 @@ interface IActivityDataRowModel {
   registrations: number;
 }
 
-function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.IChartistData {
-  const labels = data.map((d) => d.period);
-  const series = [
-    data.map((d) => d.completions),
-    data.map((d) => d.evaluations),
-    data.map((d) => d.registrations),
-  ];
-  return { labels, series };
+interface IEvaluationSummaryDataModel {
+  id: string;
+  responseCounts: Array<IResponseCount> | null
 }
 
-const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
+interface IResponseCount {
+  name: string;
+  count: number;
+}
 
-const request = new XMLHttpRequest();
+function setUpGraphs(): void {
+  const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 
-const options = {
-  axisY: {
-    scaleMinSpace: 10,
-    onlyInteger: true,
-  },
-  chartPadding: {
-    bottom: 32,
-  },
-};
+  const request = new XMLHttpRequest();
 
-request.onload = () => {
-  let { response } = request;
-  // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
-  // so we need to manually parse the JSON string if not already parsed
-  if (typeof request.response === 'string') {
-    response = JSON.parse(response);
-  }
-  const data = constructChartistData(response);
-  const chart = new Chartist.Line('.ct-chart', data, options);
+  request.onload = () => {
+    let { response } = request;
+    // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
+    // so we need to manually parse the JSON string if not already parsed
+    if (typeof request.response === 'string') {
+      response = JSON.parse(response);
+    }
+
+    setUpActivityGraph(response.activityGraphData);
+    setUpEvaluationSummaryCharts(response.evaluationSummariesData);
+  };
+
+  request.open('GET', path, true);
+  request.responseType = 'json';
+  request.send();
+}
+
+function setUpActivityGraph(inputData: Array<IActivityDataRowModel>): void {
+  const options = {
+    axisY: {
+      scaleMinSpace: 10,
+      onlyInteger: true,
+    },
+    chartPadding: {
+      bottom: 32,
+    },
+  };
+
+  const data = constructActivityGraphChartistData(inputData);
+  const chart = new Chartist.Line('#activity-graph', data, options);
 
   chart.on('draw',
     // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
@@ -63,8 +75,59 @@ request.onload = () => {
         });
       }
     });
-};
+}
 
-request.open('GET', path, true);
-request.responseType = 'json';
-request.send();
+function constructActivityGraphChartistData(data: Array<IActivityDataRowModel>):
+  Chartist.IChartistData {
+  const labels = data.map((d) => d.period);
+  const series = [
+    data.map((d) => d.completions),
+    data.map((d) => d.evaluations),
+    data.map((d) => d.registrations),
+  ];
+  return { labels, series };
+}
+
+function sum(a: number, b: number): number {
+  return a + b;
+}
+
+function setUpEvaluationSummaryCharts(inputData: Array<IEvaluationSummaryDataModel>): void {
+  inputData.forEach((data) => setUpEvaluationSummaryChart(data));
+}
+
+function setUpEvaluationSummaryChart(inputData: IEvaluationSummaryDataModel): void {
+  if (inputData.responseCounts) {
+    const data = constructEvaluationSummaryChartData(inputData.responseCounts);
+    const totalCount = inputData.responseCounts.map((rc) => rc.count).reduce(sum);
+
+    const options = {
+      donut: true,
+      donutWidth: 60,
+      donutSolid: true,
+      startAngle: 270,
+      showLabel: true,
+      labelInterpolationFnc(value: number) {
+        return value !== 0 ? `${((value / totalCount) * 100).toFixed(1)}%` : '';
+      },
+    };
+    const chart = new Chartist.Pie(`#${inputData.id}`, data, options);
+
+    chart.on('draw',
+      (drawnElement: ChartDrawData) => {
+        if (drawnElement.type === 'label') {
+          //drawnElement.element.attr({
+          //  style: 'stroke: yellow;',
+          //});
+        }
+      });
+  }
+}
+
+function constructEvaluationSummaryChartData(responseCounts: Array<IResponseCount>):
+  Chartist.IChartistData {
+  const series = responseCounts.map((rc) => ({ value: rc.count, className: `ct-series-${rc.name}` }));
+  return { series };
+}
+
+setUpGraphs();

@@ -8,17 +8,21 @@
     </h3>
 
     <div class="nhsuk-card__description">
-      @if (Model.ResponsePercentages != null && Model.ResponsePercentages.Any()) {
+      @if (Model.ResponsePercentages != null && Model.ResponsePercentages.Any())
+      {
+        <div class="ct-chart ct-perfect-fourth" id="@(new string(Model.Question.Where(char.IsLetter).ToArray()))"></div>
+
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
-          @foreach (var (response, percentageString) in Model.ResponsePercentages) {
+          @foreach (var (response, percentageString) in Model.ResponsePercentages)
+          {
             <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key eval-summary-row__key">
-                @response
-              </dt>
-              <dd class="nhsuk-summary-list__value eval-summary-row__value">
-                @percentageString
-              </dd>
-            </div>
+            <dt class="nhsuk-summary-list__key eval-summary-row__key">
+              @response
+            </dt>
+            <dd class="nhsuk-summary-list__value eval-summary-row__value">
+              @percentageString
+            </dd>
+        </div>
           }
         </dl>
       } else {

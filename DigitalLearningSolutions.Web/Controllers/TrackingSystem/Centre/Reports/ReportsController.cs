@@ -65,7 +65,7 @@
 
         [NoCaching]
         [Route("Data")]
-        public IEnumerable<ActivityDataRowModel> GetGraphData()
+        public ReportsChartDataModel GetGraphData()
         {
             var centreId = User.GetCentreId();
             var adminId = User.GetAdminId()!.Value;
@@ -74,9 +74,9 @@
             var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
-            return activity.Select(
-                p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForGraphLabel(p.DateInformation.Interval))
-            );
+            var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
+
+            return new ReportsChartDataModel(activity, evaluationResponseBreakdowns);
         }
 
         [HttpGet]

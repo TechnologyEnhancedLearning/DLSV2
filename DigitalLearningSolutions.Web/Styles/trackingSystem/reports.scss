@@ -5,6 +5,13 @@ $dark-blue: #005EB8;
 $medium-blue: #699AFC;
 $light-blue: #8EBAFF;
 
+$dark-green: $color_nhsuk-green;
+$mid-dark-green: #2CB25D;
+$mid-green: #56D879;
+$mid-light-green: #91F2A1 ;
+$light-green: #C6F8CA;
+$light-light-green: #E2FDDE;
+
 .ct-line {
   stroke-width: 5px;
 
@@ -114,4 +121,53 @@ $light-blue: #8EBAFF;
   @include mq($from: large-desktop) {
     width: 30%;
   }
+}
+
+.ct-chart-donut .ct-label {
+  color: $nhsuk-text-color;
+  fill: $nhsuk-text-color;
+}
+
+.ct-series-yes .ct-slice-donut-solid {
+  fill: $dark-green;
+}
+
+.ct-series-yesdirectly .ct-slice-donut-solid {
+  fill: $dark-green;
+}
+
+.ct-series-yesindirectly .ct-slice-donut-solid {
+  fill: $mid-green;
+}
+
+.ct-series-no .ct-slice-donut-solid {
+  fill: $color_nhsuk-red;
+}
+
+.ct-series-noresponse .ct-slice-donut-solid {
+  fill: $color_nhsuk-grey-4;
+}
+
+.ct-series-0hrs .ct-slice-donut-solid {
+  fill: $dark-green;
+}
+
+.ct-series-lessthan1hr .ct-slice-donut-solid {
+    fill: $mid-dark-green;
+}
+
+.ct-series-1to2hrs .ct-slice-donut-solid {
+  fill: $mid-green;
+}
+
+.ct-series-2to4hrs .ct-slice-donut-solid {
+  fill: $mid-light-green;
+}
+
+.ct-series-4to6hrs .ct-slice-donut-solid {
+  fill: $light-green;
+}
+
+.ct-series-morethan6hrs .ct-slice-donut-solid {
+  fill: $light-light-green;
 }
