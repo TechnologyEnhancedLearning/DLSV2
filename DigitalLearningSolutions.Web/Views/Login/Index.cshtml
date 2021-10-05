@@ -1,4 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Login
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.Login
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model LoginViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -12,7 +15,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems"/>
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Pricing"/>
 }
 
 <div class="nhsuk-grid-row">

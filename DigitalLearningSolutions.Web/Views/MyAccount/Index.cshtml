@@ -1,3 +1,5 @@
+@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.Extensions.Configuration
 @model MyAccountViewModel
@@ -8,13 +10,10 @@
 
 @{
   ViewData["Title"] = "My Account";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="My account"/>
 }
 
 <div class="nhsuk-grid-row">

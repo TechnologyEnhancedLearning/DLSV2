@@ -1,11 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @{
   ViewData["Title"] = "Pricing";
   var url = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/pricing?nonav=true";
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Pricing"/>
 }
 
 <div class="nhsuk-grid-row">

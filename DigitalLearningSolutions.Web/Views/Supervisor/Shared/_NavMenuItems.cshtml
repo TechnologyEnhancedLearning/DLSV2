@@ -1,24 +1,27 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected(controller: "Supervisor", actions: new[] { "Index" })">
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model NavMenuAndViewDataViewModel
+
+<li class="nhsuk-header__navigation-item @Html.IsTabSelected("Dashboard")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="Index">
     Dashboard
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] { "MyStaffList", "AddMultipleSuperviseDelegates" })">
+<li class="nhsuk-header__navigation-item @Html.IsTabSelected("My Staff")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="MyStaffList">
     My Staff
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsActionSelected(new[] { "SelfAssessments" })">
+<li class="nhsuk-header__navigation-item @Html.IsTabSelected("Profile Assessments")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="SelfAssessments">
     Profile Assessments
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsMyAccountTabSelected()">
+<li class="nhsuk-header__navigation-item @Html.IsTabSelected("My account")">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.Supervisor.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />

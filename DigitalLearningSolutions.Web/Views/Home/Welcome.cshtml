@@ -1,4 +1,7 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Home
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model LandingPageViewModel
 
 @{
@@ -8,7 +11,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/home/welcome.css")" asp-append-version="true" />
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Welcome"/>
 }
 
 <div class="nhsuk-grid-row">

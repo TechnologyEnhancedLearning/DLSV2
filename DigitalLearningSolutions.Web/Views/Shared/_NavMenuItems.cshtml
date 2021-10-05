@@ -1,37 +1,40 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Home", "Products", "LearningContent" })">
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model NavMenuAndViewDataViewModel
+
+<li class="nhsuk-header__navigation-item @(Model.SelectedTab == "Welcome" ? "selected" : "")">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
     Welcome
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "FindYourCentre" })">
+<li class="nhsuk-header__navigation-item @(Model.SelectedTab == "Find your centre" ? "selected" : "")">
   <a class="nhsuk-header__navigation-link" asp-controller="FindYourCentre" asp-action="Index">
     Find your centre
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Pricing" })">
+<li class="nhsuk-header__navigation-item @(Model.SelectedTab == "Pricing" ? "selected" : "")">
   <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
     Pricing
     <partial name="_NhsChevronRight" />
   </a>
 </li>
 @if (User.Identity.IsAuthenticated) {
-  <li class="nhsuk-header__navigation-item @Html.IsMyAccountTabSelected()">
+  <li class="nhsuk-header__navigation-item @(Model.SelectedTab == "My account" ? "selected" : "")">
     <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
       My account
       <partial name="_NhsChevronRight" />
     </a>
   </li>
 } else {
-  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Login" })">
+  <li class="nhsuk-header__navigation-item @(Model.SelectedTab == "Log in" ? "selected" : "")">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
       <partial name="_NhsChevronRight" />
     </a>
   </li>
-  <li class="nhsuk-header__navigation-item @Html.IsControllerSelected(new[] { "Register" })">
+  <li class="nhsuk-header__navigation-item @(Model.SelectedTab == "Register" ? "selected" : "")">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Index">
       Register
       <partial name="_NhsChevronRight" />

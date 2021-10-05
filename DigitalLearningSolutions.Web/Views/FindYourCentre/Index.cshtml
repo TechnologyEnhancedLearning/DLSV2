@@ -1,11 +1,14 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.FindYourCentre
 @model FindYourCentreViewModel
+
 @{
   ViewData["Title"] = "Find Your Centre";
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Find your centre"/>
 }
 
 <div class="nhsuk-grid-row">

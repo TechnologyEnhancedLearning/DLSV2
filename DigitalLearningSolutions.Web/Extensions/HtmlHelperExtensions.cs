@@ -2,10 +2,45 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public static class HtmlHelperExtensions
     {
+        public static string IsTabSelected(
+            this IHtmlHelper htmlHelper,
+            string currentTab,
+            string selectedCssClass = "selected"
+        )
+        {
+            var selectedTab = htmlHelper.ViewData["SelectedTab"];
+
+            if (selectedTab == null)
+            {
+                return string.Empty;
+            }
+
+            var returnStatement = selectedTab.ToString() == currentTab
+                ? selectedCssClass
+                : string.Empty;
+            return returnStatement;
+        }
+
+        public static string IsTabSelected(
+            this IHtmlHelper htmlHelper,
+            NavMenuAndViewDataViewModel model,
+            string currentTab,
+            string selectedCssClass = "selected"
+        )
+        {
+            var selectedTab = model.SelectedTab;
+
+            var returnStatement = selectedTab == currentTab
+                ? selectedCssClass
+                : string.Empty;
+            return returnStatement;
+        }
+
         public static string IsActionSelected(
             this IHtmlHelper htmlHelper,
             IEnumerable<string> actions,

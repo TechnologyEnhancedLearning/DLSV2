@@ -1,4 +1,7 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Register
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PersonalInformationViewModel
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -6,7 +9,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="_NavMenuItems" />
+  <vc:nav-menu-and-view-data application="@ApplicationType.Default" selected-tab="Register"/>
 }
 
 <div class="nhsuk-grid-row">

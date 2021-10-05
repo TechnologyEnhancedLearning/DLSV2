@@ -1,0 +1,24 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@model NavMenuAndViewDataViewModel
+
+@{
+  Layout = null;
+  ViewData["Application"] = Model.Application.Name;
+  ViewData["HeaderPath"] = Model.Application.HeaderPath;
+  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
+  ViewData["SelectedTab"] = Model.SelectedTab;
+}
+
+@if (ApplicationType.TrackingSystem.Equals(Model.Application)) {
+  <partial name="../TrackingSystem/Shared/_NavMenuItems" model="@Model" view-data="ViewData" />
+} else if (ApplicationType.LearningPortal.Equals(Model.Application)) {
+  <partial name="../LearningPortal/Shared/_NavMenuItems" model="@Model" view-data="ViewData" />
+} else if (ApplicationType.Frameworks.Equals(Model.Application)) {
+  <partial name="../Frameworks/Shared/_NavMenuItems" model="@Model" view-data="ViewData" />
+} else if (ApplicationType.Supervisor.Equals(Model.Application)) {
+  <partial name="../Supervisor/Shared/_NavMenuItems" model="@Model" view-data="ViewData" />
+} else {
+  <partial name="_NavMenuItems" model="@Model" view-data="ViewData" />
+}
+
