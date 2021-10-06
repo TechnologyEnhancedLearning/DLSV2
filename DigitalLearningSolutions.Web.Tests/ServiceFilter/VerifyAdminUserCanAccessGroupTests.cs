@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
@@ -63,16 +64,7 @@
                 A.Fake<IClockService>(),
                 A.Fake<IGroupsService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
-            var context = new ActionExecutingContext(
-                new ActionContext(
-                    new DefaultHttpContext(),
-                    new RouteData(new RouteValueDictionary()),
-                    new ActionDescriptor()
-                ),
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                delegateGroupsController
-            );
+            var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;
 
             return context;
