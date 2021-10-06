@@ -68,3 +68,31 @@ request.onload = () => {
 request.open('GET', path, true);
 request.responseType = 'json';
 request.send();
+
+var allRowsShown = false;
+var viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
+
+viewMoreLink.addEventListener('click', (event) => {
+  event.preventDefault();
+  allRowsShown = !allRowsShown;
+  showMoreRows(allRowsShown);
+  viewMoreLink.innerText = allRowsShown? "View Less": "View More";
+});
+
+function showMoreRows(status: boolean): void {
+  var activityTableRows = <HTMLElement[]>Array.from(
+    document.getElementsByClassName('js-hidden-activity-row'),
+  );
+
+  activityTableRows.forEach((row) => {
+    row.style.display = status ? 'table-row' : 'none';
+  });
+}
+
+function showMoreLink() {
+  var viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
+  viewMoreLink.style.display = 'block';
+}
+
+showMoreLink();
+showMoreRows(false);
