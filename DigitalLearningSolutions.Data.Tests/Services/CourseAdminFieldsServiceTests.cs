@@ -35,7 +35,7 @@
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Priority Access");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedCourseAdminFields = CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts);
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
@@ -63,7 +63,7 @@
                 answer: answer2
             );
             var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
@@ -112,7 +112,7 @@
             (
                 () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
@@ -134,7 +134,7 @@
             (
                 () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
                 .Returns(
                     CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                         "System Access Granted",

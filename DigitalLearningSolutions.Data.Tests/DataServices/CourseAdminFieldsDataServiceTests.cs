@@ -42,6 +42,28 @@
         }
 
         [Test]
+        public void GetCourseAdminFields_returns_populated_CourseAdminFieldsResult_for_AllCentres_course_when_allowed()
+        {
+            // Given
+            var expectedCourseAdminFieldsResult =
+                CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    2
+                );
+
+            // When
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(14038, 101, true);
+
+            // Then
+            returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
+        }
+
+        [Test]
         public void UpdateCustomPromptForCourse_correctly_updates_custom_prompt()
         {
             using var transaction = new TransactionScope();
