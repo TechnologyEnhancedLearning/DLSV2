@@ -193,7 +193,7 @@
             }
 
             var removedDate = clockService.UtcNow;
-            groupsDataService.DeleteGroup(groupId, false, removedDate);
+            groupsService.DeleteDelegateGroup(groupId, false, removedDate);
             return RedirectToAction("Index");
         }
 
@@ -227,7 +227,7 @@
             }
 
             var removedDate = clockService.UtcNow;
-            groupsDataService.DeleteGroup(groupId, model.DeleteEnrolments, removedDate);
+            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments, removedDate);
 
             return RedirectToAction("Index");
         }
