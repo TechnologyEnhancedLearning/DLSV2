@@ -396,5 +396,15 @@
                 new { delegateId }
             );
         }
+
+        public void ReactivateDelegateUser(int delegateId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET Active = 1
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+        }
     }
 }

@@ -272,5 +272,21 @@
             // then
             userDataService.GetDelegateUserById(1)!.Active.Should().BeFalse();
         }
+
+        [Test]
+        public void ReactivateDelegateUser_reactivates_delegate_user()
+        {
+            using var transaction = new TransactionScope();
+            const int delegateUserId = 29;
+
+            // given
+            userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeFalse();
+
+            // when
+            userDataService.ReactivateDelegateUser(delegateUserId);
+
+            // then
+            userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeTrue();
+        }
     }
 }

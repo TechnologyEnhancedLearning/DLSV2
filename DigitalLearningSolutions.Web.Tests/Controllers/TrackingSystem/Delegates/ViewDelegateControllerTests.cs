@@ -67,5 +67,41 @@
             // then
             result.Should().BeNotFoundResult();
         }
+
+
+        [Test]
+        public void Reactivating_delegate_returns_redirect()
+        {
+            // given
+            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+                .Returns(new DelegateUserCard { CentreId = 2, Id = 1, Active = false});
+
+            // when
+            var result = viewDelegateController.ReactivateDelegate(1);
+
+            // then
+            result.Should().BeRedirectToActionResult();
+        }
+
+        [Test]
+        public void Reactivate_nonexistent_delegate_returns_not_found_result()
+        {
+            // when
+            var result = viewDelegateController.ReactivateDelegate(-1);
+
+            // then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void Reactivate_delegate_on_wrong_centre_returns_not_found_result()
+        {
+
+            // when
+            var result = viewDelegateController.ReactivateDelegate(2);
+
+            // then
+            result.Should().BeNotFoundResult();
+        }
     }
 }
