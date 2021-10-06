@@ -49,7 +49,7 @@
         <ul class="nhsuk-contents-list__list">
           @if (Model.DashboardData.AwaitingReviewCount > 0)
           {
-            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="RoleProfileReviewRequests" asp-route-tabname="Mine">Process Review Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
+            <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="RoleProfileReviewRequests" asp-route-tabname="Mine">Profile Assessment Sign-off Requests (@Model.DashboardData.AwaitingReviewCount)</a></li>
           }
           <li class="nhsuk-contents-list__item"><a asp-controller="Supervisor" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfileAssessments" asp-route-tabname="All">View Profile Assessments (@Model.DashboardData.ProfileSelfAssessmentCount)</a></li>
         </ul>
@@ -64,9 +64,9 @@
     @foreach (var toDoItem in Model.SupervisorDashboardToDoItems)
     {
       <li class="nhsuk-contents-list__item">
-          <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
-            Review @toDoItem.ProfileName, for @toDoItem.DelegateName (requested @toDoItem.Requested.ToShortDateString())
-          </a>
+        <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
+          Review and sign-off @toDoItem.DelegateName's @toDoItem.ProfileName</a>. Requested @toDoItem.Requested.ToShortDateString()
+          
       </li>
     }
   </ul>
