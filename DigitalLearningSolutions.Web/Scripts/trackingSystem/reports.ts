@@ -71,15 +71,15 @@ request.open('GET', path, true);
 request.responseType = 'json';
 request.send();
 
-var allRowsShown = false;
-var viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
+let allRowsShown = false;
+let viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
 viewMoreLink.style.display = 'block';
 
 viewMoreLink.addEventListener('click', (event) => {
   event.preventDefault();
   allRowsShown = !allRowsShown;
   showMoreRows(allRowsShown);
-  viewMoreLink.innerText = allRowsShown ? 'View Less': 'View More';
+  viewMoreLink.innerText = allRowsShown ? 'View Less' : 'View More';
 });
 
 function showMoreRows(status: boolean): void {
@@ -92,6 +92,3 @@ function showMoreRows(status: boolean): void {
     rowElement.style.display = (status ? 'table-row' : 'none');
   });
 }
-
-
-
