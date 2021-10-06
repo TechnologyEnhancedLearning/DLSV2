@@ -16,7 +16,7 @@
             var valueToSet = (bool)(property?.GetValue(model) ?? false);
             var errorMessage = ViewData.ModelState[property?.Name]?.Errors[0]?.ErrorMessage;
 
-            var viewModel = new SingleCheckboxViewModel(
+            var viewModel = new CheckboxesItemViewModel(
                 aspFor,
                 aspFor,
                 label,

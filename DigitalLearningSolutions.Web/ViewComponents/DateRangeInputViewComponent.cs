@@ -56,7 +56,8 @@
                 endDateCheckboxId,
                 endDateCheckboxLabel,
                 checkboxValue,
-                endDateCheckboxHintText
+                endDateCheckboxHintText,
+                null
             );
 
             var allStartDateErrors = (startDayErrors ?? new ModelErrorCollection())
