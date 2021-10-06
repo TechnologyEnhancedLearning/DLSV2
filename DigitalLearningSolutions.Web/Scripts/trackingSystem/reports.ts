@@ -1,6 +1,8 @@
 import Chartist from 'chartist';
 import getPathForEndpoint from '../common';
 
+showMoreRows(false);
+
 interface IActivityDataRowModel {
   period: string;
   completions: number;
@@ -71,28 +73,25 @@ request.send();
 
 var allRowsShown = false;
 var viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
+viewMoreLink.style.display = 'block';
 
 viewMoreLink.addEventListener('click', (event) => {
   event.preventDefault();
   allRowsShown = !allRowsShown;
   showMoreRows(allRowsShown);
-  viewMoreLink.innerText = allRowsShown? "View Less": "View More";
+  viewMoreLink.innerText = allRowsShown ? 'View Less': 'View More';
 });
 
 function showMoreRows(status: boolean): void {
-  var activityTableRows = <HTMLElement[]>Array.from(
+  const activityTableRows = <HTMLElement[]>Array.from(
     document.getElementsByClassName('js-hidden-activity-row'),
   );
 
   activityTableRows.forEach((row) => {
-    row.style.display = status ? 'table-row' : 'none';
+    const rowElement = row;
+    rowElement.style.display = (status ? 'table-row' : 'none');
   });
 }
 
-function showMoreLink() {
-  var viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
-  viewMoreLink.style.display = 'block';
-}
 
-showMoreLink();
-showMoreRows(false);
+
