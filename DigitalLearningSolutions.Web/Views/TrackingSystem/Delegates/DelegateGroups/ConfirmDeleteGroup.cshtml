@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
@@ -42,11 +43,10 @@
       <input type="hidden" asp-for="DelegateCount" />
       <input type="hidden" asp-for="CourseCount" />
 
-
       <p>
-        This group has @Model.DelegateCount delegate@(Model.DelegateCount == 1 ? "" : "s") and @Model.CourseCount
-        course@(Model.CourseCount == 1 ? "" : "s"). Deleting this group will permanently remove all the delegates
-        and courses from this group.
+        This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))
+        and @Model.CourseCount course@(DisplayStringHelper.GetPluralitySuffix(Model.CourseCount)). Deleting this
+        group will permanently remove all the delegates and courses from this group.
       </p>
 
       <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
