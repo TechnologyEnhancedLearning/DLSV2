@@ -10,7 +10,7 @@
     <div class="nhsuk-card__description">
       @if (Model.ResponsePercentages != null && Model.ResponsePercentages.Any())
       {
-        <div class="ct-chart ct-perfect-fourth" id="@(new string(Model.Question.Where(char.IsLetter).ToArray()))"></div>
+        <div class="ct-chart ct-perfect-fourth ct-donut-wrapper" id="@(new string(Model.Question.Where(char.IsLetter).ToArray()))"></div>
 
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
           @foreach (var (response, percentageString) in Model.ResponsePercentages)

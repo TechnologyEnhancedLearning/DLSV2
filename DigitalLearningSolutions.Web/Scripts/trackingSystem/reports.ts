@@ -102,11 +102,15 @@ function setUpEvaluationSummaryChart(inputData: IEvaluationSummaryDataModel): vo
     const totalCount = inputData.responseCounts.map((rc) => rc.count).reduce(sum);
 
     const options = {
+      chartPadding: 22,
+      height: 200,
       donut: true,
-      donutWidth: 60,
+      donutWidth: 50,
       donutSolid: true,
       startAngle: 270,
       showLabel: true,
+      labelOffset: 20,
+      labelPosition: 'outside',
       labelInterpolationFnc(value: number) {
         return value !== 0 ? `${((value / totalCount) * 100).toFixed(1)}%` : '';
       },
