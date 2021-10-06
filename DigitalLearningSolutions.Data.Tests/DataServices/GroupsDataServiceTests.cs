@@ -301,19 +301,18 @@
         }
 
         [Test]
-        public async Task DeleteGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
+        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 // Given
                 const int groupId = 8;
-                const int centreId = 101;
                 const bool deleteStartedEnrolment = false;
                 var removedDate = DateTime.UtcNow;
 
                 // When
-                groupsDataService.DeleteGroup(groupId, deleteStartedEnrolment, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
 
                 // Then
                 var notStartedProgress = await connection.GetProgressRemovedFields(271518);
@@ -327,13 +326,6 @@
                 var progressWithAnotherGroup = await connection.GetProgressRemovedFields(285122);
                 progressWithAnotherGroup.Item1.Should().Be(0);
                 progressWithAnotherGroup.Item2.Should().BeNull();
-
-                var groupDelegates = await connection.GetCandidatesForGroup(groupId);
-                groupDelegates.Should().BeEmpty();
-                var groupCustomisations = await connection.GetCustomisationsForGroup(groupId);
-                groupCustomisations.Should().BeEmpty();
-                var groupName = groupsDataService.GetGroupName(groupId, centreId);
-                groupName.Should().BeNull();
             }
             finally
             {
@@ -342,19 +334,18 @@
         }
 
         [Test]
-        public async Task DeleteGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
+        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 // Given
                 const int groupId = 8;
-                const int centreId = 101;
                 const bool deleteStartedEnrolment = true;
                 var removedDate = DateTime.UtcNow;
 
                 // When
-                groupsDataService.DeleteGroup(groupId, deleteStartedEnrolment, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
 
                 // Then
                 var notStartedProgress = await connection.GetProgressRemovedFields(271518);
@@ -368,11 +359,71 @@
                 var progressWithAnotherGroup = await connection.GetProgressRemovedFields(285122);
                 progressWithAnotherGroup.Item1.Should().Be(0);
                 progressWithAnotherGroup.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
 
+        [Test]
+        public async Task DeleteGroupDelegates_deletes_all_group_delegates()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 8;
+
+                // When
+                groupsDataService.DeleteGroupDelegates(groupId);
+
+                // Then
                 var groupDelegates = await connection.GetCandidatesForGroup(groupId);
                 groupDelegates.Should().BeEmpty();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task DeleteGroupCustomisations_deletes_all_group_customisations()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 8;
+
+                // When
+                groupsDataService.DeleteGroupCustomisations(groupId);
+
+                // Then
                 var groupCustomisations = await connection.GetCustomisationsForGroup(groupId);
                 groupCustomisations.Should().BeEmpty();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void DeleteGroup_deletes_group()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int groupId = 25;
+                const int centreId = 101;
+
+                // When
+                groupsDataService.DeleteGroup(groupId);
+
+                // Then
                 var groupName = groupsDataService.GetGroupName(groupId, centreId);
                 groupName.Should().BeNull();
             }
