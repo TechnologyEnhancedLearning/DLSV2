@@ -48,6 +48,10 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationDataService = A.Fake<IRegistrationDataService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
 
+            A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(A<string>._, A<int>._))
+                .Returns(UserTestHelper.GetDefaultDelegateUser());
+
+
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
                 userDataService,
@@ -649,7 +653,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             catch (ArgumentOutOfRangeException ex)
             {
                 // Then
-                ex.Message.Should().Be($"Unknown return value when creating delegate record. (Parameter 'status')\r\nActual value was {failureStatusCode}.");
+                ex.Message.Should().Be($"Unknown return value when creating delegate record. (Parameter 'statusOrCandidateNumber')\r\nActual value was {failureStatusCode}.");
                 ex.ActualValue.Should().Be(failureStatusCode);
             }
             finally

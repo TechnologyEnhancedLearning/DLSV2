@@ -187,8 +187,8 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var status = registrationDataService.RegisterDelegateByCentre(model);
-            switch (status)
+            var statusOrCandidateNumber = registrationDataService.RegisterDelegateByCentre(model);
+            switch (statusOrCandidateNumber)
             {
                 case "-1":
                     delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
@@ -197,18 +197,19 @@ namespace DigitalLearningSolutions.Data.Services
                 case "-3":
                 case "-4":
                     throw new ArgumentOutOfRangeException(
-                        nameof(status),
-                        status,
+                        nameof(statusOrCandidateNumber),
+                        statusOrCandidateNumber,
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, status);
+                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(statusOrCandidateNumber, centreId)!;
+                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }
         }
 
-        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, string candidateNumber)
+        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, int delegateId)
         {
             var pendingSupervisorDelegateIds =
                 supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
@@ -221,11 +222,9 @@ namespace DigitalLearningSolutions.Data.Services
                 return;
             }
 
-            var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(candidateNumber, centreId)!;
-
             supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
                 pendingSupervisorDelegateIds,
-                newDelegateRecord.Id
+                delegateId
             );
         }
 
