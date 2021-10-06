@@ -72,7 +72,7 @@ request.responseType = 'json';
 request.send();
 
 let allRowsShown = false;
-let viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
+const viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
 viewMoreLink.style.display = 'block';
 
 viewMoreLink.addEventListener('click', (event) => {
