@@ -102,7 +102,7 @@ function setUpEvaluationSummaryChart(inputData: IEvaluationSummaryDataModel): vo
     const totalCount = inputData.responseCounts.map((rc) => rc.count).reduce(sum);
 
     const options = {
-      chartPadding: 22,
+      chartPadding: 32,
       height: 200,
       donut: true,
       donutWidth: 50,
