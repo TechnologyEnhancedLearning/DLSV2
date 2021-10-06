@@ -1,10 +1,16 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
 @{
   var headerExtension = (string)ViewData["Application"];
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
+  var applicationType = (ApplicationType)ViewData["Application"];
+  var selectedTab = (Tab)ViewData["SelectedTab"];
 }
 
 <!DOCTYPE html>
@@ -82,7 +88,11 @@
             </button>
           </p>
           <ul class="nhsuk-header__navigation-list">
-            @RenderSection("NavMenuItems", true)
+            @if (IsSectionDefined("NavMenuItems")) {
+              @RenderSection("NavMenuItems", true)
+            } else {
+              <vc:nav-menu application="@applicationType" selected-tab="@selectedTab"/>
+            }
 
             @if (shouldDisplayHelpMenuItem) {
               string helpPage;

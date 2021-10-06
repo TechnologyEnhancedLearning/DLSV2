@@ -3,10 +3,14 @@
 namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.Net.Mime;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
+    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.Extensions.Configuration;
 
     [RedirectDelegateOnlyToLearningPortal]
@@ -31,6 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             this.configuration = configuration;
         }
 
+        [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Welcome))]
         public IActionResult Index()
         {
             return RedirectToAction("Welcome");

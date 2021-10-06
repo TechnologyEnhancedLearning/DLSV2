@@ -1,4 +1,11 @@
-﻿<li class="nhsuk-header__navigation-item">
+﻿@using DigitalLearningSolutions.Data.Enums
+@{
+  var selectedTab = (Tab)ViewData["SelectedTab"];
+}
+
+@*TODO: Add check inside <li> class names like this: @(selectedTab.Equals(Tab.Welcome) ? "selected" : "")*@
+
+<li class="nhsuk-header__navigation-item">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
     Welcome
     <partial name="_NhsChevronRight" />
