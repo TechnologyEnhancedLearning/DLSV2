@@ -60,7 +60,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
-        [InlineData("/TrackingSystem/Support", "Support")]
+        [InlineData("/TrackingSystem/Delegates/Groups/103/EditDescription", "Edit description for ABC Digital Supervision 2 group (optional)")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

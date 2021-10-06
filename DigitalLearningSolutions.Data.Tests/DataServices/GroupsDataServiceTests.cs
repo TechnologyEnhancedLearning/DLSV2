@@ -256,8 +256,8 @@
 
                 //Then
                 isUpdated.Should().Be(false);
-                var result = groupsDataService.GetGroupAtCentreById(groupId, incorrectCentreId);
-                result?.GroupDescription.Should().NotBe(expectedDescription);
+                var result = this.GetGroupDescriptionById(groupId);
+                result?.Should().NotBe(expectedDescription);
             }
             finally
             {
@@ -345,6 +345,15 @@
                     VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
                     SET IDENTITY_INSERT dbo.Progress OFF"
             );
+        }
+
+        private string? GetGroupDescriptionById(int groupId)
+        {
+            return connection.Query<string?>(
+                @"SELECT GroupLabel FROM Groups 
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            ).FirstOrDefault();
         }
     }
 }
