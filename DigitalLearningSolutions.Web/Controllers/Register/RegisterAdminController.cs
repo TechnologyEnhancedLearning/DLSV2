@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Linq;
@@ -183,6 +183,7 @@
         [HttpGet]
         public IActionResult Confirmation()
         {
+            TempData.Clear();
             return View();
         }
 

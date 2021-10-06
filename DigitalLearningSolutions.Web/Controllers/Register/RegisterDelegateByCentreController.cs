@@ -241,6 +241,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var emailSent = (bool)TempData.Peek("emailSent");
             var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
+
             if (delegateNumber == null)
             {
                 return RedirectToAction("Index");

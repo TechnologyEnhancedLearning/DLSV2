@@ -262,6 +262,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var candidateNumber = (string?)TempData.Peek("candidateNumber");
             var approvedNullable = (bool?)TempData.Peek("approved");
             var centreIdNullable = (int?)TempData.Peek("centreId");
+            TempData.Clear();
+
             if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
             {
                 return RedirectToAction("Index");
