@@ -9,20 +9,12 @@
             IncludeAnswersTableCaption = true;
         }
 
-        public AddAdminFieldViewModel(int customisationId)
-        {
-            CustomisationId = customisationId;
-            IncludeAnswersTableCaption = true;
-        }
-
         public AddAdminFieldViewModel(
-            int customisationId,
             int? adminFieldId,
             string? options,
             string? answer = null
         )
         {
-            CustomisationId = customisationId;
             AdminFieldId = adminFieldId;
             OptionsString = options;
             IncludeAnswersTableCaption = true;

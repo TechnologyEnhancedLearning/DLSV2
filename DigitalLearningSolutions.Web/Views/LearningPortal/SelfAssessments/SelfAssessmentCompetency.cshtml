@@ -63,7 +63,7 @@
     Question @Model.CompetencyNumber of @Model.TotalNumberOfCompetencies
   </div>
   <button class="nhsuk-button nhsuk-u-margin-top-1" type="submit">
-    Submit
+    @(Model.Assessment.LinearNavigation ? "Save and continue" : "Submit")
   </button>
 </form>
 <div class="nhsuk-grid-row">

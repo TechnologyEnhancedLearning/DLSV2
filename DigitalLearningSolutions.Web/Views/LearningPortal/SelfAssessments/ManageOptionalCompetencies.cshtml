@@ -58,12 +58,6 @@
               <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
                 @competency.Name
               </label>
-              @if (competency.Description != null)
-              {
-                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="competency-check-@competency.Id-hint">
-                  @Html.Raw(competency.Description)
-                </div>
-              }
             </div>
           }
         </div>

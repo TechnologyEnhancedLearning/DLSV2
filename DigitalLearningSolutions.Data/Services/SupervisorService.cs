@@ -91,14 +91,14 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                             SupervisorDelegates AS sd INNER JOIN
                             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId ON ca.ID = cas.CandidateAssessmentID
                         WHERE (sd.SupervisorAdminID = @adminId)) As ProfileCount,
-                    (SELECT COALESCE
+                    COALESCE
                     ((SELECT COUNT(casv.ID) AS Expr1
                     FROM    CandidateAssessmentSupervisors AS cas INNER JOIN
                                CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                                SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                                CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
                     WHERE (sd.SupervisorAdminID = @adminId) AND ((ca.RemovedDate IS NULL)) AND (casv.Verified IS NULL)
-                    GROUP BY casv.Verified, casv.ID), 0)) AS AwaitingReviewCount", new { adminId }
+                    ), 0) AS AwaitingReviewCount", new { adminId }
                 ).FirstOrDefault();
         }
 

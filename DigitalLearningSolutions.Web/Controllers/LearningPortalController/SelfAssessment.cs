@@ -128,7 +128,7 @@
             }
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
-
+            IEnumerable<SupervisorSignOff>? supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             foreach (var competency in competencies)
             {
@@ -145,7 +145,8 @@
                 SelfAssessment = assessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
-                NumberOfOptionalCompetencies = optionalCompetencies.Count()
+                NumberOfOptionalCompetencies = optionalCompetencies.Count(),
+                SupervisorSignOffs = supervisorSignOffs
             };
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
@@ -559,7 +560,7 @@
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = sessionRequestVerification.SelfAssessmentID, vocabulary = sessionRequestVerification.Vocabulary });
         }
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Optional/{vocabulary}")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
             int candidateId = User.GetCandidateIdKnownNotNull();
@@ -588,6 +589,32 @@
                 }
             }
 
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
+        }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
+        public IActionResult RequestSignOff(int selfAssessmentId)
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var supervisors = selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            var model = new RequestSignOffViewModel()
+            {
+                SelfAssessment = assessment,
+                Supervisors = supervisors
+            };
+            return View("SelfAssessments/RequestSignOff", model);
+        }
+        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
+        public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
+        {
+            selfAssessmentService.InsertCandidateAssessmentSupervisorVerification(model.CandidateAssessmentSupervisorId);
+            frameworkNotificationService.SendSignOffRequest(model.CandidateAssessmentSupervisorId, selfAssessmentId);
+            return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
+        }
+        public IActionResult SendRequestSignOffReminder(int candidateAssessmentSupervisorId, int candidateAssessmentSupervisorVerificationId, int selfAssessmentId, string vocabulary)
+        {
+            frameworkNotificationService.SendSignOffRequest(candidateAssessmentSupervisorId, selfAssessmentId);
+            selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(candidateAssessmentSupervisorVerificationId);
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }
     }
