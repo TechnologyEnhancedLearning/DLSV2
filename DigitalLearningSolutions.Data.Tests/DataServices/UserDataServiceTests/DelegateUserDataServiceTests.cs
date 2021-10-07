@@ -259,7 +259,7 @@
         }
 
         [Test]
-        public void DeactivateDelegateUser_deactivates_delegate_user()
+        public void ActivateDelegateUser_deactivates_delegate_user()
         {
             using var transaction = new TransactionScope();
 
@@ -274,7 +274,7 @@
         }
 
         [Test]
-        public void ReactivateDelegateUser_reactivates_delegate_user()
+        public void ActivateDelegateUser_activates_delegate_user()
         {
             using var transaction = new TransactionScope();
             const int delegateUserId = 29;

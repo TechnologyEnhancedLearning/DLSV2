@@ -86,8 +86,8 @@
         }
 
         [HttpPost]
-        [Route("ReactivateDelegate")]
-        public IActionResult ReactivateDelegate(int delegateId)
+        [Route("ActivateDelegate")]
+        public IActionResult ActivateDelegate(int delegateId)
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
