@@ -14,11 +14,11 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
             // Given
             const string question = "Increased productivity?";
             var responseCounts = new List<(string, int)> { ("Yes", 4), ("No", 76), ("No response", 80) };
-            var expectedPercentages = new List<(string, string)>
+            var expectedPercentages = new List<ResponseViewModel>
             {
-                ("Yes", "2.5%"),
-                ("No", "47.5%"),
-                ("No response", "50.0%")
+                new ResponseViewModel("Yes", 4, "2.5%"),
+                new ResponseViewModel("No", 76,"47.5%"),
+                new ResponseViewModel("No response", 80, "50.0%")
             };
             var model = new EvaluationResponseBreakdown(question, responseCounts);
 
@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
 
             // Then
             viewModel.Question.Should().Be(question);
-            viewModel.ResponsePercentages.Should().BeEquivalentTo(expectedPercentages);
+            viewModel.Responses.Should().BeEquivalentTo(expectedPercentages);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
 
             // Then
             viewModel.Question.Should().Be(question);
-            viewModel.ResponsePercentages.Should().BeNull();
+            viewModel.Responses.Should().BeNull();
         }
     }
 }

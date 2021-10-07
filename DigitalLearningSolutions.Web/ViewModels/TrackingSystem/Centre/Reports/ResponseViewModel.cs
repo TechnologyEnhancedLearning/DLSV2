@@ -4,6 +4,13 @@
 
     public class ResponseViewModel
     {
+        public ResponseViewModel(string response, int count, string percentage)
+        {
+            Response = response;
+            Count = count;
+            Percentage = percentage;
+        }
+
         public ResponseViewModel(EvaluationResponses evaluationResponses)
         {
             Response = evaluationResponses.Response;
