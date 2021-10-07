@@ -91,12 +91,12 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateUser?.CentreId != centreId)
             {
                 return new NotFoundResult();
             }
 
-            userDataService.ReactivateDelegateUser(delegateId);
+            userDataService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
         }

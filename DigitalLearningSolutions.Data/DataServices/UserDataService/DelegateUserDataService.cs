@@ -397,7 +397,7 @@
             );
         }
 
-        public void ReactivateDelegateUser(int delegateId)
+        public void ActivateDelegateUser(int delegateId)
         {
             connection.Execute(
                 @"UPDATE Candidates

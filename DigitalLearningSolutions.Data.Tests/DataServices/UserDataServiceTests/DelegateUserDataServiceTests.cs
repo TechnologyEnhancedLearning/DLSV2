@@ -263,13 +263,13 @@
         {
             using var transaction = new TransactionScope();
 
-            // given
+            // Given
             userDataService.GetDelegateUserById(1)!.Active.Should().BeTrue();
 
-            // when
+            // When
             userDataService.DeactivateDelegateUser(1);
 
-            // then
+            // Then
             userDataService.GetDelegateUserById(1)!.Active.Should().BeFalse();
         }
 
@@ -279,13 +279,13 @@
             using var transaction = new TransactionScope();
             const int delegateUserId = 29;
 
-            // given
+            // Given
             userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeFalse();
 
-            // when
-            userDataService.ReactivateDelegateUser(delegateUserId);
+            // When
+            userDataService.ActivateDelegateUser(delegateUserId);
 
-            // then
+            // Then
             userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeTrue();
         }
     }

@@ -72,24 +72,24 @@
         [Test]
         public void Reactivating_delegate_returns_redirect()
         {
-            // given
+            // Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(1))
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1, Active = false});
 
-            // when
+            // When
             var result = viewDelegateController.ReactivateDelegate(1);
 
-            // then
+            // Then
             result.Should().BeRedirectToActionResult();
         }
 
         [Test]
         public void Reactivate_nonexistent_delegate_returns_not_found_result()
         {
-            // when
-            var result = viewDelegateController.ReactivateDelegate(-1);
+            // When
+            var result = viewDelegateController.ReactivateDelegate(10);
 
-            // then
+            // Then
             result.Should().BeNotFoundResult();
         }
 
@@ -97,10 +97,10 @@
         public void Reactivate_delegate_on_wrong_centre_returns_not_found_result()
         {
 
-            // when
+            // When
             var result = viewDelegateController.ReactivateDelegate(2);
 
-            // then
+            // Then
             result.Should().BeNotFoundResult();
         }
     }
