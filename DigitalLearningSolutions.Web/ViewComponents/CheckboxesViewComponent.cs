@@ -15,7 +15,7 @@
         )
         {
             var checkboxList = checkboxes.Select(
-                c => new CheckboxesItemViewModel(
+                c => new CheckboxItemViewModel(
                     c.AspFor,
                     c.AspFor,
                     c.Label,

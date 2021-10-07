@@ -51,7 +51,7 @@
             var checkboxProperty = model.GetType().GetProperty(endDateCheckboxId);
             var checkboxValue = (bool)checkboxProperty?.GetValue(model)!;
 
-            var checkboxViewModel = new CheckboxesItemViewModel(
+            var checkboxViewModel = new CheckboxItemViewModel(
                 endDateCheckboxId,
                 endDateCheckboxId,
                 endDateCheckboxLabel,

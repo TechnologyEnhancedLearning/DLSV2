@@ -1,10 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
-    public class CheckboxesItemViewModel
+    public class CheckboxItemViewModel
     {
         public readonly bool HasError;
 
-        public CheckboxesItemViewModel(
+        public CheckboxItemViewModel(
             string id,
             string name,
             string label,
