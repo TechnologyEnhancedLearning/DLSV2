@@ -36,8 +36,9 @@ export class SearchSortFilterAndPaginate {
     filterEnabled: boolean,
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
+    initialPage = 1,
   ) {
-    this.page = 1;
+    this.page = initialPage;
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
