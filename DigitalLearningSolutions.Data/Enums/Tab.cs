@@ -3,7 +3,7 @@
     using System;
     using System.ComponentModel;
 
-    [TypeConverter(typeof(EnumerationTypeConverter<RegistrationType>))]
+    [TypeConverter(typeof(EnumerationTypeConverter<Tab>))]
     public class Tab : Enumeration
     {
         public static readonly Tab Welcome = new Tab(
@@ -13,37 +13,37 @@
         );
 
         public static readonly Tab FindYourCentre = new Tab(
-            0,
+            1,
             nameof(FindYourCentre),
             "Find your centre"
         );
 
         public static readonly Tab Pricing = new Tab(
-            0,
+            2,
             nameof(Pricing),
             "Pricing"
         );
 
         public static readonly Tab MyAccount = new Tab(
-            0,
+            3,
             nameof(MyAccount),
             "My account"
         );
 
         public static readonly Tab LogIn = new Tab(
-                    0,
-                    nameof(LogIn),
-                    "Log in"
-                );
+            4,
+            nameof(LogIn),
+            "Log in"
+        );
 
         public static readonly Tab Register = new Tab(
-            0,
+            5,
             nameof(Register),
             "Register"
         );
 
         public static readonly Tab SwitchApplication = new Tab(
-            0,
+            6,
             nameof(SwitchApplication),
             "Switch application"
         );

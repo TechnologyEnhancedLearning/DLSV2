@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -10,6 +12,7 @@
     {
         [Authorize]
         [RedirectDelegateOnlyToLearningPortal]
+        [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.SwitchApplication	))]
         public IActionResult Index()
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;

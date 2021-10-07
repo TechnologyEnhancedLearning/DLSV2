@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
     using Microsoft.AspNetCore.Mvc;
 
     [RedirectDelegateOnlyToLearningPortal]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Welcome))]
     public class LearningContentController : Controller
     {
         private const string ItSkillsPathwayBrand = "ITSkillsPathway";
