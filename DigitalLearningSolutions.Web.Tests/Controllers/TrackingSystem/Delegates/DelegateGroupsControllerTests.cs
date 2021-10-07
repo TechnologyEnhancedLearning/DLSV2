@@ -370,7 +370,7 @@
             var result = delegateGroupsController.DeleteGroup(groupId);
 
             // Then
-            A.CallTo(() => groupsDataService.DeleteGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -393,7 +393,7 @@
             var result = delegateGroupsController.ConfirmDeleteGroup(groupId, model);
 
             // Then
-            A.CallTo(() => groupsDataService.DeleteGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -416,7 +416,7 @@
             var result = delegateGroupsController.ConfirmDeleteGroup(groupId, model);
 
             // Then
-            A.CallTo(() => groupsDataService.DeleteGroup(groupId, true, removedDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, true, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
