@@ -14,7 +14,9 @@
 
     public class EvaluationSummaryServiceTests
     {
-        public const string EvaluationSummaryDownloadRelativeFilePath = "\\TestData\\EvaluationSummaryDownloadTest.xlsx";
+        public const string EvaluationSummaryDownloadRelativeFilePath =
+            "\\TestData\\EvaluationSummaryDownloadTest.xlsx";
+
         private IEvaluationSummaryDataService evaluationSummaryDataService = null!;
         private IEvaluationSummaryService evaluationSummaryService = null!;
 
@@ -120,7 +122,7 @@
                 Q7No = 53,
                 Q7NoResponse = 34
             };
-            
+
             A.CallTo(
                 () => evaluationSummaryDataService.GetEvaluationSummaryData(
                     A<int>._,

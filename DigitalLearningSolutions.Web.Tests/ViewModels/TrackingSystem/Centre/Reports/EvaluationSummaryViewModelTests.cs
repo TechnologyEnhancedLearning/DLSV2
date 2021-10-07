@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
             var expectedPercentages = new List<ResponseViewModel>
             {
                 new ResponseViewModel("Yes", 4, "2.5%"),
-                new ResponseViewModel("No", 76,"47.5%"),
+                new ResponseViewModel("No", 76, "47.5%"),
                 new ResponseViewModel("No response", 80, "50.0%")
             };
             var model = new EvaluationResponseBreakdown(question, responseCounts);

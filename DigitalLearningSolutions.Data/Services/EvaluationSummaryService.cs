@@ -66,7 +66,11 @@ namespace DigitalLearningSolutions.Data.Services
             return stream.ToArray();
         }
 
-        private static void AddQuestionTableToSheet(IXLWorksheet sheet, int questionRow, EvaluationResponseBreakdown evaluationSummary)
+        private static void AddQuestionTableToSheet(
+            IXLWorksheet sheet,
+            int questionRow,
+            EvaluationResponseBreakdown evaluationSummary
+        )
         {
             sheet.Cell(questionRow, 1).Value = evaluationSummary.Question;
             sheet.Cell(questionRow, 1).Style.Font.Bold = true;
