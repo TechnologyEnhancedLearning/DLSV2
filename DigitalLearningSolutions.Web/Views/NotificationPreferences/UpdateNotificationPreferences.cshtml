@@ -5,16 +5,9 @@
 
 @{
   ViewData["Title"] = "Update Notification Preferences";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "application", Model.Application.UrlSegment }
   };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 <div class="nhsuk-grid-row">

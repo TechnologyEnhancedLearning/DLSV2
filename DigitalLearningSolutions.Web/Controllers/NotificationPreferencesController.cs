@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.Extensions.Logging;
 
     [ValidateAllowedApplicationType]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {
         private readonly ILogger<NotificationPreferencesController> logger;

@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -26,6 +27,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Register))]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {

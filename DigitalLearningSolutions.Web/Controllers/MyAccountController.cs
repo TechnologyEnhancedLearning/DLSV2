@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -18,6 +19,7 @@
     [Route("/{application}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedApplicationType]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
     {
