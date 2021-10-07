@@ -1,16 +1,21 @@
 namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IEvaluationSummaryService
     {
         IEnumerable<EvaluationResponseBreakdown> GetEvaluationSummary(int centreId, ActivityFilterData filterData);
+        byte[] GetEvaluationSummaryFileForCentre(int centreId, ActivityFilterData filterData);
     }
 
     public class EvaluationSummaryService : IEvaluationSummaryService
     {
+        private const string SheetName = "Evaluation Statistics";
         private readonly IEvaluationSummaryDataService evaluationSummaryDataService;
 
         public EvaluationSummaryService(IEvaluationSummaryDataService evaluationSummaryDataService)
@@ -32,6 +37,41 @@ namespace DigitalLearningSolutions.Data.Services
                 filterData.CustomisationId
             );
             return MapDataToEvaluationResponseBreakdowns(evaluationSummaryData);
+        }
+
+        public byte[] GetEvaluationSummaryFileForCentre(int centreId, ActivityFilterData filterData)
+        {
+            using var workbook = new XLWorkbook();
+
+            var evaluationSummaries = GetEvaluationSummary(centreId, filterData).ToList();
+
+            var sheet = workbook.Worksheets.Add(SheetName);
+
+            sheet.Cell(1, 1).Value = "Total responses";
+            sheet.Cell(1, 1).Style.Font.Bold = true;
+            sheet.Cell(1, 2).Value = evaluationSummaries.First().TotalResponses;
+
+            AddQuestionTableToSheet(sheet, 3, evaluationSummaries[0]);
+            AddQuestionTableToSheet(sheet, 8, evaluationSummaries[1]);
+            AddQuestionTableToSheet(sheet, 13, evaluationSummaries[2]);
+            AddQuestionTableToSheet(sheet, 18, evaluationSummaries[3]);
+            AddQuestionTableToSheet(sheet, 27, evaluationSummaries[4]);
+            AddQuestionTableToSheet(sheet, 32, evaluationSummaries[5]);
+            AddQuestionTableToSheet(sheet, 38, evaluationSummaries[6]);
+
+            sheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        private static void AddQuestionTableToSheet(IXLWorksheet sheet, int questionRow, EvaluationResponseBreakdown evaluationSummary)
+        {
+            sheet.Cell(questionRow, 1).Value = evaluationSummary.Question;
+            sheet.Cell(questionRow, 1).Style.Font.Bold = true;
+            var range = sheet.Cell(questionRow + 1, 1).InsertData(evaluationSummary.Responses);
+            range.Column(3).Style.NumberFormat.Format = "0.0%";
         }
 
         private static IEnumerable<EvaluationResponseBreakdown> MapDataToEvaluationResponseBreakdowns(

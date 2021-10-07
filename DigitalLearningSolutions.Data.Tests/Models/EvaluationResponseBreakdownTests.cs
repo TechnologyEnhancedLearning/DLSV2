@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
 
             // Then
             model.Question.Should().Be(question);
-            model.ResponseCounts.Should().BeEquivalentTo(responseCounts);
+            model.Responses.Should().BeEquivalentTo(responseCounts);
             model.TotalResponses.Should().Be(50);
         }
 
@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
 
             // Then
             model.Question.Should().Be(question);
-            model.ResponseCounts.Should().BeNull();
+            model.Responses.Should().BeNull();
             model.TotalResponses.Should().Be(0);
         }
     }
