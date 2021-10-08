@@ -9,7 +9,7 @@
   var headerExtension = (string)ViewData["Application"];
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
   var selectedTab = (Tab)ViewData["SelectedTab"];
-  var applicationType = (ApplicationType)ViewData["ApplicationType"] ?? null;
+  var applicationType = (ApplicationType)ViewData["ApplicationType"];
   if (applicationType != null) {
     ViewData["Application"] = applicationType.HeaderExtension;
     ViewData["HeaderPath"] = applicationType.HeaderPath;
