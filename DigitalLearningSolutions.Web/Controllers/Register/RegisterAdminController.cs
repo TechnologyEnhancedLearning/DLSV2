@@ -4,7 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -17,7 +16,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Register))]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), null)]
     public class RegisterAdminController : Controller
     {
         private const string CookieName = "AdminRegistrationData";

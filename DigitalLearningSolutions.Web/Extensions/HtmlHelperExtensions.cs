@@ -35,9 +35,6 @@
                 return "";
             }
 
-            var c = currentTab;
-            var s = selectedTab;
-
             return selectedTab.Equals(currentTab)
                 ? selectedCssClass
                 : string.Empty;

@@ -8,52 +8,45 @@
     {
         public static readonly Tab Welcome = new Tab(
             0,
-            nameof(Welcome),
-            "Welcome"
+            nameof(Welcome)
         );
 
         public static readonly Tab FindYourCentre = new Tab(
             1,
-            nameof(FindYourCentre),
-            "Find your centre"
+            nameof(FindYourCentre)
         );
 
         public static readonly Tab Pricing = new Tab(
             2,
-            nameof(Pricing),
-            "Pricing"
+            nameof(Pricing)
         );
 
         public static readonly Tab MyAccount = new Tab(
             3,
-            nameof(MyAccount),
-            "My account"
+            nameof(MyAccount)
         );
 
         public static readonly Tab LogIn = new Tab(
             4,
-            nameof(LogIn),
-            "Log in"
+            nameof(LogIn)
         );
 
         public static readonly Tab Register = new Tab(
             5,
-            nameof(Register),
-            "Register"
+            nameof(Register)
         );
 
         public static readonly Tab SwitchApplication = new Tab(
             6,
-            nameof(SwitchApplication),
-            "Switch application"
+            nameof(SwitchApplication)
         );
 
-        public readonly string DisplayText;
+        public static readonly Tab Frameworks = new Tab(
+            6,
+            nameof(Frameworks)
+        );
 
-        private Tab(int id, string name, string displayText) : base(id, name)
-        {
-            DisplayText = displayText;
-        }
+        private Tab(int id, string name) : base(id, name) { }
 
         public static implicit operator Tab(string value)
         {

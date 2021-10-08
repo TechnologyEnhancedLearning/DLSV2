@@ -9,11 +9,11 @@
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class SetApplicationTypeAndSelectedTab : Attribute, IActionFilter
     {
-        private readonly ApplicationType applicationTypeName;
+        private readonly string? applicationTypeName;
 
-        private readonly Tab? tabName;
+        private readonly string? tabName;
 
-        public SetApplicationTypeAndSelectedTab(string applicationTypeName, string tabName)
+        public SetApplicationTypeAndSelectedTab(string? applicationTypeName, string? tabName)
         {
             this.applicationTypeName = applicationTypeName;
             this.tabName = tabName;
@@ -23,20 +23,23 @@
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!(context.Controller is Controller controller) || tabName == null)
+            if (!(context.Controller is Controller controller))
             {
                 return;
             }
 
-            controller.ViewData["SelectedTab"] = tabName;
+            if (tabName != null)
+            {
+                controller.ViewData["SelectedTab"] = (Tab)tabName;
+            }
 
-            if (tabName.Equals(Tab.MyAccount))
+            if (applicationTypeName == null)
             {
                 controller.ViewData["ApplicationType"] = context.ActionArguments["application"];
             }
             else
             {
-                controller.ViewData["ApplicationType"] = applicationTypeName;
+                controller.ViewData["ApplicationType"] = (ApplicationType)applicationTypeName;
             }
         }
     }
