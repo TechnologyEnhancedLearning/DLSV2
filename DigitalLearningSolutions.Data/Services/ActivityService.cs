@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IActivityService
@@ -101,10 +102,16 @@
             var courseCategories = courseCategoriesDataService
                 .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
-            var courses = courseDataService
-                .GetCentrallyManagedAndCentreCourses(centreId, courseCategoryId)
-                .OrderBy(c => c.CourseName)
-                .Select(c => (c.CustomisationId, c.CourseName));
+
+            var availableCourses = courseDataService
+                .GetCoursesAvailableToCentreByCategory(centreId, courseCategoryId)
+                .Select(GetCourseFilterOption);
+            var historicalCourses = courseDataService
+                .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId)
+                .Select(GetCourseFilterOption);
+
+            var courses = availableCourses.Union(historicalCourses)
+                .OrderBy(c => c.Name);
 
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
@@ -216,6 +223,11 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        private static (int Id, string Name) GetCourseFilterOption(Course course)
+        {
+            return (course.CustomisationId, course.Active ? course.CourseName : "Inactive - " + course.CourseName);
         }
     }
 }

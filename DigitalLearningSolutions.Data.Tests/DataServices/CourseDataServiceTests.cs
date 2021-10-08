@@ -366,6 +366,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             result.Should().BeNull();
         }
 
+        // TODO AIR-541 specific tests for four cases: centre ID matches, active all centre course, inactive all centre course, no centre app course
         [Test]
         public void GetCentrallyManagedAndCentreCourses_returns_expected_values()
         {
@@ -374,7 +375,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             int? categoryId = null;
 
             // When
-            var result = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
+            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new Course
