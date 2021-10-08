@@ -5,10 +5,10 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
 
-    [RedirectDelegateOnlyToLearningPortal]
     [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Pricing))]
     public class PricingController : Controller
     {
+        [RedirectDelegateOnlyToLearningPortal]
         public IActionResult Index()
         {
             return View();
