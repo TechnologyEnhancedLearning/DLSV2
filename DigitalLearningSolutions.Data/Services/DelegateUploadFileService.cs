@@ -187,8 +187,8 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var statusOrCandidateNumber = registrationDataService.RegisterDelegateByCentre(model);
-            switch (statusOrCandidateNumber)
+            var errorCodeOrCandidateNumber = registrationDataService.RegisterDelegateByCentre(model);
+            switch (errorCodeOrCandidateNumber)
             {
                 case "-1":
                     delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
@@ -197,12 +197,12 @@ namespace DigitalLearningSolutions.Data.Services
                 case "-3":
                 case "-4":
                     throw new ArgumentOutOfRangeException(
-                        nameof(statusOrCandidateNumber),
-                        statusOrCandidateNumber,
+                        nameof(errorCodeOrCandidateNumber),
+                        errorCodeOrCandidateNumber,
                         "Unknown return value when creating delegate record."
                     );
                 default:
-                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(statusOrCandidateNumber, centreId)!;
+                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
