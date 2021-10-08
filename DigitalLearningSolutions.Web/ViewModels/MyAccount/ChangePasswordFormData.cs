@@ -7,7 +7,7 @@
     {
         public ChangePasswordFormData() {}
 
-        public ChangePasswordFormData(ChangePasswordFormData formData)
+        protected ChangePasswordFormData(ChangePasswordFormData formData)
         {
             CurrentPassword = formData.CurrentPassword;
             Password = formData.Password;

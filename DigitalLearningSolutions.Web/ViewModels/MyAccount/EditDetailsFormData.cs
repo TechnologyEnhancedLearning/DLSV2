@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = delegateUser?.Answer6;
         }
 
-        public EditDetailsFormData(EditDetailsFormData formData)
+        protected EditDetailsFormData(EditDetailsFormData formData)
         {
             FirstName = formData.FirstName;
             LastName = formData.LastName;

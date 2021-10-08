@@ -16,12 +16,6 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="ViewComponents\FileInputWithConfigurableModelViewComponent.cs" />
-      <Compile Remove="ViewComponents\SelectListWithConfigurableModelViewComponent.cs" />
-      <Compile Remove="ViewComponents\TextInputWithConfigurableModelViewComponent.cs" />
-    </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="wwwroot\README.txt" />
   </ItemGroup>
 
