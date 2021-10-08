@@ -41,11 +41,6 @@
             nameof(SwitchApplication)
         );
 
-        public static readonly Tab Frameworks = new Tab(
-            6,
-            nameof(Frameworks)
-        );
-
         private Tab(int id, string name) : base(id, name) { }
 
         public static implicit operator Tab(string value)

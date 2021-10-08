@@ -6,10 +6,10 @@
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
 
+    [RedirectDelegateOnlyToLearningPortal]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.FindYourCentre))]
     public class FindYourCentreController : Controller
     {
-        [RedirectDelegateOnlyToLearningPortal]
-        [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.FindYourCentre))]
         public IActionResult Index(string? centreId)
         {
             var model = centreId == null ? new FindYourCentreViewModel() : new FindYourCentreViewModel(centreId);

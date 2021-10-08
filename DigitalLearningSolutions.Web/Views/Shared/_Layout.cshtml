@@ -2,8 +2,6 @@
 @using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewComponents
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
@@ -11,7 +9,7 @@
   var headerExtension = (string)ViewData["Application"];
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
   var selectedTab = (Tab)ViewData["SelectedTab"];
-  var applicationType = (ApplicationType)ViewData["ApplicationType"] == "" ? null : (ApplicationType)ViewData["ApplicationType"];
+  var applicationType = (ApplicationType)ViewData["ApplicationType"] ?? null;
   if (applicationType != null) {
     ViewData["Application"] = applicationType.HeaderExtension;
     ViewData["HeaderPath"] = applicationType.HeaderPath;

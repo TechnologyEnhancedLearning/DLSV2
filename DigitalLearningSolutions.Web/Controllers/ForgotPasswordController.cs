@@ -9,7 +9,7 @@
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.MyAccount))]
+    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.LogIn))]
     public class ForgotPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
