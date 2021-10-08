@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
 
     public interface ISupervisorDelegateService
@@ -20,15 +19,12 @@
     public class SupervisorDelegateService : ISupervisorDelegateService
     {
         private readonly ISupervisorDelegateDataService supervisorDelegateDataService;
-        private readonly IUserDataService userDataService;
 
         public SupervisorDelegateService(
-            ISupervisorDelegateDataService supervisorDelegateDataService,
-            IUserDataService userDataService
+            ISupervisorDelegateDataService supervisorDelegateDataService
         )
         {
             this.supervisorDelegateDataService = supervisorDelegateDataService;
-            this.userDataService = userDataService;
         }
 
         public SupervisorDelegate? GetSupervisorDelegateRecordByInviteHash(Guid inviteHash)
@@ -36,7 +32,10 @@
             return supervisorDelegateDataService.GetSupervisorDelegateRecordByInviteHash(inviteHash);
         }
 
-        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(int centreId, string email)
+        public IEnumerable<SupervisorDelegate> GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+            int centreId,
+            string email
+        )
         {
             return supervisorDelegateDataService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(centreId, email);
         }

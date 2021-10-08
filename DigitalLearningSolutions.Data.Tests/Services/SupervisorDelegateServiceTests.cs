@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -13,14 +12,12 @@
     {
         private ISupervisorDelegateDataService supervisorDelegateDataService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
-        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             supervisorDelegateDataService = A.Fake<ISupervisorDelegateDataService>();
-            userDataService = A.Fake<IUserDataService>();
-            supervisorDelegateService = new SupervisorDelegateService(supervisorDelegateDataService, userDataService);
+            supervisorDelegateService = new SupervisorDelegateService(supervisorDelegateDataService);
         }
 
         [Test]
