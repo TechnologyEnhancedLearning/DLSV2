@@ -14,7 +14,7 @@
             var data = RegistrationDataHelper.SampleDelegateRegistrationData();
 
             // When
-            var result = RegistrationMappingHelper.MapToDelegateRegistrationModel(data);
+            var result = RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data);
 
             // Then
             result.FirstName.Should().Be(data.FirstName);

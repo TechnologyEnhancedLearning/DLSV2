@@ -7,18 +7,10 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
-    using Microsoft.AspNetCore.Mvc.Rendering;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class EditRolesViewModel
+    public class EditRolesViewModel : AdminRolesViewModel
     {
-        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
-
-        public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
-        {
-            AdminRoleInputs.CentreAdminCheckbox, AdminRoleInputs.SupervisorCheckbox
-        };
-
         public EditRolesViewModel() { }
 
         public EditRolesViewModel(
@@ -26,11 +18,8 @@
             int centreId,
             IEnumerable<Category> categories,
             CentreContractAdminUsage numberOfAdmins
-        )
+        ) : base(user, centreId)
         {
-            CentreId = centreId;
-            FullName = $"{user.FirstName} {user.LastName}";
-
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
             IsTrainer = user.IsTrainer;
@@ -56,31 +45,6 @@
             );
 
             SetUpCheckboxesAndRadioButtons(user, numberOfAdmins);
-        }
-
-        public int CentreId { get; set; }
-        public string? FullName { get; set; }
-        public bool IsCentreAdmin { get; set; }
-        public bool IsSupervisor { get; set; }
-        public bool IsTrainer { get; set; }
-        public bool IsContentCreator { get; set; }
-        public ContentManagementRole ContentManagementRole { get; set; }
-        public int LearningCategory { get; set; }
-        public IEnumerable<SelectListItem> LearningCategories { get; set; }
-
-        public bool NotAllRolesDisplayed => Radios.Count < 3 || Checkboxes.Count < 4;
-        public bool NoContentManagerOptionsAvailable => Radios.Count == 1;
-
-        public AdminRoles GetAdminRoles()
-        {
-            return new AdminRoles(
-                IsCentreAdmin,
-                IsSupervisor,
-                IsContentCreator,
-                IsTrainer,
-                ContentManagementRole.IsContentManager,
-                ContentManagementRole.ImportOnly
-            );
         }
 
         private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
