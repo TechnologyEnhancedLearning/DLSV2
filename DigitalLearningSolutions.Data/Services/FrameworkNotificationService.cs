@@ -24,6 +24,7 @@
         void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID);
         void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount);
         void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID);
+        void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -379,6 +380,22 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
                               To review and sign-off the self-assessment, please visit {profileReviewUrl} (sign in using your existing DLS credentials).";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p><a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p><a href='{profileReviewUrl}'>Click here</a> to review and sign-off the self-assessment (sign in using your existing DLS credentials).</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var commentString = supervisorDelegate.SupervisorName + (signedOff ? " signed off your profile assessment " : " rejected your profile assessment ") + (supervisorComments != null ? "and left the following review comment: " + supervisorComments : "but did not leave a review comment.");
+            string emailSubjectLine = $"Profile assessment {(signedOff ? " signed off " : "rejected")} by {delegateSelfAssessment.SupervisorRoleTitle} - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               {supervisorDelegate.SupervisorName} has reviewed your profile assessment {delegateSelfAssessment.RoleName} in the NHS Health Education England, Digital Learning Solutions platform.
+                               {commentString}
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has reviewed your profile assessment {delegateSelfAssessment.RoleName} in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }

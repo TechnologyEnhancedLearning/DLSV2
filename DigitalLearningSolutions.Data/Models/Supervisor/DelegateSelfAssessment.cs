@@ -5,7 +5,7 @@
     {
         public int ID { get; set; }
         public int SelfAssessmentID { get; set; }
-        public string RoleName { get; set; }
+        public string? RoleName { get; set; }
         public bool SupervisorSelfAssessmentReview { get; set; }
         public bool SupervisorResultsReview { get; set; }
         public string? SupervisorRoleTitle { get; set; }
