@@ -186,6 +186,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
@@ -245,6 +246,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<VerifyAdminUserCanAccessCourse>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.Extensions.Configuration
 @model BulkAdminFieldAnswersViewModel
@@ -9,13 +10,7 @@
   ViewData["Application"] = "Tracking System";
   ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
   ViewData["HeaderPathName"] = "Tracking System";
-  var editCancelLinkData = new Dictionary<string, string> {
-    { "customisationId", Model.CustomisationId.ToString() },
-    { "promptNumber", Model.PromptNumber.ToString() }
-  };
-  var addCancelLinkData = new Dictionary<string, string> {
-    { "customisationId", Model.CustomisationId.ToString() }
-  };
+  var cancelLinkData = Html.GetRouteValues();
 }
 
 @section NavMenuItems {
@@ -30,10 +25,7 @@
 
     <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="@(Model.IsAddPromptJourney ? "AddAdminFieldAnswersBulk" : "EditAdminFieldBulkPost")">
-
-      <input type="hidden" asp-for="IsAddPromptJourney" />
-      <input type="hidden" asp-for="PromptNumber" />
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminFieldAnswersBulk">
 
       <vc:text-area asp-for="@nameof(Model.OptionsString)"
                     label="Enter each response option on a separate line (max 1000 characters in total). The order of responses will be the order they appear on the dropdown for users."
@@ -43,15 +35,11 @@
                     hint-text=""
                     css-class=""
                     character-count="1000" />
-      <input type="hidden" asp-for="CustomisationId" />
+
       <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 
-    @if (Model.IsAddPromptJourney) {
-      <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@addCancelLinkData" />
-    } else {
-      <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@editCancelLinkData" />
-    }
+    <vc:cancel-link asp-controller="AdminFields" asp-action="EditAdminField" asp-all-route-data="@cancelLinkData" />
 
   </div>
 </div>

@@ -65,7 +65,11 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button expander-card__button" role="button">
+      <a class="nhsuk-button expander-card__button"
+         role="button"
+         asp-controller="CourseDelegates"
+         asp-action="DelegateProgress"
+         asp-route-progressId="@Model.ProgressId">
         View progress
       </a>
       @if (Model.Locked) {

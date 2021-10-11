@@ -1,20 +1,24 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Support;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
     public class SupportController : Controller
     {
+        private readonly IConfiguration configuration;
         private readonly IFeatureManager featureManager;
 
-        public SupportController(IFeatureManager featureManager)
+        public SupportController(IFeatureManager featureManager, IConfiguration configuration)
         {
             this.featureManager = featureManager;
+            this.configuration = configuration;
         }
 
         [Route("/{application}/Support")]
@@ -36,7 +40,11 @@
 
             if (trackingSystemSupportEnabled || frameworksSupportEnabled)
             {
-                var model = new SupportViewModel(application, SupportPage.Support);
+                var model = new SupportViewModel(
+                    application,
+                    SupportPage.Support,
+                    configuration.GetCurrentSystemBaseUrl()
+                );
                 return View("Support", model);
             }
 

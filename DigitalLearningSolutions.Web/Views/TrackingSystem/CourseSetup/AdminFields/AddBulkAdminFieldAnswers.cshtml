@@ -1,0 +1,45 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.Extensions.Configuration
+@model AddBulkAdminFieldAnswersViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Configure answers in bulk" : "Configure answers in bulk";
+  ViewData["Application"] = "Tracking System";
+  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
+  ViewData["HeaderPathName"] = "Tracking System";
+  var cancelLinkData = Html.GetRouteValues();
+}
+
+@section NavMenuItems {
+  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(Model.OptionsString) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Configure answers in bulk</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="AddAdminFieldAnswersBulk">
+
+      <vc:text-area asp-for="@nameof(Model.OptionsString)"
+                    label="Enter each response option on a separate line (max 1000 characters in total). The order of responses will be the order they appear on the dropdown for users."
+                    populate-with-current-value="true"
+                    rows="5"
+                    spell-check="false"
+                    hint-text=""
+                    css-class=""
+                    character-count="1000" />
+
+      <button class="nhsuk-button" type="submit">Submit</button>
+    </form>
+
+    <vc:cancel-link asp-controller="AdminFields" asp-action="AddAdminField" asp-all-route-data="@cancelLinkData" />
+
+  </div>
+</div>

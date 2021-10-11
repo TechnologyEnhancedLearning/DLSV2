@@ -8,12 +8,11 @@
     public class ManageOptionalCompetenciesViewModel
     {
         public CurrentSelfAssessment? SelfAssessment { get; set; }
-        public string? Vocabulary { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
         public List<int>? IncludedSelfAssessmentStructureIds { get; set; }
         public string VocabPlural()
         {
-            return FrameworkVocabularyHelper.VocabularyPlural(Vocabulary);
+            return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
         }
     }
 }
