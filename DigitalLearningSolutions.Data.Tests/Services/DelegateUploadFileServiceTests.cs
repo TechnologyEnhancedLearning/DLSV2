@@ -642,7 +642,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(failureStatusCode);
 
             try
@@ -659,7 +659,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             finally
             {
                 // Then
-                A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+                A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                     .MustHaveHappened();
                 A.CallTo(
                     () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
@@ -691,7 +691,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(candidateNumber);
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(candidateNumber, CentreId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(newDelegateRecordId));
@@ -708,7 +708,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(A<DelegateRegistrationModel>._))
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .MustHaveHappened();
             A.CallTo(
                 () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
