@@ -4,6 +4,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -60,8 +62,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             {
                 return NotFound();
             }
-            
-            var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) && Guid.TryParse(inviteId, out var inviteHash)
+
+            var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) &&
+                                           Guid.TryParse(inviteId, out var inviteHash)
                 ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
                 : null;
 
@@ -231,29 +234,39 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem);
 
             var userIp = Request.GetUserIpAddressFromRequest();
-            var (candidateNumber, approved) =
-                registrationService.RegisterDelegate(
-                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
-                    userIp,
-                    refactoredTrackingSystemEnabled,
-                    data.SupervisorDelegateId
-                );
 
-            if (candidateNumber == "-1")
+            try
             {
+                var (candidateNumber, approved) =
+                    registrationService.RegisterDelegate(
+                        RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
+                        userIp,
+                        refactoredTrackingSystemEnabled,
+                        data.SupervisorDelegateId
+                    );
+
+                TempData.Clear();
+                TempData.Add("candidateNumber", candidateNumber);
+                TempData.Add("approved", approved);
+                TempData.Add("centreId", centreId);
+                return RedirectToAction("Confirmation");
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
                 return new StatusCodeResult(500);
             }
-
-            if (candidateNumber == "-4")
-            {
-                return RedirectToAction("Index");
-            }
-
-            TempData.Clear();
-            TempData.Add("candidateNumber", candidateNumber);
-            TempData.Add("approved", approved);
-            TempData.Add("centreId", centreId);
-            return RedirectToAction("Confirmation");
         }
 
         [HttpGet]

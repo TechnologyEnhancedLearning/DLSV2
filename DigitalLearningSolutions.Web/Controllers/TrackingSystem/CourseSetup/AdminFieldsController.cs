@@ -44,7 +44,6 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-
             var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
                 customisationId,
                 centreId
@@ -69,7 +68,6 @@
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
             var centreId = User.GetCentreId();
-
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId,
                     centreId
@@ -326,7 +324,6 @@
             }
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
 
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 customisationId,

@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
     using System.Data;
     using System.Transactions;
     using Dapper;
@@ -9,8 +8,7 @@
     public interface IRegistrationDataService
     {
         string RegisterDelegate(DelegateRegistrationModel delegateRegistrationModel);
-        string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel);
-        int RegisterCentreManagerAdmin(RegistrationModel registrationModel);
+        int RegisterAdmin(AdminRegistrationModel registrationModel);
     }
 
     public class RegistrationDataService : IRegistrationDataService
@@ -31,41 +29,8 @@
                 delegateRegistrationModel.Email,
                 CentreID = delegateRegistrationModel.Centre,
                 JobGroupID = delegateRegistrationModel.JobGroup,
-                Active = 1,
-                Approved = delegateRegistrationModel.Approved ? 1 : 0,
-                delegateRegistrationModel.Answer1,
-                delegateRegistrationModel.Answer2,
-                delegateRegistrationModel.Answer3,
-                delegateRegistrationModel.Answer4,
-                delegateRegistrationModel.Answer5,
-                delegateRegistrationModel.Answer6,
-                AliasID = "",
-                ExternalReg = 0,
-                SelfReg = 1,
-                NotifyDate = DateTime.UtcNow,
-                Bulk = 0
-            };
-
-            var candidateNumber = connection.QueryFirstOrDefault<string>(
-                "uspSaveNewCandidate_V10",
-                values,
-                commandType: CommandType.StoredProcedure
-            );
-
-            return candidateNumber;
-        }
-
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel)
-        {
-            var values = new
-            {
-                delegateRegistrationModel.FirstName,
-                delegateRegistrationModel.LastName,
-                delegateRegistrationModel.Email,
-                CentreID = delegateRegistrationModel.Centre,
-                JobGroupID = delegateRegistrationModel.JobGroup,
                 delegateRegistrationModel.Active,
-                Approved = 1,
+                delegateRegistrationModel.Approved,
                 delegateRegistrationModel.Answer1,
                 delegateRegistrationModel.Answer2,
                 delegateRegistrationModel.Answer3,
@@ -73,22 +38,24 @@
                 delegateRegistrationModel.Answer5,
                 delegateRegistrationModel.Answer6,
                 AliasID = delegateRegistrationModel.AliasId,
-                ExternalReg = 0,
-                SelfReg = 0,
+                ExternalReg = delegateRegistrationModel.IsExternalRegistered,
+                SelfReg = delegateRegistrationModel.IsSelfRegistered,
                 delegateRegistrationModel.NotifyDate,
+                // The parameter @Bulk causes the stored procedure to send old welcome emails,
+                // which is something we do not want in the refactored system so we always set this to 0
                 Bulk = 0
             };
 
-            var candidateNumber = connection.QueryFirstOrDefault<string>(
+            var candidateNumberOrErrorCode = connection.QueryFirstOrDefault<string>(
                 "uspSaveNewCandidate_V10",
                 values,
                 commandType: CommandType.StoredProcedure
             );
 
-            return candidateNumber;
+            return candidateNumberOrErrorCode;
         }
 
-        public int RegisterCentreManagerAdmin(RegistrationModel registrationModel)
+        public int RegisterAdmin(AdminRegistrationModel registrationModel)
         {
             var values = new
             {
@@ -97,27 +64,68 @@
                 email = registrationModel.Email,
                 password = registrationModel.PasswordHash,
                 centreID = registrationModel.Centre,
-                centreAdmin = 1,
-                isCentreManager = 1,
-                approved = 1,
-                active = 1
+                categoryId = registrationModel.CategoryId,
+                centreAdmin = registrationModel.IsCentreAdmin,
+                isCentreManager = registrationModel.IsCentreManager,
+                approved = registrationModel.Approved,
+                active = registrationModel.Active,
+                contentCreator = registrationModel.IsContentCreator,
+                contentManager = registrationModel.IsContentManager,
+                importOnly = registrationModel.ImportOnly,
+                trainer = registrationModel.IsTrainer,
+                supervisor = registrationModel.IsSupervisor
             };
 
             using var transaction = new TransactionScope();
 
             var adminUserId = connection.QuerySingle<int>(
-                @"INSERT INTO AdminUsers (Forename, Surname, Email, Password, CentreId, CentreAdmin, IsCentreManager, Approved, Active)
-                        OUTPUT Inserted.AdminID
-                      VALUES (@forename, @surname, @email, @password, @centreId, @centreAdmin, @isCentreManager, @approved, @active)",
+                @"INSERT INTO AdminUsers
+                    (
+                        Forename,
+                        Surname,
+                        Email,
+                        Password,
+                        CentreId,
+                        CategoryId,
+                        CentreAdmin,
+                        IsCentreManager,
+                        Approved,
+                        Active,
+                        ContentCreator,
+                        ContentManager,
+                        ImportOnly,
+                        Trainer,
+                        Supervisor
+                    )
+                    OUTPUT Inserted.AdminID
+                    VALUES
+                    (
+                        @forename,
+                        @surname,
+                        @email,
+                        @password,
+                        @centreId,
+                        @categoryId,
+                        @centreAdmin,
+                        @isCentreManager,
+                        @approved,
+                        @active,
+                        @contentCreator,
+                        @contentManager,
+                        @importOnly,
+                        @trainer,
+                        @supervisor
+                    )",
                 values
             );
+
             connection.Execute(
                 @"INSERT INTO NotificationUsers (NotificationId, AdminUserId)
                 SELECT N.NotificationId, @adminUserId
                 FROM Notifications N INNER JOIN NotificationRoles NR 
                 ON N.NotificationID = NR.NotificationID 
-                WHERE RoleID IN (1,2) AND AutoOptIn = 1",
-                new { adminUserId }
+                WHERE RoleID IN @roles AND AutoOptIn = 1",
+                new { adminUserId, roles = registrationModel.GetNotificationRoles() }
             );
 
             transaction.Complete();
