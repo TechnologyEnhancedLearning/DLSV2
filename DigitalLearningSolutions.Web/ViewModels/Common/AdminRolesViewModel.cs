@@ -6,18 +6,22 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class AdminRolesViewModel : AdminRolesFormData
+    public abstract class AdminRolesViewModel : AdminRolesFormData
     {
-        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
+        private const int MaxNumberOfCmsRoleRadios = 3;
+        private const int MinNumberOfCmsRoleRadios = 1;
+        private const int MaxNumberOfRoleCheckboxes = 4;
 
-        public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
+        public readonly List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
             AdminRoleInputs.CentreAdminCheckbox, AdminRoleInputs.SupervisorCheckbox
         };
 
-        public AdminRolesViewModel(){}
+        public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();
 
-        public AdminRolesViewModel(User user, int centreId) : base(user)
+        protected AdminRolesViewModel() { }
+
+        protected AdminRolesViewModel(User user, int centreId) : base(user)
         {
             CentreId = centreId;
         }
@@ -25,7 +29,9 @@
         public int CentreId { get; set; }
         public IEnumerable<SelectListItem> LearningCategories { get; set; }
 
-        public bool NotAllRolesDisplayed => Radios.Count < 3 || Checkboxes.Count < 4;
-        public bool NoContentManagerOptionsAvailable => Radios.Count == 1;
+        public bool NotAllRolesDisplayed =>
+            Radios.Count < MaxNumberOfCmsRoleRadios || Checkboxes.Count < MaxNumberOfRoleCheckboxes;
+
+        public bool NoContentManagerOptionsAvailable => Radios.Count == MinNumberOfCmsRoleRadios;
     }
 }

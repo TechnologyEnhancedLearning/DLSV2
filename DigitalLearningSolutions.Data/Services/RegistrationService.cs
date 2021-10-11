@@ -136,6 +136,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
+            using var transaction = new TransactionScope();
+
             var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             if (delegateRegistrationModel.PasswordHash != null)
@@ -172,6 +174,8 @@ namespace DigitalLearningSolutions.Data.Services
                     delegateUser.Id
                 );
             }
+
+            transaction.Complete();
 
             return candidateNumber;
         }
@@ -271,16 +275,18 @@ namespace DigitalLearningSolutions.Data.Services
                 true
             );
 
-            var candidateNumber =
-                registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
+            if (failureIfAny != null)
             {
-                throw new Exception(
-                    $"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}"
+                logger.LogError(
+                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.Email}"
                 );
+
+                throw new DelegateCreationFailedException(failureIfAny);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumberOrErrorCode, delegateRegistrationModel.PasswordHash!);
         }
 
         private Email GenerateApprovalEmail(
