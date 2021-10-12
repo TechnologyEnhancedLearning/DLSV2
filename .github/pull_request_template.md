@@ -13,7 +13,7 @@ _Attach screenshots on mobile, tablet and desktop._
 
 I have:
 - [ ] Run the formatter and made sure there are no IDE errors.
-- [ ] Written tests for the changes (controller, data services, services, view models etc)
+- [ ] Written tests for the changes (accessibility tests, unit tests for controller, data services, services, view models, etc)
 - [ ] Manually tested my work with and without JavaScript. Full manual testing guidelines can be found here: https://softwiretech.atlassian.net/wiki/spaces/HEE/pages/6703648740/Testing
 - [ ] Updated/added documentation in Swiki and/or Readme. Links (if any) are below:
   - [doc_1_here](link_1_here)
