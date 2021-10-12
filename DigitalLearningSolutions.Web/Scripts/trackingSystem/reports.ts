@@ -6,8 +6,7 @@ const activityToggleRowClass = 'js-toggleable-activity-row';
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
 const request = new XMLHttpRequest();
-const viewMoreLink = <HTMLElement>document.
-  getElementsByClassName('js-toggle-row-visibility-button').item(0);
+const viewMoreLink = <HTMLElement>document.getElementsByClassName('js-toggle-row-button').item(0);
 viewMoreLink.style.display = 'block';
 
 viewLessRows();
