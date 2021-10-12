@@ -28,10 +28,6 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   return { labels, series };
 }
 
-
-
-
-
 const options = {
   axisY: {
     scaleMinSpace: 10,
@@ -78,7 +74,6 @@ request.onload = () => {
 request.open('GET', path, true);
 request.responseType = 'json';
 request.send();
-
 
 viewMoreLink.addEventListener('click', (event) => {
   event.preventDefault();
