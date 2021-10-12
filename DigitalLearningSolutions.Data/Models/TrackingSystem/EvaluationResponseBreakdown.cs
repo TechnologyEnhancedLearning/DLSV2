@@ -12,13 +12,13 @@
             var totalResponses = responses.Sum(x => x.count);
             Responses = totalResponses != 0
                 ? responses.Select(x => new EvaluationResponses(x.response, x.count, totalResponses))
-                : null;
+                : new List<EvaluationResponses>();
         }
 
         public string Question { get; set; }
 
-        public IEnumerable<EvaluationResponses>? Responses { get; set; }
+        public IEnumerable<EvaluationResponses> Responses { get; set; }
 
-        public int TotalResponses => Responses?.Sum(x => x.Count) ?? 0;
+        public int TotalResponses => Responses.Sum(x => x.Count);
     }
 }

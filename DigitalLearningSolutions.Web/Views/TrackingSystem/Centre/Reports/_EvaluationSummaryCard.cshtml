@@ -8,7 +8,7 @@
     </h3>
 
     <div class="nhsuk-card__description">
-      @if (Model.Responses != null && Model.Responses.Any()) {
+      @if (Model.Responses.Any()) {
         <dl class="nhsuk-summary-list nhsuk-u-margin-bottom-3">
           @foreach (var response in Model.Responses) {
             <div class="nhsuk-summary-list__row">

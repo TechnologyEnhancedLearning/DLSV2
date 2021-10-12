@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
         }
 
         [Test]
-        public void EvaluationResponseBreakdown_sets_ResponseCounts_to_null_when_no_responses()
+        public void EvaluationResponseBreakdown_sets_ResponseCounts_to_empty_when_no_responses()
         {
             // Given
             const string question = "Don't answer this question!";
@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
 
             // Then
             model.Question.Should().Be(question);
-            model.Responses.Should().BeNull();
+            model.Responses.Should().BeEmpty();
             model.TotalResponses.Should().Be(0);
         }
     }

@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
         }
 
         [Test]
-        public void EvaluationSummaryViewModel_sets_ResponsePercentages_to_null_when_no_responses()
+        public void EvaluationSummaryViewModel_sets_ResponsePercentages_to_empty_when_no_responses()
         {
             // Given
             const string question = "Don't answer this question!";
@@ -43,7 +43,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Re
 
             // Then
             viewModel.Question.Should().Be(question);
-            viewModel.Responses.Should().BeNull();
+            viewModel.Responses.Should().BeEmpty();
         }
     }
 }

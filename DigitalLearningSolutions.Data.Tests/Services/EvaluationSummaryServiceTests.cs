@@ -62,9 +62,9 @@
         }
 
         [Test]
-        public void GetActivityDataFileForCentre_returns_expected_excel_data()
+        public void GetEvaluationSummaryFileForCentre_returns_expected_excel_data()
         {
-            // given
+            // Given
             using var expectedWorkbook = new XLWorkbook(
                 TestContext.CurrentContext.TestDirectory + EvaluationSummaryDownloadRelativeFilePath
             );
@@ -80,7 +80,7 @@
                 ReportInterval.Months
             );
 
-            // when
+            // When
             var resultBytes = evaluationSummaryService.GetEvaluationSummaryFileForCentre(101, filterData);
 
             using var resultsStream = new MemoryStream(resultBytes);

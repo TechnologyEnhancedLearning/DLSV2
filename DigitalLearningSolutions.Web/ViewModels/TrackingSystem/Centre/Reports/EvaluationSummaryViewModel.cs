@@ -9,15 +9,12 @@
         public EvaluationSummaryViewModel(EvaluationResponseBreakdown model)
         {
             Question = model.Question;
-            if (model.Responses != null)
-            {
-                Responses = model.Responses
-                    .Select(x => new ResponseViewModel(x));
-            }
+            Responses = model.Responses
+                .Select(x => new ResponseViewModel(x));
         }
 
         public string Question { get; set; }
 
-        public IEnumerable<ResponseViewModel>? Responses { get; set; }
+        public IEnumerable<ResponseViewModel> Responses { get; set; }
     }
 }
