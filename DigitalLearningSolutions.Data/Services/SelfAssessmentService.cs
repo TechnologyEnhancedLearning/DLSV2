@@ -36,8 +36,6 @@
         IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
         IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
-        string GetSignOffSupervisorRoleForSelfAssessment(int selfAssessmentId);
-        string GetVerificationSupervisorRoleForSelfAssessment(int selfAssessmentId);
         //UPDATE
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -852,24 +850,6 @@ WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = 
                     WHERE ID = @candidateAssessmentSupervisorVerificationId",
                 new { candidateAssessmentSupervisorVerificationId }
             );
-        }
-
-        public string GetSignOffSupervisorRoleForSelfAssessment(int selfAssessmentId)
-        {
-            return connection.Query<string>(
-                @"SELECT COALESCE
-                 ((SELECT TOP (1) RoleName
-                  FROM    SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)), 'Supervisor') AS SignOffRoleName", new { selfAssessmentId }).FirstOrDefault();
-        }
-
-        public string GetVerificationSupervisorRoleForSelfAssessment(int selfAssessmentId)
-        {
-            return connection.Query<string>(
-                @"SELECT COALESCE
-                 ((SELECT TOP (1) RoleName
-                  FROM    SelfAssessmentSupervisorRoles
-                  WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1), 'Supervisor') AS SignOffRoleName", new { selfAssessmentId }).FirstOrDefault();
         }
     }
 }
