@@ -145,9 +145,8 @@
         [HttpGet]
         public IActionResult DeactivateAdmin(int adminId)
         {
-            var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
-            if (adminUser == null || adminUser.CentreId != centreId)
+            if (adminUser?.CentreId != User.GetCentreId())
             {
                 return NotFound();
             }
@@ -160,10 +159,9 @@
         [HttpPost]
         public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
         {
-            var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
 
-            if (adminUser == null || adminUser.CentreId != centreId)
+            if (adminUser?.CentreId != User.GetCentreId())
             {
                 return NotFound();
             }

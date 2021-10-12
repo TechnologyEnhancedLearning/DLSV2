@@ -204,7 +204,7 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(UserTestHelper.GetDefaultAdminUser());
+            A.CallTo(() => userDataService.GetAdminUserById(1)).Returns(UserTestHelper.GetDefaultAdminUser());
             var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
             const string expectedErrorMessage = "You must confirm before deactivating this account";
 
@@ -215,11 +215,11 @@
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
             administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo(expectedErrorMessage);
-            A.CallTo(() => userDataService.DeactivateAdmin(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.DeactivateAdmin(1)).MustNotHaveHappened();
         }
 
         [Test]
-        public void DeactivateAdminUser_deactivate_admin_user_with_confirmation()
+        public void DeactivateAdminUser_deactivates_admin_user_with_confirmation()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
@@ -231,6 +231,7 @@
 
             // Then
             A.CallTo(() => userDataService.GetAdminUserById(1)).MustHaveHappened();
+            A.CallTo(() => userDataService.DeactivateAdmin(1)).MustHaveHappened();
             result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
         }
     }
