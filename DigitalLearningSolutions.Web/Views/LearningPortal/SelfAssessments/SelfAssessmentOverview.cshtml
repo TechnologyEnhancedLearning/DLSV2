@@ -8,21 +8,21 @@
   ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Self Assessment</a></li>
-  <li class="nhsuk-breadcrumb__item">Overview</li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+  <li class="nhsuk-breadcrumb__item">@Model.VocabPlural()</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>@Model.SelfAssessment.Name - Overview</h1>
+<h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="ManageOptionalCompetencies">
-    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural()
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
+    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural().ToLower()
   </a>
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.CompetencyGroups.FirstOrDefault().First().Vocabulary.ToLower()" asp-action="StartRequestVerification">
-    Request @Model.VocabSingular() verification
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartRequestVerification">
+    Request @Model.SelfAssessment.Vocabulary.ToLower() verification
   </a>
 }
 @if (Model.CompetencyGroups.Any())
@@ -30,32 +30,32 @@
   foreach (var competencyGroup in Model.CompetencyGroups)
   {
 
-<div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
-  <details class="nhsuk-details nhsuk-expander" @((int)Model.CompetencyGroups.Count() == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("competencyGroupId") ? (ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : "") : ""))>
-    <summary class="nhsuk-details__summary">
-      <span class="competency-group-title nhsuk-details__summary-text">
-        @competencyGroup.Key
-      </span>
-    </summary>
-    <div class="nhsuk-details__text">
+    <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
+      <details class="nhsuk-details nhsuk-expander" @((int)Model.CompetencyGroups.Count() == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("competencyGroupId") ? (ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : "") : ""))>
+        <summary class="nhsuk-details__summary">
+          <span class="competency-group-title nhsuk-details__summary-text">
+            @competencyGroup.Key
+          </span>
+        </summary>
+        <div class="nhsuk-details__text">
+          @if (Model.SelfAssessment.LinearNavigation)
+          {
+            <partial name="SelfAssessments/_MeanScores"
+                     view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+          }
+
+          <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
+
+        </div>
+      </details>
       @if (Model.SelfAssessment.LinearNavigation)
       {
-        <partial name="SelfAssessments/_MeanScores"
-                 view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-      }
-
-      <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
-
+        <div class="outer-score-container nhsuk-u-padding-bottom-4">
+          <partial name="SelfAssessments/_MeanScores"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
+        </div>}
     </div>
-  </details>
-  @if (Model.SelfAssessment.LinearNavigation)
-  {
-    <div class="outer-score-container nhsuk-u-padding-bottom-4">
-      <partial name="SelfAssessments/_MeanScores"
-               view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-    </div>}
-  </div>
-   
+
   }
 }
 
@@ -67,3 +67,79 @@
     Submit self assessment
   </a>
 }
+@if (Model.SelfAssessment.IsSupervised)
+{
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+
+    @if (Model.SupervisorSignOffs.Any())
+    {
+      <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
+        <caption class="nhsuk-table__caption"><h2>Supervisor Sign-off</h2></caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              Supervisor
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Status
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+          @foreach (var supervisorSignOff in Model.SupervisorSignOffs)
+          {
+            <tr role="row" class="nhsuk-table__row">
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Supervisor </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
+              </td>
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Status </span>
+                @if (supervisorSignOff.Verified == null)
+                {
+                  <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span>
+                }
+                else if (supervisorSignOff.SignedOff && supervisorSignOff.Verified != null)
+                {
+                  <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+                }
+                else
+                {
+                  <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>
+                }
+              </td>
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Action </span>
+                @if ((supervisorSignOff.EmailSent == null || (supervisorSignOff.Verified == null) && supervisorSignOff.EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
+                {
+                  <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@supervisorSignOff.ID" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-candidateAssessmentSupervisorId="@supervisorSignOff.CandidateAssessmentSupervisorID"  asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+    else
+    {
+      <h2>Supervisor Sign-off</h2>
+    }
+    @if (Model.AllQuestionsVerified())
+    {
+      @if (!Model.SupervisorSignOffs.Any())
+      {
+        <p class="nhsuk-body-l">You have not yet requested supervisor sign-off for this self assessment.</p>
+
+      }
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2">Request supervisor sign-off</a>
+    }
+    else
+    {
+      <p class="nhsuk-body-l">All @Model.VocabPlural().ToLower() must be self-assessed and verified by a supervisor, before requesting supervisor sign off of this activity.</p>
+    }
+
+  </div>
+}
+

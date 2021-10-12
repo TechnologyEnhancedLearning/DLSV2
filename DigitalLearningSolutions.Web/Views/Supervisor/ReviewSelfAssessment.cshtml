@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewSelfAssessmentViewModel;
 @{
-  ViewData["Title"] = "Review Self Assessment";
+  ViewData["Title"] = "Review Profile Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -44,7 +44,7 @@
   <div class="nhsuk-grid-column-one-third">
     @if (Model.DelegateSelfAssessment.VerificationRequested > 0)
     {
-      <a role="button" asp-action="SubmitProfileAssessmentReview" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Review profile assessment</a>
+      <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off profile assessment</a>
     }
     @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
     {

@@ -49,9 +49,7 @@
             if (!user.HasLearningPortalPermissions() && ApplicationType.LearningPortal.Equals(application) ||
                 !user.HasFrameworksAdminPermissions() && ApplicationType.Frameworks.Equals(application) ||
                 !user.HasSupervisorAdminPermissions() && ApplicationType.Supervisor.Equals(application) ||
-                !user.HasCentreAdminPermissions() && (ApplicationType.TrackingSystem.Equals(application) ||
-                                                      ApplicationType.Main.Equals(application) ||
-                                                      application is null))
+                !user.HasCentreAdminPermissions() && ApplicationType.TrackingSystem.Equals(application))
             {
                 RedirectToHome(context);
             }

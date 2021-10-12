@@ -8,7 +8,7 @@
         public DelegateCourseDetails(
             DelegateCourseInfo delegateCourseInfo,
             List<CustomPromptWithAnswer> customPrompts,
-            (int totalAttempts, int attemptsPassed) attemptStats
+            AttemptStats attemptStats
         )
         {
             DelegateCourseInfo = delegateCourseInfo;
@@ -18,6 +18,6 @@
 
         public DelegateCourseInfo DelegateCourseInfo { get; set; }
         public List<CustomPromptWithAnswer> CustomPrompts { get; set; }
-        public (int totalAttempts, int attemptsPassed) AttemptStats { get; set; }
+        public AttemptStats AttemptStats { get; set; }
     }
 }

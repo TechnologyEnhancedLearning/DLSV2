@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Web.Helpers;
     using System.Collections.Generic;
 
     public class SelfAssessmentDescriptionViewModel
@@ -13,6 +14,8 @@
         public readonly bool UnprocessedUpdates;
         public readonly bool LinearNavigation;
         public readonly bool IsSupervised;
+        public readonly string? Vocabulary;
+        public readonly string VocabPlural;
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }
         public SelfAssessmentDescriptionViewModel(CurrentSelfAssessment selfAssessment, List<SelfAssessmentSupervisor> supervisors)
         {
@@ -25,6 +28,8 @@
             LinearNavigation = selfAssessment.LinearNavigation;
             IsSupervised = selfAssessment.IsSupervised;
             Supervisors = supervisors;
+            Vocabulary = selfAssessment.Vocabulary;
+            VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary);
         }
     }
 }

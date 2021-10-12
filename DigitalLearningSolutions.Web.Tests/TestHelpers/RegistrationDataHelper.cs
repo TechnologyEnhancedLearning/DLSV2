@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
+    using System;
     using DigitalLearningSolutions.Web.Models;
 
     public static class RegistrationDataHelper
@@ -42,6 +43,84 @@
                 Centre = CentreId,
                 JobGroup = JobGroupId,
                 PasswordHash = PasswordHash
+            };
+        }
+
+        public static DelegateRegistrationData GetDefaultDelegateRegistrationData(
+            string? firstName = "Test",
+            string? lastName = "Name",
+            string? email = "test@email.com",
+            int? centre = 2,
+            int? jobGroup = 1,
+            string? passwordHash = "hash",
+            bool isCentreSpecificRegistration = false,
+            int? supervisorDelegateId = 1,
+            string? answer1 = "answer1",
+            string? answer2 = "answer2",
+            string? answer3 = "answer3",
+            string? answer4 = "answer4",
+            string? answer5 = "answer5",
+            string? answer6 = "answer6"
+        )
+        {
+            return new DelegateRegistrationData
+            {
+                Id = Guid.NewGuid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Centre = centre,
+                JobGroup = jobGroup,
+                PasswordHash = passwordHash,
+                IsCentreSpecificRegistration = isCentreSpecificRegistration,
+                SupervisorDelegateId = supervisorDelegateId,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6
+            };
+        }
+
+        public static DelegateRegistrationByCentreData GetDefaultDelegateRegistrationByCentreData(
+            string? firstName = "Test",
+            string? lastName = "Name",
+            string? email = "test@email.com",
+            int? centre = 2,
+            int? jobGroup = 1,
+            string? passwordHash = "hash",
+            bool isCentreSpecificRegistration = false,
+            int? supervisorDelegateId = 1,
+            string? answer1 = "answer1",
+            string? answer2 = "answer2",
+            string? answer3 = "answer3",
+            string? answer4 = "answer4",
+            string? answer5 = "answer5",
+            string? answer6 = "answer6",
+            string? aliasId = "alias",
+            DateTime? welcomeEmailDate = null
+        )
+        {
+            return new DelegateRegistrationByCentreData
+            {
+                Id = Guid.NewGuid(),
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Centre = centre,
+                JobGroup = jobGroup,
+                PasswordHash = passwordHash,
+                IsCentreSpecificRegistration = isCentreSpecificRegistration,
+                SupervisorDelegateId = supervisorDelegateId,
+                Answer1 = answer1,
+                Answer2 = answer2,
+                Answer3 = answer3,
+                Answer4 = answer4,
+                Answer5 = answer5,
+                Answer6 = answer6,
+                Alias = aliasId,
+                WelcomeEmailDate = welcomeEmailDate
             };
         }
     }

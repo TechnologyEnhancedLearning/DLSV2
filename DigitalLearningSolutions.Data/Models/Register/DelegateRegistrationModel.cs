@@ -18,10 +18,12 @@
             string? answer4,
             string? answer5,
             string? answer6,
+            bool isSelfRegistered,
+            bool active,
+            bool approved = false,
             string? aliasId = null,
-            DateTime? notifyDate = null,
-            bool active = true
-        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash)
+            DateTime? notifyDate = null
+            ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
         {
             Answer1 = answer1;
             Answer2 = answer2;
@@ -31,7 +33,8 @@
             Answer6 = answer6;
             AliasId = aliasId;
             NotifyDate = notifyDate;
-            Active = active;
+            JobGroup = jobGroup;
+            IsSelfRegistered = isSelfRegistered;
         }
 
         public DelegateRegistrationModel(
@@ -40,8 +43,13 @@
             string email,
             int centre,
             int jobGroup,
-            string? passwordHash
-        ) : base(firstName, lastName, email, centre, jobGroup, passwordHash) { }
+            string? passwordHash,
+            bool active,
+            bool approved
+        ) : base(firstName, lastName, email, centre, passwordHash, active, approved)
+        {
+            JobGroup = jobGroup;
+        }
 
         public DelegateRegistrationModel(
             DelegateTableRow row,
@@ -60,9 +68,11 @@
             row.Answer4,
             row.Answer5,
             row.Answer6,
+            false,
+            row.Active!.Value,
+            true,
             row.AliasId,
-            welcomeEmailDate,
-            row.Active!.Value
+            welcomeEmailDate
         ) { }
 
         public string? Answer1 { get; set; }
@@ -81,6 +91,10 @@
 
         public DateTime? NotifyDate { get; set; }
 
-        public bool Active { get; set; }
+        public int JobGroup { get; set; }
+
+        public bool IsSelfRegistered { get; set; }
+
+        public bool IsExternalRegistered => !Approved;
     }
 }

@@ -10,13 +10,8 @@
 
     public class DelegateCourseInfoViewModelTests
     {
-        private readonly (int totalAttempts, int attemptsPassed) attemptStats = (0, 0);
+        private readonly AttemptStats attemptStats = new AttemptStats(0, 0);
         private readonly List<CustomPromptWithAnswer> customPromptsWithAnswers = new List<CustomPromptWithAnswer>();
-
-        private DelegateCourseDetails GetDetailsFromInfo(DelegateCourseInfo info)
-        {
-            return new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
-        }
 
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
@@ -71,9 +66,6 @@
         [TestCase(0, 0, null)]
         [TestCase(0, 1, null)]
         [TestCase(2, 1, "50%")]
-        [TestCase(3, 1, "33%")]
-        [TestCase(4, 1, "25%")]
-        [TestCase(100, 1, "1%")]
         public void DelegateCourseInfoViewModel_sets_pass_rate_correctly(
             int totalAttempts,
             int attemptsPassed,
@@ -84,14 +76,14 @@
             var details = new DelegateCourseDetails(
                 new DelegateCourseInfo(),
                 customPromptsWithAnswers,
-                (totalAttempts, attemptsPassed)
+                new AttemptStats(totalAttempts, attemptsPassed)
             );
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
 
             // Then
-            model.PassRate.Should().Be(passRate);
+            model.PassRateDisplayString.Should().Be(passRate);
         }
 
         [Test]
