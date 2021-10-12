@@ -1,7 +1,15 @@
 import Chartist from 'chartist';
 import getPathForEndpoint from '../common';
 
-showMoreRows(false);
+const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
+const activityToggleableRowClass = 'js-toggleable-activity-row';
+const activityToggleableRowDisplayNone = 'none';
+const activityToggleableRowDisplayTableRow = 'table-row';
+const request = new XMLHttpRequest();
+const viewMoreLink = <HTMLElement>document.getElementsByClassName('js-toggle-row-visibility-button').item(0);
+viewMoreLink.style.display = 'block';
+
+viewLessRows();
 
 interface IActivityDataRowModel {
   period: string;
@@ -20,9 +28,9 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   return { labels, series };
 }
 
-const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 
-const request = new XMLHttpRequest();
+
+
 
 const options = {
   axisY: {
@@ -71,24 +79,38 @@ request.open('GET', path, true);
 request.responseType = 'json';
 request.send();
 
-let allRowsShown = false;
-const viewMoreLink = <HTMLLIElement>document.getElementsByClassName('js-shown-load-more').item(0);
-viewMoreLink.style.display = 'block';
 
 viewMoreLink.addEventListener('click', (event) => {
   event.preventDefault();
-  allRowsShown = !allRowsShown;
-  showMoreRows(allRowsShown);
-  viewMoreLink.innerText = allRowsShown ? 'View Less' : 'View More';
+  const activityRow = <HTMLElement>document.getElementsByClassName(activityToggleableRowClass).item(0);
+
+  if (activityRow?.style.display === activityToggleableRowDisplayNone) {
+    viewMoreRows();
+    viewMoreLink.innerText = 'View Less';
+  } else {
+    viewLessRows();
+    viewMoreLink.innerText = 'View More';
+  }
 });
 
-function showMoreRows(status: boolean): void {
+function viewMoreRows(): void {
   const activityTableRows = <HTMLElement[]>Array.from(
-    document.getElementsByClassName('js-hidden-activity-row'),
+    document.getElementsByClassName(activityToggleableRowClass),
   );
 
   activityTableRows.forEach((row) => {
     const rowElement = row;
-    rowElement.style.display = (status ? 'table-row' : 'none');
+    rowElement.style.display = activityToggleableRowDisplayTableRow;
+  });
+}
+
+function viewLessRows(): void {
+  const activityTableRows = <HTMLElement[]>Array.from(
+    document.getElementsByClassName(activityToggleableRowClass),
+  );
+
+  activityTableRows.forEach((row) => {
+    const rowElement = row;
+    rowElement.style.display = activityToggleableRowDisplayNone;
   });
 }
