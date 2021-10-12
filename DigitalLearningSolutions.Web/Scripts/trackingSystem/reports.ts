@@ -62,7 +62,7 @@ function processRequest() {
     });
 }
 
-//These constants are used in _ActivityTable.cshtml
+// These constants are used in _ActivityTable.cshtml
 const toggleableActivityButtonClass = 'js-toggle-row-button';
 const toggleableActivityRowClass = 'js-toggleable-activity-row';
 // --
@@ -83,7 +83,8 @@ viewMoreLink.addEventListener('click', (event) => {
 });
 
 function toggleVisibleActivityRows() {
-  const activityRow = <HTMLElement>document.getElementsByClassName(toggleableActivityRowClass).item(0);
+  const activityRow = <HTMLElement>document.getElementsByClassName(toggleableActivityRowClass)
+    .item(0);
 
   if (activityRow?.style.display === activityToggleableRowDisplayNone) {
     viewMoreRows();
