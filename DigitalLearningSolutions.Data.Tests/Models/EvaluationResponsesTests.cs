@@ -18,7 +18,7 @@
             // Then
             result.Count.Should().Be(20);
             result.Response.Should().Be(question);
-            result.Percentage.Should().Be((float)0.2);
+            result.DecimalPercentage.Should().Be((float)0.2);
         }
     }
 }

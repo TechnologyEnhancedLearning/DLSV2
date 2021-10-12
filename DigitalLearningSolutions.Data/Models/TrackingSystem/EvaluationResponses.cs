@@ -6,13 +6,13 @@
         {
             Response = response;
             Count = count;
-            Percentage = (float)count / totalResponses;
+            DecimalPercentage = (float)count / totalResponses;
         }
 
         public string Response { get; set; }
 
         public int Count { get; set; }
 
-        public float Percentage { get; set; }
+        public float DecimalPercentage { get; set; }
     }
 }

@@ -15,7 +15,7 @@
         {
             Response = evaluationResponses.Response;
             Count = evaluationResponses.Count;
-            Percentage = evaluationResponses.Percentage.ToString("0.0%");
+            Percentage = evaluationResponses.DecimalPercentage.ToString("0.0%");
         }
 
         public string Response { get; set; }
