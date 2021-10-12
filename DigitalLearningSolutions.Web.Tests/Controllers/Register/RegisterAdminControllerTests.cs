@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
@@ -301,6 +302,62 @@
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
+        }
+
+        [Test]
+        public void SummaryPost_with_valid_information_registers_expected_admin()
+        {
+            // Given
+            const int centreId = 7;
+            const int jobGroupId = 1;
+            const string email = "right@email";
+            var model = new SummaryViewModel
+            {
+                Terms = true
+            };
+            var data = new RegistrationData
+            {
+                FirstName = "First",
+                LastName = "Name",
+                Centre = centreId,
+                JobGroup = jobGroupId,
+                PasswordHash = "hash",
+                Email = email
+            };
+            controller.TempData.Set(data);
+            A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            A.CallTo(() => registrationService.RegisterCentreManager(A<AdminRegistrationModel>._, A<int>._))
+                .DoesNothing();
+
+            // When
+            var result = controller.Summary(model);
+
+            // Then
+            A.CallTo(
+                    () => registrationService.RegisterCentreManager(
+                        A<AdminRegistrationModel>.That.Matches(
+                            a =>
+                                a.FirstName == data.FirstName &&
+                                a.LastName == data.LastName &&
+                                a.Email == data.Email! &&
+                                a.Centre == data.Centre!.Value &&
+                                a.PasswordHash == data.PasswordHash! &&
+                                a.Active &&
+                                a.Approved &&
+                                a.IsCentreAdmin &&
+                                a.IsCentreManager &&
+                                !a.IsContentManager &&
+                                !a.ImportOnly &&
+                                !a.IsContentCreator &&
+                                !a.IsTrainer &&
+                                !a.IsSupervisor
+                        ),
+                        jobGroupId
+                    )
+                )
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
         }
     }
 }
