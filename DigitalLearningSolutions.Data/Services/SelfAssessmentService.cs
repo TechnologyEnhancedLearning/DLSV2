@@ -36,6 +36,8 @@
         IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
         IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
+        string GetSignOffSupervisorRoleForSelfAssessment(int selfAssessmentId);
+        string GetVerificationSupervisorRoleForSelfAssessment(int selfAssessmentId);
         //UPDATE
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -232,7 +234,20 @@
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
                              CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
-                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles
+                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles, COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS VerificationRoleName,
+                COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS SignOffRoleName
                              FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -837,6 +852,24 @@ WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = 
                     WHERE ID = @candidateAssessmentSupervisorVerificationId",
                 new { candidateAssessmentSupervisorVerificationId }
             );
+        }
+
+        public string GetSignOffSupervisorRoleForSelfAssessment(int selfAssessmentId)
+        {
+            return connection.Query<string>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)), 'Supervisor') AS SignOffRoleName", new { selfAssessmentId }).FirstOrDefault();
+        }
+
+        public string GetVerificationSupervisorRoleForSelfAssessment(int selfAssessmentId)
+        {
+            return connection.Query<string>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1), 'Supervisor') AS SignOffRoleName", new { selfAssessmentId }).FirstOrDefault();
         }
     }
 }
