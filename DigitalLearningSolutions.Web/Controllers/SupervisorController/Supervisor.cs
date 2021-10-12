@@ -3,10 +3,7 @@
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Supervisor;
-    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.Extensions.Logging;
     using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
     using Microsoft.AspNetCore.Http;
@@ -160,7 +157,7 @@
             }
             return reviewedCompetencies;
         }
-        private AssessmentQuestion GetLevelDescriptorsForAssessmentQuestion (AssessmentQuestion assessmentQuestion)
+        private AssessmentQuestion GetLevelDescriptorsForAssessmentQuestion(AssessmentQuestion assessmentQuestion)
         {
             if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
             {
@@ -230,7 +227,7 @@
             }
             return RedirectToAction("ReviewDelegateSelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "Review" });
         }
-            public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
+        public IActionResult StartEnrolDelegateOnProfileAssessment(int supervisorDelegateId)
         {
             TempData.Clear();
             var sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile();
@@ -414,6 +411,43 @@
         {
             frameworkNotificationService.SendReminderDelegateSelfAssessment(GetAdminID(), supervisorDelegateId, candidateAssessmentId);
             return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/SignOff/")]
+        public IActionResult SignOffProfileAssessment(int supervisorDelegateId, int candidateAssessmentId)
+        {
+            SelfAssessmentResultSummary? selfAssessmentSummary = supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
+            SupervisorDelegateDetail? supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary = supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
+            SignOffProfileAssessmentViewModel? model = new SignOffProfileAssessmentViewModel()
+            {
+                SelfAssessmentResultSummary = selfAssessmentSummary,
+                SupervisorDelegate = supervisorDelegate,
+                CandidateAssessmentSupervisorVerificationId = selfAssessmentSummary.CandidateAssessmentSupervisorVerificationId,
+                CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary
+            };
+            return View("SignOffProfileAssessment", model);
+        }
+        [HttpPost]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/SignOff/")]
+        public IActionResult SignOffProfileAssessment(int supervisorDelegateId, int candidateAssessmentId, SignOffProfileAssessmentViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                SelfAssessmentResultSummary? selfAssessmentSummary = supervisorService.GetSelfAssessmentResultSummary(candidateAssessmentId, supervisorDelegateId);
+                SupervisorDelegateDetail? supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+                IEnumerable<CandidateAssessmentSupervisorVerificationSummary>? verificationsSummary = supervisorService.GetCandidateAssessmentSupervisorVerificationSummaries(candidateAssessmentId);
+                SignOffProfileAssessmentViewModel? newModel = new SignOffProfileAssessmentViewModel()
+                {
+                    SelfAssessmentResultSummary = selfAssessmentSummary,
+                    SupervisorDelegate = supervisorDelegate,
+                    CandidateAssessmentSupervisorVerificationId = selfAssessmentSummary.CandidateAssessmentSupervisorVerificationId,
+                    CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary
+                };
+                return View("SignOffProfileAssessment", newModel);
+            }
+            supervisorService.UpdateCandidateAssessmentSupervisorVerificationById(model.CandidateAssessmentSupervisorVerificationId, model.SupervisorComments, model.SignedOff);
+            frameworkNotificationService.SendProfileAssessmentSignedOff(supervisorDelegateId, candidateAssessmentId, model.SupervisorComments, model.SignedOff);
+            return RedirectToAction("ReviewDelegateSelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "Review" });
         }
     }
 }
