@@ -7,7 +7,7 @@
 
     public interface ITutorialService
     {
-        void UpdateSectionTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId);
+        void UpdateTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId);
     }
 
     public class TutorialService : ITutorialService
@@ -24,7 +24,7 @@
             this.progressDataService = progressDataService;
         }
 
-        public void UpdateSectionTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId)
+        public void UpdateTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId)
         {
             using var transaction = new TransactionScope();
 
@@ -37,7 +37,7 @@
                     tutorial.Status!.Value
                 );
 
-                progressDataService.InsertNewAspProgressForTutorialIfNoneExist(tutorial.TutorialId, customisationId);
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorial.TutorialId, customisationId);
             }
 
             transaction.Complete();

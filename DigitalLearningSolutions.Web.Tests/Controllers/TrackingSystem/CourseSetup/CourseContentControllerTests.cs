@@ -31,20 +31,6 @@
         }
 
         [Test]
-        public void Index_returns_NotFound_when_no_appropriate_course_found()
-        {
-            // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
-                .Returns(null);
-
-            // When
-            var result = controller.Index(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void Index_returns_Index_page_when_appropriate_course_found()
         {
             // Given
@@ -58,22 +44,6 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<CourseContentViewModel>();
-        }
-
-        [Test]
-        public void EditSection_returns_NotFound_when_no_appropriate_course_found()
-        {
-            // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
-                .Returns(null);
-            A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
-                .Returns(new Section(1, "Section"));
-
-            // When
-            var result = controller.EditSection(1, 1);
-
-            // Then
-            result.Should().BeNotFoundResult();
         }
 
         [Test]
@@ -113,7 +83,7 @@
         {
             // Given
             var postData = GetDefaultEditCourseSectionFormData();
-            A.CallTo(() => tutorialService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
+            A.CallTo(() => tutorialService.UpdateTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
                 .DoesNothing();
 
             // When
@@ -121,7 +91,7 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-            A.CallTo(() => tutorialService.UpdateSectionTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._))
+            A.CallTo(() => tutorialService.UpdateTutorialsStatuses(A<IEnumerable<Tutorial>>._, 1))
                 .MustHaveHappened();
         }
 
@@ -170,7 +140,7 @@
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
             result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials
-                .All(t => t.LearningEnabled == false)
+                .All(t => !t.LearningEnabled)
                 .Should().BeTrue();
         }
 
@@ -187,7 +157,7 @@
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
             result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials
-                .All(t => t.DiagnosticEnabled == false)
+                .All(t => !t.DiagnosticEnabled)
                 .Should().BeTrue();
         }
 
@@ -210,16 +180,16 @@
             {
                 CourseName = "Course",
                 SectionName = "Section",
-                Tutorials = new List<EditCourseTutorialViewModel>
+                Tutorials = new List<CourseTutorialViewModel>
                 {
-                    new EditCourseTutorialViewModel
+                    new CourseTutorialViewModel
                     {
                         TutorialId = 1,
                         TutorialName = "Tutorial 1",
                         LearningEnabled = false,
                         DiagnosticEnabled = true
                     },
-                    new EditCourseTutorialViewModel
+                    new CourseTutorialViewModel
                     {
                         TutorialId = 2,
                         TutorialName = "Tutorial 2",

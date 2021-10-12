@@ -12,10 +12,10 @@
         {
             CourseName = courseName;
             SectionName = section.SectionName;
-            Tutorials = section.Tutorials.Select(t => new EditCourseTutorialViewModel(t));
+            Tutorials = section.Tutorials.Select(t => new CourseTutorialViewModel(t));
         }
 
-        public EditCourseSectionFormData(EditCourseSectionFormData formData)
+        protected EditCourseSectionFormData(EditCourseSectionFormData formData)
         {
             CourseName = formData.CourseName;
             SectionName = formData.SectionName;
@@ -24,6 +24,6 @@
 
         public string CourseName { get; set; }
         public string SectionName { get; set; }
-        public IEnumerable<EditCourseTutorialViewModel> Tutorials { get; set; }
+        public IEnumerable<CourseTutorialViewModel> Tutorials { get; set; }
     }
 }

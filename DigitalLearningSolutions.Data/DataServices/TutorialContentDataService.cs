@@ -335,7 +335,7 @@
                         INSERT INTO CustomisationTutorials (CustomisationID, TutorialID, [Status], DiagStatus)
                         VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
                     END",
-                new { tutorialId, customisationId, diagnosticEnabled, learningEnabled }
+                new { customisationId, tutorialId, learningEnabled, diagnosticEnabled }
             );
         }
     }

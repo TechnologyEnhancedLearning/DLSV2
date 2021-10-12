@@ -2,11 +2,11 @@
 {
     using DigitalLearningSolutions.Data.Models;
 
-    public class EditCourseTutorialViewModel
+    public class CourseTutorialViewModel
     {
-        public EditCourseTutorialViewModel() {}
+        public CourseTutorialViewModel() {}
 
-        public EditCourseTutorialViewModel(Tutorial tutorial)
+        public CourseTutorialViewModel(Tutorial tutorial)
         {
             TutorialId = tutorial.TutorialId;
             TutorialName = tutorial.TutorialName;

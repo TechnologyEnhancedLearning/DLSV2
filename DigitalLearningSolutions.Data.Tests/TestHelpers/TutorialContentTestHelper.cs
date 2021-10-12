@@ -98,14 +98,32 @@
             ).FirstOrDefault();
         }
 
-        public IEnumerable<int> GetAspProgressFromTutorialId(int tutorialId)
+        public IEnumerable<int> GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(int tutorialId)
         {
             return connection.Query<int>(
-                @"SELECT aspProgressId
+                @"SELECT DISTINCT ProgressId
                     FROM aspProgress
                     WHERE TutorialID = @tutorialId;",
                 new { tutorialId }
             );
         }
-    }
+
+        public CustomisationTutorial? GetCustomisationTutorialByTutorialIdAndCustomisationId(int tutorialId, int customisationId)
+        {
+            return connection.Query<CustomisationTutorial>(
+                @"SELECT 
+                        [Status],
+                        DiagStatus
+                    FROM dbo.CustomisationTutorials
+                    WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
+                new { tutorialId, customisationId }
+            ).SingleOrDefault();
+        }
+
+        public class CustomisationTutorial
+        {
+            public bool? Status { get; set; }
+            public bool? DiagStatus { get; set; }
+        }
+}
 }

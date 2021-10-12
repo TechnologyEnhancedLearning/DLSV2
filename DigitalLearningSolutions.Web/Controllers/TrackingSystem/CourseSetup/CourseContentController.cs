@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -45,12 +47,7 @@
                 customisationId,
                 centreId,
                 categoryId.Value
-            );
-
-            if (courseDetails == null)
-            {
-                return NotFound();
-            }
+            )!;
 
             var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
                 customisationId,
@@ -68,6 +65,7 @@
 
         [HttpGet]
         [Route("EditSection/{sectionId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
@@ -76,10 +74,10 @@
                 customisationId,
                 centreId,
                 categoryId.Value
-            );
+            )!;
             var section = sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(customisationId, sectionId);
 
-            if (courseDetails == null || section == null)
+            if (section == null)
             {
                 return NotFound();
             }
@@ -95,6 +93,7 @@
 
         [HttpPost]
         [Route("EditSection/{sectionId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult EditSection(
             EditCourseSectionFormData formData,
             int customisationId,
@@ -112,7 +111,7 @@
                 t => new Tutorial(t.TutorialId, t.TutorialName, t.LearningEnabled, t.DiagnosticEnabled)
             );
 
-            tutorialService.UpdateSectionTutorialsStatuses(tutorials, customisationId);
+            tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
 
             return RedirectToAction("Index", new { customisationId });
         }

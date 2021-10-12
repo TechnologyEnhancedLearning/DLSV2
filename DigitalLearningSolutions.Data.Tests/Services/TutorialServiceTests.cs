@@ -27,7 +27,7 @@
         }
 
         [Test]
-        public void UpdateSectionTutorialsStatuses_calls_data_services_correct_number_of_times()
+        public void UpdateTutorialsStatuses_calls_data_services_correct_number_of_times()
         {
             // Given
             var tutorialOne = new Tutorial(1, "Test", true, true);
@@ -42,11 +42,11 @@
                     )
                 )
                 .DoesNothing();
-            A.CallTo(() => progressDataService.InsertNewAspProgressForTutorialIfNoneExist(A<int>._, A<int>._))
+            A.CallTo(() => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._))
                 .DoesNothing();
 
             // When
-            tutorialService.UpdateSectionTutorialsStatuses(tutorials, 1);
+            tutorialService.UpdateTutorialsStatuses(tutorials, 1);
 
             // Then
             using (new AssertionScope())
@@ -60,7 +60,7 @@
                         )
                     )
                     .MustHaveHappened(2, Times.Exactly);
-                A.CallTo(() => progressDataService.InsertNewAspProgressForTutorialIfNoneExist(A<int>._, A<int>._))
+                A.CallTo(() => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._))
                     .MustHaveHappened(2, Times.Exactly);
             }
         }

@@ -7,7 +7,7 @@
   }
 }
 
-.select-deselect-all-button {
+.select-all-button {
   @extend .right-submit-button;
   @include nhsuk-font(16);
   background-color: $button-dark-blue;
@@ -15,12 +15,8 @@
   margin-right: nhsuk-spacing(2);
 }
 
-.select-all-button {
-  @extend .select-deselect-all-button;
-}
-
 .deselect-all-button {
-  @extend .select-deselect-all-button;
+  @extend .select-all-button;
 }
 
 .tutorial-learning-column {

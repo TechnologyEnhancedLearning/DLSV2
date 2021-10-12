@@ -23,7 +23,7 @@
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
-        void InsertNewAspProgressForTutorialIfNoneExist(int tutorialId, int customisationId);
+        void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -131,7 +131,7 @@
             );
         }
 
-        public void InsertNewAspProgressForTutorialIfNoneExist(int tutorialId, int customisationId)
+        public void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId)
         {
             connection.Execute(
                 @"INSERT INTO aspProgress

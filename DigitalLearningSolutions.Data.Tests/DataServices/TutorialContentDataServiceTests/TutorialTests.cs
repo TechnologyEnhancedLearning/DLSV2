@@ -44,13 +44,19 @@
         }
 
         [Test]
-        public void UpdateOrInsertCustomisationTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
+        public void
+            UpdateOrInsertCustomisationTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
         {
             // When
             using var transaction = new TransactionScope();
             try
             {
-                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(49, CustomisationId, false, false);
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
+                    49,
+                    CustomisationId,
+                    false,
+                    false
+                );
                 var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
 
                 using (new AssertionScope())
@@ -71,7 +77,6 @@
         public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial()
         {
             // Given
-            const int sectionId = 3059;
             const int tutorialId = 12732;
             const int customisationId = 14019;
 
@@ -79,19 +84,28 @@
             using var transaction = new TransactionScope();
             try
             {
-                var initialResult = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId)
-                    .ToList();
-                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(tutorialId, customisationId, true, true);
-                var result = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId).ToList();
+                var initialResult =
+                    tutorialContentTestHelper.GetCustomisationTutorialByTutorialIdAndCustomisationId(
+                        tutorialId,
+                        customisationId
+                    );
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
+                    tutorialId,
+                    customisationId,
+                    true,
+                    true
+                );
+                var result = tutorialContentTestHelper.GetCustomisationTutorialByTutorialIdAndCustomisationId(
+                    tutorialId,
+                    customisationId
+                );
 
                 using (new AssertionScope())
                 {
-                    initialResult.First().Status.Should().BeNull();
-                    initialResult.First().DiagStatus.Should().BeNull();
-                    result.First().TutorialId.Should().Be(tutorialId);
-                    result.First().TutorialName.Should().Be("Create a presentation from an outline");
-                    result.First().Status.Should().BeTrue();
-                    result.First().DiagStatus.Should().BeTrue();
+                    initialResult.Should().BeNull();
+                    result.Should().NotBeNull();
+                    result?.Status.Should().BeTrue();
+                    result?.DiagStatus.Should().BeTrue();
                 }
             }
             finally
