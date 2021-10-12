@@ -2,11 +2,12 @@ import Chartist from 'chartist';
 import getPathForEndpoint from '../common';
 
 const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
-const activityToggleableRowClass = 'js-toggleable-activity-row';
+const activityToggleRowClass = 'js-toggleable-activity-row';
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
 const request = new XMLHttpRequest();
-const viewMoreLink = <HTMLElement>document.getElementsByClassName('js-toggle-row-visibility-button').item(0);
+const viewMoreLink = <HTMLElement>document.
+  getElementsByClassName('js-toggle-row-visibility-button').item(0);
 viewMoreLink.style.display = 'block';
 
 viewLessRows();
@@ -77,7 +78,7 @@ request.send();
 
 viewMoreLink.addEventListener('click', (event) => {
   event.preventDefault();
-  const activityRow = <HTMLElement>document.getElementsByClassName(activityToggleableRowClass).item(0);
+  const activityRow = <HTMLElement>document.getElementsByClassName(activityToggleRowClass).item(0);
 
   if (activityRow?.style.display === activityToggleableRowDisplayNone) {
     viewMoreRows();
@@ -90,7 +91,7 @@ viewMoreLink.addEventListener('click', (event) => {
 
 function viewMoreRows(): void {
   const activityTableRows = <HTMLElement[]>Array.from(
-    document.getElementsByClassName(activityToggleableRowClass),
+    document.getElementsByClassName(activityToggleRowClass),
   );
 
   activityTableRows.forEach((row) => {
@@ -101,7 +102,7 @@ function viewMoreRows(): void {
 
 function viewLessRows(): void {
   const activityTableRows = <HTMLElement[]>Array.from(
-    document.getElementsByClassName(activityToggleableRowClass),
+    document.getElementsByClassName(activityToggleRowClass),
   );
 
   activityTableRows.forEach((row) => {
