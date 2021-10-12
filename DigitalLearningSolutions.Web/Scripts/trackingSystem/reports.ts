@@ -63,15 +63,14 @@ function processRequest() {
 }
 
 /*These constants are used in _ActivityTable.cshtml*/
-const toggleableActivityButtonClass = "js-toggle-row-button";
+const toggleableActivityButtonClass = 'js-toggle-row-button';
 const toggleableActivityRowClass = 'js-toggleable-activity-row';
 // --
 
 const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
-const viewMoreLink =
-  <HTMLElement>document.getElementsByClassName(toggleableActivityButtonClass).item(0);
+const viewMoreLink = <HTMLElement>document.getElementsByClassName(toggleableActivityButtonClass).item(0);
 
 function setUpToggleActivityRowsButton() {
   viewMoreLink.style.display = 'block';
@@ -129,4 +128,3 @@ request.onload = () => {
 };
 
 pageLoad();
-
