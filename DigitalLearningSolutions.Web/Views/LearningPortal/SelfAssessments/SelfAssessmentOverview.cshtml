@@ -74,11 +74,11 @@
     @if (Model.SupervisorSignOffs.Any())
     {
       <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
-        <caption class="nhsuk-table__caption"><h2>Supervisor Sign-off</h2></caption>
+        <caption class="nhsuk-table__caption"><h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2></caption>
         <thead role="rowgroup" class="nhsuk-table__head">
           <tr role="row">
             <th role="columnheader" class="" scope="col">
-              Supervisor
+              @Model.SelfAssessment.SignOffRoleName
             </th>
             <th role="columnheader" class="" scope="col">
               Status
@@ -93,7 +93,7 @@
           {
             <tr role="row" class="nhsuk-table__row">
               <td role="cell" class="nhsuk-table__cell">
-                <span class="nhsuk-table-responsive__heading">Supervisor </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
+                <span class="nhsuk-table-responsive__heading">@Model.SelfAssessment.SignOffRoleName </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
               </td>
               <td role="cell" class="nhsuk-table__cell">
                 <span class="nhsuk-table-responsive__heading">Status </span>
@@ -124,20 +124,20 @@
     }
     else
     {
-      <h2>Supervisor Sign-off</h2>
+  <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     }
     @if (Model.AllQuestionsVerified())
     {
       @if (!Model.SupervisorSignOffs.Any())
       {
-        <p class="nhsuk-body-l">You have not yet requested supervisor sign-off for this self assessment.</p>
+  <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
 
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2">Request supervisor sign-off</a>
+  <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
     }
     else
     {
-      <p class="nhsuk-body-l">All @Model.VocabPlural().ToLower() must be self-assessed and verified by a supervisor, before requesting supervisor sign off of this activity.</p>
+  <p class="nhsuk-body-l">All @Model.VocabPlural().ToLower() must be self-assessed and verified by your @Model.SelfAssessment.VerificationRoleName, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
     }
 
   </div>
