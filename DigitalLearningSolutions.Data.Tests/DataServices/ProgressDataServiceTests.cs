@@ -203,17 +203,17 @@
             try
             {
                 // When
-                var initialProgressIdsOnAspProgressRecords = tutorialContentTestHelper
-                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+                var initialAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
                 progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorialId, customisationId);
-                var resultProgressIdsOnAspProgressRecords = tutorialContentTestHelper
-                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+                var resultAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
 
                 // Then
                 using (new AssertionScope())
                 {
-                    initialProgressIdsOnAspProgressRecords.Count.Should()
-                        .Be(resultProgressIdsOnAspProgressRecords.Count);
+                    initialAspProgressIds.Count.Should()
+                        .Be(resultAspProgressIds.Count);
                 }
             }
             finally

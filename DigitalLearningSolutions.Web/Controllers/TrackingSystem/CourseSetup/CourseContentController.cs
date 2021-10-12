@@ -14,6 +14,7 @@
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
     public class CourseContentController : Controller
     {
         public const string SelectAllDiagnosticAction = "diagnostic-select-all";
@@ -38,7 +39,6 @@
         }
 
         [HttpGet]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -65,7 +65,6 @@
 
         [HttpGet]
         [Route("EditSection/{sectionId:int}")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
@@ -93,7 +92,6 @@
 
         [HttpPost]
         [Route("EditSection/{sectionId:int}")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult EditSection(
             EditCourseSectionFormData formData,
             int customisationId,

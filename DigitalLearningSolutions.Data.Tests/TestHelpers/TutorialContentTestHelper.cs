@@ -98,6 +98,16 @@
             ).FirstOrDefault();
         }
 
+        public IEnumerable<int> GetAspProgressFromTutorialId(int tutorialId)
+        {
+            return connection.Query<int>(
+                @"SELECT aspProgressId
+                    FROM aspProgress
+                    WHERE TutorialID = @tutorialId;",
+                new { tutorialId }
+            );
+        }
+
         public IEnumerable<int> GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(int tutorialId)
         {
             return connection.Query<int>(

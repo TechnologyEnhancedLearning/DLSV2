@@ -74,7 +74,7 @@
         }
 
         [Test]
-        public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial()
+        public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial_when_one_does_not_exist()
         {
             // Given
             const int tutorialId = 12732;
