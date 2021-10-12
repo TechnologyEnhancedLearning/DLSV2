@@ -150,5 +150,18 @@
             controller.HttpContext.RequestServices = services;
             return controller;
         }
+
+        public static T WithMockRequestContext<T>(this T controller, HttpRequest request) where T : Controller
+        {
+            var httpContext = A.Fake<HttpContext>();
+            A.CallTo(() => httpContext.Request).Returns(request);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+
+            return controller;
+        }
     }
 }

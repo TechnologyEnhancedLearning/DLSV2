@@ -6,6 +6,9 @@ namespace DigitalLearningSolutions.Data.Services
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
     using Microsoft.Extensions.Configuration;
@@ -23,7 +26,9 @@ namespace DigitalLearningSolutions.Data.Services
 
         string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl);
 
-        void RegisterCentreManager(RegistrationModel registrationModel);
+        void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId);
+
+        void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId);
     }
 
     public class RegistrationService : IRegistrationService
@@ -57,6 +62,7 @@ namespace DigitalLearningSolutions.Data.Services
             this.passwordResetService = passwordResetService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
+            this.userDataService = userDataService;
             this.config = config;
             this.supervisorDelegateService = supervisorDelegateService;
             this.frameworkNotificationService = frameworkNotificationService;
@@ -84,15 +90,7 @@ namespace DigitalLearningSolutions.Data.Services
                                                  centreIpPrefixes.Any(ip => userIp.StartsWith(ip.Trim())) ||
                                                  userIp == "::1";
 
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-
-            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
-            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
-            {
-                return (candidateNumberOrErrorCode, false);
-            }
-
-            var candidateNumber = candidateNumberOrErrorCode;
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             passwordDataService.SetPasswordByCandidateNumber(
                 candidateNumber,
@@ -136,30 +134,11 @@ namespace DigitalLearningSolutions.Data.Services
             return (candidateNumber, delegateRegistrationModel.Approved);
         }
 
-        public void RegisterCentreManager(RegistrationModel registrationModel)
+        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
         {
             using var transaction = new TransactionScope();
 
-            CreateDelegateAccountForAdmin(registrationModel);
-
-            registrationDataService.RegisterCentreManagerAdmin(registrationModel);
-
-            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
-
-            transaction.Complete();
-        }
-
-        public string RegisterDelegateByCentre(DelegateRegistrationModel delegateRegistrationModel, string baseUrl)
-        {
-            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegateByCentre(delegateRegistrationModel);
-
-            // Because of how we call the stored procedures, the only errors we can receive are -1 or -4.
-            if (candidateNumberOrErrorCode == "-1" || candidateNumberOrErrorCode == "-4")
-            {
-                return candidateNumberOrErrorCode;
-            }
-
-            var candidateNumber = candidateNumberOrErrorCode;
+            var candidateNumber = CreateAccountAndReturnCandidateNumber(delegateRegistrationModel);
 
             if (delegateRegistrationModel.PasswordHash != null)
             {
@@ -196,7 +175,80 @@ namespace DigitalLearningSolutions.Data.Services
                 );
             }
 
+            transaction.Complete();
+
             return candidateNumber;
+        }
+
+        public void RegisterCentreManager(AdminRegistrationModel registrationModel, int jobGroupId)
+        {
+            using var transaction = new TransactionScope();
+
+            CreateDelegateAccountForAdmin(registrationModel, jobGroupId);
+
+            registrationDataService.RegisterAdmin(registrationModel);
+
+            centresDataService.SetCentreAutoRegistered(registrationModel.Centre);
+
+            transaction.Complete();
+        }
+
+        public void PromoteDelegateToAdmin(AdminRoles adminRoles, int categoryId, int delegateId)
+        {
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+
+            if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress) ||
+                string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
+                string.IsNullOrWhiteSpace(delegateUser.Password))
+            {
+                throw new AdminCreationFailedException("Delegate missing first name, email or password", AdminCreationError.UnexpectedError);
+            }
+
+            var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
+
+            if (adminUser != null)
+            {
+                throw new AdminCreationFailedException(AdminCreationError.EmailAlreadyInUse);
+            }
+
+            var adminRegistrationModel = new AdminRegistrationModel(
+                delegateUser.FirstName,
+                delegateUser.LastName,
+                delegateUser.EmailAddress,
+                delegateUser.CentreId,
+                delegateUser.Password,
+                true,
+                true,
+                categoryId,
+                adminRoles.IsCentreAdmin,
+                false,
+                adminRoles.IsSupervisor,
+                adminRoles.IsTrainer,
+                adminRoles.IsContentCreator,
+                adminRoles.IsCmsAdministrator,
+                adminRoles.IsCmsManager,
+                delegateUser.ProfileImage
+            );
+
+            registrationDataService.RegisterAdmin(adminRegistrationModel);
+        }
+
+        private string CreateAccountAndReturnCandidateNumber(DelegateRegistrationModel delegateRegistrationModel)
+        {
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+
+            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
+
+            if (failureIfAny != null)
+            {
+                logger.LogError(
+                    $"Could not create account for delegate on registration. Failure: {failureIfAny.Name}."
+                );
+
+                throw new DelegateCreationFailedException(failureIfAny);
+            }
+
+            return candidateNumberOrErrorCode;
         }
 
         private IEnumerable<int> GetPendingSupervisorDelegateIdsMatchingDelegate(
@@ -210,25 +262,31 @@ namespace DigitalLearningSolutions.Data.Services
                 ).Select(record => record.ID);
         }
 
-        private void CreateDelegateAccountForAdmin(RegistrationModel registrationModel)
+        private void CreateDelegateAccountForAdmin(AdminRegistrationModel registrationModel, int jobGroupId)
         {
             var delegateRegistrationModel = new DelegateRegistrationModel(
                 registrationModel.FirstName,
                 registrationModel.LastName,
                 registrationModel.Email,
                 registrationModel.Centre,
-                registrationModel.JobGroup,
-                registrationModel.PasswordHash!
-            ) { Approved = true };
-            var candidateNumber = registrationDataService.RegisterDelegate(delegateRegistrationModel);
-            if (candidateNumber == "-1" || candidateNumber == "-4")
+                jobGroupId,
+                registrationModel.PasswordHash!,
+                true,
+                true
+            );
+
+            var candidateNumberOrErrorCode = registrationDataService.RegisterDelegate(delegateRegistrationModel);
+            var failureIfAny = DelegateCreationError.FromStoredProcedureErrorCode(candidateNumberOrErrorCode);
+            if (failureIfAny != null)
             {
-                throw new Exception(
-                    $"Delegate account could not be created (error code: {candidateNumber}) with email address: {registrationModel.Email}"
+                logger.LogError(
+                    $"Delegate account could not be created (error code: {candidateNumberOrErrorCode}) with email address: {registrationModel.Email}"
                 );
+
+                throw new DelegateCreationFailedException(failureIfAny);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumber, delegateRegistrationModel.PasswordHash!);
+            passwordDataService.SetPasswordByCandidateNumber(candidateNumberOrErrorCode, delegateRegistrationModel.PasswordHash!);
         }
 
         private Email GenerateApprovalEmail(

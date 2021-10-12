@@ -124,7 +124,7 @@
                           WHERE ca.ID = @candidateAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
-                                                  ROW_NUMBER() OVER (PARTITION BY CAQ.Ordering ORDER BY SAS.Ordering) as RowNo,
+                                                  DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
@@ -232,7 +232,20 @@
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
                              CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
-                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles
+                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles, COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS VerificationRoleName,
+                COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS SignOffRoleName
                              FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -251,14 +264,14 @@
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
-                     (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
+                     (SELECT DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                              sas.CompetencyID
                       FROM SelfAssessmentStructure as sas
 INNER JOIN CandidateAssessments AS CA
                             ON CA.SelfAssessmentID = @selfAssessmentId
                                    AND CA.CandidateID = @candidateId
 LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
-                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.ID = CAOC.CompetencyID AND sas.ID = CAOC.CompetencyGroupID
+                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND sas.CompetencyGroupID = CAOC.CompetencyGroupID
                       WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                      ),
                      {LatestAssessmentResults}
@@ -267,7 +280,7 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
                     WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND CRN.RowNo = @n
-                    ORDER BY CAQ.Ordering",
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
