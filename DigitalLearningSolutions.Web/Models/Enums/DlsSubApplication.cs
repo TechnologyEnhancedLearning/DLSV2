@@ -47,6 +47,15 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "Supervisor"
         );
 
+        public static readonly DlsSubApplication SuperAdmin = new DlsSubApplication(
+            5,
+            nameof(SuperAdmin),
+            "Super Admin",
+            "/SuperAdmin/Admins",
+            "Super Admin - System Configuration",
+            "SuperAdmin"
+        );
+
         public readonly string HeaderExtension;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
