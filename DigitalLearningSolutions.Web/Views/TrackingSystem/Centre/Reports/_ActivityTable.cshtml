@@ -1,10 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
 @model UsageStatsTableViewModel
 @{
-    //These must match with the name in trackingSystem/report.ts
-    const string toggleRowButtonClass = "js-toggle-row-button";
-    const string toggleActivityRowClass = "js-toggleable-activity-row";
     const int defaultNumOfRowsVisible = 5;
+    //These must match with the name in trackingSystem/reports.ts
+    const string toggleableActivityButtonClass = "js-toggle-row-button";
+    const string toggleableActivityRowClass = "js-toggleable-activity-row";
+
 }
 
 <table role="table" class="nhsuk-table-responsive">
@@ -25,9 +26,9 @@
     </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, rowNumber) => (row, rowNumber)))
+    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, rowNumber) => (row, rowNumber + 1)))
     {
-      <tr role="row" class="nhsuk-table__row @(rowNumber >= defaultNumOfRowsVisible ? toggleActivityRowClass : string.Empty)">
+      <tr role="row" class="nhsuk-table__row @(rowNumber > defaultNumOfRowsVisible ? toggleableActivityRowClass : string.Empty)">
         <td role="cell" class="nhsuk-table__cell">
           <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
         </td>
@@ -46,5 +47,5 @@
 </table>
 
 <a role="button"
-   class="nhsuk-u-margin-top-4 js-only-block @(toggleRowButtonClass)"
+   class="nhsuk-u-margin-top-4 js-only-block @(toggleableActivityButtonClass)"
    href="#">View More</a>
