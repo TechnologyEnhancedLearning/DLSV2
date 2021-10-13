@@ -498,6 +498,26 @@
         }
 
         [Test]
+        public void NewEmailAddressIsValid_returns_true_with_unchanged_email_with_different_case()
+        {
+            // Given
+            const string email = "email@test.com";
+            const string capsEmail = "Email@test.com";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: capsEmail);
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
+
+            // Then
+            result.Should().BeTrue();
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+        }
+
+        [Test]
         public void IsDelegateEmailValidForCentre_should_return_false_if_user_at_centre_has_email()
         {
             // Given
