@@ -4,21 +4,26 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
 
-    public class CourseSectionViewModel
+    public class EditCourseSectionFormData
     {
-        public CourseSectionViewModel(Section section, int customisationId, bool postLearningAssessment)
+        public EditCourseSectionFormData() { }
+
+        public EditCourseSectionFormData(Section section, string courseName)
         {
-            CustomisationId = customisationId;
-            SectionId = section.SectionId;
+            CourseName = courseName;
             SectionName = section.SectionName;
             Tutorials = section.Tutorials.Select(t => new CourseTutorialViewModel(t));
-            PostLearningAssessment = postLearningAssessment;
         }
 
-        public int CustomisationId { get; set; }
-        public int SectionId { get; set; }
+        protected EditCourseSectionFormData(EditCourseSectionFormData formData)
+        {
+            CourseName = formData.CourseName;
+            SectionName = formData.SectionName;
+            Tutorials = formData.Tutorials;
+        }
+
+        public string CourseName { get; set; }
         public string SectionName { get; set; }
         public IEnumerable<CourseTutorialViewModel> Tutorials { get; set; }
-        public bool PostLearningAssessment { get; set; }
     }
 }

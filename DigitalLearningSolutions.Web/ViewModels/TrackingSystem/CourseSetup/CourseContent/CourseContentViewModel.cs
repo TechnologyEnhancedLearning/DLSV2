@@ -15,7 +15,7 @@
         {
             CustomisationId = customisationId;
             CourseName = courseName;
-            Sections = sections.Select(s => new CourseSectionViewModel(s, postLearningAssessment));
+            Sections = sections.Select(s => new CourseSectionViewModel(s, customisationId, postLearningAssessment));
         }
 
         public int CustomisationId { get; set; }

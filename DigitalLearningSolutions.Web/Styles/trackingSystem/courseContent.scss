@@ -1,7 +1,26 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
+@import "../shared/searchableElements/common";
 
-dd.nhsuk-summary-list__value {
+.summary-list-right-align-tags {
   @include mq($from: tablet) {
     text-align: right;
+  }
+}
+
+.select-all-button {
+  @extend .right-submit-button;
+  @include nhsuk-font(16);
+  background-color: $button-dark-blue;
+  border-radius: 4px;
+  margin-right: nhsuk-spacing(2);
+}
+
+.deselect-all-button {
+  @extend .select-all-button;
+}
+
+.tutorial-learning-column {
+  @include mq($until: desktop) {
+    margin-top: nhsuk-spacing(5);
   }
 }
