@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
@@ -28,7 +28,7 @@
                     "Learning content",
                     "Home",
                     "LearningContent"
-                )
+                ),
             }
         );
 
@@ -66,7 +66,7 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
-                CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName],
+                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
         }
     }
