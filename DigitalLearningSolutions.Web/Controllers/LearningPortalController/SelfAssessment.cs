@@ -614,5 +614,17 @@
             selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(candidateAssessmentSupervisorVerificationId);
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory")]
+        public IActionResult SignOffHistory(int selfAssessmentId)
+        {
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            IEnumerable<SupervisorSignOff>? supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+            var model = new SignOffHistoryViewModel()
+            {
+                SelfAssessment = assessment,
+                SupervisorSignOffs = supervisorSignOffs
+            };
+            return View("SelfAssessments/SignOffHistory", model);
+        }
     }
 }
