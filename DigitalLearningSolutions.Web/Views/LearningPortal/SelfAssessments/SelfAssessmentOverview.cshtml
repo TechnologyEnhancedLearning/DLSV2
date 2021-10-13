@@ -144,7 +144,7 @@
   @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
   {
     <dd class="nhsuk-summary-list__actions">
-      <a asp-action="SignOffHistory" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
+      <a asp-action="SignOffHistory" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
     </dd>
   }
   </div>

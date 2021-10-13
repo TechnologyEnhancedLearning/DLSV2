@@ -10,5 +10,6 @@
         public int MeetingCount { get; set; }
         public int PartiallyMeetingCount { get; set; }
         public int NotMeetingCount { get; set; }
+        public string? SignOffSupervisorStatement { get; set; }
     }
 }

@@ -604,6 +604,17 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+                var supervisors = selfAssessmentService.GetSignOffSupervisorsForSelfAssessmentId(selfAssessmentId, User.GetCandidateIdKnownNotNull());
+                var newModel = new RequestSignOffViewModel()
+                {
+                    SelfAssessment = assessment,
+                    Supervisors = supervisors
+                };
+                return View("SelfAssessments/RequestSignOff", newModel);
+            }
             selfAssessmentService.InsertCandidateAssessmentSupervisorVerification(model.CandidateAssessmentSupervisorId);
             frameworkNotificationService.SendSignOffRequest(model.CandidateAssessmentSupervisorId, selfAssessmentId);
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
