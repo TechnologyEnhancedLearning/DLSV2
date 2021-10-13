@@ -217,7 +217,7 @@ namespace DigitalLearningSolutions.Data.Services
                             delegateRow.Email!,
                             configuration.GetAppRootPath(),
                             welcomeEmailDate.Value,
-                            "RegisterDelegateByCentre_Refactor"
+                            "DelegateBulkUpload_Refactor"
                         );
                     }
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
