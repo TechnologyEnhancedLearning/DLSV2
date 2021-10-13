@@ -104,16 +104,29 @@
                 .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
 
             var availableCourses = courseDataService
-                .GetCoursesAvailableToCentreByCategory(centreId, courseCategoryId)
-                .Select(GetCourseFilterOption);
+                .GetCoursesAvailableToCentreByCategory(centreId, courseCategoryId);
             var historicalCourses = courseDataService
-                .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId)
-                .Select(GetCourseFilterOption);
+                .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId);
 
-            var courses = availableCourses.Union(historicalCourses)
-                .OrderBy(c => c.Name);
+            var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
+                .OrderByDescending(c => c.Active)
+                .ThenBy(c => c.CourseNameWithInactiveFlag)
+                .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
 
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
+        }
+
+        private class CourseEqualityComparer : IEqualityComparer<Course>
+        {
+            public bool Equals(Course? x, Course? y)
+            {
+                return x?.CustomisationId == y?.CustomisationId;
+            }
+
+            public int GetHashCode(Course obj)
+            {
+                return obj.CustomisationId;
+            }
         }
 
         public DateTime GetStartOfActivityForCentre(int centreId)
@@ -223,11 +236,6 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
-        }
-
-        private static (int Id, string Name) GetCourseFilterOption(Course course)
-        {
-            return (course.CustomisationId, course.Active ? course.CourseName : "Inactive - " + course.CourseName);
         }
     }
 }
