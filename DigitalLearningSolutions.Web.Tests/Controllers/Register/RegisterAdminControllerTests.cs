@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.Register;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -135,9 +135,9 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
 
-            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true };
+            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true, };
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId))
-                .Returns(new List<AdminUser> { centreManagerAdmin });
+                .Returns(new List<AdminUser> { centreManagerAdmin, });
 
             // When
             var result = controller.Index(centreId);
@@ -180,7 +180,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = "wrong@email"
+                Email = "wrong@email",
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
@@ -207,7 +207,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = email
+                Email = email,
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
@@ -236,7 +236,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = centreId,
-                Email = email
+                Email = email,
             };
             var data = new RegistrationData(centreId);
             controller.TempData.Set(data);
@@ -267,9 +267,9 @@
             const int centreId = 7;
             var model = new SummaryViewModel
             {
-                Terms = true
+                Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = userEmail };
+            var data = new RegistrationData { Centre = centreId, Email = userEmail, };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId))
@@ -290,9 +290,9 @@
             const string email = "right@email";
             var model = new SummaryViewModel
             {
-                Terms = true
+                Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = email };
+            var data = new RegistrationData { Centre = centreId, Email = email, };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
@@ -313,7 +313,7 @@
             const string email = "right@email";
             var model = new SummaryViewModel
             {
-                Terms = true
+                Terms = true,
             };
             var data = new RegistrationData
             {
@@ -322,7 +322,7 @@
                 Centre = centreId,
                 JobGroup = jobGroupId,
                 PasswordHash = "hash",
-                Email = email
+                Email = email,
             };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));

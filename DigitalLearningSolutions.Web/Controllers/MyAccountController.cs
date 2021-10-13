@@ -19,7 +19,8 @@
     [Route("/{application}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedApplicationType]
-    [SetApplicationTypeAndSelectedTab(null, nameof(Tab.MyAccount))]
+    [SetApplicationType(applicationRouteParamName: "application")]
+    [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
     {

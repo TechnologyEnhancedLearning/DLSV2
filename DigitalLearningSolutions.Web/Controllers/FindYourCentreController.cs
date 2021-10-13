@@ -6,7 +6,8 @@
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.FindYourCentre))]
+    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
     public class FindYourCentreController : Controller
     {
         [RedirectDelegateOnlyToLearningPortal]

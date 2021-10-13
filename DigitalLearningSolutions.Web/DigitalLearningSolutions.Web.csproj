@@ -109,6 +109,10 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\Components\NavMenu\Default.cshtml" />
+  </ItemGroup>
+
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />

@@ -19,7 +19,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.LogIn))]
+    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {
         private readonly ILogger<LoginController> logger;

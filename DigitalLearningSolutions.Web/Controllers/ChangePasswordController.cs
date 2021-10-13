@@ -14,7 +14,8 @@
     [Route("/{application}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
     [ValidateAllowedApplicationType]
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.MyAccount))]
+    [SetApplicationType(applicationRouteParamName: "application")]
+    [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class ChangePasswordController : Controller
     {

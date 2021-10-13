@@ -12,7 +12,8 @@
     {
         [Authorize]
         [RedirectDelegateOnlyToLearningPortal]
-        [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.SwitchApplication))]
+        [SetApplicationType(nameof(ApplicationType.Main))]
+        [SetSelectedTab(nameof(NavMenuTab.SwitchApplication))]
         public IActionResult Index()
         {
             var learningPortalAccess = User.GetCustomClaimAsBool(CustomClaimTypes.LearnUserAuthenticated) ?? false;

@@ -8,12 +8,11 @@
 @{
   var headerExtension = (string)ViewData["Application"];
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
-  var selectedTab = (Tab)ViewData["SelectedTab"];
   var applicationType = (ApplicationType)ViewData["ApplicationType"];
   if (applicationType != null) {
-    ViewData["Application"] = applicationType.HeaderExtension;
-    ViewData["HeaderPath"] = applicationType.HeaderPath;
-    ViewData["HeaderPathName"] = applicationType.HeaderPathName;
+    ViewData["Application"] ??= applicationType.HeaderExtension;
+    ViewData["HeaderPath"] ??= applicationType.HeaderPath;
+    ViewData["HeaderPathName"] ??= applicationType.HeaderPathName;
   }
 }
 
@@ -95,7 +94,7 @@
             @if (IsSectionDefined("NavMenuItems")) {
               @RenderSection("NavMenuItems", true)
             } else if (applicationType != null) {
-              <vc:nav-menu application="@applicationType" selected-tab="@selectedTab" />
+              <partial name="_AutoNavMenuItems.cshtml" model="@applicationType" />
             }
 
             @if (shouldDisplayHelpMenuItem) {
@@ -115,7 +114,7 @@
               </li>
             }
             @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
-              <li class="nhsuk-header__navigation-item @Html.IsSelectedTab(Tab.SwitchApplication)">
+              <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
                 <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                   Switch application
                   <partial name="_NhsChevronRight" />

@@ -7,7 +7,8 @@
     using Microsoft.AspNetCore.Mvc;
 
     [RedirectDelegateOnlyToLearningPortal]
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Welcome))]
+    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class LearningContentController : Controller
     {
         private const string ItSkillsPathwayBrand = "ITSkillsPathway";
@@ -38,7 +39,7 @@
             var model = new LearningContentViewModel(
                 TerminologyAndClassificationsDeliveryServiceBrand,
                 TerminologyAndClassificationsDeliveryServiceTitle,
-                titleIsLong: true
+                true
             );
             return View("Index", model);
         }

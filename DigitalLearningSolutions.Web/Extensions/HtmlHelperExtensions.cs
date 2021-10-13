@@ -24,18 +24,18 @@
                 : string.Empty;
         }
 
-        public static string IsSelectedTab(
+        public static string GetSelectedCssClassIfTabSelected(
             this IHtmlHelper htmlHelper,
-            Tab currentTab,
+            NavMenuTab currentNavMenuTab,
             string selectedCssClass = "selected"
         )
         {
-            if (!(htmlHelper.ViewContext.ViewData["SelectedTab"] is Tab selectedTab))
+            if (!(htmlHelper.ViewContext.ViewData["SelectedTab"] is NavMenuTab selectedTab))
             {
                 return "";
             }
 
-            return selectedTab.Equals(currentTab)
+            return selectedTab.Equals(currentNavMenuTab)
                 ? selectedCssClass
                 : string.Empty;
         }

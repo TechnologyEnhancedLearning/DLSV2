@@ -11,7 +11,8 @@
     using Microsoft.Extensions.Configuration;
 
     [RedirectDelegateOnlyToLearningPortal]
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Welcome))]
+    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class HomeController : Controller
     {
         private const string LandingPageMiniHubName = "Digital Learning Solutions";
@@ -65,7 +66,7 @@
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
-                CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName]
+                CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName],
             };
         }
     }

@@ -27,7 +27,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Register))]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {

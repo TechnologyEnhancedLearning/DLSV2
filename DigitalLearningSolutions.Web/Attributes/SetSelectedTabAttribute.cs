@@ -2,20 +2,16 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class SetApplicationTypeAndSelectedTab : Attribute, IActionFilter
+    public class SetSelectedTabAttribute : Attribute, IActionFilter
     {
-        private readonly string? applicationTypeName;
-
         private readonly string? tabName;
 
-        public SetApplicationTypeAndSelectedTab(string? applicationTypeName, string? tabName)
+        public SetSelectedTabAttribute(string? tabName)
         {
-            this.applicationTypeName = applicationTypeName;
             this.tabName = tabName;
         }
 
@@ -30,16 +26,7 @@
 
             if (tabName != null)
             {
-                controller.ViewData["SelectedTab"] = (Tab)tabName;
-            }
-
-            if (applicationTypeName == null)
-            {
-                controller.ViewData["ApplicationType"] = context.ActionArguments["application"];
-            }
-            else
-            {
-                controller.ViewData["ApplicationType"] = (ApplicationType)applicationTypeName;
+                controller.ViewData["SelectedTab"] = (NavMenuTab)tabName;
             }
         }
     }

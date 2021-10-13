@@ -18,8 +18,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement;
-
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Register))]
+    
     public class RegisterController : Controller
     {
         private const string CookieName = "RegistrationData";

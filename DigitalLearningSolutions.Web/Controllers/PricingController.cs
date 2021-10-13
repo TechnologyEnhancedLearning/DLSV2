@@ -5,7 +5,8 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationTypeAndSelectedTab(nameof(ApplicationType.Main), nameof(Tab.Pricing))]
+    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Pricing))]
     public class PricingController : Controller
     {
         [RedirectDelegateOnlyToLearningPortal]
