@@ -23,7 +23,6 @@ resharper_wrap_before_invocation_rpar = true
 resharper_csharp_instance_members_qualify_members = none
 resharper_dl_tag_contains_non_dt_or_dd_elements_highlighting = none
 resharper_csharp_trailing_comma_in_multiline_lists = true
-resharper_trailing_comma_in_multiline_lists = true
 
 [*.{cs}]
 indent_size = 4

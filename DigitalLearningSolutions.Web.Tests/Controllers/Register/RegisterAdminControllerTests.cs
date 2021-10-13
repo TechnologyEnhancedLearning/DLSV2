@@ -135,9 +135,9 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("Some centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, "email@email"));
 
-            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true, };
+            var centreManagerAdmin = new AdminUser { CentreId = centreId, IsCentreManager = true };
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId))
-                .Returns(new List<AdminUser> { centreManagerAdmin, });
+                .Returns(new List<AdminUser> { centreManagerAdmin });
 
             // When
             var result = controller.Index(centreId);
@@ -269,7 +269,7 @@
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = userEmail, };
+            var data = new RegistrationData { Centre = centreId, Email = userEmail };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreName(centreId)).Returns("My centre");
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId))
@@ -292,7 +292,7 @@
             {
                 Terms = true,
             };
-            var data = new RegistrationData { Centre = centreId, Email = email, };
+            var data = new RegistrationData { Centre = centreId, Email = email };
             controller.TempData.Set(data);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).Returns((false, email));
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(new AdminUser());
