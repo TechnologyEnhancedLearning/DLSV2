@@ -141,10 +141,10 @@
   <dd class="nhsuk-summary-list__value">
     @(Model.SupervisorSignOffs.Count() - 1)
   </dd>
-  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
+  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
   {
     <dd class="nhsuk-summary-list__actions">
-      <a asp-action="ViewPreviousSignOffs" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
+      <a asp-action="SignOffHistory" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
     </dd>
   }
   </div>
