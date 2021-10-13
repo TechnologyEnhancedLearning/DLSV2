@@ -8,14 +8,14 @@
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class SetApplicationTypeAttribute : Attribute, IActionFilter
     {
-        private readonly string? applicationRouteParamName;
+        private readonly string? determiningRouteParameter;
         private readonly string? applicationTypeName;
 
-        public SetApplicationTypeAttribute(string? applicationTypeName = null, string? applicationRouteParamName = null)
+        public SetApplicationTypeAttribute(string? applicationTypeName = null, string? determiningRouteParameter = null)
         {
             this.applicationTypeName = applicationTypeName;
-            this.applicationRouteParamName = applicationRouteParamName;
-            if (applicationTypeName != null && applicationRouteParamName != null)
+            this.determiningRouteParameter = determiningRouteParameter;
+            if (applicationTypeName != null && determiningRouteParameter != null)
             {
                 throw new Exception(
                     "Only one argument may be passed to SetApplicationTypeAttribute. " +
@@ -24,7 +24,7 @@
                 );
             }
 
-            if (applicationTypeName == null && applicationRouteParamName == null)
+            if (applicationTypeName == null && determiningRouteParameter == null)
             {
                 throw new Exception(
                     "One argument must be passed to SetApplicationTypeAttribute. " +
@@ -49,7 +49,7 @@
             }
             else
             {
-                controller.ViewData["ApplicationType"] = context.ActionArguments[applicationRouteParamName!];
+                controller.ViewData["ApplicationType"] = context.ActionArguments[determiningRouteParameter!];
             }
         }
     }

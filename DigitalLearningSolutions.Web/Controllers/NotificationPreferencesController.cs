@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.Extensions.Logging;
 
     [ValidateAllowedApplicationType]
-    [SetApplicationType(applicationRouteParamName: "application")]
+    [SetApplicationType(determiningRouteParameter: "application")]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {

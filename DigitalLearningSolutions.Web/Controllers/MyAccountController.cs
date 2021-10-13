@@ -19,7 +19,7 @@
     [Route("/{application}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedApplicationType]
-    [SetApplicationType(applicationRouteParamName: "application")]
+    [SetApplicationType(determiningRouteParameter: "application")]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
@@ -75,7 +75,7 @@
             ViewBag.JobGroupOptions =
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
-            
+
             var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application);
 
             return View(model);
@@ -150,7 +150,7 @@
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
-            
+
             if (!ModelState.IsValid)
             {
                 return View(new EditDetailsViewModel(formData, application));

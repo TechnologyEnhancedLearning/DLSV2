@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -26,7 +27,7 @@
 
             if (tabName != null)
             {
-                controller.ViewData["SelectedTab"] = (NavMenuTab)tabName;
+                controller.ViewData[ViewDataHelper.SelectedTab] = (NavMenuTab)tabName;
             }
         }
     }
