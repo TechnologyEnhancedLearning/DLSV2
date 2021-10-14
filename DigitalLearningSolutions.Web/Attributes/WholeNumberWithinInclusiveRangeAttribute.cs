@@ -2,13 +2,13 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class WholeNumberWithinRangeAttribute : ValidationAttribute
+    public class WholeNumberWithinInclusiveRangeAttribute : ValidationAttribute
     {
         private readonly string errorMessage;
         private readonly int lowerBound;
         private readonly int upperBound;
 
-        public WholeNumberWithinRangeAttribute(int lowerBound, int upperBound, string errorMessage)
+        public WholeNumberWithinInclusiveRangeAttribute(int lowerBound, int upperBound, string errorMessage)
         {
             this.lowerBound = lowerBound;
             this.upperBound = upperBound;

@@ -33,10 +33,10 @@
 
         public int CustomisationId { get; set; }
 
-        [WholeNumberWithinRange(0, 48, "Enter a whole number from 0 to 48")]
+        [WholeNumberWithinInclusiveRange(0, 48, "Enter a whole number from 0 to 48")]
         public string? CompleteWithinMonths { get; set; }
 
-        [WholeNumberWithinRange(0, 48, "Enter a whole number from 0 to 48")]
+        [WholeNumberWithinInclusiveRange(0, 48, "Enter a whole number from 0 to 48")]
         public string? ValidityMonths { get; set; }
 
         public bool Mandatory { get; set; }
