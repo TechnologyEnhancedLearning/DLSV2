@@ -16,22 +16,36 @@
 
         public string GetDateLabel(string format)
         {
-            var quarter = StartDate.Month / 3 + 1;
-
-            format = format.Replace("Q", $"'Quarter' {quarter}").Replace("q", $"Q{quarter}");
+            format = ConvertQuartersInFormatString(format, StartDate);
 
             return StartDate.ToString(format);
         }
 
         public string GetDateRangeLabel(string format, DateTime rangeTerminator, bool startRangeFromTerminator)
         {
-            var quarter = StartDate.Month / 3 + 1;
+            var dateFromThisObject = startRangeFromTerminator ? GetFinalDate() : StartDate;
+            var formatForDateFromThisObject = ConvertQuartersInFormatString(format, dateFromThisObject);
 
-            format = format.Replace("Q", $"'Quarter' {quarter}").Replace("q", $"Q{quarter}");
+            var formatForTerminator = ConvertQuartersInFormatString(format, rangeTerminator);
 
             return startRangeFromTerminator
-                ? rangeTerminator.ToString(format) + " - " + GetFinalDate().ToString(format)
-                : StartDate.ToString(format) + " - " + rangeTerminator.ToString(format);
+                ? rangeTerminator.ToString(formatForTerminator) + " - " + dateFromThisObject.ToString(formatForDateFromThisObject)
+                : dateFromThisObject.ToString(formatForDateFromThisObject) + " - " + rangeTerminator.ToString(formatForTerminator);
+        }
+
+        public string GetDateRangeLabel(string format, DateTime startDate, DateTime endDate)
+        {
+            var startFormat = ConvertQuartersInFormatString(format, startDate);
+            var endFormat = ConvertQuartersInFormatString(format, endDate);
+
+            return startDate.ToString(startFormat) + " - " + endDate.ToString(endFormat);
+        }
+
+        private string ConvertQuartersInFormatString(string format, DateTime date)
+        {
+            var quarter = date.Month / 3 + 1;
+
+            return format.Replace("Q", $"'Quarter' {quarter}").Replace("q", $"Q{quarter}");
         }
 
         private DateTime GetFinalDate()

@@ -34,18 +34,40 @@
         {
             activity = activity.ToList();
 
-            var first = new[] { activity.First() }.Select(
-                p => new ActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, true)
-            );
-            var last = new[] { activity.Last() }.Select(
-                p => new ActivityDataRowModel(p, DateHelper.StandardDateFormat, endDate, false)
-            );
+            if (activity.Count() <= 1)
+            {
+                Rows = activity.Select(
+                    p => new ActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, endDate)
+                );
+            }
+            else
+            {
+                var first = new[] { activity.First() }.Select(
+                    p => p.DateInformation.Interval == ReportInterval.Days
+                        ? new ActivityDataRowModel(
+                            p,
+                            DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
+                        )
+                        : new ActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, true)
+                );
+                var last = new[] { activity.Last() }.Select(
+                    p => p.DateInformation.Interval == ReportInterval.Days
+                        ? new ActivityDataRowModel(
+                            p,
+                            DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
+                        )
+                        : new ActivityDataRowModel(p, DateHelper.StandardDateFormat, endDate, false)
+                );
 
-            var middleRows = activity.Skip(1).SkipLast(1).Select(
-                p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval))
-            );
+                var middleRows = activity.Skip(1).SkipLast(1).Select(
+                    p => new ActivityDataRowModel(
+                        p,
+                        DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
+                    )
+                );
 
-            Rows = first.Concat(middleRows).Concat(last).Reverse();
+                Rows = first.Concat(middleRows).Concat(last).Reverse();
+            }
         }
 
         public IEnumerable<ActivityDataRowModel> Rows { get; set; }
@@ -69,6 +91,19 @@
         )
         {
             Period = periodOfActivity.DateInformation.GetDateRangeLabel(format, boundaryDate, startRangeFromTerminator);
+            Completions = periodOfActivity.Completions;
+            Evaluations = periodOfActivity.Evaluations;
+            Registrations = periodOfActivity.Registrations;
+        }
+
+        public ActivityDataRowModel(
+            PeriodOfActivity periodOfActivity,
+            string format,
+            DateTime startDate,
+            DateTime endDate
+        )
+        {
+            Period = periodOfActivity.DateInformation.GetDateRangeLabel(format, startDate, endDate);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
             Registrations = periodOfActivity.Registrations;
