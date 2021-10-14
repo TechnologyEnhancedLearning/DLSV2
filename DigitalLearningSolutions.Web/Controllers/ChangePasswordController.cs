@@ -11,10 +11,10 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [Route("/{application}/ChangePassword", Order = 1)]
+    [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
-    [ValidateAllowedApplicationType]
-    [SetApplicationType(determiningRouteParameter: "application")]
+    [ValidateAllowedDlsSubApplication]
+    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class ChangePasswordController : Controller
@@ -29,14 +29,14 @@
         }
 
         [HttpGet]
-        public IActionResult Index(ApplicationType application)
+        public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
-            var model = new ChangePasswordViewModel(application);
+            var model = new ChangePasswordViewModel(dlsSubApplication);
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ChangePasswordFormData formData, ApplicationType application)
+        public async Task<IActionResult> Index(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication)
         {
             var adminId = User.GetAdminId();
             var delegateId = User.GetCandidateId();
@@ -55,7 +55,7 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new ChangePasswordViewModel(formData, application);
+                var model = new ChangePasswordViewModel(formData, dlsSubApplication);
                 return View(model);
             }
 
@@ -63,7 +63,7 @@
 
             await passwordService.ChangePasswordAsync(verifiedLinkedUsersAccounts.GetUserRefs(), newPassword);
 
-            return View("Success", application);
+            return View("Success", dlsSubApplication);
         }
     }
 }

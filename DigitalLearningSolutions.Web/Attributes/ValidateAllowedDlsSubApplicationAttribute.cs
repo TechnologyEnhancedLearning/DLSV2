@@ -9,11 +9,11 @@
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ValidateAllowedApplicationTypeAttribute : Attribute, IActionFilter
+    public class ValidateAllowedDlsSubApplicationAttribute : Attribute, IActionFilter
     {
         private readonly string applicationArgumentName;
 
-        public ValidateAllowedApplicationTypeAttribute(string applicationArgumentName = "application")
+        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = "application")
         {
             this.applicationArgumentName = applicationArgumentName;
         }
@@ -35,21 +35,21 @@
                 return;
             }
 
-            var application = (ApplicationType?)
+            var application = (DlsSubApplication?)
                 (context.ActionArguments.ContainsKey(applicationArgumentName)
                     ? context.ActionArguments[applicationArgumentName]
                     : null);
 
-            if (user.IsDelegateOnlyAccount() && !ApplicationType.LearningPortal.Equals(application))
+            if (user.IsDelegateOnlyAccount() && !DlsSubApplication.LearningPortal.Equals(application))
             {
                 RedirectToLearningPortalVersion(context);
                 return;
             }
 
-            if (!user.HasLearningPortalPermissions() && ApplicationType.LearningPortal.Equals(application) ||
-                !user.HasFrameworksAdminPermissions() && ApplicationType.Frameworks.Equals(application) ||
-                !user.HasSupervisorAdminPermissions() && ApplicationType.Supervisor.Equals(application) ||
-                !user.HasCentreAdminPermissions() && ApplicationType.TrackingSystem.Equals(application))
+            if (!user.HasLearningPortalPermissions() && DlsSubApplication.LearningPortal.Equals(application) ||
+                !user.HasFrameworksAdminPermissions() && DlsSubApplication.Frameworks.Equals(application) ||
+                !user.HasSupervisorAdminPermissions() && DlsSubApplication.Supervisor.Equals(application) ||
+                !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application))
             {
                 RedirectToHome(context);
             }
@@ -70,7 +70,7 @@
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
             var routeValues = new Dictionary<string, object>
             {
-                [applicationArgumentName] = ApplicationType.LearningPortal
+                [applicationArgumentName] = DlsSubApplication.LearningPortal,
             };
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
         }

@@ -19,7 +19,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class LoginController : Controller
     {

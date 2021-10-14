@@ -13,7 +13,7 @@
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             CentreCustomPromptsWithAnswers? customPrompts,
-            ApplicationType application)
+            DlsSubApplication dlsSubApplication)
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
@@ -32,7 +32,7 @@
                     .ToList();
             }
 
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public string? Centre { get; set; }
@@ -53,6 +53,6 @@
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

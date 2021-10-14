@@ -9,16 +9,16 @@
         public UpdateNotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> notifications,
             string userType,
-            ApplicationType application
+            DlsSubApplication dlsSubApplication
         )
         {
             Notifications = notifications;
             UserType = userType;
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public string UserType { get; set; }
         public IEnumerable<NotificationPreference> Notifications { get; set; }
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

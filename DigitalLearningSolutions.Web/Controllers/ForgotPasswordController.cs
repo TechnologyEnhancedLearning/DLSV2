@@ -9,7 +9,7 @@
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class ForgotPasswordController : Controller
     {

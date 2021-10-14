@@ -6,15 +6,15 @@
     {
         private readonly string currentSystemBaseUrl;
 
-        public SupportViewModel(ApplicationType application, SupportPage currentPage, string currentSystemBaseUrl)
+        public SupportViewModel(DlsSubApplication dlsSubApplication, SupportPage currentPage, string currentSystemBaseUrl)
         {
             CurrentPage = currentPage;
             this.currentSystemBaseUrl = currentSystemBaseUrl;
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public SupportPage CurrentPage { get; set; }
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
 
         public string HelpUrl => $"{currentSystemBaseUrl}/help/Introduction.html";
         public string FaqUrl => $"{currentSystemBaseUrl}/tracking/faqs";

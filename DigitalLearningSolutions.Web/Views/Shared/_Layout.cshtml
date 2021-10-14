@@ -8,11 +8,11 @@
 @{
   var headerExtension = (string)ViewData[ViewDataHelper.Application];
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
-  var applicationType = (ApplicationType)ViewData["ApplicationType"];
-  if (applicationType != null) {
-    ViewData[ViewDataHelper.Application] ??= applicationType.HeaderExtension;
-    ViewData[ViewDataHelper.HeaderPath] ??= applicationType.HeaderPath;
-    ViewData[ViewDataHelper.HeaderPathName] ??= applicationType.HeaderPathName;
+  var dlsSubApplication = (DlsSubApplication)ViewData[ViewDataHelper.DlsSubApplication];
+  if (dlsSubApplication != null) {
+    ViewData[ViewDataHelper.Application] ??= dlsSubApplication.HeaderExtension;
+    ViewData[ViewDataHelper.HeaderPath] ??= dlsSubApplication.HeaderPath;
+    ViewData[ViewDataHelper.HeaderPathName] ??= dlsSubApplication.HeaderPathName;
   }
 }
 
@@ -93,8 +93,8 @@
           <ul class="nhsuk-header__navigation-list">
             @if (IsSectionDefined("NavMenuItems")) {
               @RenderSection("NavMenuItems", true)
-            } else if (applicationType != null) {
-              <partial name="_AutoNavMenuItems.cshtml" model="@applicationType" />
+            } else if (dlsSubApplication != null) {
+              <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
             }
 
             @if (shouldDisplayHelpMenuItem) {

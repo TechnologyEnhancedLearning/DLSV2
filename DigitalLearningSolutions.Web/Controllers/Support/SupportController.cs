@@ -21,27 +21,27 @@
             this.configuration = configuration;
         }
 
-        [Route("/{application}/Support")]
+        [Route("/{dlsSubApplication}/Support")]
         [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
-        public async Task<IActionResult> Index(ApplicationType application)
+        public async Task<IActionResult> Index(DlsSubApplication dlsSubApplication)
         {
-            if (!ApplicationType.TrackingSystem.Equals(application) &&
-                !ApplicationType.Frameworks.Equals(application))
+            if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
+                !DlsSubApplication.Frameworks.Equals(dlsSubApplication))
             {
                 return NotFound();
             }
 
             var trackingSystemSupportEnabled =
-                ApplicationType.TrackingSystem.Equals(application) &&
+                DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
                 await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem);
-            var frameworksSupportEnabled = ApplicationType.Frameworks.Equals(application) &&
+            var frameworksSupportEnabled = DlsSubApplication.Frameworks.Equals(dlsSubApplication) &&
                                            User.HasFrameworksAdminPermissions();
 
             if (trackingSystemSupportEnabled || frameworksSupportEnabled)
             {
                 var model = new SupportViewModel(
-                    application,
+                    dlsSubApplication,
                     SupportPage.Support,
                     configuration.GetCurrentSystemBaseUrl()
                 );

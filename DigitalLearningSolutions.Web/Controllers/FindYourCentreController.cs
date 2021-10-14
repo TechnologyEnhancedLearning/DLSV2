@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.FindYourCentre))]
     public class FindYourCentreController : Controller
     {

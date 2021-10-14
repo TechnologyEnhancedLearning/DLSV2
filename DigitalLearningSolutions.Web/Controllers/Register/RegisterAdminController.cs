@@ -16,7 +16,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
-    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class RegisterAdminController : Controller
     {
         private const string CookieName = "AdminRegistrationData";

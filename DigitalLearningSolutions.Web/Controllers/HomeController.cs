@@ -11,7 +11,7 @@
     using Microsoft.Extensions.Configuration;
 
     [RedirectDelegateOnlyToLearningPortal]
-    [SetApplicationType(nameof(ApplicationType.Main))]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class HomeController : Controller
     {

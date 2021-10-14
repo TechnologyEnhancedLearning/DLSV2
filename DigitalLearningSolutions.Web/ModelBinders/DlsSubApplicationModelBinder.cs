@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-    public class ApplicationTypeModelBinder : IModelBinder
+    public class DlsSubApplicationModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
@@ -18,9 +18,9 @@ namespace DigitalLearningSolutions.Web.ModelBinders
             var enumerationName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
             if (string.IsNullOrEmpty(enumerationName.FirstValue))
             {
-                bindingContext.Result = ModelBindingResult.Success(ApplicationType.Default);
+                bindingContext.Result = ModelBindingResult.Success(DlsSubApplication.Default);
             }
-            else if (ApplicationType.TryGetFromUrlSegment(enumerationName.FirstValue, out var result, true))
+            else if (DlsSubApplication.TryGetFromUrlSegment(enumerationName.FirstValue, out var result, true))
             {
                 bindingContext.Result = ModelBindingResult.Success(result!);
             }
@@ -38,7 +38,7 @@ namespace DigitalLearningSolutions.Web.ModelBinders
         }
     }
 
-    public class ApplicationTypeModelBinderProvider : IModelBinderProvider
+    public class DlsSubApplicationModelBinderProvider : IModelBinderProvider
     {
         public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
@@ -47,9 +47,9 @@ namespace DigitalLearningSolutions.Web.ModelBinders
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.Metadata.ModelType == typeof(ApplicationType))
+            if (context.Metadata.ModelType == typeof(DlsSubApplication))
             {
-                return new BinderTypeModelBinder(typeof(ApplicationTypeModelBinder));
+                return new BinderTypeModelBinder(typeof(DlsSubApplicationModelBinder));
             }
 
             return null;

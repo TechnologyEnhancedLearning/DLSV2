@@ -5,7 +5,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
 }
 
@@ -20,7 +20,7 @@
       Use the form below to change the password for delegate and admin accounts associated with your email address.
     </p>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-application="@Model.Application.UrlSegment">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">
       <vc:text-input
         asp-for="@nameof(Model.CurrentPassword)"
         label="Current password"

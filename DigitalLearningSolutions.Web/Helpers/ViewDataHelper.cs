@@ -4,6 +4,7 @@
     {
         public const string Title = "Title";
         public const string Application = "Application";
+        public const string DlsSubApplication = "DlsSubApplication";
         public const string SelectedTab = "SelectedTab";
         public const string HeaderPath = "HeaderPath";
         public const string HeaderPathName = "HeaderPathName";

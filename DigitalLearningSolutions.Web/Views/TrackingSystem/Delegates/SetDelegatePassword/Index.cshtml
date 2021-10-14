@@ -6,14 +6,14 @@
 
 @{
     ViewData["Title"] = "Set delegate user password";
-    ViewData["Application"] = ApplicationType.TrackingSystem.HeaderExtension;
-    ViewData["HeaderPath"] = ApplicationType.TrackingSystem.HeaderPath;
-    ViewData["HeaderPathName"] = ApplicationType.TrackingSystem.HeaderPathName;
+    ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
+    ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+    ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
     var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem" />
+  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">

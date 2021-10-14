@@ -12,7 +12,7 @@
     {
         [Authorize]
         [RedirectDelegateOnlyToLearningPortal]
-        [SetApplicationType(nameof(ApplicationType.Main))]
+        [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
         [SetSelectedTab(nameof(NavMenuTab.SwitchApplication))]
         public IActionResult Index()
         {
