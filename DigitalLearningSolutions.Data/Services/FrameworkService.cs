@@ -407,8 +407,11 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public void AddDefaultQuestionsToCompetency(int competencyId, int frameworkId)
         {
             connection.Execute(
-                @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
-                        SELECT @competencyId AS Expr1, AssessmentQuestionId
+                @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID, Ordering)
+                        SELECT @competencyId AS CompetencyID, AssessmentQuestionId, COALESCE
+                             ((SELECT        MAX(Ordering)
+                                 FROM            [CompetencyAssessmentQuestions]
+                                 WHERE        ([CompetencyId] = @competencyId)), 0)+1 As Ordering
                     FROM   FrameworkDefaultQuestions
                     WHERE (FrameworkId = @frameworkId) AND (NOT EXISTS  (SELECT * FROM CompetencyAssessmentQuestions WHERE AssessmentQuestionID = FrameworkDefaultQuestions.AssessmentQuestionID AND CompetencyID = @competencyId))",
                 new { competencyId, frameworkId }
@@ -881,8 +884,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                  $@"{AssessmentQuestionFields}
                     {AssessmentQuestionTables}
                     INNER JOIN FrameworkDefaultQuestions AS FDQ ON AQ.ID = FDQ.AssessmentQuestionID
-                    WHERE FDQ.FrameworkId = @frameworkId
-                     ORDER BY [Question]"
+                    WHERE FDQ.FrameworkId = @frameworkId"
                     , new { frameworkId, adminId });
         }
         public IEnumerable<AssessmentQuestion> GetCompetencyAssessmentQuestionsById(int competencyId, int adminId)
@@ -919,13 +921,13 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             else if (addToExisting)
             {
                 numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID)
-                        SELECT CompetencyID, @assessmentQuestionId AS AssessmentQuestionID
-                        FROM FrameworkCompetencies
-                        WHERE FrameworkID = @frameworkId
-                        EXCEPT
-                        SELECT CompetencyID, AssessmentQuestionID
-                        FROM CompetencyAssessmentQuestions",
+                    @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID, Ordering)
+                        SELECT CompetencyID, @assessmentQuestionId AS AssessmentQuestionID, COALESCE
+                             ((SELECT        MAX(Ordering)
+                                 FROM            [CompetencyAssessmentQuestions]
+                                 WHERE        ([CompetencyId] = fc.CompetencyID)), 0)+1 AS Ordering
+                        FROM FrameworkCompetencies AS fc
+                        WHERE FrameworkID = @frameworkId AND NOT EXISTS (SELECT * FROM CompetencyAssessmentQuestions WHERE CompetencyID = fc.CompetencyID AND AssessmentQuestionID = @assessmentQuestionId)",
                     new { assessmentQuestionId, frameworkId });
             }
         }
@@ -975,7 +977,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             return connection.Query<GenericSelectList>(
                 @"SELECT AQ.ID, CASE WHEN AddedByAdminId = @adminId THEN '* ' ELSE '' END + Question + ' (' + InputTypeName + ' ' + CAST(MinValue AS nvarchar) + ' to ' + CAST(MaxValue As nvarchar) + ')' AS Label
                     FROM AssessmentQuestions AS AQ LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
-                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM CompetencyAssessmentQuestions AS CAQ INNER JOIN FrameworkCompetencies AS FC ON CAQ.CompetencyID = FC.CompetencyID WHERE FC.ID = @frameworkCompetencyId)", new { frameworkCompetencyId, adminId }
+                    WHERE AQ.ID NOT IN (SELECT AssessmentQuestionID FROM CompetencyAssessmentQuestions AS CAQ INNER JOIN FrameworkCompetencies AS FC ON CAQ.CompetencyID = FC.CompetencyID WHERE FC.ID = @frameworkCompetencyId) ORDER BY Question", new { frameworkCompetencyId, adminId }
                 );
         }
         public IEnumerable<GenericSelectList> GetAssessmentQuestionInputTypes()
@@ -1011,7 +1013,7 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                     INNER JOIN CompetencyAssessmentQuestions AS CAQ ON AQ.ID = CAQ.AssessmentQuestionID
                     INNER JOIN FrameworkCompetencies AS FC ON CAQ.CompetencyId = FC.CompetencyId
                     WHERE FC.Id = @frameworkCompetencyId
-                     ORDER BY [Question]"
+                     ORDER BY CAQ.Ordering"
                     , new
                     {
                         frameworkCompetencyId,
