@@ -23,8 +23,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCoursesAtCentreForAdminCategoryId(int centreId, int categoryId);
-        bool UpdateCourseOptions(CourseDetails courseDetails);
+        bool TryUpdateCourseOptions(CourseOptions courseOptions, int customisationId, int centreId, int? categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -368,24 +369,59 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool UpdateCourseOptions(CourseDetails courseDetails)
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseOptions>(
+                @"SELECT
+                        cu.Active,
+                        cu.SelfRegister,
+                        cu.HideInLearnerPortal,
+                        cu.DiagObjSelect,
+                        ap.DiagAssess
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
+        }
+
+        public bool TryUpdateCourseOptions(
+            CourseOptions courseOptions,
+            int customisationId,
+            int centreId,
+            int? categoryId
+        )
         {
             var affectedRows = connection.Execute(
-                @"UPDATE Customisations
+                @"UPDATE cu
                     SET Active = @Active,
                         SelfRegister = @SelfRegister,
                         HideInLearnerPortal = @HideInLearnerPortal,
                         DiagObjSelect = @DiagObjSelect
-                    WHERE CustomisationID = @CustomisationId 
-                    AND CentreID = @CentreId",
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
                 new
                 {
-                    courseDetails.Active,
-                    courseDetails.SelfRegister,
-                    courseDetails.HideInLearnerPortal,
-                    courseDetails.DiagObjSelect,
-                    courseDetails.CustomisationId,
-                    courseDetails.CentreId
+                    courseOptions.Active,
+                    courseOptions.SelfRegister,
+                    courseOptions.HideInLearnerPortal,
+                    courseOptions.DiagObjSelect,
+                    customisationId,
+                    centreId,
+                    categoryId
                 }
             );
             return affectedRows > 0;

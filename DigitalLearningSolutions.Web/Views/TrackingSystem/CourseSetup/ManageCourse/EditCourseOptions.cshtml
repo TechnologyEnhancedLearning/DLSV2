@@ -1,5 +1,8 @@
 ﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model EditCourseOptionsViewModel
 
@@ -11,7 +14,7 @@
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
@@ -28,6 +31,6 @@
       <button class="nhsuk-button" type="submit" value="save">Save</button>
     </form>
 
-      <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+      <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" />
   </div>
 </div>

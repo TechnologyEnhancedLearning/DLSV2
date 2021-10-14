@@ -54,8 +54,13 @@
         public void Edit_Course_Options_with_course_details_page_opens()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
-                .Returns(new CourseDetails());
+            A.CallTo(
+                () => courseDataService.GetCourseDetailsForAdminCategoryId(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(new CourseDetails());
 
             // When
             var result = controller.EditCourseOptions(1);
@@ -65,13 +70,19 @@
         }
 
         [Test]
-        public void Edit_Course_Options_page_when_course_details_are_not_updated()
+        public void Edit_Course_Options_post_returns_not_found_when_course_details_are_not_updated()
         {
             // Given
-            var courseDetails = new CourseDetails();
-            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseDetails);
-            A.CallTo(() => courseDataService.UpdateCourseOptions(A<CourseDetails>._))
-                .Returns(false);
+            var courseOptions = new CourseOptions();
+            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseOptions, 1);
+            A.CallTo(
+                () => courseDataService.TryUpdateCourseOptions(
+                    A<CourseOptions>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(false);
 
             // When
             var result = controller.EditCourseOptions(editCourseOptionsViewModel);
@@ -84,10 +95,16 @@
         public void Edit_Course_Options_page_when_course_details_are_successfully_updated()
         {
             // Given
-            var courseDetails = new CourseDetails();
-            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseDetails);
-            A.CallTo(() => courseDataService.UpdateCourseOptions(A<CourseDetails>._))
-                .Returns(true);
+            var courseOptions = new CourseOptions();
+            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseOptions, 1);
+            A.CallTo(
+                () => courseDataService.TryUpdateCourseOptions(
+                    A<CourseOptions>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
 
             // When
             var result = controller.EditCourseOptions(editCourseOptionsViewModel);

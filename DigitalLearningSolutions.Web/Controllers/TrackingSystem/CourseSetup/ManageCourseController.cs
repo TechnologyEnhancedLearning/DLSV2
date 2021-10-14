@@ -50,18 +50,18 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var courseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
                 customisationId,
                 centreId,
                 categoryId.Value
             );
 
-            if (courseDetails == null)
+            if (courseOptions is null)
             {
                 return NotFound();
             }
 
-            var model = new EditCourseOptionsViewModel(courseDetails);
+            var model = new EditCourseOptionsViewModel(courseOptions, customisationId);
             return View(model);
         }
 
@@ -70,23 +70,20 @@
         public IActionResult EditCourseOptions(EditCourseOptionsViewModel editCourseOptionsViewModel)
         {
             var centreId = User.GetCentreId();
-            var courseDetails = new CourseDetails
+            var customisationId = editCourseOptionsViewModel.CustomisationId;
+            var categoryId = User.GetAdminCategoryId()!;
+
+            var courseOptions = new CourseOptions
             {
-                CustomisationId = editCourseOptionsViewModel.CustomisationId,
-                CentreId = centreId,
                 Active = editCourseOptionsViewModel.Active,
                 SelfRegister = editCourseOptionsViewModel.AllowSelfEnrolment,
                 HideInLearnerPortal = editCourseOptionsViewModel.HideInLearningPortal,
                 DiagObjSelect = editCourseOptionsViewModel.DiagnosticObjectiveSelection
             };
 
-            var updateSuccessful = courseDataService.UpdateCourseOptions(courseDetails);
-            if (!updateSuccessful)
-            {
-                return NotFound();
-            }
+            courseDataService.TryUpdateCourseOptions(courseOptions, customisationId, centreId, categoryId);
 
-            return RedirectToAction("Index", "ManageCourse", new { courseDetails.CustomisationId });
+            return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
     }
 }
