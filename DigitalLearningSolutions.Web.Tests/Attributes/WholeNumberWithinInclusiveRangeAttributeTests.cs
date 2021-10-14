@@ -5,10 +5,9 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    [TestFixture]
     public class WholeNumberWithinInclusiveRangeAttributeTests
     {
-        private static IEnumerable<TestCaseData> WholeNumberWithinInclusiveRangeAttributeTestData
+        private static IEnumerable<TestCaseData> WholeNumberWithinInclusiveRangeAttributeTestsData
         {
             get
             {
@@ -25,7 +24,7 @@
         [Test]
         [TestCaseSource(
             typeof(WholeNumberWithinInclusiveRangeAttributeTests),
-            nameof(WholeNumberWithinInclusiveRangeAttributeTestData)
+            nameof(WholeNumberWithinInclusiveRangeAttributeTestsData)
         )]
         public void Accepts_valid_inputs_and_rejects_invalid_inputs(
             string input,
