@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/EditDescription", "Edit description for Activities worker or coordinator group (optional)")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
@@ -60,7 +61,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
-        [InlineData("/TrackingSystem/Delegates/Groups/103/EditDescription", "Edit description for ABC Digital Supervision 2 group (optional)")]
+        [InlineData("/TrackingSystem/Support", "Support")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

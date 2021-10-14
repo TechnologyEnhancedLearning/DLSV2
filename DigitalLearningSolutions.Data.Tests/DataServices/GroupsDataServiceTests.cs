@@ -230,7 +230,7 @@
                 var isUpdated = groupsDataService.TryUpdateGroupDescription(groupId, centerId, expectedDescription);
 
                 // Then
-                isUpdated.Should().Be(true);
+                isUpdated.Should().BeTrue();
                 var result = groupsDataService.GetGroupAtCentreById(groupId, centerId);
                 result?.GroupDescription.Should().Be(expectedDescription);
             }
@@ -350,7 +350,7 @@
         private string? GetGroupDescriptionById(int groupId)
         {
             return connection.Query<string?>(
-                @"SELECT GroupLabel FROM Groups 
+                @"SELECT GroupDescription FROM Groups 
                     WHERE GroupID = @groupId",
                 new { groupId }
             ).FirstOrDefault();

@@ -32,6 +32,17 @@
 
     public class GroupsDataService : IGroupsDataService
     {
+        private const string CourseCountSql = @"SELECT COUNT(*)
+                FROM GroupCustomisations AS gc
+                JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
+                INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                WHERE gc.GroupID = g.GroupID
+                AND ca.CentreId = @centreId
+                AND gc.InactivatedDate IS NULL
+                AND ap.ArchivedDate IS NULL
+                AND c.Active = 1";
+
         private readonly IDbConnection connection;
 
         public GroupsDataService(IDbConnection connection)
@@ -243,16 +254,5 @@
             );
             return numberOfAffectedRows > 0;
         }
-
-        private const string CourseCountSql = @"SELECT COUNT(*)
-                FROM GroupCustomisations AS gc
-                JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                WHERE gc.GroupID = g.GroupID
-                AND ca.CentreId = @centreId
-                AND gc.InactivatedDate IS NULL
-                AND ap.ArchivedDate IS NULL
-                AND c.Active = 1";
     }
 }
