@@ -6,7 +6,7 @@
 @inject IConfiguration Configuration
 
 @{
-  var dlsSubApplication = (DlsSubApplication)ViewData[LayoutViewDataKeys.DlsSubApplication];
+  var dlsSubApplication = (DlsSubApplication?)ViewData[LayoutViewDataKeys.DlsSubApplication];
   if (dlsSubApplication != null) {
     ViewData[LayoutViewDataKeys.Application] ??= dlsSubApplication.HeaderExtension;
     ViewData[LayoutViewDataKeys.HeaderPath] ??= dlsSubApplication.HeaderPath;
