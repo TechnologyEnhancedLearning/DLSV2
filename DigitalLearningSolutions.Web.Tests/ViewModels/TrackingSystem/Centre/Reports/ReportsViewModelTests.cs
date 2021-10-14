@@ -18,20 +18,28 @@
             {
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2001-01-01"), ReportInterval.Months),
-                    null
+                    1,
+                    1,
+                    1
                 ),
                 new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Months),
-                    null
+                    new DateInformation(DateTime.Parse("2002-02-01"), ReportInterval.Months),
+                    0,
+                    0,
+                    0
                 )
             };
 
             // when
-            var model = new UsageStatsTableViewModel(monthlyData);
+            var model = new UsageStatsTableViewModel(
+                monthlyData,
+                DateTime.Parse("2001-01-01"),
+                DateTime.Parse("2002-02-01")
+            );
 
             // then
-            model.Rows.First().Period.Should().Be("February, 2002");
-            model.Rows.Last().Period.Should().Be("January, 2001");
+            model.Rows.First().Completions.Should().Be(0);
+            model.Rows.Last().Completions.Should().Be(1);
         }
 
         [Test]
@@ -62,16 +70,28 @@
             var dailyData = new[]
             {
                 new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-01"), ReportInterval.Days),
+                    null
+                ),
+                new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Days),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-03"), ReportInterval.Days),
                     null
                 )
             };
 
             // when
-            var model = new UsageStatsTableViewModel(dailyData);
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-01"),
+                DateTime.Parse("2002-02-03")
+            );
 
             // then
-            model.Rows.First().Period.Should().Be("2/02/2002");
+            model.Rows.ToList()[1].Period.Should().Be("2/02/2002");
         }
 
         [Test]
@@ -81,16 +101,59 @@
             var dailyData = new[]
             {
                 new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Weeks),
+                    new DateInformation(DateTime.Parse("2002-02-01"), ReportInterval.Weeks),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-08"), ReportInterval.Weeks),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-15"), ReportInterval.Weeks),
                     null
                 )
             };
 
             // when
-            var model = new UsageStatsTableViewModel(dailyData);
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-01"),
+                DateTime.Parse("2002-02-15")
+            );
 
             // then
-            model.Rows.First().Period.Should().Be("Week commencing 2/02/2002");
+            model.Rows.ToList()[1].Period.Should().Be("Week commencing 8/02/2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_month_interval_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-01-01"), ReportInterval.Months),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-02-01"), ReportInterval.Months),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-03-01"), ReportInterval.Months),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-01-01"),
+                DateTime.Parse("2002-03-02")
+            );
+
+            // then
+            model.Rows.ToList()[1].Period.Should().Be("February, 2002");
         }
 
         [Test]
@@ -100,16 +163,28 @@
             var dailyData = new[]
             {
                 new PeriodOfActivity(
-                    new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Quarters),
+                    new DateInformation(DateTime.Parse("2002-01-01"), ReportInterval.Quarters),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-04-01"), ReportInterval.Quarters),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-07-01"), ReportInterval.Quarters),
                     null
                 )
             };
 
             // when
-            var model = new UsageStatsTableViewModel(dailyData);
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-02"),
+                DateTime.Parse("2002-08-02")
+            );
 
             // then
-            model.Rows.First().Period.Should().Be("Quarter 1, 2002");
+            model.Rows.ToList()[1].Period.Should().Be("Quarter 2, 2002");
         }
 
         [Test]
@@ -121,14 +196,82 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-02"), ReportInterval.Years),
                     null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2003-02-02"), ReportInterval.Years),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2004-02-02"), ReportInterval.Years),
+                    null
                 )
             };
 
             // when
-            var model = new UsageStatsTableViewModel(dailyData);
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-02"),
+                DateTime.Parse("2004-02-02")
+            );
 
             // then
-            model.Rows.First().Period.Should().Be("2002");
+            model.Rows.ToList()[1].Period.Should().Be("2003");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_boundary_period_strings_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-01-01"), ReportInterval.Years),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2003-01-01"), ReportInterval.Years),
+                    null
+                ),
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2004-01-01"), ReportInterval.Years),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-02"),
+                DateTime.Parse("2004-02-02")
+            );
+
+            // then
+            model.Rows.First().Period.Should().Be("01/01/2004 - 02/02/2004");
+            model.Rows.Last().Period.Should().Be("02/02/2002 - 31/12/2002");
+        }
+
+        [Test]
+        public void UsageStatsTableViewModel_formats_single_period_string_correctly()
+        {
+            // given
+            var dailyData = new[]
+            {
+                new PeriodOfActivity(
+                    new DateInformation(DateTime.Parse("2002-01-01"), ReportInterval.Years),
+                    null
+                )
+            };
+
+            // when
+            var model = new UsageStatsTableViewModel(
+                dailyData,
+                DateTime.Parse("2002-02-02"),
+                DateTime.Parse("2002-02-03")
+            );
+
+            // then
+            model.Rows.Count().Should().Be(1);
+            model.Rows.First().Period.Should().Be("02/02/2002 - 03/02/2002");
         }
     }
 }
