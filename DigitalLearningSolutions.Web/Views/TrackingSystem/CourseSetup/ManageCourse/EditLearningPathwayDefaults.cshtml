@@ -7,9 +7,9 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Edit Learning Pathway defaults";
-  ViewData["Application"] = ApplicationType.TrackingSystem.Name;
-  ViewData["HeaderPath"] = ApplicationType.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = ApplicationType.TrackingSystem.HeaderPathName;
+  ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
+  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
   var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
