@@ -14,7 +14,7 @@
     [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: RouteParamKeys.DlsSubApplication)]
+    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class ChangePasswordController : Controller

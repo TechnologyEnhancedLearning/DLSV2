@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.Extensions.Logging;
 
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: RouteParamKeys.DlsSubApplication)]
+    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {
@@ -41,7 +41,11 @@ namespace DigitalLearningSolutions.Web.Controllers
             var delegateNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, dlsSubApplication);
+            var model = new NotificationPreferencesViewModel(
+                adminNotifications,
+                delegateNotifications,
+                dlsSubApplication
+            );
 
             return View(model);
         }
@@ -91,7 +95,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 notificationIds
             );
 
-            return RedirectToAction("Index", "NotificationPreferences", new { application = dlsSubApplication.UrlSegment });
+            return RedirectToAction(
+                "Index",
+                "NotificationPreferences",
+                new { application = dlsSubApplication.UrlSegment }
+            );
         }
 
         private UserReference? GetUserReference(UserType? userType)
