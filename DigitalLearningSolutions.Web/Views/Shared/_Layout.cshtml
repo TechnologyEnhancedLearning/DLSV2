@@ -12,7 +12,7 @@
     ViewData[LayoutViewDataKeys.HeaderPath] ??= dlsSubApplication.HeaderPath;
     ViewData[LayoutViewDataKeys.HeaderPathName] ??= dlsSubApplication.HeaderPathName;
   }
-  var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
+  var headerExtension = ViewData[LayoutViewDataKeys.Application] != null ? (string)ViewData[LayoutViewDataKeys.Application] : dlsSubApplication!.HeaderExtension;
   var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
 }
 

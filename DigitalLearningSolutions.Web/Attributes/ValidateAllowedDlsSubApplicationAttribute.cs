@@ -13,7 +13,7 @@
     {
         private readonly string applicationArgumentName;
 
-        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = "dlsSubApplication")
+        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = RouteParamKeys.DlsSubApplication)
         {
             this.applicationArgumentName = applicationArgumentName;
         }

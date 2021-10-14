@@ -13,7 +13,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.Extensions.Logging;
 
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetDlsSubApplication(determiningRouteParameter: RouteParamKeys.DlsSubApplication)]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {

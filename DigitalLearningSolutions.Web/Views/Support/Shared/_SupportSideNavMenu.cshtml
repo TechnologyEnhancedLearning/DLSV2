@@ -1,9 +1,11 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportViewModel
 
 @{
-  var routeData = new Dictionary<string, string?> { { "application", Model.DlsSubApplication.UrlSegment } };
+  var routeData = new Dictionary<string, string?> { { RouteParamKeys.DlsSubApplication, Model.DlsSubApplication.UrlSegment } };
 }
 
 <h2 class="side-nav__heading">Support</h2>

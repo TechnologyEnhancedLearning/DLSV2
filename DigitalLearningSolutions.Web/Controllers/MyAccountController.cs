@@ -19,7 +19,7 @@
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetDlsSubApplication(determiningRouteParameter: RouteParamKeys.DlsSubApplication)]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
