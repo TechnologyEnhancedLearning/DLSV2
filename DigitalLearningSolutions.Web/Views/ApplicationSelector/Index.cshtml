@@ -1,14 +1,9 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@inject IConfiguration Configuration
+
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector
 @using Microsoft.Extensions.Configuration
-
-@inject IConfiguration Configuration
-
 @model ApplicationSelectorViewModel
-
-@section NavMenuItems {
-  <partial name="_NavMenuItems"/>
-}
 
 @{
   ViewData["Title"] = "Switch Application";
@@ -65,7 +60,7 @@
       <div class="nhsuk-card nhsuk-card--clickable">
         <div class="nhsuk-card__content">
           <h2 class="nhsuk-card__heading nhsuk-heading-m">
-            <a class="nhsuk-card__link"  asp-controller="Supervisor" asp-action="Index">Supervise</a>
+            <a class="nhsuk-card__link" asp-controller="Supervisor" asp-action="Index">Supervise</a>
           </h2>
           <p class="nhsuk-card__description">Assign and review staff profile assessments and arrange supervision sessions.</p>
         </div>

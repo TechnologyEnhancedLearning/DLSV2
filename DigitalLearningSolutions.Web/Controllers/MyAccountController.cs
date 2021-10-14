@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -15,9 +16,11 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Route("/{application}/MyAccount", Order = 1)]
+    [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
-    [ValidateAllowedApplicationType]
+    [ValidateAllowedDlsSubApplication]
+    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
     {
@@ -43,7 +46,7 @@
         }
 
         [NoCaching]
-        public IActionResult Index(ApplicationType application)
+        public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -55,14 +58,14 @@
                     delegateUser
                 );
 
-            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, application);
+            var model = new MyAccountViewModel(adminUser, delegateUser, customPrompts, dlsSubApplication);
 
             return View(model);
         }
 
         [NoCaching]
         [HttpGet("EditDetails")]
-        public IActionResult EditDetails(ApplicationType application)
+        public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -72,28 +75,28 @@
             ViewBag.JobGroupOptions =
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
-            
-            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, application);
+
+            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, dlsSubApplication);
 
             return View(model);
         }
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(EditDetailsFormData formData, string action, ApplicationType application)
+        public IActionResult EditDetails(EditDetailsFormData formData, string action, DlsSubApplication dlsSubApplication)
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(formData.JobGroupId);
             ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(formData);
             return action switch
             {
-                "save" => EditDetailsPostSave(formData, application),
-                "previewImage" => EditDetailsPostPreviewImage(formData, application),
-                "removeImage" => EditDetailsPostRemoveImage(formData, application),
+                "save" => EditDetailsPostSave(formData, dlsSubApplication),
+                "previewImage" => EditDetailsPostPreviewImage(formData, dlsSubApplication),
+                "removeImage" => EditDetailsPostRemoveImage(formData, dlsSubApplication),
                 _ => new StatusCodeResult(500)
             };
         }
 
-        private IActionResult EditDetailsPostSave(EditDetailsFormData formData, ApplicationType application)
+        private IActionResult EditDetailsPostSave(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -123,7 +126,7 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new EditDetailsViewModel(formData, application);
+                var model = new EditDetailsViewModel(formData, dlsSubApplication);
                 return View(model);
             }
 
@@ -133,24 +136,24 @@
                     nameof(EditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
-                var model = new EditDetailsViewModel(formData, application);
+                var model = new EditDetailsViewModel(formData, dlsSubApplication);
                 return View(model);
             }
 
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { application = application.UrlSegment });
+            return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
         }
 
-        private IActionResult EditDetailsPostPreviewImage(EditDetailsFormData formData, ApplicationType application)
+        private IActionResult EditDetailsPostPreviewImage(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
-            
+
             if (!ModelState.IsValid)
             {
-                return View(new EditDetailsViewModel(formData, application));
+                return View(new EditDetailsViewModel(formData, dlsSubApplication));
             }
 
             if (formData.ProfileImageFile != null)
@@ -159,11 +162,11 @@
                 formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
-            var model = new EditDetailsViewModel(formData, application);
+            var model = new EditDetailsViewModel(formData, dlsSubApplication);
             return View(model);
         }
 
-        private IActionResult EditDetailsPostRemoveImage(EditDetailsFormData formData, ApplicationType application)
+        private IActionResult EditDetailsPostRemoveImage(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearAllErrors();
@@ -171,7 +174,7 @@
             ModelState.Remove(nameof(EditDetailsFormData.ProfileImage));
             formData.ProfileImage = null;
 
-            var model = new EditDetailsViewModel(formData, application);
+            var model = new EditDetailsViewModel(formData, dlsSubApplication);
             return View(model);
         }
 

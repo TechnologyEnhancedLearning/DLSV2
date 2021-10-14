@@ -7,16 +7,16 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
+  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
+  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
+  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
+  <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
 <div class="nhsuk-grid-row">
@@ -29,7 +29,7 @@
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-application="@Model.Application.UrlSegment" enctype="multipart/form-data">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>

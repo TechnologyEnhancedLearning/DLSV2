@@ -273,7 +273,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    Expires = DateTimeOffset.UtcNow.AddDays(30),
                 }
             );
 

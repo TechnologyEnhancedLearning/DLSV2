@@ -10,17 +10,17 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
-            ApplicationType application
+            DlsSubApplication dlsSubApplication
         ) : base(adminUser, delegateUser, jobGroups)
         {
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
-        public EditDetailsViewModel(EditDetailsFormData formData, ApplicationType application) : base(formData)
+        public EditDetailsViewModel(EditDetailsFormData formData, DlsSubApplication dlsSubApplication) : base(formData)
         {
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

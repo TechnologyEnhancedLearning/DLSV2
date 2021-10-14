@@ -50,11 +50,11 @@
                 centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true);
             var formData = new EditDetailsFormData();
-            var expectedModel = new EditDetailsViewModel(formData, ApplicationType.Default);
+            var expectedModel = new EditDetailsViewModel(formData, DlsSubApplication.Default);
             myAccountController.ModelState.AddModelError(nameof(EditDetailsFormData.Email), "Required");
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", ApplicationType.Default);
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
@@ -80,10 +80,10 @@
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
             var formData = new EditDetailsFormData();
-            var expectedModel = new EditDetailsViewModel(formData, ApplicationType.Default);
+            var expectedModel = new EditDetailsViewModel(formData, DlsSubApplication.Default);
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", ApplicationType.Default);
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
@@ -118,7 +118,7 @@
             };
 
             // When
-            var result = myAccountController.EditDetails(model, "save", ApplicationType.Default);
+            var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
@@ -148,10 +148,10 @@
             {
                 ProfileImageFile = A.Fake<FormFile>()
             };
-            var expectedModel = new EditDetailsViewModel(formData, ApplicationType.Default);
+            var expectedModel = new EditDetailsViewModel(formData, DlsSubApplication.Default);
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", ApplicationType.Default);
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
@@ -184,10 +184,10 @@
                 Email = Email,
                 Password = "password"
             };
-            var expectedModel = new EditDetailsViewModel(formData, ApplicationType.Default);
+            var expectedModel = new EditDetailsViewModel(formData, DlsSubApplication.Default);
 
             // When
-            var result = myAccountController.EditDetails(formData, "save", ApplicationType.Default);
+            var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
@@ -212,7 +212,7 @@
             var model = new EditDetailsFormData();
 
             // When
-            var result = myAccountController.EditDetails(model, action, ApplicationType.Default);
+            var result = myAccountController.EditDetails(model, action, DlsSubApplication.Default);
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);

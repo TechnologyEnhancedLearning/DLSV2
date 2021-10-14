@@ -1,11 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using Microsoft.AspNetCore.Mvc;
 
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class ForgotPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
@@ -38,8 +43,7 @@
 
             try
             {
-                passwordResetService.GenerateAndSendPasswordResetLink
-                (
+                passwordResetService.GenerateAndSendPasswordResetLink(
                     model.EmailAddress.Trim(),
                     baseUrl
                 );
