@@ -27,7 +27,7 @@
 
             if (tabName != null)
             {
-                controller.ViewData[ViewDataHelper.SelectedTab] = (NavMenuTab)tabName;
+                controller.ViewData[LayoutViewDataKeys.SelectedTab] = (NavMenuTab)tabName;
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    public static class ViewDataHelper
+    public static class LayoutViewDataKeys
     {
         public const string Title = "Title";
         public const string Application = "Application";
@@ -10,6 +10,6 @@
         public const string HeaderPathName = "HeaderPathName";
         public const string HeaderPrefix = "HeaderPrefix";
         public const string DoNotDisplayNavBar = "DoNotDisplayNavBar";
-        public const string CustomisationId = "CustomisationId";
+        public const string CustomisationIdForHeaderLogo = "CustomisationId";
     }
 }

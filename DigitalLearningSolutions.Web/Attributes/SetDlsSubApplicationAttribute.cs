@@ -49,11 +49,11 @@
 
             if (dlsSubApplicationName != null)
             {
-                controller.ViewData[ViewDataHelper.DlsSubApplication] = (DlsSubApplication)dlsSubApplicationName;
+                controller.ViewData[LayoutViewDataKeys.DlsSubApplication] = (DlsSubApplication)dlsSubApplicationName;
             }
             else
             {
-                controller.ViewData[ViewDataHelper.DlsSubApplication] =
+                controller.ViewData[LayoutViewDataKeys.DlsSubApplication] =
                     context.ActionArguments[determiningRouteParameter!];
             }
         }

@@ -31,7 +31,7 @@
             NavMenuTab currentNavMenuTab
         )
         {
-            if (!(htmlHelper.ViewContext.ViewData[ViewDataHelper.SelectedTab] is NavMenuTab selectedTab))
+            if (!(htmlHelper.ViewContext.ViewData[LayoutViewDataKeys.SelectedTab] is NavMenuTab selectedTab))
             {
                 return "";
             }
