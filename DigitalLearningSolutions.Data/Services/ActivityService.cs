@@ -80,7 +80,7 @@
                 {
                     var dateInformation = new DateInformation(slot, filterData.ReportInterval);
                     var periodData = dataByPeriod.SingleOrDefault(
-                        data => data.DateInformation.Date == slot.Date
+                        data => data.DateInformation.StartDate == slot.Date
                     );
                     return new PeriodOfActivity(dateInformation, periodData);
                 }
@@ -110,7 +110,7 @@
 
             var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
                 .OrderByDescending(c => c.Active)
-                .ThenBy(c => c.CourseNameWithInactiveFlag)
+                .ThenBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
 
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
@@ -139,7 +139,7 @@
             using var workbook = new XLWorkbook();
 
             var activityData = GetFilteredActivity(centreId, filterData).Select(
-                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
+                p => new { Period = p.DateInformation.StartDate, p.Registrations, p.Completions, p.Evaluations }
             );
 
             var sheet = workbook.Worksheets.Add(SheetName);

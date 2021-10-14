@@ -12,10 +12,12 @@
         public ReportsViewModel(
             IEnumerable<PeriodOfActivity> activity,
             ReportsFilterModel filterModel,
-            IEnumerable<EvaluationResponseBreakdown> evaluationResponseBreakdowns
+            IEnumerable<EvaluationResponseBreakdown> evaluationResponseBreakdowns,
+            DateTime startDate,
+            DateTime endDate
         )
         {
-            UsageStatsTableViewModel = new UsageStatsTableViewModel(activity);
+            UsageStatsTableViewModel = new UsageStatsTableViewModel(activity, startDate, endDate);
             ReportsFilterModel = filterModel;
             EvaluationSummaryBreakdown =
                 evaluationResponseBreakdowns.Select(model => new EvaluationSummaryViewModel(model));
@@ -28,11 +30,22 @@
 
     public class UsageStatsTableViewModel
     {
-        public UsageStatsTableViewModel(IEnumerable<PeriodOfActivity> activity)
+        public UsageStatsTableViewModel(IEnumerable<PeriodOfActivity> activity, DateTime startDate, DateTime endDate)
         {
-            Rows = activity.Reverse().Select(
+            activity = activity.ToList();
+
+            var first = new[] { activity.First() }.Select(
+                p => new ActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, true)
+            );
+            var last = new[] { activity.Last() }.Select(
+                p => new ActivityDataRowModel(p, DateHelper.StandardDateFormat, endDate, false)
+            );
+
+            var middleRows = activity.Skip(1).SkipLast(1).Select(
                 p => new ActivityDataRowModel(p, DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval))
             );
+
+            Rows = first.Concat(middleRows).Concat(last).Reverse();
         }
 
         public IEnumerable<ActivityDataRowModel> Rows { get; set; }
@@ -43,6 +56,19 @@
         public ActivityDataRowModel(PeriodOfActivity periodOfActivity, string format)
         {
             Period = periodOfActivity.DateInformation.GetDateLabel(format);
+            Completions = periodOfActivity.Completions;
+            Evaluations = periodOfActivity.Evaluations;
+            Registrations = periodOfActivity.Registrations;
+        }
+
+        public ActivityDataRowModel(
+            PeriodOfActivity periodOfActivity,
+            string format,
+            DateTime boundaryDate,
+            bool startRangeFromTerminator
+        )
+        {
+            Period = periodOfActivity.DateInformation.GetDateRangeLabel(format, boundaryDate, startRangeFromTerminator);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
             Registrations = periodOfActivity.Registrations;
@@ -78,7 +104,7 @@
                 { "customisationId", filterData.CustomisationId?.ToString() ?? "" },
                 { "startDate", filterData.StartDate.ToString() },
                 { "endDate", filterData.EndDate?.ToString() ?? "" },
-                { "reportInterval", filterData.ReportInterval.ToString() },
+                { "reportInterval", filterData.ReportInterval.ToString() }
             };
         }
 

@@ -59,7 +59,7 @@
 
             var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
 
-            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns);
+            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns, filterData.StartDate, filterData.EndDate ?? DateTime.Today);
             return View(model);
         }
 
