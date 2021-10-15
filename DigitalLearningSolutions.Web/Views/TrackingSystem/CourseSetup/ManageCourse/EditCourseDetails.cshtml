@@ -1,0 +1,147 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.Extensions.Configuration
+@model EditCourseDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit course details";
+  ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
+  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+@section NavMenuItems {
+  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(EditLearningPathwayDefaultsViewModel.CompleteWithinMonths), nameof(EditLearningPathwayDefaultsViewModel.ValidityMonths) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit course details</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post"
+          novalidate
+          asp-controller="ManageCourse"
+          asp-action="SaveLearningPathwayDefaults"
+          asp-route-customisationId="@Model.CustomisationId">
+
+      <h3 class="nhsuk-u-font-weight-normal">
+        Course name
+      </h3>
+
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-m">
+          @Model.CustomisationName -
+        </div>
+        <div class="nhsuk-grid-column-one-half nhsuk-heading-l nhsuk-u-font-weight-normal">
+          <vc:text-input asp-for="@nameof(Model.CustomisationName)"
+                         label=""
+                         populate-with-current-value="false"
+                         type="text"
+                         spell-check="true"
+                         autocomplete=""
+                         hint-text=""
+                         css-class="nhsuk-u-width-three-quarters nhsuk-u-font-weight-normal" />
+        </div>
+      </div>
+
+      <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+          <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
+
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="contact-1" name="contact" type="checkbox" value="email" aria-controls="conditional-contact-1" aria-expanded="false">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="contact-1">
+                Password protected
+              </label>
+            </div>
+
+            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-contact-1">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="email">
+                  Enter the password for the course
+                </label>
+                <input class="nhsuk-input nhsuk-u-width-two-thirds" id="email" name="email" type="text">
+              </div>
+            </div>
+
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="contact-3" name="contact" type="checkbox" value="text" aria-controls="conditional-contact-3" aria-expanded="false">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="contact-3">
+                Receive course completion notification emails
+              </label>
+            </div>
+
+            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-contact-3">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="mobile">
+                  Enter an email address for receiving the notifications
+                </label>
+                <input class="nhsuk-input nhsuk-u-width-two-thirds" id="mobile" name="mobile" type="text">
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+      </div>
+
+      <h3 class="nhsuk-u-font-weight-normal">
+        Completion criteria
+      </h3>
+
+      <div class="nhsuk-form-group">
+
+        <div class="nhsuk-form-group">
+          <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+            <div class="nhsuk-radios nhsuk-radios--conditional">
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="contact-2" name="contact" type="radio" value="phone">
+                <label class="nhsuk-label nhsuk-radios__label" for="contact-2">
+                  Post learning assessment
+                </label>
+              </div>
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="contact-5" name="contact" type="radio" value="text" aria-controls="conditional-contact-5" aria-expanded="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="contact-3">
+                  Completion criteria
+                </label>
+              </div>
+
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-5">
+
+                <vc:numeric-input model="@Model" asp-for="@nameof(Model.TutCompletionThreshold)"
+                                  label="Required learning percentage"
+                                  populate-with-current-value="true"
+                                  type="text"
+                                  hint-text=""
+                                  css-class="nhsuk-input nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+
+                <vc:numeric-input model="@Model" asp-for="@nameof(Model.DiagCompletionThreshold)"
+                                  label="Required diagnostic percentage"
+                                  populate-with-current-value="true"
+                                  type="text"
+                                  hint-text=""
+                                  css-class="nhsuk-input nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+
+              </div>
+
+            </div>
+          </fieldset>
+        </div>
+
+      </div>
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+  </div>
+</div>

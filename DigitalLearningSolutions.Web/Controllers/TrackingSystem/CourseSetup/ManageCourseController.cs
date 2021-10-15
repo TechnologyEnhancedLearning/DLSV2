@@ -102,6 +102,24 @@
         }
 
         [HttpGet]
+        [Route("CourseDetails")]
+        public IActionResult EditCourseDetails(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+
+            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.Value
+            );
+
+            var model = new EditCourseDetailsViewModel(courseDetails!);
+
+            return View(model);
+        }
+
+        [HttpGet]
         [Route("EditCourseOptions")]
         public IActionResult EditCourseOptions(int customisationId)
         {
