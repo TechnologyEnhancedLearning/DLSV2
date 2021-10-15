@@ -29,8 +29,10 @@
             var formatForTerminator = ConvertQuartersInFormatString(format, rangeTerminator);
 
             return startRangeFromTerminator
-                ? rangeTerminator.ToString(formatForTerminator) + " to " + dateFromThisObject.ToString(formatForDateFromThisObject)
-                : dateFromThisObject.ToString(formatForDateFromThisObject) + " to " + rangeTerminator.ToString(formatForTerminator);
+                ? rangeTerminator.ToString(formatForTerminator) + " to " +
+                  dateFromThisObject.ToString(formatForDateFromThisObject)
+                : dateFromThisObject.ToString(formatForDateFromThisObject) + " to " +
+                  rangeTerminator.ToString(formatForTerminator);
         }
 
         public string GetDateRangeLabel(string format, DateTime startDate, DateTime endDate)

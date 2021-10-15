@@ -27,7 +27,7 @@
                     0,
                     0,
                     0
-                )
+                ),
             };
 
             // when
@@ -81,7 +81,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-03"), ReportInterval.Days),
                     null
-                )
+                ),
             };
 
             // when
@@ -112,7 +112,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-02-15"), ReportInterval.Weeks),
                     null
-                )
+                ),
             };
 
             // when
@@ -143,7 +143,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-03-01"), ReportInterval.Months),
                     null
-                )
+                ),
             };
 
             // when
@@ -174,7 +174,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-07-01"), ReportInterval.Quarters),
                     null
-                )
+                ),
             };
 
             // when
@@ -205,7 +205,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2004-02-02"), ReportInterval.Years),
                     null
-                )
+                ),
             };
 
             // when
@@ -236,7 +236,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2004-01-01"), ReportInterval.Years),
                     null
-                )
+                ),
             };
 
             // when
@@ -260,7 +260,7 @@
                 new PeriodOfActivity(
                     new DateInformation(DateTime.Parse("2002-01-01"), ReportInterval.Years),
                     null
-                )
+                ),
             };
 
             // when

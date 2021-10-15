@@ -116,19 +116,6 @@
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
 
-        private class CourseEqualityComparer : IEqualityComparer<Course>
-        {
-            public bool Equals(Course? x, Course? y)
-            {
-                return x?.CustomisationId == y?.CustomisationId;
-            }
-
-            public int GetHashCode(Course obj)
-            {
-                return obj.CustomisationId;
-            }
-        }
-
         public DateTime GetStartOfActivityForCentre(int centreId)
         {
             return activityDataService.GetStartOfActivityForCentre(centreId);
@@ -217,7 +204,7 @@
                 ReportInterval.Quarters => activityData.GroupBy(
                     x => new DateTime(x.LogYear, GetFirstMonthOfQuarter(x.LogQuarter), 1).Ticks
                 ),
-                _ => activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks)
+                _ => activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks),
             };
 
             return groupedActivityLogs.Select(
@@ -236,6 +223,19 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        private class CourseEqualityComparer : IEqualityComparer<Course>
+        {
+            public bool Equals(Course? x, Course? y)
+            {
+                return x?.CustomisationId == y?.CustomisationId;
+            }
+
+            public int GetHashCode(Course obj)
+            {
+                return obj.CustomisationId;
+            }
         }
     }
 }

@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
-    using NUnit.Framework.Internal;
 
     public class CourseDataServiceTests
     {
@@ -93,7 +92,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 SupervisorAdminId = 0,
                 ProgressID = 173218,
                 EnrollmentMethodID = 1,
-                PLLocked = false
+                PLLocked = false,
             };
             result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -122,7 +121,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HasLearning = true,
                 Passes = 1,
                 Sections = 2,
-                ProgressID = 251571
+                ProgressID = 251571,
             };
             result.Should().HaveCount(15);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -147,7 +146,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 DelegateStatus = 0,
                 HasLearning = true,
                 HasDiagnostic = true,
-                IsAssessed = true
+                IsAssessed = true,
             };
             result.Should().HaveCountGreaterOrEqualTo(1);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -282,7 +281,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HideInLearnerPortal = false,
                 CategoryName = "Office 2007",
                 CourseTopic = "Microsoft Office",
-                LearningMinutes = "N/A"
+                LearningMinutes = "N/A",
             };
 
             result.Should().HaveCount(260);
@@ -385,7 +384,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
-                Active = false
+                Active = false,
             };
 
             result.Should().HaveCount(260);
@@ -397,7 +396,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         {
             // Given
             const int centreId = 101;
-            int categoryId = 1;
+            var categoryId = 1;
 
             // When
             var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
@@ -410,7 +409,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 206,
                 ApplicationName = "An Introduction to Cognition",
                 CustomisationName = "eLearning",
-                Active = true
+                Active = true,
             };
             var expectedInactiveCourse = new Course
             {
@@ -419,7 +418,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 76,
                 ApplicationName = "Mobile Directory",
                 CustomisationName = "eLearning",
-                Active = false
+                Active = false,
             };
 
             result.Should().ContainEquivalentOf(expectedActiveCourse);
@@ -446,7 +445,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 301,
                 ApplicationName = "5 Jan Test",
                 CustomisationName = "New",
-                Active = true
+                Active = true,
             };
 
             result.Should().ContainEquivalentOf(expectedUnavailableCourse);

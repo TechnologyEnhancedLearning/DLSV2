@@ -34,7 +34,7 @@
                 StartMonth = 1,
                 StartYear = 2021,
                 EndDate = false,
-                DataStart = DateTime.Parse("2222-2-2")
+                DataStart = DateTime.Parse("2222-2-2"),
             };
             const string expectedErrorMessage = "Enter a start date after the start of data for this centre";
 
@@ -55,7 +55,7 @@
                 StartDay = 1,
                 StartMonth = 1,
                 StartYear = 2021,
-                EndDate = false
+                EndDate = false,
             };
 
             // When
@@ -74,7 +74,7 @@
                 StartDay = 1,
                 StartMonth = 1,
                 StartYear = 2021,
-                EndDate = true
+                EndDate = true,
             };
             const string expectedErrorMessage = "Enter an End Date";
 
@@ -107,7 +107,7 @@
                 EndDay = endDay,
                 EndMonth = endMonth,
                 EndYear = endYear,
-                EndDate = true
+                EndDate = true,
             };
             var expectedFirstError = new ValidationResult("Enter an end date after the start date", new[] { "EndDay" });
             var expectedSecondError = new ValidationResult(
@@ -145,7 +145,7 @@
                 EndDay = endDay,
                 EndMonth = endMonth,
                 EndYear = endYear,
-                EndDate = false
+                EndDate = false,
             };
 
             // When

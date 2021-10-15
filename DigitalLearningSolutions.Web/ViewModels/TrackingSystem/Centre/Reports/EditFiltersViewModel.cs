@@ -142,7 +142,7 @@
                         "Enter a start date after the start of data for this centre",
                         new[]
                         {
-                            nameof(StartDay)
+                            nameof(StartDay),
                         }
                     )
                 );
@@ -151,7 +151,7 @@
                         "",
                         new[]
                         {
-                            nameof(StartMonth), nameof(StartYear)
+                            nameof(StartMonth), nameof(StartYear),
                         }
                     )
                 );
@@ -187,7 +187,7 @@
                         "Enter an end date after the start date",
                         new[]
                         {
-                            nameof(EndDay)
+                            nameof(EndDay),
                         }
                     )
                 );
@@ -196,7 +196,7 @@
                         "",
                         new[]
                         {
-                            nameof(EndMonth), nameof(EndYear)
+                            nameof(EndMonth), nameof(EndYear),
                         }
                     )
                 );

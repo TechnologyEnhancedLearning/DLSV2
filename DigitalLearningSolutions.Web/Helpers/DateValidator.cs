@@ -18,7 +18,9 @@
         {
             if (!day.HasValue && !month.HasValue && !year.HasValue)
             {
-                return required ? new DateValidationResult("Enter " + NameWithIndefiniteArticle(name)) : new DateValidationResult();
+                return required
+                    ? new DateValidationResult("Enter " + NameWithIndefiniteArticle(name))
+                    : new DateValidationResult();
             }
 
             if (day.HasValue && month.HasValue && year.HasValue)
@@ -30,7 +32,14 @@
             return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
-        private static DateValidationResult ValidateDate(int day, int month, int year, string name, bool dateMustNotBeInPast, bool dateMustNotBeInFuture)
+        private static DateValidationResult ValidateDate(
+            int day,
+            int month,
+            int year,
+            string name,
+            bool dateMustNotBeInPast,
+            bool dateMustNotBeInFuture
+        )
         {
             // note: the minimum year the DB can store is 1753
             var invalidDay = day < 1 || day > 31;
@@ -83,7 +92,8 @@
                 missingValues.Add("year");
             }
 
-            return "Enter " + NameWithIndefiniteArticle(name) + " containing a " + string.Join(" and a ", missingValues);
+            return "Enter " + NameWithIndefiniteArticle(name) + " containing a " +
+                   string.Join(" and a ", missingValues);
         }
 
         private static string GetInvalidValuesErrorMessage(
@@ -115,7 +125,8 @@
                 return "Enter a real date for " + name;
             }
 
-            return "Enter " + NameWithIndefiniteArticle(name) + " containing a real " + string.Join(" and ", invalidValues);
+            return "Enter " + NameWithIndefiniteArticle(name) + " containing a real " +
+                   string.Join(" and ", invalidValues);
         }
 
         private static string NameWithIndefiniteArticle(string name)
