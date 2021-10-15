@@ -6,15 +6,15 @@
 
 @{
   ViewData["Title"] = "Support";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
+  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
+  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
+  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
 }
 
 @section NavMenuItems {
-  @if (Model.Application.Equals(ApplicationType.TrackingSystem)) {
+  @if (Model.DlsSubApplication.Equals(DlsSubApplication.TrackingSystem)) {
     <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-  } else if (Model.Application.Equals(ApplicationType.Frameworks)) {
+  } else if (Model.DlsSubApplication.Equals(DlsSubApplication.Frameworks)) {
     <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
   }
 }

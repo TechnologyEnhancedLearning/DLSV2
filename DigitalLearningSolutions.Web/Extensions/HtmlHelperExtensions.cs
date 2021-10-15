@@ -4,14 +4,17 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public static class HtmlHelperExtensions
     {
+        private const string SelectedCssClass = "selected";
+
         public static string IsSelected(
             this IHtmlHelper htmlHelper,
             string action,
-            string selectedCssClass = "selected",
             string? controller = null
         )
         {
@@ -19,7 +22,22 @@
             var currentAction = htmlHelper.ViewContext.RouteData.Values["action"] as string;
 
             return (controller == null || controller == currentController) && action == currentAction
-                ? selectedCssClass
+                ? SelectedCssClass
+                : string.Empty;
+        }
+
+        public static string GetSelectedCssClassIfTabSelected(
+            this IHtmlHelper htmlHelper,
+            NavMenuTab currentNavMenuTab
+        )
+        {
+            if (!(htmlHelper.ViewContext.ViewData[LayoutViewDataKeys.SelectedTab] is NavMenuTab selectedTab))
+            {
+                return "";
+            }
+
+            return selectedTab.Equals(currentNavMenuTab)
+                ? SelectedCssClass
                 : string.Empty;
         }
 

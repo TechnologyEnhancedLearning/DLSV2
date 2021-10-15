@@ -4,16 +4,16 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
     public class ChangePasswordViewModel : ChangePasswordFormData
     {
-        public ChangePasswordViewModel(ApplicationType application) : this(
+        public ChangePasswordViewModel(DlsSubApplication dlsSubApplication) : this(
             new ChangePasswordFormData(),
-            application
+            dlsSubApplication
         ) { }
 
-        public ChangePasswordViewModel(ChangePasswordFormData formData, ApplicationType application) : base(formData)
+        public ChangePasswordViewModel(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication) : base(formData)
         {
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

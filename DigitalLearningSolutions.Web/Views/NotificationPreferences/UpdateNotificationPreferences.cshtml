@@ -5,16 +5,9 @@
 
 @{
   ViewData["Title"] = "Update Notification Preferences";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -25,7 +18,7 @@
           asp-controller="NotificationPreferences"
           asp-action="SaveNotificationPreferences"
           asp-route-userType="@Model.UserType"
-          asp-route-application="@Model.Application.UrlSegment">
+          asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">
       <div class="nhsuk-form-group">
         <div class="nhsuk-fieldset" aria-describedby="notification-hint">
           <div class="nhsuk-hint update-notification-hint" id="notification-hint">Please tick the boxes for all the notifications you would like to receive.</div>

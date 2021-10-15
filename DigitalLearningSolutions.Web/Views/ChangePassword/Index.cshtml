@@ -4,16 +4,9 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Change Your Password" : "Change Your Password";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 <div class="nhsuk-grid-row">
@@ -27,7 +20,7 @@
       Use the form below to change the password for delegate and admin accounts associated with your email address.
     </p>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-application="@Model.Application.UrlSegment">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">
       <vc:text-input
         asp-for="@nameof(Model.CurrentPassword)"
         label="Current password"

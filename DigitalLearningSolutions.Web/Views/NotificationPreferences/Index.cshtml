@@ -5,16 +5,9 @@
 
 @{
   ViewData["Title"] = "Notification Preferences";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
 }
 
 @section NavBreadcrumbs {
@@ -22,11 +15,11 @@
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item">
-          <a class="nhsuk-breadcrumb__link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@Model.Application.UrlSegment">My account</a>
+          <a class="nhsuk-breadcrumb__link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">My account</a>
         </li>
       </ol>
       <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-controller="MyAccount" asp-action="Index" asp-route-application="@Model.Application.UrlSegment">Back to my account</a>
+        <a class="nhsuk-breadcrumb__backlink" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">Back to my account</a>
       </p>
     </div>
   </nav>

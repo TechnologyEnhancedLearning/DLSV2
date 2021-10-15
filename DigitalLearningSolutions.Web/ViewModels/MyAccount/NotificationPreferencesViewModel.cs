@@ -11,30 +11,30 @@
         public NotificationPreferencesViewModel(
             IEnumerable<NotificationPreference> adminNotifications,
             IEnumerable<NotificationPreference> delegateNotifications,
-            ApplicationType application
+            DlsSubApplication dlsSubApplication
         )
         {
             AdminNotifications = new NotificationPreferenceListViewModel(
                 adminNotifications,
                 UserType.AdminUser,
                 delegateNotifications.Any(),
-                application
+                dlsSubApplication
             );
             DelegateNotifications = new NotificationPreferenceListViewModel(
                 delegateNotifications,
                 UserType.DelegateUser,
                 adminNotifications.Any(),
-                application
+                dlsSubApplication
             );
 
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public NotificationPreferenceListViewModel AdminNotifications { get; set; }
 
         public NotificationPreferenceListViewModel DelegateNotifications { get; set; }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 
     public class NotificationPreferenceListViewModel
@@ -43,13 +43,13 @@
             IEnumerable<NotificationPreference> notifications,
             UserType userType,
             bool showAsExpandable,
-            ApplicationType application
+            DlsSubApplication dlsSubApplication
         )
         {
             Notifications = notifications;
             UserType = userType;
             ShowAsExpandable = showAsExpandable;
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public UserType UserType { get; set; }
@@ -58,6 +58,6 @@
 
         public bool ShowAsExpandable { get; set; }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }
