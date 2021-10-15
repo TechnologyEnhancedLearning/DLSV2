@@ -3,8 +3,6 @@
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using FluentAssertions;
     using NUnit.Framework;
