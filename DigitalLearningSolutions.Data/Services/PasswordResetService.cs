@@ -92,7 +92,7 @@
             var delegateUsers = userService.GetDelegateUsersByEmailAddress(emailAddress);
             var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
@@ -116,7 +116,7 @@
             var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
             var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);

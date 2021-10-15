@@ -646,6 +646,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(delegateId);
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).DoesNothing();
 
             // When
             var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);

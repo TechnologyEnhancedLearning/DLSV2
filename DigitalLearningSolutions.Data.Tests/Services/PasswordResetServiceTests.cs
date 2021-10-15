@@ -166,7 +166,7 @@
         }
 
         [Test]
-        public async Task Removes_reset_password_for_exact_users_matching_email()
+        public async Task InvalidateResetPasswordForEmailAsync_removes_reset_password_for_exact_users_matching_email()
         {
             // Given
             var users = (
@@ -187,7 +187,7 @@
         }
 
         [Test]
-        public void Trying_get_null_user_when_generating_welcome_email_should_throw_an_exception()
+        public void GenerateAndSendDelegateWelcomeEmail_with_null_user_should_throw_an_exception()
         {
             // Given
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
@@ -199,7 +199,7 @@
         }
 
         [Test]
-        public void Trying_get_user_with_incorrect_candidateNumber_when_generating_welcome_email_should_throw_an_exception()
+        public void GenerateAndSendDelegateWelcomeEmail_with_incorrect_candidate_number_should_throw_an_exception()
         {
             // Given
             const string emailAddress = "recipient@example.com";
@@ -218,7 +218,7 @@
         }
 
         [Test]
-        public void Trying_to_send_password_reset_when_generating_welcome_email_sends_email()
+        public void GenerateAndSendDelegateWelcomeEmail_with_correct_details_sends_email()
         {
             // Given
             const string emailAddress = "recipient@example.com";
@@ -255,8 +255,8 @@
         {
             // Given
             var deliveryDate = new DateTime(2200, 1, 1);
-            const string? emailAddress = "recipient@example.com";
-            const string? addedByProcess = "some process";
+            const string emailAddress = "recipient@example.com";
+            const string addedByProcess = "some process";
             const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
@@ -298,8 +298,8 @@
         {
             // Given
             var deliveryDate = new DateTime(2200, 1, 1);
-            const string? emailAddress = "recipient@example.com";
-            const string? addedByProcess = "some process";
+            const string emailAddress = "recipient@example.com";
+            const string addedByProcess = "some process";
             const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
