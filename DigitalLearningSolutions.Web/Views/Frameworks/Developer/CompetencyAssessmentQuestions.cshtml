@@ -84,14 +84,14 @@
                 <div class="status-tag">
                   @if (question.i > 0)
                   {
-                  <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="Up" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                  <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="UP" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
                     Move up
                   </a>
                   <span>&nbsp;</span>
                   }
                   @if (question.i < Model.AssessmentQuestions.Count() - 1)
                   {
-                    <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="Down" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                    <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="DOWN" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
                       Move Down
                     </a>
                   }

@@ -85,6 +85,7 @@
         void SubmitFrameworkReview(int frameworkId, int reviewId, bool signedOff, int? commentId);
         void UpdateReviewRequestedDate(int reviewId);
         void ArchiveReviewRequest(int reviewId);
+        void MoveCompetencyAssessmentQuestion(int competencyId, int assessmentQuestionId, bool singleStep, string direction);
         //Delete data
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
         void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
@@ -552,14 +553,14 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
                        Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE (fcg.FrameworkID = @frameworkId)
-                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.Name, c.Description, fc.Ordering
+                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
@@ -578,14 +579,14 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
         {
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                 	FROM FrameworkCompetencies AS fc 
                 		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                         LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                 	WHERE fc.FrameworkID = @frameworkId 
                 		AND fc.FrameworkCompetencyGroupID IS NULL
-GROUP BY fc.ID, c.Name, c.Description, fc.Ordering
+GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fc.Ordering",
                 new { frameworkId }
                 );
@@ -663,7 +664,7 @@ GROUP BY fc.ID, c.Name, c.Description, fc.Ordering
         public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
-                 @"SELECT fc.ID, c.Name, c.Description, fc.Ordering
+                 @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering
                 	FROM FrameworkCompetencies AS fc 
                 		INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                 	WHERE fc.ID = @Id",
@@ -1558,7 +1559,6 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                  WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
                 new { adminId }).FirstOrDefault();
         }
-
         public IEnumerable<DashboardToDoItem> GetDashboardToDoItems(int adminId)
         {
             return connection.Query<DashboardToDoItem>(
@@ -1577,6 +1577,10 @@ FROM   SelfAssessmentReviews AS RPR INNER JOIN
 WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archived IS NULL)", new { adminId }
                 );
 
+        }
+        public void MoveCompetencyAssessmentQuestion(int competencyId, int assessmentQuestionId, bool singleStep, string direction)
+        {
+            connection.Execute("ReorderCompetencyAssessmentQuestion", new { competencyId, assessmentQuestionId, direction, singleStep }, commandType: CommandType.StoredProcedure);
         }
     }
 }
