@@ -211,16 +211,17 @@ namespace DigitalLearningSolutions.Data.Services
                     );
                 default:
                     var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     if (welcomeEmailDate.HasValue)
                     {
                         passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                             delegateRow.Email!,
+                            newDelegateRecord.CandidateNumber,
                             configuration.GetAppRootPath(),
                             welcomeEmailDate.Value,
                             "DelegateBulkUpload_Refactor"
                         );
                     }
-                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }

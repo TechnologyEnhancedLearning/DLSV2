@@ -194,7 +194,26 @@
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "example.com")
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "A1", "example.com")
+            );
+        }
+
+        [Test]
+        public void Trying_get_user_with_incorrect_candidateNumber_when_generating_welcome_email_should_throw_an_exception()
+        {
+            // Given
+            const string emailAddress = "recipient@example.com";
+            const string candidateNumber = "A1";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
+                .Build();
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
+
+            // Then
+            Assert.Throws<UserAccountNotFoundException>(
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "IncorrectCandidateNumber", "example.com")
             );
         }
 
@@ -202,16 +221,18 @@
         public void Trying_to_send_password_reset_when_generating_welcome_email_sends_email()
         {
             // Given
-            var emailAddress = "recipient@example.com";
+            const string emailAddress = "recipient@example.com";
+            const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
                 .Build();
 
             A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
                 .Returns(new List<DelegateUser> { delegateUser });
 
             // When
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, candidateNumber, "example.com");
 
             // Then
             A.CallTo(
@@ -230,14 +251,16 @@
         }
 
         [Test]
-        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email()
+        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email_with_correct_candidate_number()
         {
             // Given
             var deliveryDate = new DateTime(2200, 1, 1);
-            var emailAddress = "recipient@example.com";
-            var addedByProcess = "some process";
+            const string? emailAddress = "recipient@example.com";
+            const string? addedByProcess = "some process";
+            const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
                 .Build();
 
             A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
@@ -246,6 +269,7 @@
             // When
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                 emailAddress,
+                candidateNumber,
                 "example.com",
                 deliveryDate,
                 addedByProcess
@@ -267,6 +291,34 @@
                         )
                 )
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GenerateAndScheduleDelegateWelcomeEmail_throws_exception_with_incorrect_candidate_number()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            const string? emailAddress = "recipient@example.com";
+            const string? addedByProcess = "some process";
+            const string candidateNumber = "A1";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .Build();
+
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
+
+            // Then
+            Assert.Throws<UserAccountNotFoundException>(
+                () =>
+                    passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                        emailAddress,
+                        candidateNumber,
+                        "example.com",
+                        deliveryDate,
+                        addedByProcess
+                    )
+            );
         }
 
         public void SendWelcomeEmailsToDelegates_schedules_emails_to_delegates()

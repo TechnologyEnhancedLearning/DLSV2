@@ -655,6 +655,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                     () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                         row.EmailAddress,
                         A<string>._,
+                        A<string>._,
                         welcomeEmailDate,
                         A<string>._
                     )
@@ -684,6 +685,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Then
             A.CallTo(
                     () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                        A<string>._,
                         A<string>._,
                         A<string>._,
                         A<DateTime>._,
