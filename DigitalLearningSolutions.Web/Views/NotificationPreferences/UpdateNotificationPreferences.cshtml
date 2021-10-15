@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewComponents
+﻿@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model UpdateNotificationPreferencesViewModel
@@ -9,7 +8,7 @@
 @{
   ViewData["Title"] = "Update Notification Preferences";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { RouteParamKeys.DlsSubApplication, Model.DlsSubApplication.UrlSegment }
+    { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };
 }
 
