@@ -16,7 +16,7 @@
         {
             // Given
             var viewModel = new EditFiltersViewModel();
-            const string expectedErrorMessage = "Start date is required";
+            const string expectedErrorMessage = "Enter a Start Date";
 
             // When
             var result = viewModel.Validate(new ValidationContext(viewModel)).ToList();
@@ -78,7 +78,7 @@
                 StartYear = 2021,
                 EndDate = true
             };
-            const string expectedErrorMessage = "End date is required";
+            const string expectedErrorMessage = "Enter an End Date";
 
             // When
             var result = viewModel.Validate(new ValidationContext(viewModel)).ToList();
