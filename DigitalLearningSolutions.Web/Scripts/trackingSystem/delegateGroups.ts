@@ -1,7 +1,7 @@
 import {SearchSortFilterAndPaginate} from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
-import {getLastRouteParam} from "../common";
+import {getAndTrimPageNumber} from "../common";
 
-const currentPage = parseInt(getLastRouteParam());
+const currentPage = getAndTrimPageNumber();
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate('TrackingSystem/Delegates/Groups/AllDelegateGroups', true, true, true, 'DelegateGroupsFilter', currentPage);

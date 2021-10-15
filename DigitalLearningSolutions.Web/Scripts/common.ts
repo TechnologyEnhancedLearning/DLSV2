@@ -5,10 +5,19 @@ export default function getPathForEndpoint(endpoint: string): string {
   return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
 }
 
-export function getLastRouteParam(): string {
+export function getAndTrimPageNumber(): number | undefined {
   const currentPath = window.location.pathname;
   const urlParts = currentPath.split('/')
-  return urlParts[urlParts.length - 1];
+  const pageNumber = parseInt(urlParts[urlParts.length - 1]);
+
+  if (isNaN(pageNumber)) {
+    return undefined;
+  }
+
+  const newUrl = urlParts.slice(0, -1).join("/");
+  history.replaceState({}, "", newUrl);
+
+  return pageNumber;
 }
 
 /** This allows us to dispatch browser events in old IE and newer browsers. */
