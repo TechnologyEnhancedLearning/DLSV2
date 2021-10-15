@@ -88,7 +88,7 @@
             var result = controller.EditCourseOptions(editCourseOptionsViewModel);
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
         }
 
         [Test]
