@@ -1,12 +1,22 @@
 import Chartist from 'chartist';
 import getPathForEndpoint from '../common';
 
+// These constants are used in _ActivityTable.cshtml
+const toggleableActivityButtonClass = 'js-toggle-row-button';
+const toggleableActivityRowClass = 'js-toggleable-activity-row';
+// --
+
+const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
+const activityToggleableRowDisplayNone = 'none';
+const activityToggleableRowDisplayTableRow = 'table-row';
+
 interface IActivityDataRowModel {
   period: string;
   completions: number;
   evaluations: number;
   registrations: number;
 }
+
 
 function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.IChartistData {
   const labels = data.map((d) => d.period);
@@ -15,35 +25,35 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
     data.map((d) => d.evaluations),
     data.map((d) => d.registrations),
   ];
-  return { labels, series };
+  return {labels, series};
 }
 
-const options = {
-  axisY: {
-    scaleMinSpace: 10,
-    onlyInteger: true,
-  },
-  chartPadding: {
-    bottom: 32,
-  },
-};
-
-const request = new XMLHttpRequest();
 function processRequest() {
-  let { response } = request;
+  let {response} = request;
   // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
   // so we need to manually parse the JSON string if not already parsed
   if (typeof request.response === 'string') {
     response = JSON.parse(response);
   }
   const data = constructChartistData(response);
+
+  const options = {
+    axisY: {
+      scaleMinSpace: 10,
+      onlyInteger: true,
+    },
+    chartPadding: {
+      bottom: 32,
+    },
+  };
+
   const chart = new Chartist.Line('.ct-chart', data, options);
 
   chart.on('draw',
     // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (drawnElement: any) => {
-      const { element } = drawnElement;
+      const {element} = drawnElement;
       // IE renders text in SVGs with 'text' tags that do not work with most CSS properties
       // so we set the relevant attributes manually
       if (element.getNode().tagName === 'text'
@@ -62,27 +72,8 @@ function processRequest() {
     });
 }
 
-// These constants are used in _ActivityTable.cshtml
-const toggleableActivityButtonClass = 'js-toggle-row-button';
-const toggleableActivityRowClass = 'js-toggleable-activity-row';
-// --
-
-const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
-const activityToggleableRowDisplayNone = 'none';
-const activityToggleableRowDisplayTableRow = 'table-row';
-const viewMoreLink = <HTMLElement>document.getElementsByClassName(toggleableActivityButtonClass)
-  .item(0);
-
-function setUpToggleActivityRowsButton() {
-  viewMoreLink.style.display = 'block';
-}
-
-viewMoreLink.addEventListener('click', (event) => {
-  event.preventDefault();
-  toggleVisibleActivityRows();
-});
-
 function toggleVisibleActivityRows() {
+  const viewMoreLink = GetViewMoreLink();
   const activityRow = <HTMLElement>document.getElementsByClassName(toggleableActivityRowClass)
     .item(0);
 
@@ -94,6 +85,7 @@ function toggleVisibleActivityRows() {
     viewMoreLink.innerText = 'View More';
   }
 }
+
 function viewMoreRows(): void {
   const activityTableRows = <HTMLElement[]>Array.from(
     document.getElementsByClassName(toggleableActivityRowClass),
@@ -116,17 +108,35 @@ function viewLessRows(): void {
   });
 }
 
-function pageLoad() {
-  setUpToggleActivityRowsButton();
-  viewLessRows();
+function DoRequest() {
+  const request = new XMLHttpRequest();
+
+  request.onload = () => {
+    processRequest();
+  };
 
   request.open('GET', path, true);
   request.responseType = 'json';
   request.send();
 }
 
-request.onload = () => {
-  processRequest();
-};
+function GetViewMoreLink() {
+  return <HTMLElement>document.getElementsByClassName(toggleableActivityButtonClass)
+    .item(0);
+}
+
+function pageLoad() {
+  const viewMoreLink = GetViewMoreLink();
+
+  viewMoreLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleVisibleActivityRows();
+  });
+
+  viewMoreLink.style.display = 'block';
+  viewLessRows();
+
+  DoRequest();
+}
 
 pageLoad();
