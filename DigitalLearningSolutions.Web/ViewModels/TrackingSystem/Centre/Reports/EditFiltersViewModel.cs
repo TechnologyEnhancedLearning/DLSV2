@@ -123,7 +123,10 @@
                 )
                 .ToValidationResultList(nameof(StartDay), nameof(StartMonth), nameof(StartYear));
 
-            ValidateStartDateIsAfterDataStart(startDateValidationResults);
+            if (!startDateValidationResults.Any())
+            {
+                ValidateStartDateIsAfterDataStart(startDateValidationResults);
+            }
 
             validationResults.AddRange(startDateValidationResults);
         }

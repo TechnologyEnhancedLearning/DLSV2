@@ -23,6 +23,7 @@ const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 const request = new XMLHttpRequest();
 
 const options = {
+  fullWidth: true,
   axisY: {
     scaleMinSpace: 10,
     onlyInteger: true,

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Centre.Reports
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
@@ -22,6 +23,28 @@
 
             // Then
             result.Should().HaveCount(3);
+            result.First().ErrorMessage.Should().BeEquivalentTo(expectedErrorMessage);
+        }
+
+        [Test]
+        public void Start_date_before_data_start_triggers_validation_error()
+        {
+            // Given
+            var viewModel = new EditFiltersViewModel
+            {
+                StartDay = 1,
+                StartMonth = 1,
+                StartYear = 2021,
+                EndDate = false,
+                DataStart = DateTime.Parse("2222-2-2")
+            };
+            const string expectedErrorMessage = "Enter a start date after the start of data for this centre";
+
+            // When
+            var result = viewModel.Validate(new ValidationContext(viewModel)).ToList();
+
+            // Then
+            result.Should().HaveCount(2);
             result.First().ErrorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }
 
@@ -88,7 +111,7 @@
                 EndYear = endYear,
                 EndDate = true
             };
-            var expectedFirstError = new ValidationResult("End date must not precede start date", new[] { "EndDay" });
+            var expectedFirstError = new ValidationResult("Enter an end date after the start date", new[] { "EndDay" });
             var expectedSecondError = new ValidationResult(
                 "",
                 new[] { "EndMonth", "EndYear" }
