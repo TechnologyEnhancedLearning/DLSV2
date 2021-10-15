@@ -27,6 +27,7 @@
         private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private IClockService clockService = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
@@ -46,6 +47,8 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+
             A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
             groupsService = new GroupsService(
@@ -55,7 +58,8 @@
                 emailService,
                 jobGroupsDataService,
                 progressDataService,
-                configuration
+                configuration,
+                centreCustomPromptsService
             );
         }
 

@@ -1,9 +1,11 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { selectAll, deselectAll } from '../common';
 
 const selectedElements = document.querySelectorAll('.delegate-checkbox:checked') as NodeListOf<HTMLInputElement>;
 const selectedIds = Array.from(selectedElements).map((el) => el.value);
 const queryParams = selectedIds.map((id, index) => `selectedIds[${index}]=${id}`);
 const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParams.join('&')}`;
+const checkboxSelector = '.delegate-checkbox';
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
@@ -16,20 +18,6 @@ function alertResultCount(): void {
   resultCount.setAttribute('role', 'alert');
 }
 
-function selectAll(): void {
-  const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (!checkbox.checked) checkbox.click();
-  });
-}
-
-function deselectAll(): void {
-  const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (checkbox.checked) checkbox.click();
-  });
-}
-
 function setUpSelectAndDeselectButtons(): void {
   const selectAllForm = document.getElementById('select-all-form') as HTMLFormElement;
   const selectAllButton = document.getElementById('select-all-button') as HTMLButtonElement;
@@ -39,13 +27,13 @@ function setUpSelectAndDeselectButtons(): void {
 
   selectAllButton.addEventListener('click',
     () => {
-      selectAll();
+      selectAll(checkboxSelector);
       alertResultCount();
     });
 
   deselectAllButton.addEventListener('click',
     () => {
-      deselectAll();
+      deselectAll(checkboxSelector);
       alertResultCount();
     });
 }

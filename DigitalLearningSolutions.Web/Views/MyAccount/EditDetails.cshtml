@@ -7,40 +7,37 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
+  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
+  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
+  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.Application.UrlSegment }
+    { "application", Model.DlsSubApplication.UrlSegment }
   };
-  var isDelegateUser = Model.FormData.IsDelegateUser;
-  var profileImage = Model.FormData.ProfileImage;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
+  <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FormData.FirstName), nameof(Model.FormData.LastName), nameof(Model.FormData.Email), nameof(Model.FormData.Password) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password) })" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
   </div>
 </div>
 
-<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-application="@Model.Application.UrlSegment" enctype="multipart/form-data">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDetails" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" enctype="multipart/form-data">
   <div class="hidden-submit">
     <button name="action" class="nhsuk-button" value="save" aria-hidden="true" tabindex="-1">Save</button>
   </div>
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="FirstName"
+      <vc:text-input
+        asp-for="@nameof(Model.FirstName)"
         label="First name"
         populate-with-current-value="true"
         type="text"
@@ -49,9 +46,8 @@
         hint-text=""
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="LastName"
+      <vc:text-input
+        asp-for="@nameof(Model.LastName)"
         label="Last name"
         populate-with-current-value="true"
         type="text"
@@ -60,9 +56,8 @@
         hint-text=""
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="Email"
+      <vc:text-input
+        asp-for="@nameof(Model.Email)"
         label="Email address"
         populate-with-current-value="true"
         type="text"
@@ -73,15 +68,14 @@
     </div>
   </div>
 
-  @if (isDelegateUser) {
-    <input type="hidden" asp-for="@isDelegateUser" />
+  @if (Model.IsDelegateUser) {
+    <input type="hidden" asp-for="IsDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
-        <vc:select-list-with-configurable-model
-          model="@Model.FormData"
-          asp-for="JobGroupId"
+        <vc:select-list
+          asp-for="@nameof(Model.JobGroupId)"
           label="Job group"
-          value="@Model.FormData.JobGroupId.ToString()"
+          value="@Model.JobGroupId.ToString()"
           hint-text=""
           deselectable="false"
           css-class="nhsuk-u-width-one-half"
@@ -90,8 +84,7 @@
 
         @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
           @if (customField.Options.Any()) {
-            <vc:select-list-with-configurable-model
-              model="@Model.FormData"
+            <vc:select-list
               asp-for="@("Answer" + customField.CustomFieldId)"
               label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
               value="@customField.Answer"
@@ -101,8 +94,7 @@
               default-option="Select a @customField.CustomPrompt.ToLower()"
               select-list-options="@customField.Options" />
           } else {
-            <vc:text-input-with-configurable-model
-              model="@Model.FormData"
+            <vc:text-input
               asp-for="@("Answer" + customField.CustomFieldId)"
               label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
               populate-with-current-value="true"
@@ -122,17 +114,16 @@
       @{ var hintText = @"To change your profile picture, select a new image and click the Preview button to preview it.
                               To remove your profile picture click the remove button.
                               Changes will not be made until the Save button below is clicked."; }
-      <input type="hidden" asp-for="@profileImage" />
-      <vc:file-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="ProfileImageFile"
+      <input type="hidden" asp-for="ProfileImage" />
+      <vc:file-input
+        asp-for="@nameof(Model.ProfileImageFile)"
         label="Profile picture (optional)"
         hint-text="@hintText"
         css-class="nhsuk-u-width-full" />
     </div>
     <div class="nhsuk-grid-column-one-half">
-      @if (profileImage != null) {
-        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(profileImage)" alt="Profile Picture" />
+      @if (Model.ProfileImage != null) {
+        <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
       } else {
         <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
       }
@@ -148,9 +139,8 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input-with-configurable-model
-        model="@Model.FormData"
-        asp-for="Password"
+      <vc:text-input
+        asp-for="@nameof(Model.Password)"
         label="Confirm password to save changes:"
         populate-with-current-value="false"
         type="password"

@@ -1,17 +1,26 @@
 namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
+    using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class EditDetailsViewModel
+    public class EditDetailsViewModel : EditDetailsFormData
     {
-        public EditDetailsViewModel(EditDetailsFormData formData, ApplicationType application)
+        public EditDetailsViewModel(
+            AdminUser? adminUser,
+            DelegateUser? delegateUser,
+            List<(int id, string name)> jobGroups,
+            DlsSubApplication dlsSubApplication
+        ) : base(adminUser, delegateUser, jobGroups)
         {
-            FormData = formData;
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
-        public EditDetailsFormData FormData { get; set; }
+        public EditDetailsViewModel(EditDetailsFormData formData, DlsSubApplication dlsSubApplication) : base(formData)
+        {
+            DlsSubApplication = dlsSubApplication;
+        }
 
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

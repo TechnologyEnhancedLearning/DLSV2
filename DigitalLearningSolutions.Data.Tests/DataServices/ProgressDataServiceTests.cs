@@ -160,5 +160,66 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void InsertNewAspProgressRecordsForTutorialIfNoneExist_inserts_new_records()
+        {
+            // Given
+            const int tutorialId = 12732;
+            const int customisationId = 14019;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var initialProgressIdsOnAspProgressRecords = tutorialContentTestHelper
+                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorialId, customisationId);
+                var resultProgressIdsOnAspProgressRecords = tutorialContentTestHelper
+                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    initialProgressIdsOnAspProgressRecords.Count.Should().Be(3);
+                    resultProgressIdsOnAspProgressRecords.Count.Should().Be(6);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            InsertNewAspProgressRecordsForTutorialIfNoneExist_does_not_insert_new_records_when_they_already_exist()
+        {
+            // Given
+            const int tutorialId = 12925;
+            const int customisationId = 27816;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var initialAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorialId, customisationId);
+                var resultAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    initialAspProgressIds.Count.Should()
+                        .Be(resultAspProgressIds.Count);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

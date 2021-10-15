@@ -8,13 +8,13 @@
 
 @{
   ViewData["Title"] = "My Account";
-  ViewData["Application"] = Model.Application.HeaderExtension;
-  ViewData["HeaderPath"] = Model.Application.HeaderPath;
-  ViewData["HeaderPathName"] = Model.Application.HeaderPathName;
+  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
+  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
+  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.Application" />
+  <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
 <div class="nhsuk-grid-row">
@@ -28,7 +28,7 @@
 </div>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <a class="nhsuk-button" asp-controller="NotificationPreferences" asp-action="Index" asp-route-application="@Model.Application.UrlSegment" role="button">
+    <a class="nhsuk-button" asp-controller="NotificationPreferences" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment" role="button">
       View notification preferences
     </a>
   </div>

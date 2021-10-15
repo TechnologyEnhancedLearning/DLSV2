@@ -35,6 +35,7 @@
     {
         private const string AddedByProcess = "AddDelegateToGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IClockService clockService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
@@ -50,7 +51,8 @@
             IEmailService emailService,
             IJobGroupsDataService jobGroupsDataService,
             IProgressDataService progressDataService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ICentreCustomPromptsService centreCustomPromptsService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -60,6 +62,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.progressDataService = progressDataService;
             this.configuration = configuration;
+            this.centreCustomPromptsService = centreCustomPromptsService;
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -71,7 +74,8 @@
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 delegateAccountWithOldDetails.GetCentreAnswersData(),
                 newCentreAnswers,
-                jobGroupsDataService
+                jobGroupsDataService,
+                centreCustomPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
@@ -80,11 +84,13 @@
             foreach (var changedAnswer in changedLinkedFields)
             {
                 var groupToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.SingleOrDefault(
-                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber && g.GroupLabel == changedAnswer.OldValue
+                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
+                         GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.OldValue, changedAnswer.LinkedFieldName)
                 );
 
                 var groupToAddDelegateTo = allSynchronisedGroupsAtCentre.SingleOrDefault(
-                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber && g.GroupLabel == changedAnswer.NewValue
+                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
+                         GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
                 using var transaction = new TransactionScope();
@@ -205,6 +211,11 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
+        private bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
+        {
+            return groupLabel == answer || groupLabel == linkedFieldName + " - " + answer;
+        }
+
         private static bool ProgressShouldBeUpdatedOnEnrolment(Progress progress)
         {
             return progress.Completed == null && progress.RemovedDate == null;
@@ -212,8 +223,8 @@
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
-            groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
             groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow);
+            groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
         private Email BuildEnrolmentEmail(

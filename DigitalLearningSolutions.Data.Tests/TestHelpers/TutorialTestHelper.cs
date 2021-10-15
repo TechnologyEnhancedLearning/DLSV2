@@ -11,13 +11,7 @@
             bool diagStatus = true
         )
         {
-            return new Tutorial
-            {
-                TutorialId = tutorialId,
-                TutorialName = tutorialName,
-                Status = status,
-                DiagStatus = diagStatus
-            };
+            return new Tutorial(tutorialId, tutorialName, status, diagStatus);
         }
     }
 }

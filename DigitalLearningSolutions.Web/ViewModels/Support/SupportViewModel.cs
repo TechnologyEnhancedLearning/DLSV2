@@ -4,14 +4,23 @@
 
     public class SupportViewModel
     {
-        public SupportViewModel(ApplicationType application, SupportPage currentPage)
+        private readonly string currentSystemBaseUrl;
+
+        public SupportViewModel(DlsSubApplication dlsSubApplication, SupportPage currentPage, string currentSystemBaseUrl)
         {
             CurrentPage = currentPage;
-
-            Application = application;
+            this.currentSystemBaseUrl = currentSystemBaseUrl;
+            DlsSubApplication = dlsSubApplication;
         }
 
         public SupportPage CurrentPage { get; set; }
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
+
+        public string HelpUrl => $"{currentSystemBaseUrl}/help/Introduction.html";
+        public string FaqUrl => $"{currentSystemBaseUrl}/tracking/faqs";
+        public string ResourcesUrl => $"{currentSystemBaseUrl}/tracking/resources";
+        public string SupportTicketsUrl => $"{currentSystemBaseUrl}/tracking/tickets";
+        public string ChangeRequestsUrl =>
+            "https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true";
     }
 }

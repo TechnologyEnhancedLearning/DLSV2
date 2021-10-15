@@ -18,7 +18,10 @@
             bool useFilteredApi = false,
             bool unprocessedUpdates = false,
             bool linearNavigation = true,
-            bool useDescriptionExpanders = true
+            bool useDescriptionExpanders = true,
+            string vocabulary = "Capability",
+            string verificationRoleName = "Supervisor",
+            string signOffRoleName = "Supervisor"
         )
         {
             return new CurrentSelfAssessment()
@@ -33,7 +36,10 @@
                 UseFilteredApi = useFilteredApi,
                 UnprocessedUpdates = unprocessedUpdates,
                 LinearNavigation = linearNavigation,
-                UseDescriptionExpanders = useDescriptionExpanders
+                UseDescriptionExpanders = useDescriptionExpanders,
+                Vocabulary = vocabulary,
+                VerificationRoleName = verificationRoleName,
+                SignOffRoleName = signOffRoleName
             };
         }
 

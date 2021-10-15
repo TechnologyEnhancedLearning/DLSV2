@@ -2,21 +2,18 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class ChangePasswordViewModel
+    public class ChangePasswordViewModel : ChangePasswordFormData
     {
-        public ChangePasswordViewModel(ApplicationType application) : this(
+        public ChangePasswordViewModel(DlsSubApplication dlsSubApplication) : this(
             new ChangePasswordFormData(),
-            application
+            dlsSubApplication
         ) { }
 
-        public ChangePasswordViewModel(ChangePasswordFormData formData, ApplicationType application)
+        public ChangePasswordViewModel(ChangePasswordFormData formData, DlsSubApplication dlsSubApplication) : base(formData)
         {
-            FormData = formData;
-            Application = application;
+            DlsSubApplication = dlsSubApplication;
         }
 
-        public ChangePasswordFormData FormData { get; set; }
-
-        public ApplicationType Application { get; set; }
+        public DlsSubApplication DlsSubApplication { get; set; }
     }
 }

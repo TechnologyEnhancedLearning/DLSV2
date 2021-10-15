@@ -1,16 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Helpers;
     public class VerificationSummaryViewModel
     {
-        public int SelfAssessmentId { get; set; }
         public string Supervisor { get; set; }
-        public string? Vocubulary { get; set; }
-        public string? SelfAssessmentName { get; set; }
+        public CurrentSelfAssessment? SelfAssessment { get; set; }
         public int ResultCount { get; set; }
         public string VocabPlural()
         {
-            return FrameworkVocabularyHelper.VocabularyPlural(Vocubulary);
+            if (SelfAssessment != null)
+            {
+                return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
+            }
+            else
+            {
+                return "Capabilities";
+            }
         }
     }
 }
