@@ -394,7 +394,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Progress AS p ON p.CandidateID = cn.CandidateID
                     INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
+                    LEFT JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
                     WHERE cn.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     AND ap.ArchivedDate IS NULL",

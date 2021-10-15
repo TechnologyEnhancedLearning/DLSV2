@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
+    using NUnit.Framework.Internal;
 
     public class CourseDataServiceTests
     {
@@ -366,9 +367,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             result.Should().BeNull();
         }
 
-        // TODO AIR-541 specific tests for four cases: centre ID matches, active all centre course, inactive all centre course, no centre app course
         [Test]
-        public void GetCentrallyManagedAndCentreCourses_returns_expected_values()
+        public void GetCoursesAvailableToCentreByCategory_returns_expected_values()
         {
             // Given
             const int centreId = 101;
@@ -390,6 +390,67 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void GetCoursesAvailableToCentreByCategory_returns_active_and_inactive_all_centre_courses()
+        {
+            // Given
+            const int centreId = 101;
+            int categoryId = 1;
+
+            // When
+            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            var expectedActiveCourse = new Course
+            {
+                CustomisationId = 17468,
+                CentreId = 549,
+                ApplicationId = 206,
+                ApplicationName = "An Introduction to Cognition",
+                CustomisationName = "eLearning",
+                Active = true
+            };
+            var expectedInactiveCourse = new Course
+            {
+                CustomisationId = 14738,
+                CentreId = 549,
+                ApplicationId = 76,
+                ApplicationName = "Mobile Directory",
+                CustomisationName = "eLearning",
+                Active = false
+            };
+
+            result.Should().ContainEquivalentOf(expectedActiveCourse);
+            result.Should().ContainEquivalentOf(expectedInactiveCourse);
+        }
+
+        [Test]
+        public void GetCoursesEverUsedAtCentreByCategory_returns_courses_no_longer_available_to_centre()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetCoursesEverUsedAtCentreByCategory(centreId, categoryId).ToList();
+            var availableResult =
+                courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            var expectedUnavailableCourse = new Course
+            {
+                CustomisationId = 18438,
+                CentreId = 101,
+                ApplicationId = 301,
+                ApplicationName = "5 Jan Test",
+                CustomisationName = "New",
+                Active = true
+            };
+
+            result.Should().ContainEquivalentOf(expectedUnavailableCourse);
+            availableResult.Select(c => c.CustomisationId).Should().NotContain(18438);
         }
 
         [Test]
