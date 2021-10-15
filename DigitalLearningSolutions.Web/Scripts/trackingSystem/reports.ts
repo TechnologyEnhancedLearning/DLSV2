@@ -4,7 +4,6 @@ import getPathForEndpoint from '../common';
 // These constants are used in _ActivityTable.cshtml
 const toggleableActivityButtonClass = 'js-toggle-row-button';
 const toggleableActivityRowClass = 'js-toggleable-activity-row';
-// --
 
 const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 const activityToggleableRowDisplayNone = 'none';
@@ -28,7 +27,7 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   return {labels, series};
 }
 
-function processRequest() {
+function processRequest(request: XMLHttpRequest) {
   let {response} = request;
   // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
   // so we need to manually parse the JSON string if not already parsed
@@ -112,7 +111,7 @@ function DoRequest() {
   const request = new XMLHttpRequest();
 
   request.onload = () => {
-    processRequest();
+    processRequest(request);
   };
 
   request.open('GET', path, true);
