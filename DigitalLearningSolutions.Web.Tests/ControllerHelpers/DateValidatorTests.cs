@@ -58,7 +58,7 @@
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("Date is required");
+            result.ErrorMessage.Should().Be("Enter a Date");
         }
 
         [TestCase(null, 1, 3000, "a day")]
@@ -81,7 +81,7 @@
             result.HasDayError.Should().Be(!day.HasValue);
             result.HasMonthError.Should().Be(!month.HasValue);
             result.HasYearError.Should().Be(!year.HasValue);
-            result.ErrorMessage.Should().Be("Date must include " + errorMessageEnding);
+            result.ErrorMessage.Should().Be("Enter a Date containing " + errorMessageEnding);
         }
 
         [Test]
@@ -94,7 +94,7 @@
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("Date must be a real date");
+            result.ErrorMessage.Should().Be("Enter a real date for Date");
         }
 
         [TestCase(0, 1, 3000, true, false, false, "day")]
@@ -123,7 +123,7 @@
             result.HasDayError.Should().Be(dayError);
             result.HasMonthError.Should().Be(monthError);
             result.HasYearError.Should().Be(yearError);
-            result.ErrorMessage.Should().Be("Date must include a real " + errorMessageEnding);
+            result.ErrorMessage.Should().Be("Enter a Date containing a real " + errorMessageEnding);
         }
 
         [Test]
@@ -136,7 +136,7 @@
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("Date must be a real date");
+            result.ErrorMessage.Should().Be("Enter a real date for Date");
         }
 
         [Test]
@@ -149,20 +149,33 @@
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("Date must not be in the past");
+            result.ErrorMessage.Should().Be("Enter a Date not in the past");
+        }
+
+        [Test]
+        public void ValidateDate_returns_appropriate_error_if_date_in_future()
+        {
+            // When
+            var result = DateValidator.ValidateDate(1, 1, 3000, validateNonFuture: true);
+
+            // Then
+            result.HasDayError.Should().BeTrue();
+            result.HasMonthError.Should().BeTrue();
+            result.HasYearError.Should().BeTrue();
+            result.ErrorMessage.Should().Be("Enter a Date not in the future");
         }
 
         [Test]
         public void ValidateDate_uses_name_correctly_in_error_message()
         {
             // When
-            var result = DateValidator.ValidateDate(null, null, null, "What's required", true);
+            var result = DateValidator.ValidateDate(null, null, null, "entrance and exit an exit.", true);
 
             // Then
             result.HasDayError.Should().BeTrue();
             result.HasMonthError.Should().BeTrue();
             result.HasYearError.Should().BeTrue();
-            result.ErrorMessage.Should().Be("What's required is required");
+            result.ErrorMessage.Should().Be("Enter an entrance and exit an exit.");
         }
 
         [TestCase(true, false, false, "Day")]
