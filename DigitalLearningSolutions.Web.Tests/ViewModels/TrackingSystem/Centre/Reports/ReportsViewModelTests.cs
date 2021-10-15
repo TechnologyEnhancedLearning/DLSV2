@@ -60,7 +60,8 @@
             var model = new ReportsFilterModel(filterData, "", "", "", false);
 
             // then
-            model.DateRange.Should().Be("01/01/2001 - 02/02/2002");
+            model.StartDate.Should().Be("01/01/2001");
+            model.EndDate.Should().Be("02/02/2002");
         }
 
         [Test]
@@ -246,8 +247,8 @@
             );
 
             // then
-            model.Rows.First().Period.Should().Be("01/01/2004 - 02/02/2004");
-            model.Rows.Last().Period.Should().Be("02/02/2002 - 31/12/2002");
+            model.Rows.First().Period.Should().Be("01/01/2004 to 02/02/2004");
+            model.Rows.Last().Period.Should().Be("02/02/2002 to 31/12/2002");
         }
 
         [Test]
@@ -271,7 +272,7 @@
 
             // then
             model.Rows.Count().Should().Be(1);
-            model.Rows.First().Period.Should().Be("02/02/2002 - 03/02/2002");
+            model.Rows.First().Period.Should().Be("02/02/2002 to 03/02/2002");
         }
     }
 }

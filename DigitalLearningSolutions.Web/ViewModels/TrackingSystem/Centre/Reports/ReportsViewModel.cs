@@ -129,8 +129,8 @@
             CourseCategoryName = courseCategoryName;
             CourseName = courseNameString;
             ReportIntervalName = Enum.GetName(typeof(ReportInterval), filterData.ReportInterval)!;
-            DateRange =
-                $"{filterData.StartDate.ToString(DateHelper.StandardDateFormat)} - {filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today"}";
+            StartDate = filterData.StartDate.ToString(DateHelper.StandardDateFormat);
+            EndDate = filterData.EndDate?.ToString(DateHelper.StandardDateFormat) ?? "Today";
             ShowCourseCategoryFilter = userManagingAllCourses;
             FilterValues = new Dictionary<string, string>
             {
@@ -146,7 +146,8 @@
         public string JobGroupName { get; set; }
         public string CourseCategoryName { get; set; }
         public string CourseName { get; set; }
-        public string DateRange { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public string ReportIntervalName { get; set; }
         public bool ShowCourseCategoryFilter { get; set; }
 

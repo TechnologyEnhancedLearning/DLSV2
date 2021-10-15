@@ -221,6 +221,13 @@ ul.no-bullets {
   @include hidden-submit-ie-fix;
 }
 
+.screen-reader-only {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
 .divider {
   border-bottom: 1px solid $nhsuk-border-color;
   margin-bottom: nhsuk-spacing(3);
