@@ -456,6 +456,28 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[ReorderFrameworkCompetency]    Script Date: 15/10/2021 08:31:18 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/10/2021
+        ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
+        ///-- =============================================
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
+            get {
+                return ResourceManager.GetString("DLSV2_379_ReorderCompetencyAssessmentQuestionsSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to --DLSV2-95 Adds System Versioning to auditable tables (UP)
         ///
         ///--Frameworks table

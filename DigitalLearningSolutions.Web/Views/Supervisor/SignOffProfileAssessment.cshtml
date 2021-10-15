@@ -86,12 +86,12 @@
     </dt>
     <dd class="nhsuk-summary-list__value">
       @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
-        {
-      <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br/>
-        }
-</dd>
+      {
+        <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
+      }
+    </dd>
 
-      </div>
+    </div>
   }
 
   @if (@Model.SelfAssessmentResultSummary.UngradedCount < Model.SelfAssessmentResultSummary.ResultCount)
@@ -130,11 +130,8 @@
     <dd class="nhsuk-summary-list__value">
       @Model.SelfAssessmentResultSummary.UngradedCount
     </dd>
-
     </div>
   }
-
-
 </dl>
 <div class="nhsuk-card">
   <div class="nhsuk-card__content">
@@ -145,7 +142,7 @@
             Sign-off Profile Self Assessment
           </h2>
         </legend>
-        <input type="hidden"  asp-for="CandidateAssessmentSupervisorVerificationId" />
+        <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
         <nhs-form-group nhs-validation-for="SupervisorComments">
           <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
         </nhs-form-group>
@@ -170,10 +167,10 @@
 </div>
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link"
-      asp-controller="Supervisor"
-               asp-action="ReviewDelegateSelfAssessment"
-               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-               asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
+     asp-controller="Supervisor"
+     asp-action="ReviewDelegateSelfAssessment"
+     asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+     asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
     </svg>
