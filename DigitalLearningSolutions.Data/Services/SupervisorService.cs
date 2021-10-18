@@ -16,7 +16,7 @@
         //GET DATA
         DashboardData GetDashboardDataForAdminId(int adminId);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminId(int adminId);
-        SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId);
+        SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateId);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
         IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId);
@@ -175,12 +175,12 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
             }
         }
 
-        public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId)
+        public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateId)
         {
             return connection.Query<SupervisorDelegateDetail>(
                $@"SELECT {supervisorDelegateDetailFields}
                     FROM   {supervisorDelegateDetailTables}
-                    WHERE (sd.ID = @supervisorDelegateId) AND (Removed IS NULL)", new { supervisorDelegateId }
+                    WHERE (sd.ID = @supervisorDelegateId) AND (sd.CandidateID = @delegateId OR sd.SupervisorAdminID = @adminId) AND (Removed IS NULL)", new { supervisorDelegateId, adminId, delegateId }
                ).FirstOrDefault();
         }
 

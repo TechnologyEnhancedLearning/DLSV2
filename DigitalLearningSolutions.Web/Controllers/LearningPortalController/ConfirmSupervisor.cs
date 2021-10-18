@@ -9,8 +9,8 @@
         [Route("/LearningPortal/ConfirmSupervisor/{supervisorDelegateId}")]
         public IActionResult ConfirmSupervisor(int supervisorDelegateId)
         {
-            var candidateId = GetCandidateId();
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, candidateId);
             if(supervisorDelegate.CandidateID != candidateId | supervisorDelegate.Confirmed != null | supervisorDelegate.Removed != null )
             {
                 logger.LogWarning($"Attempt to display confirm supervisor screen for where candidate id ({candidateId}) did not match supervise delegate candidate id ({supervisorDelegate.CandidateID}). SuperviseDelegateID: {supervisorDelegateId}");
@@ -20,17 +20,19 @@
         }
         public IActionResult AcceptSupervisorDelegateInvite(int supervisorDelegateId)
         {
-            if(supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0))
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, candidateId, 0))
             {
-                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId);
+                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, candidateId);
             }
             return RedirectToAction("Current");
         }
         public IActionResult RejecttSupervisorDelegateInvite(int supervisorDelegateId)
         {
-            if(supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0))
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            if (supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, candidateId, 0))
             {
-                frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId);
+                frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId, candidateId);
             }
             return RedirectToAction("Current");
         }
