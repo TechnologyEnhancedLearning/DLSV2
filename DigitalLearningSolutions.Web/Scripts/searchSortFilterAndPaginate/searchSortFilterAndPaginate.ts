@@ -161,15 +161,28 @@ export class SearchSortFilterAndPaginate {
 
   static updateResultCount(count: number): void {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
-    const oldResultCountMessage = resultCount.innerHTML;
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
     let newResultCountMessage = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+    newResultCountMessage = this.modifyResultCountMessageForScreenReaderIfUnchanged(
+      newResultCountMessage,
+      resultCount,
+    );
+
+    resultCount.innerHTML = newResultCountMessage;
+  }
+
+  static modifyResultCountMessageForScreenReaderIfUnchanged(
+    newResultCountMessage: string,
+    resultCountElement: HTMLSpanElement,
+  ): string {
+    const oldResultCountMessage = resultCountElement.innerHTML;
 
     if (newResultCountMessage === oldResultCountMessage) {
-      newResultCountMessage += '&nbsp';
+      return `${newResultCountMessage}&nbsp`;
     }
-    resultCount.innerHTML = newResultCountMessage;
+
+    return newResultCountMessage;
   }
 
   private static scrollToTop() : void {

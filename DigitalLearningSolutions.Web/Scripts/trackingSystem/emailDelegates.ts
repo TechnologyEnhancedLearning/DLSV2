@@ -10,17 +10,8 @@ new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter'
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
-  // change the content of the search results
-  // so that an "identical" result is announced by the aria-live attribute
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  const resultCountMessage = resultCount.innerHTML;
-  const indexOfSpace = resultCountMessage.search('&nbsp');
-
-  if (indexOfSpace === -1) {
-    resultCount.innerHTML = `${resultCountMessage}&nbsp`;
-  } else {
-    resultCount.innerHTML = resultCountMessage.substring(0, indexOfSpace);
-  }
+  resultCount.innerHTML = modifyUnchangedResultCountMessageForScreenReader(resultCount);
 }
 
 function selectAll(): void {
@@ -55,4 +46,16 @@ function setUpSelectAndDeselectButtons(): void {
       deselectAll();
       alertResultCount();
     });
+}
+
+function modifyUnchangedResultCountMessageForScreenReader(
+  resultsCountElement: HTMLSpanElement,
+): string {
+  const resultCountMessage = resultsCountElement.innerHTML;
+  const indexOfSpace = resultCountMessage.search('&nbsp');
+
+  if (indexOfSpace === -1) {
+    return `${resultCountMessage}&nbsp`;
+  }
+  return resultCountMessage.substring(0, indexOfSpace);
 }
