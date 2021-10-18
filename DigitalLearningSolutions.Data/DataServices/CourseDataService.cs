@@ -69,6 +69,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         private const string SelectDelegateCourseInfoQuery =
             @"SELECT
+                pr.ProgressId,
                 cu.CustomisationID AS CustomisationId,
                 cu.CentreID AS CustomisationCentreId,
                 cu.Active AS IsCourseActive,

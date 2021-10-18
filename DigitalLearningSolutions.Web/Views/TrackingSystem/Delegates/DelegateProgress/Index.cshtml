@@ -5,23 +5,22 @@
 @model DelegateProgressViewModel
 
 @{
-  ViewData["Title"] = "Delegate progress";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
-  var routeParamsForBackLink = new Dictionary<string, string?> {
-    {
-      "customisationId", Model.CustomisationId.ToString()
-    }
-  };
-}
+    ViewData["Title"] = "Delegate progress";
+    var routeParamsForBackLink = new Dictionary<string, string?>();
 
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
+    if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+      routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
+    } else {
+      routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+    }
 }
 
 @section NavBreadcrumbs {
-  <partial name="_CourseDelegatesBreadcrumbs" />
+  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId"/>
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId"/>
+  }
 }
 
 <div class="nhsuk-grid-row">
@@ -46,8 +45,9 @@
       </div>
     </div>
 
-    @if (!Model.IsCourseActive) {
-      <partial name="_InactiveCourseInset" />
+    @if (!Model.IsCourseActive)
+    {
+      <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
     }
 
     <partial name="_DelegateProgressSummary" model="Model" />
@@ -59,6 +59,10 @@
       View learning log
     </a>
 
-    <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+      <vc:back-link asp-controller="CourseDelegates" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    } else {
+      <vc:back-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>
