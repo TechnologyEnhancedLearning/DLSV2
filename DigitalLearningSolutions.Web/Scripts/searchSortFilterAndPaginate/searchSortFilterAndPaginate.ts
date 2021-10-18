@@ -179,7 +179,7 @@ export class SearchSortFilterAndPaginate {
     const newResultCountMessage = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
 
     if (newResultCountMessage === oldResultCountMessage) {
-      // add a non-breaking space if messages are the same to cause the screen reader to announce it
+      // Screen reader does not announce the message if it has not changed
       return `${newResultCountMessage}&nbsp`;
     }
 

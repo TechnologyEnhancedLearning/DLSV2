@@ -11,7 +11,7 @@ setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  resultCount.innerHTML = modifyUnchangedResultCountMessageForScreenReader(resultCount);
+  resultCount.innerHTML = getModifiedResultCountMessageForScreenReader(resultCount);
 }
 
 function selectAll(): void {
@@ -48,7 +48,7 @@ function setUpSelectAndDeselectButtons(): void {
     });
 }
 
-function modifyUnchangedResultCountMessageForScreenReader(
+function getModifiedResultCountMessageForScreenReader(
   resultsCountElement: HTMLSpanElement,
 ): string {
   const resultCountMessage = resultsCountElement.innerHTML;
