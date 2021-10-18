@@ -163,22 +163,23 @@ export class SearchSortFilterAndPaginate {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
-    let newResultCountMessage = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
-    newResultCountMessage = this.modifyResultCountMessageForScreenReaderIfUnchanged(
-      newResultCountMessage,
+    const newResultCountMessage = this.getNewResultCountMessage(
+      count,
       resultCount,
     );
 
     resultCount.innerHTML = newResultCountMessage;
   }
 
-  static modifyResultCountMessageForScreenReaderIfUnchanged(
-    newResultCountMessage: string,
+  static getNewResultCountMessage(
+    count: number,
     resultCountElement: HTMLSpanElement,
   ): string {
     const oldResultCountMessage = resultCountElement.innerHTML;
+    const newResultCountMessage = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
 
     if (newResultCountMessage === oldResultCountMessage) {
+      // add a non-breaking space if messages are the same to cause the screen reader to announce it
       return `${newResultCountMessage}&nbsp`;
     }
 
