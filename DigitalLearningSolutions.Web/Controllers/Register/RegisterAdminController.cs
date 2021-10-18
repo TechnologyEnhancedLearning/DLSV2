@@ -185,6 +185,7 @@
         [HttpGet]
         public IActionResult Confirmation()
         {
+            TempData.Clear();
             return View();
         }
 
