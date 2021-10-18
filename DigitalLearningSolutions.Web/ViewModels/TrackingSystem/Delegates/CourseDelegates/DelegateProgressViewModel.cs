@@ -73,7 +73,7 @@
         public string SupervisorFullName =>
             SupervisorAdminId == null ? "None" : $"{SupervisorForename} {SupervisorSurname}";
 
-        public string EnrolmentMethod
+        public new string EnrolmentMethod
         {
             get
             {
