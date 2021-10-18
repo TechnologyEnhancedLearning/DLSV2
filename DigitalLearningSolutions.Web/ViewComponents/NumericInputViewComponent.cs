@@ -7,7 +7,6 @@
     public class NumericInputViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(
-            object model,
             string aspFor,
             string label,
             bool populateWithCurrentValue,
@@ -16,6 +15,8 @@
             string cssClass
         )
         {
+            var model = ViewData.Model;
+
             var property = model.GetType().GetProperty(aspFor);
             var valueToSet = populateWithCurrentValue ? property?.GetValue(model)?.ToString() : null;
 

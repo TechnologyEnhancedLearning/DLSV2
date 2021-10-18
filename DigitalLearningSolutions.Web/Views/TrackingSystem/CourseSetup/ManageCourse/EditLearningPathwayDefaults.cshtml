@@ -1,26 +1,16 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 @model EditLearningPathwayDefaultsViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit Learning Pathway defaults";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Learning Pathway defaults" : "Edit Learning Pathway defaults";
   var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditLearningPathwayDefaultsViewModel.CompleteWithinMonths), nameof(EditLearningPathwayDefaultsViewModel.ValidityMonths) }" />
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) }" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>
@@ -30,27 +20,24 @@
           asp-controller="ManageCourse"
           asp-action="SaveLearningPathwayDefaults"
           asp-route-customisationId="@Model.CustomisationId">
-      <div class="nhsuk-form-group">
-        <vc:numeric-input model="@Model"
-                          asp-for="@nameof(Model.CompleteWithinMonths)"
-                          label="Completion within (in months)"
-                          populate-with-current-value="true"
-                          type="text"
-                          hint-text="Within how many months of enrolment (up to 48) should the learner complete the
-                                     course? Enter 0 or leave blank if you do not wish to configure this value."
-                          css-class="nhsuk-input nhsuk-input--width-10" />
-      </div>
 
-      <div class="nhsuk-form-group">
-        <vc:numeric-input model="@Model" asp-for="@nameof(Model.ValidityMonths)"
-                          label="Completion valid for (in months)"
-                          populate-with-current-value="true"
-                          type="text"
-                          hint-text="For how many months after completion (up to 48) will the completion remain valid, before the
+      <vc:numeric-input asp-for="@nameof(Model.CompleteWithinMonths)"
+                        label="Completion within (in months)"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text="Within how many months of enrolment (up to 48) should the learner complete the
+                                     course? Enter 0 or leave blank if you do not wish to configure this value."
+                        css-class="nhsuk-input--width-10" />
+
+
+      <vc:numeric-input asp-for="@nameof(Model.ValidityMonths)"
+                        label="Completion valid for (in months)"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text="For how many months after completion (up to 48) will the completion remain valid, before the
                                      learner is expected to complete the course again? Enter 0 or leave blank if you do not wish
                                      to configure this value."
-                          css-class="nhsuk-input nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
-      </div>
+                        css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
 
       <div class="nhsuk-checkboxes">
         <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">

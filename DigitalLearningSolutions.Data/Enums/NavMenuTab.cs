@@ -41,6 +41,11 @@
             nameof(SwitchApplication)
         );
 
+        public static readonly NavMenuTab CourseSetup = new NavMenuTab(
+            7,
+            nameof(CourseSetup)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)
