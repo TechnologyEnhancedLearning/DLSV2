@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Manage")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -30,12 +32,7 @@
                 customisationId,
                 centreId,
                 categoryId.Value
-            );
-
-            if (courseDetails == null)
-            {
-                return NotFound();
-            }
+            )!;
 
             var model = new ManageCourseViewModel(courseDetails);
 

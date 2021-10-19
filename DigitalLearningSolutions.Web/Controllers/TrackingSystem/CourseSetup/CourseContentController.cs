@@ -51,7 +51,7 @@
 
             var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
                 customisationId,
-                courseDetails.ApplicationId
+                courseDetails!.ApplicationId
             );
             var model = new CourseContentViewModel(
                 customisationId,

@@ -25,6 +25,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -393,6 +394,17 @@ namespace DigitalLearningSolutions.Data.DataServices
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
+        {
+            return connection.QueryFirstOrDefault<(int?, int?)>(
+                @"  SELECT c.CentreId, a.CourseCategoryId
+                        FROM Customisations AS c
+                        INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId",
+                new { customisationId }
             );
         }
     }

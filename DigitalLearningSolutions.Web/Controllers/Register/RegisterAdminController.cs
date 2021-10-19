@@ -48,9 +48,14 @@
                 return RedirectToAction("Index", "Home");
             }
 
-            if (!centreId.HasValue || !IsRegisterAdminAllowed(centreId.Value))
+            if (!centreId.HasValue || centresDataService.GetCentreName(centreId.Value) == null)
             {
                 return NotFound();
+            }
+
+            if (!IsRegisterAdminAllowed(centreId.Value))
+            {
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             SetAdminRegistrationData(centreId.Value);
@@ -191,11 +196,6 @@
 
         private bool IsRegisterAdminAllowed(int centreId)
         {
-            if (centresDataService.GetCentreName(centreId) == null)
-            {
-                return false;
-            }
-
             var adminUsers = userDataService.GetAdminUsersByCentreId(centreId);
             var hasCentreManagerAdmin = adminUsers.Any(user => user.IsCentreManager);
             var (autoRegistered, autoRegisterManagerEmail) = centresDataService.GetCentreAutoRegisterValues(centreId);
@@ -212,7 +212,7 @@
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    Expires = DateTimeOffset.UtcNow.AddDays(30),
                 }
             );
 

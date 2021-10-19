@@ -1,19 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class VerifyAdminUserCanAccessCourse : IActionFilter
+    public class VerifyAdminUserCanAccessAdminUser : IActionFilter
     {
-        private readonly ICourseService courseService;
+        private readonly IUserDataService userDataService;
 
-        public VerifyAdminUserCanAccessCourse(
-            ICourseService courseService
-        )
+        public VerifyAdminUserCanAccessAdminUser(IUserDataService userDataService)
         {
-            this.courseService = courseService;
+            this.userDataService = userDataService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -26,17 +24,14 @@
             }
 
             var centreId = controller.User.GetCentreId();
-            var categoryId = controller.User.GetAdminCategoryId()!;
-            var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
+            var adminUserId = int.Parse(context.RouteData.Values["adminId"].ToString()!);
+            var adminAccount = userDataService.GetAdminUserById(adminUserId);
 
-            var validationResult =
-                courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value);
-
-            if (!validationResult.HasValue)
+            if (adminAccount == null)
             {
                 context.Result = new NotFoundResult();
             }
-            else if (!validationResult.Value)
+            else if (adminAccount.CentreId != centreId)
             {
                 context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
             }
