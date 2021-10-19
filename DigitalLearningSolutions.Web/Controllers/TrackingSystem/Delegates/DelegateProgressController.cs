@@ -13,12 +13,10 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [Route("TrackingSystem/Delegates/{accessedVia}")]
+    [Route("TrackingSystem/Delegates/{accessedVia}/DelegateProgress/{progressId:int}")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     public class DelegateProgressController : Controller
     {
-        public const string CourseDelegatesAccessRouteParameter = "CourseDelegates";
-        public const string ViewDelegateAccessRouteParameter = "ViewDelegate";
         private readonly ICourseService courseService;
 
         public DelegateProgressController(ICourseService courseService)
@@ -26,7 +24,6 @@
             this.courseService = courseService;
         }
 
-        [Route("DelegateProgress/{progressId:int}")]
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
         {
             if (!DelegateProgressAccessRoute.CourseDelegates.Equals(accessedVia) &&
