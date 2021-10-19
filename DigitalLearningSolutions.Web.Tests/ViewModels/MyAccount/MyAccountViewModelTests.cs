@@ -24,7 +24,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts, ApplicationType.Default);
+            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts, DlsSubApplication.Default);
 
             // Then
             using (new AssertionScope())
@@ -47,7 +47,7 @@
             var adminUser = UserTestHelper.GetDefaultAdminUser();
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, null, null, ApplicationType.Default);
+            var returnedModel = new MyAccountViewModel(adminUser, null, null, DlsSubApplication.Default);
 
             // Then
             using (new AssertionScope())
@@ -75,7 +75,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, ApplicationType.Default);
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
 
             // Then
             using (new AssertionScope())
@@ -104,7 +104,7 @@
                 });
 
             // When
-            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, ApplicationType.Default);
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
 
             // Then
             using (new AssertionScope())

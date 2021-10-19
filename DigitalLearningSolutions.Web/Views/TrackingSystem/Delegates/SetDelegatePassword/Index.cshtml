@@ -1,18 +1,19 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 @using Microsoft.Extensions.Configuration
 @model SetDelegatePasswordViewModel
 
 @{
-  ViewData["Title"] = "Set delegate user password";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Set delegate user password";
+    ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
+    ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+    ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 
 @section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
@@ -41,7 +42,7 @@
                      populate-with-current-value="false"
                      type="text"
                      spell-check="false"
-                     autocomplete=""
+                     autocomplete="off"
                      hint-text="Password should have a minimum of 8 characters with at least 1 letter, 1 number and 1 symbol."
                      css-class="nhsuk-u-width-one-half" />
 

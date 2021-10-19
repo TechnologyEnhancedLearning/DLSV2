@@ -6,6 +6,7 @@
     using System.Transactions;
     using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
@@ -17,6 +18,12 @@
     {
         private SqlConnection connection = null!;
         private GroupsDataService groupsDataService = null!;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            MapperHelper.SetUpFluentMapper();
+        }
 
         [SetUp]
         public void Setup()

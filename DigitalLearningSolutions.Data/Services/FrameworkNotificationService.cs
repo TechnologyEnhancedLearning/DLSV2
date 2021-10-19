@@ -13,16 +13,18 @@
         void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment);
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder);
         void SendReviewOutcomeNotification(int reviewId);
-        void SendSupervisorDelegateInvite(int supervisorDelegateId);
-        void SendSupervisorDelegateAcceptance(int supervisorDelegateId);
-        void SendSupervisorDelegateRejected(int supervisorDelegateId);
-        void SendSupervisorDelegateConfirmed(int superviseDelegateId);
+        void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId);
+        void SendSupervisorDelegateAcceptance(int supervisorDelegateId, int delegateId);
+        void SendSupervisorDelegateRejected(int supervisorDelegateId, int delegateIId);
+        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId);
         void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults);
-        void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID);
-        void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount);
+        void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateId);
+        void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateId);
+        void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateId);
+        void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId);
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
@@ -180,9 +182,9 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
         }
-        public void SendSupervisorDelegateInvite(int supervisorDelegateId)
+        public void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             string emailSubjectLine = "Invite from Supervisor - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
@@ -207,9 +209,9 @@
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
-        public void SendSupervisorDelegateAcceptance(int supervisorDelegateId)
+        public void SendSupervisorDelegateAcceptance(int supervisorDelegateId, int delegateId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
             string emailSubjectLine = "Accepted Supervisor Invitation - Digital Learning Solutions";
@@ -222,9 +224,9 @@ To manage their role profile assessments, please visit {dlsUrlBuilder.Uri.ToStri
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.SupervisorEmail));
         }
 
-        public void SendSupervisorDelegateRejected(int supervisorDelegateId)
+        public void SendSupervisorDelegateRejected(int supervisorDelegateId, int delegateId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
             string emailSubjectLine = "REJECTED Supervisor Invitation - Digital Learning Solutions";
             var builder = new BodyBuilder();
             var dlsUrlBuilder = GetDLSUriBuilder();
@@ -237,9 +239,9 @@ To manage your team, please visit {dlsUrlBuilder.Uri.ToString()}.";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.SupervisorEmail));
         }
 
-        public void SendSupervisorDelegateConfirmed(int supervisorDelegateId)
+        public void SendSupervisorDelegateConfirmed(int supervisorDelegateId, int adminId, int delegateId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateId);
             string emailSubjectLine = "Supervisor Confirmed - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
@@ -251,7 +253,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
 
         public void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
@@ -268,7 +270,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
 
         public void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             var completeByString = completeByDate == null ? $"Your {delegateSelfAssessment.SupervisorRoleTitle} did not specify a date by which the self assessment should be completed." : $"Your {delegateSelfAssessment.SupervisorRoleTitle} indicated that this self assessment should be completed by {completeByDate.Value.ToShortDateString()}.";
@@ -287,7 +289,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
 
         public void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             string emailSubjectLine = $"Reminder to complete the profile assessment {delegateSelfAssessment.RoleName} - Digital Learning Solutions";
@@ -301,7 +303,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
 
         public void SendSupervisorMultipleResultsReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int countResults)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Verified {countResults} Results - Digital Learning Solutions";
@@ -313,9 +315,9 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 
-        public void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID)
+        public void SendDelegateSupervisorNominated(int supervisorDelegateId, int selfAssessmentID, int delegateId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
             if (supervisorDelegate == null)
             {
                 return;
@@ -347,12 +349,12 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             return dlsUrlBuilder.Uri.ToString();
         }
 
-        public void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount)
+        public void SendResultVerificationRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int resultCount, int delegateId)
         {
             var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisorById(candidateAssessmentSupervisorId);
             int supervisorDelegateId = candidateAssessmentSupervisor.SupervisorDelegateId;
             int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId);
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID);
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Results Review Request - Digital Learning Solutions";
             string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId);
@@ -361,6 +363,39 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
                               {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) has requested that you review {resultCount.ToString()} of their self assessment results for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
                               To review these results, please visit {profileReviewUrl} (sign in using your existing DLS credentials).";
             builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p><a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> has requested that you review {resultCount} of their self assessment results for the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p><a href='{profileReviewUrl}'>Click here</a> to review these results (sign in using your existing DLS credentials).</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateId)
+        {
+            var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisorById(candidateAssessmentSupervisorId);
+            int supervisorDelegateId = candidateAssessmentSupervisor.SupervisorDelegateId;
+            int candidateAssessmentId = candidateAssessmentSupervisor.CandidateAssessmentID;
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, 0, delegateId);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentSupervisor.CandidateAssessmentID);
+            string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Self Assessment Sign-off Request - Digital Learning Solutions";
+            string? profileReviewUrl = GetSupervisorProfileReviewUrl(supervisorDelegateId, candidateAssessmentId);
+            BodyBuilder? builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.SupervisorName},
+                              {supervisorDelegate.FirstName} {supervisorDelegate.LastName} ({supervisorDelegate.DelegateEmail}) has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.
+                              To review and sign-off the self-assessment, please visit {profileReviewUrl} (sign in using your existing DLS credentials).";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.SupervisorName},</p><p><a href='mailto:{supervisorDelegate.DelegateEmail}'>{supervisorDelegate.FirstName} {supervisorDelegate.LastName}</a> has requested that you sign-off of their self assessment the activity '{delegateSelfAssessment.RoleName}' in the NHS Health Education England, Digital Learning Solutions (DLS) platform.</p><p><a href='{profileReviewUrl}'>Click here</a> to review and sign-off the self-assessment (sign in using your existing DLS credentials).</p></body>";
+            emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
+        }
+
+        public void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId)
+        {
+            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
+            var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
+            var commentString = supervisorDelegate.SupervisorName + (signedOff ? " signed off your profile assessment " : " rejected your profile assessment ") + (supervisorComments != null ? "and left the following review comment: " + supervisorComments : "but did not leave a review comment.");
+            string emailSubjectLine = $"Profile assessment {(signedOff ? " signed off " : "rejected")} by {delegateSelfAssessment.SupervisorRoleTitle} - Digital Learning Solutions";
+            var builder = new BodyBuilder();
+            builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
+                               {supervisorDelegate.SupervisorName} has reviewed your profile assessment {delegateSelfAssessment.RoleName} in the NHS Health Education England, Digital Learning Solutions platform.
+                               {commentString}
+                               To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} has reviewed your profile assessment {delegateSelfAssessment.RoleName} in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
     }

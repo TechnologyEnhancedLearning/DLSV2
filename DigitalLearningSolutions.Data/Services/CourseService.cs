@@ -12,6 +12,8 @@
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
         public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod);
+        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -46,19 +48,41 @@
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId)
         {
             return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
-                info =>
-                {
-                    var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
-                        info,
-                        info.CustomisationId,
-                        centreId
-                    );
-                    var attemptStats = info.IsAssessed
-                        ? courseDataService.GetDelegateCourseAttemptStats(delegateId, info.CustomisationId)
-                        : (0, 0);
-                    return new DelegateCourseDetails(info, customPrompts, attemptStats);
-                }
+                info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
+            ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
+        }
+
+        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)
+        {
+            var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
+        }
+
+        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
+        {
+            var categoryIdFilter = adminCategoryIdClaim == 0 ? (int?)null : adminCategoryIdClaim;
+            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, categoryIdFilter);
+        }
+
+        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
+            DelegateCourseInfo info,
+            int centreId,
+            bool allowAllCentreCourses = false
+        )
+        {
+            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                info,
+                info.CustomisationId,
+                centreId,
+                allowAllCentreCourses
             );
+
+            var attemptStats = info.IsAssessed
+                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
+                : new AttemptStats(0, 0);
+
+            return new DelegateCourseDetails(info, customPrompts, attemptStats);
         }
 
         public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod)

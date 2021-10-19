@@ -2,21 +2,21 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
     internal partial class TutorialContentDataServiceTests
     {
+        private const int CustomisationId = 1379;
+        private const int SectionId = 74;
+
         [Test]
         public void GetTutorialsBySectionId_returns_tutorials_correctly()
         {
-            // Given
-            const int customisationId = 1379;
-            const int sectionId = 74;
-
             // When
-            var result = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId).ToList();
+            var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
 
             // Then
             using (new AssertionScope())
@@ -41,6 +41,77 @@
 
             // Then
             result.Should().BeEquivalentTo(expectedTutorials);
+        }
+
+        [Test]
+        public void
+            UpdateOrInsertCustomisationTutorialStatuses_updates_both_statuses_on_existing_CustomisationTutorial()
+        {
+            // When
+            using var transaction = new TransactionScope();
+            try
+            {
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
+                    49,
+                    CustomisationId,
+                    false,
+                    false
+                );
+                var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
+
+                using (new AssertionScope())
+                {
+                    result.First().TutorialId.Should().Be(49);
+                    result.First().TutorialName.Should().Be("View documents");
+                    result.First().Status.Should().BeFalse();
+                    result.First().DiagStatus.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial_when_one_does_not_exist()
+        {
+            // Given
+            const int tutorialId = 12732;
+            const int customisationId = 14019;
+
+            // When
+            using var transaction = new TransactionScope();
+            try
+            {
+                var initialResult =
+                    tutorialContentTestHelper.GetCustomisationTutorialByTutorialIdAndCustomisationId(
+                        tutorialId,
+                        customisationId
+                    );
+                tutorialContentDataService.UpdateOrInsertCustomisationTutorialStatuses(
+                    tutorialId,
+                    customisationId,
+                    true,
+                    true
+                );
+                var result = tutorialContentTestHelper.GetCustomisationTutorialByTutorialIdAndCustomisationId(
+                    tutorialId,
+                    customisationId
+                );
+
+                using (new AssertionScope())
+                {
+                    initialResult.Should().BeNull();
+                    result.Should().NotBeNull();
+                    result?.Status.Should().BeTrue();
+                    result?.DiagStatus.Should().BeTrue();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

@@ -29,10 +29,11 @@
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             userDataService = A.Fake<IUserDataService>();
 
-            registrationPromptsController = new RegistrationPromptsController(centreCustomPromptsService, userDataService)
-                .WithDefaultContext()
-                .WithMockUser(true)
-                .WithMockTempData();
+            registrationPromptsController =
+                new RegistrationPromptsController(centreCustomPromptsService, userDataService)
+                    .WithDefaultContext()
+                    .WithMockUser(true)
+                    .WithMockTempData();
 
             httpRequest = A.Fake<HttpRequest>();
             const string cookieName = "AddRegistrationPromptData";
@@ -96,11 +97,8 @@
             var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>();
-                AssertNumberOfConfiguredAnswersOnView(result, 2);
-            }
+            result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>().Which.OptionsString
+                .Should().BeEquivalentTo("Test\r\nAnswer");
         }
 
         [Test]
@@ -114,11 +112,8 @@
             var result = registrationPromptsController.EditRegistrationPrompt(model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>();
-                AssertNumberOfConfiguredAnswersOnView(result, 1);
-            }
+            result.As<ViewResult>().Model.Should().BeOfType<EditRegistrationPromptViewModel>().Which.OptionsString
+                .Should().BeEquivalentTo("Answer");
         }
 
         [Test]
@@ -240,7 +235,6 @@
                 AssertSelectPromptViewModelIsExpectedModel(initialSelectPromptModel);
                 AssertPromptAnswersViewModelIsExpectedModel(expectedConfigureAnswerViewModel);
                 result.As<ViewResult>().Model.Should().BeOfType<RegistrationPromptAnswersViewModel>();
-                AssertNumberOfConfiguredAnswersOnView(result, 2);
             }
         }
 
@@ -268,7 +262,6 @@
                 AssertSelectPromptViewModelIsExpectedModel(initialPromptModel);
                 AssertPromptAnswersViewModelIsExpectedModel(expectedViewModel);
                 result.As<ViewResult>().Model.Should().BeOfType<RegistrationPromptAnswersViewModel>();
-                AssertNumberOfConfiguredAnswersOnView(result, 1);
             }
         }
 
@@ -406,13 +399,6 @@
                 AssertPromptAnswersViewModelIsExpectedModel(expectedViewModel);
                 result.Should().BeRedirectToActionResult().WithActionName("AddRegistrationPromptConfigureAnswers");
             }
-        }
-
-        private static void AssertNumberOfConfiguredAnswersOnView(IActionResult result, int expectedCount)
-        {
-            result.Should().BeViewResult();
-            result.As<ViewResult>().Model.As<RegistrationPromptAnswersViewModel>().Options.Count.Should()
-                .Be(expectedCount);
         }
 
         private void AssertSelectPromptViewModelIsExpectedModel(AddRegistrationPromptSelectPromptViewModel promptModel)

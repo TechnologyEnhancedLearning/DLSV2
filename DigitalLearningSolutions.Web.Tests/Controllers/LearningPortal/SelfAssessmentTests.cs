@@ -254,11 +254,13 @@
                 new Competency() { CompetencyGroup = "A" },
                 new Competency() { CompetencyGroup = "A" }
             };
+            var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
-                PreviousCompetencyNumber = 2
+                PreviousCompetencyNumber = 2,
+                SupervisorSignOffs = supervisorSignOffs
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
@@ -304,11 +306,13 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
+            var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
-                PreviousCompetencyNumber = 1
+                PreviousCompetencyNumber = 1,
+                SupervisorSignOffs = supervisorSignOffs 
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);

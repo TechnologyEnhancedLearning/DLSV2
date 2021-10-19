@@ -1,4 +1,5 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @using Microsoft.Extensions.Configuration
@@ -105,9 +106,15 @@
            asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary view-delegate-button" role="button">
-          Promote to admin
-        </a>
+        @if (User.HasCentreManagerPermissions()) {
+          <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
+             role="button"
+             asp-controller="PromoteToAdmin"
+             asp-action="Index"
+             asp-route-delegateId="@Model.DelegateInfo.Id">
+            Promote to admin
+          </a>
+        }
         <form asp-action="DeactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
           <button
             class="nhsuk-button delete-button view-delegate-button"

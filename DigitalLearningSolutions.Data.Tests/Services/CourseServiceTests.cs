@@ -91,67 +91,90 @@
         }
 
         [Test]
-        public void GetAllCoursesForDelegate_should_call_correct_data_service_and_helper_methods()
+        public void GetDelegateAttemptsAndCourseCustomPrompts_should_call_correct_data_service_and_helper_methods()
         {
             // Given
             const int delegateId = 20;
             const int customisationId = 111;
-            var attemptStats = (7, 4);
+            var attemptStatsReturnedByDataService = new AttemptStats(10, 5);
             var info = new DelegateCourseInfo
-                { CustomisationId = customisationId, IsAssessed = true };
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
-                .Returns(new List<DelegateCourseInfo> { info });
+                { DelegateId = delegateId, CustomisationId = customisationId, IsAssessed = true };
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .Returns(attemptStats);
+                .Returns(attemptStatsReturnedByDataService);
 
             // When
-            var results = courseService.GetAllCoursesForDelegate(delegateId, CentreId).ToList();
+            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
 
             // Then
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,
-                    0
+                    false
                 )
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
                 .MustHaveHappened(1, Times.Exactly);
-            results.Should().HaveCount(1);
-            results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results[0].AttemptStats.Should().Be(attemptStats);
+            results.DelegateCourseInfo.Should().BeEquivalentTo(info);
+            results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
         }
 
         [Test]
-        public void GetAllCoursesForDelegate_should_not_fetch_attempt_stats_if_course_not_assessed()
+        public void GetDelegateAttemptsAndCourseCustomPrompts_should_not_fetch_attempt_stats_if_course_not_assessed()
         {
             // Given
-            const int delegateId = 20;
             const int customisationId = 111;
             var info = new DelegateCourseInfo
                 { CustomisationId = customisationId, IsAssessed = false };
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
-                .Returns(new List<DelegateCourseInfo> { info });
 
             // When
-            var results = courseService.GetAllCoursesForDelegate(delegateId, CentreId).ToList();
+            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
 
             // Then
-            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
                     customisationId,
                     CentreId,
-                    0
+                    false
                 )
             ).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
-            results.Should().HaveCount(1);
-            results[0].DelegateCourseInfo.Should().BeEquivalentTo(info);
-            results[0].AttemptStats.Should().Be((0, 0));
+            result.DelegateCourseInfo.Should().BeEquivalentTo(info);
+            result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_call_correct_data_service_method()
+        {
+            // Given
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(true);
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_ids()
+        {
+            // Given
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(false);
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 1);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
+                .MustHaveHappened(1, Times.Exactly);
+            result.Should().BeFalse();
         }
 
         [Test]
