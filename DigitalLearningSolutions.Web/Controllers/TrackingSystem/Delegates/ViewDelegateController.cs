@@ -97,13 +97,8 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            if (delegateUser == null || delegateUser.CentreId != centreId)
-            {
-                return new NotFoundResult();
-            }
-
             var course = courseDataService.GetCourseNameAndApplication(customisationId);
-            if (course == null)
+            if (delegateUser == null || delegateUser.CentreId != centreId || course == null)
             {
                 return new NotFoundResult();
             }
@@ -135,7 +130,7 @@
                 return new NotFoundResult();
             }
 
-            if (!courseService.RemoveDelegateFromCourse(delegateId, customisationId, RemovalMethod.RemovedByAdmin))
+            if (!courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(delegateId, customisationId, RemovalMethod.RemovedByAdmin))
             {
                 return new NotFoundResult();
             }

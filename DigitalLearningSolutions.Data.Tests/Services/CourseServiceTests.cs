@@ -163,7 +163,7 @@
             );
 
             // When
-            var result = courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
+            var result = courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
             result.Should().BeTrue();
@@ -180,7 +180,7 @@
             );
 
             // When
-            var result = courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
+            var result = courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
             result.Should().BeFalse();

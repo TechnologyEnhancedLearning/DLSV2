@@ -11,7 +11,7 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
-        public bool RemoveDelegateFromCourse(int delegateId, int customisationId, RemovalMethod removalMethod);
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod);
     }
 
     public class CourseService : ICourseService
@@ -61,7 +61,7 @@
             );
         }
 
-        public bool RemoveDelegateFromCourse(int delegateId, int customisationId, RemovalMethod removalMethod)
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod)
         {
             var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
                 .FirstOrDefault(p => p.Completed == null && p.RemovedDate == null);
