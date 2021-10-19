@@ -3,7 +3,6 @@
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestFixtures;
     using DigitalLearningSolutions.Web.AutomatedUiTests.TestHelpers;
     using FluentAssertions;
-    using OpenQA.Selenium;
     using Selenium.Axe;
     using Xunit;
     public class SelfAssessmentAccessibilityTests : AccessibilityTestsBase,
