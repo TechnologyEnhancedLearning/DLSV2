@@ -41,9 +41,24 @@
             nameof(SwitchApplication)
         );
 
-        public static readonly NavMenuTab CourseSetup = new NavMenuTab(
+        public static readonly NavMenuTab Centre = new NavMenuTab(
             7,
+            nameof(Centre)
+        );
+
+        public static readonly NavMenuTab Delegates = new NavMenuTab(
+            8,
+            nameof(Delegates)
+        );
+
+        public static readonly NavMenuTab CourseSetup = new NavMenuTab(
+            9,
             nameof(CourseSetup)
+        );
+
+        public static readonly NavMenuTab Support = new NavMenuTab(
+            10,
+            nameof(Support)
         );
 
         private NavMenuTab(int id, string name) : base(id, name) { }
