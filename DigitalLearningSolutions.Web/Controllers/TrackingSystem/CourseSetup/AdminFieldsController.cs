@@ -475,10 +475,11 @@
                 return;
             }
 
-            var remainingLength = 1000 - (model.OptionsString?.Length - 2 ?? 0);
+            var remainingLength = 1000 - model.OptionsString.Length;
+            var remainingLengthShownToUser = remainingLength <= 2 ? 0 : remainingLength - 2;
             ModelState.AddModelError(
                 nameof(AdminFieldAnswersViewModel.Answer),
-                $"The complete list of answers must be 1000 characters or fewer ({remainingLength} characters remaining for the new answer)"
+                $"The complete list of answers must be 1000 characters or fewer ({remainingLengthShownToUser} characters remaining for the new answer)"
             );
         }
 

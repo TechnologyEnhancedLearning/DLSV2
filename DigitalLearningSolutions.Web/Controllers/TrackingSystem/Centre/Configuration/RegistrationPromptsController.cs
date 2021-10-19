@@ -444,10 +444,11 @@
                 return;
             }
 
-            var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
+            var remainingLength = 4000 - model.OptionsString.Length;
+            var remainingLengthShownToUser = remainingLength <= 2 ? 0 : remainingLength - 2;
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                $"The complete list of answers must be 4000 characters or fewer ({remainingLength} characters remaining for the new answer)"
+                $"The complete list of answers must be 4000 characters or fewer ({remainingLengthShownToUser} characters remaining for the new answer)"
             );
         }
 
