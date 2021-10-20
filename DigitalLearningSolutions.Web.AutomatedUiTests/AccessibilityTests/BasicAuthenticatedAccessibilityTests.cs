@@ -42,6 +42,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup/10716/Content", "Course content")]
         [InlineData("/TrackingSystem/CourseSetup/10716/Content/EditSection/203", "Edit section content")]
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage", "Level 1 - Microsoft Excel 2010 - Inductions")]
+        [InlineData(
+            "/TrackingSystem/CourseSetup/10716/Manage/LearningPathwayDefaults",
+            "Edit Learning Pathway defaults"
+        )]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
