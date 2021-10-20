@@ -311,6 +311,7 @@
             const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
                 .Build();
 
             A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
@@ -321,7 +322,7 @@
                 () =>
                     passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                         emailAddress,
-                        candidateNumber,
+                        "IncorrectCandidateNumber",
                         "example.com",
                         deliveryDate,
                         addedByProcess
