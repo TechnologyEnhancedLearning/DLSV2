@@ -16,18 +16,20 @@
             // Given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
             const string startUrl = "/LearningPortal/SelfAssessment/1";
-            const string completeByUrl = "/LearningPortal/SelfAssessment/3/CompleteBy";
+            const string firstCapabilityUrl = startUrl + "/1";
+            const string capabilitiesUrl = startUrl + "/Capabilities";
+            const string completeByUrl = startUrl + "/CompleteBy";
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
             ValidatePageHeading("Digital Capability Self Assessment");
             var startPageResult = new AxeBuilder(Driver).Analyze();
 
-            Driver.ClickLinkContainingText("Go to Capability 1");
+            Driver.Navigate().GoToUrl(BaseUrl + firstCapabilityUrl);
             ValidatePageHeading("Data, Information and Content");
             var firstCapabilityResult = new AxeBuilder(Driver).Analyze();
 
-            Driver.ClickLinkContainingText("Return to Capabilities");
+            Driver.Navigate().GoToUrl(BaseUrl + capabilitiesUrl);
             ValidatePageHeading("Digital Capability Self Assessment - Capabilities");
             var capabilitiesResult = new AxeBuilder(Driver).Analyze();
 
