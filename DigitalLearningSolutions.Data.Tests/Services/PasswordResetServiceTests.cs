@@ -194,7 +194,11 @@
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "A1", "example.com")
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                    "recipient@example.com",
+                    "A1",
+                    "example.com"
+                )
             );
         }
 
@@ -213,7 +217,11 @@
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "IncorrectCandidateNumber", "example.com")
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                    "recipient@example.com",
+                    "IncorrectCandidateNumber",
+                    "example.com"
+                )
             );
         }
 
@@ -321,6 +329,7 @@
             );
         }
 
+        [Test]
         public void SendWelcomeEmailsToDelegates_schedules_emails_to_delegates()
         {
             // Given

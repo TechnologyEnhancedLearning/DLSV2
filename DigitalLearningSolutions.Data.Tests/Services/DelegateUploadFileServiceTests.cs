@@ -675,7 +675,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_does_not_call_to_generate_welcome_email_when_welcomeEmailDate_is_not_populated()
+        public void ProcessDelegateTable_does_not_call_generate_welcome_email_when_welcomeEmailDate_is_not_populated()
         {
             // Given
             const string delegateId = "DELEGATE";
