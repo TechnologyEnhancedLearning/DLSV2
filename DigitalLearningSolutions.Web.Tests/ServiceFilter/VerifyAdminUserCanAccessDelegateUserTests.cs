@@ -20,6 +20,7 @@
     {
         private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
         private ActionExecutingContext context = null!;
+        private const int DelegateId = 2;
 
         [SetUp]
         public void Setup()
@@ -42,8 +43,8 @@
         public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            context.RouteData.Values["delegateId"] = 2;
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._))
+            context.RouteData.Values["delegateId"] = DelegateId;
+            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(null);
 
             // When
@@ -57,8 +58,8 @@
         public void Returns_AccessDenied_if_service_returns_delegate_user_at_different_centre()
         {
             // Given
-            context.RouteData.Values["delegateId"] = 2;
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._))
+            context.RouteData.Values["delegateId"] = DelegateId;
+            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 100));
 
             // When
@@ -73,8 +74,8 @@
         public void Does_not_return_any_redirect_page_if_service_returns_delegate_user_at_same_centre()
         {
             // Given
-            context.RouteData.Values["delegateId"] = 2;
-            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._))
+            context.RouteData.Values["delegateId"] = DelegateId;
+            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 101));
 
             // When

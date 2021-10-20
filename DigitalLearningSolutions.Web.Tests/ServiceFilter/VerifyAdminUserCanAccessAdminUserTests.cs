@@ -20,6 +20,7 @@
     {
         private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
         private ActionExecutingContext context = null!;
+        private const int AdminId = 2;
 
         [SetUp]
         public void Setup()
@@ -42,8 +43,8 @@
         public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            context.RouteData.Values["adminId"] = 2;
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
                 .Returns(null);
 
             // When
@@ -57,8 +58,8 @@
         public void Returns_AccessDenied_if_service_returns_admin_user_at_different_centre()
         {
             // Given
-            context.RouteData.Values["adminId"] = 2;
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
                 .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 100));
 
             // When
@@ -73,8 +74,8 @@
         public void Does_not_return_any_redirect_page_if_service_returns_admin_user_at_same_centre()
         {
             // Given
-            context.RouteData.Values["adminId"] = 2;
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
                 .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 101));
 
             // When
