@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -93,7 +92,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Remove")]
-        public IActionResult ConfirmRemoveCourse(int delegateId, int customisationId)
+        public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
@@ -109,14 +108,14 @@
                 CustomisationId = customisationId,
                 CourseName = course.CourseName,
                 Name = delegateUser.FullName,
-                Confirm = false
+                Confirm = false,
             };
             return View("ConfirmRemoveFromCourse", model);
         }
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        public IActionResult RemoveFromCourse(int delegateId, int customisationId, RemoveFromCourseViewModel model)
+        public IActionResult ExecuteRemoveFromCourse(int delegateId, int customisationId, RemoveFromCourseViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -125,12 +124,12 @@
 
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            if (delegateUser == null || delegateUser.CentreId != centreId)
-            {
-                return new NotFoundResult();
-            }
-
-            if (!courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(delegateId, customisationId, RemovalMethod.RemovedByAdmin))
+            if (delegateUser == null || delegateUser.CentreId != centreId ||
+                !courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+                    delegateId,
+                    customisationId,
+                    RemovalMethod.RemovedByAdmin
+                ))
             {
                 return new NotFoundResult();
             }
