@@ -22,7 +22,17 @@
                 ValidatePageHeading("My Current Activities");
                 var currentActivitiesResult = new AxeBuilder(Driver).Analyze();
 
+                Driver.ClickLinkContainingText("Completed activities");
+                ValidatePageHeading("My Completed Activities");
+                var completedActivitiesResult = new AxeBuilder(Driver).Analyze();
+
+                Driver.ClickLinkContainingText("Available activities");
+                ValidatePageHeading("Available Activities");
+                var availableActivitiesResult = new AxeBuilder(Driver).Analyze();
+
                 currentActivitiesResult.Violations.Should().BeEmpty();
+                completedActivitiesResult.Violations.Should().BeEmpty();
+                availableActivitiesResult.Violations.Should().BeEmpty();
             }
         }
     }
