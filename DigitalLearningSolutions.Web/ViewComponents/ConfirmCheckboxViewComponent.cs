@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,9 @@
             var model = ViewData.Model;
             var property = model.GetType().GetProperty(aspFor);
             var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
-            var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : string.Empty;
+            var errorMessages = hasError ? ViewData.ModelState[property?.Name]?.Errors.Select(e => e.ErrorMessage) :
+                                                 new string[] { };
+
             var value = (bool)property?.GetValue(model)!;
 
             var checkboxViewModel = new ConfirmCheckboxViewModel(
@@ -32,7 +35,7 @@
                 label,
                 value,
                 hintText,
-                errorMessage,
+                errorMessages,
                 hasError
             );
 

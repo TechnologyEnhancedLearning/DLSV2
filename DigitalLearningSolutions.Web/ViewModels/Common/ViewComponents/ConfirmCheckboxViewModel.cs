@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
 {
+    using System.Collections.Generic;
+
     public class ConfirmCheckboxViewModel
     {
         public ConfirmCheckboxViewModel(
@@ -8,7 +10,7 @@
             string label,
             bool value,
             string? hintText,
-            string? errorMessage,
+            IEnumerable<string>? errorMessages,
             bool hasError
         )
         {
@@ -17,7 +19,7 @@
             Label = label;
             Value = value;
             HintText = hintText;
-            ErrorMessage = errorMessage;
+            ErrorMessages = errorMessages;
             HasError = hasError;
         }
 
@@ -26,7 +28,7 @@
         public string Label { get; set; }
         public bool Value { get; set; }
         public string? HintText { get; set; }
-        public string? ErrorMessage { get; set; }
+        public IEnumerable<string>? ErrorMessages { get; set; }
         public bool HasError { get; set; }
     }
 }

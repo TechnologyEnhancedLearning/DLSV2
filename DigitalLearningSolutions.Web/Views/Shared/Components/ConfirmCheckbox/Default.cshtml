@@ -7,17 +7,22 @@
 
   <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Label.RemoveWhitespace()-hint">
 
-    @if (Model.HintText != null) {
+    @if (Model.HintText != null)
+    {
       <div class="nhsuk-hint" id="@Model.Label.RemoveWhitespace()-hint">
         @Model.HintText
       </div>
     }
 
-    @if (Model.HasError) {
+    @if (Model.HasError)
+    {
       <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
-        <span class="error-message--margin-bottom-1 nhsuk-error-message">
-          <span class="nhsuk-u-visually-hidden">Error:</span> @Model.ErrorMessage
-        </span>
+        @foreach (var errorMessage in Model.ErrorMessages)
+        {
+          <span class="error-message--margin-bottom-1 nhsuk-error-message">
+            <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+          </span>
+        }
       </div>
     }
     <div class="nhsuk-checkboxes">
@@ -33,7 +38,8 @@
         <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Id">
           @Model.Label
         </label>
-        @if (Model.HintText != null) {
+        @if (Model.HintText != null)
+        {
           <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@Model.Id-item-hint">
             @Model.HintText
           </div>
