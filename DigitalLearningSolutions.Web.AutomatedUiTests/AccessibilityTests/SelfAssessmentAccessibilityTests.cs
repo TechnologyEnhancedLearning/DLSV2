@@ -16,6 +16,7 @@
             // Given
             Driver.LogUserInAsAdminAndDelegate(BaseUrl);
             const string startUrl = "/LearningPortal/SelfAssessment/1";
+            const string completeByUrl = "/LearningPortal/SelfAssessment/3/CompleteBy";
 
             // When
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
@@ -30,9 +31,15 @@
             ValidatePageHeading("Digital Capability Self Assessment - Capabilities");
             var capabilitiesResult = new AxeBuilder(Driver).Analyze();
 
+            Driver.Navigate().GoToUrl(BaseUrl + completeByUrl);
+            ValidatePageHeading("Enter a completion date for Digital Capability Self Assessment");
+            var completeByPageResult = new AxeBuilder(Driver).Analyze();
+
+            //Then
             startPageResult.Violations.Should().BeEmpty();
             firstCapabilityResult.Violations.Should().BeEmpty();
             capabilitiesResult.Violations.Should().BeEmpty();
+            completeByPageResult.Violations.Should().BeEmpty();
         }
     }
 }
