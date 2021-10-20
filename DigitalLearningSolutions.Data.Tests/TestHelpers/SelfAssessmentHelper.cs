@@ -80,7 +80,7 @@
             int? result = null,
             int minValue = 0,
             int maxValue = 10,
-            int assessmentQuestionInputTypeID = 1,
+            int assessmentQuestionInputTypeID = 2,
             bool includeComments = true)
         {
             return new AssessmentQuestion()
