@@ -439,7 +439,7 @@
 
         private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
         {
-            if (model.OptionsString == null || model.OptionsString.Length < 2)
+            if (model.OptionsString == null)
             {
                 return;
             }
