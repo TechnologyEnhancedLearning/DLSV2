@@ -163,7 +163,27 @@ export class SearchSortFilterAndPaginate {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
-    resultCount.textContent = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+    const newResultCountMessage = this.getNewResultCountMessage(
+      count,
+      resultCount,
+    );
+
+    resultCount.innerHTML = newResultCountMessage;
+  }
+
+  static getNewResultCountMessage(
+    count: number,
+    resultCountElement: HTMLSpanElement,
+  ): string {
+    const oldResultCountMessage = resultCountElement.innerHTML;
+    const newResultCountMessage = count === 1 ? '1 matching result' : `${count.toString()} matching results`;
+
+    if (newResultCountMessage === oldResultCountMessage) {
+      // Screen reader does not announce the message if it has not changed
+      return `${newResultCountMessage}&nbsp`;
+    }
+
+    return newResultCountMessage;
   }
 
   private static scrollToTop() : void {

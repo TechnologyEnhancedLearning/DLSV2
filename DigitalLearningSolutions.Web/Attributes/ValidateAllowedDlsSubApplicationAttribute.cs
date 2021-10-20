@@ -13,7 +13,7 @@
     {
         private readonly string applicationArgumentName;
 
-        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = "application")
+        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = "dlsSubApplication")
         {
             this.applicationArgumentName = applicationArgumentName;
         }
