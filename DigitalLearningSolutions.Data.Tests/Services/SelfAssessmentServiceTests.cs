@@ -18,7 +18,7 @@
     {
         private SelfAssessmentService selfAssessmentService;
         private const int SelfAssessmentId = 1;
-        private const int CandidateId = 254480;
+        private const int CandidateId = 11;
         private SqlConnection connection;
 
         [SetUp]
@@ -44,7 +44,7 @@
                 new DateTime(2020, 09, 01, 14, 10, 37, 447), null, null,
                 false,
                 true,
-                false,
+                true,
                 true
             );
 
@@ -99,7 +99,8 @@
                         id: 3,
                         maxValueDescription: "Strongly agree",
                         minValueDescription: "Strongly disagree",
-                        question: "To what extent do you agree"
+                        question: "To what extent do you agree",
+                       assessmentQuestionInputTypeID: 1
                     )
                 });
 
@@ -557,7 +558,7 @@
                 var updatedSelfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)!;
 
                 // Then
-                updatedSelfAssessment.UserBookmark.Should().BeNull();
+                updatedSelfAssessment.UserBookmark.Should().NotBe("test");
             }
         }
         [Test]
