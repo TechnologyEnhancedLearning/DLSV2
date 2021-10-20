@@ -11,7 +11,7 @@
         public LearningMenuAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
-        public void LearningPortal_interface_has_no_accessibility_errors()
+        public void LearningMenu_interface_has_no_accessibility_errors()
         {
             {
                 // Given
