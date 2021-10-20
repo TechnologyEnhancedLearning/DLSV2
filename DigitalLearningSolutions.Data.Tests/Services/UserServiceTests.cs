@@ -193,7 +193,7 @@
             var lastName = "TestLastName";
             var email = "test@email.com";
             var accountDetailsData =
-                new AccountDetailsData(adminUser.Id, null, password, firstName, lastName, email, null);
+                new MyAccountDetailsData(adminUser.Id, null, password, firstName, lastName, email, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(adminUser.EmailAddress!)).Returns(adminUser);
@@ -225,7 +225,7 @@
             var lastName = "TestLastName";
             var email = "test@email.com";
             var accountDetailsData =
-                new AccountDetailsData(null, delegateUser.Id, password, firstName, lastName, email, null);
+                new MyAccountDetailsData(null, delegateUser.Id, password, firstName, lastName, email, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
@@ -239,7 +239,7 @@
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
                     A<DelegateUser>._,
-                    A<AccountDetailsData>._,
+                    A<MyAccountDetailsData>._,
                     A<CentreAnswersData>._
                 )
             ).DoesNothing();
@@ -276,7 +276,7 @@
             var lastName = "TestLastName";
             var email = "test@email.com";
             var accountDetailsData =
-                new AccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
+                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
@@ -295,7 +295,7 @@
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
                     A<DelegateUser>._,
-                    A<AccountDetailsData>._,
+                    A<MyAccountDetailsData>._,
                     A<CentreAnswersData>._
                 )
             ).DoesNothing();
@@ -331,7 +331,7 @@
             var lastName = "TestLastName";
             var email = "test@email.com";
             var accountDetailsData =
-                new AccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
+                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
@@ -344,7 +344,7 @@
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
                     A<DelegateUser>._,
-                    A<AccountDetailsData>._,
+                    A<MyAccountDetailsData>._,
                     A<CentreAnswersData>._
                 )
             ).DoesNothing();
@@ -373,7 +373,7 @@
             A.CallTo(
                 () => groupsService.SynchroniseUserChangesWithGroups(
                     A<DelegateUser>._,
-                    A<AccountDetailsData>._,
+                    A<MyAccountDetailsData>._,
                     A<CentreAnswersData>._
                 )
             ).MustNotHaveHappened();

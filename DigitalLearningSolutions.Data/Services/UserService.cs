@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Data.Services
         List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
         void UpdateUserAccountDetails(
-            AccountDetailsData accountDetailsData,
+            MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
 
@@ -46,6 +46,13 @@ namespace DigitalLearningSolutions.Data.Services
             int adminId,
             AdminRoles adminRoles,
             int categoryId
+        );
+
+        bool NewAliasIsValid(string aliasId, int delegateUserId, int centreId);
+
+        void UpdateUserAccountDetailsByAdmin(
+            EditDelegateDetailsData editDelegateDetailsData,
+            CentreAnswersData centreAnswersData
         );
     }
 
@@ -137,24 +144,24 @@ namespace DigitalLearningSolutions.Data.Services
         }
 
         public void UpdateUserAccountDetails(
-            AccountDetailsData accountDetailsData,
+            MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
         {
             var (verifiedAdminUser, verifiedDelegateUsers) =
                 GetVerifiedLinkedUsersAccounts(
-                    accountDetailsData.AdminId,
-                    accountDetailsData.DelegateId,
-                    accountDetailsData.Password
+                    myAccountDetailsData.AdminId,
+                    myAccountDetailsData.DelegateId,
+                    myAccountDetailsData.Password
                 );
 
             if (verifiedAdminUser != null)
             {
                 userDataService.UpdateAdminUser(
-                    accountDetailsData.FirstName,
-                    accountDetailsData.Surname,
-                    accountDetailsData.Email,
-                    accountDetailsData.ProfileImage,
+                    myAccountDetailsData.FirstName,
+                    myAccountDetailsData.Surname,
+                    myAccountDetailsData.Email,
+                    myAccountDetailsData.ProfileImage,
                     verifiedAdminUser.Id
                 );
             }
@@ -163,20 +170,20 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
                 userDataService.UpdateDelegateUsers(
-                    accountDetailsData.FirstName,
-                    accountDetailsData.Surname,
-                    accountDetailsData.Email,
-                    accountDetailsData.ProfileImage,
+                    myAccountDetailsData.FirstName,
+                    myAccountDetailsData.Surname,
+                    myAccountDetailsData.Email,
+                    myAccountDetailsData.ProfileImage,
                     delegateIds
                 );
 
                 var oldDelegateDetails =
-                    verifiedDelegateUsers.SingleOrDefault(u => u.Id == accountDetailsData.DelegateId);
+                    verifiedDelegateUsers.SingleOrDefault(u => u.Id == myAccountDetailsData.DelegateId);
 
                 if (oldDelegateDetails != null && centreAnswersData != null)
                 {
                     userDataService.UpdateDelegateUserCentrePrompts(
-                        accountDetailsData.DelegateId!.Value,
+                        myAccountDetailsData.DelegateId!.Value,
                         centreAnswersData.JobGroupId,
                         centreAnswersData.Answer1,
                         centreAnswersData.Answer2,
@@ -188,7 +195,7 @@ namespace DigitalLearningSolutions.Data.Services
 
                     groupsService.SynchroniseUserChangesWithGroups(
                         oldDelegateDetails,
-                        accountDetailsData,
+                        myAccountDetailsData,
                         centreAnswersData
                     );
                 }
@@ -291,6 +298,62 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsContentManager,
                 adminRoles.ImportOnly,
                 categoryId
+            );
+        }
+
+        public bool NewAliasIsValid(string aliasId, int delegateUserId, int centreId)
+        {
+            var delegateUsers = userDataService.GetDelegateUsersByAliasId(aliasId);
+            return !delegateUsers.Any(du => du.Id != delegateUserId && du.CentreId == centreId);
+        }
+
+        public void UpdateUserAccountDetailsByAdmin(
+            EditDelegateDetailsData editDelegateDetailsData,
+            CentreAnswersData centreAnswersData
+        )
+        {
+            var delegateUser = userDataService.GetDelegateUserById(editDelegateDetailsData.DelegateId);
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(delegateUser!.EmailAddress!);
+
+            if (adminUser != null)
+            {
+                userDataService.UpdateAdminUser(
+                    editDelegateDetailsData.FirstName,
+                    editDelegateDetailsData.Surname,
+                    editDelegateDetailsData.Email,
+                    adminUser.ProfileImage,
+                    adminUser.Id
+                );
+            }
+
+            var delegateIds = delegateUsers.Select(d => d.Id).ToArray();
+            userDataService.UpdateDelegateUsersByAdmin(
+                editDelegateDetailsData.FirstName,
+                editDelegateDetailsData.Surname,
+                editDelegateDetailsData.Email,
+                delegateIds
+            );
+
+            userDataService.UpdateDelegate(
+                editDelegateDetailsData.DelegateId,
+                editDelegateDetailsData.FirstName,
+                editDelegateDetailsData.Surname,
+                centreAnswersData.JobGroupId,
+                delegateUser.Active,
+                centreAnswersData.Answer1,
+                centreAnswersData.Answer2,
+                centreAnswersData.Answer3,
+                centreAnswersData.Answer4,
+                centreAnswersData.Answer5,
+                centreAnswersData.Answer6,
+                editDelegateDetailsData.Alias,
+                editDelegateDetailsData.Email
+            );
+
+            groupsService.SynchroniseUserChangesWithGroups(
+                delegateUser,
+                editDelegateDetailsData,
+                centreAnswersData
             );
         }
 

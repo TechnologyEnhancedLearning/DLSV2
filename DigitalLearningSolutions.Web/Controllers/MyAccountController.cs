@@ -76,7 +76,7 @@
                 SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
             ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
 
-            var model = new EditDetailsViewModel(adminUser, delegateUser, jobGroups, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(adminUser, delegateUser, jobGroups, dlsSubApplication);
 
             return View(model);
         }
@@ -84,7 +84,7 @@
         [NoCaching]
         [HttpPost("EditDetails")]
         public IActionResult EditDetails(
-            EditDetailsFormData formData,
+            MyAccountEditDetailsFormData formData,
             string action,
             DlsSubApplication dlsSubApplication
         )
@@ -100,7 +100,7 @@
             };
         }
 
-        private IActionResult EditDetailsPostSave(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
+        private IActionResult EditDetailsPostSave(MyAccountEditDetailsFormData formData, DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
@@ -114,7 +114,7 @@
             if (formData.ProfileImageFile != null)
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.ProfileImageFile),
+                    nameof(MyAccountEditDetailsFormData.ProfileImageFile),
                     "Preview your new profile picture before saving"
                 );
             }
@@ -123,14 +123,14 @@
                 !userService.IsPasswordValid(userAdminId, userDelegateId, formData.Password))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Password),
+                    nameof(MyAccountEditDetailsFormData.Password),
                     CommonValidationErrorMessages.IncorrectPassword
                 );
             }
 
             if (!ModelState.IsValid)
             {
-                var model = new EditDetailsViewModel(formData, dlsSubApplication);
+                var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
                 return View(model);
             }
 
@@ -140,51 +140,56 @@
                     nameof(EditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
-                var model = new EditDetailsViewModel(formData, dlsSubApplication);
+                var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
                 return View(model);
             }
 
-            var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
+            var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
+                formData,
+                userAdminId,
+                userDelegateId,
+                User.GetCentreId()
+            );
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
         }
 
         private IActionResult EditDetailsPostPreviewImage(
-            EditDetailsFormData formData,
+            MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
         )
         {
             // We don't want to display validation errors on other fields in this case
-            ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
+            ModelState.ClearErrorsForAllFieldsExcept(nameof(MyAccountEditDetailsViewModel.ProfileImageFile));
 
             if (!ModelState.IsValid)
             {
-                return View(new EditDetailsViewModel(formData, dlsSubApplication));
+                return View(new MyAccountEditDetailsViewModel(formData, dlsSubApplication));
             }
 
             if (formData.ProfileImageFile != null)
             {
-                ModelState.Remove(nameof(EditDetailsFormData.ProfileImage));
+                ModelState.Remove(nameof(MyAccountEditDetailsFormData.ProfileImage));
                 formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
-            var model = new EditDetailsViewModel(formData, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
             return View(model);
         }
 
         private IActionResult EditDetailsPostRemoveImage(
-            EditDetailsFormData formData,
+            MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
         )
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearAllErrors();
 
-            ModelState.Remove(nameof(EditDetailsFormData.ProfileImage));
+            ModelState.Remove(nameof(MyAccountEditDetailsFormData.ProfileImage));
             formData.ProfileImage = null;
 
-            var model = new EditDetailsViewModel(formData, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
             return View(model);
         }
 
@@ -240,37 +245,6 @@
                 formData.Answer6,
                 ModelState
             );
-        }
-
-        private (AccountDetailsData, CentreAnswersData?) MapToUpdateAccountData(
-            EditDetailsFormData formData,
-            int? userAdminId,
-            int? userDelegateId
-        )
-        {
-            var accountDetailsData = new AccountDetailsData(
-                userAdminId,
-                userDelegateId,
-                formData.Password!,
-                formData.FirstName!,
-                formData.LastName!,
-                formData.Email!,
-                formData.ProfileImage
-            );
-
-            var centreAnswersData = userDelegateId == null
-                ? null
-                : new CentreAnswersData(
-                    User.GetCentreId(),
-                    formData.JobGroupId!.Value,
-                    formData.Answer1,
-                    formData.Answer2,
-                    formData.Answer3,
-                    formData.Answer4,
-                    formData.Answer5,
-                    formData.Answer6
-                );
-            return (accountDetailsData, centreAnswersData);
         }
     }
 }

@@ -19,7 +19,7 @@
     {
         private const int GenericNewProgressId = 17;
         private const int GenericRelatedTutorialId = 5;
-        private readonly AccountDetailsData reusableAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+        private readonly MyAccountDetailsData reusableMyAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly DelegateUser reusableDelegateDetails =
             UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
