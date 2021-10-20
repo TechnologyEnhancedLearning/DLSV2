@@ -95,23 +95,12 @@ $light-blue: #8EBAFF;
 }
 
 .eval-summary-row__key {
-  width: 55%;
   padding-right: 0;
-
-  @include mq($from: large-desktop) {
-    width: 70%;
-  }
 }
 
 .eval-summary-row__value {
-  width: 45%;
-
   @include mq($from: tablet) {
     text-align: end;
     padding-right: 0;
-  }
-
-  @include mq($from: large-desktop) {
-    width: 30%;
   }
 }

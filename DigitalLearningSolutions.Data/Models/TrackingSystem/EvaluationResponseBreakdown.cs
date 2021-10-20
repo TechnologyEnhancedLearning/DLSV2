@@ -8,14 +8,17 @@
         public EvaluationResponseBreakdown(string question, IEnumerable<(string response, int count)> responseCounts)
         {
             Question = question;
-            var totalResponses = responseCounts.Sum(x => x.count);
-            ResponseCounts = totalResponses != 0 ? responseCounts : null;
+            var responses = responseCounts.ToList();
+            var totalResponses = responses.Sum(x => x.count);
+            Responses = totalResponses != 0
+                ? responses.Select(x => new EvaluationResponses(x.response, x.count, totalResponses))
+                : new List<EvaluationResponses>();
         }
 
         public string Question { get; set; }
 
-        public IEnumerable<(string response, int count)>? ResponseCounts { get; set; }
+        public IEnumerable<EvaluationResponses> Responses { get; set; }
 
-        public int TotalResponses => ResponseCounts?.Sum(x => x.count) ?? 0;
+        public int TotalResponses => Responses.Sum(x => x.Count);
     }
 }
