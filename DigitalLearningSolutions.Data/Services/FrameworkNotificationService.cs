@@ -190,7 +190,8 @@
             var dlsUrlBuilder = GetDLSUriBuilder();
             if (supervisorDelegate.CandidateID == null)
             {
-                dlsUrlBuilder.Path += $"Register?centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
+                dlsUrlBuilder.Path += "Register";
+                dlsUrlBuilder.Query = $"centreid={supervisorDelegate.CentreId}&inviteid={supervisorDelegate.InviteHash}";
                 builder.TextBody = $@"Dear colleague,
                               You have been invited to register to access the NHS Health Education England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}).
                               To register, visit {dlsUrlBuilder.Uri.ToString()}.
