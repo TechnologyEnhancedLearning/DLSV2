@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
-        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
+        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId, int? courseCategoryId);
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
         AttemptStats GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
@@ -257,14 +257,15 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
+        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId, int? courseCategoryId)
         {
             return connection.Query<DelegateCourseInfo>(
                 $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
+                        AND (@courseCategoryID IS NULL OR ap.CourseCategoryId = @courseCategoryId)
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
-                new { delegateId }
+                new { delegateId, courseCategoryId }
             );
         }
 

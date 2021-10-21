@@ -317,11 +317,22 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetDelegateCoursesInfo_should_return_delegate_course_info_correctly()
         {
             // When
-            var results = courseDataService.GetDelegateCoursesInfo(20).ToList();
+            var results = courseDataService.GetDelegateCoursesInfo(20, null).ToList();
 
             // Then
             results.Should().HaveCount(4);
             results[3].Should().BeEquivalentTo(ExpectedCourseInfo);
+        }
+
+        [Test]
+        public void GetDelegateCoursesInfo_should_return_category_filtered_delegate_course_info_correctly()
+        {
+            // When
+            var results = courseDataService.GetDelegateCoursesInfo(20, 4).ToList();
+
+            // Then
+            results.Should().HaveCount(1);
+            results.Single().Should().BeEquivalentTo(ExpectedCourseInfo);
         }
 
         [Test]

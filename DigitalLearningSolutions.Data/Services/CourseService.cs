@@ -9,7 +9,7 @@
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(int delegateId, int centreId, int? courseCategoryId);
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
         public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
         public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
@@ -45,9 +45,10 @@
             return allCourses.Where(c => c.CentreId == centreId);
         }
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId)
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(int delegateId, int centreId, int? courseCategoryId)
         {
-            return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
+            return courseDataService.GetDelegateCoursesInfo(delegateId, courseCategoryId)
+                .Select(
                 info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
             ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
         }
