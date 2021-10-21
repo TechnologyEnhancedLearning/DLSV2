@@ -211,7 +211,7 @@
         }
 
         [Test]
-        public void AddAdminField_save_clears_temp_data_and_redirects_to_index()
+        public void AddAdminField_save_redirects_to_index()
         {
             // Given
             var model = new AddAdminFieldViewModel(1, "Test");
@@ -232,11 +232,8 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            
         }
 
         [Test]
@@ -261,11 +258,8 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+
         }
 
         [Test]

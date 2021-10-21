@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
@@ -10,7 +9,6 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -23,9 +21,6 @@
         public const string AddPromptAction = "addPrompt";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private const string EditPromptCookieName = "EditAdminFieldData";
-        private const string AddPromptCookieName = "AddAdminFieldData";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
 
@@ -43,6 +38,7 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult Index(int customisationId)
         {
+            TempData.Clear();
             var centreId = User.GetCentreId();
             var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
                 customisationId,
@@ -57,8 +53,6 @@
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Start")]
         public IActionResult EditAdminFieldStart(int customisationId, int promptNumber)
         {
-            TempData.Clear();
-
             return RedirectToAction("EditAdminField", new { customisationId, promptNumber });
         }
 
@@ -100,7 +94,7 @@
                 SaveAction => EditAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => EditAdminFieldBulk(customisationId, model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -150,8 +144,6 @@
         [Route("{customisationId:int}/AdminFields/Add/New")]
         public IActionResult AddAdminFieldNew(int customisationId)
         {
-            TempData.Clear();
-
             var model = new AddAdminFieldViewModel();
 
             SetAddAdminFieldTempData(model);
@@ -192,7 +184,7 @@
                 SaveAction => AddAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => AddAdminFieldBulk(customisationId, model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -300,16 +292,6 @@
         private void SetEditAdminFieldTempData(EditAdminFieldViewModel model)
         {
             var data = new EditAdminFieldData(model);
-            var id = data.Id;
-
-            Response.Cookies.Append(
-                EditPromptCookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
             TempData.Set(data);
         }
 
@@ -332,7 +314,6 @@
                 model.OptionsString
             ))
             {
-                TempData.Clear();
                 return RedirectToAction("Index", new { customisationId });
             }
 
@@ -352,16 +333,6 @@
         private void SetAddAdminFieldTempData(AddAdminFieldViewModel model)
         {
             var data = new AddAdminFieldData(model);
-            var id = data.Id;
-
-            Response.Cookies.Append(
-                AddPromptCookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
             TempData.Set(data);
         }
 
