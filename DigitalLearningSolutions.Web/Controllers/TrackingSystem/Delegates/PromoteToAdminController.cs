@@ -25,9 +25,9 @@
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
         private readonly ILogger<PromoteToAdminController> logger;
+        private readonly IRegistrationService registrationService;
+        private readonly IUserDataService userDataService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
@@ -50,7 +50,8 @@
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
 
-            if (delegateUser == null || delegateUser.CentreId != centreId || delegateUser.IsAdmin)
+            if (delegateUser == null || delegateUser.CentreId != centreId || delegateUser.IsAdmin ||
+                !delegateUser.IsPasswordSet)
             {
                 return NotFound();
             }
@@ -68,7 +69,11 @@
         {
             try
             {
-                registrationService.PromoteDelegateToAdmin(formData.GetAdminRoles(), formData.LearningCategory, delegateId);
+                registrationService.PromoteDelegateToAdmin(
+                    formData.GetAdminRoles(),
+                    formData.LearningCategory,
+                    delegateId
+                );
             }
             catch (AdminCreationFailedException e)
             {
