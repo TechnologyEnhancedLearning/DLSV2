@@ -63,19 +63,18 @@
                 );
             }
 
-            if (!userService.NewAliasIsValid(formData.Email!, delegateId, User.GetCentreId()))
+            if (!userService.NewAliasIsValid(formData.AliasId, delegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(
                     nameof(EditDelegateFormData.AliasId),
-                    "A user with this alias is already registered at this centre"
+                    "A user with this alias ID is already registered at this centre"
                 );
             }
 
             if (!ModelState.IsValid)
             {
-                var delegateUser = userService.GetUsersById(null, delegateId).delegateUser;
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                var model = new EditDelegateViewModel(formData, jobGroups, GetCustomFieldsWithDelegateAnswers(delegateUser), delegateId);
+                var model = new EditDelegateViewModel(formData, jobGroups, GetCustomFieldsWithEnteredAnswers(formData), delegateId);
                 return View(model);
             }
 
@@ -121,6 +120,19 @@
                 delegateUser?.Answer4,
                 delegateUser?.Answer5,
                 delegateUser?.Answer6
+            );
+        }
+
+        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsFormData formData)
+        {
+            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
+                User.GetCentreId(),
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
             );
         }
     }

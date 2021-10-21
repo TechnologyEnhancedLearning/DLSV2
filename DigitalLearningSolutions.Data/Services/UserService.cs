@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Data.Services
             int categoryId
         );
 
-        bool NewAliasIsValid(string aliasId, int delegateUserId, int centreId);
+        bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId);
 
         void UpdateUserAccountDetailsByAdmin(
             EditDelegateDetailsData editDelegateDetailsData,
@@ -301,8 +301,13 @@ namespace DigitalLearningSolutions.Data.Services
             );
         }
 
-        public bool NewAliasIsValid(string aliasId, int delegateUserId, int centreId)
+        public bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId)
         {
+            if (aliasId == null)
+            {
+                return true;
+            }
+
             var delegateUsers = userDataService.GetDelegateUsersByAliasId(aliasId);
             return !delegateUsers.Any(du => du.Id != delegateUserId && du.CentreId == centreId);
         }
