@@ -93,7 +93,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 SupervisorAdminId = 0,
                 ProgressID = 173218,
                 EnrollmentMethodID = 1,
-                PLLocked = false
+                PLLocked = false,
             };
             result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HasLearning = true,
                 Passes = 1,
                 Sections = 2,
-                ProgressID = 251571
+                ProgressID = 251571,
             };
             result.Should().HaveCount(15);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -147,7 +147,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 DelegateStatus = 0,
                 HasLearning = true,
                 HasDiagnostic = true,
-                IsAssessed = true
+                IsAssessed = true,
             };
             result.Should().HaveCountGreaterOrEqualTo(1);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -282,7 +282,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HideInLearnerPortal = false,
                 CategoryName = "Office 2007",
                 CourseTopic = "Microsoft Office",
-                LearningMinutes = "N/A"
+                LearningMinutes = "N/A",
             };
 
             result.Should().HaveCount(260);
@@ -396,7 +396,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
-                Active = false
+                Active = false,
             };
 
             result.Should().HaveCount(260);

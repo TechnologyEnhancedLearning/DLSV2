@@ -46,7 +46,8 @@
             var categoryIdFilter = adminUser.CategoryIdFilter;
 
             var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-            var delegateCourses = courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
+            var delegateCourses =
+                courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
             var model = new ViewDelegateViewModel(delegateUser, customFields, delegateCourses);
 
@@ -86,7 +87,7 @@
 
             userDataService.DeactivateDelegateUser(delegateId);
 
-            return RedirectToAction("Index", new { delegateId } );
+            return RedirectToAction("Index", new { delegateId });
         }
     }
 }

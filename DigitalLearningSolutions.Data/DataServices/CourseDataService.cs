@@ -25,6 +25,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
