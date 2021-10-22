@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -117,6 +118,64 @@
             var model = new EditCourseDetailsViewModel(courseDetails!);
 
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("CourseDetails")]
+        public IActionResult SaveCourseDetails(
+            int customisationId,
+            EditCourseDetailsViewModel model
+        )
+        {
+            var customisationNameSuffix =
+                model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
+            var customisationName = model.CustomisationName + customisationNameSuffix;
+
+            if (!string.IsNullOrEmpty(model.CustomisationNameSuffix) && courseService.DoesCourseNameExistAtCentre(
+                customisationName,
+                model.CentreId,
+                model.ApplicationId
+            ))
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                    "The course name must be unique"
+                );
+            }
+
+            if (model.PasswordProtected == false)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.Password));
+                model.Password = null;
+            }
+
+            if (model.ReceiveNotificationEmails == false)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
+                model.NotificationEmails = null;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View("EditCourseDetails", model);
+            }
+
+            var tutCompletionThreshold =
+                model.TutCompletionThreshold == null ? 0 : int.Parse(model.TutCompletionThreshold);
+            var diagCompletionThreshold =
+                model.DiagCompletionThreshold == null ? 0 : int.Parse(model.DiagCompletionThreshold);
+
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                model.Password!,
+                model.NotificationEmails!,
+                model.IsAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
+
+            return RedirectToAction("Index", new { customisationId });
         }
 
         [HttpGet]

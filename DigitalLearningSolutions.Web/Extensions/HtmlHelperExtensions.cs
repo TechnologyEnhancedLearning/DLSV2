@@ -51,5 +51,18 @@
                 kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture)
             );
         }
+
+        public static string GetRouteValueByKey(
+            this IHtmlHelper htmlHelper,
+            string key
+        )
+        {
+            var routeValues = htmlHelper.ViewContext.HttpContext.Request.RouteValues;
+            routeValues.ToDictionary(
+                kvp => kvp.Key,
+                kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture)
+            );
+            return routeValues[key].ToString();
+        }
     }
 }

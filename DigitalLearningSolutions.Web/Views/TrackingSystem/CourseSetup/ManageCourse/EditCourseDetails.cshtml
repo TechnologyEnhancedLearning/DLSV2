@@ -1,6 +1,9 @@
 ﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model EditCourseDetailsViewModel
 
@@ -10,7 +13,11 @@
   ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
   ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
   ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
-  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  var cancelLinkData = Html.GetRouteValues();
+  var customisationId = Html.GetRouteValueByKey("customisationId");
+  const string passwordId = "conditional-password";
+  const string emailId = "conditional-email";
+  const string completionCriteriaId = "conditional-completion-criteria";
 }
 
 @section NavMenuItems {
@@ -20,7 +27,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(EditLearningPathwayDefaultsViewModel.CompleteWithinMonths), nameof(EditLearningPathwayDefaultsViewModel.ValidityMonths) }" />
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.CustomisationNameSuffix), nameof(@Model.Password), nameof(@Model.NotificationEmails), nameof(@Model.TutCompletionThreshold), nameof(@Model.DiagCompletionThreshold) }" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit course details</h1>
@@ -28,19 +35,21 @@
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate
           asp-controller="ManageCourse"
-          asp-action="SaveLearningPathwayDefaults"
-          asp-route-customisationId="@Model.CustomisationId">
+          asp-action="SaveCourseDetails"
+          asp-route-customisationId="@customisationId">
 
       <h3 class="nhsuk-u-font-weight-normal">
         Course name
       </h3>
 
+      <input type="hidden" asp-for="CustomisationName" />
+
       <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-m">
+        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-m nhsuk-u-margin-top-3">
           @Model.CustomisationName -
         </div>
         <div class="nhsuk-grid-column-one-half nhsuk-heading-l nhsuk-u-font-weight-normal">
-          <vc:text-input asp-for="@nameof(Model.CustomisationName)"
+          <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
                          label=""
                          populate-with-current-value="false"
                          type="text"
@@ -55,35 +64,59 @@
         <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
           <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
 
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="contact-1" name="contact" type="checkbox" value="email" aria-controls="conditional-contact-1" aria-expanded="false">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="contact-1">
-                Password protected
-              </label>
-            </div>
-
-            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-contact-1">
-              <div class="nhsuk-form-group">
-                <label class="nhsuk-label" for="email">
-                  Enter the password for the course
+            <div class="nhsuk-u-margin-bottom-3">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input"
+                       id="PasswordProtected"
+                       name="PasswordProtected"
+                       asp-for="PasswordProtected"
+                       type="checkbox"
+                       value="PasswordProtected"
+                       aria-controls="@passwordId"
+                       aria-expanded="@(Model.PasswordProtected)">
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="PasswordProtected">
+                  Password protected
                 </label>
-                <input class="nhsuk-input nhsuk-u-width-two-thirds" id="email" name="email" type="text">
+              </div>
+
+              <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="@passwordId">
+                <div class="nhsuk-form-group">
+                  <vc:text-input asp-for="@nameof(Model.Password)"
+                                 label="Enter the password for the course"
+                                 populate-with-current-value="true"
+                                 type="text"
+                                 spell-check="false"
+                                 autocomplete=""
+                                 hint-text=""
+                                 css-class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                </div>
               </div>
             </div>
 
             <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="contact-3" name="contact" type="checkbox" value="text" aria-controls="conditional-contact-3" aria-expanded="false">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="contact-3">
+              <input class="nhsuk-checkboxes__input"
+                     id="ReceiveNotificationEmails"
+                     name="ReceiveNotificationEmails"
+                     asp-for="ReceiveNotificationEmails"
+                     type="checkbox"
+                     value="ReceiveNotificationEmails"
+                     aria-controls="@emailId"
+                     aria-expanded="@(Model.ReceiveNotificationEmails)">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="ReceiveNotificationEmails">
                 Receive course completion notification emails
               </label>
             </div>
 
-            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="conditional-contact-3">
+            <div class="nhsuk-checkboxes__conditional nhsuk-checkboxes__conditional--hidden" id="@emailId">
               <div class="nhsuk-form-group">
-                <label class="nhsuk-label" for="mobile">
-                  Enter an email address for receiving the notifications
-                </label>
-                <input class="nhsuk-input nhsuk-u-width-two-thirds" id="mobile" name="mobile" type="text">
+                <vc:text-input asp-for="@nameof(Model.NotificationEmails)"
+                               label="Enter an email address for receiving the notifications"
+                               populate-with-current-value="true"
+                               type="text"
+                               spell-check="false"
+                               autocomplete=""
+                               hint-text=""
+                               css-class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
               </div>
             </div>
 
@@ -96,47 +129,47 @@
       </h3>
 
       <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+          <div class="nhsuk-radios nhsuk-radios--conditional">
 
-        <div class="nhsuk-form-group">
-          <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
-            <div class="nhsuk-radios nhsuk-radios--conditional">
-
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="contact-2" name="contact" type="radio" value="phone">
-                <label class="nhsuk-label nhsuk-radios__label" for="contact-2">
+            @if (Model.PostLearningAssessment) {
+              <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
+                <input class="nhsuk-radios__input"
+                       id="PostLearningAssessment"
+                       name="IsAssessed"
+                       asp-for="IsAssessed"
+                       type="radio"
+                       value="PostLearningAssessment">
+                <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessment">
                   Post learning assessment
                 </label>
               </div>
+            }
 
+            @if (Model.PostLearningAssessment) {
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="contact-5" name="contact" type="radio" value="text" aria-controls="conditional-contact-5" aria-expanded="false">
-                <label class="nhsuk-label nhsuk-radios__label" for="contact-3">
-                  Completion criteria
+                <input class="nhsuk-radios__input"
+                       id="OtherCompletionCriteria"
+                       name="IsAssessed"
+                       asp-for="IsAssessed"
+                       type="radio"
+                       value="OtherCompletionCriteria"
+                       aria-controls="@completionCriteriaId"
+                       aria-expanded="@(!Model.IsAssessed)">
+                <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
+                  Other completion criteria
                 </label>
               </div>
 
-              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-contact-5">
-
-                <vc:numeric-input model="@Model" asp-for="@nameof(Model.TutCompletionThreshold)"
-                                  label="Required learning percentage"
-                                  populate-with-current-value="true"
-                                  type="text"
-                                  hint-text=""
-                                  css-class="nhsuk-input nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
-
-                <vc:numeric-input model="@Model" asp-for="@nameof(Model.DiagCompletionThreshold)"
-                                  label="Required diagnostic percentage"
-                                  populate-with-current-value="true"
-                                  type="text"
-                                  hint-text=""
-                                  css-class="nhsuk-input nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
-
+              <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="@completionCriteriaId">
+                <partial name="_OtherCompletionCriteriaInputs" model="@Model" />
               </div>
+            } else {
+              <partial name="_OtherCompletionCriteriaInputs" model="@Model" />
+            }
 
-            </div>
-          </fieldset>
-        </div>
-
+          </div>
+        </fieldset>
       </div>
 
       <button class="nhsuk-button" type="submit">Save</button>
