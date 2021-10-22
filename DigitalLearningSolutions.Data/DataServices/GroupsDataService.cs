@@ -164,7 +164,8 @@
                                 AND p.EnrollmentMethodID  = 3
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL)
+                                AND P.RemovedDate IS NULL
+                                AND p.LoginCount = 0)
                         AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
                 new { groupId, delegateId, removedDate }
             );
