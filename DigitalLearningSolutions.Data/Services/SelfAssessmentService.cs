@@ -254,7 +254,12 @@
                                           ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
-                            WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+  INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
+                            WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                             GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
                 new { candidateId, selfAssessmentId }
             );
