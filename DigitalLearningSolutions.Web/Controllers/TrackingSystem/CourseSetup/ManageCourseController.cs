@@ -81,6 +81,7 @@
             if (model.AutoRefresh)
             {
                 // TODO in HEEDLS-442: Redirect to "Edit auto-refresh options" page
+                return RedirectToAction("Index", new { customisationId = model.CustomisationId });
             }
 
             var completeWithinMonthsInt =
