@@ -33,7 +33,7 @@
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
         IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
         //UPDATE
@@ -774,17 +774,21 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
             }
         }
 
-        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId)
+        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId)
         {
             return connection.Query<Administrator>(
                 @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
                     FROM   AdminUsers
-                    WHERE (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
+                    WHERE ((Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
                        (Supervisor = 1) AND (Active = 1) AND (CategoryID =
                    (SELECT CategoryID
                      FROM    SelfAssessments
-                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)",
-                new { centreId, selfAssessmentId }
+                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)) AND AdminID NOT IN (SELECT sd.SupervisorAdminID
+FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+             SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (ca.CandidateID = @candidateId) AND (sd.SupervisorAdminID = AdminUsers.AdminID)) ",
+                new { centreId, selfAssessmentId, candidateId }
                 );
         }
 
