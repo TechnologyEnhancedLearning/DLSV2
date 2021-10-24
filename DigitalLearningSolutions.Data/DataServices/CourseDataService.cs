@@ -27,6 +27,13 @@ namespace DigitalLearningSolutions.Data.DataServices
         bool TryUpdateCourseOptions(CourseOptions courseOptions, int customisationId, int centreId, int? categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        );
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
@@ -474,6 +481,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CompleteWithinMonths = @completeWithinMonths,
+                        ValidityMonths = @validityMonths,
+                        Mandatory = @mandatory,
+                        AutoRefresh = @autoRefresh
+                    WHERE CustomisationID = @customisationId",
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
             );
         }
     }

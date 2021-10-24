@@ -172,5 +172,27 @@
                 .MustHaveHappened(1, Times.Exactly);
             result.Should().BeFalse();
         }
+
+        [Test]
+        public void UpdateLearningPathwayDefaultsForCourse_calls_data_service()
+        {
+            // Given
+            A.CallTo(
+                () => courseDataService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+
+            // Then
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+                .MustHaveHappened();
+        }
     }
 }

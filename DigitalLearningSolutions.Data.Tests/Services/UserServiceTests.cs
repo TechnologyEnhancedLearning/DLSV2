@@ -390,7 +390,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
 
             // Then
             result.Should().BeTrue();
@@ -413,7 +413,7 @@
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).Returns(new List<DelegateUser>());
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
 
             // Then
             result.Should().BeFalse();
@@ -434,7 +434,7 @@
                 (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email) });
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
 
             // Then
             result.Should().BeFalse();
@@ -455,7 +455,7 @@
                 (new List<DelegateUser> { UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email, centreId: 3) });
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, 7, 2, 2);
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
 
             // Then
             result.Should().BeTrue();
@@ -470,7 +470,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, 7, null, 2);
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, null, adminUser.CentreId);
 
             // Then
             result.Should().BeTrue();
@@ -488,11 +488,31 @@
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
 
             // When
-            var result = userService.NewEmailAddressIsValid(email, null, 2, 2);
+            var result = userService.NewEmailAddressIsValid(email, null, delegateUser.Id, delegateUser.CentreId);
 
             // Then
             result.Should().BeTrue();
             A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void NewEmailAddressIsValid_returns_true_with_unchanged_email_with_different_case()
+        {
+            // Given
+            const string email = "email@test.com";
+            const string capsEmail = "Email@test.com";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: capsEmail);
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+
+            // When
+            var result = userService.NewEmailAddressIsValid(email, adminUser.Id, delegateUser.Id, adminUser.CentreId);
+
+            // Then
+            result.Should().BeTrue();
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).MustNotHaveHappened();
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email)).MustNotHaveHappened();
         }

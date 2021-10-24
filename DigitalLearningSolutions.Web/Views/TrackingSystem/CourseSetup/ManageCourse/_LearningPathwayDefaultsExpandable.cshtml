@@ -68,7 +68,10 @@
 
     </dl>
 
-    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" href="">
+    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button"
+       asp-controller="ManageCourse"
+       asp-action="EditLearningPathwayDefaults"
+       asp-route-customisationId="@Model.CustomisationId">
       Edit
     </a>
 

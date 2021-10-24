@@ -13,18 +13,24 @@ namespace DigitalLearningSolutions.Data.Tests.Models
             // Given
             const string question = "Increased productivity?";
             var responseCounts = new List<(string, int)> { ("Yes", 10), ("No", 25), ("No response", 15) };
+            var expectedResponses = new List<EvaluationResponses>
+            {
+                new EvaluationResponses("Yes", 10, 50),
+                new EvaluationResponses("No", 25, 50),
+                new EvaluationResponses("No response", 15, 50)
+            };
 
             // When
             var model = new EvaluationResponseBreakdown(question, responseCounts);
 
             // Then
             model.Question.Should().Be(question);
-            model.ResponseCounts.Should().BeEquivalentTo(responseCounts);
+            model.Responses.Should().BeEquivalentTo(expectedResponses);
             model.TotalResponses.Should().Be(50);
         }
 
         [Test]
-        public void EvaluationResponseBreakdown_sets_ResponseCounts_to_null_when_no_responses()
+        public void EvaluationResponseBreakdown_sets_ResponseCounts_to_empty_when_no_responses()
         {
             // Given
             const string question = "Don't answer this question!";
@@ -35,7 +41,7 @@ namespace DigitalLearningSolutions.Data.Tests.Models
 
             // Then
             model.Question.Should().Be(question);
-            model.ResponseCounts.Should().BeNull();
+            model.Responses.Should().BeEmpty();
             model.TotalResponses.Should().Be(0);
         }
     }

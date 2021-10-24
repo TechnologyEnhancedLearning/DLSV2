@@ -12,10 +12,8 @@ new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter'
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
-  // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  resultCount.setAttribute('role', '');
-  resultCount.setAttribute('role', 'alert');
+  resultCount.innerHTML = getModifiedResultCountMessageForScreenReader(resultCount);
 }
 
 function setUpSelectAndDeselectButtons(): void {
@@ -36,4 +34,16 @@ function setUpSelectAndDeselectButtons(): void {
       deselectAll(checkboxSelector);
       alertResultCount();
     });
+}
+
+function getModifiedResultCountMessageForScreenReader(
+  resultsCountElement: HTMLSpanElement,
+): string {
+  const resultCountMessage = resultsCountElement.innerHTML;
+  const indexOfSpace = resultCountMessage.search('&nbsp');
+
+  if (indexOfSpace === -1) {
+    return `${resultCountMessage}&nbsp`;
+  }
+  return resultCountMessage.substring(0, indexOfSpace);
 }

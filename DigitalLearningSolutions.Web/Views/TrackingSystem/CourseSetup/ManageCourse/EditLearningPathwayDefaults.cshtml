@@ -1,0 +1,75 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditLearningPathwayDefaultsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Learning Pathway defaults" : "Edit Learning Pathway defaults";
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.CompleteWithinMonths), nameof(@Model.ValidityMonths) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit Learning Pathway defaults</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post"
+          novalidate
+          asp-controller="ManageCourse"
+          asp-action="SaveLearningPathwayDefaults"
+          asp-route-customisationId="@Model.CustomisationId">
+
+      <vc:numeric-input asp-for="@nameof(Model.CompleteWithinMonths)"
+                        label="Completion within (in months)"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text="Within how many months of enrolment (up to 48) should the learner complete the
+                                     course? Enter 0 or leave blank if you do not wish to configure this value."
+                        css-class="nhsuk-input--width-10" />
+
+
+      <vc:numeric-input asp-for="@nameof(Model.ValidityMonths)"
+                        label="Completion valid for (in months)"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text="For how many months after completion (up to 48) will the completion remain valid, before the
+                                     learner is expected to complete the course again? Enter 0 or leave blank if you do not wish
+                                     to configure this value."
+                        css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+
+      <div class="nhsuk-checkboxes">
+        <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
+          <input class="nhsuk-checkboxes__input"
+                 type="checkbox"
+                 id="Mandatory"
+                 asp-for="Mandatory">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="Mandatory">
+            Course is mandatory
+          </label>
+          <div class="nhsuk-hint nhsuk-checkboxes__hint">
+            Cannot be removed from the current course list by the learner after enrolment
+          </div>
+        </div>
+
+        <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
+          <input class="nhsuk-checkboxes__input"
+                 type="checkbox"
+                 id="AutoRefresh"
+                 asp-for="AutoRefresh">
+          <label class="nhsuk-label nhsuk-checkboxes__label" for="AutoRefresh">
+            Enable auto-refresh
+          </label>
+          <div class="nhsuk-hint nhsuk-checkboxes__hint">
+            After the completion valid period expires, should the learner automatically be enrolled on a refresher course?
+          </div>
+        </div>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+  </div>
+</div>
