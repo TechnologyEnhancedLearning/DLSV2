@@ -70,10 +70,12 @@
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input" asp-for="RemoveProgress" aria-describedby="@(nameof(Model.RemoveProgress))-item-hint" />
                 <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveProgress">
-                  Remove delegate from all the related enrolments where course is not yet complete.
+                  Remove delegate from all the related enrolments where course has been started but is not yet complete
                 </label>
                 <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
-                  Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
+                  <div class="nhsuk-grid-column-three-quarters">
+                    Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
+                  </div>
                 </div>
               </div>
             </div>
