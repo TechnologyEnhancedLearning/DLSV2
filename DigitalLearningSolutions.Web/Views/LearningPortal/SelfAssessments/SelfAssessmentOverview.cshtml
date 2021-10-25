@@ -158,7 +158,7 @@
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
 
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route="@Model.SelfAssessment.Id" >Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
     }
     else
     {

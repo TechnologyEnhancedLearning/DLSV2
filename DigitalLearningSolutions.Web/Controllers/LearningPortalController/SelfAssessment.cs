@@ -284,7 +284,7 @@
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
-            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(User.GetCentreId(), selfAssessmentId);
+            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(User.GetCentreId(), selfAssessmentId, User.GetCandidateIdKnownNotNull());
             var model = new AddSupervisorViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
@@ -381,7 +381,7 @@
             TempData.Set(sessionAddSupervisor);
             var supervisorDelegateId = supervisorService.AddSuperviseDelegate(sessionAddSupervisor.SupervisorAdminId, User.GetCandidateIdKnownNotNull(), User.GetUserEmail(), sessionAddSupervisor.SupervisorEmail, User.GetCentreId());
             supervisorService.InsertCandidateAssessmentSupervisor(User.GetCandidateIdKnownNotNull(), supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID, sessionAddSupervisor.SelfAssessmentSupervisorRoleId);
-            frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID);
+            frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
         public IActionResult RemoveSupervisor(int selfAssessmentId, int candidateAssessmentSupervisorId)
@@ -391,19 +391,19 @@
         }
         public IActionResult SendSupervisorReminder(int selfAssessmentId, int supervisorDelegateId)
         {
-            frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, selfAssessmentId);
+            frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, selfAssessmentId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
         public IActionResult ConfirmSupervisor(int supervisorDelegateId, int selfAssessmentId)
         {
             supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
-            frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId);
+            frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, 0, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
         public IActionResult RejectSupervisor(int supervisorDelegateId, int selfAssessmentId)
         {
             supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
-            frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId);
+            frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
         public IActionResult StartRequestVerification(int selfAssessmentId)
@@ -551,7 +551,7 @@
                 }
                 if (resultCount > 0)
                 {
-                    frameworkNotificationService.SendResultVerificationRequest(candidateAssessmentSupervisorId, sessionRequestVerification.SelfAssessmentID, resultCount);
+                    frameworkNotificationService.SendResultVerificationRequest(candidateAssessmentSupervisorId, sessionRequestVerification.SelfAssessmentID, resultCount, User.GetCandidateIdKnownNotNull());
                 }
             }
 
@@ -616,12 +616,12 @@
                 return View("SelfAssessments/RequestSignOff", newModel);
             }
             selfAssessmentService.InsertCandidateAssessmentSupervisorVerification(model.CandidateAssessmentSupervisorId);
-            frameworkNotificationService.SendSignOffRequest(model.CandidateAssessmentSupervisorId, selfAssessmentId);
+            frameworkNotificationService.SendSignOffRequest(model.CandidateAssessmentSupervisorId, selfAssessmentId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }
         public IActionResult SendRequestSignOffReminder(int candidateAssessmentSupervisorId, int candidateAssessmentSupervisorVerificationId, int selfAssessmentId, string vocabulary)
         {
-            frameworkNotificationService.SendSignOffRequest(candidateAssessmentSupervisorId, selfAssessmentId);
+            frameworkNotificationService.SendSignOffRequest(candidateAssessmentSupervisorId, selfAssessmentId, User.GetCandidateIdKnownNotNull());
             selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(candidateAssessmentSupervisorVerificationId);
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = vocabulary });
         }

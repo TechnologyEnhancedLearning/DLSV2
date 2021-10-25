@@ -335,11 +335,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             );
 
             // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId))
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, 0))
                 .MustHaveHappened();
             A.CallTo(
                 () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    A<int>.That.Matches(id => id != supervisorDelegateId)
+                    A<int>.That.Matches(id => id != supervisorDelegateId), A<int>._
                 )
             ).MustNotHaveHappened();
         }
@@ -637,7 +637,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationService.RegisterDelegateByCentre(model, baseUrl);
 
             // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._, A<int>._))
                 .MustNotHaveHappened();
         }
 

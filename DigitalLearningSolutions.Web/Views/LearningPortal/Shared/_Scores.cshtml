@@ -7,7 +7,7 @@
       @if (Model.HasDiagnosticScore())
       {
         <div class="nhsuk-grid-column-one-quarter">
-          <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-diagnostic-score-title" aria-describedby="@Model.Id-name">Diagnostic Score</h5>
+          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-diagnostic-score-title" aria-describedby="@Model.Id-name">Diagnostic Score</span>
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
           <p aria-describedby="@Model.Id-name @Model.Id-diagnostic-score-title" name="diagnostic-score">@Model.DiagnosticScore</p>
         </div>
@@ -15,7 +15,7 @@
       @if (Model.HasPassedSections())
       {
         <div class="nhsuk-grid-column-one-quarter">
-          <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-passed-sections-title" aria-describedby="@Model.Id-name">Passed Sections</h5>
+          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-passed-sections-title" aria-describedby="@Model.Id-name">Passed Sections</span>
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
           <p aria-describedby="@Model.Id-name @Model.Id-passed-sections-title" name="passed-sections">@Model.DisplayPassedSections()</p>
         </div>
