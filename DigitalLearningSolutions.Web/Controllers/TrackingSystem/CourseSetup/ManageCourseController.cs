@@ -131,29 +131,7 @@
                 model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
             var customisationName = model.CustomisationName + customisationNameSuffix;
 
-            if (!string.IsNullOrEmpty(model.CustomisationNameSuffix) && courseService.DoesCourseNameExistAtCentre(
-                customisationName,
-                model.CentreId,
-                model.ApplicationId
-            ))
-            {
-                ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                    "The course name must be unique"
-                );
-            }
-
-            if (model.PasswordProtected == false)
-            {
-                ModelState.ClearErrorsOnField(nameof(model.Password));
-                model.Password = null;
-            }
-
-            if (model.ReceiveNotificationEmails == false)
-            {
-                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
-                model.NotificationEmails = null;
-            }
+            HandleEditCourseFormValidations(customisationName, model);
 
             if (!ModelState.IsValid)
             {
@@ -212,6 +190,51 @@
 
             courseService.UpdateCourseOptions(courseOptions, customisationId);
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
+        }
+
+        private void HandleEditCourseFormValidations(string customisationName, EditCourseDetailsViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.CustomisationNameSuffix))
+            {
+                if (customisationName.Length > 250)
+                {
+                    ModelState.AddModelError(
+                        nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                        "Course name must be 250 characters or fewer"
+                    );
+                }
+                else if (courseService.DoesCourseNameExistAtCentre(
+                    customisationName,
+                    model.CentreId,
+                    model.ApplicationId
+                ))
+                {
+                    ModelState.AddModelError(
+                        nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                        "Course name must be unique"
+                    );
+                }
+            }
+
+            if (!model.PasswordProtected)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.Password));
+                model.Password = null;
+            }
+
+            if (!model.ReceiveNotificationEmails)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
+                model.NotificationEmails = null;
+            }
+
+            if (model.IsAssessed)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.TutCompletionThreshold));
+                model.TutCompletionThreshold = "0";
+                ModelState.ClearErrorsOnField(nameof(model.DiagCompletionThreshold));
+                model.DiagCompletionThreshold = "0";
+            }
         }
     }
 }
