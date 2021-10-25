@@ -480,12 +480,13 @@
             var answerLength = model.Answer!.Length;
             var remainingLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(remainingLengthShownToUser);
             var answerLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(answerLength);
+            var verb = answerLength == 1 ? "was" : "were";
 
             ModelState.AddModelError(
                 nameof(AdminFieldAnswersViewModel.Answer),
                 "The complete list of answers must be 1000 characters or fewer " +
                 $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
-                $"{answerLength} character{answerLengthPluralitySuffix} entered)"
+                $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
 
