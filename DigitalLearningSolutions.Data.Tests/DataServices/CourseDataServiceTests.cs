@@ -450,5 +450,70 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void Edit_Course_Options_updates_course_options_successfully()
+        {
+            using var transaction = new TransactionScope();
+            const int customisationId = 100;
+            const int centreId = 101;
+            const int categoryId = 0;
+
+            var defaultCourseOptions = new CourseOptions()
+            {
+                Active = true,
+                DiagObjSelect = true,
+                SelfRegister = false,
+                HideInLearnerPortal = false,
+            };
+
+            try
+            {
+                // When
+                courseDataService.UpdateCourseOptions(defaultCourseOptions, customisationId);
+                var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                    customisationId,
+                    centreId,
+                    categoryId
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCourseOptions?.Active.Should().BeTrue();
+                    updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                    updatedCourseOptions?.SelfRegister.Should().BeFalse();
+                    updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void Edit_Course_Options_get_course_options_for_admin_categoryId()
+        {
+            const int customisationId = 100;
+            const int centreId = 101;
+            const int categoryId = 0;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                updatedCourseOptions?.Active.Should().BeFalse();
+                updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                updatedCourseOptions?.SelfRegister.Should().BeTrue();
+                updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+            }
+        }
     }
 }

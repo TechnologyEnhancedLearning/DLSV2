@@ -1,0 +1,35 @@
+﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.Extensions.Configuration
+@using DigitalLearningSolutions.Web.Models.Enums
+@model EditCourseOptionsViewModel
+
+@{
+    ViewData["Title"] = "Edit course options";
+    ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
+    ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+    ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
+    var cancelRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+@section NavMenuItems {
+  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditCourseOptions">
+
+      <vc:checkboxes label=""
+                     populate-with-current-values="true"
+                     checkboxes="@Model.Checkboxes"
+                     hint-text="" />
+
+      <button class="nhsuk-button" type="submit" value="save">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelRouteData" />
+  </div>
+</div>
