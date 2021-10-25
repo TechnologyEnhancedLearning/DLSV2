@@ -204,9 +204,12 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            const string expectedErrorMessage = "You must confirm before deactivating this account";
+
             A.CallTo(() => userDataService.GetAdminUserById(1)).Returns(UserTestHelper.GetDefaultAdminUser());
             var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
-            const string expectedErrorMessage = "You must confirm before deactivating this account";
+            administratorController.ModelState.AddModelError(nameof(DeactivateAdminViewModel.Confirm), expectedErrorMessage);
+            
 
             // When
             var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
