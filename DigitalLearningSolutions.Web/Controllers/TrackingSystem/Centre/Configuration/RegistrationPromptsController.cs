@@ -92,7 +92,7 @@
                 SaveAction => EditRegistrationPromptPostSave(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 BulkAction => EditRegistrationPromptBulk(model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -145,7 +145,7 @@
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = CookieExpiry
+                    Expires = CookieExpiry,
                 }
             );
             TempData.Set(addRegistrationPromptData);
@@ -209,7 +209,7 @@
                 NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
                 BulkAction => AddRegistrationPromptBulk(model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -413,7 +413,7 @@
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = CookieExpiry
+                    Expires = CookieExpiry,
                 }
             );
             TempData.Set(data);
@@ -446,9 +446,15 @@
 
             var remainingLength = 4000 - model.OptionsString.Length;
             var remainingLengthShownToUser = remainingLength <= 2 ? 0 : remainingLength - 2;
+            var answerLength = model.Answer!.Length;
+            var remainingLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(remainingLengthShownToUser);
+            var answerLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(answerLength);
+
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                $"The complete list of answers must be 4000 characters or fewer ({remainingLengthShownToUser} characters remaining for the new answer)"
+                "The complete list of answers must be 4000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                $"{answerLength} character{answerLengthPluralitySuffix} entered)"
             );
         }
 

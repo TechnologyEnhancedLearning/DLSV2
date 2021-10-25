@@ -100,7 +100,7 @@
                 SaveAction => EditAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => EditAdminFieldBulk(customisationId, model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -192,7 +192,7 @@
                 SaveAction => AddAdminFieldPostSave(customisationId, model),
                 AddPromptAction => AdminFieldAnswersPostAddPrompt(model),
                 BulkAction => AddAdminFieldBulk(customisationId, model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -307,7 +307,7 @@
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = CookieExpiry
+                    Expires = CookieExpiry,
                 }
             );
             TempData.Set(data);
@@ -359,7 +359,7 @@
                 id.ToString(),
                 new CookieOptions
                 {
-                    Expires = CookieExpiry
+                    Expires = CookieExpiry,
                 }
             );
             TempData.Set(data);
@@ -477,9 +477,15 @@
 
             var remainingLength = 1000 - model.OptionsString.Length;
             var remainingLengthShownToUser = remainingLength <= 2 ? 0 : remainingLength - 2;
+            var answerLength = model.Answer!.Length;
+            var remainingLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(remainingLengthShownToUser);
+            var answerLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(answerLength);
+
             ModelState.AddModelError(
                 nameof(AdminFieldAnswersViewModel.Answer),
-                $"The complete list of answers must be 1000 characters or fewer ({remainingLengthShownToUser} characters remaining for the new answer)"
+                "The complete list of answers must be 1000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                $"{answerLength} character{answerLengthPluralitySuffix} entered)"
             );
         }
 
