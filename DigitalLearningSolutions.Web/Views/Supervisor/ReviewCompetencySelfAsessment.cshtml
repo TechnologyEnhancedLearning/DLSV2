@@ -2,7 +2,7 @@
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Review Competency";
+  ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">

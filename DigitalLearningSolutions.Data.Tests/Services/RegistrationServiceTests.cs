@@ -1,14 +1,24 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Services
+namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Register;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging.Abstractions;
     using NUnit.Framework;
 
     public class RegistrationServiceTests
@@ -16,47 +26,19 @@
         private const string ApproverEmail = "approver@email.com";
         private const string ApprovedIpPrefix = "123.456.789";
         private const string NewCandidateNumber = "TU67";
-        private const string PasswordHash = "hash";
         private const string RefactoredSystemBaseUrl = "refactoredUrl";
         private const string OldSystemBaseUrl = "oldUrl";
-
-        private readonly DelegateRegistrationModel failingRegistrationModel = new DelegateRegistrationModel(
-            "Bad",
-            "User",
-            "fail@test.com",
-            1,
-            1,
-            PasswordHash,
-            "answer1",
-            "answer2",
-            "answer3",
-            "answer4",
-            "answer5",
-            "answer6"
-        );
-
-        private readonly DelegateRegistrationModel testRegistrationModel = new DelegateRegistrationModel(
-            "Test",
-            "User",
-            "testuser@email.com",
-            1,
-            1,
-            PasswordHash,
-            "answer1",
-            "answer2",
-            "answer3",
-            "answer4",
-            "answer5",
-            "answer6"
-        );
 
         private ICentresDataService centresDataService = null!;
         private IConfiguration config = null!;
         private IEmailService emailService = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
         private IPasswordDataService passwordDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private IRegistrationService registrationService = null!;
+        private ISupervisorDelegateService supervisorDelegateService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -67,19 +49,20 @@
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             config = A.Fake<IConfiguration>();
+            supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(OldSystemBaseUrl);
             A.CallTo(() => config["AppRootPath"]).Returns(RefactoredSystemBaseUrl);
 
-            A.CallTo(() => centresDataService.GetCentreIpPrefixes(testRegistrationModel.Centre))
+            A.CallTo(() => centresDataService.GetCentreIpPrefixes(RegistrationModelTestHelper.Centre))
                 .Returns(new[] { ApprovedIpPrefix });
             A.CallTo(() => centresDataService.GetCentreManagerDetails(A<int>._))
                 .Returns(("Test", "Approver", ApproverEmail));
 
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
                 .Returns(NewCandidateNumber);
-            A.CallTo(() => registrationDataService.RegisterDelegate(failingRegistrationModel))
-                .Returns("-1");
 
             registrationService = new RegistrationService(
                 registrationDataService,
@@ -87,7 +70,11 @@
                 passwordResetService,
                 emailService,
                 centresDataService,
-                config
+                config,
+                supervisorDelegateService,
+                frameworkNotificationService,
+                userDataService,
+                new NullLogger<RegistrationService>()
             );
         }
 
@@ -96,9 +83,14 @@
         {
             // Given
             const string clientIp = ApprovedIpPrefix + ".100";
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            var (_, approved) = registrationService.RegisterDelegate(testRegistrationModel, clientIp, false);
+            var (_, approved) = registrationService.RegisterDelegate(
+                model,
+                clientIp,
+                false
+            );
 
             // Then
             A.CallTo(
@@ -114,8 +106,11 @@
         [Test]
         public void Registering_delegate_on_localhost_registers_delegate_as_approved()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "::1", false);
+            registrationService.RegisterDelegate(model, "::1", false);
 
             // Then
             A.CallTo(
@@ -130,8 +125,11 @@
         [Test]
         public void Registering_delegate_with_unapproved_IP_registers_delegate_as_unapproved()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "987.654.321.100", false);
+            registrationService.RegisterDelegate(model, "987.654.321.100", false);
 
             // Then
             A.CallTo(
@@ -146,8 +144,11 @@
         [Test]
         public void Registering_delegate_sends_approval_email_with_old_site_approval_link()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false);
+            registrationService.RegisterDelegate(model, string.Empty, false);
 
             // Then
             A.CallTo(
@@ -168,8 +169,11 @@
         [Test]
         public void Registering_delegate_sends_approval_email_with_refactored_tracking_system_link()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, true);
+            registrationService.RegisterDelegate(model, string.Empty, true);
 
             // Then
             A.CallTo(
@@ -190,8 +194,11 @@
         [Test]
         public void Registering_automatically_approved_does_not_send_email()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, "123.456.789.100", false);
+            registrationService.RegisterDelegate(model, "123.456.789.100", false);
 
             // Then
             A.CallTo(
@@ -203,46 +210,166 @@
         [Test]
         public void Registering_delegate_should_set_password()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
-            registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false);
+            registrationService.RegisterDelegate(model, string.Empty, false);
 
             // Then
             A.CallTo(
                 () =>
-                    passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash)
+                    passwordDataService.SetPasswordByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.PasswordHash
+                    )
             ).MustHaveHappened();
         }
 
         [Test]
         public void Registering_delegate_returns_candidate_number()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
             // When
             var candidateNumber =
-                registrationService.RegisterDelegate(testRegistrationModel, string.Empty, false).candidateNumber;
+                registrationService.RegisterDelegate(model, string.Empty, false)
+                    .candidateNumber;
 
             // Then
             candidateNumber.Should().Be(NewCandidateNumber);
         }
 
         [Test]
-        public void Error_when_registering_delegate_returns_error_code()
+        public void Registering_delegate_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
         {
+            // Given
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            A.CallTo(
+                    () => userDataService.GetDelegateUserByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.Centre
+                    )
+                )
+                .Returns(new DelegateUser { Id = 777 });
+
             // When
-            var candidateNumber =
-                registrationService.RegisterDelegate(failingRegistrationModel, string.Empty, false)
-                    .candidateNumber;
+            registrationService.RegisterDelegate(model, string.Empty, false, 999);
 
             // Then
-            candidateNumber.Should().Be("-1");
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    777
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_add_Confirmed_only_to_SupervisorDelegate_record_with_matching_id()
+        {
+            // Given
+            const int matchingSupervisorDelegateId = 2;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegate(
+                model,
+                string.Empty,
+                false,
+                matchingSupervisorDelegateId
+            );
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(matchingSupervisorDelegateId)
+            ).MustHaveHappened();
+            A.CallTo(
+                () => supervisorDelegateService.ConfirmSupervisorDelegateRecord(
+                    A<int>.That.Matches(id => id != matchingSupervisorDelegateId)
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_not_update_any_SupervisorDelegate_records_if_none_found()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenNoPendingSupervisorDelegateRecordsForEmail();
+
+            // When
+            registrationService.RegisterDelegate(model, string.Empty, false, 999);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_should_send_SupervisorDelegate_email_for_matching_id_record_only()
+        {
+            // Given
+            const int supervisorDelegateId = 2;
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegate(
+                model,
+                string.Empty,
+                false,
+                supervisorDelegateId
+            );
+
+            // Then
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, 0))
+                .MustHaveHappened();
+            A.CallTo(
+                () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
+                    A<int>.That.Matches(id => id != supervisorDelegateId), A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Error_when_registering_delegate_returns_error_code()
+        {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
+
+            // When
+            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false);
+
+            // Then
+            act.Should().Throw<DelegateCreationFailedException>();
         }
 
         [Test]
         public void Error_when_registering_delegate_fails_fast()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
+
             // When
-            registrationService.RegisterDelegate(failingRegistrationModel, string.Empty, false);
+            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false);
 
             // Then
+            act.Should().Throw<DelegateCreationFailedException>();
             A.CallTo(
                 () =>
                     emailService.SendEmail(A<Email>._)
@@ -256,8 +383,11 @@
         [Test]
         public void Registering_admin_delegate_registers_delegate_as_approved()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+
             // When
-            registrationService.RegisterCentreManager(testRegistrationModel);
+            registrationService.RegisterCentreManager(model, 1);
 
             // Then
             A.CallTo(
@@ -272,8 +402,11 @@
         [Test]
         public void Registering_admin_delegate_does_not_send_email()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+
             // When
-            registrationService.RegisterCentreManager(testRegistrationModel);
+            registrationService.RegisterCentreManager(model, 1);
 
             // Then
             A.CallTo(
@@ -285,21 +418,30 @@
         [Test]
         public void Registering_admin_delegate_should_set_password()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+
             // When
-            registrationService.RegisterCentreManager(testRegistrationModel);
+            registrationService.RegisterCentreManager(model, 1);
 
             // Then
             A.CallTo(
                 () =>
-                    passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash)
+                    passwordDataService.SetPasswordByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.PasswordHash
+                    )
             ).MustHaveHappened();
         }
 
         [Test]
         public void RegisterCentreManager_calls_all_relevant_registration_methods()
         {
+            // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
+
             // When
-            registrationService.RegisterCentreManager(testRegistrationModel);
+            registrationService.RegisterCentreManager(model, 1);
 
             // Then
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
@@ -308,9 +450,9 @@
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => registrationDataService.RegisterCentreManagerAdmin(testRegistrationModel))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model))
                 .MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => centresDataService.SetCentreAutoRegistered(testRegistrationModel.Centre))
+            A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustHaveHappened(1, Times.Exactly);
         }
 
@@ -318,10 +460,11 @@
         public void Error_in_RegisterCentreManager_throws_exception()
         {
             // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(failingRegistrationModel);
+            Action act = () => registrationService.RegisterCentreManager(model, 1);
 
             // Then
             act.Should().Throw<Exception>();
@@ -331,10 +474,11 @@
         public void Error_in_RegisterCentreManager_fails_fast()
         {
             // Given
+            var model = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
             A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterCentreManager(failingRegistrationModel);
+            Action act = () => registrationService.RegisterCentreManager(model, 1);
 
             // Then
             act.Should().Throw<Exception>();
@@ -344,9 +488,9 @@
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
-            A.CallTo(() => registrationDataService.RegisterCentreManagerAdmin(testRegistrationModel))
+            A.CallTo(() => registrationDataService.RegisterAdmin(model))
                 .MustNotHaveHappened();
-            A.CallTo(() => centresDataService.SetCentreAutoRegistered(testRegistrationModel.Centre))
+            A.CallTo(() => centresDataService.SetCentreAutoRegistered(RegistrationModelTestHelper.Centre))
                 .MustNotHaveHappened();
         }
 
@@ -354,15 +498,20 @@
         public void RegisterDelegateByCentre_sets_password_if_passwordHash_not_null()
         {
             // Given
-            var model = new DelegateRegistrationModel("firstName", "lastName", "email", 0, 0, PasswordHash);
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
-            A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(NewCandidateNumber, PasswordHash))
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(
+                    () => passwordDataService.SetPasswordByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.PasswordHash
+                    )
+                )
                 .MustHaveHappened(1, Times.Exactly);
         }
 
@@ -370,14 +519,15 @@
         public void RegisterDelegateByCentre_does_not_set_password_if_passwordHash_is_null()
         {
             // Given
-            var model = new DelegateRegistrationModel("firstName", "lastName", "email", 0, 0, null);
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).Returns(NewCandidateNumber);
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            model.PasswordHash = null;
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, "");
 
             // Then
-            A.CallTo(() => registrationDataService.RegisterDelegateByCentre(model)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._))
                 .MustNotHaveHappened();
         }
@@ -386,11 +536,11 @@
         public void RegisterDelegateByCentre_schedules_welcome_email_if_notify_date_set()
         {
             // Given
-            var notifyDate = new DateTime(2200, 1, 1);
-            const string emailAddress = "email@test.com";
             const string baseUrl = "base.com";
-            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null)
-                { NotifyDate = notifyDate };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(
+                passwordHash: null,
+                notifyDate: new DateTime(2200, 1, 1)
+            );
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -398,9 +548,9 @@
             // Then
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
-                    emailAddress,
+                    model.Email,
                     baseUrl,
-                    notifyDate,
+                    model.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"
                 )
             ).MustHaveHappened(1, Times.Exactly);
@@ -410,9 +560,8 @@
         public void RegisterDelegateByCentre_does_not_schedule_welcome_email_if_notify_date_not_set()
         {
             // Given
-            const string emailAddress = "email@test.com";
             const string baseUrl = "base.com";
-            var model = new DelegateRegistrationModel("firstName", "lastName", emailAddress, 0, 0, null);
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -426,6 +575,182 @@
                     A<string>._
                 )
             ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_add_CandidateId_to_all_SupervisorDelegate_records_found_by_email()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+            A.CallTo(() => registrationDataService.RegisterDelegate(model))
+                .Returns(NewCandidateNumber);
+            A.CallTo(
+                    () => userDataService.GetDelegateUserByCandidateNumber(
+                        NewCandidateNumber,
+                        RegistrationModelTestHelper.Centre
+                    )
+                )
+                .Returns(new DelegateUser { Id = 777 });
+
+            // When
+            registrationService.RegisterDelegateByCentre(model, baseUrl);
+
+            // Then
+            A.CallTo(
+                () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                    A<IEnumerable<int>>.That.IsSameSequenceAs(supervisorDelegateIds),
+                    777
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_not_add_Confirmed_to_any_SupervisorDelegate_record()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegateByCentre(model, baseUrl);
+
+            // Then
+            A.CallTo(() => supervisorDelegateService.ConfirmSupervisorDelegateRecord(A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void RegisterDelegateByCentre_should_not_send_SupervisorDelegate_email()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            var supervisorDelegateIds = new List<int> { 1, 2, 3, 4, 5 };
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            GivenPendingSupervisorDelegateIdsForEmailAre(supervisorDelegateIds);
+
+            // When
+            registrationService.RegisterDelegateByCentre(model, baseUrl);
+
+            // Then
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._, A<int>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_first_name()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.UnexpectedError);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_AdminCreationFailedException_if_delegate_has_no_email()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.UnexpectedError);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_throws_email_in_use_AdminCreationFailedException_if_admin_already_exists()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
+
+            // When
+            var result = Assert.Throws<AdminCreationFailedException>(
+                () => registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1)
+            );
+
+            // Then
+            result.Error.Should().Be(AdminCreationError.EmailAlreadyInUse);
+        }
+
+        [Test]
+        public void PromoteDelegateToAdmin_calls_data_service_with_expected_value()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
+
+            // When
+            registrationService.PromoteDelegateToAdmin(adminRoles, 1, 1);
+
+            // Then
+            A.CallTo(
+                () => registrationDataService.RegisterAdmin(
+                    A<AdminRegistrationModel>.That.Matches(
+                        a =>
+                            a.FirstName == delegateUser.FirstName &&
+                            a.LastName == delegateUser.LastName &&
+                            a.Email == delegateUser.EmailAddress &&
+                            a.Centre == delegateUser.CentreId &&
+                            a.PasswordHash == delegateUser.Password &&
+                            a.Active &&
+                            a.Approved &&
+                            a.IsCentreAdmin == adminRoles.IsCentreAdmin &&
+                            !a.IsCentreManager &&
+                            a.IsContentManager == adminRoles.IsContentManager &&
+                            a.ImportOnly == adminRoles.IsCmsAdministrator &&
+                            a.IsContentCreator == adminRoles.IsContentCreator &&
+                            a.IsTrainer == adminRoles.IsTrainer &&
+                            a.IsSupervisor == adminRoles.IsSupervisor
+                    )
+                )
+            ).MustHaveHappened();
+        }
+
+        private void GivenNoPendingSupervisorDelegateRecordsForEmail()
+        {
+            A.CallTo(
+                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                        A<int>._,
+                        A<string>._
+                    )
+                )
+                .Returns(new List<SupervisorDelegate>());
+        }
+
+        private void GivenPendingSupervisorDelegateIdsForEmailAre(IEnumerable<int> supervisorDelegateIds)
+        {
+            var supervisorDelegates = supervisorDelegateIds.Select(id => new SupervisorDelegate { ID = id });
+            A.CallTo(
+                    () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                        A<int>._,
+                        A<string>._
+                    )
+                )
+                .Returns(supervisorDelegates);
         }
     }
 }

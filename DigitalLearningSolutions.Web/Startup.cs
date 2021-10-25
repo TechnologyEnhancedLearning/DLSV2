@@ -123,7 +123,7 @@ namespace DigitalLearningSolutions.Web
                     {
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
-                        options.ModelBinderProviders.Insert(0, new ApplicationTypeModelBinderProvider());
+                        options.ModelBinderProviders.Insert(0, new DlsSubApplicationModelBinderProvider());
                     }
                 );
 
@@ -184,7 +184,10 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<ITrackerService, TrackerService>();
+            services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
@@ -215,6 +218,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
+            services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
@@ -243,6 +247,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<VerifyAdminUserCanAccessCourse>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

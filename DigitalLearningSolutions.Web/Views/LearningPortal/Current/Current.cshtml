@@ -20,7 +20,10 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Current Activities</h1>
-    <h2 class="page-subheading">@Model.BannerText</h2>
+    @if (Model.BannerText != null)
+    {
+      <h2 class="page-subheading">@Model.BannerText</h2>
+      }
 
     @if (Model.NoDataFound) {
       <p class="nhsuk-u-margin-top-4" role="alert">

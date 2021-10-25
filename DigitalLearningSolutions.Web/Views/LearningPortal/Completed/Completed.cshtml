@@ -19,25 +19,33 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Completed Activities</h1>
-    <h2 class="page-subheading">@Model.BannerText</h2>
+    @if (Model.BannerText != null)
+    {
+      <h2 class="page-subheading">@Model.BannerText</h2>
+    }
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
     <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />
-    @if (Model.NoDataFound) {
+    @if (Model.NoDataFound)
+    {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No data to display</b>
       </p>
-    } else {
+    }
+    else
+    {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var completedCourse in Model.CompletedCourses) {
+        @foreach (var completedCourse in Model.CompletedCourses)
+        {
           <partial name="Completed/CompletedCourseCard/_CompletedCourseCard" model="completedCourse" />
         }
       </div>
     }
-    @if (Model.TotalPages > 1) {
+    @if (Model.TotalPages > 1)
+    {
       <partial name="SearchablePage/_Pagination" model="Model" />
     }
 

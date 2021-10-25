@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -295,7 +296,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)
         {
-            return user != null && user.EmailAddress != emailAddress;
+            return user != null && !emailAddress.Equals(user.EmailAddress, StringComparison.InvariantCultureIgnoreCase);
         }
 
         private bool NewUserRolesExceedAvailableSpots(

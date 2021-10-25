@@ -107,6 +107,7 @@
             {
                 DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
+                CompetencyId = competency.CompetencyID,
                 CompetencyName = (string)competency.Name,
                 AssessmentQuestions = assessmentQuestions,
                 QuestionSelectList = questionSelectList
@@ -549,6 +550,11 @@
             {
                 return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId});
             }
+        }
+        public IActionResult CompetencyAssessmentQuestionReorder(string? direction, int competencyId, int assessmentQuestionId, int frameworkCompetencyId, int frameworkId)
+        {
+            frameworkService.MoveCompetencyAssessmentQuestion(competencyId, assessmentQuestionId, true, direction);
+            return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
         }
     }
 }

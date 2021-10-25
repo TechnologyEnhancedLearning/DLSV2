@@ -2,14 +2,16 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
@@ -17,6 +19,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement;
 
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
         private const string CookieName = "RegistrationData";
@@ -26,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IFeatureManager featureManager;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserService userService;
 
         public RegisterController(
@@ -35,7 +40,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             ICryptoService cryptoService,
             IUserService userService,
             CentreCustomPromptHelper centreCustomPromptHelper,
-            IFeatureManager featureManager
+            IFeatureManager featureManager,
+            ISupervisorDelegateService supervisorDelegateService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,9 +51,10 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userService = userService;
             this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.featureManager = featureManager;
+            this.supervisorDelegateService = supervisorDelegateService;
         }
 
-        public IActionResult Index(int? centreId = null)
+        public IActionResult Index(int? centreId = null, string? inviteId = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -59,7 +66,21 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 return NotFound();
             }
 
-            SetDelegateRegistrationData(centreId);
+            var supervisorDelegateRecord = centreId.HasValue && !string.IsNullOrEmpty(inviteId) &&
+                                           Guid.TryParse(inviteId, out var inviteHash)
+                ? supervisorDelegateService.GetSupervisorDelegateRecordByInviteHash(inviteHash)
+                : null;
+
+            if (supervisorDelegateRecord?.CentreId != centreId)
+            {
+                supervisorDelegateRecord = null;
+            }
+
+            SetDelegateRegistrationData(
+                centreId,
+                supervisorDelegateRecord?.ID,
+                supervisorDelegateRecord?.DelegateEmail
+            );
 
             return RedirectToAction("PersonalInformation");
         }
@@ -216,28 +237,39 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem);
 
             var userIp = Request.GetUserIpAddressFromRequest();
-            var (candidateNumber, approved) =
-                registrationService.RegisterDelegate(
-                    RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
-                    userIp,
-                    refactoredTrackingSystemEnabled
-                );
 
-            if (candidateNumber == "-1")
+            try
             {
+                var (candidateNumber, approved) =
+                    registrationService.RegisterDelegate(
+                        RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
+                        userIp,
+                        refactoredTrackingSystemEnabled,
+                        data.SupervisorDelegateId
+                    );
+
+                TempData.Clear();
+                TempData.Add("candidateNumber", candidateNumber);
+                TempData.Add("approved", approved);
+                TempData.Add("centreId", centreId);
+                return RedirectToAction("Confirmation");
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
                 return new StatusCodeResult(500);
             }
-
-            if (candidateNumber == "-4")
-            {
-                return RedirectToAction("Index");
-            }
-
-            TempData.Clear();
-            TempData.Add("candidateNumber", candidateNumber);
-            TempData.Add("approved", approved);
-            TempData.Add("centreId", centreId);
-            return RedirectToAction("Confirmation");
         }
 
         [HttpGet]
@@ -246,6 +278,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var candidateNumber = (string?)TempData.Peek("candidateNumber");
             var approvedNullable = (bool?)TempData.Peek("approved");
             var centreIdNullable = (int?)TempData.Peek("centreId");
+            TempData.Clear();
+
             if (candidateNumber == null || approvedNullable == null || centreIdNullable == null)
             {
                 return RedirectToAction("Index");
@@ -259,9 +293,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             return View(viewModel);
         }
 
-        private void SetDelegateRegistrationData(int? centreId)
+        private void SetDelegateRegistrationData(int? centreId, int? supervisorDelegateId, string? email)
         {
-            var delegateRegistrationData = new DelegateRegistrationData(centreId);
+            var delegateRegistrationData = new DelegateRegistrationData(centreId, supervisorDelegateId, email);
             var id = delegateRegistrationData.Id;
 
             Response.Cookies.Append(

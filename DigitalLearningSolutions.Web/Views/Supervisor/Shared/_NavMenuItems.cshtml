@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "Supervisor", action: "Index")">
   <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="Index">
@@ -12,14 +13,16 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("SelfAssessments")">
-  <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="SelfAssessments">
-    Profile Assessments
-    <partial name="_NhsChevronRight" />
-  </a>
-</li>
+<feature name="@(FeatureFlags.SupervisorProfileAssessmentInterface)">
+  <li class="nhsuk-header__navigation-item @Html.IsSelected("SelfAssessments")">
+    <a class="nhsuk-header__navigation-link" asp-controller="Supervisor" asp-action="SelfAssessments">
+      Profile Assessments
+      <partial name="_NhsChevronRight" />
+    </a>
+  </li>
+</feature>
 <li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
-  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-application="@ApplicationType.Supervisor.UrlSegment">
+  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Supervisor.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />
   </a>

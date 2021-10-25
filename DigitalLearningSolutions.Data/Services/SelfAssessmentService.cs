@@ -28,12 +28,14 @@
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetResultReviewSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
+        IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         SelfAssessmentSupervisor GetSelfAssessmentSupervisorByCandidateAssessmentSupervisorId(int candidateAssessmentSupervisorId);
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
+        IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
         //UPDATE
         void UpdateLastAccessed(int selfAssessmentId, int candidateId);
         void SetSubmittedDateNow(int selfAssessmentId, int candidateId);
@@ -42,10 +44,12 @@
         void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
         void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId);
+        void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId);
         //INSERT
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result, string? supportingComments);
         void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId);
+        void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -120,7 +124,7 @@
                           WHERE ca.ID = @candidateAssessmentId
                          )";
         private const string CompetencyFields = @"C.ID       AS Id,
-                                                  ROW_NUMBER() OVER (PARTITION BY CAQ.Ordering ORDER BY SAS.Ordering) as RowNo,
+                                                  DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
                                                   CG.Name       AS CompetencyGroup,
@@ -192,14 +196,15 @@
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
-SA.UseFilteredApi,
+                             SA.UseFilteredApi,
+                             COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
+                      CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
                       FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
@@ -208,7 +213,7 @@ CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId }
             );
         }
@@ -218,24 +223,44 @@ CA.LaunchCount, 1 AS IsSelfAssessment, CA.SubmittedDate
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
-SA.UseFilteredApi,
+                             SA.UseFilteredApi,
+                             COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
                              CA.LastAccessed,
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
-                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles
-                      FROM CandidateAssessments CA
+                             CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
+                                                  CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles, COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS VerificationRoleName,
+                COALESCE
+                 ((SELECT TOP (1) RoleName
+                  FROM    SelfAssessmentSupervisorRoles
+                  WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                                   ((SELECT COUNT(*) AS Expr1
+                                    FROM    SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
+                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)), 'Supervisor') AS SignOffRoleName,
+                                    SA.SignOffRequestorStatement
+                             FROM CandidateAssessments CA
                                JOIN SelfAssessments SA
                                     ON CA.SelfAssessmentID = SA.ID
                                INNER JOIN SelfAssessmentStructure AS SAS
                                           ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
-                      WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
+  INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
+                            WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
+                            GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -245,14 +270,14 @@ CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpander
             Competency? competencyResult = null;
             return connection.Query<Competency, Models.SelfAssessments.AssessmentQuestion, Competency>(
                 $@"WITH CompetencyRowNumber AS
-                     (SELECT ROW_NUMBER() OVER (ORDER BY Ordering) as RowNo,
+                     (SELECT DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                              sas.CompetencyID
                       FROM SelfAssessmentStructure as sas
 INNER JOIN CandidateAssessments AS CA
                             ON CA.SelfAssessmentID = @selfAssessmentId
                                    AND CA.CandidateID = @candidateId
 LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
-                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.ID = CAOC.CompetencyID AND sas.ID = CAOC.CompetencyGroupID
+                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND sas.CompetencyGroupID = CAOC.CompetencyGroupID
                       WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                      ),
                      {LatestAssessmentResults}
@@ -261,7 +286,7 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                         INNER JOIN CompetencyRowNumber AS CRN
                             ON CRN.CompetencyID = C.ID
                     WHERE (CAOC.IncludedInSelfAssessment = 1 OR SAS.Optional = 0) AND CRN.RowNo = @n
-                    ORDER BY CAQ.Ordering",
+                    ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -754,17 +779,21 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
             }
         }
 
-        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId)
+        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId)
         {
             return connection.Query<Administrator>(
                 @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
                     FROM   AdminUsers
-                    WHERE (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
+                    WHERE ((Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
                        (Supervisor = 1) AND (Active = 1) AND (CategoryID =
                    (SELECT CategoryID
                      FROM    SelfAssessments
-                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)",
-                new { centreId, selfAssessmentId }
+                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)) AND AdminID NOT IN (SELECT sd.SupervisorAdminID
+FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+             SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (ca.CandidateID = @candidateId) AND (sd.SupervisorAdminID = AdminUsers.AdminID)) ",
+                new { centreId, selfAssessmentId, candidateId }
                 );
         }
 
@@ -775,6 +804,62 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
                     FROM   AdminUsers
                     WHERE (AdminID = @supervisorAdminId)", new { supervisorAdminId }
                 ).Single();
+        }
+
+        public IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<SupervisorSignOff>(
+                @"SELECT casv.ID, casv.CandidateAssessmentSupervisorID, au.Forename + ' ' + au.Surname AS SupervisorName, au.Email AS SupervisorEmail, casv.Requested, casv.EmailSent, casv.Verified, casv.Comments, casv.SignedOff
+                    FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+                         CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+                         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                        SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+                         AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+                         SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                    WHERE (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) OR
+                         (ca.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
+                    ORDER BY casv.Requested DESC", new { selfAssessmentId, candidateId });
+        }
+
+        public IEnumerable<SelfAssessmentSupervisor> GetSignOffSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
+        {
+            return connection.Query<SelfAssessmentSupervisor>(
+                  @"SELECT cas.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, COALESCE(au.Forename + ' ' + au.Surname, sd.SupervisorEmail) AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+FROM   SupervisorDelegates AS sd INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID LEFT OUTER JOIN
+             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+             SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1) AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))", new { selfAssessmentId, candidateId }
+                  );
+        }
+
+        public void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO CandidateAssessmentSupervisorVerifications
+                          ([CandidateAssessmentSupervisorID],[EmailSent])
+                    VALUES(@candidateAssessmentSupervisorId, GETUTCDATE())",
+                new { candidateAssessmentSupervisorId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting CandidateAssessmentSupervisorVerification as db update failed. " +
+                    $"candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                );
+            }
+        }
+
+        public void UpdateCandidateAssessmentSupervisorVerificationEmailSent(int candidateAssessmentSupervisorVerificationId)
+        {
+            connection.Execute(
+                @"UPDATE CandidateAssessmentSupervisorVerifications
+                    SET EmailSent = GETUTCDATE()
+                    WHERE ID = @candidateAssessmentSupervisorVerificationId",
+                new { candidateAssessmentSupervisorVerificationId }
+            );
         }
     }
 }
