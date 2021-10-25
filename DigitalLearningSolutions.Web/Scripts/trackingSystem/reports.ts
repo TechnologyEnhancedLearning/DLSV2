@@ -10,7 +10,7 @@ const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
 
 interface IActivityDataRowModel {
-	period: string;
+  period: string;
 	completions: number;
 	evaluations: number;
 	registrations: number;
@@ -26,7 +26,7 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
 	return { labels, series };
 }
 
-function processRequest(request: XMLHttpRequest) {
+function generateChart(request: XMLHttpRequest) {
 	let { response } = request;
 	// IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
 	// so we need to manually parse the JSON string if not already parsed
@@ -106,11 +106,11 @@ function viewLessRows(): void {
 	});
 }
 
-function DoRequest() {
+function makeChartistRequest() {
 	const request = new XMLHttpRequest();
 
 	request.onload = () => {
-		processRequest(request);
+		generateChart(request);
 	};
 
 	request.open('GET', path, true);
@@ -134,7 +134,7 @@ function pageLoad() {
 	viewMoreLink.style.display = 'block';
 	viewLessRows();
 
-	DoRequest();
+  makeChartistRequest();
 }
 
 pageLoad();
