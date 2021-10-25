@@ -17,7 +17,7 @@
     @if (Model.HasError)
     {
       <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
-        @foreach (var errorMessage in Model.ErrorMessages)
+        @foreach (var errorMessage in Model.ErrorMessages!)
         {
           <span class="error-message--margin-bottom-1 nhsuk-error-message">
             <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
@@ -26,7 +26,6 @@
       </div>
     }
     <div class="nhsuk-checkboxes">
-
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input"
                type="checkbox"
@@ -45,7 +44,6 @@
           </div>
         }
       </div>
-
     </div>
   </fieldset>
 

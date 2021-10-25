@@ -1,17 +1,16 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @using Microsoft.Extensions.Configuration
 
 @{
   ViewData["Title"] = "User deactivated";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
+  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem" />
+  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">

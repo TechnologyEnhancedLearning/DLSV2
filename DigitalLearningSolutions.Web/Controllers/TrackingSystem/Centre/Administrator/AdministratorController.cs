@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -106,7 +105,7 @@
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
-        public IActionResult EditAdminRoles(AdminRolesFormData formData, int adminId)
+        public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId);
@@ -118,8 +117,8 @@
 
             userService.UpdateAdminUserPermissions(
                 adminId,
-                formData.GetAdminRoles(),
-                formData.LearningCategory
+                model.GetAdminRoles(),
+                model.LearningCategory
             );
 
             return RedirectToAction("Index");
@@ -165,16 +164,6 @@
             if (adminUser?.CentreId != User.GetCentreId())
             {
                 return NotFound();
-            }
-
-            if (!model.Confirm)
-            {
-                ModelState.AddModelError(
-                    nameof(DeactivateAdminViewModel.Confirm),
-                    "You must confirm before deactivating this account"
-                );
-
-                return View(model);
             }
 
             userDataService.DeactivateAdmin(adminId);

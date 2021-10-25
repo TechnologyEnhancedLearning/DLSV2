@@ -5,14 +5,14 @@
 @model DeactivateAdminViewModel
 
 @{
-  ViewData["Title"] = !ViewData.ModelState.IsValid ? "Error: Deactivate Admin Account" : "Deactivate Admin Account";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+    ViewData["Title"] = !ViewData.ModelState.IsValid ? "Error: Deactivate Admin Account" : "Deactivate Admin Account";
+    ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
+    ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
+    ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
 }
 
 @section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem" />
+  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
