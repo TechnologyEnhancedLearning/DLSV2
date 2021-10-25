@@ -452,9 +452,11 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void Edit_Course_Options_updates_course_options_successfully()
+        public void UpdateCourseOptions_updates_course_options_successfully()
         {
             using var transaction = new TransactionScope();
+
+            //Given
             const int customisationId = 100;
             const int centreId = 101;
             const int categoryId = 0;
@@ -493,9 +495,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void Edit_Course_Options_get_course_options_for_admin_categoryId()
+        public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
         {
-            const int customisationId = 100;
+            //Given
+            const int customisationId = 1379;
             const int centreId = 101;
             const int categoryId = 0;
 
@@ -509,11 +512,49 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             using (new AssertionScope())
             {
-                updatedCourseOptions?.Active.Should().BeFalse();
+                updatedCourseOptions?.Active.Should().BeTrue();
                 updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
                 updatedCourseOptions?.SelfRegister.Should().BeTrue();
-                updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+                updatedCourseOptions?.HideInLearnerPortal.Should().BeTrue();
             }
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId()
+        {
+            //Given
+            const int customisationId = 1379;
+            const int centreId = 5;
+            const int categoryId = 0;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId()
+        {
+            //Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            const int categoryId = 10;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
         }
     }
 }

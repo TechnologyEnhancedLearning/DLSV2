@@ -107,13 +107,6 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            if (!courseService.VerifyAdminUserCanAccessCourse(
-                customisationId,
-                centreId, categoryId.GetValueOrDefault()))
-            {
-                return NotFound();
-            }
-
             var courseOptions = courseService.GetCourseOptionsForAdminCategoryId(
                 customisationId,
                 centreId,
@@ -131,17 +124,6 @@
             EditCourseOptionsViewModel editCourseOptionsViewModel
         )
         {
-            var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-
-            if (!courseService.VerifyAdminUserCanAccessCourse(
-                customisationId,
-                centreId,
-                categoryId.GetValueOrDefault()))
-            {
-                return NotFound();
-            }
-
             var courseOptions = new CourseOptions
             {
                 Active = editCourseOptionsViewModel.Active,
