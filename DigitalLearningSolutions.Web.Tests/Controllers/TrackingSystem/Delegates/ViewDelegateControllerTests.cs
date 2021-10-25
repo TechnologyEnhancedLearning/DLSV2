@@ -59,8 +59,11 @@
         }
 
         [Test]
-        public void Deactivating_delegate_on_wrong_centre_returns_not_found_result()
+        public void DeactivateDelegateUser_on_wrong_centre_returns_not_found_result()
         {
+            //Given
+            A.CallTo(() => userDataService.DeactivateDelegateUser(2)).DoesNothing();
+
             // when
             var result = viewDelegateController.DeactivateDelegate(2);
 
@@ -69,11 +72,13 @@
         }
 
         [Test]
-        public void Reactivating_delegate_returns_redirect()
+        public void Reactivating_delegate_redirects_to_index_page()
         {
             // Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(1))
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1, Active = false });
+
+            A.CallTo(() => userDataService.ActivateDelegateUser(1)).DoesNothing();
 
             // When
             var result = viewDelegateController.ActivateDelegate(1);
@@ -83,8 +88,11 @@
         }
 
         [Test]
-        public void Activate_nonexistent_delegate_returns_not_found_result()
+        public void ReactivateDelegate_nonexistent_delegate_returns_not_found_result()
         {
+            //Given
+            A.CallTo(() => userDataService.ActivateDelegateUser(10)).DoesNothing();
+
             // When
             var result = viewDelegateController.ActivateDelegate(10);
 
@@ -93,8 +101,11 @@
         }
 
         [Test]
-        public void Activate_delegate_on_wrong_centre_returns_not_found_result()
+        public void ReactivateDelegat_delegate_on_wrong_centre_returns_not_found_result()
         {
+            //Given
+            A.CallTo(() => userDataService.ActivateDelegateUser(2)).DoesNothing();
+
             // When
             var result = viewDelegateController.ActivateDelegate(2);
 
