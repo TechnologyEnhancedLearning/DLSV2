@@ -159,8 +159,12 @@
         [HttpPost]
         public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
         {
-            var adminUser = userDataService.GetAdminUserById(adminId);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
+            var adminUser = userDataService.GetAdminUserById(adminId);
             if (adminUser?.CentreId != User.GetCentreId())
             {
                 return NotFound();
