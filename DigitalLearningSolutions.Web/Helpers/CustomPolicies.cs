@@ -10,6 +10,7 @@
         public const string UserCentreManager = "UserCentreManager";
         public const string UserSupervisor = "UserSupervisor";
         public const string UserCentreAdminOrFrameworksAdmin = "UserCentreAdminOrFrameworksAdmin";
+        public const string UserSuperAdmin = "UserSuperAdmin";
 
         public static AuthorizationPolicyBuilder ConfigurePolicyUserOnly(AuthorizationPolicyBuilder policy)
         {
@@ -57,14 +58,23 @@
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
                            && (context.User.HasCentreAdminPermissions()
-                           || context.User.HasFrameworksAdminPermissions())
+                               || context.User.HasFrameworksAdminPermissions())
             );
         }
+
         public static AuthorizationPolicyBuilder ConfigurePolicyUserSupervisor(AuthorizationPolicyBuilder policy)
         {
             return policy.RequireAssertion(
                 context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null
                            && context.User.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true
+            );
+        }
+
+        public static AuthorizationPolicyBuilder ConfigurePolicyUserSuperAdmin(AuthorizationPolicyBuilder policy)
+        {
+            return policy.RequireAssertion(
+                context => context.User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId) != null &&
+                           context.User.HasSuperAdminPermissions()
             );
         }
     }
