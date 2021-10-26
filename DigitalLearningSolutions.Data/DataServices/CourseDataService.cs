@@ -514,8 +514,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         public void UpdateCourseDetails(
             int customisationId,
             string customisationName,
-            string password,
-            string notificationEmails,
+            string? password,
+            string? notificationEmails,
             bool isAssessed,
             int tutCompletionThreshold,
             int diagCompletionThreshold

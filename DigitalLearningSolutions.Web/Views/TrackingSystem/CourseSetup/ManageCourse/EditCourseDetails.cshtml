@@ -22,7 +22,7 @@
                     + (Model.PasswordProtected ? "" : " nhsuk-checkboxes__conditional--hidden")
                     + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
   var emailCss = "nhsuk-checkboxes__conditional"
-                 + (Model.PasswordProtected ? "" : " nhsuk-checkboxes__conditional--hidden")
+                 + (Model.ReceiveNotificationEmails ? "" : " nhsuk-checkboxes__conditional--hidden")
                  + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
   var otherCompletionCriteriaCss = "nhsuk-radios__conditional"
                                    + (!Model.IsAssessed ? "" : " nhsuk-radios__conditional--hidden")
@@ -53,16 +53,20 @@
       <input type="hidden" asp-for="PostLearningAssessment" />
       <input type="hidden" asp-for="DiagAssess" />
 
-      <h3 class="nhsuk-u-font-weight-normal">
+      <label class="nhsuk-label" for="CustomisationNameSection">
         Course name
-      </h3>
+      </label>
 
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-m nhsuk-u-margin-top-3">
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5" id="CustomisationNameSection">
+        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s nhsuk-u-font-weight-normal nhsuk-u-margin-top-2">
           @Model.CustomisationName -
         </div>
-        <div class="nhsuk-grid-column-one-half nhsuk-heading-l nhsuk-u-font-weight-normal">
+        <div class="nhsuk-grid-column-one-half">
+          <label hidden="hidden" for="CustomisationNameSuffix">
+            Add on to course name (optional)
+          </label>
           <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
+                         id="CustomisationNameSuffix"
                          label=""
                          populate-with-current-value="true"
                          type="text"
@@ -73,8 +77,8 @@
         </div>
       </div>
 
-      <div class="nhsuk-form-group">
-        <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+      <div class="nhsuk-form-group nhsuk-u-margin-bottom-5">
+        <fieldset class="nhsuk-fieldset">
           <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
 
             <div class="nhsuk-u-margin-bottom-3">
@@ -85,7 +89,7 @@
                        asp-for="PasswordProtected"
                        type="checkbox"
                        aria-controls="@passwordId"
-                       aria-expanded="@Model.PasswordProtected">
+                       aria-expanded="@(Model.PasswordProtected ? "true" : "false")">
                 <label class="nhsuk-label nhsuk-checkboxes__label" for="PasswordProtected">
                   Password protected
                 </label>
@@ -112,7 +116,7 @@
                      asp-for="ReceiveNotificationEmails"
                      type="checkbox"
                      aria-controls="@emailId"
-                     aria-expanded="@Model.ReceiveNotificationEmails">
+                     aria-expanded="@(Model.ReceiveNotificationEmails ? "true" : "false")">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="ReceiveNotificationEmails">
                 Receive course completion notification emails
               </label>
@@ -135,23 +139,23 @@
         </fieldset>
       </div>
 
-      <h3 class="nhsuk-u-font-weight-normal">
+      <h2 class="nhsuk-heading-s nhsuk-u-font-weight-normal">
         Completion criteria
-      </h3>
+      </h2>
 
       <div class="nhsuk-form-group">
-        <fieldset class="nhsuk-fieldset" aria-describedby="contact-hint">
+        <fieldset class="nhsuk-fieldset">
           <div class="nhsuk-radios nhsuk-radios--conditional">
 
             @if (Model.PostLearningAssessment) {
               <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
                 <input class="nhsuk-radios__input"
-                       id="PostLearningAssessment"
+                       id="PostLearningAssessmentRadio"
                        name="IsAssessed"
                        asp-for="IsAssessed"
                        type="radio"
                        value="true">
-                <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessment">
+                <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessmentRadio">
                   Post learning assessment
                 </label>
               </div>
@@ -164,7 +168,7 @@
                        type="radio"
                        value="false"
                        aria-controls="@completionCriteriaId"
-                       aria-expanded="@(!Model.IsAssessed)">
+                       aria-expanded="@(Model.IsAssessed ? "false" : "true")">
                 <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
                   Other completion criteria
                 </label>

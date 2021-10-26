@@ -30,6 +30,37 @@
             DiagCompletionThreshold = courseDetails.DiagCompletionThreshold.ToString();
         }
 
+        public EditCourseDetailsViewModel(
+            int centreId,
+            int applicationId,
+            string customisationName,
+            string? customisationNameSuffix,
+            bool passwordProtected,
+            string? password,
+            bool receiveNotificationEmails,
+            string? notificationEmails,
+            bool postLearningAssessment,
+            bool isAssessed,
+            bool diagAssess,
+            string? tutCompletionThreshold,
+            string? diagCompletionThreshold
+        )
+        {
+            CentreId = centreId;
+            ApplicationId = applicationId;
+            CustomisationName = customisationName;
+            CustomisationNameSuffix = customisationNameSuffix;
+            PasswordProtected = passwordProtected;
+            Password = password;
+            ReceiveNotificationEmails = receiveNotificationEmails;
+            NotificationEmails = notificationEmails;
+            PostLearningAssessment = postLearningAssessment;
+            IsAssessed = isAssessed;
+            DiagAssess = diagAssess;
+            TutCompletionThreshold = tutCompletionThreshold;
+            DiagCompletionThreshold = diagCompletionThreshold;
+        }
+
         public int CentreId { get; set; }
 
         public int ApplicationId { get; set; }

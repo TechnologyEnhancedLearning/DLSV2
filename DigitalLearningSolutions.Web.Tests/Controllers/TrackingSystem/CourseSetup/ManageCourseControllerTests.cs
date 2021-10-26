@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -113,6 +114,193 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
             Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void SaveCourseDetails_calls_correct_service_method_with_valid_inputs()
+        {
+            // Given
+            var model = new EditCourseDetailsViewModel(
+                101,
+                1,
+                "Name",
+                "v1",
+                false,
+                null,
+                false,
+                null,
+                true,
+                true,
+                true,
+                null,
+                null
+            );
+
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            var model = new EditCourseDetailsViewModel(
+                101,
+                1,
+                "Name",
+                "v1",
+                false,
+                "Password1234",
+                false,
+                "invalid email",
+                true,
+                true,
+                true,
+                "75",
+                "90"
+            );
+            controller.ModelState.AddModelError("Email", "Email address must not contain any whitespace characters");
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    "invalid email",
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_correctly_adds_model_error_if_customisation_name_is_not_unique()
+        {
+            // Given
+            var model = new EditCourseDetailsViewModel(
+                101,
+                1,
+                "Non-unique course name",
+                "test",
+                false,
+                null,
+                false,
+                "hello@test.com",
+                true,
+                true,
+                true,
+                "75",
+                "90"
+            );
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    "Non-unique course name - test",
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState["CustomisationNameSuffix"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("Course name must be unique");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_clears_values_of_conditional_inputs_if_corresponding_checkboxes_or_radios_are_unchecked()
+        {
+            // Given
+            var model = new EditCourseDetailsViewModel(
+                101,
+                1,
+                "Name",
+                "v1",
+                false,
+                "Password1234",
+                false,
+                "hello@test.com",
+                true,
+                true,
+                true,
+                "75",
+                "90"
+            );
+
+            // Given
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    null!,
+                    null!,
+                    A<bool>._,
+                    0,
+                    0
+                )
+            ).MustHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
         }
 
         [Test]

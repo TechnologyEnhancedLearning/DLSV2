@@ -131,7 +131,7 @@
                 model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
             var customisationName = model.CustomisationName + customisationNameSuffix;
 
-            HandleEditCourseFormValidations(customisationName, model);
+            HandleEditCourseDetailsFormValidations(customisationName, model);
 
             if (!ModelState.IsValid)
             {
@@ -192,7 +192,7 @@
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
 
-        private void HandleEditCourseFormValidations(string customisationName, EditCourseDetailsViewModel model)
+        private void HandleEditCourseDetailsFormValidations(string customisationName, EditCourseDetailsViewModel model)
         {
             if (!string.IsNullOrEmpty(model.CustomisationNameSuffix))
             {

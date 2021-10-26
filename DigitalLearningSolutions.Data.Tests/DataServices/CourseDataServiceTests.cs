@@ -497,6 +497,36 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 2, 0);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_with_categoryId()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
         {
             // When
@@ -516,6 +546,36 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Then
             centreId.Should().BeNull();
             courseCategoryId.Should().BeNull();
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_returns_true_if_course_name_exists_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre("This course name does not exist", 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_with_applicationId()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 2);
+
+            // Then
+            result.Should().BeFalse();
         }
 
         [Test]
@@ -539,6 +599,37 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                     courseDetails.ValidityMonths.Should().Be(12);
                     courseDetails.Mandatory.Should().Be(true);
                     courseDetails.AutoRefresh.Should().Be(true);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateCourseDetails_correctly_updates_course_details()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0);
+                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                    1,
+                    2,
+                    0
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CustomisationName.Should().Be("Name");
+                    courseDetails.Password.Should().Be("Password");
+                    courseDetails.NotificationEmails.Should().Be("hello@test.com");
+                    courseDetails.IsAssessed.Should().Be(true);
+                    courseDetails.TutCompletionThreshold.Should().Be(0);
+                    courseDetails.DiagCompletionThreshold.Should().Be(0);
                 }
             }
             finally

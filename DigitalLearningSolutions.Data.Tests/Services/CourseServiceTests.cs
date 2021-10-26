@@ -285,6 +285,41 @@
         }
 
         [Test]
+        public void DoesCourseNameExistAtCentre_calls_data_service()
+        {
+            // When
+            courseService.DoesCourseNameExistAtCentre("Name", 101, 1);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre("Name", 101, 1))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCourseDetails_calls_data_service()
+        {
+            // Given
+            A.CallTo(
+                () => courseDataService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0);
+
+            // Then
+            A.CallTo(() => courseDataService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0))
+                .MustHaveHappened();
+        }
+
+        [Test]
         public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
         {
             // Given

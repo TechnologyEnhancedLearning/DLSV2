@@ -29,9 +29,9 @@
             }
         }
 
-        internal static void ClearErrorsOnField(
+        public static void ClearErrorsOnField(
             this ModelStateDictionary modelStateDictionary,
-            string? fieldName
+            string fieldName
         )
         {
             modelStateDictionary[fieldName].Errors.Clear();
