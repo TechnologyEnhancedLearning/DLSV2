@@ -53,21 +53,20 @@
       <input type="hidden" asp-for="PostLearningAssessment" />
       <input type="hidden" asp-for="DiagAssess" />
 
-      <label class="nhsuk-label" for="CustomisationNameSection">
-        Course name
-      </label>
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
 
-      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5" id="CustomisationNameSection">
-        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s nhsuk-u-font-weight-normal nhsuk-u-margin-top-2">
-          @Model.CustomisationName -
-        </div>
-        <div class="nhsuk-grid-column-one-half">
-          <label hidden="hidden" for="CustomisationNameSuffix">
-            Add on to course name (optional)
+        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s">
+          <label class="nhsuk-heading-s nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+            Course name
           </label>
+          <div class="nhsuk-u-margin-top-2">
+            @Model.CustomisationName -
+          </div>
+        </div>
+        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-2">
           <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
                          id="CustomisationNameSuffix"
-                         label=""
+                         label="Add on to course name (optional)"
                          populate-with-current-value="true"
                          type="text"
                          spell-check="true"
@@ -104,7 +103,7 @@
                                  spell-check="false"
                                  autocomplete=""
                                  hint-text=""
-                                 css-class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                                 css-class="nhsuk-input nhsuk-u-width-one-half" />
                 </div>
               </div>
             </div>
@@ -131,7 +130,7 @@
                                spell-check="false"
                                autocomplete=""
                                hint-text=""
-                               css-class="nhsuk-input nhsuk-u-width-one-half nhsuk-u-font-weight-bold" />
+                               css-class="nhsuk-input nhsuk-u-width-one-half" />
               </div>
             </div>
 
