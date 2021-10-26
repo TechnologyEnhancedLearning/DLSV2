@@ -279,17 +279,16 @@
         {
             // Given
             var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = false };
-            var removedDate = DateTime.UtcNow;
 
             const int groupId = 44;
             const int delegateId = 3274;
-
+            
             A.CallTo(() => groupsDataService.GetGroupName(groupId, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(groupId))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, model.RemoveProgress)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, A<DateTime>._, model.RemoveProgress)
             ).DoesNothing();
 
             // When
@@ -297,8 +296,8 @@
 
             // Then
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, model.RemoveProgress)
-            ).MustNotHaveHappened();
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, A<DateTime>._, model.RemoveProgress)
+            ).MustHaveHappened();
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }

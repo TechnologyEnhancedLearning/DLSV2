@@ -17,7 +17,7 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate, bool removeProgress);
+        void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate, bool removeStartedEnrolments);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
@@ -142,7 +142,7 @@
             ).SingleOrDefault();
         }
 
-        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate, bool removeProgress)
+        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate, bool removeStartedEnrolments)
         {
             const string numberOfGroupsWhereDelegateIsEnrolledOnThisCourse =
                 @"SELECT COUNT(DISTINCT(gd.GroupId))
@@ -165,9 +165,9 @@
                                 AND GC.GroupID = @groupId
                                 AND p.CandidateID = @delegateId
                                 AND P.RemovedDate IS NULL
-                                AND (p.LoginCount = 0 OR @removeProgress = 1))
+                                AND (p.LoginCount = 0 OR @removeStartedEnrolments = 1))
                         AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
-                new { groupId, delegateId, removedDate, removeProgress }
+                new { groupId, delegateId, removedDate, removeStartedEnrolments }
             );
         }
 
