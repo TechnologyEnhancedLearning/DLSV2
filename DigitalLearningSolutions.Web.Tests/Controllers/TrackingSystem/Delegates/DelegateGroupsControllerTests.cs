@@ -279,19 +279,27 @@
         {
             // Given
             var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = false };
-            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsDataService.GetGroupDelegates(1))
-                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
-            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
+            var removedDate = DateTime.UtcNow;
+
+            const int groupId = 44;
+            const int delegateId = 3274;
+
+            A.CallTo(() => groupsDataService.GetGroupName(groupId, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(groupId))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).DoesNothing();
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, model.RemoveProgress)
+            ).DoesNothing();
 
             // When
-            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+            var result = delegateGroupsController.GroupDelegatesRemove(model, groupId, delegateId);
 
             // Then
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, model.RemoveProgress)
             ).MustNotHaveHappened();
-            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }
 
