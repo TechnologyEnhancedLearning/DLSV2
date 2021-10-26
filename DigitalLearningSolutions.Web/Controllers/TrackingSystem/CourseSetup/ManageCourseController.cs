@@ -131,7 +131,10 @@
                 model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
             var customisationName = model.CustomisationName + customisationNameSuffix;
 
-            HandleEditCourseDetailsFormValidations(customisationName, model);
+            ValidateCustomisationName(customisationName, model);
+            ValidatePassword(model);
+            ValidateEmail(model);
+            ValidateCompletionCriteria(model);
 
             if (!ModelState.IsValid)
             {
@@ -192,47 +195,77 @@
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
 
-        private void HandleEditCourseDetailsFormValidations(string customisationName, EditCourseDetailsViewModel model)
+        private void ValidateCustomisationName(string customisationName, EditCourseDetailsViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.CustomisationNameSuffix))
+            if (string.IsNullOrEmpty(model.CustomisationNameSuffix))
             {
-                if (customisationName.Length > 250)
-                {
-                    ModelState.AddModelError(
-                        nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                        "Course name must be 250 characters or fewer"
-                    );
-                }
-                else if (courseService.DoesCourseNameExistAtCentre(
-                    customisationName,
-                    model.CentreId,
-                    model.ApplicationId
-                ))
-                {
-                    ModelState.AddModelError(
-                        nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                        "Course name must be unique"
-                    );
-                }
+                return;
             }
 
-            if (!model.PasswordProtected)
+            if (customisationName.Length > 250)
             {
-                ModelState.ClearErrorsOnField(nameof(model.Password));
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                    "Course name must be 250 characters or fewer"
+                );
+            }
+            else if (courseService.DoesCourseNameExistAtCentre(
+                customisationName,
+                model.CentreId,
+                model.ApplicationId
+            ))
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                    "Course name must be unique"
+                );
+            }
+        }
+
+        private void ValidatePassword(EditCourseDetailsViewModel model)
+        {
+            if (model.PasswordProtected)
+            {
+                return;
+            }
+
+            if (ModelState.HasError("Password"))
+            {
+                ModelState.ClearErrorsOnField("Password");
                 model.Password = null;
             }
+        }
 
-            if (!model.ReceiveNotificationEmails)
+        private void ValidateEmail(EditCourseDetailsViewModel model)
+        {
+            if (model.ReceiveNotificationEmails)
             {
-                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
-                model.NotificationEmails = null;
+                return;
             }
 
-            if (model.IsAssessed)
+            if (ModelState.HasError("NotificationEmails"))
             {
-                ModelState.ClearErrorsOnField(nameof(model.TutCompletionThreshold));
+                ModelState.ClearErrorsOnField("NotificationEmails");
+                model.NotificationEmails = null;
+            }
+        }
+
+        private void ValidateCompletionCriteria(EditCourseDetailsViewModel model)
+        {
+            if (!model.IsAssessed)
+            {
+                return;
+            }
+
+            if (ModelState.HasError("TutCompletionThreshold"))
+            {
+                ModelState.ClearErrorsOnField("TutCompletionThreshold");
                 model.TutCompletionThreshold = "0";
-                ModelState.ClearErrorsOnField(nameof(model.DiagCompletionThreshold));
+            }
+
+            if (ModelState.HasError("DiagCompletionThreshold"))
+            {
+                ModelState.ClearErrorsOnField("DiagCompletionThreshold");
                 model.DiagCompletionThreshold = "0";
             }
         }
