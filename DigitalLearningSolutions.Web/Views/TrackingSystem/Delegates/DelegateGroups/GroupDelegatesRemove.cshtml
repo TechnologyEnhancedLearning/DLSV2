@@ -19,7 +19,8 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ConfirmRemovalFromGroup) }" />
     }
 
@@ -28,7 +29,7 @@
 </div>
 
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-s nhsuk-u-font-weight-bold word-break">
+  <div class="nhsuk-grid-column-full nhsuk-lede-text">
     All enrolments on courses that have not yet been started and are associated with the delegate’s membership of this group will be removed.
   </div>
 </div>
@@ -47,7 +48,8 @@
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="GroupDelegatesRemove">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.ConfirmRemovalFromGroup))-error">
-          @if (confirmError) {
+          @if (confirmError)
+          {
             <span class="nhsuk-error-message" id="@(nameof(Model.ConfirmRemovalFromGroup))-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)].Errors[0].ErrorMessage
             </span>
@@ -63,7 +65,8 @@
         </fieldset>
       </div>
 
-      @if (Model.RemoveProgressEnabled) {
+      @if (Model.RemoveProgressEnabled)
+      {
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveProgress))-error">
             <div class="nhsuk-checkboxes">
@@ -73,9 +76,7 @@
                   Remove delegate from all the related enrolments where course has been started but is not yet complete
                 </label>
                 <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
-                  <div class="nhsuk-grid-column-three-quarters">
-                    Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
-                  </div>
+                  Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
                 </div>
               </div>
             </div>

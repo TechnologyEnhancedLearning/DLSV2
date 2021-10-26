@@ -124,7 +124,7 @@
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
             ).MustNotHaveHappened();
         }
 
@@ -170,7 +170,7 @@
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
             ).DoesNothing();
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();

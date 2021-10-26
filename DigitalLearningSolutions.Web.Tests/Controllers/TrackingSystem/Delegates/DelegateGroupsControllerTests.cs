@@ -289,7 +289,7 @@
 
             // Then
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
             ).MustNotHaveHappened();
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
@@ -304,14 +304,14 @@
             A.CallTo(() => groupsDataService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
-            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._, A<bool>._))
                 .DoesNothing();
 
             // When
             var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
 
             // Then
-            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._, A<bool>._))
                 .MustHaveHappened();
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");

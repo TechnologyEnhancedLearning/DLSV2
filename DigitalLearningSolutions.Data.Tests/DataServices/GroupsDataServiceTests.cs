@@ -150,9 +150,10 @@
                 // Given
                 var removedDate = DateTime.Now;
                 const int delegateId = 245969;
+                const bool removeProgress = true;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate, removeProgress);
                 var progressFields = await connection.GetProgressRemovedFields(285146);
 
                 // Then
@@ -174,11 +175,12 @@
                 // Given
                 var removedDate = DateTime.Now;
                 const int delegateId = 299228;
+                const bool removeProgress = false; 
                 AddDelegateToGroupWithSharedCourse();
                 AddProgressRecordForGroupWithSharedCourse();
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate, removeProgress);
                 var progressFields = await connection.GetProgressRemovedFields(285172);
 
                 // Then

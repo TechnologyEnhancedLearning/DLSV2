@@ -115,6 +115,7 @@
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeProgress = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -144,7 +145,8 @@
                 () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate
+                    testDate,
+                    removeProgress
                 )
             ).MustHaveHappened();
         }
@@ -155,6 +157,7 @@
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeProgress = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
@@ -190,7 +193,8 @@
                 () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate
+                    testDate,
+                    removeProgress
                 )
             ).MustHaveHappened();
         }

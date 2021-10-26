@@ -223,7 +223,8 @@
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow);
+            const bool removeProgress = false; 
+            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow, removeProgress);
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
