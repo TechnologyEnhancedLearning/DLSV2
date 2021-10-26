@@ -5,7 +5,9 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Authorization;
@@ -15,6 +17,7 @@
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("TrackingSystem/Delegates/{delegateId:int}/Edit")]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     public class EditDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
