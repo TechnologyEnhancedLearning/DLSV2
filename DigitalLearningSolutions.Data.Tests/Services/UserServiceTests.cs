@@ -757,6 +757,136 @@
             result.Should().BeFalse();
         }
 
+        [Test]
+        public void UpdateUserAccountDetailsByAdmin_updates_admin_user_if_found_by_email()
+        {
+            // Given
+            const string email = "test@email.com";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            var adminUser = UserTestHelper.GetDefaultAdminUser(emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(adminUser);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateAdminUser(
+                    editDelegateDetailsData.FirstName,
+                    editDelegateDetailsData.Surname,
+                    editDelegateDetailsData.Email,
+                    adminUser.ProfileImage,
+                    adminUser.Id
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserAccountDetailsByAdmin_does_not_update_admin_user_if_not_found_by_email()
+        {
+            // Given
+            const string email = "test@email.com";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateAdminUser(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<byte[]?>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserAccountDetailsByAdmin_updates_name_and_email_on_all_found_delegates()
+        {
+            // Given
+            const string email = "test@email.com";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(id: 3, emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateDelegateUsersByAdmin(
+                    editDelegateDetailsData.FirstName,
+                    editDelegateDetailsData.Surname,
+                    editDelegateDetailsData.Email,
+                    A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
+            )
+            ).MustHaveHappened();
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,
