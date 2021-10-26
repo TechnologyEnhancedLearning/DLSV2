@@ -125,7 +125,7 @@
             {
                 UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: true),
                 UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: true),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true)
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: true),
             };
             var expectedDelegateIds = new List<int> { 2, 3, 4 };
 
@@ -149,7 +149,7 @@
             {
                 UserTestHelper.GetDefaultDelegateUser(2, centreName: "Second Centre", centreActive: false),
                 UserTestHelper.GetDefaultDelegateUser(3, centreName: "Third Centre", centreActive: false),
-                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: false)
+                UserTestHelper.GetDefaultDelegateUser(4, centreName: "Fourth Centre", centreActive: false),
             };
 
             // When
@@ -169,7 +169,7 @@
             {
                 UserTestHelper.GetDefaultDelegateUser(centreId: 1, centreName: "First Centre"),
                 UserTestHelper.GetDefaultDelegateUser(centreId: 3, centreName: "Third Centre"),
-                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre")
+                UserTestHelper.GetDefaultDelegateUser(centreId: 4, centreName: "Fourth Centre"),
             };
             var inputAdminAccount = UserTestHelper.GetDefaultAdminUser(centreId: 2, centreName: "Second Centre");
             // Expect Admin first, alphabetical after
@@ -622,7 +622,7 @@
                 new DelegateUserCard
                     { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = "" },
                 new DelegateUserCard
-                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null }
+                    { AliasId = "skip", Approved = true, SelfReg = false, Password = null, EmailAddress = null },
             };
             A.CallTo(() => userDataService.GetDelegateUserCardsByCentreId(101)).Returns(testDelegates);
 
@@ -713,6 +713,48 @@
                 )
             );
             AssertAdminPermissionUpdateMustNotHaveHappened();
+        }
+
+        [Test]
+        public void NewAliasIsValid_returns_true_with_null_alias()
+        {
+            // When
+            var result = userService.NewAliasIsValid(null, 1, 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void NewAliasIsValid_returns_true_with_delegate_at_different_centre()
+        {
+            // Given
+            const string alias = "alias";
+            const int centreId = 1;
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: centreId, aliasId: alias);
+            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
+
+            // When
+            var result = userService.NewAliasIsValid(alias, 1, 2);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void NewAliasIsValid_returns_false_with_delegate_at_the_same_centre()
+        {
+            // Given
+            const string alias = "alias";
+            const int centreId = 1;
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(centreId: centreId, aliasId: alias);
+            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
+
+            // When
+            var result = userService.NewAliasIsValid(alias, 1, centreId);
+
+            // Then
+            result.Should().BeFalse();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(
