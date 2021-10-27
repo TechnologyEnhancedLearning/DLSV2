@@ -169,7 +169,7 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record()
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_remove_started_progress_record_when_specified()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try

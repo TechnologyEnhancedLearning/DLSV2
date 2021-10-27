@@ -65,17 +65,17 @@
         </fieldset>
       </div>
 
-      @if (Model.RemoveProgressEnabled)
+      @if (Model.RemoveStartedEnrolmentsEnabled)
       {
         <div class="nhsuk-form-group">
-          <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveProgress))-error">
+          <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-error">
             <div class="nhsuk-checkboxes">
               <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input" asp-for="RemoveProgress" aria-describedby="@(nameof(Model.RemoveProgress))-item-hint" />
-                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveProgress">
+                <input class="nhsuk-checkboxes__input" asp-for="RemoveStartedEnrolments" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-item-hint" />
+                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveStartedEnrolments">
                   Remove delegate from all the related enrolments where course has been started but is not yet complete
                 </label>
-                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
+                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveStartedEnrolments))-item-hint">
                   Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
                 </div>
               </div>

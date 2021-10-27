@@ -151,7 +151,7 @@
             using var transaction = new TransactionScope();
 
             var currentDate = clockService.UtcNow;
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, currentDate, model.RemoveProgress);
+            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, currentDate, model.RemoveStartedEnrolments);
 
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
             transaction.Complete();
