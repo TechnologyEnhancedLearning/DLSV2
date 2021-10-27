@@ -73,6 +73,20 @@
         }
 
         [Test]
+        public void Index_should_clear_TempData_and_go_to_index_page()
+        {
+            var expectedTempData = new AddRegistrationPromptData();
+            registrationPromptsController.TempData.Set(expectedTempData);
+
+            // When
+            var result = registrationPromptsController.Index();
+
+            // Then
+            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
         public void PostEditRegistrationPrompt_save_calls_correct_methods()
         {
             // Given

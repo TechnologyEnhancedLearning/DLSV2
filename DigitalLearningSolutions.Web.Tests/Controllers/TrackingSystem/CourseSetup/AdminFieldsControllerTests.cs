@@ -64,18 +64,20 @@
         }
 
         [Test]
-        public void AdminFields_returns_AdminFields_page_when_appropriate_course_found()
+        public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
             A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
+            controller.TempData.Set(samplePrompt1);
 
             // When
             var result = controller.Index(1);
 
             // Then
+            controller.TempData.Peek<CustomPrompt>().Should().BeNull();
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
         }
 
@@ -236,7 +238,7 @@
         }
 
         [Test]
-        public void AddAdminField_save_clears_temp_data_and_redirects_to_index()
+        public void AddAdminField_save_redirects_to_index()
         {
             // Given
             var model = new AddAdminFieldViewModel(1, "Test");
@@ -257,11 +259,7 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -286,11 +284,7 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
