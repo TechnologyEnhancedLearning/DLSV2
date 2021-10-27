@@ -20,12 +20,18 @@
     public class DelegateProgressController : Controller
     {
         private readonly ICourseService courseService;
+        private readonly IProgressService progressService;
         private readonly IUserService userService;
 
-        public DelegateProgressController(ICourseService courseService, IUserService userService)
+        public DelegateProgressController(
+            ICourseService courseService,
+            IUserService userService,
+            IProgressService progressService
+        )
         {
             this.courseService = courseService;
             this.userService = userService;
+            this.progressService = progressService;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
@@ -47,7 +53,12 @@
                 courseService.GetDelegateCourseProgress(progressId, centreId);
             var supervisors = userService.GetSupervisorsAtCentre(centreId);
 
-            var model = new EditSupervisorViewModel(progressId, accessedVia, supervisors, delegateCourseProgress!.DelegateCourseInfo);
+            var model = new EditSupervisorViewModel(
+                progressId,
+                accessedVia,
+                supervisors,
+                delegateCourseProgress!.DelegateCourseInfo
+            );
             return View(model);
         }
 
@@ -59,10 +70,20 @@
             DelegateProgressAccessRoute accessedVia
         )
         {
+            if (!ModelState.IsValid)
+            {
+                var supervisors = userService.GetSupervisorsAtCentre(User.GetCentreId());
+                var model = new EditSupervisorViewModel(formData, progressId, accessedVia, supervisors);
+                return View(model);
+            }
+
+            progressService.UpdateSupervisor(progressId, formData.SupervisorId!.Value);
+
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {
                 return RedirectToAction("Index", new { progressId, accessedVia });
             }
+
             return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
         }
     }
