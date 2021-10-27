@@ -260,7 +260,6 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-            
         }
 
         [Test]
@@ -286,7 +285,6 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-
         }
 
         [Test]
