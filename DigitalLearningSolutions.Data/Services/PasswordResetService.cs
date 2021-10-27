@@ -21,7 +21,7 @@
             TimeSpan expiryTime
         );
 
-        void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
+        Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
         void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
 
@@ -60,13 +60,15 @@
             this.clockService = clockService;
         }
 
-        public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
+        public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
             (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             user ??= delegateUsers.FirstOrDefault() ??
                      throw new UserAccountNotFoundException(
                          "No user account could be found with the specified email address"
                      );
+
+            await InvalidateResetPasswordForEmailAsync(emailAddress);
             string resetPasswordHash = GenerateResetPasswordHash(user);
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
