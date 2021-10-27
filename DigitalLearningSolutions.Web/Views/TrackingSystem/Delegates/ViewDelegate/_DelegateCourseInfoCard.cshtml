@@ -26,7 +26,12 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Supervisor" />
           <dd class="nhsuk-summary-list__actions">
-            <a href="#">Edit<span class="nhsuk-u-visually-hidden"> supervisor</span></a>
+            <a asp-controller="DelegateProgress"
+               asp-action="EditSupervisor"
+               asp-route-progressId="@Model.ProgressId"
+               asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+              Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
+            </a>
           </dd>
         </div>
 

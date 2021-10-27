@@ -47,6 +47,8 @@ namespace DigitalLearningSolutions.Data.Services
             AdminRoles adminRoles,
             int categoryId
         );
+
+        IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
     }
 
     public class UserService : IUserService
@@ -292,6 +294,11 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.ImportOnly,
                 categoryId
             );
+        }
+
+        public IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)
