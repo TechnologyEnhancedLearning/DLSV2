@@ -218,7 +218,7 @@
                                     <p>To reset your password please follow this link: <a href=""{resetPasswordUrl.Uri}"">{resetPasswordUrl.Uri}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>
                                     <p>Please don’t reply to this email as it has been automatically generated.</p>
-                                </body>"
+                                </body>",
             };
 
             return new Email(emailSubject, body, emailAddress);
@@ -257,7 +257,7 @@
                                 <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
-                            </body>"
+                            </body>",
             };
 
             return new Email(emailSubject, body, emailAddress);

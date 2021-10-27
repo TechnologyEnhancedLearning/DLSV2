@@ -7,7 +7,6 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -119,7 +118,8 @@
             var result = await controller.Index(new ForgotPasswordViewModel("  recipient@example.com\t"));
 
             // Then
-            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", A<string>._)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", A<string>._))
+                .MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
     }

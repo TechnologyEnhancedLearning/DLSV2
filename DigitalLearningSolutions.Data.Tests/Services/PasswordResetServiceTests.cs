@@ -59,7 +59,10 @@
 
             // Then
             Assert.ThrowsAsync<UserAccountNotFoundException>(
-                async () => await passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com")
+                async () => await passwordResetService.GenerateAndSendPasswordResetLink(
+                    "recipient@example.com",
+                    "example.com"
+                )
             );
         }
 
