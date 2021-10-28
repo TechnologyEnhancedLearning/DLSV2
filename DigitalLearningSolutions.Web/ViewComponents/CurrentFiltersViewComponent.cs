@@ -18,7 +18,7 @@
                 currentFilter => PopulateAppliedFilterViewModel(searchablePageViewModel, currentFilter)
             );
 
-            var model = new CurrentFiltersViewModel(appliedFilters, searchablePageViewModel.SearchString);
+            var model = new CurrentFiltersViewModel(appliedFilters, searchablePageViewModel.SearchString, searchablePageViewModel.RouteData);
 
             return View(model);
         }

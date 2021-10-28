@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -77,6 +78,16 @@
         public static readonly (string DisplayText, string PropertyName) CourseName = ("Course Name", nameof(CourseStatistics.CourseName));
         public static readonly (string DisplayText, string PropertyName) TotalDelegates = ("Total Delegates", nameof(CourseStatistics.DelegateCount));
         public static readonly (string DisplayText, string PropertyName) InProgress = ("In Progress", nameof(CourseStatistics.InProgressCount));
+    }
+
+    public static class CourseDelegatesSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(CourseDelegate.FullName));
+        public static readonly (string DisplayText, string PropertyName) LastUpdatedDate = ("Last updated date", nameof(CourseDelegate.LastUpdated));
+        public static readonly (string DisplayText, string PropertyName) EnrolledDate = ("Enrolled date", nameof(CourseDelegate.Enrolled));
+        public static readonly (string DisplayText, string PropertyName) CompleteByDate = ("Complete by date", nameof(CourseDelegate.CompleteByDate));
+        public static readonly (string DisplayText, string PropertyName) CompletedDate = ("Completed date", nameof(CourseDelegate.Completed));
+        public static readonly (string DisplayText, string PropertyName) PassRate = ("Pass rate", nameof(CourseDelegate.PassRate));
     }
 
     public static class DefaultSortByOptions

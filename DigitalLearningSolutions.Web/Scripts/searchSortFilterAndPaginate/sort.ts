@@ -29,14 +29,19 @@ export function getSortValue(
 ): string | number | Date {
   switch (sortBy) {
     case 'SearchableName':
+    case 'FullName':
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
     case 'DateRegistered':
       return parseDate(getElementText(searchableElement, 'registration-date'));
     case 'StartedDate':
       return parseDate(getElementText(searchableElement, 'started-date'));
+    case 'Enrolled':
+      return parseDate(getElementText(searchableElement, 'enrolled-date'));
     case 'LastAccessed':
       return parseDate(getElementText(searchableElement, 'accessed-date'));
+    case 'LastUpdated':
+      return parseDate(getElementText(searchableElement, 'last-updated-date'));
     case 'CompleteByDate':
       return parseDate(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
@@ -57,6 +62,8 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'courses-count'), 10);
     case 'InProgressCount':
       return parseInt(getElementText(searchableElement, 'in-progress-count'), 10);
+    case 'PassRate':
+      return parseInt(getElementText(searchableElement, 'pass-rate'), 10);
     case 'CourseName':
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
     default:

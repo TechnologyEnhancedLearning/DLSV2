@@ -14,9 +14,9 @@
 
         public readonly bool FilterEnabled;
 
-        public readonly string? SearchString;
-
         public readonly string? SearchLabel;
+
+        public readonly string? SearchString;
 
         protected BaseSearchablePageViewModel(
             string? searchString,
@@ -26,7 +26,8 @@
             string sortDirection = Ascending,
             string? filterBy = null,
             int itemsPerPage = DefaultItemsPerPage,
-            string? searchLabel = null
+            string? searchLabel = null,
+            Dictionary<string, string>? routeData = null
         ) : base(page, itemsPerPage)
         {
             SortBy = sortBy;
@@ -36,6 +37,7 @@
             FilterBy = filterBy;
             FilterEnabled = filterEnabled;
             Filters = new List<FilterViewModel>();
+            RouteData = routeData ?? new Dictionary<string, string>();
         }
 
         public string SortDirection { get; set; }
@@ -52,5 +54,7 @@
         public bool NoSearchOrFilter => SearchString == null && FilterBy == null;
 
         public IEnumerable<FilterViewModel> Filters { get; set; }
+
+        public Dictionary<string, string> RouteData { get; set; }
     }
 }

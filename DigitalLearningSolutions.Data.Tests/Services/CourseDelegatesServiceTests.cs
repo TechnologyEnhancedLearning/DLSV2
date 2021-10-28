@@ -79,7 +79,7 @@
         public void GetCoursesAndCourseDelegatesForCentre_uses_passed_in_customisation_id()
         {
             // Given
-            const int customisationId = 2;
+            const int customisationId = 1;
             const int centreId = 2;
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
@@ -97,6 +97,31 @@
             // Then
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId))
                 .MustHaveHappened();
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public void
+            GetCoursesAndCourseDelegatesForCentre_returns_null_when_passed_in_customisation_id_does_not_have_accessible_course()
+        {
+            // Given
+            const int customisationId = 2;
+            const int centreId = 2;
+            const int categoryId = 1;
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+                .Returns(new List<Course> { new Course { CustomisationId = 1 } });
+
+            // When
+            var result = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                centreId,
+                categoryId,
+                customisationId
+            );
+
+            // Then
+            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
+                .MustNotHaveHappened();
+            result.Should().BeNull();
         }
     }
 }

@@ -7,11 +7,13 @@
 
     public interface ICourseDelegatesService
     {
-        CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
+        CourseDelegatesData? GetCoursesAndCourseDelegatesForCentre(
             int centreId,
             int? categoryId,
             int? customisationId
         );
+
+        IEnumerable<CourseDelegate> GetCourseDelegatesForCentre(int customisationId, int centreId);
     }
 
     public class CourseDelegatesService : ICourseDelegatesService
@@ -28,13 +30,19 @@
             this.courseDelegatesDataService = courseDelegatesDataService;
         }
 
-        public CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
+        public CourseDelegatesData? GetCoursesAndCourseDelegatesForCentre(
             int centreId,
             int? categoryId,
             int? customisationId
         )
         {
             var courses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
+
+            if (customisationId != null && courses.All(c => c.CustomisationId != customisationId))
+            {
+                return null;
+            }
+
             var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);
             var inactiveCoursesAlphabetical =
                 courses.Where(c => !c.Active).OrderBy(c => c.CourseName);
@@ -44,11 +52,15 @@
             var currentCustomisationId = customisationId ?? orderedCourses.FirstOrDefault()?.CustomisationId;
 
             var courseDelegates = currentCustomisationId.HasValue
-                ? courseDelegatesDataService.GetDelegatesOnCourse(currentCustomisationId.Value, centreId)
-                    .ToList()
+                ? GetCourseDelegatesForCentre(currentCustomisationId.Value, centreId)
                 : new List<CourseDelegate>();
 
             return new CourseDelegatesData(currentCustomisationId, orderedCourses, courseDelegates);
+        }
+
+        public IEnumerable<CourseDelegate> GetCourseDelegatesForCentre(int customisationId, int centreId)
+        {
+            return courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId);
         }
     }
 }
