@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
@@ -7,6 +8,7 @@
     public interface IProgressService
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
+        void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
     }
 
     public class ProgressService : IProgressService
@@ -47,6 +49,12 @@
             progressDataService.ClearAspProgressVerificationRequest(progressId);
 
             transaction.Complete();
+        }
+
+        public void UpdateCompleteByDate(int progressId, DateTime? completeByDate)
+        {
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+            courseDataService.SetCompleteByDate(progressId, courseInfo!.DelegateId,completeByDate);
         }
     }
 }

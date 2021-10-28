@@ -36,7 +36,10 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
     <dd class="nhsuk-summary-list__actions">
-      <a href="#">
+      <a asp-controller="DelegateProgress"
+         asp-action="EditCompleteByDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
