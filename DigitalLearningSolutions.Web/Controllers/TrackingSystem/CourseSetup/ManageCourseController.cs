@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -82,8 +83,9 @@
 
             if (model.AutoRefresh)
             {
-                // TODO in HEEDLS-442: Redirect to "Edit auto-refresh options" page
-                return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+                SetEditLearningPathwayDetailsTempData(model);
+
+                return RedirectToAction("EditAutoRefreshOptions", new { customisationId = model.CustomisationId });
             }
 
             var completeWithinMonthsInt =
@@ -115,9 +117,61 @@
                 categoryId.Value
             );
 
+            var data = TempData.Peek<EditLearningPathwayDefaultsData>();
+
             var model = new EditAutoRefreshOptionsViewModel(courseDetails!);
 
+            model.LpDefaultsViewModel = data.LearningPathwayDefaultsModel;
+
             return View(model);
+        }
+
+        [HttpPost]
+        [Route("AutoRefreshOptions")]
+        public IActionResult SaveAutoRefreshOptions(
+            int customisationId,
+            EditAutoRefreshOptionsViewModel model
+        )
+        {
+            if (customisationId != model.CustomisationId)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            if (!ModelState.IsValid)
+            {
+
+                return View("EditAutoRefreshOptions", model);
+            }
+
+            var autoRefreshMonths =
+                model.AutoRefreshMonths == null ? 0 : int.Parse(model.AutoRefreshMonths);
+
+            var completeWithinMonthsInt =
+                model.LpDefaultsViewModel.CompleteWithinMonths == null ? 0 : int.Parse(model.LpDefaultsViewModel.CompleteWithinMonths);
+
+            var validityMonthsInt =
+                model.LpDefaultsViewModel.ValidityMonths == null ? 0 : int.Parse(model.LpDefaultsViewModel.ValidityMonths);
+
+            courseService.UpdateLearningPathwayDefaultsForCourse(
+                model.CustomisationId,
+                completeWithinMonthsInt,
+                validityMonthsInt,
+                model.LpDefaultsViewModel.Mandatory,
+                model.LpDefaultsViewModel.AutoRefresh,
+                autoRefreshMonths,
+                model.RefreshToCustomisationId,
+                model.ApplyLpDefaultsToSelfEnrol
+            );
+
+            return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+        }
+
+
+        private void SetEditLearningPathwayDetailsTempData(EditLearningPathwayDefaultsViewModel model)
+        {
+            var data = new EditLearningPathwayDefaultsData(model);
+            TempData.Set(data);
         }
 
         [HttpGet]

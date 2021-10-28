@@ -15,7 +15,11 @@
 
     <h1 class="nhsuk-heading-xl">Edit auto-refresh options</h1>
 
-       <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">
+      You have selected to enable auto-refresh on the course. Please specify the auto-refresh options.
+    </p>
+
+    <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
           label="Course to refresh to"
           value="@Model.RefreshToCustomisationId.ToString()"
           hint-text="Which course should the learner be enrolled on when auto-refreshing?"

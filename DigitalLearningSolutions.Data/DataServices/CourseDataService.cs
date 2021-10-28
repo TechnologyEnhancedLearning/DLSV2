@@ -55,7 +55,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int autoRefreshMonths,
+            int refreshToCustomisationId,
+            bool applyLpDefaultsToSelfEnrol
         );
 
         public void UpdateCourseDetails(
@@ -498,7 +501,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int autoRefreshMonths,
+            int refreshToCustomisationId,
+            bool applyLpDefaultsToSelfEnrol
         )
         {
             connection.Execute(
@@ -507,9 +513,12 @@ namespace DigitalLearningSolutions.Data.DataServices
                         CompleteWithinMonths = @completeWithinMonths,
                         ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
-                        AutoRefresh = @autoRefresh
+                        AutoRefresh = @autoRefresh,
+                        AutoRefreshMonths = @autoRefreshMonths,
+                        RefreshToCustomisationID = @refreshToCustomisationId,
+                        ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId, autoRefreshMonths, refreshToCustomisationId, applyLpDefaultsToSelfEnrol }
             );
         }
 

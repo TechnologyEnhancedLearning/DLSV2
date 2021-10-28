@@ -35,7 +35,10 @@
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int autoRefreshMonths = 0,
+            int refreshToCustomisationId = 0,
+            bool applyLpDefaultsToSelfEnrol = false
         );
 
         public bool DoesCourseNameExistAtCentre(
@@ -141,7 +144,10 @@
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int autoRefreshMonths = 0,
+            int refreshToCustomisationId = 0,
+            bool applyLpDefaultsToSelfEnrol = false
         )
         {
             courseDataService.UpdateLearningPathwayDefaultsForCourse(
@@ -149,7 +155,10 @@
                 completeWithinMonths,
                 validityMonths,
                 mandatory,
-                autoRefresh
+                autoRefresh,
+                autoRefreshMonths,
+                refreshToCustomisationId,
+                applyLpDefaultsToSelfEnrol
             );
         }
 

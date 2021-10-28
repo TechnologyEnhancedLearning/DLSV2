@@ -19,13 +19,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.Cou
             int customisationId,
             int refreshToCustomisationId,
             string? autoRefreshMonths,
-            bool applyLpDefaultsToSelfEnrol
+            bool applyLpDefaultsToSelfEnrol,
+            EditLearningPathwayDefaultsViewModel lpDefaultsViewModel
             )
         {
             CustomisationId = customisationId;
             RefreshToCustomisationId = refreshToCustomisationId;
             AutoRefreshMonths = autoRefreshMonths;
             ApplyLpDefaultsToSelfEnrol = applyLpDefaultsToSelfEnrol;
+            LpDefaultsViewModel = lpDefaultsViewModel;
         }
 
         public int CustomisationId { get; set; }
@@ -35,5 +37,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.Cou
         public string? AutoRefreshMonths { get; set; }
 
         public bool ApplyLpDefaultsToSelfEnrol { get; set; }
+
+        public EditLearningPathwayDefaultsViewModel LpDefaultsViewModel { get; set; }
     }
 }
