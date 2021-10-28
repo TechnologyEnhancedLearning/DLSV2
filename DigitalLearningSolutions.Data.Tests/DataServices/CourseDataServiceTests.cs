@@ -456,7 +456,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         {
             using var transaction = new TransactionScope();
 
-            //Given
+            // Given
             const int customisationId = 100;
             const int centreId = 101;
             const int categoryId = 0;
@@ -497,7 +497,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [Test]
         public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
         {
-            //Given
+            // Given
             const int customisationId = 1379;
             const int centreId = 101;
             const int categoryId = 0;
@@ -520,9 +520,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId()
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
         {
-            //Given
+            // Given
             const int customisationId = 1379;
             const int centreId = 5;
             const int categoryId = 0;
@@ -539,9 +539,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId()
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
         {
-            //Given
+            // Given
             const int customisationId = 1379;
             const int centreId = 101;
             const int categoryId = 10;

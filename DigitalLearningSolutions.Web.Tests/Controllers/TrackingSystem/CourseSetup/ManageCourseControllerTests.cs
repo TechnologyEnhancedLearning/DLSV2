@@ -1,14 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Routing;
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     internal class ManageCourseControllerTests
     {
@@ -185,30 +191,24 @@
         public void Edit_Course_Options_redirects_to_not_found_page_when_admin_user_cannot_access_course()
         {
             // Given
-            const int customisationId = 1;
-            A.CallTo(
-                () => courseService.VerifyAdminUserCanAccessCourse(
-                    customisationId,
-                    A<int>._,
-                    A<int>._
-                )
-            ).Returns(false);
-
-            A.CallTo(
-                () => courseService.GetCourseOptionsForAdminCategoryId(
-                    customisationId,
-                    A<int>._,
-                    A<int>._
-                )
-            ).Returns(new CourseOptions());
-
+            const int centreId = 101;
+            var context = new ActionExecutingContext(
+                new ActionContext(
+                    new DefaultHttpContext(),
+                    new RouteData(new RouteValueDictionary() { { "customisationId", "1" }}),
+                    new ActionDescriptor()
+                ),
+                new List<IFilterMetadata>(),
+                new Dictionary<string, object>(),
+                new ManageCourseController(A.Fake<ICourseService>()).WithDefaultContext().
+                    WithMockUser(true, centreId: centreId)
+            );
 
             // When
-            var result = controller.EditCourseOptions(customisationId);
+            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
 
             // Then
-            result.Should().BeNotFoundResult();
+            context.Result.Should().BeNotFoundResult();
         }
-
     }
 }
