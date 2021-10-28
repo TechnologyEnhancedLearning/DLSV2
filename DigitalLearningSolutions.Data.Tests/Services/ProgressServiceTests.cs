@@ -103,5 +103,23 @@
                 () => progressDataService.ClearAspProgressVerificationRequest(A<int>._)
             ).MustNotHaveHappened();
         }
+
+        [Test]
+        public void UpdateCompleteByDate_calls_data_service()
+        {
+            // Given
+            const int progressId = 1;
+            const int delegateId = 1;
+            var completeByDate = new DateTime(2021, 09, 01);
+            var courseInfo = new DelegateCourseInfo { DelegateId = delegateId };
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(courseInfo);
+
+            // When
+            progressService.UpdateCompleteByDate(progressId, completeByDate);
+
+            // Then
+            A.CallTo(() => courseDataService.SetCompleteByDate(progressId, delegateId, completeByDate))
+                .MustHaveHappened();
+        }
     }
 }
