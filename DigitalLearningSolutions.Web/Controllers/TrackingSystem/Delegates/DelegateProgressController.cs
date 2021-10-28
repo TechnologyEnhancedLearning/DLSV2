@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -14,6 +15,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("TrackingSystem/Delegates/{accessedVia}/DelegateProgress/{progressId:int}")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [ServiceFilter(typeof(VerifyDelegateProgressAccessedViaValidRoute))]
     [ServiceFilter(typeof(VerifyAdminUserCanAccessProgress))]
     public class DelegateProgressController : Controller
