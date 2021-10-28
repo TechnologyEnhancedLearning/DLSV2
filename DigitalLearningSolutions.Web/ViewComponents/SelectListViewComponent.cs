@@ -1,12 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    [Obsolete("Use SelectListWithConfigurableModelViewComponent instead.")]
     public class SelectListViewComponent : ViewComponent
     {
         public IViewComponentResult Invoke(

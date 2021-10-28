@@ -233,7 +233,7 @@
         public void GroupDelegatesRemovePost_should_return_not_found_with_invalid_group_for_centre()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
 
             // When
@@ -247,7 +247,7 @@
         public void GroupDelegatesRemovePost_should_return_not_found_with_delegate_not_in_group()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
 
@@ -276,23 +276,30 @@
         }
 
         [Test]
-        public void GroupDelegatesRemove_should_not_call_remove_progress_if_unchecked()
+        public void GroupDelegatesRemove_should_call_remove_progress_but_keep_started_enrolments_if_unchecked()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = false };
-            A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsDataService.GetGroupDelegates(1))
-                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
-            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
+
+            const int groupId = 44;
+            const int delegateId = 3274;
+
+            A.CallTo(() => groupsDataService.GetGroupName(groupId, 2)).Returns("Group");
+            A.CallTo(() => groupsDataService.GetGroupDelegates(groupId))
+                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).DoesNothing();
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, A<DateTime>._)
+            ).DoesNothing();
 
             // When
-            var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
+            var result = delegateGroupsController.GroupDelegatesRemove(model, groupId, delegateId);
 
             // Then
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
-            ).MustNotHaveHappened();
-            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, A<DateTime>._)
+            ).MustHaveHappened();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }
 
@@ -300,19 +307,19 @@
         public void GroupDelegatesRemove_should_call_remove_progress_if_checked()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveProgress = true };
+            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).DoesNothing();
-            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroup(1, 2, A<bool>._, A<DateTime>._))
                 .DoesNothing();
 
             // When
             var result = delegateGroupsController.GroupDelegatesRemove(model, 1, 2);
 
             // Then
-            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(1, 2, A<DateTime>._))
+            A.CallTo(() => groupsDataService.RemoveRelatedProgressRecordsForGroup(1, 2, A<bool>._, A<DateTime>._))
                 .MustHaveHappened();
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(1, 2)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");

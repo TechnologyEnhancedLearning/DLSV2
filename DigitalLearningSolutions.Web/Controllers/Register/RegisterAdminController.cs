@@ -1,6 +1,5 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers.Register
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
@@ -9,15 +8,15 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     public class RegisterAdminController : Controller
     {
-        private const string CookieName = "AdminRegistrationData";
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -174,8 +173,8 @@
                 return new StatusCodeResult(500);
             }
 
-            var registrationModel = RegistrationMappingHelper.MapToRegistrationModel(data);
-            registrationService.RegisterCentreManager(registrationModel);
+            var registrationModel = RegistrationMappingHelper.MapToCentreManagerAdminRegistrationModel(data);
+            registrationService.RegisterCentreManager(registrationModel, data.JobGroup!.Value);
 
             return RedirectToAction("Confirmation");
         }
@@ -183,6 +182,7 @@
         [HttpGet]
         public IActionResult Confirmation()
         {
+            TempData.Clear();
             return View();
         }
 
@@ -202,17 +202,6 @@
         private void SetAdminRegistrationData(int centreId)
         {
             var adminRegistrationData = new RegistrationData(centreId);
-            var id = adminRegistrationData.Id;
-
-            Response.Cookies.Append(
-                CookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
-                }
-            );
-
             TempData.Clear();
             TempData.Set(adminRegistrationData);
         }

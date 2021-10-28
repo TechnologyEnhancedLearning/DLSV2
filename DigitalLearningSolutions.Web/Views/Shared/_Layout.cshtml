@@ -1,10 +1,19 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
 @{
-  var headerExtension = (string)ViewData["Application"];
-  var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
+  var dlsSubApplication = (DlsSubApplication?)ViewData[LayoutViewDataKeys.DlsSubApplication];
+  if (dlsSubApplication != null) {
+    ViewData[LayoutViewDataKeys.Application] ??= dlsSubApplication.HeaderExtension;
+    ViewData[LayoutViewDataKeys.HeaderPath] ??= dlsSubApplication.HeaderPath;
+    ViewData[LayoutViewDataKeys.HeaderPathName] ??= dlsSubApplication.HeaderPathName;
+  }
+  var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
+  var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
 }
 
 <!DOCTYPE html>
@@ -15,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
 
-  <title>@ViewData["Title"] - Digital Learning Solutions</title>
+  <title>@ViewData[LayoutViewDataKeys.Title] - Digital Learning Solutions</title>
 
   <!-- Styles -->
   <link rel="stylesheet" href="@Url.Content("~/css/nhsuk.css")" asp-append-version="true">
@@ -30,13 +39,13 @@
   <link rel="icon" href="@Url.Content("~/favicon.ico")">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="@(ViewData["og:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
+  <meta property="og:title" content="@(ViewData["og:title"] ?? ViewData[LayoutViewDataKeys.Title] ?? "Digital Learning Solutions")">
   <meta property="og:description" content="@(ViewData["og:description"] ?? "")">
   <meta property="og:type" content="@(ViewData["og:type"] ?? "article")">
   <meta property="og:site_name" content="Digital Learning Solutions">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData["Title"] ?? "Digital Learning Solutions")">
+  <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData[LayoutViewDataKeys.Title] ?? "Digital Learning Solutions")">
   <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
 </head>
 
@@ -49,29 +58,29 @@
     <div class="nhsuk-width-container nhsuk-header__container">
       <div class="nhsuk-header__logo">
         <a class="nhsuk-header__link nhsuk-header__link--service"
-           href="@(ViewData["HeaderPath"] ?? Configuration["AppRootPath"] + "/Home")"
-           aria-label="NHS Digital Learning Solutions - @(ViewData["HeaderPathName"] ?? "Landing Page")">
+           href="@(ViewData[LayoutViewDataKeys.HeaderPath] ?? Configuration["AppRootPath"] + "/Home")"
+           aria-label="NHS Digital Learning Solutions - @(ViewData[LayoutViewDataKeys.HeaderPathName] ?? "Landing Page")">
           <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false" viewBox="0 0 40 16">
             <path class="nhsuk-logo__background" d="M0 0h40v16H0z"></path>
             <path class="nhsuk-logo__text" d="M3.9 1.5h4.4l2.6 9h.1l1.8-9h3.3l-2.8 13H9l-2.7-9h-.1l-1.8 9H1.1M17.3 1.5h3.6l-1 4.9h4L25 1.5h3.5l-2.7 13h-3.5l1.1-5.6h-4.1l-1.2 5.6h-3.4M37.7 4.4c-.7-.3-1.6-.6-2.9-.6-1.4 0-2.5.2-2.5 1.3 0 1.8 5.1 1.2 5.1 5.1 0 3.6-3.3 4.5-6.4 4.5-1.3 0-2.9-.3-4-.7l.8-2.7c.7.4 2.1.7 3.2.7s2.8-.2 2.8-1.5c0-2.1-5.1-1.3-5.1-5 0-3.4 2.9-4.4 5.8-4.4 1.6 0 3.1.2 4 .6"></path>
             <image src="https://assets.nhs.uk/images/nhs-logo.png" xlink:href=""></image>
           </svg>
 
-          <span class="nhsuk-header__service-name">@(ViewData["HeaderPrefix"] ?? "Digital Learning Solutions ")@(headerExtension)</span>
+          <span class="nhsuk-header__service-name">@(ViewData[LayoutViewDataKeys.HeaderPrefix] ?? "Digital Learning Solutions ")@(headerExtension)</span>
         </a>
       </div>
 
-      @if ((bool?)ViewData["DoNotDisplayNavBar"] != true) {
+      @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true) {
         <div class="nhsuk-header__content" id="content-header">
           <div class="nhsuk-header__menu">
             <button class="nhsuk-header__menu-toggle" id="toggle-menu" aria-controls="header-navigation" aria-label="Open menu">Menu</button>
           </div>
         </div>
       }
-      <vc:logo customisation-id="@((int?)ViewData["CustomisationId"])" />
+      <vc:logo customisation-id="@((int?)ViewData[LayoutViewDataKeys.CustomisationIdForHeaderLogo])" />
     </div>
 
-    @if ((bool?)ViewData["DoNotDisplayNavBar"] != true) {
+    @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true) {
       <nav class="nhsuk-header__navigation" id="header-navigation" role="navigation" aria-label="Primary navigation" aria-labelledby="label-navigation">
         <div class="nhsuk-width-container">
           <p class="nhsuk-header__navigation-title">
@@ -82,7 +91,11 @@
             </button>
           </p>
           <ul class="nhsuk-header__navigation-list">
-            @RenderSection("NavMenuItems", true)
+            @if (IsSectionDefined("NavMenuItems")) {
+              @RenderSection("NavMenuItems", true)
+            } else if (dlsSubApplication != null) {
+              <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
+            }
 
             @if (shouldDisplayHelpMenuItem) {
               string helpPage;
@@ -101,7 +114,7 @@
               </li>
             }
             @if (User.Identity.IsAuthenticated && User.GetAdminId() != null) {
-              <li class="nhsuk-header__navigation-item">
+              <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
                 <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
                   Switch application
                   <partial name="_NhsChevronRight" />
@@ -113,7 +126,7 @@
       </nav>
     }
 
-    @{ var visualSeparatorNoNavBar = (bool?)ViewData["DoNotDisplayNavBar"] == true ? "visual-separator-no-nav-bar" : string.Empty; }
+    @{ var visualSeparatorNoNavBar = (bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] == true ? "visual-separator-no-nav-bar" : string.Empty; }
     <div class="visual-separator @visualSeparatorNoNavBar"></div>
   </header>
 

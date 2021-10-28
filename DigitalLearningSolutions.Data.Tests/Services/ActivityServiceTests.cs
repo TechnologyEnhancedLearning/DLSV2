@@ -249,7 +249,7 @@
         }
 
         [Test]
-        public void GetFilterNames_returns_expected_job_group_name_with_non_null_job_groud_id_filter()
+        public void GetFilterNames_returns_expected_job_group_name_with_non_null_job_group_id_filter()
         {
             // Given
             var filterData = new ActivityFilterData(

@@ -32,7 +32,7 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var delegateRegistrationModel = UserTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
+            var delegateRegistrationModel = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel(centre: 3);
 
             // When
             var candidateNumber = service.RegisterDelegate(delegateRegistrationModel);
@@ -57,10 +57,10 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
+            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            service.RegisterCentreManagerAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;
@@ -78,10 +78,10 @@
             using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             // Given
-            var registrationModel = UserTestHelper.GetDefaultRegistrationModel();
+            var registrationModel = RegistrationModelTestHelper.GetDefaultCentreManagerRegistrationModel();
 
             // When
-            service.RegisterCentreManagerAdmin(registrationModel);
+            service.RegisterAdmin(registrationModel);
 
             // Then
             var user = userDataService.GetAdminUserByEmailAddress(registrationModel.Email)!;

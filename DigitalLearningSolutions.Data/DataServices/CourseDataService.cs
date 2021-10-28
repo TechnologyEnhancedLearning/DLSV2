@@ -19,11 +19,19 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
-        (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
+        AttemptStats GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        );
     }
 
     public class CourseDataService : ICourseDataService
@@ -65,6 +73,48 @@ namespace DigitalLearningSolutions.Data.DataServices
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL
                 ORDER BY SubmittedTime DESC) AS LastAccessed";
+
+        private const string SelectDelegateCourseInfoQuery =
+            @"SELECT
+                pr.ProgressId,
+                cu.CustomisationID AS CustomisationId,
+                cu.CentreID AS CustomisationCentreId,
+                cu.Active AS IsCourseActive,
+                cu.AllCentres AS AllCentresCourse,
+                ap.CourseCategoryID,
+                ap.ApplicationName,
+                cu.CustomisationName,
+                auSupervisor.AdminID AS SupervisorAdminId,
+                auSupervisor.Forename AS SupervisorForename,
+                auSupervisor.Surname AS SupervisorSurname,
+                pr.FirstSubmittedTime AS Enrolled,
+                pr.SubmittedTime AS LastUpdated,
+                pr.CompleteByDate AS CompleteBy,
+                pr.Completed AS Completed,
+                pr.Evaluated AS Evaluated,
+                pr.RemovedDate,
+                pr.EnrollmentMethodID AS EnrolmentMethodId,
+                auEnrolledBy.AdminID AS EnrolledByAdminId,
+                auEnrolledBy.Forename AS EnrolledByForename,
+                auEnrolledBy.Surname AS EnrolledBySurname,
+                pr.LoginCount,
+                pr.Duration AS LearningTime,
+                pr.DiagnosticScore,
+                cu.IsAssessed,
+                pr.Answer1,
+                pr.Answer2,
+                pr.Answer3,
+                ca.CandidateID AS DelegateId,
+                ca.FirstName AS DelegateFirstName,
+                ca.LastName AS DelegateLastName,
+                ca.EmailAddress AS DelegateEmail,
+                ca.CentreID AS DelegateCentreId
+            FROM Customisations cu
+            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
+            LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
+            INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -211,29 +261,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
-                @"SELECT
-                        cu.CustomisationID AS CustomisationId,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-                        au.Forename AS SupervisorForename,
-                        au.Surname AS SupervisorSurname,
-                        pr.FirstSubmittedTime AS Enrolled,
-                        pr.SubmittedTime AS LastUpdated,
-                        pr.CompleteByDate AS CompleteBy,
-                        pr.Completed AS Completed,
-                        pr.Evaluated AS Evaluated,
-                        pr.EnrollmentMethodID AS EnrolmentMethodId,
-                        pr.LoginCount,
-                        pr.Duration AS LearningTime,
-                        pr.DiagnosticScore,
-                        cu.IsAssessed,
-                        pr.Answer1,
-                        pr.Answer2,
-                        pr.Answer3
-                    FROM Customisations cu
-                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-                    LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
+                $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
@@ -241,12 +269,22 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(
+        public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)
+        {
+            return connection.QuerySingleOrDefault<DelegateCourseInfo>(
+                $@"{SelectDelegateCourseInfoQuery}
+                    WHERE pr.ProgressID = @progressId
+                        AND ap.ArchivedDate IS NULL",
+                new { progressId }
+            );
+        }
+
+        public AttemptStats GetDelegateCourseAttemptStats(
             int delegateId,
             int customisationId
         )
         {
-            return connection.QueryFirstOrDefault<(int, int)>(
+            var (totalAttempts, attemptsPassed) = connection.QueryFirstOrDefault<(int, int)>(
                 @"SELECT COUNT(aa.Status) AS TotalAttempts,
                         COUNT(CASE WHEN aa.Status=1 THEN 1 END) AS AttemptsPassed
                     FROM AssessAttempts aa
@@ -256,6 +294,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
+
+            return new AttemptStats(totalAttempts, attemptsPassed);
         }
 
         // Admins have a non-nullable category ID where 0 = all. This is why we have the
@@ -361,6 +401,26 @@ namespace DigitalLearningSolutions.Data.DataServices
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
                 new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CompleteWithinMonths = @completeWithinMonths,
+                        ValidityMonths = @validityMonths,
+                        Mandatory = @mandatory,
+                        AutoRefresh = @autoRefresh
+                    WHERE CustomisationID = @customisationId",
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
             );
         }
     }

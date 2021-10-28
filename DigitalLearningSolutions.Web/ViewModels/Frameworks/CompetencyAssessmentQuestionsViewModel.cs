@@ -8,6 +8,7 @@
     {
         public DetailFramework DetailFramework { get; set; }
         public int FrameworkCompetencyId { get; set; }
+        public int CompetencyId { get; set; }
         public string? CompetencyName { get; set; }
         public SelectList? QuestionSelectList { get; set; }
         public IEnumerable<AssessmentQuestion>? AssessmentQuestions { get; set; }

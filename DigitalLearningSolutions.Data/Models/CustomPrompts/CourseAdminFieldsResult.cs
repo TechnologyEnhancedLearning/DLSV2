@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
-    using System.Collections.Generic;
-
     public class CourseAdminFieldsResult
     {
         public string? CustomField1Prompt { get; set; }

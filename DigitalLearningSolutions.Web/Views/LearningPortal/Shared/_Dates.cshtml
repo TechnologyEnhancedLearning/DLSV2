@@ -5,13 +5,13 @@
 @model StartedLearningItemViewModel
 
 <div class="nhsuk-grid-column-one-quarter">
-  <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Enrolled</h5>
+  <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-enrolled-title" aria-describedby="@Model.Id-name">Enrolled</span>
   <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
   <p aria-describedby="@Model.Id-name @Model.Id-enrolled-title" name="started-date">@Model.StartedDate.ToShortDateString()</p>
 </div>
 <div class="nhsuk-grid-column-one-quarter">
-  <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</h5>
+  <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-last-access-title" aria-describedby="@Model.Id-name">Last access</span>
   <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
   <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">
@@ -22,7 +22,7 @@
 {
 <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
   <div class="nhsuk-grid-column-three-quarters">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</h5>
+    <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
   </div>
   <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
@@ -53,13 +53,13 @@
 @if (Model is CompletedCourseViewModel completedCourseViewModel)
 {
   <div class="nhsuk-grid-column-one-quarter">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</h5>
+    <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
     <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
   </div>
   <div class="nhsuk-grid-column-one-quarter">
-    <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-evaluated-title" aria-describedby="@Model.Id-name">Evaluated</h5>
+    <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-evaluated-title" aria-describedby="@Model.Id-name">Evaluated</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
     <p aria-describedby="@Model.Id-name @Model.Id-evaluated-title" name="evaluated-date">

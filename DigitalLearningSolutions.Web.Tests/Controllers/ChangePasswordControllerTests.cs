@@ -40,7 +40,7 @@
             authenticatedController.ModelState.AddModelError("key", "Invalid for testing.");
 
             // When
-            var result = await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
+            var result = await authenticatedController.Index(new ChangePasswordFormData(), DlsSubApplication.Default);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -53,7 +53,7 @@
             GivenPasswordVerificationFails();
 
             // When
-            var result = await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
+            var result = await authenticatedController.Index(new ChangePasswordFormData(), DlsSubApplication.Default);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ChangePasswordViewModel>();
@@ -66,7 +66,7 @@
             GivenPasswordVerificationFails();
 
             // When
-            await authenticatedController.Index(new ChangePasswordFormData(), ApplicationType.Default);
+            await authenticatedController.Index(new ChangePasswordFormData(), DlsSubApplication.Default);
 
             // Then
             ThenMustNotHaveChangedPassword();
@@ -87,7 +87,7 @@
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
                 },
-                ApplicationType.Default
+                DlsSubApplication.Default
             );
 
             // Then
@@ -113,7 +113,7 @@
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
                 },
-                ApplicationType.Default
+                DlsSubApplication.Default
             );
 
             ThenMustHaveChangedPasswordForUserRefsOnce("new-password", verifiedUsers.GetUserRefs());
@@ -140,7 +140,7 @@
                     ConfirmPassword = "new-password",
                     CurrentPassword = "current-password"
                 },
-                ApplicationType.Default
+                DlsSubApplication.Default
             );
 
             // Then

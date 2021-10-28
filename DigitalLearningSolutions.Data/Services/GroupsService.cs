@@ -237,7 +237,8 @@
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow);
+            const bool removeStartedEnrolments = false;
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, clockService.UtcNow);
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 

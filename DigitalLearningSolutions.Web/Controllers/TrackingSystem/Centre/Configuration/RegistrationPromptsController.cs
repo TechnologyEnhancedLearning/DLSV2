@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
@@ -11,7 +10,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration.RegistrationPrompts;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
@@ -25,9 +23,6 @@
         public const string NextAction = "next";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private const string AddPromptCookieName = "AddRegistrationPromptData";
-        private const string EditPromptCookieName = "EditRegistrationPromptData";
-        private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(7);
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IUserDataService userDataService;
 
@@ -42,6 +37,7 @@
 
         public IActionResult Index()
         {
+            TempData.Clear();
             var centreId = User.GetCentreId();
 
             var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
@@ -92,7 +88,7 @@
                 SaveAction => EditRegistrationPromptPostSave(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model),
                 BulkAction => EditRegistrationPromptBulk(model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -138,16 +134,6 @@
             TempData.Clear();
 
             var addRegistrationPromptData = new AddRegistrationPromptData();
-            var id = addRegistrationPromptData.Id;
-
-            Response.Cookies.Append(
-                AddPromptCookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
             TempData.Set(addRegistrationPromptData);
 
             return RedirectToAction("AddRegistrationPromptSelectPrompt");
@@ -209,7 +195,7 @@
                 NextAction => AddRegistrationPromptConfigureAnswersPostNext(model),
                 AddPromptAction => RegistrationPromptAnswersPostAddPrompt(model, true),
                 BulkAction => AddRegistrationPromptBulk(model),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -406,16 +392,6 @@
         private void SetEditRegistrationPromptTempData(EditRegistrationPromptViewModel model)
         {
             var data = new EditRegistrationPromptData(model);
-            var id = data.Id;
-
-            Response.Cookies.Append(
-                EditPromptCookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = CookieExpiry
-                }
-            );
             TempData.Set(data);
         }
 
@@ -439,15 +415,23 @@
 
         private void SetTotalAnswersLengthTooLongError(RegistrationPromptAnswersViewModel model)
         {
-            if (model.OptionsString == null || model.OptionsString.Length < 2)
+            if (model.OptionsString == null)
             {
                 return;
             }
 
-            var remainingLength = 4000 - (model.OptionsString?.Length - 2 ?? 0);
+            var remainingLength = 4000 - model.OptionsString.Length;
+            var remainingLengthShownToUser = remainingLength <= 2 ? 0 : remainingLength - 2;
+            var answerLength = model.Answer!.Length;
+            var remainingLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(remainingLengthShownToUser);
+            var answerLengthPluralitySuffix = DisplayStringHelper.GetPluralitySuffix(answerLength);
+            var verb = answerLength == 1 ? "was" : "were";
+
             ModelState.AddModelError(
                 nameof(RegistrationPromptAnswersViewModel.Answer),
-                $"The complete list of answers must be 4000 characters or fewer ({remainingLength} characters remaining for the new answer)"
+                "The complete list of answers must be 4000 characters or fewer " +
+                $"({remainingLengthShownToUser} character{remainingLengthPluralitySuffix} remaining for the new answer, " +
+                $"{answerLength} character{answerLengthPluralitySuffix} {verb} entered)"
             );
         }
 

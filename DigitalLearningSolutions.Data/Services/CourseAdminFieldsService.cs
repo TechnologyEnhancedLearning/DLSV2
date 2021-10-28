@@ -16,7 +16,8 @@
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
-            int centreId
+            int centreId,
+            bool allowAllCentreCourses = false
         );
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptId, string? options);
@@ -65,10 +66,15 @@
         public List<CustomPromptWithAnswer> GetCustomPromptsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId,
-            int centreId
+            int centreId,
+            bool allowAllCentreCourses = false
         )
         {
-            var result = GetCourseCustomPromptsResultForCourse(customisationId, centreId);
+            var result = GetCourseCustomPromptsResultForCourse(
+                customisationId,
+                centreId,
+                allowAllCentreCourses
+            );
 
             return PopulateCustomPromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
         }
@@ -151,15 +157,16 @@
 
         private CourseAdminFieldsResult? GetCourseCustomPromptsResultForCourse(
             int customisationId,
-            int centreId
+            int centreId,
+            bool allowAllCentreCourses = false
         )
         {
-            var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId, centreId);
-            if (result == null)
-            {
-                return null;
-            }
-
+            var result = courseAdminFieldsDataService.GetCourseAdminFields(
+                customisationId,
+                centreId,
+                allowAllCentreCourses
+            );
+            
             return result;
         }
 

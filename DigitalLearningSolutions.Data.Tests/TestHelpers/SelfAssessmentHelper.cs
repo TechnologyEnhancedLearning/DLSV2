@@ -19,7 +19,9 @@
             bool unprocessedUpdates = false,
             bool linearNavigation = true,
             bool useDescriptionExpanders = true,
-            string vocabulary = "Capability"
+            string vocabulary = "Capability",
+            string verificationRoleName = "Supervisor",
+            string signOffRoleName = "Supervisor"
         )
         {
             return new CurrentSelfAssessment()
@@ -35,7 +37,9 @@
                 UnprocessedUpdates = unprocessedUpdates,
                 LinearNavigation = linearNavigation,
                 UseDescriptionExpanders = useDescriptionExpanders,
-                Vocabulary = vocabulary
+                Vocabulary = vocabulary,
+                VerificationRoleName = verificationRoleName,
+                SignOffRoleName = signOffRoleName
             };
         }
 
@@ -76,7 +80,7 @@
             int? result = null,
             int minValue = 0,
             int maxValue = 10,
-            int assessmentQuestionInputTypeID = 1,
+            int assessmentQuestionInputTypeID = 2,
             bool includeComments = true)
         {
             return new AssessmentQuestion()

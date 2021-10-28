@@ -142,18 +142,21 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroupDelegate_updates_progress_record()
+        public async Task RemoveRelatedProgressRecordsForGroup_updates_progress_record()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 // Given
-                var removedDate = DateTime.Now;
-                const int delegateId = 245969;
+                var removedDate = DateTime.UtcNow;
+                const int groupId = 60;
+                const int delegateId = 298304;
+                const bool removeStartedEnrolments = true;
+                const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate);
-                var progressFields = await connection.GetProgressRemovedFields(285146);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
                 progressFields.Item1.Should().Be(3);
@@ -166,20 +169,48 @@
         }
 
         [Test]
-        public async Task
-            RemoveRelatedProgressRecordsForGroupDelegate_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        public async Task RemoveRelatedProgressRecordsForGroup_does_not_remove_started_progress_record_when_specified()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
                 // Given
-                var removedDate = DateTime.Now;
+                var removedDate = DateTime.UtcNow;
+                const int groupId = 60;
+                const int delegateId = 298304;
+                const bool removeStartedEnrolments = false;
+                const int progressId = 282560;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
+
+                // Then
+                progressFields.Item1.Should().Be(0);
+                progressFields.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_does_not_update_progress_record_when_course_is_shared_by_another_group()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.UtcNow;
                 const int delegateId = 299228;
+                const bool removeStartedEnrolments = false;
                 AddDelegateToGroupWithSharedCourse();
                 AddProgressRecordForGroupWithSharedCourse();
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(8, delegateId, removeStartedEnrolments, removedDate);
                 var progressFields = await connection.GetProgressRemovedFields(285172);
 
                 // Then
@@ -280,24 +311,6 @@
             {
                 transaction.Dispose();
             }
-        }
-
-        private void AddDelegateToGroupWithSharedCourse()
-        {
-            connection.Execute(
-                @"INSERT INTO dbo.GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
-                    VALUES (8, 299228, GETUTCDATE(), 1)"
-            );
-        }
-
-        private void AddProgressRecordForGroupWithSharedCourse()
-        {
-            connection.Execute(
-                @"SET IDENTITY_INSERT dbo.Progress ON
-                    INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
-                    VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
-                    SET IDENTITY_INSERT dbo.Progress OFF"
-            );
         }
 
         [Test]
@@ -431,6 +444,24 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        private void AddDelegateToGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"INSERT INTO dbo.GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                    VALUES (8, 299228, GETUTCDATE(), 1)"
+            );
+        }
+
+        private void AddProgressRecordForGroupWithSharedCourse()
+        {
+            connection.Execute(
+                @"SET IDENTITY_INSERT dbo.Progress ON
+                    INSERT INTO Progress(ProgressID, CandidateID, CustomisationID, CustomisationVersion, SubmittedTime, EnrollmentMethodID, SupervisorAdminID)
+                    VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
+                    SET IDENTITY_INSERT dbo.Progress OFF"
+            );
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
-    using System;
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
-    [Obsolete("Use TextInputWithConfigurableModelViewComponent instead.")]
     public class TextInputViewComponent : ViewComponent
     {
         /// <summary>
-        /// Render TextInput view component.
+        ///     Render TextInput view component.
         /// </summary>
         /// <param name="aspFor"></param>
         /// <param name="label"></param>
@@ -48,8 +46,8 @@
                 spellCheck,
                 string.IsNullOrEmpty(autocomplete) ? null : autocomplete,
                 errorMessages,
-                cssClass: string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                hintText: string.IsNullOrEmpty(hintText) ? null : hintText
+                string.IsNullOrEmpty(cssClass) ? null : cssClass,
+                string.IsNullOrEmpty(hintText) ? null : hintText
             );
             return View(textBoxViewModel);
         }

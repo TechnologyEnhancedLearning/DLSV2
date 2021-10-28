@@ -1,12 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
     public class TutorialContentTestHelper
     {
-        private SqlConnection connection;
+        private readonly SqlConnection connection;
 
         public TutorialContentTestHelper(SqlConnection connection)
         {
@@ -96,5 +97,43 @@
                 new { progressId, tutorialId }
             ).FirstOrDefault();
         }
-    }
+
+        public IEnumerable<int> GetAspProgressFromTutorialId(int tutorialId)
+        {
+            return connection.Query<int>(
+                @"SELECT aspProgressId
+                    FROM aspProgress
+                    WHERE TutorialID = @tutorialId;",
+                new { tutorialId }
+            );
+        }
+
+        public IEnumerable<int> GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(int tutorialId)
+        {
+            return connection.Query<int>(
+                @"SELECT DISTINCT ProgressId
+                    FROM aspProgress
+                    WHERE TutorialID = @tutorialId;",
+                new { tutorialId }
+            );
+        }
+
+        public CustomisationTutorial? GetCustomisationTutorialByTutorialIdAndCustomisationId(int tutorialId, int customisationId)
+        {
+            return connection.Query<CustomisationTutorial>(
+                @"SELECT 
+                        [Status],
+                        DiagStatus
+                    FROM dbo.CustomisationTutorials
+                    WHERE TutorialID = @tutorialId AND CustomisationID = @customisationId",
+                new { tutorialId, customisationId }
+            ).SingleOrDefault();
+        }
+
+        public class CustomisationTutorial
+        {
+            public bool? Status { get; set; }
+            public bool? DiagStatus { get; set; }
+        }
+}
 }

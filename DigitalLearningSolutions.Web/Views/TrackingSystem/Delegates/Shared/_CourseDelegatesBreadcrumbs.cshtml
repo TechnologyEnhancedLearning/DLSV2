@@ -1,0 +1,14 @@
+﻿@model int
+
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-controller="CourseDelegates" asp-action="Index" asp-route-customisationId="@Model">Course delegates</a>
+      </li>
+    </ol>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="CourseDelegates" asp-action="Index" asp-route-customisationId="@Model">Back to course delegates</a>
+    </p>
+  </div>
+</nav>

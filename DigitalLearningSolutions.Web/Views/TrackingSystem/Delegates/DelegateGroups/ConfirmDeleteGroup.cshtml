@@ -8,13 +8,6 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Groups - Delete group";
-  ViewData["Application"] = ApplicationType.TrackingSystem.HeaderExtension;
-  ViewData["HeaderPath"] = ApplicationType.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = ApplicationType.TrackingSystem.HeaderPathName;
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="ApplicationType.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">

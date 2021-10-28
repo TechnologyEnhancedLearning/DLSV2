@@ -17,9 +17,9 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        int? GetGroupCentreId(int groupId);
+        void RemoveRelatedProgressRecordsForGroup(int groupId, int? delegateId, bool removeStartedEnrolments, DateTime removedDate);
 
-        void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
+        int? GetGroupCentreId(int groupId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
@@ -247,7 +247,7 @@
             );
         }
 
-        private void RemoveRelatedProgressRecordsForGroup(
+        public void RemoveRelatedProgressRecordsForGroup(
             int groupId,
             int? delegateId,
             bool deleteStartedEnrolment,
