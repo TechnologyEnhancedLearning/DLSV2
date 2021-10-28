@@ -124,7 +124,7 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
             A.CallTo(() => userService.UpdateUserAccountDetails(A<AccountDetailsData>._, null))
                 .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue("dlsSubApplication", DlsSubApplication.Default.UrlSegment);
         }
 
         [Test]

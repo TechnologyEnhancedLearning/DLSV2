@@ -94,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return RedirectToAction(
                 "Index",
                 "NotificationPreferences",
-                new { application = dlsSubApplication.UrlSegment }
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
             );
         }
 
