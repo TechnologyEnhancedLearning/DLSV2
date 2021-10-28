@@ -758,6 +758,23 @@
         }
 
         [Test]
+        public void NewAliasIsValid_returns_true_with_delegate_at_the_same_centre_that_is_the_delegate_we_are_checking()
+        {
+            // Given
+            const string alias = "alias";
+            const int centreId = 1;
+            const int delegateId = 2;
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(id: delegateId,centreId: centreId, aliasId: alias);
+            A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
+
+            // When
+            var result = userService.NewAliasIsValid(alias, delegateId, centreId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
         public void UpdateUserAccountDetailsByAdmin_updates_admin_user_if_found_by_email()
         {
             // Given

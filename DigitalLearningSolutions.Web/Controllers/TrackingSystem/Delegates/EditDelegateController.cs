@@ -38,16 +38,19 @@
         [HttpGet]
         public IActionResult Index(int delegateId)
         {
+            var centreId = User.GetCentreId();
             var delegateUser = userService.GetUsersById(null, delegateId).delegateUser;
 
-            if (delegateUser == null || delegateUser.CentreId != User.GetCentreId())
+            if (delegateUser == null || delegateUser.CentreId != centreId)
             {
                 return NotFound();
             }
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
-            var model = new EditDelegateViewModel(delegateUser, jobGroups, GetCustomFieldsWithDelegateAnswers(delegateUser));
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, centreId);
+            var model = new EditDelegateViewModel(delegateUser, jobGroups, customPrompts);
 
             return View(model);
         }
@@ -55,10 +58,15 @@
         [HttpPost]
         public IActionResult Index(EditDelegateFormData formData, int delegateId)
         {
-            ValidateJobGroup(formData);
-            ValidateCustomPrompts(formData);
+            var centreId = User.GetCentreId();
+            if (!formData.JobGroupId.HasValue)
+            {
+                ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
+            }
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, User.GetCentreId()))
+            centreCustomPromptHelper.ValidateCustomPrompts(formData, centreId, ModelState);
+
+            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, centreId))
             {
                 ModelState.AddModelError(
                     nameof(EditDetailsFormData.Email),
@@ -66,7 +74,7 @@
                 );
             }
 
-            if (!userService.NewAliasIsValid(formData.AliasId, delegateId, User.GetCentreId()))
+            if (!userService.NewAliasIsValid(formData.AliasId, delegateId, centreId))
             {
                 ModelState.AddModelError(
                     nameof(EditDelegateFormData.AliasId),
@@ -77,7 +85,9 @@
             if (!ModelState.IsValid)
             {
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                var model = new EditDelegateViewModel(formData, jobGroups, GetCustomFieldsWithEnteredAnswers(formData), delegateId);
+                var customPrompts =
+                    centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(formData, centreId);
+                var model = new EditDelegateViewModel(formData, jobGroups, customPrompts, delegateId);
                 return View(model);
             }
 
@@ -89,54 +99,6 @@
             userService.UpdateUserAccountDetailsByAdmin(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
-        }
-
-        private void ValidateJobGroup(EditDetailsFormData formData)
-        {
-            if (!formData.JobGroupId.HasValue)
-            {
-                ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
-            }
-        }
-
-        private void ValidateCustomPrompts(EditDetailsFormData formData)
-        {
-            centreCustomPromptHelper.ValidateCustomPrompts(
-                User.GetCentreId(),
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6,
-                ModelState
-            );
-        }
-
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
-        {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
-                User.GetCentreId(),
-                delegateUser?.Answer1,
-                delegateUser?.Answer2,
-                delegateUser?.Answer3,
-                delegateUser?.Answer4,
-                delegateUser?.Answer5,
-                delegateUser?.Answer6
-            );
-        }
-
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsFormData formData)
-        {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
-                User.GetCentreId(),
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6
-            );
         }
     }
 }

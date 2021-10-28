@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using FakeItEasy;
     using FluentAssertions;
@@ -50,7 +51,12 @@
                 centreCustomPromptHelper
             ).WithDefaultContext().WithMockUser(true);
             var formData = new MyAccountEditDetailsFormData();
-            var expectedModel = new MyAccountEditDetailsViewModel(formData, DlsSubApplication.Default);
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditCustomFieldViewModel>(),
+                DlsSubApplication.Default
+            );
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
 
             // When
@@ -80,7 +86,13 @@
                 CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
             );
             var formData = new MyAccountEditDetailsFormData();
-            var expectedModel = new MyAccountEditDetailsViewModel(formData, DlsSubApplication.Default);
+            var expectedPrompt = new EditCustomFieldViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditCustomFieldViewModel> { expectedPrompt },
+                DlsSubApplication.Default
+            );
 
             // When
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
@@ -114,7 +126,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
-                Password = "password"
+                Password = "password",
             };
 
             // When
@@ -146,9 +158,15 @@
             );
             var formData = new MyAccountEditDetailsFormData
             {
-                ProfileImageFile = A.Fake<FormFile>()
+                ProfileImageFile = A.Fake<FormFile>(),
             };
-            var expectedModel = new MyAccountEditDetailsViewModel(formData, DlsSubApplication.Default);
+            var expectedPrompt = new EditCustomFieldViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditCustomFieldViewModel> { expectedPrompt },
+                DlsSubApplication.Default
+            );
 
             // When
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);
@@ -157,8 +175,9 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
-            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState.Should().Be
-                (ModelValidationState.Invalid);
+            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
+                .Should().Be
+                    (ModelValidationState.Invalid);
         }
 
         [Test]
@@ -182,9 +201,14 @@
                 FirstName = "Test",
                 LastName = "User",
                 Email = Email,
-                Password = "password"
+                Password = "password",
             };
-            var expectedModel = new MyAccountEditDetailsViewModel(formData, DlsSubApplication.Default);
+            var expectedModel = new MyAccountEditDetailsViewModel(
+                formData,
+                new List<(int id, string name)>(),
+                new List<EditCustomFieldViewModel>(),
+                DlsSubApplication.Default
+            );
 
             // When
             var result = myAccountController.EditDetails(formData, "save", DlsSubApplication.Default);

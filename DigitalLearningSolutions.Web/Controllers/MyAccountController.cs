@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -14,7 +12,6 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
@@ -72,11 +69,16 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            ViewBag.JobGroupOptions =
-                SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser?.JobGroupName);
-            ViewBag.CustomFields = GetCustomFieldsWithDelegateAnswers(delegateUser);
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
 
-            var model = new MyAccountEditDetailsViewModel(adminUser, delegateUser, jobGroups, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(
+                adminUser,
+                delegateUser,
+                jobGroups,
+                customPrompts,
+                dlsSubApplication
+            );
 
             return View(model);
         }
@@ -89,8 +91,6 @@
             DlsSubApplication dlsSubApplication
         )
         {
-            ViewBag.JobGroupOptions = GetJobGroupItems(formData.JobGroupId);
-            ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(formData);
             return action switch
             {
                 "save" => EditDetailsPostSave(formData, dlsSubApplication),
@@ -100,15 +100,22 @@
             };
         }
 
-        private IActionResult EditDetailsPostSave(MyAccountEditDetailsFormData formData, DlsSubApplication dlsSubApplication)
+        private IActionResult EditDetailsPostSave(
+            MyAccountEditDetailsFormData formData,
+            DlsSubApplication dlsSubApplication
+        )
         {
             var userAdminId = User.GetAdminId();
             var userDelegateId = User.GetCandidateId();
 
             if (userDelegateId.HasValue)
             {
-                ValidateJobGroup(formData);
-                ValidateCustomPrompts(formData);
+                if (!formData.JobGroupId.HasValue)
+                {
+                    ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
+                }
+
+                centreCustomPromptHelper.ValidateCustomPrompts(formData, User.GetCentreId(), ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -130,8 +137,7 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
-                return View(model);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userAdminId, userDelegateId);
             }
 
             if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
@@ -140,8 +146,7 @@
                     nameof(EditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
-                var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
-                return View(model);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userAdminId, userDelegateId);
             }
 
             var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
@@ -155,6 +160,21 @@
             return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
         }
 
+        private IActionResult ReturnToEditDetailsViewWithErrors(
+            MyAccountEditDetailsFormData formData,
+            DlsSubApplication dlsSubApplication,
+            int? userAdminId,
+            int? userDelegateId
+        )
+        {
+            var (_, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            return View(model);
+        }
+
         private IActionResult EditDetailsPostPreviewImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -163,9 +183,15 @@
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(MyAccountEditDetailsViewModel.ProfileImageFile));
 
+            var userDelegateId = User.GetCandidateId();
+            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+
             if (!ModelState.IsValid)
             {
-                return View(new MyAccountEditDetailsViewModel(formData, dlsSubApplication));
+                return View(new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication));
             }
 
             if (formData.ProfileImageFile != null)
@@ -174,7 +200,7 @@
                 formData.ProfileImage = imageResizeService.ResizeProfilePicture(formData.ProfileImageFile);
             }
 
-            var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
+            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }
 
@@ -189,62 +215,14 @@
             ModelState.Remove(nameof(MyAccountEditDetailsFormData.ProfileImage));
             formData.ProfileImage = null;
 
-            var model = new MyAccountEditDetailsViewModel(formData, dlsSubApplication);
-            return View(model);
-        }
-
-        private IEnumerable<SelectListItem> GetJobGroupItems(int? selectedId)
-        {
+            var userDelegateId = User.GetCandidateId();
+            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-            return SelectListHelper.MapOptionsToSelectListItems(jobGroups, selectedId);
-        }
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
 
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithEnteredAnswers(EditDetailsFormData formData)
-        {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
-                User.GetCentreId(),
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6
-            );
-        }
-
-        private List<EditCustomFieldViewModel> GetCustomFieldsWithDelegateAnswers(DelegateUser? delegateUser)
-        {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
-                User.GetCentreId(),
-                delegateUser?.Answer1,
-                delegateUser?.Answer2,
-                delegateUser?.Answer3,
-                delegateUser?.Answer4,
-                delegateUser?.Answer5,
-                delegateUser?.Answer6
-            );
-        }
-
-        private void ValidateJobGroup(EditDetailsFormData formData)
-        {
-            if (!formData.JobGroupId.HasValue)
-            {
-                ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
-            }
-        }
-
-        private void ValidateCustomPrompts(EditDetailsFormData formData)
-        {
-            centreCustomPromptHelper.ValidateCustomPrompts(
-                User.GetCentreId(),
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6,
-                ModelState
-            );
+            var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            return View(model);
         }
     }
 }

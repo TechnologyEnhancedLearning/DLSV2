@@ -381,13 +381,16 @@
                 var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 
                 // Then
-                updatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                updatedUser.LastName.Should().BeEquivalentTo(lastName);
-                updatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                using (new AssertionScope())
+                {
+                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
 
-                secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
-                secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
-                secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                    secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                }
             }
             finally
             {

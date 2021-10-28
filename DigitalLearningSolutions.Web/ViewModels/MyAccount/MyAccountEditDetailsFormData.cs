@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     {
         public MyAccountEditDetailsFormData() { }
 
-        public MyAccountEditDetailsFormData(
+        protected MyAccountEditDetailsFormData(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups
