@@ -41,13 +41,13 @@
             this.connection = connection;
         }
 
-        public CourseAdminFieldsResult GetCourseAdminFields(
+        public CourseAdminFieldsResult? GetCourseAdminFields(
             int customisationId,
             int centreId,
             bool allowAllCentreCourses = false
         )
         {
-            var result = connection.Query<CourseAdminFieldsResult>(
+            return connection.Query<CourseAdminFieldsResult>(
                 @"SELECT
                         cp1.CoursePrompt AS CustomField1Prompt,
                         cu.Q1Options AS CustomField1Options,
@@ -72,9 +72,7 @@
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, allowAllCentreCourses }
-            ).Single();
-
-            return result;
+            ).SingleOrDefault();
         }
 
         public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
