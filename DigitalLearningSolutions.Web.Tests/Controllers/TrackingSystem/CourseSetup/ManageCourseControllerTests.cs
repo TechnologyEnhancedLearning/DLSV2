@@ -205,7 +205,7 @@
             );
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessCourse(A.Fake<ICourseService>()).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
