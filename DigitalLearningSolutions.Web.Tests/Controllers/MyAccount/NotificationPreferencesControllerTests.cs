@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.MyAccount
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
@@ -27,6 +28,7 @@
         [Test]
         public void SaveNotificationPreferences_redirects_to_expected_page_on_success()
         {
+            // Given
             A.CallTo(
                 () => notificationPreferencesService.SetNotificationPreferencesForUser(
                     UserType.AdminUser,
@@ -34,8 +36,10 @@
                     A<IEnumerable<int>>._
                 )
             ).DoesNothing();
+            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
+                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
 
-            // Given
+            // When
             var result = controller.SaveNotificationPreferences(
                 UserType.AdminUser,
                 new List<int>(),
@@ -44,7 +48,7 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
-                "dlsSubApplication",
+                parameterName,
                 DlsSubApplication.Default.UrlSegment
             );
         }
