@@ -20,6 +20,9 @@
             bool mandatory,
             bool autoRefresh
         );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -105,6 +108,23 @@
                 mandatory,
                 autoRefresh
             );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            courseDataService.UpdateCourseOptions(
+                courseOptions,
+                customisationId
+            );
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return courseDataService.GetCourseOptionsForAdminCategoryId(
+               customisationId,
+               centreId,
+               categoryId
+           );
         }
     }
 }

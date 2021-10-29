@@ -1,14 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Abstractions;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.AspNetCore.Routing;
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     internal class ManageCourseControllerTests
     {
@@ -114,6 +120,71 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
             Assert.IsFalse(controller.ModelState.IsValid);
+        }
+
+        [Test]
+        public void Edit_Course_Options_page_opens_up_with_course_options()
+        {
+            // Given
+            const int customisationId = 1;
+            A.CallTo(
+                () => courseService.VerifyAdminUserCanAccessCourse(
+                    customisationId,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
+
+            A.CallTo(
+                () => courseService.GetCourseOptionsForAdminCategoryId(
+                    customisationId,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(new CourseOptions());
+
+
+            // When
+            var result = controller.EditCourseOptions(customisationId);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseOptionsViewModel>();
+        }
+
+        [Test]
+        public void Edit_Course_Options_page_redirects_to_Index_when_course_details_are_updated()
+        {
+            // Given
+            const int customisationId = 1;
+            var courseOptions = new CourseOptions()
+            {
+                Active = true,
+                DiagObjSelect = true,
+                HideInLearnerPortal = true,
+                SelfRegister = true
+            };
+
+            A.CallTo(
+                () => courseService.UpdateCourseOptions(
+                    A<CourseOptions>._,
+                    customisationId
+                )
+            ).DoesNothing();
+
+            var editCourseOptionsViewModel = new EditCourseOptionsViewModel(courseOptions, customisationId);
+
+            // When
+            var result = controller.EditCourseOptions(customisationId, editCourseOptionsViewModel);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseOptions(
+                    A<CourseOptions>._,
+                    customisationId
+                )
+            ).MustHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
         }
     }
 }
