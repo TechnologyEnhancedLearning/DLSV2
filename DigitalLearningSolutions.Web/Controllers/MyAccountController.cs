@@ -137,7 +137,7 @@
 
             if (!ModelState.IsValid)
             {
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userAdminId, userDelegateId);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
             }
 
             if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
@@ -146,7 +146,7 @@
                     nameof(EditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
-                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userAdminId, userDelegateId);
+                return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
             }
 
             var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
@@ -163,11 +163,10 @@
         private IActionResult ReturnToEditDetailsViewWithErrors(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication,
-            int? userAdminId,
             int? userDelegateId
         )
         {
-            var (_, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
+            var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
                 centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());

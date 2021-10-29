@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -66,14 +64,6 @@
 
             centreCustomPromptHelper.ValidateCustomPrompts(formData, centreId, ModelState);
 
-            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, centreId))
-            {
-                ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
-                    "A user with this email address is already registered at this centre"
-                );
-            }
-
             if (!userService.NewAliasIsValid(formData.AliasId, delegateId, centreId))
             {
                 ModelState.AddModelError(
@@ -84,11 +74,16 @@
 
             if (!ModelState.IsValid)
             {
-                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                var customPrompts =
-                    centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(formData, centreId);
-                var model = new EditDelegateViewModel(formData, jobGroups, customPrompts, delegateId);
-                return View(model);
+                return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
+            }
+
+            if (!userService.NewEmailAddressIsValid(formData.Email!, null, delegateId, centreId))
+            {
+                ModelState.AddModelError(
+                    nameof(EditDetailsFormData.Email),
+                    "A user with this email address is already registered at this centre"
+                );
+                return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);
             }
 
             var (accountDetailsData, centreAnswersData) = AccountDetailsDataHelper.MapToUpdateAccountData(
@@ -99,6 +94,19 @@
             userService.UpdateUserAccountDetailsByAdmin(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
+
+        private IActionResult ReturnToEditDetailsViewWithErrors(
+            EditDelegateFormData formData,
+            int delegateId,
+            int centreId
+        )
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            var customPrompts =
+                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(formData, centreId);
+            var model = new EditDelegateViewModel(formData, jobGroups, customPrompts, delegateId);
+            return View(model);
         }
     }
 }

@@ -176,8 +176,7 @@
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.ProfileImageFile)].ValidationState
-                .Should().Be
-                    (ModelValidationState.Invalid);
+                .Should().Be(ModelValidationState.Invalid);
         }
 
         [Test]
