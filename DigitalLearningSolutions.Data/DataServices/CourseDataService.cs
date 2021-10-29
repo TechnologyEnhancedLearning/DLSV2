@@ -25,6 +25,16 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
     }
 
@@ -70,6 +80,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         private const string SelectDelegateCourseInfoQuery =
             @"SELECT
+                pr.ProgressId,
                 cu.CustomisationID AS CustomisationId,
                 cu.CentreID AS CustomisationCentreId,
                 cu.Active AS IsCourseActive,
@@ -406,6 +417,69 @@ namespace DigitalLearningSolutions.Data.DataServices
                         WHERE CustomisationID = @customisationId",
                 new { customisationId }
             );
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CompleteWithinMonths = @completeWithinMonths,
+                        ValidityMonths = @validityMonths,
+                        Mandatory = @mandatory,
+                        AutoRefresh = @autoRefresh
+                    WHERE CustomisationID = @customisationId",
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+            );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            connection.Execute(
+               @"UPDATE cu
+                    SET Active = @Active,
+                        SelfRegister = @SelfRegister,
+                        HideInLearnerPortal = @HideInLearnerPortal,
+                        DiagObjSelect = @DiagObjSelect
+                    FROM dbo.Customisations AS cu                   
+                    WHERE
+                    cu.CustomisationID = @customisationId",
+               new
+               {
+                   courseOptions.Active,
+                   courseOptions.SelfRegister,
+                   courseOptions.HideInLearnerPortal,
+                   courseOptions.DiagObjSelect,
+                   customisationId,
+               });
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseOptions>(
+                @"SELECT
+                        cu.Active,
+                        cu.SelfRegister,
+                        cu.HideInLearnerPortal,
+                        cu.DiagObjSelect,
+                        ap.DiagAssess
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
         }
     }
 }

@@ -12,6 +12,17 @@
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -91,6 +102,45 @@
                 : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
+        }
+
+        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            courseDataService.UpdateLearningPathwayDefaultsForCourse(
+                customisationId,
+                completeWithinMonths,
+                validityMonths,
+                mandatory,
+                autoRefresh
+            );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            courseDataService.UpdateCourseOptions(
+                courseOptions,
+                customisationId
+            );
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return courseDataService.GetCourseOptionsForAdminCategoryId(
+               customisationId,
+               centreId,
+               categoryId
+           );
         }
     }
 }

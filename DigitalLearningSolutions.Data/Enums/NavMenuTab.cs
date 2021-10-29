@@ -41,6 +41,46 @@
             nameof(SwitchApplication)
         );
 
+        public static readonly NavMenuTab Centre = new NavMenuTab(
+            7,
+            nameof(Centre)
+        );
+
+        public static readonly NavMenuTab Delegates = new NavMenuTab(
+            8,
+            nameof(Delegates)
+        );
+
+        public static readonly NavMenuTab CourseSetup = new NavMenuTab(
+            9,
+            nameof(CourseSetup)
+        );
+
+        public static readonly NavMenuTab Support = new NavMenuTab(
+            10,
+            nameof(Support)
+        );
+
+        public static readonly NavMenuTab Admins = new NavMenuTab(
+            11,
+            nameof(Admins)
+        );
+
+        public static readonly NavMenuTab Centres = new NavMenuTab(
+            12,
+            nameof(Centres)
+        );
+
+        public static readonly NavMenuTab Reports = new NavMenuTab(
+            13,
+            nameof(Reports)
+        );
+
+        public static readonly NavMenuTab System = new NavMenuTab(
+            14,
+            nameof(System)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)

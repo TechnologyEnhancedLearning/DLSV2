@@ -9,20 +9,12 @@
         public EvaluationSummaryViewModel(EvaluationResponseBreakdown model)
         {
             Question = model.Question;
-            if (model.ResponseCounts != null)
-            {
-                ResponsePercentages = model.ResponseCounts
-                    .Select(x => (x.response, FormatAsPercentageString(x.count, model.TotalResponses)));
-            }
+            Responses = model.Responses
+                .Select(x => new ResponseViewModel(x));
         }
 
         public string Question { get; set; }
 
-        public IEnumerable<(string response, string percentageString)>? ResponsePercentages { get; set; }
-
-        private static string FormatAsPercentageString(int count, int total)
-        {
-            return ((float)count / total).ToString("0.0%");
-        }
+        public IEnumerable<ResponseViewModel> Responses { get; set; }
     }
 }

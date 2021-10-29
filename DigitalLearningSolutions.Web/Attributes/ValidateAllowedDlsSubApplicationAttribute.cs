@@ -49,7 +49,8 @@
             if (!user.HasLearningPortalPermissions() && DlsSubApplication.LearningPortal.Equals(application) ||
                 !user.HasFrameworksAdminPermissions() && DlsSubApplication.Frameworks.Equals(application) ||
                 !user.HasSupervisorAdminPermissions() && DlsSubApplication.Supervisor.Equals(application) ||
-                !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application))
+                !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application) ||
+                !user.HasSuperAdminPermissions() && DlsSubApplication.SuperAdmin.Equals(application))
             {
                 RedirectToAccessDenied(context);
             }

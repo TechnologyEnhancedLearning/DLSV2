@@ -89,6 +89,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreAdminOrFrameworksAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserSuperAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserSuperAdmin(policy)
+                    );
                 }
             );
 
@@ -116,6 +120,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/Configuration/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -250,6 +255,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessCourse>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
+            services.AddScoped<VerifyAdminUserCanAccessProgress>();
+            services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

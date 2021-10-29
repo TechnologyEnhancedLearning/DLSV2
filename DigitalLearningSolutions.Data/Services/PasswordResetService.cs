@@ -23,10 +23,11 @@
 
         void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
-        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl);
+        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
             string recipientEmailAddress,
+            string candidateNumber,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
@@ -86,12 +87,12 @@
             }
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl)
+        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
         {
-            (_, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault() ??
+            var delegateUsers = userService.GetDelegateUsersByEmailAddress(emailAddress);
+            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
@@ -106,15 +107,16 @@
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
             string recipientEmailAddress,
+            string candidateNumber,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         )
         {
             var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault() ??
+            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);

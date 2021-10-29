@@ -19,7 +19,7 @@
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
@@ -147,7 +147,7 @@
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
+            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
         }
 
         private IActionResult EditDetailsPostPreviewImage(

@@ -284,7 +284,7 @@
         {
             SessionAddSupervisor sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
             TempData.Set(sessionAddSupervisor);
-            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(User.GetCentreId(), selfAssessmentId);
+            var supervisors = selfAssessmentService.GetValidSupervisorsForActivity(User.GetCentreId(), selfAssessmentId, User.GetCandidateIdKnownNotNull());
             var model = new AddSupervisorViewModel()
             {
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,

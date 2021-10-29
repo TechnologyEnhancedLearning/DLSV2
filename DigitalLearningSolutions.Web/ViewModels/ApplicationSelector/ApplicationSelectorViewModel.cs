@@ -8,7 +8,8 @@
             bool contentManagementSystemAccess,
             bool superviseAccess,
             bool contentCreatorAccess,
-            bool frameworksAccess)
+            bool frameworksAccess,
+            bool superAdminAccess)
         {
             LearningPortalAccess = learningPortalAccess;
             TrackingSystemAccess = trackingSystemAccess;
@@ -16,6 +17,7 @@
             SuperviseAccess = superviseAccess;
             ContentCreatorAccess = contentCreatorAccess;
             FrameworksAccess = frameworksAccess;
+            SuperAdminAccess = superAdminAccess;
         }
 
         public bool LearningPortalAccess { get; set; }
@@ -24,5 +26,6 @@
         public bool SuperviseAccess { get; set; }
         public bool ContentCreatorAccess { get; set; }
         public bool FrameworksAccess { get; set; }
+        public bool SuperAdminAccess { get; set; }
     }
 }

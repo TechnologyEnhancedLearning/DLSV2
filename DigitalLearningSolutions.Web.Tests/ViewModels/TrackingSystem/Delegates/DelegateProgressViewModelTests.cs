@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -24,9 +25,10 @@
                 SupervisorSurname = "Iommi",
                 EnrolledByAdminId = null,
                 EnrolledByForename = "Geezer",
-                EnrolledBySurname = "Butler"
+                EnrolledBySurname = "Butler",
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
+                DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     missingNamesDelegateInfo,
                     new List<CustomPromptWithAnswer>(),
@@ -43,9 +45,10 @@
                 SupervisorSurname = "Iommi",
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
-                EnrolledBySurname = "Butler"
+                EnrolledBySurname = "Butler",
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
+                DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     fullNamesDelegateInfo,
                     new List<CustomPromptWithAnswer>(),
@@ -75,9 +78,10 @@
             {
                 DelegateFirstName = "Bill",
                 DelegateLastName = "Ward",
-                DelegateEmail = null
+                DelegateEmail = null,
             };
             var viewModel = new DelegateProgressViewModel(
+                DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
             );
 
@@ -98,9 +102,10 @@
                 EnrolmentMethodId = enrolmentMethodId,
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
-                EnrolledBySurname = "Dio"
+                EnrolledBySurname = "Dio",
             };
             var viewModel = new DelegateProgressViewModel(
+                DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
             );
 

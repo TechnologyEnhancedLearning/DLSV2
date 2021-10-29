@@ -23,14 +23,6 @@
     </a>
   </li>
 }
-@if (User.HasSuperAdminPermissions()) {
-  <li class="nhsuk-header__navigation-item">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
-      Admin
-      <partial name="_NhsChevronRight" />
-    </a>
-  </li>
-}
 <li class="nhsuk-header__navigation-item">
   <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
     Support
