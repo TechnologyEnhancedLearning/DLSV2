@@ -19,22 +19,20 @@
       You have selected to enable auto-refresh on the course. Please specify the auto-refresh options.
     </p>
 
-    <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
-          label="Course to refresh to"
-          value="@Model.RefreshToCustomisationId.ToString()"
-          hint-text="Which course should the learner be enrolled on when auto-refreshing?"
-          deselectable="false"
-          css-class="nhsuk-u-width-one-half"
-          default-option="Select a field name"
-          select-list-options="@ViewBag.CourseOptions" />
-
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate
           asp-controller="ManageCourse"
           asp-action="SaveAutoRefreshOptions"
           asp-route-customisationId="@Model.CustomisationId">
 
-      <input type="hidden" asp-for="LpDefaultsViewModel" />
+      <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
+                label="Course to refresh to"
+                value="@Model.RefreshToCustomisationId.ToString()"
+                hint-text="Which course should the learner be enrolled on when auto-refreshing?"
+                deselectable="false"
+                css-class="nhsuk-u-width-one-half"
+                default-option="Select a field name"
+                select-list-options="@ViewBag.CourseOptions" />
 
       <vc:numeric-input asp-for="@nameof(Model.AutoRefreshMonths)"
                         label="Enrol on refresher (months before expiry)"

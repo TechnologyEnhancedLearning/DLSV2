@@ -585,7 +585,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             try
             {
                 // When
-                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0 ,0, false);
                 var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
                     1,
                     2,

@@ -51,6 +51,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -65,6 +68,9 @@
                     6,
                     12,
                     false,
+                    false,
+                    0,
+                    0,
                     false
                 )
             ).MustHaveHappened();
@@ -87,6 +93,9 @@
                     0,
                     0,
                     false,
+                    false,
+                    0,
+                    0,
                     false
                 )
             ).MustHaveHappened();
@@ -111,6 +120,9 @@
                     49,
                     12,
                     false,
+                    false,
+                    0,
+                    0,
                     false
                 )
             ).MustNotHaveHappened();

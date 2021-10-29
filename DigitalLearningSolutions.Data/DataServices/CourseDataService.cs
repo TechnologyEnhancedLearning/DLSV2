@@ -529,6 +529,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public IEnumerable<(int id, string name)> GetCentrallyManagedAndCentreCoursesAlphabetical(int centreId, int? categoryId)
         {
+            //todo check with steve if we want to be joining on applications (we think we do)
             return connection.Query<(int, string)>(
                 @"SELECT
                         c.CustomisationID,

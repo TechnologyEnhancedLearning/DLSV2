@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -118,13 +120,9 @@
                 categoryId.Value
             );
 
-            var data = TempData.Peek<EditLearningPathwayDefaultsData>()!;
-
             var model = new EditAutoRefreshOptionsViewModel(courseDetails!);
 
-            SetViewBagCourseOptions(model.RefreshToCustomisationId);
-
-            model.LpDefaultsViewModel = data.LearningPathwayDefaultsModel;
+            SetViewBagCourseOptions(customisationId, model.RefreshToCustomisationId);
 
             return View(model);
         }
@@ -144,18 +142,20 @@
 
             if (!ModelState.IsValid)
             {
-                SetViewBagCourseOptions(model.RefreshToCustomisationId);
+                SetViewBagCourseOptions(customisationId, model.RefreshToCustomisationId);
                 return View("EditAutoRefreshOptions", model);
             }
+
+            var data = TempData.Peek<EditLearningPathwayDefaultsData>()!;
 
             var autoRefreshMonths =
                 model.AutoRefreshMonths == null ? 0 : int.Parse(model.AutoRefreshMonths);
 
             var completeWithinMonthsInt =
-                model.LpDefaultsViewModel.CompleteWithinMonths == null ? 0 : int.Parse(model.LpDefaultsViewModel.CompleteWithinMonths);
+                data.LearningPathwayDefaultsModel.CompleteWithinMonths == null ? 0 : int.Parse(data.LearningPathwayDefaultsModel.CompleteWithinMonths);
 
             var validityMonthsInt =
-                model.LpDefaultsViewModel.ValidityMonths == null ? 0 : int.Parse(model.LpDefaultsViewModel.ValidityMonths);
+                data.LearningPathwayDefaultsModel.ValidityMonths == null ? 0 : int.Parse(data.LearningPathwayDefaultsModel.ValidityMonths);
 
             var refreshToCustomisationId =
                 model.RefreshToCustomisationId ?? 0;
@@ -164,8 +164,8 @@
                 model.CustomisationId,
                 completeWithinMonthsInt,
                 validityMonthsInt,
-                model.LpDefaultsViewModel.Mandatory,
-                model.LpDefaultsViewModel.AutoRefresh,
+                data.LearningPathwayDefaultsModel.Mandatory,
+                data.LearningPathwayDefaultsModel.AutoRefresh,
                 autoRefreshMonths,
                 refreshToCustomisationId,
                 model.ApplyLpDefaultsToSelfEnrol
@@ -275,12 +275,15 @@
             TempData.Set(data);
         }
 
-        private void SetViewBagCourseOptions(int? selectedId = null)
+        private void SetViewBagCourseOptions(int customisationId, int? selectedId = null)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
             var categoryIdFilter = categoryId == 0 ? null : categoryId;
-            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
+
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
+            centreCourses.RemoveAll(c => c.id == customisationId);
+            centreCourses.Insert(0, (customisationId, "Same course"));
 
             ViewBag.CourseOptions =
                 SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
