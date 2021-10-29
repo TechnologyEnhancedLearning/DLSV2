@@ -7,6 +7,7 @@
         public DelegateCourseInfo() { }
 
         public DelegateCourseInfo(
+            int progressId,
             int customisationId,
             int customisationCentreId,
             bool isCourseActive,
@@ -41,6 +42,7 @@
             int delegateCentreId
         )
         {
+            ProgressId = progressId;
             CustomisationId = customisationId;
             CustomisationCentreId = customisationCentreId;
             IsCourseActive = isCourseActive;
@@ -75,6 +77,7 @@
             DelegateCentreId = delegateCentreId;
         }
 
+        public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public int CustomisationCentreId { get; set; }
         public bool IsCourseActive { get; set; }

@@ -148,16 +148,46 @@
             try
             {
                 // Given
-                var removedDate = DateTime.Now;
-                const int delegateId = 245969;
+                var removedDate = DateTime.UtcNow;
+                const int groupId = 60;
+                const int delegateId = 298304;
+                const bool removeStartedEnrolments = true;
+                const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(5, delegateId, removedDate);
-                var progressFields = await connection.GetProgressRemovedFields(285146);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, removeStartedEnrolments);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
                 progressFields.Item1.Should().Be(3);
                 progressFields.Item2.Should().BeCloseTo(removedDate);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public async Task RemoveRelatedProgressRecordsForGroupDelegate_does_not_remove_started_progress_record_when_specified()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                var removedDate = DateTime.UtcNow;
+                const int groupId = 60;
+                const int delegateId = 298304;
+                const bool removeStartedEnrolments = false;
+                const int progressId = 282560;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, removedDate, removeStartedEnrolments);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
+
+                // Then
+                progressFields.Item1.Should().Be(0);
+                progressFields.Item2.Should().BeNull();
             }
             finally
             {
@@ -172,13 +202,14 @@
             try
             {
                 // Given
-                var removedDate = DateTime.Now;
+                var removedDate = DateTime.UtcNow;
                 const int delegateId = 299228;
+                const bool removeStartedEnrolments = false; 
                 AddDelegateToGroupWithSharedCourse();
                 AddProgressRecordForGroupWithSharedCourse();
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(8, delegateId, removedDate, removeStartedEnrolments);
                 var progressFields = await connection.GetProgressRemovedFields(285172);
 
                 // Then
