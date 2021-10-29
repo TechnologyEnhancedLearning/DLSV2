@@ -186,29 +186,5 @@
 
             result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
         }
-
-        [Test]
-        public void Edit_Course_Options_redirects_to_not_found_page_when_admin_user_cannot_access_course()
-        {
-            // Given
-            const int centreId = 101;
-            var context = new ActionExecutingContext(
-                new ActionContext(
-                    new DefaultHttpContext(),
-                    new RouteData(new RouteValueDictionary() { { "customisationId", "1" }}),
-                    new ActionDescriptor()
-                ),
-                new List<IFilterMetadata>(),
-                new Dictionary<string, object>(),
-                new ManageCourseController(A.Fake<ICourseService>()).WithDefaultContext().
-                    WithMockUser(true, centreId: centreId)
-            );
-
-            // When
-            new VerifyAdminUserCanAccessCourse(A.Fake<ICourseService>()).OnActionExecuting(context);
-
-            // Then
-            context.Result.Should().BeNotFoundResult();
-        }
     }
 }
