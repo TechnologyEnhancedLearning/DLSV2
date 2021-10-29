@@ -10,23 +10,19 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
 
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {
-        private readonly ILogger<NotificationPreferencesController> logger;
         private readonly INotificationPreferencesService notificationPreferencesService;
 
         public NotificationPreferencesController(
-            INotificationPreferencesService notificationPreferencesService,
-            ILogger<NotificationPreferencesController> logger
+            INotificationPreferencesService notificationPreferencesService
         )
         {
             this.notificationPreferencesService = notificationPreferencesService;
-            this.logger = logger;
         }
 
         [Route("/{dlsSubApplication}/NotificationPreferences")]
@@ -98,7 +94,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return RedirectToAction(
                 "Index",
                 "NotificationPreferences",
-                new { application = dlsSubApplication.UrlSegment }
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
             );
         }
 

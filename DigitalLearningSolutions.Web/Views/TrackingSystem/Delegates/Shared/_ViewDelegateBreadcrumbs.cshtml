@@ -1,0 +1,17 @@
+﻿@model int
+
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-controller="AllDelegates" asp-action="Index">All delegates</a>
+      </li>
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model">View delegate</a>
+      </li>
+    </ol>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model">Back to view delegate</a>
+    </p>
+  </div>
+</nav>
