@@ -9,8 +9,8 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin;
     using Microsoft.AspNetCore.Authorization;
@@ -50,10 +50,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            if (delegateUser == null || delegateUser.CentreId != centreId || delegateUser.IsAdmin ||
-                !delegateUser.IsPasswordSet)
+            if (delegateUser.IsAdmin || !delegateUser.IsPasswordSet)
             {
                 return NotFound();
             }

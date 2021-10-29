@@ -109,9 +109,9 @@
                     CentreId,
                     false
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             results.DelegateCourseInfo.Should().BeEquivalentTo(info);
             results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
         }
@@ -135,7 +135,7 @@
                     CentreId,
                     false
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
             result.DelegateCourseInfo.Should().BeEquivalentTo(info);
             result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
@@ -153,7 +153,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
@@ -170,7 +170,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
@@ -186,7 +186,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -202,7 +202,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
@@ -218,7 +218,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             result.Should().BeNull();
         }
 

@@ -3,18 +3,11 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
-    using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.AspNetCore.Routing;
     using NUnit.Framework;
-    using System.Collections.Generic;
 
     internal class ManageCourseControllerTests
     {
@@ -143,7 +136,6 @@
                 )
             ).Returns(new CourseOptions());
 
-
             // When
             var result = controller.EditCourseOptions(customisationId);
 
@@ -156,12 +148,12 @@
         {
             // Given
             const int customisationId = 1;
-            var courseOptions = new CourseOptions()
+            var courseOptions = new CourseOptions
             {
                 Active = true,
                 DiagObjSelect = true,
                 HideInLearnerPortal = true,
-                SelfRegister = true
+                SelfRegister = true,
             };
 
             A.CallTo(

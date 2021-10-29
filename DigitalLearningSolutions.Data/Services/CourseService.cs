@@ -8,11 +8,17 @@
     public interface ICourseService
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
+
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
+
         public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
+
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+
         public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
@@ -22,6 +28,7 @@
         );
 
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
@@ -84,26 +91,6 @@
             return true;
         }
 
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
-            DelegateCourseInfo info,
-            int centreId,
-            bool allowAllCentreCourses = false
-        )
-        {
-            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
-                info,
-                info.CustomisationId,
-                centreId,
-                allowAllCentreCourses
-            );
-
-            var attemptStats = info.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : new AttemptStats(0, 0);
-
-            return new DelegateCourseDetails(info, customPrompts, attemptStats);
-        }
-
         public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
         {
             return courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
@@ -137,10 +124,30 @@
         public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
         {
             return courseDataService.GetCourseOptionsForAdminCategoryId(
-               customisationId,
-               centreId,
-               categoryId
-           );
+                customisationId,
+                centreId,
+                categoryId
+            );
+        }
+
+        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
+            DelegateCourseInfo info,
+            int centreId,
+            bool allowAllCentreCourses = false
+        )
+        {
+            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                info,
+                info.CustomisationId,
+                centreId,
+                allowAllCentreCourses
+            );
+
+            var attemptStats = info.IsAssessed
+                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
+                : new AttemptStats(0, 0);
+
+            return new DelegateCourseDetails(info, customPrompts, attemptStats);
         }
     }
 }
