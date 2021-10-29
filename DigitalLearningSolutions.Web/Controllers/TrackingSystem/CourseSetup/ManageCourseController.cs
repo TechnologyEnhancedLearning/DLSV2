@@ -105,6 +105,7 @@
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(RedirectEmptySessionData<EditLearningPathwayDefaultsData>))]
         [Route("AutoRefreshOptions")]
         public IActionResult EditAutoRefreshOptions(int customisationId)
         {
@@ -117,9 +118,11 @@
                 categoryId.Value
             );
 
-            var data = TempData.Peek<EditLearningPathwayDefaultsData>();
+            var data = TempData.Peek<EditLearningPathwayDefaultsData>()!;
 
             var model = new EditAutoRefreshOptionsViewModel(courseDetails!);
+
+            SetViewBagCourseOptions(model.RefreshToCustomisationId);
 
             model.LpDefaultsViewModel = data.LearningPathwayDefaultsModel;
 
@@ -127,6 +130,7 @@
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(RedirectEmptySessionData<EditLearningPathwayDefaultsData>))]
         [Route("AutoRefreshOptions")]
         public IActionResult SaveAutoRefreshOptions(
             int customisationId,
@@ -140,7 +144,7 @@
 
             if (!ModelState.IsValid)
             {
-
+                SetViewBagCourseOptions(model.RefreshToCustomisationId);
                 return View("EditAutoRefreshOptions", model);
             }
 
@@ -153,6 +157,9 @@
             var validityMonthsInt =
                 model.LpDefaultsViewModel.ValidityMonths == null ? 0 : int.Parse(model.LpDefaultsViewModel.ValidityMonths);
 
+            var refreshToCustomisationId =
+                model.RefreshToCustomisationId ?? 0;
+
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 model.CustomisationId,
                 completeWithinMonthsInt,
@@ -160,18 +167,11 @@
                 model.LpDefaultsViewModel.Mandatory,
                 model.LpDefaultsViewModel.AutoRefresh,
                 autoRefreshMonths,
-                model.RefreshToCustomisationId,
+                refreshToCustomisationId,
                 model.ApplyLpDefaultsToSelfEnrol
             );
 
             return RedirectToAction("Index", new { customisationId = model.CustomisationId });
-        }
-
-
-        private void SetEditLearningPathwayDetailsTempData(EditLearningPathwayDefaultsViewModel model)
-        {
-            var data = new EditLearningPathwayDefaultsData(model);
-            TempData.Set(data);
         }
 
         [HttpGet]
@@ -267,6 +267,23 @@
 
             courseService.UpdateCourseOptions(courseOptions, customisationId);
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
+        }
+
+        private void SetEditLearningPathwayDetailsTempData(EditLearningPathwayDefaultsViewModel model)
+        {
+            var data = new EditLearningPathwayDefaultsData(model);
+            TempData.Set(data);
+        }
+
+        private void SetViewBagCourseOptions(int? selectedId = null)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+            var categoryIdFilter = categoryId == 0 ? null : categoryId;
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
+
+            ViewBag.CourseOptions =
+                SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
         }
 
         private void ValidateCustomisationName(

@@ -61,6 +61,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             bool applyLpDefaultsToSelfEnrol
         );
 
+        IEnumerable<(int id, string name)> GetCentrallyManagedAndCentreCoursesAlphabetical(
+            int centreId,
+            int? categoryId
+        );
+
         public void UpdateCourseDetails(
             int customisationId,
             string customisationName,
@@ -519,6 +524,24 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
                 new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId, autoRefreshMonths, refreshToCustomisationId, applyLpDefaultsToSelfEnrol }
+            );
+        }
+
+        public IEnumerable<(int id, string name)> GetCentrallyManagedAndCentreCoursesAlphabetical(int centreId, int? categoryId)
+        {
+            return connection.Query<(int, string)>(
+                @"SELECT
+                        c.CustomisationID,
+                        c.CustomisationName
+                    FROM Customisations AS c
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    WHERE (c.CentreID = @centreId OR (c.AllCentres = 1 AND ca.Active = 1))
+	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    AND ca.CentreID = @centreId
+                    AND ap.ArchivedDate IS NULL
+                    ORDER BY c.CustomisationName",
+                new { centreId, categoryId }
             );
         }
 

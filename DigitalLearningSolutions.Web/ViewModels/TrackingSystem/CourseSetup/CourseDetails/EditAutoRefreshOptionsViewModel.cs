@@ -1,5 +1,6 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
+    using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Attributes;
 
@@ -17,7 +18,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.Cou
 
         public EditAutoRefreshOptionsViewModel(
             int customisationId,
-            int refreshToCustomisationId,
+            int? refreshToCustomisationId,
             string? autoRefreshMonths,
             bool applyLpDefaultsToSelfEnrol,
             EditLearningPathwayDefaultsViewModel lpDefaultsViewModel
@@ -31,7 +32,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.Cou
         }
 
         public int CustomisationId { get; set; }
-        public int RefreshToCustomisationId { get; set; }
+
+        [Required(ErrorMessage = "Select a course")]
+        public int? RefreshToCustomisationId { get; set; }
 
         [WholeNumberWithinInclusiveRange(0, 12, "Enter a whole number from 0 to 12")]
         public string? AutoRefreshMonths { get; set; }
