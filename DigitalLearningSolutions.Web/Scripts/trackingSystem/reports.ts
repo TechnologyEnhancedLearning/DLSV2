@@ -2,7 +2,7 @@ import Chartist from 'chartist';
 import getPathForEndpoint from '../common';
 
 // These constants are used in _ActivityTable.cshtml
-const toggleableActivityButtonClass = 'js-toggle-row-button';
+const toggleableActivityButtonId = 'js-toggle-row-button';
 const toggleableActivityRowClass = 'js-toggleable-activity-row';
 
 const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
@@ -77,10 +77,10 @@ function toggleVisibleActivityRows() {
 
   if (activityRow?.style.display === activityToggleableRowDisplayNone) {
     viewMoreRows();
-    viewMoreLink.innerText = 'View Less';
+    viewMoreLink.innerText = 'View less';
   } else {
     viewLessRows();
-    viewMoreLink.innerText = 'View More';
+    viewMoreLink.innerText = 'View more';
   }
 }
 
@@ -119,22 +119,19 @@ function makeChartistRequest() {
 }
 
 function GetViewMoreLink() {
-  return <HTMLElement>document.getElementsByClassName(toggleableActivityButtonClass)
-    .item(0);
+  return <HTMLElement>document.getElementById(toggleableActivityButtonId);
 }
 
-function pageLoad() {
+function setUpToggleActivityRowsButton() {
   const viewMoreLink = GetViewMoreLink();
 
   viewMoreLink.addEventListener('click', (event) => {
     event.preventDefault();
     toggleVisibleActivityRows();
   });
-
-  viewMoreLink.style.display = 'block';
-  viewLessRows();
-
-  makeChartistRequest();
 }
 
-pageLoad();
+setUpToggleActivityRowsButton();
+viewLessRows();
+makeChartistRequest();
+

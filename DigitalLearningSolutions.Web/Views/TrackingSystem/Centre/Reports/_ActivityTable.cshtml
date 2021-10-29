@@ -4,7 +4,7 @@
   const int defaultNumOfRowsVisible = 5;
 
   //These must match with the name in trackingSystem/reports.ts
-  const string toggleableActivityButtonClass = "js-toggle-row-button";
+  const string toggleableActivityButtonId = "js-toggle-row-button";
   const string toggleableActivityRowClass = "js-toggleable-activity-row";
 }
 
@@ -26,9 +26,9 @@
     </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, rowNumber) => (row, rowNumber)))
+    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, rowNumber) => (row, rowNumber + 1)))
     {
-      <tr role="row" class="nhsuk-table__row @(rowNumber >= defaultNumOfRowsVisible ? toggleableActivityRowClass : string.Empty)">
+      <tr role="row" class="nhsuk-table__row @(rowNumber > defaultNumOfRowsVisible ? toggleableActivityRowClass : string.Empty)">
         <td role="cell" class="nhsuk-table__cell">
           <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
         </td>
@@ -46,6 +46,11 @@
   </tbody>
 </table>
 
-<a role="button"
-   class="nhsuk-u-margin-top-4 js-only-block @(toggleableActivityButtonClass)"
-   href="#">View More</a>
+<div class="nhsuk-u-margin-top-4">
+  <a id="@(toggleableActivityButtonId)"
+     role="button"
+     class="nhsuk-u-margin-top-4 js-only-inline"
+     href="#">
+    View more
+  </a>
+</div>
