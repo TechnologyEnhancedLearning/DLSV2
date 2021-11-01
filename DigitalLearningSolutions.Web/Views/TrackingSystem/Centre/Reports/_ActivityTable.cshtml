@@ -1,6 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports
-
 @model UsageStatsTableViewModel
+@{
+  const int defaultNumOfRowsVisible = 5;
+
+  //These must match with the name in trackingSystem/reports.ts
+  const string toggleableActivityButtonId = "js-toggle-row-button";
+  const string toggleableActivityRowClass = "js-toggleable-activity-row";
+}
 
 <table role="table" class="nhsuk-table-responsive">
   <thead role="rowgroup" class="nhsuk-table__head">
@@ -20,21 +26,31 @@
     </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-  @foreach (var activityRow in Model.Rows) {
-    <tr role="row" class="nhsuk-table__row">
-      <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
-      </td>
-      <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Registrations </span>@activityRow.Registrations
-      </td>
-      <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
-      </td>
-      <td role="cell" class="nhsuk-table__cell">
-        <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations
-      </td>
-    </tr>
-  }
+    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, index) => (row, index + 1)))
+    {
+      <tr role="row" class="nhsuk-table__row @(rowNumber > defaultNumOfRowsVisible ? toggleableActivityRowClass : string.Empty)">
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Period </span>@activityRow.Period
+        </td>
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Registrations </span>@activityRow.Registrations
+        </td>
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Completions </span>@activityRow.Completions
+        </td>
+        <td role="cell" class="nhsuk-table__cell">
+          <span class="nhsuk-table-responsive__heading">Evaluations </span>@activityRow.Evaluations
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
+
+<div class="nhsuk-u-margin-top-4">
+  <a id="@(toggleableActivityButtonId)"
+     role="button"
+     class="nhsuk-u-margin-top-4 js-only-inline"
+     href="#">
+    View more
+  </a>
+</div>
