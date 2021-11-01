@@ -71,7 +71,7 @@ function generateChart(request: XMLHttpRequest) {
 }
 
 function toggleVisibleActivityRows() {
-  const viewMoreLink = GetViewMoreLink();
+  const viewMoreLink = getViewMoreLink();
   const activityRow = <HTMLElement>document.getElementsByClassName(toggleableActivityRowClass)
     .item(0);
 
@@ -118,12 +118,12 @@ function makeChartistRequest() {
   request.send();
 }
 
-function GetViewMoreLink() {
+function getViewMoreLink() {
   return <HTMLElement>document.getElementById(toggleableActivityButtonId);
 }
 
 function setUpToggleActivityRowsButton() {
-  const viewMoreLink = GetViewMoreLink();
+  const viewMoreLink = getViewMoreLink();
 
   viewMoreLink.addEventListener('click', (event) => {
     event.preventDefault();
@@ -134,4 +134,3 @@ function setUpToggleActivityRowsButton() {
 setUpToggleActivityRowsButton();
 viewLessRows();
 makeChartistRequest();
-
