@@ -26,7 +26,7 @@
     </tr>
   </thead>
   <tbody class="nhsuk-table__body">
-    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, rowNumber) => (row, rowNumber + 1)))
+    @foreach (var (activityRow, rowNumber) in Model.Rows.Select((row, index) => (row, index + 1)))
     {
       <tr role="row" class="nhsuk-table__row @(rowNumber > defaultNumOfRowsVisible ? toggleableActivityRowClass : string.Empty)">
         <td role="cell" class="nhsuk-table__cell">
