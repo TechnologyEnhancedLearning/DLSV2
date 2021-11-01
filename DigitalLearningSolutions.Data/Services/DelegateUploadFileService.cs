@@ -11,10 +11,12 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
 
     public interface IDelegateUploadFileService
     {
@@ -25,20 +27,29 @@ namespace DigitalLearningSolutions.Data.Services
     {
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationDataService registrationDataService;
+        private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
             IRegistrationDataService registrationDataService,
-            IUserService userService
+            ISupervisorDelegateService supervisorDelegateService,
+            IUserService userService,
+            IPasswordResetService passwordResetService,
+            IConfiguration configuration
         )
         {
             this.userDataService = userDataService;
             this.registrationDataService = registrationDataService;
+            this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
+            this.passwordResetService = passwordResetService;
+            this.configuration = configuration;
         }
 
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate)
@@ -184,8 +195,8 @@ namespace DigitalLearningSolutions.Data.Services
         private void RegisterDelegate(DelegateTableRow delegateRow, DateTime? welcomeEmailDate, int centreId)
         {
             var model = new DelegateRegistrationModel(delegateRow, centreId, welcomeEmailDate);
-            var status = registrationDataService.RegisterDelegateByCentre(model);
-            switch (status)
+            var errorCodeOrCandidateNumber = registrationDataService.RegisterDelegate(model);
+            switch (errorCodeOrCandidateNumber)
             {
                 case "-1":
                     delegateRow.Error = BulkUploadResult.ErrorReason.UnexpectedErrorForCreate;
@@ -194,14 +205,45 @@ namespace DigitalLearningSolutions.Data.Services
                 case "-3":
                 case "-4":
                     throw new ArgumentOutOfRangeException(
-                        nameof(status),
-                        status,
+                        nameof(errorCodeOrCandidateNumber),
+                        errorCodeOrCandidateNumber,
                         "Unknown return value when creating delegate record."
                     );
                 default:
+                    var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
+                    SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
+                    if (welcomeEmailDate.HasValue)
+                    {
+                        passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                            delegateRow.Email!,
+                            newDelegateRecord.CandidateNumber,
+                            configuration.GetAppRootPath(),
+                            welcomeEmailDate.Value,
+                            "DelegateBulkUpload_Refactor"
+                        );
+                    }
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }
+        }
+
+        private void SetUpSupervisorDelegateRelations(string emailAddress, int centreId, int delegateId)
+        {
+            var pendingSupervisorDelegateIds =
+                supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
+                    centreId,
+                    emailAddress
+                ).Select(supervisor => supervisor.ID).ToList();
+
+            if (!pendingSupervisorDelegateIds.Any())
+            {
+                return;
+            }
+
+            supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
+                pendingSupervisorDelegateIds,
+                delegateId
+            );
         }
 
         private static bool ValidateHeaders(IXLTable table)

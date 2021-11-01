@@ -23,3 +23,17 @@ export function sendBrowserAgnosticEvent <T extends HTMLElement>(
 
   return event;
 }
+
+export function selectAll(selectorClass: string): void {
+  const allCheckboxes = document.querySelectorAll(selectorClass) as NodeListOf<HTMLInputElement>;
+  allCheckboxes.forEach((checkbox) => {
+    if (!checkbox.checked) checkbox.click();
+  });
+}
+
+export function deselectAll(selectorClass: string): void {
+  const allCheckboxes = document.querySelectorAll(selectorClass) as NodeListOf<HTMLInputElement>;
+  allCheckboxes.forEach((checkbox) => {
+    if (checkbox.checked) checkbox.click();
+  });
+}

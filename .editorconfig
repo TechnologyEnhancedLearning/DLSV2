@@ -8,6 +8,7 @@ trim_trailing_whitespace = true
 encoding = utf-8-bom
 
 # ReSharper properties
+resharper_csharp_blank_lines_around_single_line_invocable = 1
 resharper_csharp_wrap_after_declaration_lpar = true
 resharper_csharp_wrap_after_invocation_lpar = true
 resharper_csharp_wrap_arguments_style = chop_if_long
@@ -22,6 +23,7 @@ resharper_wrap_before_declaration_rpar = true
 resharper_wrap_before_invocation_rpar = true
 resharper_csharp_instance_members_qualify_members = none
 resharper_dl_tag_contains_non_dt_or_dd_elements_highlighting = none
+resharper_csharp_trailing_comma_in_multiline_lists = true
 
 [*.{cs}]
 indent_size = 4

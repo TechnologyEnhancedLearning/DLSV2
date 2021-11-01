@@ -7,17 +7,18 @@
             string lastName,
             string email,
             int centre,
-            int jobGroup,
-            string? passwordHash
+            string? passwordHash,
+            bool active,
+            bool approved
         )
         {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Centre = centre;
-            JobGroup = jobGroup;
             PasswordHash = passwordHash;
-            Approved = false;
+            Active = active;
+            Approved = approved;
         }
 
         public string FirstName { get; set; }
@@ -28,10 +29,10 @@
 
         public int Centre { get; set; }
 
-        public int JobGroup { get; set; }
-
         public string? PasswordHash { get; set; }
 
         public bool Approved { get; set; }
+
+        public bool Active { get; set; }
     }
 }

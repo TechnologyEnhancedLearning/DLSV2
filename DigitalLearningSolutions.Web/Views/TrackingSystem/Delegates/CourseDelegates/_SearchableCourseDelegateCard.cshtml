@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model SearchableCourseDelegateViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.DelegateId-card">
@@ -65,7 +66,12 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button expander-card__button" role="button">
+      <a class="nhsuk-button expander-card__button"
+         role="button"
+         asp-controller="DelegateProgress"
+         asp-action="Index"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
         View progress
       </a>
       @if (Model.Locked) {

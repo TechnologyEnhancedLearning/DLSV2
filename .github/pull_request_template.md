@@ -9,9 +9,13 @@ _Attach screenshots on mobile, tablet and desktop._
 
 -----
 ### Developer checks
+(Leave tasks unticked if they haven't been appropriate for your ticket.)
+
 I have:
 - [ ] Run the formatter and made sure there are no IDE errors.
-- [ ] Written tests for the changes (controller, data services, services, view models etc) and manually tested my work with and without JavaScript. Full manual testing guidelines can be found here: https://softwiretech.atlassian.net/wiki/spaces/HEE/pages/6703648740/Testing
-- [ ] Updated/added documentation in Swiki and/or Readme.
+- [ ] Written tests for the changes (accessibility tests, unit tests for controller, data services, services, view models, etc)
+- [ ] Manually tested my work with and without JavaScript. Full manual testing guidelines can be found here: https://softwiretech.atlassian.net/wiki/spaces/HEE/pages/6703648740/Testing
+- [ ] Updated/added documentation in Swiki and/or Readme. Links (if any) are below:
+  - [doc_1_here](link_1_here)
 - [ ] Updated my Jira ticket with information about other parts of the system that were touched as part of the MR and have to be sanity tested to ensure nothing’s broken.
 - [ ] Scanned over my own MR to ensure everything is as expected.

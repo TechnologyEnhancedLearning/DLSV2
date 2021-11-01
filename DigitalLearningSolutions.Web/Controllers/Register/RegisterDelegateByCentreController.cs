@@ -5,6 +5,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -15,7 +17,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using ConfirmationViewModel =
@@ -27,7 +28,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private const string CookieName = "DelegateRegistrationByCentreData";
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -214,24 +214,35 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
 
             string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
-            var candidateNumber = registrationService.RegisterDelegateByCentre(
-                RegistrationMappingHelper.MapToDelegateRegistrationModel(data),
-                baseUrl
-            );
-
-            switch (candidateNumber)
+            try
             {
-                case "-1":
-                    return StatusCode(500);
-                case "-4":
-                    return RedirectToAction("Index");
-            }
+                var candidateNumber = registrationService.RegisterDelegateByCentre(
+                    RegistrationMappingHelper.MapCentreRegistrationToDelegateRegistrationModel(data),
+                    baseUrl
+                );
 
-            TempData.Clear();
-            TempData.Add("delegateNumber", candidateNumber);
-            TempData.Add("emailSent", data.ShouldSendEmail);
-            TempData.Add("passwordSet", data.IsPasswordSet);
-            return RedirectToAction("Confirmation");
+                TempData.Clear();
+                TempData.Add("delegateNumber", candidateNumber);
+                TempData.Add("emailSent", data.ShouldSendEmail);
+                TempData.Add("passwordSet", data.IsPasswordSet);
+                return RedirectToAction("Confirmation");
+            }
+            catch (DelegateCreationFailedException e)
+            {
+                var error = e.Error;
+
+                if (error.Equals(DelegateCreationError.UnexpectedError))
+                {
+                    return new StatusCodeResult(500);
+                }
+
+                if (error.Equals(DelegateCreationError.EmailAlreadyInUse))
+                {
+                    return RedirectToAction("Index");
+                }
+
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet]
@@ -241,6 +252,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var emailSent = (bool)TempData.Peek("emailSent");
             var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
+
             if (delegateNumber == null)
             {
                 return RedirectToAction("Index");
@@ -253,17 +265,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private void SetCentreDelegateRegistrationData(int centreId)
         {
             var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, DateTime.Today);
-            var id = centreDelegateRegistrationData.Id;
-
-            Response.Cookies.Append(
-                CookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
-                }
-            );
-
             TempData.Set(centreDelegateRegistrationData);
         }
 

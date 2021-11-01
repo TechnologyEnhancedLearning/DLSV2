@@ -1,30 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.MiniHub;
     using DigitalLearningSolutions.Web.ViewModels.Home;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
 
     [RedirectDelegateOnlyToLearningPortal]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class HomeController : Controller
     {
         private const string LandingPageMiniHubName = "Digital Learning Solutions";
+
+        private readonly IConfiguration configuration;
+
         private readonly List<MiniHubSection> sections = new List<MiniHubSection>(
             new[]
             {
-                new MiniHubSection(sectionTitle: "Welcome", controllerName: "Home", actionName: "Welcome"),
-                new MiniHubSection(sectionTitle: "Products", controllerName: "Home", actionName: "Products"),
+                new MiniHubSection("Welcome", "Home", "Welcome"),
+                new MiniHubSection("Products", "Home", "Products"),
                 new MiniHubSection(
-                    sectionTitle: "Learning Content",
-                    controllerName: "Home",
-                    actionName: "LearningContent"),
-            });
-
-        private readonly IConfiguration configuration;
+                    "Learning content",
+                    "Home",
+                    "LearningContent"
+                ),
+            }
+        );
 
         public HomeController(IConfiguration configuration)
         {
@@ -60,7 +66,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
-                CurrentSiteBaseUrl = configuration[ConfigHelper.CurrentSystemBaseUrlName],
+                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
             };
         }
     }

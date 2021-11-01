@@ -15,6 +15,44 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
     public class CourseDataServiceTests
     {
+        private static readonly DateTime EnrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
+
+        private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
+            284998,
+            27915,
+            101,
+            true,
+            false,
+            4,
+            "LinkedIn",
+            "Cohort Testing",
+            1,
+            "Kevin",
+            "Whittaker (Developer)",
+            EnrollmentDate,
+            EnrollmentDate,
+            null,
+            null,
+            null,
+            null,
+            3,
+            1,
+            "Kevin",
+            "Whittaker (Developer)",
+            0,
+            0,
+            null,
+            true,
+            null,
+            null,
+            null,
+            20,
+            "xxxx",
+            "xxxxxx",
+            "",
+            101
+        );
+
         private CourseDataService courseDataService = null!;
 
         [OneTimeSetUp]
@@ -56,7 +94,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 SupervisorAdminId = 0,
                 ProgressID = 173218,
                 EnrollmentMethodID = 1,
-                PLLocked = false
+                PLLocked = false,
             };
             result.Should().HaveCount(4);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -85,7 +123,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HasLearning = true,
                 Passes = 1,
                 Sections = 2,
-                ProgressID = 251571
+                ProgressID = 251571,
             };
             result.Should().HaveCount(15);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -110,7 +148,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 DelegateStatus = 0,
                 HasLearning = true,
                 HasDiagnostic = true,
-                IsAssessed = true
+                IsAssessed = true,
             };
             result.Should().HaveCountGreaterOrEqualTo(1);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
@@ -245,7 +283,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 HideInLearnerPortal = false,
                 CategoryName = "Office 2007",
                 CourseTopic = "Microsoft Office",
-                LearningMinutes = "N/A"
+                LearningMinutes = "N/A",
             };
 
             result.Should().HaveCount(260);
@@ -283,40 +321,30 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var results = courseDataService.GetDelegateCoursesInfo(20).ToList();
 
             // Then
-            var enrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
-            var expected = new DelegateCourseInfo(
-                27915,
-                "LinkedIn",
-                "Cohort Testing",
-                "Kevin",
-                "Whittaker (Developer)",
-                enrollmentDate,
-                enrollmentDate,
-                null,
-                null,
-                null,
-                3,
-                0,
-                0,
-                null,
-                true,
-                null,
-                null,
-                null
-            );
             results.Should().HaveCount(4);
-            results[3].Should().BeEquivalentTo(expected);
+            results[3].Should().BeEquivalentTo(ExpectedCourseInfo);
+        }
+
+        [Test]
+        public void GetDelegateCourseInfo_should_return_delegate_course_info_correctly()
+        {
+            // When
+            var result = courseDataService.GetDelegateCourseInfoByProgressId(284998);
+
+            // Then
+            result.Should().BeEquivalentTo(ExpectedCourseInfo);
         }
 
         [Test]
         public void GetDelegateCoursesAttemptStats_should_return_delegate_course_info_correctly()
         {
             // When
-            var (totalAttempts, attemptsPassed) = courseDataService.GetDelegateCourseAttemptStats(11, 100);
+            var attemptStats = courseDataService.GetDelegateCourseAttemptStats(11, 100);
 
             // Then
-            totalAttempts.Should().Be(23);
-            attemptsPassed.Should().Be(11);
+            attemptStats.TotalAttempts.Should().Be(23);
+            attemptStats.AttemptsPassed.Should().Be(11);
+            attemptStats.PassRate.Should().Be(48);
         }
 
         [Test]
@@ -358,11 +386,176 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationId = 1,
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
-                Active = false
+                Active = false,
             };
 
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 2, 0);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_with_categoryId()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                    1,
+                    2,
+                    0
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CompleteWithinMonths.Should().Be(6);
+                    courseDetails.ValidityMonths.Should().Be(12);
+                    courseDetails.Mandatory.Should().Be(true);
+                    courseDetails.AutoRefresh.Should().Be(true);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateCourseOptions_updates_course_options_successfully()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int customisationId = 100;
+            const int centreId = 101;
+            const int categoryId = 0;
+
+            var defaultCourseOptions = new CourseOptions()
+            {
+                Active = true,
+                DiagObjSelect = true,
+                SelfRegister = false,
+                HideInLearnerPortal = false,
+            };
+
+            try
+            {
+                // When
+                courseDataService.UpdateCourseOptions(defaultCourseOptions, customisationId);
+                var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                    customisationId,
+                    centreId,
+                    categoryId
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCourseOptions?.Active.Should().BeTrue();
+                    updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                    updatedCourseOptions?.SelfRegister.Should().BeFalse();
+                    updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            const int categoryId = 0;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                updatedCourseOptions?.Active.Should().BeTrue();
+                updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                updatedCourseOptions?.SelfRegister.Should().BeTrue();
+                updatedCourseOptions?.HideInLearnerPortal.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 5;
+            const int categoryId = 0;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            const int categoryId = 10;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
         }
     }
 }

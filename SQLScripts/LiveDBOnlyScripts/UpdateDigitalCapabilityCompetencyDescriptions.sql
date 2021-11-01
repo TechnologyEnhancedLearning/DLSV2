@@ -62,3 +62,11 @@ UPDATE [dbo].[Competencies] SET [Description]=NULL,[Name]=N'I am the person resp
 GO
 UPDATE [dbo].[Competencies] SET [Description]=NULL,[Name]=N'Taking an active role in my own learning is the most important thing that affects my digital literacy skills development' WHERE ID=32
 GO
+UPDATE [dbo].[Competencies] SET [Description]='<p>For example:</p><ul><li>vehicle tax</li><li>voting registration</li><li>rdering repeat prescriptions</li><li>booking doctor appointments</li></ul>',[Name]=N'I can access and use public services online, including filling in forms' WHERE ID=73
+GO
+UPDATE [dbo].[Competencies] SET [Description]='<p>For example:</p><ul><li>work out dosage</li><li>cost of providing a service </li></ul>',[Name]=N'I can use digital tools to make calculations' WHERE ID=74
+GO
+UPDATE [dbo].[SelfAssessments] SET UseDescriptionExpanders = 1, LinearNavigation = 1, Vocabulary = 'Capability' WHERE ID = 1
+GO
+UPDATE [dbo].[CompetencyAssessmentQuestions] SET Ordering = 2 WHERE AssessmentQuestionID = 2
+GO

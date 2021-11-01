@@ -19,10 +19,22 @@ namespace DigitalLearningSolutions.Data.DataServices
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
-        (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+        DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
+        AttemptStats GetDelegateCourseAttemptStats(int delegateId, int customisationId);
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+        void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -30,7 +42,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string DelegateCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL) AS DelegateCount";
@@ -38,7 +50,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         private const string CompletedCountQuery =
             @"(SELECT COUNT(pr.CandidateID)
                 FROM dbo.Progress AS pr
-                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID 
+                INNER JOIN dbo.Candidates AS can ON can.CandidateID = pr.CandidateID
                 WHERE pr.CustomisationID = cu.CustomisationID AND pr.Completed IS NOT NULL
                 AND can.CentreID = @centreId) AS CompletedCount";
 
@@ -64,6 +76,48 @@ namespace DigitalLearningSolutions.Data.DataServices
                 AND can.CentreID = @centreId
                 AND RemovedDate IS NULL
                 ORDER BY SubmittedTime DESC) AS LastAccessed";
+
+        private const string SelectDelegateCourseInfoQuery =
+            @"SELECT
+                pr.ProgressId,
+                cu.CustomisationID AS CustomisationId,
+                cu.CentreID AS CustomisationCentreId,
+                cu.Active AS IsCourseActive,
+                cu.AllCentres AS AllCentresCourse,
+                ap.CourseCategoryID,
+                ap.ApplicationName,
+                cu.CustomisationName,
+                auSupervisor.AdminID AS SupervisorAdminId,
+                auSupervisor.Forename AS SupervisorForename,
+                auSupervisor.Surname AS SupervisorSurname,
+                pr.FirstSubmittedTime AS Enrolled,
+                pr.SubmittedTime AS LastUpdated,
+                pr.CompleteByDate AS CompleteBy,
+                pr.Completed AS Completed,
+                pr.Evaluated AS Evaluated,
+                pr.RemovedDate,
+                pr.EnrollmentMethodID AS EnrolmentMethodId,
+                auEnrolledBy.AdminID AS EnrolledByAdminId,
+                auEnrolledBy.Forename AS EnrolledByForename,
+                auEnrolledBy.Surname AS EnrolledBySurname,
+                pr.LoginCount,
+                pr.Duration AS LearningTime,
+                pr.DiagnosticScore,
+                cu.IsAssessed,
+                pr.Answer1,
+                pr.Answer2,
+                pr.Answer3,
+                ca.CandidateID AS DelegateId,
+                ca.FirstName AS DelegateFirstName,
+                ca.LastName AS DelegateLastName,
+                ca.EmailAddress AS DelegateEmail,
+                ca.CentreID AS DelegateCentreId
+            FROM Customisations cu
+            INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
+            INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
+            LEFT OUTER JOIN AdminUsers auSupervisor ON auSupervisor.AdminID = pr.SupervisorAdminId
+            LEFT OUTER JOIN AdminUsers auEnrolledBy ON auEnrolledBy.AdminID = pr.EnrolledByAdminID
+            INNER JOIN Candidates AS ca ON ca.CandidateID = pr.CandidateID";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CourseDataService> logger;
@@ -167,7 +221,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COUNT(*)
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE Active = 1 AND CentreID = @centreId 
+                        WHERE Active = 1 AND CentreID = @centreId
 	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
                 new { centreId, adminCategoryId }
             );
@@ -199,7 +253,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
                     INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL",
@@ -210,29 +264,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
-                @"SELECT
-                        cu.CustomisationID AS CustomisationId,
-                        ap.ApplicationName,
-                        cu.CustomisationName,
-                        au.Forename AS SupervisorForename,
-                        au.Surname AS SupervisorSurname,
-                        pr.FirstSubmittedTime AS Enrolled,
-                        pr.SubmittedTime AS LastUpdated,
-                        pr.CompleteByDate AS CompleteBy,
-                        pr.Completed AS Completed,
-                        pr.Evaluated AS Evaluated,
-                        pr.EnrollmentMethodID AS EnrolmentMethodId,
-                        pr.LoginCount,
-                        pr.Duration AS LearningTime,
-                        pr.DiagnosticScore,
-                        cu.IsAssessed,
-                        pr.Answer1,
-                        pr.Answer2,
-                        pr.Answer3
-                    FROM Customisations cu
-                    INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
-                    INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID
-                    LEFT OUTER JOIN AdminUsers au ON au.AdminID = pr.SupervisorAdminId
+                $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
@@ -240,12 +272,22 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int totalAttempts, int attemptsPassed) GetDelegateCourseAttemptStats(
+        public DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId)
+        {
+            return connection.QuerySingleOrDefault<DelegateCourseInfo>(
+                $@"{SelectDelegateCourseInfoQuery}
+                    WHERE pr.ProgressID = @progressId
+                        AND ap.ArchivedDate IS NULL",
+                new { progressId }
+            );
+        }
+
+        public AttemptStats GetDelegateCourseAttemptStats(
             int delegateId,
             int customisationId
         )
         {
-            return connection.QueryFirstOrDefault<(int, int)>(
+            var (totalAttempts, attemptsPassed) = connection.QueryFirstOrDefault<(int, int)>(
                 @"SELECT COUNT(aa.Status) AS TotalAttempts,
                         COUNT(CASE WHEN aa.Status=1 THEN 1 END) AS AttemptsPassed
                     FROM AssessAttempts aa
@@ -255,6 +297,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND pr.RemovedDate IS NULL",
                 new { delegateId, customisationId }
             );
+
+            return new AttemptStats(totalAttempts, attemptsPassed);
         }
 
         // Admins have a non-nullable category ID where 0 = all. This is why we have the
@@ -298,9 +342,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
                         AND cu.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL 
+                        AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
@@ -309,9 +353,9 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             var names = connection.QueryFirstOrDefault<CourseNameInfo>(
-                @"SELECT cu.CustomisationId, cu.CustomisationName, ap.ApplicationName
+                @"SELECT cu.CustomisationName, ap.ApplicationName
                         FROM Customisations cu
-                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId 
+                        JOIN Applications ap ON cu.ApplicationId = ap.ApplicationId
                         WHERE cu.CustomisationId = @customisationId",
                 new { customisationId }
             );
@@ -344,6 +388,86 @@ namespace DigitalLearningSolutions.Data.DataServices
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
+        }
+
+        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT *
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId
+                        AND c.CentreID = @centreId
+                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    )
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public void UpdateLearningPathwayDefaultsForCourse(
+            int customisationId,
+            int completeWithinMonths,
+            int validityMonths,
+            bool mandatory,
+            bool autoRefresh
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CompleteWithinMonths = @completeWithinMonths,
+                        ValidityMonths = @validityMonths,
+                        Mandatory = @mandatory,
+                        AutoRefresh = @autoRefresh
+                    WHERE CustomisationID = @customisationId",
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+            );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            connection.Execute(
+               @"UPDATE cu
+                    SET Active = @Active,
+                        SelfRegister = @SelfRegister,
+                        HideInLearnerPortal = @HideInLearnerPortal,
+                        DiagObjSelect = @DiagObjSelect
+                    FROM dbo.Customisations AS cu                   
+                    WHERE
+                    cu.CustomisationID = @customisationId",
+               new
+               {
+                   courseOptions.Active,
+                   courseOptions.SelfRegister,
+                   courseOptions.HideInLearnerPortal,
+                   courseOptions.DiagObjSelect,
+                   customisationId,
+               });
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseOptions>(
+                @"SELECT
+                        cu.Active,
+                        cu.SelfRegister,
+                        cu.HideInLearnerPortal,
+                        cu.DiagObjSelect,
+                        ap.DiagAssess
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
         }
     }
 }

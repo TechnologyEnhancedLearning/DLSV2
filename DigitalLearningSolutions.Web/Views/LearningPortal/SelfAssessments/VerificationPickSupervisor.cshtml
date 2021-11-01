@@ -4,14 +4,15 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Self Assessment";
-  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Request verification</li>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Request @Model.Vocubulary verification</h1>
+<h1>Request @Model.SelfAssessment.Vocabulary.ToLower() verification</h1>
 @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.CandidateAssessmentSupervisorId) })" />
@@ -22,10 +23,10 @@
     <fieldset class="nhsuk-fieldset">
       <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
         <h2 class="nhsuk-fieldset__heading">
-          Which supervisor?
+          Which @Model.SelfAssessment.VerificationRoleName?
         </h2>
         <div class="nhsuk-hint">
-          Choose the supervisor you wish to request verification of @Model.VocabPlural().ToLower() from.
+          Choose the @Model.SelfAssessment.VerificationRoleName you wish to request verification of @Model.VocabPlural().ToLower() from.
         </div>
 
       </legend>
@@ -49,11 +50,11 @@
     </button>
   </form>
 
-  <p>Can't see the supervisor you need? <a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Click here</a> to manage supervisors.</p>
+  <p>Can't see the  @Model.SelfAssessment.VerificationRoleName you need? <a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Click here</a> to manage supervisors.</p>
   <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link"
-       asp-action="SelfAssessmentOverview"
-       asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+       asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
       </svg>
@@ -65,7 +66,7 @@ else
 {
   <p>There are no supervisors identified who can verify @Model.VocabPlural().ToLower() for this self assessment.</p>
   <div class="nhsuk-action-link">
-    <a class="nhsuk-action-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+    <a class="nhsuk-action-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
       <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M0 0h24v24H0z" fill="none"></path>
         <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>

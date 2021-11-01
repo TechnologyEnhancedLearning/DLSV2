@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -11,6 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public DelegateCourseInfoViewModel(DelegateCourseDetails details)
         {
             var info = details.DelegateCourseInfo;
+            ProgressId = info.ProgressId;
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
                 2 => "Administrator",
                 3 => "Group",
                 4 => "System",
-                _ => ""
+                _ => "",
             };
             LoginCount = info.LoginCount;
             LearningTime = info.LearningTime + " mins";
@@ -35,10 +35,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             IsAssessed = info.IsAssessed;
 
             CourseCustomPromptsWithAnswers = details.CustomPrompts;
-            TotalAttempts = details.AttemptStats.totalAttempts;
-            AttemptsPassed = details.AttemptStats.attemptsPassed;
+            TotalAttempts = details.AttemptStats.TotalAttempts;
+            AttemptsPassed = details.AttemptStats.AttemptsPassed;
+            PassRate = details.AttemptStats.PassRate;
         }
 
+        public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
@@ -58,6 +60,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public List<CustomPromptWithAnswer> CourseCustomPromptsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
+        public double PassRate { get; set; }
 
         public string? Supervisor
         {
@@ -76,7 +79,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public string CourseName =>
             ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");
 
-        public string? PassRate =>
-            TotalAttempts != 0 ? Math.Round(100 * AttemptsPassed / (double)TotalAttempts) + "%" : null;
+        public string? PassRateDisplayString =>
+            TotalAttempts != 0 ? PassRate + "%" : null;
     }
 }

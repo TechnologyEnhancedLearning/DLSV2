@@ -254,17 +254,19 @@
                 new Competency() { CompetencyGroup = "A" },
                 new Competency() { CompetencyGroup = "A" }
             };
+            var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
-                PreviousCompetencyNumber = 2
+                PreviousCompetencyNumber = 2,
+                SupervisorSignOffs = supervisorSignOffs
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             result.Should().BeViewResult()
@@ -280,7 +282,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SelfAssessmentOverview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             A.CallTo(() => selfAssessmentService.UpdateLastAccessed(selfAssessment.Id, CandidateId)).MustHaveHappened();
@@ -291,9 +293,9 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessment.Id.ToString() + "/Overview";
+            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessment.Id}/{selfAssessment.Vocabulary}";
             // When
-            controller.SelfAssessmentOverview(SelfAssessmentId);
+            controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             A.CallTo(() => selfAssessmentService.SetBookmark(selfAssessment.Id, CandidateId, destUrl)).MustHaveHappened();
@@ -304,17 +306,19 @@
             // Given
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             var competencies = new List<Competency>();
+            var supervisorSignOffs = new List<SupervisorSignOff>();
             var expectedModel = new SelfAssessmentOverviewViewModel()
             {
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
-                PreviousCompetencyNumber = 1
+                PreviousCompetencyNumber = 1,
+                SupervisorSignOffs = supervisorSignOffs 
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, selfAssessment.Vocabulary);
 
             // Then
             result.Should().BeViewResult()
@@ -329,7 +333,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SelfAssessmentOverview(SelfAssessmentId);
+            var result = controller.SelfAssessmentOverview(SelfAssessmentId, Vocabulary);
 
             // Then
             result.Should()

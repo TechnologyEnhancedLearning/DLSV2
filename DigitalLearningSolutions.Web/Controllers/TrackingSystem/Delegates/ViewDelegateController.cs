@@ -62,7 +62,7 @@
 
             string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, baseUrl);
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, delegateUser.CandidateNumber, baseUrl);
 
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
@@ -82,7 +82,7 @@
 
             userDataService.DeactivateDelegateUser(delegateId);
 
-            return RedirectToAction("Index", new { delegateId } );
+            return RedirectToAction("Index", new { delegateId });
         }
     }
 }

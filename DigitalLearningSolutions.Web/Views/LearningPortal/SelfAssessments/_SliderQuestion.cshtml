@@ -1,17 +1,20 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
 @model AssessmentQuestion
 
-<h5 class="nhsuk-u-margin-bottom-1">@Model.Question</h5>
-@if (Model.ScoringInstructions != null)
-{
-  <div class="nhsuk-hint">
-    @(Html.Raw(Model.ScoringInstructions))</div>
+<label for="@Model.Id-input">
+  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question</h3>
+</label>
+  @if (Model.ScoringInstructions != null)
+  {
+    <div class="nhsuk-hint">
+      @(Html.Raw(Model.ScoringInstructions))
+    </div>
   }
 
-<div class="nhsuk-grid-row">
-  <div class="grid-column-85">
-    <label class="left-label" for="@Model.Id-input">@Model.MinValueDescription</label>
-    <label class="right-label" for="@Model.Id-input">@Model.MaxValueDescription</label>
+  <div class="nhsuk-grid-row">
+    <div class="grid-column-85">
+      <span class="left-label">@Model.MinValueDescription</span>
+      <span class="right-label">@Model.MaxValueDescription</span>
   </div>
 </div>
 <div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
