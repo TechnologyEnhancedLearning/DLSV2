@@ -58,7 +58,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Name = ".AspNet.SharedCookie";
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToHome;
+                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDenied;
                     }
                 );
 
@@ -253,6 +253,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<VerifyAdminUserCanAccessCourse>();
+            services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
+            services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
         }
@@ -262,7 +264,7 @@ namespace DigitalLearningSolutions.Web
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions
                 {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
                 }
             );
 
@@ -299,9 +301,9 @@ namespace DigitalLearningSolutions.Web
             return Task.CompletedTask;
         }
 
-        private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
+        private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect("/Home");
+            context.HttpContext.Response.Redirect("/AccessDenied");
             return Task.CompletedTask;
         }
     }

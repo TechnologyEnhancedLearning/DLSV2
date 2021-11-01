@@ -1,7 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -15,11 +16,11 @@
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
-    public class VerifyAdminUserCanAccessCourseTests
+    internal class VerifyAdminUserCanAccessAdminUserTests
     {
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
+        private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
         private ActionExecutingContext context = null!;
-        private const int CustomisationId = 2;
+        private const int AdminId = 2;
 
         [SetUp]
         public void Setup()
@@ -42,27 +43,27 @@
         public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void Returns_AccessDenied_if_service_returns_false()
+        public void Returns_AccessDenied_if_service_returns_admin_user_at_different_centre()
         {
             // Given
-            context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
-                .Returns(false);
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
+                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 100));
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -70,15 +71,15 @@
         }
 
         [Test]
-        public void Does_not_return_NotFound_Or_AccessDenied_if_service_returns_true()
+        public void Does_not_return_any_redirect_page_if_service_returns_admin_user_at_same_centre()
         {
             // Given
-            context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
-                .Returns(true);
+            context.RouteData.Values["adminId"] = AdminId;
+            A.CallTo(() => userDataService.GetAdminUserById(AdminId))
+                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 101));
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessAdminUser(userDataService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

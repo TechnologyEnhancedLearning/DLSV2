@@ -55,7 +55,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             var notifications =
@@ -82,7 +82,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             notificationPreferencesService.SetNotificationPreferencesForUser(
