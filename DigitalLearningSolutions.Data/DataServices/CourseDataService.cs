@@ -11,20 +11,33 @@ namespace DigitalLearningSolutions.Data.DataServices
     public interface ICourseDataService
     {
         IEnumerable<CurrentCourse> GetCurrentCourses(int candidateId);
+
         IEnumerable<CompletedCourse> GetCompletedCourses(int candidateId);
+
         IEnumerable<AvailableCourse> GetAvailableCourses(int candidateId, int? centreId);
+
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
+
         void RemoveCurrentCourse(int progressId, int candidateId);
+
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
+
         int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
+
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
+
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
+
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
+
         AttemptStats GetDelegateCourseAttemptStats(int delegateId, int customisationId);
+
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
+
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
-        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
@@ -32,6 +45,12 @@ namespace DigitalLearningSolutions.Data.DataServices
             bool mandatory,
             bool autoRefresh
         );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+
+        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -387,20 +406,14 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
+        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
         {
-            return connection.ExecuteScalar<bool>(
-                @"SELECT CASE WHEN EXISTS (
-                        SELECT *
+            return connection.QueryFirstOrDefault<(int?, int?)>(
+                @"SELECT c.CentreId, a.CourseCategoryId
                         FROM Customisations AS c
-                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE CustomisationID = @customisationId
-                        AND c.CentreID = @centreId
-                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    )
-                    THEN CAST(1 AS BIT)
-                    ELSE CAST(0 AS BIT) END",
-                new { customisationId, centreId, categoryId }
+                        INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId",
+                new { customisationId }
             );
         }
 
@@ -422,6 +435,50 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE CustomisationID = @customisationId",
                 new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
             );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            connection.Execute(
+                @"UPDATE cu
+                    SET Active = @Active,
+                        SelfRegister = @SelfRegister,
+                        HideInLearnerPortal = @HideInLearnerPortal,
+                        DiagObjSelect = @DiagObjSelect
+                    FROM dbo.Customisations AS cu                   
+                    WHERE
+                    cu.CustomisationID = @customisationId",
+                new
+                {
+                    courseOptions.Active,
+                    courseOptions.SelfRegister,
+                    courseOptions.HideInLearnerPortal,
+                    courseOptions.DiagObjSelect,
+                    customisationId,
+                }
+            );
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return connection.Query<CourseOptions>(
+                @"SELECT
+                        cu.Active,
+                        cu.SelfRegister,
+                        cu.HideInLearnerPortal,
+                        cu.DiagObjSelect,
+                        ap.DiagAssess
+                    FROM dbo.Customisations AS cu
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
+                    LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
+                    LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
+                    WHERE
+                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        AND cu.CentreID = @centreId
+                        AND ap.ArchivedDate IS NULL 
+                        AND cu.CustomisationID = @customisationId",
+                new { customisationId, centreId, categoryId }
+            ).FirstOrDefault();
         }
     }
 }
