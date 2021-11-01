@@ -301,16 +301,14 @@
             TempData.Set(sessionEnrolOnRoleProfile);
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
             var roleProfile = supervisorService.GetRoleProfileById((int)sessionEnrolOnRoleProfile.SelfAssessmentID);
-            var model = new EnrolDelegateSetCompletByDateViewModel()
-            {
-                SupervisorDelegateDetail = supervisorDelegate,
-                RoleProfile = roleProfile,
-                CompleteByDate = sessionEnrolOnRoleProfile.CompleteByDate
-            };
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
+            var model = new EnrolDelegateSetCompleteByDateViewModel(
+                supervisorDelegate,
+                roleProfile,
+                sessionEnrolOnRoleProfile.CompleteByDate
+            );
+
+            model.CompleteByValidationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+
             return View("EnrolDelegateSetCompleteBy", model);
         }
         [HttpPost]
@@ -320,8 +318,8 @@
             SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
             if (day != 0 | month != 0 | year != 0)
             {
-                var validationResult = OldDateValidator.ValidateDate(day, month, year);
-                if (!validationResult.DateValid)
+                var validationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+                if (!validationResult.IsValid)
                 {
                     return RedirectToAction("EnrolDelegateCompleteBy", new { supervisorDelegateId, day, month, year });
                 }

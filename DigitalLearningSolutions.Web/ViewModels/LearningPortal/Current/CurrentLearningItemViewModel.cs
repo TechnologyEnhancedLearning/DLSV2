@@ -6,15 +6,23 @@
 
     public class CurrentLearningItemViewModel : StartedLearningItemViewModel
     {
-        public DateTime? CompleteByDate { get; }
-        public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
-
         public CurrentLearningItemViewModel(
             CurrentLearningItem course
         ) : base(course)
         {
-            CompleteByDate = course.CompleteByDate;
+            Day = course.CompleteByDate?.Day;
+            Month = course.CompleteByDate?.Month;
+            Year = course.CompleteByDate?.Year;
         }
+
+        public int? Day { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
+        public DateValidator.DateValidationResult? CompleteByValidationResult { get; set; }
+
+        public DateTime? CompleteByDate => Day.HasValue && Month.HasValue && Year.HasValue
+            ? new DateTime(Year.Value, Month.Value, Day.Value)
+            : (DateTime?)null;
 
         public string DateStyle()
         {
@@ -23,7 +31,7 @@
                 return "overdue";
             }
 
-            if (CompleteByDate < (DateTime.Today + TimeSpan.FromDays(30)))
+            if (CompleteByDate < DateTime.Today + TimeSpan.FromDays(30))
             {
                 return "due-soon";
             }
@@ -34,11 +42,11 @@
         public string DueByDescription()
         {
             return DateStyle() switch
-                {
+            {
                 "overdue" => "Course overdue; ",
                 "due-soon" => "Course due soon; ",
-                _ => ""
-                };
+                _ => "",
+            };
         }
     }
 }

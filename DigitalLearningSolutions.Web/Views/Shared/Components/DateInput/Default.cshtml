@@ -18,7 +18,11 @@
         @Model.HintText
       </div>
     }
-
+    @if (Model.OptionalSecondHint != null) {
+      <div class="nhsuk-hint">
+        @Model.OptionalSecondHint
+      </div>
+    }
     @if (Model.HasError) {
       @foreach (var message in Model.ErrorMessages) {
         <span class="error-message--margin-bottom-1 nhsuk-error-message">

@@ -55,8 +55,8 @@
                 return RedirectToAction("Current");
             }
 
-            var validationResult = OldDateValidator.ValidateDate(day, month, year);
-            if (!validationResult.DateValid)
+            var validationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+            if (!validationResult.IsValid)
             {
                 return RedirectToAction("SetCurrentCourseCompleteByDate", new { id, day, month, year });
             }
@@ -89,11 +89,8 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
-
+            model.CompleteByValidationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+            
             return View("Current/SetCompleteByDate", model);
         }
 

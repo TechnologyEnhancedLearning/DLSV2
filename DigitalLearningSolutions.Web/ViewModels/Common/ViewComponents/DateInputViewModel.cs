@@ -22,7 +22,8 @@
             bool hasYearError,
             IEnumerable<string> errorMessages,
             string? cssClass = null,
-            string? hintText = null
+            string? hintText = null,
+            string? optionalSecondHint = null
         )
         {
             Id = id;
@@ -35,6 +36,7 @@
             YearValue = yearValue;
             CssClass = cssClass;
             HintText = hintText;
+            OptionalSecondHint = optionalSecondHint;
             HasDayError = hasDayError;
             HasMonthError = hasMonthError;
             HasYearError = hasYearError;
@@ -51,6 +53,7 @@
         public string? YearValue { get; set; }
         public string? CssClass { get; set; }
         public string? HintText { get; set; }
+        public string? OptionalSecondHint { get; set; }
         public bool HasError => HasDayError || HasMonthError || HasYearError;
         public IEnumerable<string> ErrorMessages { get; set; }
     }

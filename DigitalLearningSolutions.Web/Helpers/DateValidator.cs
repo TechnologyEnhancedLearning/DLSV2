@@ -143,6 +143,8 @@
                 ErrorMessage = errorMessage;
             }
 
+            public bool IsValid => !HasDayError && !HasMonthError && !HasYearError;
+
             public List<ValidationResult> ToValidationResultList(
                 string dayId,
                 string monthId,

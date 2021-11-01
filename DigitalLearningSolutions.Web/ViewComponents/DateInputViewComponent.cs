@@ -17,6 +17,7 @@
         /// <param name="yearId"></param>
         /// <param name="cssClass">Leave blank for no custom css class.</param>
         /// <param name="hintText">Leave blank for no hint.</param>
+        /// <param name="optionalSecondHint">Leave blank to not add an extra hint</param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
             string id,
@@ -25,7 +26,8 @@
             string monthId,
             string yearId,
             string cssClass,
-            string hintText
+            string hintText,
+            string optionalSecondHint
         )
         {
             var model = ViewData.Model;
@@ -53,12 +55,13 @@
                 dayValue,
                 monthValue,
                 yearValue,
-                dayErrors?.Count > 0,
-                monthErrors?.Count > 0,
-                yearErrors?.Count > 0,
+                dayErrors.Count > 0,
+                monthErrors.Count > 0,
+                yearErrors.Count > 0,
                 nonEmptyErrors,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText
+                string.IsNullOrEmpty(hintText) ? null : hintText,
+                string.IsNullOrEmpty(optionalSecondHint) ? null : optionalSecondHint
             );
             return View(viewModel);
         }

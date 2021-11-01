@@ -166,9 +166,9 @@
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
             }
-
-            var validationResult = OldDateValidator.ValidateDate(day, month, year);
-            if (!validationResult.DateValid)
+            
+            var validationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+            if (!validationResult.IsValid)
             {
                 return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
             }
@@ -190,11 +190,8 @@
 
             var model = new SelfAssessmentCardViewModel(assessment);
 
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
-
+            model.CompleteByValidationResult = DateValidator.ValidateDate(day, month, year, "Complete by date");
+            
             return View("Current/SetCompleteByDate", model);
         }
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
