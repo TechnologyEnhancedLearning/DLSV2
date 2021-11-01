@@ -49,6 +49,17 @@
         }
 
         [HttpGet]
+        [Route("LearningPathwayDefaults/New")]
+        public IActionResult EditLearningPathwayDefaultsNew(int customisationId)
+        {
+            var model = new EditLearningPathwayDefaultsViewModel();
+
+            SetEditLearningPathwayDetailsTempData(model);
+
+            return RedirectToAction("EditLearningPathwayDefaults", new { customisationId });
+        }
+
+        [HttpGet]
         [Route("LearningPathwayDefaults")]
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
@@ -166,8 +177,8 @@
                 validityMonthsInt,
                 data.LearningPathwayDefaultsModel.Mandatory,
                 data.LearningPathwayDefaultsModel.AutoRefresh,
-                autoRefreshMonths,
                 refreshToCustomisationId,
+                autoRefreshMonths,
                 model.ApplyLpDefaultsToSelfEnrol
             );
 

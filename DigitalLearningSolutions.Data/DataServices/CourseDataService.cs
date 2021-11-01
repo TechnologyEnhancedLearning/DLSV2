@@ -56,8 +56,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             int validityMonths,
             bool mandatory,
             bool autoRefresh,
-            int autoRefreshMonths,
             int refreshToCustomisationId,
+            int autoRefreshMonths,
             bool applyLpDefaultsToSelfEnrol
         );
 
@@ -507,8 +507,8 @@ namespace DigitalLearningSolutions.Data.DataServices
             int validityMonths,
             bool mandatory,
             bool autoRefresh,
-            int autoRefreshMonths,
             int refreshToCustomisationId,
+            int autoRefreshMonths,
             bool applyLpDefaultsToSelfEnrol
         )
         {
@@ -519,11 +519,11 @@ namespace DigitalLearningSolutions.Data.DataServices
                         ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
                         AutoRefresh = @autoRefresh,
-                        AutoRefreshMonths = @autoRefreshMonths,
                         RefreshToCustomisationID = @refreshToCustomisationId,
+                        AutoRefreshMonths = @autoRefreshMonths,
                         ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId, autoRefreshMonths, refreshToCustomisationId, applyLpDefaultsToSelfEnrol }
+                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId, refreshToCustomisationId, autoRefreshMonths, applyLpDefaultsToSelfEnrol }
             );
         }
 

@@ -20,9 +20,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.Cou
             int customisationId,
             int? refreshToCustomisationId,
             string? autoRefreshMonths,
-            bool applyLpDefaultsToSelfEnrol,
-            EditLearningPathwayDefaultsViewModel lpDefaultsViewModel
-            )
+            bool applyLpDefaultsToSelfEnrol
+        )
         {
             CustomisationId = customisationId;
             RefreshToCustomisationId = refreshToCustomisationId;

@@ -36,8 +36,8 @@
             int validityMonths,
             bool mandatory,
             bool autoRefresh,
-            int autoRefreshMonths = 0,
             int refreshToCustomisationId = 0,
+            int autoRefreshMonths = 0,
             bool applyLpDefaultsToSelfEnrol = false
         );
 
@@ -147,8 +147,8 @@
             int validityMonths,
             bool mandatory,
             bool autoRefresh,
-            int autoRefreshMonths = 0,
             int refreshToCustomisationId = 0,
+            int autoRefreshMonths = 0,
             bool applyLpDefaultsToSelfEnrol = false
         )
         {
@@ -158,8 +158,8 @@
                 validityMonths,
                 mandatory,
                 autoRefresh,
-                autoRefreshMonths,
                 refreshToCustomisationId,
+                autoRefreshMonths,
                 applyLpDefaultsToSelfEnrol
             );
         }

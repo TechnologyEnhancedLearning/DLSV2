@@ -1,13 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class ManageCourseControllerTests
@@ -22,7 +27,8 @@
 
             controller = new ManageCourseController(courseService)
                 .WithDefaultContext()
-                .WithMockUser(true, 101);
+                .WithMockUser(true, 101)
+                .WithMockTempData();
         }
 
         [Test]
@@ -37,6 +43,38 @@
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<ManageCourseViewModel>();
+        }
+
+        [Test]
+        public void SetEditLearningPathwayDefaultsNew_sets_new_temp_data()
+        {
+            // When
+            var result = controller.EditLearningPathwayDefaultsNew(1);
+
+            // Then
+            controller.TempData.Peek<EditLearningPathwayDefaultsData>().Should().NotBeNull();
+            result.Should().BeRedirectToActionResult().WithActionName("EditLearningPathwayDefaults");
+        }
+
+        [Test]
+        public void AddAdminField_post_updates_temp_data_and_redirects()
+        {
+            // Given
+            var initialEditViewModel = new EditLearningPathwayDefaultsViewModel(1, "0", "0", false, false);
+            var initialTempData = new EditLearningPathwayDefaultsData(initialEditViewModel);
+            var inputViewModel = new EditLearningPathwayDefaultsViewModel(1, "12", "3", true, true);
+            controller.TempData.Set(initialTempData);
+
+            // When
+            var result = controller.SaveLearningPathwayDefaults(1, inputViewModel);
+
+            // Then
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<EditLearningPathwayDefaultsData>()!.LearningPathwayDefaultsModel.Should()
+                    .BeEquivalentTo(inputViewModel);
+                result.Should().BeRedirectToActionResult().WithActionName("EditAutoRefreshOptions");
+            }
         }
 
         [Test]
@@ -128,6 +166,147 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
             controller.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void SaveAutoRefreshOptions_save_calls_correct_method()
+        {
+            // Given
+            var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
+            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, "12", true);
+
+            var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
+            controller.TempData.Set(learningPathwayData);
+
+            var courseOptions = new List<(int, string)> { (1, "courseName") };
+            A.CallTo(() => courseService.GetCourseOptionsAlphabeticalListForCentre(A<int>._, A<int>._))
+                .Returns(courseOptions);
+
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    6,
+                    12,
+                    false,
+                    false,
+                    1,
+                    12,
+                    true
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void SaveAutoRefreshOptions_saves_if_number_input_is_null()
+        {
+            // Given
+            var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
+            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, null, true);
+
+            var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
+            controller.TempData.Set(learningPathwayData);
+
+            var courseOptions = new List<(int, string)> { (1, "courseName") };
+            A.CallTo(() => courseService.GetCourseOptionsAlphabeticalListForCentre(A<int>._, A<int>._))
+                .Returns(courseOptions);
+
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    6,
+                    12,
+                    false,
+                    false,
+                    1,
+                    0,
+                    true
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void SaveAutoRefreshOptions_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
+            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, "13", true);
+            controller.ModelState.AddModelError("AutoRefreshMonths", "Enter a whole number from 0 to 12");
+
+            var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
+            controller.TempData.Set(learningPathwayData);
+
+            var courseOptions = new List<(int, string)> { (1, "courseName") };
+            A.CallTo(() => courseService.GetCourseOptionsAlphabeticalListForCentre(A<int>._, A<int>._))
+                .Returns(courseOptions);
+
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+            controller.ModelState.AddModelError("RefreshToCustomisationId", "Select a course");
+
+            // When
+            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateLearningPathwayDefaultsForCourse(
+                    1,
+                    6,
+                    12,
+                    false,
+                    false,
+                    1,
+                    13,
+                    false
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditAutoRefreshOptionsViewModel>();
+            Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [Test]
