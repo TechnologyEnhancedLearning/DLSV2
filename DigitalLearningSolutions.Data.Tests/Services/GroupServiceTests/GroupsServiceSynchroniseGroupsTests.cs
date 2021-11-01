@@ -142,11 +142,11 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate,
-                    removeStartedEnrolments
+                    removeStartedEnrolments,
+                    testDate
                 )
             ).MustHaveHappened();
         }
@@ -190,11 +190,11 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate,
-                    removeStartedEnrolments
+                    removeStartedEnrolments,
+                    testDate
                 )
             ).MustHaveHappened();
         }
