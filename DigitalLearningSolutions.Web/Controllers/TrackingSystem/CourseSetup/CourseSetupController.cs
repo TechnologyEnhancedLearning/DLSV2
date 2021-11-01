@@ -42,17 +42,14 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[CourseFilterCookieName] ?? CourseStatusFilterOptions.IsActive.FilterValue;
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                CourseFilterCookieName,
+                CourseStatusFilterOptions.IsActive.FilterValue
+            );
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
