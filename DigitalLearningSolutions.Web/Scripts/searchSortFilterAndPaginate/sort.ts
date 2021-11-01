@@ -63,7 +63,7 @@ export function getSortValue(
     case 'InProgressCount':
       return parseInt(getElementText(searchableElement, 'in-progress-count'), 10);
     case 'PassRate':
-      return parseInt(getElementText(searchableElement, 'pass-rate'), 10);
+      return parseFloat(getElementText(searchableElement, 'pass-rate'));
     case 'CourseName':
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
     default:
