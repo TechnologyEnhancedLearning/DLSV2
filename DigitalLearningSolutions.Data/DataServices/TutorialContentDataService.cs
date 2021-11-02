@@ -20,7 +20,14 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
-        void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
+
+        void UpdateOrInsertCustomisationTutorialStatuses(
+            int tutorialId,
+            int customisationId,
+            bool diagnosticEnabled,
+            bool learningEnabled
+        );
+
         IEnumerable<Objective> GetObjectivesBySectionId(int sectionId, int customisationId);
     }
 

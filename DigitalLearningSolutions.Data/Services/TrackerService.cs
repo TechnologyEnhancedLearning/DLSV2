@@ -34,8 +34,11 @@
                 {
                     return action switch
                     {
-                        TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(query.CustomisationId, query.SectionId),
-                        _ => throw new ArgumentOutOfRangeException()
+                        TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(
+                            query.CustomisationId,
+                            query.SectionId
+                        ),
+                        _ => throw new ArgumentOutOfRangeException(),
                     };
                 }
 

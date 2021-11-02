@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using Newtonsoft.Json;
@@ -13,9 +12,8 @@
 
     public class TrackerActionService : ITrackerActionService
     {
-        private readonly ITutorialContentDataService tutorialContentDataService;
-
         private readonly JsonSerializerSettings settings;
+        private readonly ITutorialContentDataService tutorialContentDataService;
 
         public TrackerActionService(ITutorialContentDataService tutorialContentDataService)
         {
@@ -27,12 +25,13 @@
         {
             if (!customisationId.HasValue || !sectionId.HasValue)
             {
-                return JsonConvert.SerializeObject(new {});
+                return JsonConvert.SerializeObject(new { });
             }
 
-            var objectives = tutorialContentDataService.GetObjectivesBySectionId(sectionId.Value, customisationId.Value).ToList();
+            var objectives = tutorialContentDataService.GetObjectivesBySectionId(sectionId.Value, customisationId.Value)
+                .ToList();
 
-            object objectiveArrayObject = objectives.Any() ? (object)new { objectives } : new {};
+            object objectiveArrayObject = objectives.Any() ? (object)new { objectives } : new { };
 
             return JsonConvert.SerializeObject(objectiveArrayObject, settings);
         }

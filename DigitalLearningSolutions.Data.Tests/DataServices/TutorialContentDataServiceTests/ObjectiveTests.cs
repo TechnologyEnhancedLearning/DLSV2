@@ -18,7 +18,7 @@
             {
                 result.Count.Should().Be(4);
                 result.First().TutorialId.Should().Be(1137);
-                result.First().Interactions.Should().BeEquivalentTo(new []{0,1,2,3});
+                result.First().Interactions.Should().BeEquivalentTo(new[] { 0, 1, 2, 3 });
                 result.First().Possible.Should().Be(4);
                 result.First().MyScore.Should().Be(0);
             }

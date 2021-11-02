@@ -10,11 +10,10 @@
 
     public class TrackerActionServiceTests
     {
-        private ITrackerActionService trackerActionService = null!;
+        private const string EmptyObjectJson = "{}";
 
         private ITutorialContentDataService dataService = null!;
-
-        private const string EmptyObjectJson = "{}";
+        private ITrackerActionService trackerActionService = null!;
 
         [SetUp]
         public void Setup()
@@ -59,7 +58,10 @@
         [TestCase(null, null)]
         [TestCase(1, null)]
         [TestCase(null, 1)]
-        public void GetObjectiveArray_returns_empty_object_json_if_parameter_missing(int? customisationId, int? sectionId)
+        public void GetObjectiveArray_returns_empty_object_json_if_parameter_missing(
+            int? customisationId,
+            int? sectionId
+        )
         {
             // given
             A.CallTo(() => dataService.GetObjectivesBySectionId(A<int>._, A<int>._))
