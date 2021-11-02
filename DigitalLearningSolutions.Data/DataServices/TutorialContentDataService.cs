@@ -21,6 +21,7 @@
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
         void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
+        IEnumerable<Objective> GetObjectivesBySectionId(int sectionId, int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -336,6 +337,26 @@
                         VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
                     END",
                 new { customisationId, tutorialId, learningEnabled, diagnosticEnabled }
+            );
+        }
+
+        public IEnumerable<Objective> GetObjectivesBySectionId(int sectionId, int customisationId)
+        {
+            return connection.Query<Objective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.CMIInteractionsIDs AS Interactions,
+                        ct.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL",
+                new { sectionId, customisationId }
             );
         }
     }

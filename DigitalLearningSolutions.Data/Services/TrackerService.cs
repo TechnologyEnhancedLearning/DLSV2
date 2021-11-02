@@ -13,10 +13,12 @@
     public class TrackerService : ITrackerService
     {
         private readonly ILogger<TrackerService> logger;
+        private readonly ITrackerActionService trackerActionService;
 
-        public TrackerService(ILogger<TrackerService> logger)
+        public TrackerService(ILogger<TrackerService> logger, ITrackerActionService trackerActionService)
         {
             this.logger = logger;
+            this.trackerActionService = trackerActionService;
         }
 
         public string ProcessQuery(TrackerEndpointQueryParams query)
@@ -32,6 +34,7 @@
                 {
                     return action switch
                     {
+                        TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(query.CustomisationId, query.SectionId),
                         _ => throw new ArgumentOutOfRangeException()
                     };
                 }
