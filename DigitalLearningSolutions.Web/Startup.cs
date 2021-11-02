@@ -121,6 +121,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -185,6 +186,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
@@ -209,6 +211,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
+            services.AddScoped<IDownloadDataService, DownloadDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();

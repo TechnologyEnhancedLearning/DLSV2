@@ -17,7 +17,7 @@
             return GenerateBytesDisplayString(number) + Divider + GenerateBytesDisplayString(limit);
         }
 
-        private static string GenerateBytesDisplayString(long byteCount)
+        public static string GenerateBytesDisplayString(long byteCount)
         {
             if (byteCount < 0)
             {
