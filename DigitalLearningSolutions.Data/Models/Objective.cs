@@ -8,7 +8,7 @@
         public Objective(int tutorialId, string interactions, int possible)
         {
             TutorialId = tutorialId;
-            Interactions = interactions.Split(',').Select(int.Parse);
+            Interactions = string.IsNullOrEmpty(interactions) ? new List<int>() : interactions.Split(',').Select(int.Parse);
             Possible = possible;
             MyScore = 0;
         }

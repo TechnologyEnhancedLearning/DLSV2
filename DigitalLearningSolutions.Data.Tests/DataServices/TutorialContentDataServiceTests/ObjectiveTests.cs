@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices.TutorialContentDataServiceTests
 {
-    using System;
     using System.Linq;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -12,16 +11,16 @@
         public void GetObjectivesBySectionId_returns_objectives_correctly()
         {
             // When
-            var result = tutorialContentDataService.GetObjectivesBySectionId(SectionId, CustomisationId).ToList();
+            var result = tutorialContentDataService.GetObjectivesBySectionId(248, 22062).ToList();
 
             // Then
             using (new AssertionScope())
             {
                 result.Count.Should().Be(4);
-                result.First().TutorialId.Should().Be(49);
-                result.First().Interactions.Should().BeEquivalentTo(new []{1,2,3,4});
-                result.First().Possible.Should().Be(255);
-                result.First().MyScore.Should().Be(120);
+                result.First().TutorialId.Should().Be(1137);
+                result.First().Interactions.Should().BeEquivalentTo(new []{0,1,2,3});
+                result.First().Possible.Should().Be(4);
+                result.First().MyScore.Should().Be(0);
             }
         }
     }
