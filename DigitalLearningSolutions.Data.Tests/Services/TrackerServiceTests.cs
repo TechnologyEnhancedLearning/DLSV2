@@ -11,14 +11,16 @@
     public class TrackerServiceTests
     {
         private ILogger<TrackerService> logger = null!;
+        private ITrackerActionService actionService = null!;
         private ITrackerService trackerService = null!;
 
         [SetUp]
         public void Setup()
         {
             logger =  A.Fake<ILogger<TrackerService>>();
+            actionService = A.Fake<ITrackerActionService>();
 
-            trackerService = new TrackerService(logger);
+            trackerService = new TrackerService(logger, actionService);
         }
 
         [Test]
@@ -45,6 +47,21 @@
 
             // Then
             result.Should().Be(TrackerEndpointErrorResponse.InvalidAction);
+        }
+
+        [Test]
+        public void
+            ProcessQuery_with_GetObjectiveArray_action_passes_query_params_and_returns_appropriate_service_response()
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
+            A.CallTo(() => actionService.GetObjectiveArray(1, 1)).Returns("GOA result");
+
+            // When
+            var result = trackerService.ProcessQuery(query);
+
+            // Then
+            result.Should().Be("GOA result");
         }
     }
 }
