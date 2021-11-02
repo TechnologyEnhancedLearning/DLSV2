@@ -301,13 +301,13 @@
             // Given
             A.CallTo(
                 () => courseDataService.UpdateCourseDetails(
-                    A<int>._,
-                    A<string>._,
-                    A<string>._,
-                    A<string>._,
-                    A<bool>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "Name",
+                    "Password",
+                    "hello@test.com",
+                    true,
+                    0,
+                    0
                 )
             ).DoesNothing();
 
