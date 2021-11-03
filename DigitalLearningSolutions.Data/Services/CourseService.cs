@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DocumentFormat.OpenXml.Office2010.Excel;
 
     public interface ICourseService
     {
@@ -166,7 +167,9 @@
 
         public IEnumerable<(int id, string value)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId)
         {
-            return courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId);
+            var courses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId);
+            var orderedCourses = courses.OrderBy(c => c.CustomisationName);
+            return orderedCourses.Select(c =>  (c.CustomisationId, c.CustomisationName));
         }
 
         public bool DoesCourseNameExistAtCentre(
