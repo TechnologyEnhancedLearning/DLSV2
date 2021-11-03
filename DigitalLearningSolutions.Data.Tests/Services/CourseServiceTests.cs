@@ -306,7 +306,7 @@
                     }
 
                 };
-            var courseOptions = new List<(int, string)> { (1, "course name") };
+            var courseOptions = new List<(int, string)> { (1, "Application name - course name") };
             A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
                 .Returns(courses);
 
