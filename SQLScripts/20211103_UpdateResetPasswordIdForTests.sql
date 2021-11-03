@@ -1,0 +1,1 @@
+UPDATE Candidates SET ResetPasswordID = 1 WHERE CandidateID = 2

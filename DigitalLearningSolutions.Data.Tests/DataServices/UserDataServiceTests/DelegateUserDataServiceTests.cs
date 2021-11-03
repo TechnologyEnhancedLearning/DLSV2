@@ -94,7 +94,7 @@
         public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
         {
             // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
 
             // When
             var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
