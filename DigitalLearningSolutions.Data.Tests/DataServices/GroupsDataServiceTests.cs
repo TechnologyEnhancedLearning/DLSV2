@@ -446,6 +446,88 @@
             }
         }
 
+        [Test]
+        public void UpdateGroupDescription_updates_record()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int centerId = 101;
+                const int groupId = 5;
+                const string expectedDescription = "Test group description1";
+
+                // When
+                groupsDataService.UpdateGroupDescription(
+                    groupId,
+                    centerId,
+                    expectedDescription);
+
+                // Then
+                var result = this.GetGroupDescriptionById(groupId);
+                result.Should().Be(expectedDescription);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int incorrectCentreId = 107;
+                const int groupId = 5;
+                const string expectedDescription = "Test group description1";
+
+                // When
+                groupsDataService.UpdateGroupDescription(
+                    groupId,
+                    incorrectCentreId,
+                    expectedDescription);
+
+                //Then
+                var result = this.GetGroupDescriptionById(groupId);
+                result?.Should().NotBe(expectedDescription);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetGroupAtCentreById_returns_expected_group()
+        {
+            // Given
+            var expectedGroup = GroupTestHelper.GetDefaultGroup();
+
+            // When
+            var result = groupsDataService.GetGroupAtCentreById(34, 101);
+
+            //Then
+            result.Should().BeEquivalentTo(expectedGroup);
+        }
+
+
+        [Test]
+        public void GetGroupAtCentreById_returns_null_with_incorrect_centreId()
+        {
+            // Given
+            const int groupId = 5;
+            const int incorrectCentreId = 1;
+
+            // When
+            var result = groupsDataService.GetGroupAtCentreById(groupId, incorrectCentreId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
         private void AddDelegateToGroupWithSharedCourse()
         {
             connection.Execute(
@@ -462,6 +544,15 @@
                     VALUES (285172,299228,25918,1,GETUTCDATE(),3,0)
                     SET IDENTITY_INSERT dbo.Progress OFF"
             );
+        }
+
+        private string? GetGroupDescriptionById(int groupId)
+        {
+            return connection.Query<string?>(
+                @"SELECT GroupDescription FROM Groups 
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            ).FirstOrDefault();
         }
     }
 }
