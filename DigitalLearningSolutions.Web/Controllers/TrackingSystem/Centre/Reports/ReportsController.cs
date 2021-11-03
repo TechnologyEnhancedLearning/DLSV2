@@ -221,7 +221,7 @@
         {
             return activityService.GetFilterOptions(
                 centreId,
-                adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                adminUser.CategoryIdFilter
             );
         }
     }

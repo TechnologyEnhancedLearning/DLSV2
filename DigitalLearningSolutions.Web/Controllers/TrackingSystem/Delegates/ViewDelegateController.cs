@@ -38,8 +38,13 @@
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var categoryIdFilter = adminUser.CategoryIdFilter;
+
             var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
-            var delegateCourses = courseService.GetAllCoursesForDelegate(delegateId, centreId);
+            var delegateCourses =
+                courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
             var model = new ViewDelegateViewModel(delegateUser, customFields, delegateCourses);
 
