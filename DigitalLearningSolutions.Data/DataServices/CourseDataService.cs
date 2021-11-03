@@ -26,7 +26,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
 
-        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId, int? courseCategoryId);
+        IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
 
         DelegateCourseInfo? GetDelegateCourseInfoByProgressId(int progressId);
 
@@ -277,15 +277,14 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId, int? courseCategoryId)
+        public IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId)
         {
             return connection.Query<DelegateCourseInfo>(
                 $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
-                        AND (@courseCategoryID IS NULL OR ap.CourseCategoryId = @courseCategoryId)
                         AND ap.ArchivedDate IS NULL
                         AND pr.RemovedDate IS NULL",
-                new { delegateId, courseCategoryId }
+                new { delegateId }
             );
         }
 

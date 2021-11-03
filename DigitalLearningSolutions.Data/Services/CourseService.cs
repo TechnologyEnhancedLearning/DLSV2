@@ -65,7 +65,8 @@
             int? courseCategoryId
         )
         {
-            return courseDataService.GetDelegateCoursesInfo(delegateId, courseCategoryId)
+            return courseDataService.GetDelegateCoursesInfo(delegateId)
+                .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
                 .Select(
                     info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
                 ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
