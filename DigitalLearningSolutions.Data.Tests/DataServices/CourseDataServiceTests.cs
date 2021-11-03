@@ -398,7 +398,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         {
             // Given
             const int centreId = 101;
-            var categoryId = 1;
+            const int categoryId = 1;
 
             // When
             var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
@@ -434,12 +434,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             int? categoryId = null;
 
-            // When
-            var result = courseDataService.GetCoursesEverUsedAtCentreByCategory(centreId, categoryId).ToList();
-            var availableResult =
-                courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
-
-            // Then
             var expectedUnavailableCourse = new Course
             {
                 CustomisationId = 18438,
@@ -450,10 +444,29 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 Active = true,
             };
 
-            result.Should().ContainEquivalentOf(expectedUnavailableCourse);
+            // When
+            var everUsedResult = courseDataService.GetCoursesEverUsedAtCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            everUsedResult.Should().ContainEquivalentOf(expectedUnavailableCourse);
+        }
+
+        [Test]
+        public void GetCoursesAvailableToCentreByCategory_does_not_return_unavailable_courses()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var availableResult =
+                courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
             availableResult.Select(c => c.CustomisationId).Should().NotContain(18438);
         }
 
+        [Test]
         public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
         {
             // When
