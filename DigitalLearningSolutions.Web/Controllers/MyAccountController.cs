@@ -147,7 +147,7 @@
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
+            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
         }
 
         private IActionResult EditDetailsPostPreviewImage(

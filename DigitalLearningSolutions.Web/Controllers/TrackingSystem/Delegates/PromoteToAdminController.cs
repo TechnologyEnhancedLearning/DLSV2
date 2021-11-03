@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin;
     using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/PromoteToAdmin")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     public class PromoteToAdminController : Controller
@@ -48,10 +50,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            if (delegateUser == null || delegateUser.CentreId != centreId || delegateUser.IsAdmin ||
-                !delegateUser.IsPasswordSet)
+            if (delegateUser.IsAdmin || !delegateUser.IsPasswordSet)
             {
                 return NotFound();
             }

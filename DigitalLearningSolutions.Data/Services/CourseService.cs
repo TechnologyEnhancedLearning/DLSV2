@@ -8,6 +8,7 @@
     public interface ICourseService
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
+
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
@@ -17,7 +18,9 @@
         );
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+
+        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+
         public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
         public void UpdateLearningPathwayDefaultsForCourse(
@@ -27,6 +30,10 @@
             bool mandatory,
             bool autoRefresh
         );
+
+        void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
+
+        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
     }
 
     public class CourseService : ICourseService
@@ -71,10 +78,26 @@
             return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
         }
 
-        public bool VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
+        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
         {
-            var categoryIdFilter = adminCategoryIdClaim == 0 ? (int?)null : adminCategoryIdClaim;
-            return courseDataService.DoesCourseExistAtCentre(customisationId, centreId, categoryIdFilter);
+            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(customisationId);
+
+            if (courseCentreId == null || courseCategoryId == null)
+            {
+                return null;
+            }
+
+            if (courseCentreId != centreId)
+            {
+                return false;
+            }
+
+            if (adminCategoryIdClaim != 0 && courseCategoryId != adminCategoryIdClaim)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
@@ -96,6 +119,23 @@
                 validityMonths,
                 mandatory,
                 autoRefresh
+            );
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            courseDataService.UpdateCourseOptions(
+                courseOptions,
+                customisationId
+            );
+        }
+
+        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        {
+            return courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
             );
         }
 
