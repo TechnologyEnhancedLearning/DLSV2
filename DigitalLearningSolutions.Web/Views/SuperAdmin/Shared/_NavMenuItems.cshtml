@@ -1,0 +1,40 @@
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Models.Enums
+
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Admins)">
+  <a class="nhsuk-header__navigation-link" asp-controller="Admins" asp-action="Index">
+    Admins
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Centres)">
+  <a class="nhsuk-header__navigation-link" href="#">
+    Centres
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Delegates)">
+  <a class="nhsuk-header__navigation-link" href="#">
+    Delegates
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Reports)">
+  <a class="nhsuk-header__navigation-link" href="#">
+    Reports
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.System)">
+  <a class="nhsuk-header__navigation-link" href="#">
+    System
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
+  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.SuperAdmin.UrlSegment">
+    My account
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>

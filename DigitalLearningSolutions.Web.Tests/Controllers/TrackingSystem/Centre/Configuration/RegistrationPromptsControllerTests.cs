@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
@@ -23,6 +25,30 @@
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
         private IUserDataService userDataService = null!;
 
+        private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
+        {
+            get
+            {
+                yield return new TestCaseData(
+                    new string('x', 4000),
+                    "xx",
+                    "The complete list of answers must be 4000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                ).SetName("Error_message_shows_zero_characters_remaining_if_options_string_is_at_max_length");
+                yield return new TestCaseData(
+                    new string('x', 3998),
+                    "xx",
+                    "The complete list of answers must be 4000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                ).SetName(
+                    "Error_message_shows_zero_characters_remaining_if_options_string_is_two_less_than_max_length"
+                );
+                yield return new TestCaseData(
+                    new string('x', 3996),
+                    "xxxx",
+                    "The complete list of answers must be 4000 characters or fewer (2 characters remaining for the new answer, 4 characters were entered)"
+                ).SetName("Error_message_shows_two_less_than_number_of_characters_remaining_if_possible_to_add_answer");
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -44,6 +70,20 @@
                     .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
+        }
+
+        [Test]
+        public void Index_should_clear_TempData_and_go_to_index_page()
+        {
+            var expectedTempData = new AddRegistrationPromptData();
+            registrationPromptsController.TempData.Set(expectedTempData);
+
+            // When
+            var result = registrationPromptsController.Index();
+
+            // Then
+            registrationPromptsController.TempData.Peek<AddRegistrationPromptData>().Should().BeNull();
+            result.Should().BeViewResult().WithDefaultViewName();
         }
 
         [Test]
@@ -239,6 +279,41 @@
         }
 
         [Test]
+        [TestCaseSource(
+            typeof(RegistrationPromptsControllerTests),
+            nameof(AddAnswerModelErrorTestData)
+        )]
+        public void
+            AddRegistrationPromptConfigureAnswers_adds_correct_model_error_if_new_answer_surpasses_character_limit(
+                string optionsString,
+                string newAnswerInput,
+                string expectedErrorMessage
+            )
+        {
+            // Given
+            var initialSelectPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
+
+            var inputAnswersViewModel = new RegistrationPromptAnswersViewModel(optionsString, newAnswerInput);
+
+            var initialTempData = new AddRegistrationPromptData
+                { SelectPromptViewModel = initialSelectPromptModel, ConfigureAnswersViewModel = inputAnswersViewModel };
+            registrationPromptsController.TempData.Set(initialTempData);
+
+            const string action = "addPrompt";
+
+            // When
+            var result =
+                registrationPromptsController.AddRegistrationPromptConfigureAnswers(inputAnswersViewModel, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<RegistrationPromptAnswersViewModel>();
+                AssertModelStateErrorIsExpected(result, expectedErrorMessage);
+            }
+        }
+
+        [Test]
         public void AddRegistrationPromptConfigureAnswers_delete_removes_configured_answer()
         {
             // Given
@@ -385,7 +460,8 @@
 
             var initialTempData = new AddRegistrationPromptData
             {
-                SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialConfigureAnswersViewModel
+                SelectPromptViewModel = initialPromptModel,
+                ConfigureAnswersViewModel = initialConfigureAnswersViewModel,
             };
             registrationPromptsController.TempData.Set(initialTempData);
 
@@ -417,6 +493,13 @@
         {
             registrationPromptsController.TempData.Peek<EditRegistrationPromptData>()!.EditModel.Should()
                 .BeEquivalentTo(expectedData);
+        }
+
+        private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
+        {
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+            errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }
     }
 }

@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         private static readonly DateTime EnrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
 
         private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
+            284998,
             27915,
             101,
             true,
