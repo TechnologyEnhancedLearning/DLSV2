@@ -6,14 +6,14 @@
 @inject IConfiguration Configuration
 
 @{
-  var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
-  var shouldDisplayHelpMenuItem = headerExtension != "Tracking System";
-  var dlsSubApplication = (DlsSubApplication)ViewData[LayoutViewDataKeys.DlsSubApplication];
+  var dlsSubApplication = (DlsSubApplication?)ViewData[LayoutViewDataKeys.DlsSubApplication];
   if (dlsSubApplication != null) {
     ViewData[LayoutViewDataKeys.Application] ??= dlsSubApplication.HeaderExtension;
     ViewData[LayoutViewDataKeys.HeaderPath] ??= dlsSubApplication.HeaderPath;
     ViewData[LayoutViewDataKeys.HeaderPathName] ??= dlsSubApplication.HeaderPathName;
   }
+  var headerExtension = (string)ViewData[LayoutViewDataKeys.Application];
+  var shouldDisplayHelpMenuItem = dlsSubApplication?.DisplayHelpMenuItem ?? headerExtension != DlsSubApplication.TrackingSystem.HeaderExtension;
 }
 
 <!DOCTYPE html>

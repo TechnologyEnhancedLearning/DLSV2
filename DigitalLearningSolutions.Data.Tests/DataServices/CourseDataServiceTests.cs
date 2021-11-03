@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -17,6 +18,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         private static readonly DateTime EnrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
 
         private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
+            284998,
             27915,
             101,
             true,
@@ -452,34 +454,160 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             availableResult.Select(c => c.CustomisationId).Should().NotContain(18438);
         }
 
-        [Test]
-        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
+        public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
         {
             // When
-            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
+            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(100);
 
             // Then
-            result.Should().BeTrue();
+            centreId.Should().Be(101);
+            courseCategoryId.Should().Be(2);
         }
 
         [Test]
-        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_at_centre()
+        public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
         {
             // When
-            var result = courseDataService.DoesCourseExistAtCentre(100, 2, 0);
+            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(265);
 
             // Then
-            result.Should().BeFalse();
+            centreId.Should().BeNull();
+            courseCategoryId.Should().BeNull();
         }
 
         [Test]
-        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_with_categoryId()
+        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults()
         {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                    1,
+                    2,
+                    0
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CompleteWithinMonths.Should().Be(6);
+                    courseDetails.ValidityMonths.Should().Be(12);
+                    courseDetails.Mandatory.Should().Be(true);
+                    courseDetails.AutoRefresh.Should().Be(true);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateCourseOptions_updates_course_options_successfully()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int customisationId = 100;
+            const int centreId = 101;
+            const int categoryId = 0;
+
+            var defaultCourseOptions = new CourseOptions()
+            {
+                Active = true,
+                DiagObjSelect = true,
+                SelfRegister = false,
+                HideInLearnerPortal = false,
+            };
+
+            try
+            {
+                // When
+                courseDataService.UpdateCourseOptions(defaultCourseOptions, customisationId);
+                var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                    customisationId,
+                    centreId,
+                    categoryId
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedCourseOptions?.Active.Should().BeTrue();
+                    updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                    updatedCourseOptions?.SelfRegister.Should().BeFalse();
+                    updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            const int categoryId = 0;
+
             // When
-            var result = courseDataService.DoesCourseExistAtCentre(100, 101, 99);
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
 
             // Then
-            result.Should().BeFalse();
+            using (new AssertionScope())
+            {
+                updatedCourseOptions?.Active.Should().BeTrue();
+                updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
+                updatedCourseOptions?.SelfRegister.Should().BeTrue();
+                updatedCourseOptions?.HideInLearnerPortal.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 5;
+            const int categoryId = 0;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            const int categoryId = 10;
+
+            // When
+            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId
+            );
+
+            // Then
+            updatedCourseOptions.Should().BeNull();
         }
     }
 }

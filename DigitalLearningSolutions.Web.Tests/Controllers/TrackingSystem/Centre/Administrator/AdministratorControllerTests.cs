@@ -35,13 +35,13 @@
             UserTestHelper.GetDefaultAdminUser(firstName: "l", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "m", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "n", lastName: "Surname"),
-            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname")
+            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname"),
         };
 
         private readonly List<Category> categories = new List<Category>
         {
             new Category { CategoryName = "All" },
-            new Category { CategoryName = "Office" }
+            new Category { CategoryName = "Office" },
         };
 
         private AdministratorController administratorController = null!;
@@ -155,33 +155,6 @@
                 .MustHaveHappened();
             result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
-        }
-
-        [Test]
-        public void UnlockAccount_returns_not_found_if_admin_to_unlock_does_not_exist()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(null);
-
-            // When
-            var result = administratorController.UnlockAccount(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void UnlockAccount_returns_not_found_if_admin_to_unlock_is_at_different_centre()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
-                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 3));
-
-            // When
-            var result = administratorController.UnlockAccount(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
         }
 
         [Test]

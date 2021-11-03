@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/SetPassword")]
     public class SetDelegatePasswordController : Controller
     {
@@ -26,12 +28,7 @@
         [HttpGet]
         public IActionResult Index(int delegateId, bool isFromViewDelegatePage)
         {
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-
-            if (delegateUser == null || delegateUser.CentreId != User.GetCentreId())
-            {
-                return NotFound();
-            }
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
             {
@@ -56,12 +53,7 @@
                 return View(model);
             }
 
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
-
-            if (delegateUser == null || delegateUser.CentreId != User.GetCentreId())
-            {
-                return NotFound();
-            }
+            var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
 
             if (string.IsNullOrWhiteSpace(delegateUser.EmailAddress))
             {

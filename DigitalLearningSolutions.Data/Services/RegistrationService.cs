@@ -115,7 +115,7 @@ namespace DigitalLearningSolutions.Data.Services
             if (foundRecordForSupervisorDelegateId)
             {
                 supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
-                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value);
+                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value, delegateUser.Id);
             }
 
             if (!delegateRegistrationModel.Approved)
@@ -151,6 +151,7 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     delegateRegistrationModel.Email,
+                    candidateNumber,
                     baseUrl,
                     delegateRegistrationModel.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"

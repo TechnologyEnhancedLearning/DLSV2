@@ -17,7 +17,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using ConfirmationViewModel =
@@ -29,7 +28,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private const string CookieName = "DelegateRegistrationByCentreData";
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -254,6 +252,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             var emailSent = (bool)TempData.Peek("emailSent");
             var passwordSet = (bool)TempData.Peek("passwordSet");
             TempData.Clear();
+
             if (delegateNumber == null)
             {
                 return RedirectToAction("Index");
@@ -266,17 +265,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private void SetCentreDelegateRegistrationData(int centreId)
         {
             var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, DateTime.Today);
-            var id = centreDelegateRegistrationData.Id;
-
-            Response.Cookies.Append(
-                CookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30),
-                }
-            );
-
             TempData.Set(centreDelegateRegistrationData);
         }
 

@@ -117,7 +117,7 @@
         View courses
       </a>
 
-      <a class="nhsuk-button delete-button expander-card__button" role="button">
+      <a class="nhsuk-button delete-button expander-card__button" role="button" asp-action="DeleteGroup" asp-route-groupId="@Model.Id">
         Delete group
       </a>
     </div>

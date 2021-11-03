@@ -26,6 +26,12 @@
             addButton.Click();
         }
 
+        public static void ClickLinkContainingText(this IWebDriver driver, string text)
+        {
+            var foundLink = driver.FindElement(By.XPath($"//a[contains(text(), '{text}')]"));
+            foundLink.Click();
+        }
+
         public static void SelectDropdownItemValue(this IWebDriver driver, string dropdownId, string selectedValue)
         {
             var dropdown = new SelectElement(driver.FindElement(By.Id(dropdownId)));

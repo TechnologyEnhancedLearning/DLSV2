@@ -1,9 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @model DlsSubApplication
 @{
   ViewData["Title"] = "Password Changed Successfully";
   var routeParamsForIndexLink = new Dictionary<string, string?> {
-    { "application", Model.UrlSegment }
+    { "dlsSubApplication", Model.UrlSegment },
   };
 }
 

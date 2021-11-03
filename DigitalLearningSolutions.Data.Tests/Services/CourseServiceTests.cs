@@ -65,7 +65,7 @@
                     CentreId = CentreId,
                     Active = true,
                     DelegateCount = 100,
-                    CompletedCount = 41
+                    CompletedCount = 41,
                 },
                 new CourseStatistics
                 {
@@ -73,7 +73,7 @@
                     CentreId = CentreId,
                     Active = false,
                     DelegateCount = 50,
-                    CompletedCount = 30
+                    CompletedCount = 30,
                 },
                 new CourseStatistics
                 {
@@ -81,8 +81,8 @@
                     CentreId = CentreId + 1,
                     Active = true,
                     DelegateCount = 500,
-                    CompletedCount = 99
-                }
+                    CompletedCount = 99,
+                },
             };
         }
 
@@ -109,9 +109,9 @@
                     CentreId,
                     false
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             results.DelegateCourseInfo.Should().BeEquivalentTo(info);
             results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
         }
@@ -135,42 +135,113 @@
                     CentreId,
                     false
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
             result.DelegateCourseInfo.Should().BeEquivalentTo(info);
             result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_call_correct_data_service_method()
+        public void VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_and_categoryId_match()
         {
             // Given
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .Returns(true);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_ids()
+        public void
+            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
         {
             // Given
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .Returns(false);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 1);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_centre()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_categoryID()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((1, 1));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((null, null));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void UpdateLearningPathwayDefaultsForCourse_calls_data_service()
+        {
+            // Given
+            A.CallTo(
+                () => courseDataService.UpdateLearningPathwayDefaultsForCourse(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+
+            // Then
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+                .MustHaveHappened();
         }
     }
 }

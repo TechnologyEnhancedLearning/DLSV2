@@ -19,7 +19,7 @@
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
     [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class MyAccountController : Controller
@@ -83,7 +83,11 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
-        public IActionResult EditDetails(EditDetailsFormData formData, string action, DlsSubApplication dlsSubApplication)
+        public IActionResult EditDetails(
+            EditDetailsFormData formData,
+            string action,
+            DlsSubApplication dlsSubApplication
+        )
         {
             ViewBag.JobGroupOptions = GetJobGroupItems(formData.JobGroupId);
             ViewBag.CustomFields = GetCustomFieldsWithEnteredAnswers(formData);
@@ -92,7 +96,7 @@
                 "save" => EditDetailsPostSave(formData, dlsSubApplication),
                 "previewImage" => EditDetailsPostPreviewImage(formData, dlsSubApplication),
                 "removeImage" => EditDetailsPostRemoveImage(formData, dlsSubApplication),
-                _ => new StatusCodeResult(500)
+                _ => new StatusCodeResult(500),
             };
         }
 
@@ -143,10 +147,13 @@
             var (accountDetailsData, centreAnswersData) = MapToUpdateAccountData(formData, userAdminId, userDelegateId);
             userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
 
-            return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
+            return RedirectToAction("Index", new { dlsSubApplication = dlsSubApplication.UrlSegment });
         }
 
-        private IActionResult EditDetailsPostPreviewImage(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
+        private IActionResult EditDetailsPostPreviewImage(
+            EditDetailsFormData formData,
+            DlsSubApplication dlsSubApplication
+        )
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearErrorsForAllFieldsExcept(nameof(EditDetailsFormData.ProfileImageFile));
@@ -166,7 +173,10 @@
             return View(model);
         }
 
-        private IActionResult EditDetailsPostRemoveImage(EditDetailsFormData formData, DlsSubApplication dlsSubApplication)
+        private IActionResult EditDetailsPostRemoveImage(
+            EditDetailsFormData formData,
+            DlsSubApplication dlsSubApplication
+        )
         {
             // We don't want to display validation errors on other fields in this case
             ModelState.ClearAllErrors();

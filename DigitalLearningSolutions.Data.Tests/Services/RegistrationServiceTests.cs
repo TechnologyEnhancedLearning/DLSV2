@@ -335,11 +335,11 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             );
 
             // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId))
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId, 0))
                 .MustHaveHappened();
             A.CallTo(
                 () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    A<int>.That.Matches(id => id != supervisorDelegateId)
+                    A<int>.That.Matches(id => id != supervisorDelegateId), A<int>._
                 )
             ).MustNotHaveHappened();
         }
@@ -541,6 +541,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 passwordHash: null,
                 notifyDate: new DateTime(2200, 1, 1)
             );
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -549,6 +550,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     model.Email,
+                    NewCandidateNumber,
                     baseUrl,
                     model.NotifyDate.Value,
                     "RegisterDelegateByCentre_Refactor"
@@ -562,6 +564,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             const string baseUrl = "base.com";
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+            A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns(NewCandidateNumber);
 
             // When
             registrationService.RegisterDelegateByCentre(model, baseUrl);
@@ -570,6 +573,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(
                 () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                     A<string>._,
+                    NewCandidateNumber,
                     A<string>._,
                     A<DateTime>._,
                     A<string>._
@@ -637,7 +641,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             registrationService.RegisterDelegateByCentre(model, baseUrl);
 
             // Then
-            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._))
+            A.CallTo(() => frameworkNotificationService.SendSupervisorDelegateAcceptance(A<int>._, A<int>._))
                 .MustNotHaveHappened();
         }
 

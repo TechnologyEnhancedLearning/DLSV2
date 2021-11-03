@@ -97,7 +97,6 @@ else
 <p>
   There are no self assessment results ready for verification.
 </p>
-<a class="nhsuk-button nhsuk-button--secondary" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">Cancel</a>
 <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
   Cancel
 </a>
