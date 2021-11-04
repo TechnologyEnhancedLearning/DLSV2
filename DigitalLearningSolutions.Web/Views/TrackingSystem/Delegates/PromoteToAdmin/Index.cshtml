@@ -1,28 +1,14 @@
-﻿@inject IConfiguration Configuration;
-@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin
 @model PromoteToAdminViewModel
 
 @{
   ViewData["Title"] = "Promote centre delegate to admin";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
   var cancelRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Promote centre delegate to admin</h1>
-
-    <div class="nhsuk-u-margin-bottom-8 nhsuk-u-margin-top-8">
-      <vc:number-of-administrators centre-id="Model.CentreId" />
-    </div>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
@@ -30,13 +16,17 @@
           User:
         </div>
       </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
+      <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
         <input type="hidden" asp-for="FullName" />
         @Model.FullName
       </div>
     </div>
 
-    <h2 class="nhsuk-heading-l nhsuk-u-margin-top-4">Please select all roles this user will have.</h2>
+    <h2 class="nhsuk-heading-l">User roles</h2>
+
+    <div class="nhsuk-u-margin-bottom-4 nhsuk-u-margin-top-4">
+      <vc:number-of-administrators centre-id="Model.CentreId" />
+    </div>
 
     @if (Model.NotAllRolesDisplayed) {
       <div class="nhsuk-warning-callout nhsuk-u-margin-bottom-4">
