@@ -12,7 +12,6 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class ManageCourseControllerTests

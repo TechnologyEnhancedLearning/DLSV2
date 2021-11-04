@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -163,10 +162,14 @@
                 model.AutoRefreshMonths == null ? 0 : int.Parse(model.AutoRefreshMonths);
 
             var completeWithinMonthsInt =
-                data.LearningPathwayDefaultsModel.CompleteWithinMonths == null ? 0 : int.Parse(data.LearningPathwayDefaultsModel.CompleteWithinMonths);
+                data.LearningPathwayDefaultsModel.CompleteWithinMonths == null
+                    ? 0
+                    : int.Parse(data.LearningPathwayDefaultsModel.CompleteWithinMonths);
 
             var validityMonthsInt =
-                data.LearningPathwayDefaultsModel.ValidityMonths == null ? 0 : int.Parse(data.LearningPathwayDefaultsModel.ValidityMonths);
+                data.LearningPathwayDefaultsModel.ValidityMonths == null
+                    ? 0
+                    : int.Parse(data.LearningPathwayDefaultsModel.ValidityMonths);
 
             var refreshToCustomisationId =
                 model.RefreshToCustomisationId ?? 0;
@@ -292,7 +295,8 @@
             var categoryId = User.GetAdminCategoryId()!;
             var categoryIdFilter = categoryId == 0 ? null : categoryId;
 
-            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
+                .ToList();
             centreCourses.RemoveAll(c => c.id == customisationId);
             centreCourses.Insert(0, (customisationId, "Same course"));
 

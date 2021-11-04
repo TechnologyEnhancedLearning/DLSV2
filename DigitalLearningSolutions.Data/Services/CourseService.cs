@@ -171,6 +171,26 @@
             return orderedCourses.Select(c => (c.CustomisationId, c.ApplicationName + " - " + c.CustomisationName));
         }
 
+        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
+            DelegateCourseInfo info,
+            int centreId,
+            bool allowAllCentreCourses = false
+        )
+        {
+            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                info,
+                info.CustomisationId,
+                centreId,
+                allowAllCentreCourses
+            );
+
+            var attemptStats = info.IsAssessed
+                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
+                : new AttemptStats(0, 0);
+
+            return new DelegateCourseDetails(info, customPrompts, attemptStats);
+        }
+
         public bool DoesCourseNameExistAtCentre(
             int customisationId,
             string customisationName,
@@ -246,26 +266,6 @@
                 courseOptions,
                 customisationId
             );
-        }
-
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
-            DelegateCourseInfo info,
-            int centreId,
-            bool allowAllCentreCourses = false
-        )
-        {
-            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
-                info,
-                info.CustomisationId,
-                centreId,
-                allowAllCentreCourses
-            );
-
-            var attemptStats = info.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : new AttemptStats(0, 0);
-
-            return new DelegateCourseDetails(info, customPrompts, attemptStats);
         }
     }
 }

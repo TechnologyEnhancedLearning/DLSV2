@@ -579,13 +579,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_without_auto_refresh()
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_without_auto_refresh()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, false, 0 ,0, false);
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, false, 0, 0, false);
                 var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
                     1,
                     2,
@@ -611,13 +612,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_with_auto_refresh_params()
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_with_auto_refresh_params()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 1,12, true);
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 1, 12, true);
                 var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
                     1,
                     2,

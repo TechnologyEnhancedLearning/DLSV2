@@ -523,7 +523,11 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AutoRefreshMonths = @autoRefreshMonths,
                         ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId, refreshToCustomisationId, autoRefreshMonths, applyLpDefaultsToSelfEnrol }
+                new
+                {
+                    completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId,
+                    refreshToCustomisationId, autoRefreshMonths, applyLpDefaultsToSelfEnrol,
+                }
             );
         }
 
