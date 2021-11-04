@@ -103,7 +103,7 @@
             DateTime endDate
         )
         {
-            Period = periodOfActivity.DateInformation.GetDateRangeLabel(format, startDate, endDate);
+            Period = DateInformation.GetDateRangeLabel(format, startDate, endDate);
             Completions = periodOfActivity.Completions;
             Evaluations = periodOfActivity.Evaluations;
             Registrations = periodOfActivity.Registrations;

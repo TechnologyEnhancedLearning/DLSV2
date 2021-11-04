@@ -108,7 +108,7 @@
             var historicalCourses = courseDataService
                 .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId);
 
-            var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
+            var courses = availableCourses.Union(historicalCourses)
                 .OrderByDescending(c => c.Active)
                 .ThenBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
@@ -223,19 +223,6 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
-        }
-
-        private class CourseEqualityComparer : IEqualityComparer<Course>
-        {
-            public bool Equals(Course? x, Course? y)
-            {
-                return x?.CustomisationId == y?.CustomisationId;
-            }
-
-            public int GetHashCode(Course obj)
-            {
-                return obj.CustomisationId;
-            }
         }
     }
 }
