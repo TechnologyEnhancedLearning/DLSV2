@@ -27,7 +27,6 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
 }
 
 function generateChart(request: XMLHttpRequest) {
-
   let { response } = request;
   // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
   // so we need to manually parse the JSON string if not already parsed
