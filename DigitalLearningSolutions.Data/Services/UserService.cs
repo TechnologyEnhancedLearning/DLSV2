@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         List<CentreUserDetails> GetUserCentres(AdminUser? adminUser, List<DelegateUser> delegateUsers);
 
-        void UpdateUserAccountDetails(
+        void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         );
@@ -50,7 +50,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool NewAliasIsValid(string? aliasId, int delegateUserId, int centreId);
 
-        void UpdateUserAccountDetailsByAdmin(
+        void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
         );
@@ -143,7 +143,7 @@ namespace DigitalLearningSolutions.Data.Services
             return availableCentres.OrderByDescending(ac => ac.IsAdmin).ThenBy(ac => ac.CentreName).ToList();
         }
 
-        public void UpdateUserAccountDetails(
+        public void UpdateUserAccountDetailsForAllVerifiedUsers(
             MyAccountDetailsData myAccountDetailsData,
             CentreAnswersData? centreAnswersData = null
         )
@@ -312,7 +312,7 @@ namespace DigitalLearningSolutions.Data.Services
             return !delegateUsers.Any(du => du.Id != delegateUserId && du.CentreId == centreId);
         }
 
-        public void UpdateUserAccountDetailsByAdmin(
+        public void UpdateUserAccountDetailsViaDelegateAccount(
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
         )
@@ -332,7 +332,7 @@ namespace DigitalLearningSolutions.Data.Services
             }
 
             var delegateIds = delegateUsers.Select(d => d.Id).ToArray();
-            userDataService.UpdateDelegateUsersByAdmin(
+            userDataService.UpdateDelegateAccountDetails(
                 editDelegateDetailsData.FirstName,
                 editDelegateDetailsData.Surname,
                 editDelegateDetailsData.Email,

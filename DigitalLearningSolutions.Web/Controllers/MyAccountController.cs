@@ -110,11 +110,6 @@
 
             if (userDelegateId.HasValue)
             {
-                if (!formData.JobGroupId.HasValue)
-                {
-                    ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
-                }
-
                 centreCustomPromptHelper.ValidateCustomPrompts(formData, User.GetCentreId(), ModelState);
             }
 
@@ -155,7 +150,7 @@
                 userDelegateId,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", new { application = dlsSubApplication.UrlSegment });
         }

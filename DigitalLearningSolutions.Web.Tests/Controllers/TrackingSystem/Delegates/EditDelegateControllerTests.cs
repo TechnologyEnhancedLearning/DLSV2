@@ -64,28 +64,6 @@
         }
 
         [Test]
-        public void Index_post_returns_view_with_model_error_with_missing_job_group()
-        {
-            // Given
-            var formData = new EditDelegateFormData
-            {
-                JobGroupId = null
-            };
-            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
-            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
-
-            // When
-            var result = controller.Index(formData, DelegateId);
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(result, "Select a job group");
-            }
-        }
-
-        [Test]
         public void Index_post_returns_view_with_model_error_with_duplicate_email()
         {
             // Given
@@ -151,7 +129,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => userService.UpdateUserAccountDetailsByAdmin(
+                    () => userService.UpdateUserAccountDetailsViaDelegateAccount(
                         A<EditDelegateDetailsData>._,
                         A<CentreAnswersData>._
                     )

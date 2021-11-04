@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -33,5 +34,13 @@
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!JobGroupId.HasValue)
+            {
+                yield return new ValidationResult("Select a job group", new[] { nameof(JobGroupId) });
+            }
+        }
     }
 }

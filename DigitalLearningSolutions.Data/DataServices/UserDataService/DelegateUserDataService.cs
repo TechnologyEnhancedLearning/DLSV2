@@ -201,7 +201,7 @@
             );
         }
 
-        public void UpdateDelegateUsersByAdmin(string firstName, string surname, string email, int[] ids)
+        public void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates

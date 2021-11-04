@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    public class AccountDetailsData
+    public abstract class AccountDetailsData
     {
-        public AccountDetailsData(
+        protected AccountDetailsData(
             string firstName,
             string surname,
             string email

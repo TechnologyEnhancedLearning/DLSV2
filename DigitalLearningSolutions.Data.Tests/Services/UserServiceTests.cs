@@ -184,7 +184,7 @@
         }
 
         [Test]
-        public void TryUpdateUsers_with_null_delegate_only_updates_admin()
+        public void UpdateUserAccountDetailsForAllVerifiedUsers_with_null_delegate_only_updates_admin()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
@@ -205,7 +205,7 @@
                 .DoesNothing();
 
             // When
-            userService.UpdateUserAccountDetails(accountDetailsData);
+            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData);
 
             // Then
             A.CallTo(() => userDataService.UpdateAdminUser(A<string>._, A<string>._, A<string>._, null, A<int>._))
@@ -216,7 +216,7 @@
         }
 
         [Test]
-        public void TryUpdateUsers_with_null_admin_only_updates_delegate()
+        public void UpdateUserAccountDetailsForAllVerifiedUsers_with_null_admin_only_updates_delegate()
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
@@ -245,7 +245,7 @@
             ).DoesNothing();
 
             // When
-            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
@@ -265,7 +265,7 @@
         }
 
         [Test]
-        public void TryUpdateUsers_with_both_admin_and_delegate_updates_both()
+        public void UpdateUserAccountDetailsForAllVerifiedUsers_with_both_admin_and_delegate_updates_both()
         {
             // Given
             string signedInEmail = "oldtest@email.com";
@@ -301,7 +301,7 @@
             ).DoesNothing();
 
             // When
-            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
@@ -320,7 +320,7 @@
         }
 
         [Test]
-        public void TryUpdateUsers_with_incorrect_password_doesnt_update()
+        public void UpdateUserAccountDetailsForAllVerifiedUsers_with_incorrect_password_doesnt_update()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
@@ -350,7 +350,7 @@
             ).DoesNothing();
 
             // When
-            userService.UpdateUserAccountDetails(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsForAllVerifiedUsers(accountDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(() => userDataService.UpdateDelegateUsers(A<string>._, A<string>._, A<string>._, null, A<int[]>._))
@@ -775,7 +775,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsByAdmin_updates_admin_user_if_found_by_email()
+        public void UpdateUserAccountDetailsViaDelegateAccount_updates_admin_user_if_found_by_email()
         {
             // Given
             const string email = "test@email.com";
@@ -804,7 +804,7 @@
             );
 
             // When
-            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(
@@ -819,7 +819,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsByAdmin_does_not_update_admin_user_if_not_found_by_email()
+        public void UpdateUserAccountDetailsViaDelegateAccount_does_not_update_admin_user_if_not_found_by_email()
         {
             // Given
             const string email = "test@email.com";
@@ -847,7 +847,7 @@
             );
 
             // When
-            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(
@@ -862,7 +862,7 @@
         }
 
         [Test]
-        public void UpdateUserAccountDetailsByAdmin_updates_name_and_email_on_all_found_delegates()
+        public void UpdateUserAccountDetailsViaDelegateAccount_updates_name_and_email_on_all_found_delegates()
         {
             // Given
             const string email = "test@email.com";
@@ -891,11 +891,11 @@
             );
 
             // When
-            userService.UpdateUserAccountDetailsByAdmin(editDelegateDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
 
             // Then
             A.CallTo(
-                () => userDataService.UpdateDelegateUsersByAdmin(
+                () => userDataService.UpdateDelegateAccountDetails(
                     editDelegateDetailsData.FirstName,
                     editDelegateDetailsData.Surname,
                     editDelegateDetailsData.Email,

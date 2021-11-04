@@ -365,7 +365,7 @@
         }
 
         [Test]
-        public void UpdateDelegateUsersByAdmin_updates_users()
+        public void UpdateDelegateAccountDetails_updates_users()
         {
             using var transaction = new TransactionScope();
             try
@@ -376,7 +376,7 @@
                 const string email = "test@email.com";
 
                 // When
-                userDataService.UpdateDelegateUsersByAdmin(firstName, lastName, email, new[] { 2, 3 });
+                userDataService.UpdateDelegateAccountDetails(firstName, lastName, email, new[] { 2, 3 });
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
                 var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 

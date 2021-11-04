@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,6 +17,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [Route("TrackingSystem/Delegates/{delegateId:int}/Edit")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
@@ -57,10 +59,6 @@
         public IActionResult Index(EditDelegateFormData formData, int delegateId)
         {
             var centreId = User.GetCentreId();
-            if (!formData.JobGroupId.HasValue)
-            {
-                ModelState.AddModelError(nameof(EditDetailsFormData.JobGroupId), "Select a job group");
-            }
 
             centreCustomPromptHelper.ValidateCustomPrompts(formData, centreId, ModelState);
 
@@ -91,7 +89,7 @@
                 delegateId,
                 User.GetCentreId()
             );
-            userService.UpdateUserAccountDetailsByAdmin(accountDetailsData, centreAnswersData);
+            userService.UpdateUserAccountDetailsViaDelegateAccount(accountDetailsData, centreAnswersData);
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }

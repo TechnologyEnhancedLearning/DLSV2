@@ -101,8 +101,6 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, A<int?>._, A<int?>._, A<int>._))
                 .MustNotHaveHappened();
             result.As<ViewResult>().Model.As<MyAccountEditDetailsViewModel>().Should().BeEquivalentTo(expectedModel);
-            myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.JobGroupId)].ValidationState.Should().Be
-                (ModelValidationState.Invalid);
             myAccountController.ModelState[nameof(MyAccountEditDetailsFormData.Answer1)].ValidationState.Should().Be
                 (ModelValidationState.Invalid);
         }
@@ -120,7 +118,7 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<MyAccountDetailsData>._, null)).DoesNothing();
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null)).DoesNothing();
             var model = new MyAccountEditDetailsFormData
             {
                 FirstName = "Test",
@@ -134,7 +132,7 @@
 
             // Then
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
@@ -192,7 +190,7 @@
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
-            A.CallTo(() => userService.UpdateUserAccountDetails(A<MyAccountDetailsData>._, null))
+            A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
                 .DoesNothing();
 
             var formData = new MyAccountEditDetailsFormData

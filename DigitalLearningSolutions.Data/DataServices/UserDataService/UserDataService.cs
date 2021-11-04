@@ -18,7 +18,6 @@
         ///     This should not occur as Login is not an editable column.
         /// </exception>
         AdminUser? GetAdminUserByUsername(string username);
-
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         int GetNumberOfActiveAdminsAtCentre(int centreId);
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
@@ -73,7 +72,7 @@
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
         void DeactivateDelegateUser(int delegateId);
         IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId);
-        void UpdateDelegateUsersByAdmin(string firstName, string surname, string email, int[] ids);
+        void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);

@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class EditDelegateFormData : EditDetailsFormData
+    public class EditDelegateFormData : EditDetailsFormData, IValidatableObject
     {
         public EditDelegateFormData() {}
 
