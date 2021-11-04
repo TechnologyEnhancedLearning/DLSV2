@@ -33,33 +33,6 @@
         }
 
         [Test]
-        public void Index_should_return_not_found_with_null_delegate_user()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId)).Returns(null);
-
-            // When
-            var result = setDelegatePasswordController.Index(DelegateId, true);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void Index_should_return_not_found_with_delegate_user_at_different_centre()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetDelegateUserById(DelegateId))
-                .Returns(UserTestHelper.GetDefaultDelegateUser(centreId: 1));
-
-            // When
-            var result = setDelegatePasswordController.Index(DelegateId, true);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void Index_should_show_error_view_for_delegate_user_with_no_email()
         {
             // Given

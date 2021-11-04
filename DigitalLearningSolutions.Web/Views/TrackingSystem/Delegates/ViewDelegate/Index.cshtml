@@ -9,13 +9,6 @@
 
 @{
   ViewData["Title"] = "View delegate";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -108,7 +101,7 @@
            asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
-        @if (User.HasCentreManagerPermissions()) {
+        @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet) {
           <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
              role="button"
              asp-controller="PromoteToAdmin"

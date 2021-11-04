@@ -17,7 +17,9 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate);
+        void RemoveRelatedProgressRecordsForGroup(int groupId, int? delegateId, bool removeStartedEnrolments, DateTime removedDate);
+
+        int? GetGroupCentreId(int groupId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
 
@@ -26,6 +28,14 @@
         int AddDelegateGroup(GroupDetails groupDetails);
 
         void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink);
+
+        void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
+
+        void DeleteGroupDelegates(int groupId);
+
+        void DeleteGroupCustomisations(int groupId);
+
+        void DeleteGroup(int groupId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -142,33 +152,19 @@
             ).SingleOrDefault();
         }
 
+        public int? GetGroupCentreId(int groupId)
+        {
+            return connection.Query<int>(
+                @"SELECT CentreID
+                        FROM Groups
+                        WHERE GroupID = @groupId",
+                new { groupId }
+            ).SingleOrDefault();
+        }
+
         public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
         {
-            const string numberOfGroupsWhereDelegateIsEnrolledOnThisCourse =
-                @"SELECT COUNT(DISTINCT(gd.GroupId))
-                    FROM dbo.Progress AS pr
-                    INNER JOIN dbo.GroupCustomisations AS gc ON gc.CustomisationID = pr.CustomisationID
-                    INNER JOIN dbo.GroupDelegates AS gd ON gd.DelegateID = pr.CandidateID AND gd.GroupID = gc.GroupID
-                    WHERE pr.CustomisationID = Progress.CustomisationID AND pr.CandidateID = Progress.CandidateID";
-
-            connection.Execute(
-                $@"UPDATE Progress
-                    SET
-                        RemovedDate = @removedDate,
-                        RemovalMethodID = 3
-                    WHERE ProgressID IN
-                          (SELECT ProgressID
-                            FROM Progress AS P
-                            INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                            WHERE p.Completed IS NULL
-                                AND p.EnrollmentMethodID  = 3
-                                AND GC.GroupID = @groupId
-                                AND p.CandidateID = @delegateId
-                                AND P.RemovedDate IS NULL
-                                AND p.LoginCount = 0)
-                        AND ({numberOfGroupsWhereDelegateIsEnrolledOnThisCourse}) = 1",
-                new { groupId, delegateId, removedDate }
-            );
+            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
         }
 
         public int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId)
@@ -211,11 +207,74 @@
             connection.Execute(
                 @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
                     VALUES (
-                        @groupId, 
-                        @delegateId, 
-                        @addedDate, 
+                        @groupId,
+                        @delegateId,
+                        @addedDate,
                         @addedByFieldLink)",
                 new { groupId, delegateId, addedDate, addedByFieldLink }
+            );
+        }
+
+        public void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, null, deleteStartedEnrolment, removedDate);
+        }
+
+        public void DeleteGroupDelegates(int groupId)
+        {
+            connection.Execute(
+                @"DELETE FROM GroupDelegates
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public void DeleteGroupCustomisations(int groupId)
+        {
+            connection.Execute(
+                @"DELETE FROM GroupCustomisations
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public void DeleteGroup(int groupId)
+        {
+            connection.Execute(
+                @"DELETE FROM Groups
+                     WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public void RemoveRelatedProgressRecordsForGroup(
+            int groupId,
+            int? delegateId,
+            bool deleteStartedEnrolment,
+            DateTime removedDate
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                        SET
+                            RemovedDate = @removedDate,
+                            RemovalMethodID = 3
+                        WHERE ProgressID IN
+                            (SELECT ProgressID
+                             FROM Progress AS P
+                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+                             WHERE P.Completed IS NULL
+                             AND P.EnrollmentMethodID = 3
+                             AND GC.GroupID = @groupId
+                             AND (P.CandidateID = @delegateId OR @delegateId IS NULL)
+                             AND P.RemovedDate IS NULL
+                             AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
+                             AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
+                                                INNER JOIN GroupDelegates AS GD ON GCInner.GroupID = GD.GroupID
+                                                WHERE GCInner.CustomisationID = P.CustomisationID
+                                                AND GD.DelegateID = P.CandidateID
+                                                AND GCInner.GroupID != GC.GroupID))",
+                new { groupId, removedDate, deleteStartedEnrolment, delegateId }
             );
         }
     }

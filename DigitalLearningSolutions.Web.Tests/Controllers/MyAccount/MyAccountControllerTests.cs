@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.MyAccount
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -126,6 +127,8 @@
                 Email = Email,
                 Password = "password",
             };
+            var parameterName = typeof(MyAccountController).GetMethod("Index")?.GetParameters()
+                .SingleOrDefault(p => p.ParameterType == typeof(DlsSubApplication))?.Name;
 
             // When
             var result = myAccountController.EditDetails(model, "save", DlsSubApplication.Default);
@@ -134,7 +137,11 @@
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).MustHaveHappened();
             A.CallTo(() => userService.UpdateUserAccountDetailsForAllVerifiedUsers(A<MyAccountDetailsData>._, null))
                 .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index").WithRouteValue(
+                parameterName,
+                DlsSubApplication.Default.UrlSegment
+            );
         }
 
         [Test]
