@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/Edit")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
