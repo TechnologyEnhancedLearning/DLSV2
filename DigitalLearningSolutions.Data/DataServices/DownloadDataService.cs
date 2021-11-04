@@ -27,9 +27,10 @@
                         Description,
                         UploadDTT AS UploadDate,
                         FileSize,
-                        Tag
+                        Tag,
+                        Filename
                     FROM Downloads
-                    WHERE (Active = 1)"
+                    WHERE Active = 1"
             );
         }
     }

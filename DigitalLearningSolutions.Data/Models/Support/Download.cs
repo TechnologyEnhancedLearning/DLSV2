@@ -9,5 +9,6 @@
         public DateTime UploadDate { get; set; }
         public long FileSize { get; set; }
         public string Tag { get; set; }
+        public string FileName { get; set; }
     }
 }
