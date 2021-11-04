@@ -27,7 +27,6 @@
             DelegateName = formData.DelegateName;
         }
 
-        [Required(ErrorMessage = "Please select a supervisor")]
         public int? SupervisorId { get; set; }
         public int DelegateId { get; set; }
         public string? DelegateName { get; set; }

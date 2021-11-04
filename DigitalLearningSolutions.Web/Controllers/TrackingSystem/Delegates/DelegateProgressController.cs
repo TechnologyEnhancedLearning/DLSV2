@@ -77,7 +77,7 @@
                 return View(model);
             }
 
-            progressService.UpdateSupervisor(progressId, formData.SupervisorId!.Value);
+            progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {

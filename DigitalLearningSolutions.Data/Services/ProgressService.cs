@@ -5,7 +5,7 @@
 
     public interface IProgressService
     {
-        void UpdateSupervisor(int progressId, int newSupervisorId);
+        void UpdateSupervisor(int progressId, int? newSupervisorId);
     }
 
     public class ProgressService : IProgressService
@@ -19,7 +19,7 @@
             this.progressDataService = progressDataService;
         }
 
-        public void UpdateSupervisor(int progressId, int newSupervisorId)
+        public void UpdateSupervisor(int progressId, int? newSupervisorId)
         {
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
 
@@ -28,11 +28,13 @@
                 return;
             }
 
+            var supervisorId = newSupervisorId ?? 0;
+
             using var transaction = new TransactionScope();
 
             progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                 progressId,
-                newSupervisorId,
+                supervisorId,
                 courseInfo.CompleteBy
             );
 

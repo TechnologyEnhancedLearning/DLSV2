@@ -64,5 +64,26 @@
                 () => progressDataService.ClearAspProgressVerificationRequest(progressId)
             ).MustHaveHappened();
         }
+
+        [Test]
+        public void UpdateSupervisor_sets_supervisor_id_to_0_if_new_supervisor_is_null()
+        {
+            // Given
+            const int oldSupervisorId = 1;
+            const int progressId = 1;
+            var courseInfo = new DelegateCourseInfo { SupervisorAdminId = oldSupervisorId };
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(courseInfo);
+
+            // When
+            progressService.UpdateSupervisor(progressId, null);
+
+            // Then
+            A.CallTo(
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(progressId, 0, A<DateTime?>._)
+            ).MustHaveHappened();
+            A.CallTo(
+                () => progressDataService.ClearAspProgressVerificationRequest(progressId)
+            ).MustHaveHappened();
+        }
     }
 }
