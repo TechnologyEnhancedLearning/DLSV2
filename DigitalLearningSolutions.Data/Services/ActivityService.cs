@@ -124,12 +124,60 @@
         {
             using var workbook = new XLWorkbook();
 
-            var activityData = GetFilteredActivity(centreId, filterData).Select(
-                p => new { Period = p.DateInformation.StartDate, p.Registrations, p.Completions, p.Evaluations }
-            );
+            var activityData = GetFilteredActivity(centreId, filterData).ToList();
+
+            IEnumerable<WorkbookRow> workbookData;
+
+            if (activityData.Count() <= 1)
+            {
+                workbookData = activityData.Select(
+                    p => new WorkbookRow(
+                        DateInformation.GetDateRangeLabel(
+                            DateHelper.StandardDateFormat,
+                            filterData.StartDate,
+                            filterData.EndDate ?? DateTime.Now
+                        ),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+            }
+            else
+            {
+                var first = new[] { activityData.First() }.Select(
+                    p => new WorkbookRow(
+                        p.DateInformation.GetDateRangeLabel(DateHelper.StandardDateFormat, filterData.StartDate, true),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+                var last = new[] { activityData.Last() }.Select(
+                    p => new WorkbookRow(
+                        p.DateInformation.GetDateRangeLabel(
+                            DateHelper.StandardDateFormat,
+                            filterData.EndDate ?? DateTime.Now,
+                            true
+                        ),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+                var middleRows = activityData.Skip(1).SkipLast(1).Select(
+                    p => new WorkbookRow(
+                        p.DateInformation.GetDateLabel(DateHelper.StandardDateFormat),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+                workbookData = first.Concat(middleRows).Concat(last);
+            }
 
             var sheet = workbook.Worksheets.Add(SheetName);
-            var table = sheet.Cell(1, 1).InsertTable(activityData);
+            var table = sheet.Cell(1, 1).InsertTable(workbookData);
             table.Theme = TableTheme;
             sheet.Columns().AdjustToContents();
 
@@ -222,6 +270,22 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        private class WorkbookRow
+        {
+            public WorkbookRow(string period, int registrations, int completions, int evaluations)
+            {
+                Period = period;
+                Registrations = registrations;
+                Completions = completions;
+                Evaluations = evaluations;
+            }
+
+            public string Period { get; }
+            public int Registrations { get; }
+            public int Completions { get; }
+            public int Evaluations { get; }
         }
     }
 }
