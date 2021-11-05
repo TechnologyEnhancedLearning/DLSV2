@@ -33,7 +33,11 @@
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
-            var model = new DelegateProgressViewModel(accessedVia, courseDelegatesData!, courseDelegatesData!.DelegateCourseInfo.DelegateId);
+            var model = new DelegateProgressViewModel(
+                accessedVia,
+                courseDelegatesData!,
+                courseDelegatesData!.DelegateCourseInfo.DelegateId
+            );
             return View(model);
         }
     }

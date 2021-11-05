@@ -219,7 +219,8 @@
             );
 
             // When
-            var result = courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
             result.Should().BeTrue();
@@ -274,7 +275,8 @@
             );
 
             // When
-            var result = courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
             result.Should().BeFalse();
@@ -286,9 +288,9 @@
         public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
         {
             // Given
-            var info1 = new DelegateCourseInfo{DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1};
-            var info2 = new DelegateCourseInfo{DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1};
-            var info3 = new DelegateCourseInfo{DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2};
+            var info1 = new DelegateCourseInfo { DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1 };
+            var info2 = new DelegateCourseInfo { DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1 };
+            var info3 = new DelegateCourseInfo { DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2 };
             A.CallTo(
                 () => courseDataService.GetDelegateCoursesInfo(1)
             ).Returns(new[] { info1, info2, info3 });
