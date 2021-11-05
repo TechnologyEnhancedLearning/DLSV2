@@ -99,15 +99,13 @@
                 .Returns(attemptStatsReturnedByDataService);
 
             // When
-            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
+            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
 
             // Then
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
-                    customisationId,
-                    CentreId,
-                    false
+                    customisationId
                 )
             ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
@@ -125,15 +123,13 @@
                 { CustomisationId = customisationId, IsAssessed = false };
 
             // When
-            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
+            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
 
             // Then
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
-                    customisationId,
-                    CentreId,
-                    false
+                    customisationId
                 )
             ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
@@ -245,12 +241,31 @@
         }
 
         [Test]
+        public void GetAllCoursesForDelegate_returns_only_courses_at_centre()
+        {
+            // Given
+            const int delegateId = 1;
+            const int centreId = 1;
+            const int categoryId = 1;
+            var delegateCourseInfoAtCentre = new DelegateCourseInfo { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
+            var delegateCourseInfoNotAtCentre = new DelegateCourseInfo { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
+                .Returns(new[] { delegateCourseInfoAtCentre, delegateCourseInfoNotAtCentre });
+
+            // When
+            var result = courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryId);
+
+            // Then
+            result.Count().Should().Be(1);
+        }
+
+        [Test]
         public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
         {
             // Given
-            var info1 = new DelegateCourseInfo{DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1};
-            var info2 = new DelegateCourseInfo{DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1};
-            var info3 = new DelegateCourseInfo{DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2};
+            var info1 = new DelegateCourseInfo{DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info2 = new DelegateCourseInfo{DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info3 = new DelegateCourseInfo{DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
             A.CallTo(
                 () => courseDataService.GetDelegateCoursesInfo(1)
             ).Returns(new[] { info1, info2, info3 });

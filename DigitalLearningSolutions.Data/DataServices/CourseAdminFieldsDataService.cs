@@ -8,11 +8,7 @@
 
     public interface ICourseAdminFieldsDataService
     {
-        CourseAdminFieldsResult? GetCourseAdminFields(
-            int customisationId,
-            int centreId,
-            bool allowAllCentreCourses = false
-        );
+        CourseAdminFieldsResult GetCourseAdminFields(int customisationId);
 
         void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
 
@@ -41,11 +37,7 @@
             this.connection = connection;
         }
 
-        public CourseAdminFieldsResult GetCourseAdminFields(
-            int customisationId,
-            int centreId,
-            bool allowAllCentreCourses = false
-        )
+        public CourseAdminFieldsResult GetCourseAdminFields(int customisationId)
         {
             var result = connection.Query<CourseAdminFieldsResult>(
                 @"SELECT
@@ -68,10 +60,9 @@
                     LEFT JOIN CoursePrompts AS cp3
                         ON cu.CourseField3PromptID = cp3.CoursePromptID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
-                    WHERE (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND @allowAllCentreCourses = 1))
-                        AND ap.ArchivedDate IS NULL
+                    WHERE ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
-                new { customisationId, centreId, allowAllCentreCourses }
+                new { customisationId }
             ).Single();
 
             return result;
