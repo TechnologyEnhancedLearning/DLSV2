@@ -76,6 +76,22 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
+
+        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
+
+        void CreateNewCentreCourse(
+            int centreId,
+            int applicationId,
+            string customisationName,
+            string? password,
+            bool selfRegister,
+            int tutCompletionThreshold,
+            bool isAssessed,
+            int diagCompletionThreshold,
+            bool diagObjSelect,
+            bool hideInLearnerPortal,
+            string? notificationEmails
+        );
     }
 
     public class CourseDataService : ICourseDataService
@@ -652,6 +668,47 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
+        }
+
+        public void CreateNewCentreCourse(
+            int centreId,
+            int applicationId,
+            string customisationName,
+            string? password,
+            bool selfRegister,
+            int tutCompletionThreshold,
+            bool isAssessed,
+            int diagCompletionThreshold,
+            bool diagObjSelect,
+            bool hideInLearnerPortal,
+            string? notificationEmails
+        )
+        {
+            connection.Execute(
+                @"INSERT INTO [dbo].[Customisations]
+                           ([CentreID]
+                           ,[ApplicationID])
+                     VALUES
+                           (CurrentVersion = 1,
+                            CentreId = @centreId,
+                            ApplicationId = @applicationId,
+                            Active = 1,
+                            CustomisationName = @customisationName,
+                            Password = @password,
+                            SelfRegister = @selfRegister,
+                            TutCompletionThreshold = @tutCompletionThreshold,
+                            IsAssessed = @isAssessed,
+                            DiagCompletionThreshold = @diagCompletionThreshold,
+                            DiagObjSelect = @diagObjSelect,
+                            HideInLearnerPortal = @hideInLearnerPortal
+                            NotificationEmails = @notificationEmails
+                           )",
+                new
+                {
+                    centreId, applicationId, customisationName, password, selfRegister, tutCompletionThreshold,
+                    isAssessed, diagCompletionThreshold, diagObjSelect, hideInLearnerPortal, notificationEmails,
+                }
+            );
         }
     }
 }

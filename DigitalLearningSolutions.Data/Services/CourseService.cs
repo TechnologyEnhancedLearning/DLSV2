@@ -76,6 +76,8 @@
         IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(int centreId, int? categoryId, int groupId);
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
+
+        void CreateNewCentreCourse(CourseDetails courseDetails);
     }
 
     public class CourseService : ICourseService
@@ -337,6 +339,24 @@
                 : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
+        }
+
+        public void CreateNewCentreCourse(CourseDetails courseDetails)
+        {
+            courseDataService.CreateNewCentreCourse(
+                courseDetails.CentreId,
+                courseDetails.ApplicationId,
+                courseDetails.CustomisationName,
+                courseDetails.Password,
+                courseDetails.SelfRegister,
+                courseDetails.TutCompletionThreshold,
+                courseDetails.IsAssessed,
+                courseDetails.DiagCompletionThreshold,
+                courseDetails.DiagObjSelect,
+                courseDetails.HideInLearnerPortal,
+                courseDetails.NotificationEmails);
+
+
         }
     }
 }

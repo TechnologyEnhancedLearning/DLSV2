@@ -1,0 +1,28 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Configuration
+@model EditCourseOptionsViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Set course options" : "Set course options";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ qq }" />
+    }
+    <h1 class="nhsuk-heading-xl">Set course options</h1>
+
+    <form method="post" novalidate asp-action="SetCourseOptions">
+      // TODO: Add partial
+    </form>
+
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseDetails" />
+  </div>
+</div>

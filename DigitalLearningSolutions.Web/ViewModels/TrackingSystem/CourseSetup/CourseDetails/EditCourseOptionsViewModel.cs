@@ -45,6 +45,25 @@
             }
         }
 
+        public EditCourseOptionsViewModel(CourseOptions courseOptions)
+        {
+            Active = courseOptions.Active;
+            AllowSelfEnrolment = courseOptions.SelfRegister;
+            DiagnosticObjectiveSelection = courseOptions.DiagObjSelect;
+            HideInLearningPortal = courseOptions.HideInLearnerPortal;
+
+            if (courseOptions.DiagAssess)
+            {
+                Checkboxes.Add(
+                    new CheckboxListItemViewModel(
+                        nameof(DiagnosticObjectiveSelection),
+                        "Allow diagnostic objective selection",
+                        "Allow the learner to choose which objectives to be assessed against when starting a diagnostic assessment."
+                    )
+                );
+            }
+        }
+
         public EditCourseOptionsViewModel() { }
 
         public int CustomisationId { get; set; }
