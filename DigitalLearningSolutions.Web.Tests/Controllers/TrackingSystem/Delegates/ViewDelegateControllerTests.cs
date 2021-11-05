@@ -57,26 +57,6 @@
         }
 
         [Test]
-        public void Deactivating_nonexistent_delegate_returns_not_found_result()
-        {
-            // when
-            var result = viewDelegateController.DeactivateDelegate(-1);
-
-            // then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void Deactivating_delegate_on_wrong_centre_returns_not_found_result()
-        {
-            // when
-            var result = viewDelegateController.DeactivateDelegate(2);
-
-            // then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void Removal_confirmation_page_displays_for_valid_delegate_and_course()
         {
             // given
