@@ -1,18 +1,10 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
 @using Microsoft.Extensions.Configuration
 @model int
 
 @{
   ViewData["Title"] = "Unable to set password";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
   var actionLinkRouteData = new Dictionary<string, string> { { "delegateId", Model.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
@@ -20,7 +12,7 @@
     <h1 class="nhsuk-heading-xl">Email address in use</h1>
 
     <p class="nhsuk-body-l">
-      There is already an admin account with this email address.
+      There is already an admin account with this delegate's email address.
     </p>
 
     <vc:action-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@actionLinkRouteData" link-text="View delegate" />

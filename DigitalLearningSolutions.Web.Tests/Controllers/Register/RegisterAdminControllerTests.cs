@@ -71,7 +71,7 @@
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregistered_true_shows_notfound_error()
+        public void IndexGet_with_centre_autoregistered_true_shows_AccessDenied_error()
         {
             // Given
             const int centreId = 7;
@@ -86,11 +86,12 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
-            result.Should().BeNotFoundResult();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregisteremail_null_shows_notfound_error()
+        public void IndexGet_with_centre_autoregisteremail_null_shows_AccessDenied_error()
         {
             // Given
             const int centreId = 7;
@@ -105,11 +106,12 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
-            result.Should().BeNotFoundResult();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
         }
 
         [Test]
-        public void IndexGet_with_centre_autoregisteremail_empty_shows_notfound_error()
+        public void IndexGet_with_centre_autoregisteremail_empty_shows_AccessDenied_error()
         {
             // Given
             const int centreId = 7;
@@ -124,11 +126,12 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
-            result.Should().BeNotFoundResult();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
         }
 
         [Test]
-        public void IndexGet_with_centre_with_active_centre_manager_shows_notfound_error()
+        public void IndexGet_with_centre_with_active_centre_manager_shows_AccessDenied_error()
         {
             // Given
             const int centreId = 7;
@@ -146,7 +149,8 @@
             A.CallTo(() => centresDataService.GetCentreName(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => centresDataService.GetCentreAutoRegisterValues(centreId)).MustHaveHappened(1, Times.Exactly);
             A.CallTo(() => userDataService.GetAdminUsersByCentreId(centreId)).MustHaveHappened(1, Times.Exactly);
-            result.Should().BeNotFoundResult();
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
         }
 
         [Test]

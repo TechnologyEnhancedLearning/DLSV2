@@ -33,7 +33,7 @@
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
         Profile? GetFilteredProfileForCandidateById(int candidateId, int selfAssessmentId);
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
-        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId);
+        IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId);
         Administrator GetSupervisorByAdminId(int supervisorAdminId);
         IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId);
         //UPDATE
@@ -254,7 +254,12 @@
                                           ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
-                            WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
+  INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID
+                                    AND SAS.SelfAssessmentID = @selfAssessmentId
+                        LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
+                            WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                             GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
                 new { candidateId, selfAssessmentId }
             );
@@ -774,17 +779,21 @@ WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.CandidateID = @candidateId) 
             }
         }
 
-        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId)
+        public IEnumerable<Administrator> GetValidSupervisorsForActivity(int centreId, int selfAssessmentId, int candidateId)
         {
             return connection.Query<Administrator>(
                 @"SELECT AdminID, Forename, Surname, Email, ProfileImage, IsFrameworkDeveloper
                     FROM   AdminUsers
-                    WHERE (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
+                    WHERE ((Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId) OR
                        (Supervisor = 1) AND (Active = 1) AND (CategoryID =
                    (SELECT CategoryID
                      FROM    SelfAssessments
-                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)",
-                new { centreId, selfAssessmentId }
+                      WHERE (ID = @selfAssessmentId))) AND (CentreID = @centreId)) AND AdminID NOT IN (SELECT sd.SupervisorAdminID
+FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+             SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (ca.CandidateID = @candidateId) AND (sd.SupervisorAdminID = AdminUsers.AdminID)) ",
+                new { centreId, selfAssessmentId, candidateId }
                 );
         }
 

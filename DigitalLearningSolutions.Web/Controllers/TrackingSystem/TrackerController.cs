@@ -14,7 +14,7 @@
             this.trackerService = trackerService;
         }
 
-        public string Index([FromQuery]TrackerEndpointQueryParams queryParams)
+        public string Index([FromQuery] TrackerEndpointQueryParams queryParams)
         {
             return trackerService.ProcessQuery(queryParams);
         }

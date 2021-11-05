@@ -12,12 +12,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
     using ConfirmationViewModel =
@@ -26,10 +26,11 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private const string CookieName = "DelegateRegistrationByCentreData";
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -267,17 +268,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private void SetCentreDelegateRegistrationData(int centreId)
         {
             var centreDelegateRegistrationData = new DelegateRegistrationByCentreData(centreId, DateTime.Today);
-            var id = centreDelegateRegistrationData.Id;
-
-            Response.Cookies.Append(
-                CookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30),
-                }
-            );
-
             TempData.Set(centreDelegateRegistrationData);
         }
 
