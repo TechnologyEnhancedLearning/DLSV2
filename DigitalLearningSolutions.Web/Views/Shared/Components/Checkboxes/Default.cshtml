@@ -19,25 +19,8 @@
 
     <div class="nhsuk-checkboxes">
       @foreach (var checkbox in Model.Checkboxes) {
-        <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input"
-                 type="checkbox"
-                 id="@checkbox.Id"
-                 name="@checkbox.Name"
-                 aria-describedby="@checkbox.Id-item-hint"
-                 value="true"
-                 @(checkbox.Value ? "checked" : string.Empty) />
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="@checkbox.Id">
-            @checkbox.Label
-          </label>
-          @if (checkbox.HintText != null) {
-            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@checkbox.Id-item-hint">
-              @checkbox.HintText
-            </div>
-          }
-        </div>
+        <partial name="_CheckboxItem" model="checkbox" />
       }
-
     </div>
   </fieldset>
 
