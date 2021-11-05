@@ -46,6 +46,7 @@
         private CourseSetupController controller = null!;
         private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
+        private ITutorialService tutorialService = null!;
         private ICourseTopicsDataService courseTopicsDataService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -56,6 +57,7 @@
             courseCategoryDataService = A.Fake<ICourseCategoriesDataService>();
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
+            tutorialService = A.Fake<ITutorialService>();
 
             A.CallTo(() => courseService.GetCentreSpecificCourseStatistics(A<int>._, A<int>._)).Returns(courses);
             A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -67,7 +69,7 @@
             const string cookieName = "CourseFilter";
             const string cookieValue = "Status|Active|false";
 
-            controller = new CourseSetupController(courseService, courseCategoryDataService, courseTopicsDataService)
+            controller = new CourseSetupController(courseService, courseCategoryDataService, courseTopicsDataService, tutorialService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockTempData();
@@ -156,7 +158,8 @@
             var controllerWithNoCookies = new CourseSetupController(
                     courseService,
                     courseCategoryDataService,
-                    courseTopicsDataService
+                    courseTopicsDataService,
+                    tutorialService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
