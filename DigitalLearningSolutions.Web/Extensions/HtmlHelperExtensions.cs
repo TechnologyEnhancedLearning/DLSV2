@@ -51,14 +51,5 @@
                 kvp => Convert.ToString(kvp.Value, CultureInfo.InvariantCulture)
             );
         }
-
-        public static string GetRouteValueByKey(
-            this IHtmlHelper htmlHelper,
-            string key
-        )
-        {
-            var routeValues = GetRouteValues(htmlHelper);
-            return routeValues[key]!;
-        }
     }
 }

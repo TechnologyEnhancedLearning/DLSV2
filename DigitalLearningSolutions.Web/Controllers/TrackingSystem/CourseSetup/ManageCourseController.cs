@@ -124,39 +124,36 @@
         [Route("CourseDetails")]
         public IActionResult SaveCourseDetails(
             int customisationId,
-            EditCourseDetailsViewModel model
+            EditCourseDetailsFormData formData
         )
         {
-            if (customisationId != model.CustomisationId)
-            {
-                return StatusCode(500);
-            }
-
+            var centreId = User.GetCentreId();
             var customisationNameSuffix =
-                model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
-            var customisationName = model.CustomisationName + customisationNameSuffix;
+                formData.CustomisationNameSuffix == null ? "" : " - " + formData.CustomisationNameSuffix;
+            var customisationName = formData.CustomisationName + customisationNameSuffix;
 
-            ValidateCustomisationName(customisationName, model);
-            ValidatePassword(model);
-            ValidateEmail(model);
-            ValidateCompletionCriteria(model);
+            ValidateCustomisationName(customisationId, customisationName, centreId, formData);
+            ValidatePassword(formData);
+            ValidateEmail(formData);
+            ValidateCompletionCriteria(formData);
 
             if (!ModelState.IsValid)
             {
+                var model = new EditCourseDetailsViewModel(formData, customisationId, centreId);
                 return View("EditCourseDetails", model);
             }
 
             var tutCompletionThreshold =
-                model.TutCompletionThreshold == null ? 0 : int.Parse(model.TutCompletionThreshold);
+                formData.TutCompletionThreshold == null ? 0 : int.Parse(formData.TutCompletionThreshold);
             var diagCompletionThreshold =
-                model.DiagCompletionThreshold == null ? 0 : int.Parse(model.DiagCompletionThreshold);
+                formData.DiagCompletionThreshold == null ? 0 : int.Parse(formData.DiagCompletionThreshold);
 
             courseService.UpdateCourseDetails(
                 customisationId,
                 customisationName,
-                model.Password!,
-                model.NotificationEmails!,
-                model.IsAssessed,
+                formData.Password!,
+                formData.NotificationEmails!,
+                formData.IsAssessed,
                 tutCompletionThreshold,
                 diagCompletionThreshold
             );
@@ -200,7 +197,12 @@
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
 
-        private void ValidateCustomisationName(string customisationName, EditCourseDetailsViewModel model)
+        private void ValidateCustomisationName(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            EditCourseDetailsFormData formData
+        )
         {
             if (customisationName.Length > 250)
             {
@@ -210,13 +212,13 @@
                 );
             }
             else if (courseService.DoesCourseNameExistAtCentre(
-                model.CustomisationId,
+                customisationId,
                 customisationName,
-                model.CentreId,
-                model.ApplicationId
+                centreId,
+                formData.ApplicationId
             ))
             {
-                var uniqueNameErrorMessage = string.IsNullOrWhiteSpace(model.CustomisationNameSuffix)
+                var uniqueNameErrorMessage = string.IsNullOrWhiteSpace(formData.CustomisationNameSuffix)
                     ? "A course with this name already exists, add on to the course name to make it unique"
                     : "Course name must be unique, including any additions";
 
@@ -227,55 +229,55 @@
             }
         }
 
-        private void ValidatePassword(EditCourseDetailsViewModel model)
+        private void ValidatePassword(EditCourseDetailsFormData formData)
         {
-            if (model.PasswordProtected)
+            if (formData.PasswordProtected)
             {
                 return;
             }
 
-            if (ModelState.HasError(nameof(model.Password)))
+            if (ModelState.HasError(nameof(formData.Password)))
             {
-                ModelState.ClearErrorsOnField(nameof(model.Password));
+                ModelState.ClearErrorsOnField(nameof(formData.Password));
             }
 
-            model.Password = null;
+            formData.Password = null;
         }
 
-        private void ValidateEmail(EditCourseDetailsViewModel model)
+        private void ValidateEmail(EditCourseDetailsFormData formData)
         {
-            if (model.ReceiveNotificationEmails)
+            if (formData.ReceiveNotificationEmails)
             {
                 return;
             }
 
-            if (ModelState.HasError(nameof(model.NotificationEmails)))
+            if (ModelState.HasError(nameof(formData.NotificationEmails)))
             {
-                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
+                ModelState.ClearErrorsOnField(nameof(formData.NotificationEmails));
             }
 
-            model.NotificationEmails = null;
+            formData.NotificationEmails = null;
         }
 
-        private void ValidateCompletionCriteria(EditCourseDetailsViewModel model)
+        private void ValidateCompletionCriteria(EditCourseDetailsFormData formData)
         {
-            if (!model.IsAssessed)
+            if (!formData.IsAssessed)
             {
                 return;
             }
 
-            if (ModelState.HasError(nameof(model.TutCompletionThreshold)))
+            if (ModelState.HasError(nameof(formData.TutCompletionThreshold)))
             {
-                ModelState.ClearErrorsOnField(nameof(model.TutCompletionThreshold));
+                ModelState.ClearErrorsOnField(nameof(formData.TutCompletionThreshold));
             }
 
-            if (ModelState.HasError(nameof(model.DiagCompletionThreshold)))
+            if (ModelState.HasError(nameof(formData.DiagCompletionThreshold)))
             {
-                ModelState.ClearErrorsOnField(nameof(model.DiagCompletionThreshold));
+                ModelState.ClearErrorsOnField(nameof(formData.DiagCompletionThreshold));
             }
 
-            model.TutCompletionThreshold = "0";
-            model.DiagCompletionThreshold = "0";
+            formData.TutCompletionThreshold = "0";
+            formData.DiagCompletionThreshold = "0";
         }
     }
 }

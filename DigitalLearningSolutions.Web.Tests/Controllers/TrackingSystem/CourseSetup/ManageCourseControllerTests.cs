@@ -336,9 +336,7 @@
             string? diagCompletionThreshold = "75"
         )
         {
-            return new EditCourseDetailsViewModel(
-                customisationId,
-                centreId,
+            var formData = new EditCourseDetailsFormData(
                 applicationId,
                 customisationName,
                 customisationNameSuffix,
@@ -351,6 +349,12 @@
                 diagAssess,
                 tutCompletionThreshold,
                 diagCompletionThreshold
+            );
+
+            return new EditCourseDetailsViewModel(
+                formData,
+                customisationId,
+                centreId
             );
         }
     }
