@@ -7,14 +7,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
   var cancelLinkRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
 }
 
 <div class="nhsuk-grid-row">
