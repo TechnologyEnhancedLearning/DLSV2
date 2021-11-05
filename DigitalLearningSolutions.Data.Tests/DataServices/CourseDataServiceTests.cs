@@ -552,7 +552,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void DoesCourseNameExistAtCentre_returns_true_if_course_name_exists_at_centre()
         {
             // When
-            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1);
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "Standard", 101, 1);
 
             // Then
             result.Should().BeTrue();
@@ -562,7 +562,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_at_centre()
         {
             // When
-            var result = courseDataService.DoesCourseNameExistAtCentre("This course name does not exist", 101, 99);
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "This course name does not exist", 101, 99);
 
             // Then
             result.Should().BeFalse();
@@ -572,7 +572,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_with_applicationId()
         {
             // When
-            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 2);
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "Standard", 101, 2);
 
             // Then
             result.Should().BeFalse();
@@ -613,23 +613,43 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             using var transaction = new TransactionScope();
             try
             {
+                // Given
+                const int customisationId = 1;
+                const string customisationName = "Name";
+                const string password = "Password";
+                const string notificationEmails = "hello@test.com";
+                const bool isAssessed = true;
+                const int tutCompletionThreshold = 0;
+                const int diagCompletionThreshold = 0;
+                const int centreId = 2;
+                const int categoryId = 0;
+
                 // When
-                courseDataService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0);
+                courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                );
+
                 var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
-                    1,
-                    2,
-                    0
+                    customisationId,
+                    centreId,
+                    categoryId
                 );
 
                 // Then
                 using (new AssertionScope())
                 {
-                    courseDetails!.CustomisationName.Should().Be("Name");
-                    courseDetails.Password.Should().Be("Password");
-                    courseDetails.NotificationEmails.Should().Be("hello@test.com");
-                    courseDetails.IsAssessed.Should().Be(true);
-                    courseDetails.TutCompletionThreshold.Should().Be(0);
-                    courseDetails.DiagCompletionThreshold.Should().Be(0);
+                    courseDetails!.CustomisationName.Should().Be(customisationName);
+                    courseDetails.Password.Should().Be(password);
+                    courseDetails.NotificationEmails.Should().Be(notificationEmails);
+                    courseDetails.IsAssessed.Should().Be(isAssessed);
+                    courseDetails.TutCompletionThreshold.Should().Be(tutCompletionThreshold);
+                    courseDetails.DiagCompletionThreshold.Should().Be(diagCompletionThreshold);
                 }
             }
             finally

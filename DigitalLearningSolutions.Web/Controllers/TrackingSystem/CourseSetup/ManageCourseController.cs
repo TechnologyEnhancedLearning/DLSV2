@@ -127,6 +127,11 @@
             EditCourseDetailsViewModel model
         )
         {
+            if (customisationId != model.CustomisationId)
+            {
+                return StatusCode(500);
+            }
+
             var customisationNameSuffix =
                 model.CustomisationNameSuffix == null ? "" : " - " + model.CustomisationNameSuffix;
             var customisationName = model.CustomisationName + customisationNameSuffix;
@@ -197,27 +202,27 @@
 
         private void ValidateCustomisationName(string customisationName, EditCourseDetailsViewModel model)
         {
-            if (string.IsNullOrEmpty(model.CustomisationNameSuffix))
-            {
-                return;
-            }
-
             if (customisationName.Length > 250)
             {
                 ModelState.AddModelError(
                     nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                    "Course name must be 250 characters or fewer"
+                    "Course name must be 250 characters or fewer, including any additions"
                 );
             }
             else if (courseService.DoesCourseNameExistAtCentre(
+                model.CustomisationId,
                 customisationName,
                 model.CentreId,
                 model.ApplicationId
             ))
             {
+                var uniqueNameErrorMessage = string.IsNullOrWhiteSpace(model.CustomisationNameSuffix)
+                    ? "A course with this name already exists, add on to the course name to make it unique"
+                    : "Course name must be unique, including any additions";
+
                 ModelState.AddModelError(
                     nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                    "Course name must be unique"
+                    uniqueNameErrorMessage
                 );
             }
         }
@@ -229,11 +234,12 @@
                 return;
             }
 
-            if (ModelState.HasError("Password"))
+            if (ModelState.HasError(nameof(model.Password)))
             {
-                ModelState.ClearErrorsOnField("Password");
-                model.Password = null;
+                ModelState.ClearErrorsOnField(nameof(model.Password));
             }
+
+            model.Password = null;
         }
 
         private void ValidateEmail(EditCourseDetailsViewModel model)
@@ -243,11 +249,12 @@
                 return;
             }
 
-            if (ModelState.HasError("NotificationEmails"))
+            if (ModelState.HasError(nameof(model.NotificationEmails)))
             {
-                ModelState.ClearErrorsOnField("NotificationEmails");
-                model.NotificationEmails = null;
+                ModelState.ClearErrorsOnField(nameof(model.NotificationEmails));
             }
+
+            model.NotificationEmails = null;
         }
 
         private void ValidateCompletionCriteria(EditCourseDetailsViewModel model)
@@ -257,17 +264,18 @@
                 return;
             }
 
-            if (ModelState.HasError("TutCompletionThreshold"))
+            if (ModelState.HasError(nameof(model.TutCompletionThreshold)))
             {
-                ModelState.ClearErrorsOnField("TutCompletionThreshold");
-                model.TutCompletionThreshold = "0";
+                ModelState.ClearErrorsOnField(nameof(model.TutCompletionThreshold));
             }
 
-            if (ModelState.HasError("DiagCompletionThreshold"))
+            if (ModelState.HasError(nameof(model.DiagCompletionThreshold)))
             {
-                ModelState.ClearErrorsOnField("DiagCompletionThreshold");
-                model.DiagCompletionThreshold = "0";
+                ModelState.ClearErrorsOnField(nameof(model.DiagCompletionThreshold));
             }
+
+            model.TutCompletionThreshold = "0";
+            model.DiagCompletionThreshold = "0";
         }
     }
 }

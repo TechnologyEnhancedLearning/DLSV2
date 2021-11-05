@@ -11,14 +11,11 @@
 
         public EditCourseDetailsViewModel(CourseDetails courseDetails)
         {
+            CustomisationId = courseDetails.CustomisationId;
             CentreId = courseDetails.CentreId;
             ApplicationId = courseDetails.ApplicationId;
-            CustomisationName = courseDetails.CustomisationName.Contains(" - ")
-                ? courseDetails.CustomisationName.Split(" - ")[0]
-                : courseDetails.CustomisationName;
-            CustomisationNameSuffix = courseDetails.CustomisationName.Contains(" - ")
-                ? courseDetails.CustomisationName.Split(" - ")[1]
-                : null;
+            CustomisationName = GetPartOfCustomisationName(courseDetails.CustomisationName, 0)!;
+            CustomisationNameSuffix = GetPartOfCustomisationName(courseDetails.CustomisationName, 1);
             PasswordProtected = !string.IsNullOrEmpty(courseDetails.Password);
             Password = courseDetails.Password;
             ReceiveNotificationEmails = !string.IsNullOrEmpty(courseDetails.NotificationEmails);
@@ -31,6 +28,7 @@
         }
 
         public EditCourseDetailsViewModel(
+            int customisationId,
             int centreId,
             int applicationId,
             string customisationName,
@@ -46,6 +44,7 @@
             string? diagCompletionThreshold
         )
         {
+            CustomisationId = customisationId;
             CentreId = centreId;
             ApplicationId = applicationId;
             CustomisationName = customisationName;
@@ -61,13 +60,14 @@
             DiagCompletionThreshold = diagCompletionThreshold;
         }
 
+        public int CustomisationId { get; set; }
+
         public int CentreId { get; set; }
 
         public int ApplicationId { get; set; }
 
         public string CustomisationName { get; set; }
 
-        [MaxLength(250, ErrorMessage = "Course name must be 250 characters or fewer")]
         public string? CustomisationNameSuffix { get; set; }
 
         public bool PasswordProtected { get; set; }
@@ -95,5 +95,15 @@
 
         [WholeNumberWithinInclusiveRange(0, 100, "Enter a whole number from 0 to 100")]
         public string? DiagCompletionThreshold { get; set; }
+
+        private static string? GetPartOfCustomisationName(string customisationName, int index)
+        {
+            if (customisationName.Contains(" - "))
+            {
+                return customisationName.Split(" - ")[index];
+            }
+
+            return index == 0 ? customisationName : null;
+        }
     }
 }

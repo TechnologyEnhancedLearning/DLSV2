@@ -287,11 +287,17 @@
         [Test]
         public void DoesCourseNameExistAtCentre_calls_data_service()
         {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const int centreId = 101;
+            const int applicationId = 1;
+
             // When
-            courseService.DoesCourseNameExistAtCentre("Name", 101, 1);
+            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre("Name", 101, 1))
+            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId))
                 .MustHaveHappened();
         }
 
@@ -299,23 +305,49 @@
         public void UpdateCourseDetails_calls_data_service()
         {
             // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const string notificationEmails = "hello@test.com";
+            const bool isAssessed = true;
+            const int tutCompletionThreshold = 0;
+            const int diagCompletionThreshold = 0;
+
             A.CallTo(
                 () => courseDataService.UpdateCourseDetails(
-                    1,
-                    "Name",
-                    "Password",
-                    "hello@test.com",
-                    true,
-                    0,
-                    0
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
                 )
             ).DoesNothing();
 
             // When
-            courseService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0);
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password,
+                notificationEmails,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
 
             // Then
-            A.CallTo(() => courseDataService.UpdateCourseDetails(1, "Name", "Password", "hello@test.com", true, 0, 0))
+            A.CallTo(
+                    () => courseDataService.UpdateCourseDetails(
+                        customisationId,
+                        customisationName,
+                        password,
+                        notificationEmails,
+                        isAssessed,
+                        tutCompletionThreshold,
+                        diagCompletionThreshold
+                    )
+                )
                 .MustHaveHappened();
         }
 

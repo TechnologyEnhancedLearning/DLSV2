@@ -1,20 +1,14 @@
 ﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model EditCourseDetailsViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Edit course details";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.Name;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
-  var cancelLinkData = Html.GetRouteValues();
-  var customisationId = Html.GetRouteValueByKey("customisationId");
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  var customisationId = Model.CustomisationId;
   const string passwordId = "conditional-password";
   const string emailId = "conditional-email";
   const string completionCriteriaId = "conditional-completion-criteria";
@@ -27,10 +21,6 @@
   var otherCompletionCriteriaCss = "nhsuk-radios__conditional"
                                    + (!Model.IsAssessed ? "" : " nhsuk-radios__conditional--hidden")
                                    + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
-}
-
-@section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
@@ -59,18 +49,18 @@
           <label class="nhsuk-heading-s nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
             Course name
           </label>
-          <div class="nhsuk-u-margin-top-2">
+          <div class="nhsuk-u-margin-top-1">
             @Model.CustomisationName -
           </div>
         </div>
-        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-2">
+        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-1">
           <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
                          id="CustomisationNameSuffix"
                          label="Add on to course name (optional)"
                          populate-with-current-value="true"
                          type="text"
                          spell-check="true"
-                         autocomplete=""
+                         autocomplete="false"
                          hint-text=""
                          css-class="nhsuk-u-width-three-quarters nhsuk-u-font-weight-normal" />
         </div>
@@ -83,55 +73,47 @@
             <div class="nhsuk-u-margin-bottom-3">
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input"
-                       id="PasswordProtected"
-                       name="PasswordProtected"
                        asp-for="PasswordProtected"
                        type="checkbox"
                        aria-controls="@passwordId"
-                       aria-expanded="@(Model.PasswordProtected ? "true" : "false")">
-                <label class="nhsuk-label nhsuk-checkboxes__label" for="PasswordProtected">
+                       aria-expanded="@(Model.PasswordProtected.ToString())">
+                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="PasswordProtected">
                   Password protected
                 </label>
               </div>
 
               <div class="@passwordCss" id="@passwordId">
-                <div class="nhsuk-form-group">
-                  <vc:text-input asp-for="@nameof(Model.Password)"
+                <vc:text-input asp-for="@nameof(Model.Password)"
                                  label="Enter the password for the course"
                                  populate-with-current-value="true"
                                  type="text"
                                  spell-check="false"
                                  autocomplete=""
                                  hint-text=""
-                                 css-class="nhsuk-input nhsuk-u-width-one-half" />
-                </div>
+                                 css-class="nhsuk-u-width-one-half" />
               </div>
             </div>
 
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input"
-                     id="ReceiveNotificationEmails"
-                     name="ReceiveNotificationEmails"
                      asp-for="ReceiveNotificationEmails"
                      type="checkbox"
                      aria-controls="@emailId"
-                     aria-expanded="@(Model.ReceiveNotificationEmails ? "true" : "false")">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="ReceiveNotificationEmails">
+                     aria-expanded="@(Model.ReceiveNotificationEmails.ToString())">
+              <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ReceiveNotificationEmails">
                 Receive course completion notification emails
               </label>
             </div>
 
             <div class="@emailCss" id="@emailId">
-              <div class="nhsuk-form-group">
-                <vc:text-input asp-for="@nameof(Model.NotificationEmails)"
+              <vc:text-input asp-for="@nameof(Model.NotificationEmails)"
                                label="Enter an email address for receiving the notifications"
                                populate-with-current-value="true"
                                type="text"
                                spell-check="false"
                                autocomplete=""
                                hint-text=""
-                               css-class="nhsuk-input nhsuk-u-width-one-half" />
-              </div>
+                               css-class="nhsuk-u-width-one-half" />
             </div>
 
           </div>
@@ -167,7 +149,7 @@
                        type="radio"
                        value="false"
                        aria-controls="@completionCriteriaId"
-                       aria-expanded="@(Model.IsAssessed ? "false" : "true")">
+                       aria-expanded="@(Model.IsAssessed.ToString())">
                 <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
                   Other completion criteria
                 </label>

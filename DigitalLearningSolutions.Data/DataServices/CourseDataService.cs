@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
 
         bool DoesCourseNameExistAtCentre(
+            int customisationId,
             string customisationName,
             int centreId,
             int applicationId
@@ -465,7 +466,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseNameExistAtCentre(string customisationName, int centreId, int applicationId)
+        public bool DoesCourseNameExistAtCentre(int customisationId, string customisationName, int centreId, int applicationId)
         {
             return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
@@ -473,10 +474,11 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FROM dbo.Customisations
                         WHERE [ApplicationID] = @applicationID
                         AND [CentreID] = @centreID
-                        AND [CustomisationName] = @customisationName)
+                        AND [CustomisationName] = @customisationName
+                        AND [CustomisationID] != @customisationId)
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
-                new { customisationName, centreId, applicationId }
+                new { customisationId, customisationName, centreId, applicationId }
             );
         }
 
@@ -533,8 +535,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE CustomisationID = @customisationId",
                 new
                 {
-                    customisationName, password, notificationEmails, isAssessed,
-                    tutCompletionThreshold, diagCompletionThreshold, customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold,
+                    customisationId,
                 }
             );
         }

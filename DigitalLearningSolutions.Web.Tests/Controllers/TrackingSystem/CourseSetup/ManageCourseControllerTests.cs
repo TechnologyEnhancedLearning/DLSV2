@@ -113,28 +113,14 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            controller.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]
         public void SaveCourseDetails_calls_correct_service_method_with_valid_inputs()
         {
             // Given
-            var model = new EditCourseDetailsViewModel(
-                101,
-                1,
-                "Name",
-                "v1",
-                false,
-                null,
-                false,
-                null,
-                true,
-                true,
-                true,
-                null,
-                null
-            );
+            var model = GetEditCourseDetailsViewModel();
 
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
@@ -154,13 +140,13 @@
             // Then
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
-                    A<int>._,
-                    A<string>._,
-                    A<string>._,
-                    A<string>._,
-                    A<bool>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "Name - v1",
+                    "Password",
+                    "hello@test.com",
+                    false,
+                    90,
+                    75
                 )
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
@@ -171,21 +157,7 @@
             SaveCourseDetails_does_not_call_service_with_invalid_model()
         {
             // Given
-            var model = new EditCourseDetailsViewModel(
-                101,
-                1,
-                "Name",
-                "v1",
-                false,
-                "Password1234",
-                false,
-                "invalid email",
-                true,
-                true,
-                true,
-                "75",
-                "90"
-            );
+            var model = GetEditCourseDetailsViewModel();
             controller.ModelState.AddModelError("Email", "Email address must not contain any whitespace characters");
 
             // When
@@ -197,14 +169,14 @@
                     A<int>._,
                     A<string>._,
                     A<string>._,
-                    "invalid email",
+                    A<string>._,
                     A<bool>._,
                     A<int>._,
                     A<int>._
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            controller.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]
@@ -212,23 +184,11 @@
             SaveCourseDetails_correctly_adds_model_error_if_customisation_name_is_not_unique()
         {
             // Given
-            var model = new EditCourseDetailsViewModel(
-                101,
-                1,
-                "Non-unique course name",
-                "test",
-                false,
-                null,
-                false,
-                "hello@test.com",
-                true,
-                true,
-                true,
-                "75",
-                "90"
-            );
+            var model = GetEditCourseDetailsViewModel();
+
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
+                    A<int>._,
                     A<string>._,
                     A<int>._,
                     A<int>._
@@ -242,7 +202,7 @@
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
                     A<int>._,
-                    "Non-unique course name - test",
+                    A<string>._,
                     A<string>._,
                     A<string>._,
                     A<bool>._,
@@ -252,7 +212,7 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
             controller.ModelState["CustomisationNameSuffix"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("Course name must be unique");
+                .BeEquivalentTo("Course name must be unique, including any additions");
         }
 
         [Test]
@@ -260,30 +220,20 @@
             SaveCourseDetails_clears_values_of_conditional_inputs_if_corresponding_checkboxes_or_radios_are_unchecked()
         {
             // Given
-            var model = new EditCourseDetailsViewModel(
-                101,
-                1,
-                "Name",
-                "v1",
-                false,
-                "Password1234",
-                false,
-                "hello@test.com",
-                true,
-                true,
-                true,
-                "75",
-                "90"
+            var model = GetEditCourseDetailsViewModel(
+                passwordProtected: false,
+                receiveNotificationEmails: false,
+                isAssessed: true
             );
 
-            // Given
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
+                    A<int>._,
                     A<string>._,
                     A<int>._,
                     A<int>._
                 )
-            ).Returns(true);
+            ).Returns(false);
 
             // When
             var result = controller.SaveCourseDetails(1, model);
@@ -291,16 +241,16 @@
             // Then
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
-                    A<int>._,
-                    A<string>._,
+                    1,
+                    "Name - v1",
                     null!,
                     null!,
-                    A<bool>._,
+                    true,
                     0,
                     0
                 )
             ).MustHaveHappened();
-            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -365,6 +315,41 @@
             ).MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
+        }
+
+        private static EditCourseDetailsViewModel GetEditCourseDetailsViewModel(
+            int customisationId = 1,
+            int centreId = 101,
+            int applicationId = 1,
+            string customisationName = "Name",
+            string customisationNameSuffix = "v1",
+            bool passwordProtected = true,
+            string password = "Password",
+            bool receiveNotificationEmails = true,
+            string notificationEmails = "hello@test.com",
+            bool postLearningAssessment = true,
+            bool isAssessed = false,
+            bool diagAssess = true,
+            string? tutCompletionThreshold = "90",
+            string? diagCompletionThreshold = "75"
+        )
+        {
+            return new EditCourseDetailsViewModel(
+                customisationId,
+                centreId,
+                applicationId,
+                customisationName,
+                customisationNameSuffix,
+                passwordProtected,
+                password,
+                receiveNotificationEmails,
+                notificationEmails,
+                postLearningAssessment,
+                isAssessed,
+                diagAssess,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
         }
     }
 }

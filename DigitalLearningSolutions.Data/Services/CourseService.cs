@@ -39,6 +39,7 @@
         );
 
         public bool DoesCourseNameExistAtCentre(
+            int customisationId,
             string customisationName,
             int centreId,
             int applicationId
@@ -153,12 +154,14 @@
         }
 
         public bool DoesCourseNameExistAtCentre(
+            int customisationId,
             string customisationName,
             int centreId,
             int applicationId
         )
         {
             return courseDataService.DoesCourseNameExistAtCentre(
+                customisationId,
                 customisationName,
                 centreId,
                 applicationId
