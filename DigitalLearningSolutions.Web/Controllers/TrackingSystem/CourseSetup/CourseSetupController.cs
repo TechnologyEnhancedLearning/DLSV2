@@ -155,7 +155,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            var model = new SetCourseDetailsViewModel();
+            var model = new EditCourseDetailsViewModel();
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -184,7 +184,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            var model = new SetCourseOptionsViewModel();
+            var model = new EditCourseOptionsViewModel();
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }

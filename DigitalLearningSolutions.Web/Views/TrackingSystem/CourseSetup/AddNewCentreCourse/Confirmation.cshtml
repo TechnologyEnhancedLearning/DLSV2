@@ -1,16 +1,16 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model ConfirmationViewModel
 
 @{
-  ViewData["Title"] = "New course @{Model.CustomisationName} has been set up";
+  ViewData["Title"] = "New course has been set up";
   var viewCourseRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">New course @{Model.CustomisationName} has been set up</h1>
+    <h1 class="nhsuk-heading-xl">
+      New course @{Model.CustomisationName} has been set up
+    </h1>
 
     <p class="nhsuk-body-l">
       Your new course has been successfully set up. Click links below to either view the new course or go back to all courses view.

@@ -14,86 +14,95 @@
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Centre
+          Course
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Centre
+          @Model.CustomisationName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          @if (!Model.IsCentreSpecificRegistration) {
-            <a asp-action="PersonalInformation">
-              Change<span class="nhsuk-u-visually-hidden"> centre</span>
-            </a>
-          }
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          First name
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.FirstName
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> first name</span>
+          <a asp-action="SelectCourse">
+            Change<span class="nhsuk-u-visually-hidden"> course</span>
           </a>
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Last name
+          Course name
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.LastName
+          @Model.CustomisationName - @Model.CustomisationNameSuffix
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> last name</span>
+          <a asp-action="SetCourseDetails">
+            Change<span class="nhsuk-u-visually-hidden"> course name</span>
           </a>
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Email
+          Password protected
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Email
+          @(Model.Password ? Model.Password : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="PersonalInformation">
-            Change<span class="nhsuk-u-visually-hidden"> email address</span>
+          <a asp-action="SetCourseDetails">
+            Change<span class="nhsuk-u-visually-hidden"> password</span>
           </a>
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Job group
+          Completion notification email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.JobGroup
+          @(Model.NotificationEmails ? Model.NotificationEmails : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="LearnerInformation">
-            Change<span class="nhsuk-u-visually-hidden"> job group</span>
+          <a asp-action="SetCourseDetails">
+            Change<span class="nhsuk-u-visually-hidden"> notification email</span>
           </a>
         </dd>
       </div>
-      @foreach (var customField in Model.CustomFields) {
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @customField.Answer
-          </dd>
-          <dd class="nhsuk-summary-list__actions">
-            <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
-            </a>
-          </dd>
-        </div>
-      }
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Allow self-enrolment
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="SetCourseOptions">
+            Change<span class="nhsuk-u-visually-hidden"> self-enrolment</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Allow diagnostic objective selection
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="SetCourseOptions">
+            Change<span class="nhsuk-u-visually-hidden"> diagnostic objective selection</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Course content
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="SetCourseOptions">
+            Change<span class="nhsuk-u-visually-hidden"> course content</span>
+          </a>
+        </dd>
+      </div>
     </dl>
 
     <form method="post" asp-action="Summary">

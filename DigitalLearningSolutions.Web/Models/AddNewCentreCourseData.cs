@@ -16,7 +16,6 @@
         public Guid Id { get; set; }
 
         public SelectCourseViewModel SelectCourseViewModel { get; set; }
-
         // TODO: public EditCourseDetailsViewModel EditCourseDetailsViewModel { get; set; }
         public EditCourseOptionsViewModel SetCourseOptionsViewModel { get; set; }
         public CourseContentViewModel CourseContentViewModel { get; set; }
@@ -34,17 +33,20 @@
 
         public void SetCourseOptions(EditCourseOptionsViewModel model)
         {
-            // TODO: Set course details
+            SetCourseOptionsViewModel.Active = model.Active;
+            SetCourseOptionsViewModel.AllowSelfEnrolment = model.AllowSelfEnrolment;
+            SetCourseOptionsViewModel.HideInLearningPortal = model.HideInLearningPortal,
+            SetCourseOptionsViewModel.DiagnosticObjectiveSelection = model.DiagnosticObjectiveSelection,
         }
 
         public void SetCourseContent(EditCourseSectionViewModel model)
         {
-            // TODO: Set course details
+            // TODO: Set course content
         }
 
         public void EditSectionContent(EditCourseSectionViewModel model)
         {
-            // TODO: Set course details
+            // TODO: Set section content
         }
     }
 }
