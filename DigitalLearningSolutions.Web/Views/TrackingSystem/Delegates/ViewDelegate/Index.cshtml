@@ -106,7 +106,7 @@
            asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
-        @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet) {
+        @if (User.HasCentreManagerPermissions()) {
           <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
              role="button"
              asp-controller="PromoteToAdmin"
