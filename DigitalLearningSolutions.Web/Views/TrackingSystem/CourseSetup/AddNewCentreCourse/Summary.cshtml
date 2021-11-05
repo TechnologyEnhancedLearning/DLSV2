@@ -1,0 +1,104 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@model SummaryViewModel
+@{
+  ViewData["Title"] =  "Add new centre course - Summary";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <div class="nhsuk-u-margin-bottom-8">
+      <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+    </div>
+
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Centre
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Centre
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          @if (!Model.IsCentreSpecificRegistration) {
+            <a asp-action="PersonalInformation">
+              Change<span class="nhsuk-u-visually-hidden"> centre</span>
+            </a>
+          }
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          First name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.FirstName
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> first name</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Last name
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.LastName
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> last name</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Email
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Email
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="PersonalInformation">
+            Change<span class="nhsuk-u-visually-hidden"> email address</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Job group
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.JobGroup
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="LearnerInformation">
+            Change<span class="nhsuk-u-visually-hidden"> job group</span>
+          </a>
+        </dd>
+      </div>
+      @foreach (var customField in Model.CustomFields) {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @customField.Answer
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="LearnerInformation">
+              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
+            </a>
+          </dd>
+        </div>
+      }
+    </dl>
+
+    <form method="post" asp-action="Summary">
+      <button class="nhsuk-button" type="submit">Submit</button>
+    </form>
+    <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+  </div>
+</div>

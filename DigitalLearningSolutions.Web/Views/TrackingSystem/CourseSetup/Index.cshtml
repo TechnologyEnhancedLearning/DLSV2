@@ -10,7 +10,17 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">Centre course setup</h1>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter">
+        <h1 class="nhsuk-heading-xl">Centre course setup</h1>
+      </div>
+      <div class="nhsuk-grid-column-three-quarters heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
+          Register
+        </a>
+      </div>
+    </div>
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 

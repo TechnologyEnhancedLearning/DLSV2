@@ -1,0 +1,41 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.Extensions.Configuration
+@model SelectCourseViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(AddAdminFieldViewModel.AdminFieldId), nameof(AddAdminFieldViewModel.Answer) }" />
+    }
+    <h1 class="nhsuk-heading-xl">Add course admin field</h1>
+
+    @* TODO: Add filtering *@
+
+    <form method="post" novalidate asp-action="SelectCourse">
+      <vc:select-list asp-for="@nameof(Model.CustomisationId)"
+                      label="Field name"
+                      value="@Model.CustomisationId.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Course"
+                      select-list-options="@ViewBag.CourseOptions" />
+
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
+      </div>
+    </form>
+
+    <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+  </div>
+</div>
