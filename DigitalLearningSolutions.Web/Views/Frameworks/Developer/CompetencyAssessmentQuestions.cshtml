@@ -73,7 +73,7 @@
               @if (question.value.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question..valueID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
                   Edit
                 </a>
 
