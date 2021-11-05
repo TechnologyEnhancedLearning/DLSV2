@@ -18,6 +18,32 @@
             centreCustomPromptsService = customPromptsService;
         }
 
+        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(DelegateUser? delegateUser, int centreId)
+        {
+           return GetEditCustomFieldViewModelsForCentre(
+                centreId,
+                delegateUser?.Answer1,
+                delegateUser?.Answer2,
+                delegateUser?.Answer3,
+                delegateUser?.Answer4,
+                delegateUser?.Answer5,
+                delegateUser?.Answer6
+            );
+        }
+
+        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(EditDetailsFormData formData, int centreId)
+        {
+            return GetEditCustomFieldViewModelsForCentre(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
+            );
+        }
+
         public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
             int centreId,
             string? answer1,
@@ -100,6 +126,20 @@
                 delegateUser.Answer4,
                 delegateUser.Answer5,
                 delegateUser.Answer6
+            );
+        }
+
+        public void ValidateCustomPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
+        {
+            ValidateCustomPrompts(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6,
+                modelState
             );
         }
 

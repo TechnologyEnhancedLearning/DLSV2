@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -20,7 +21,7 @@
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
-    [SetSelectedTab(nameof(NavMenuTab.Admins))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("TrackingSystem/Centre/Administrators")]
     public class AdministratorController : Controller
     {

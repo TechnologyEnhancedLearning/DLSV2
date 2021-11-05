@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Support;
@@ -10,6 +12,8 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
+    [SetDlsSubApplication]
+    [SetSelectedTab(nameof(NavMenuTab.Support))]
     public class SupportController : Controller
     {
         private readonly IConfiguration configuration;

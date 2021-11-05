@@ -23,6 +23,7 @@
     [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/PromoteToAdmin")]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class PromoteToAdminController : Controller
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;

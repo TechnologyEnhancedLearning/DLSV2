@@ -11,7 +11,11 @@
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+            int delegateId,
+            int centreId,
+            int? courseCategoryId
+        );
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
 
@@ -55,11 +59,17 @@
             return allCourses.Where(c => c.CentreId == centreId);
         }
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId)
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+            int delegateId,
+            int centreId,
+            int? courseCategoryId
+        )
         {
-            return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
-                info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
-            ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
+            return courseDataService.GetDelegateCoursesInfo(delegateId)
+                .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
+                .Select(
+                    info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
+                ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
         }
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)

@@ -28,7 +28,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -61,7 +61,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -95,7 +95,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -130,7 +130,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -178,7 +178,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -218,7 +218,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -260,7 +260,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
