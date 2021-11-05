@@ -199,8 +199,6 @@
         {
             using var transaction = new TransactionScope();
             var  adminUser = userDataService.GetAdminUserById(7)!;
-            const bool mustBeTrueBeforeDeactivate = true;
-            const bool mustBeFalseAfterDeactivate = false;
 
             try
             {
@@ -209,8 +207,8 @@
                 var updatedAdminUser = userDataService.GetAdminUserById(7)!;
 
                 // Then
-                adminUser.Active.Should().Be(mustBeTrueBeforeDeactivate);
-                updatedAdminUser.Active.Should().Be(mustBeFalseAfterDeactivate);
+                adminUser.Active.Should().Be(true);
+                updatedAdminUser.Active.Should().Be(true);
             }
             finally
             {
