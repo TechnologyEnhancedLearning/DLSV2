@@ -1,7 +1,5 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.ViewComponents
+﻿@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
-@using Microsoft.Extensions.Configuration
 @model EditCourseDetailsViewModel
 
 @{
@@ -84,13 +82,13 @@
 
               <div class="@passwordCss" id="@passwordId">
                 <vc:text-input asp-for="@nameof(Model.Password)"
-                                 label="Enter the password for the course"
-                                 populate-with-current-value="true"
-                                 type="text"
-                                 spell-check="false"
-                                 autocomplete=""
-                                 hint-text=""
-                                 css-class="nhsuk-u-width-one-half" />
+                               label="Enter the password for the course"
+                               populate-with-current-value="true"
+                               type="text"
+                               spell-check="false"
+                               autocomplete=""
+                               hint-text=""
+                               css-class="nhsuk-u-width-one-half" />
               </div>
             </div>
 
@@ -107,13 +105,13 @@
 
             <div class="@emailCss" id="@emailId">
               <vc:text-input asp-for="@nameof(Model.NotificationEmails)"
-                               label="Enter an email address for receiving the notifications"
-                               populate-with-current-value="true"
-                               type="text"
-                               spell-check="false"
-                               autocomplete=""
-                               hint-text=""
-                               css-class="nhsuk-u-width-one-half" />
+                             label="Enter an email address for receiving the notifications"
+                             populate-with-current-value="true"
+                             type="text"
+                             spell-check="false"
+                             autocomplete=""
+                             hint-text=""
+                             css-class="nhsuk-u-width-one-half" />
             </div>
 
           </div>
