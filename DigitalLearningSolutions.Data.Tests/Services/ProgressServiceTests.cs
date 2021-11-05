@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -84,6 +85,23 @@
             A.CallTo(
                 () => progressDataService.ClearAspProgressVerificationRequest(progressId)
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateSupervisor_throws_exception_if_no_progress_record_found()
+        {
+            // Given
+            const int progressId = 1;
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(null);
+
+            // Then
+            Assert.Throws<ProgressNotFoundException>(() => progressService.UpdateSupervisor(progressId, null));
+            A.CallTo(
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () => progressDataService.ClearAspProgressVerificationRequest(A<int>._)
+            ).MustNotHaveHappened();
         }
     }
 }

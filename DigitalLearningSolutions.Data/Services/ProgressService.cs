@@ -2,6 +2,7 @@
 {
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
 
     public interface IProgressService
     {
@@ -22,6 +23,11 @@
         public void UpdateSupervisor(int progressId, int? newSupervisorId)
         {
             var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (courseInfo == null)
+            {
+                throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
+            }
 
             if (courseInfo!.SupervisorAdminId == newSupervisorId)
             {
