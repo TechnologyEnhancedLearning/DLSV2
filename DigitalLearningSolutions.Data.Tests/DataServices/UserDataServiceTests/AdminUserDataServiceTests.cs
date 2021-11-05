@@ -208,7 +208,7 @@
 
                 // Then
                 adminUser.Active.Should().Be(true);
-                updatedAdminUser.Active.Should().Be(true);
+                updatedAdminUser.Active.Should().Be(false);
             }
             finally
             {
