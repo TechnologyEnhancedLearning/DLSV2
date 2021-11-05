@@ -12,12 +12,14 @@
 
     internal class ManageCourseControllerTests
     {
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ManageCourseController controller = null!;
+        private ICourseService courseService = null!;
 
         [SetUp]
         public void Setup()
         {
+            courseService = A.Fake<ICourseService>();
+
             controller = new ManageCourseController(courseService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
