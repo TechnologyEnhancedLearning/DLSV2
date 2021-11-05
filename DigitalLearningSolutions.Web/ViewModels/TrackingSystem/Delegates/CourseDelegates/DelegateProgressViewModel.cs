@@ -12,8 +12,9 @@
     {
         public DelegateProgressViewModel(
             DelegateProgressAccessRoute accessedVia,
-            DelegateCourseDetails details
-        ) : base(details)
+            DelegateCourseDetails details,
+            int delegateId
+        ) : base(details, delegateId)
         {
             AccessedVia = accessedVia;
             CustomisationCentreId = details.DelegateCourseInfo.CustomisationCentreId;
