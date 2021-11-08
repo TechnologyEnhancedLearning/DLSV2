@@ -13,14 +13,14 @@
 
     public class ResourcesServiceTests
     {
-        private IDownloadDataService downloadDataService = null!;
+        private IResourceDataService resourceDataService = null!;
         private IResourcesService resourcesService = null!;
 
         [SetUp]
         public void SetUp()
         {
-            downloadDataService = A.Fake<IDownloadDataService>();
-            resourcesService = new ResourcesService(downloadDataService);
+            resourceDataService = A.Fake<IResourceDataService>();
+            resourcesService = new ResourcesService(resourceDataService);
         }
 
         [Test]
@@ -32,7 +32,7 @@
                 .TheNext(5).With(d => d.Category = "Category 2")
                 .TheRest().With(d => d.Category = "Category 3")
                 .Build();
-            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
+            A.CallTo(() => resourceDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();
@@ -56,7 +56,7 @@
                 .TheNext(5).With(d => d.Category = "C Category")
                 .TheRest().With(d => d.Category = "A Category")
                 .Build();
-            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
+            A.CallTo(() => resourceDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();
@@ -81,7 +81,7 @@
                 new Resource { UploadDate = new DateTime(2021, 9, 1) },
                 new Resource { UploadDate = new DateTime(2021, 8, 1) },
             };
-            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
+            A.CallTo(() => resourceDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();

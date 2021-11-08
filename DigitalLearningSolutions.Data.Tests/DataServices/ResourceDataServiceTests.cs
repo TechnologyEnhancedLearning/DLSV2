@@ -6,22 +6,22 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class DownloadDataServiceTests
+    public class ResourceDataServiceTests
     {
-        private IDownloadDataService downloadDataService = null!;
+        private IResourceDataService resourceDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            downloadDataService = new DownloadDataService(connection);
+            resourceDataService = new ResourceDataService(connection);
         }
 
         [Test]
-        public void GetAllDownloads_gets_expected_downloads()
+        public void GetAllResources_gets_expected_downloads()
         {
             // When
-            var result = downloadDataService.GetAllResources().ToList();
+            var result = resourceDataService.GetAllResources().ToList();
 
             // Then
             result.Count.Should().Be(96);

@@ -5,16 +5,16 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Support;
 
-    public interface IDownloadDataService
+    public interface IResourceDataService
     {
         IEnumerable<Resource> GetAllResources();
     }
 
-    public class DownloadDataService : IDownloadDataService
+    public class ResourceDataService : IResourceDataService
     {
         private readonly IDbConnection connection;
 
-        public DownloadDataService(IDbConnection connection)
+        public ResourceDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

@@ -12,16 +12,16 @@
 
     public class ResourcesService : IResourcesService
     {
-        private readonly IDownloadDataService downloadDataService;
+        private readonly IResourceDataService resourceDataService;
 
-        public ResourcesService(IDownloadDataService downloadDataService)
+        public ResourcesService(IResourceDataService resourceDataService)
         {
-            this.downloadDataService = downloadDataService;
+            this.resourceDataService = resourceDataService;
         }
 
         public IEnumerable<ResourceCategory> GetAllResources()
         {
-            var resources = downloadDataService.GetAllResources();
+            var resources = resourceDataService.GetAllResources();
 
             var resourceCategories = resources.GroupBy(d => d.Category).Select(
                 dg => new ResourceCategory(
