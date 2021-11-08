@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -91,5 +93,27 @@
 
             return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
         }
+
+        [HttpGet]
+        [Route("EditCompletionDate")]
+        public IActionResult DelegateProgressEditCompletionDateViewModel(int progressId, string customisationName)
+        {
+            Console.WriteLine("hello");
+            //todo do we need to use 'Accessed via' in here?
+
+            //todo want to get the details of the course from a service method OR pass them in as temp data?
+            var model = new DelegateProgressEditCompletionDateViewModel(progressId, customisationName, null, null, null);
+            return View(model);
+        }
+
+          [HttpPost]
+          [Route("EditCompletionDate")]
+          public IActionResult EditCompletionDate(int progressId)
+          {
+              //we probably need to write a model to pass into this with the progress id and the date in the d.m.y format?
+              Console.WriteLine("save the new date");
+              //courseService.
+              return RedirectToAction("Index");
+          }
     }
 }

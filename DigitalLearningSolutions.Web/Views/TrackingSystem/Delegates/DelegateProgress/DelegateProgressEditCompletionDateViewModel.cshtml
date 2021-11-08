@@ -1,0 +1,46 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@model DelegateProgressEditCompletionDateViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completion Date" : "Edit completion date";
+  //var cancelLinkData = new Dictionary<string, string> { { "progressId", Model.NewCompletionDate.ToString() } };
+  const string dateInputId = "new-completion-date";
+  var exampleDate = DateTime.Today;
+  var completionDateCss = "nhsuk-checkboxes__conditional"
+                          + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      //<vc:error-summary order-of-property-names="@new []{ nameof(@Model.NewCompletionDate), nameof(@Model.NewCompletionDate) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CustomisationName</h1>
+
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">
+      For example 1 7 2021. Leave the boxes blank to clear the completion date.
+    </p>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post"
+          novalidate>
+
+       <vc:date-input id="@dateInputId"
+                             label="Deliver email on or after:"
+                             day-id="Day"
+                             month-id="Month"
+                             year-id="Year"
+                             css-class="@completionDateCss"
+                             key="1"
+                             hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    @* <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" /> *@
+  </div>
+</div>
+
+

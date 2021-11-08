@@ -60,7 +60,7 @@
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
           <dd class="nhsuk-summary-list__actions">
             @if (Model.Completed == null) {
-              <a href="#">Set completed date</a>
+              <a href="/TrackingSystem/Delegates/@DelegateProgressAccessRoute.ViewDelegate/DelegateProgress/@Model.ProgressId/EditCompletionDate" >Edit completion date </a>
             }
           </dd>
         </div>
