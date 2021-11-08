@@ -27,12 +27,12 @@
         public void GetAllResources_maps_downloads_to_resource_categories_correctly()
         {
             // Given
-            var downloads = Builder<Download>.CreateListOfSize(10)
+            var resources = Builder<Resource>.CreateListOfSize(10)
                 .TheFirst(3).With(d => d.Category = "Category 1")
                 .TheNext(5).With(d => d.Category = "Category 2")
                 .TheRest().With(d => d.Category = "Category 3")
                 .Build();
-            A.CallTo(() => downloadDataService.GetAllDownloads()).Returns(downloads);
+            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();
@@ -51,12 +51,12 @@
         public void GetAllResources_orders_resource_categories_correctly()
         {
             // Given
-            var downloads = Builder<Download>.CreateListOfSize(10)
+            var resources = Builder<Resource>.CreateListOfSize(10)
                 .TheFirst(3).With(d => d.Category = "B Category")
                 .TheNext(5).With(d => d.Category = "C Category")
                 .TheRest().With(d => d.Category = "A Category")
                 .Build();
-            A.CallTo(() => downloadDataService.GetAllDownloads()).Returns(downloads);
+            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();
@@ -75,13 +75,13 @@
         public void GetAllResources_orders_resources_correctly()
         {
             // Given
-            var downloads = new[]
+            var resources = new[]
             {
-                new Download { UploadDate = new DateTime(2021, 10, 1) },
-                new Download { UploadDate = new DateTime(2021, 9, 1) },
-                new Download { UploadDate = new DateTime(2021, 8, 1) },
+                new Resource { UploadDate = new DateTime(2021, 10, 1) },
+                new Resource { UploadDate = new DateTime(2021, 9, 1) },
+                new Resource { UploadDate = new DateTime(2021, 8, 1) },
             };
-            A.CallTo(() => downloadDataService.GetAllDownloads()).Returns(downloads);
+            A.CallTo(() => downloadDataService.GetAllResources()).Returns(resources);
 
             // When
             var result = resourcesService.GetAllResources().ToList();

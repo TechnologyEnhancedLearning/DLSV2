@@ -21,13 +21,12 @@
 
         public IEnumerable<ResourceCategory> GetAllResources()
         {
-            var downloads = downloadDataService.GetAllDownloads();
+            var resources = downloadDataService.GetAllResources();
 
-            var resourceCategories = downloads.GroupBy(d => d.Category).Select(
+            var resourceCategories = resources.GroupBy(d => d.Category).Select(
                 dg => new ResourceCategory(
                     dg.Key,
-                    dg.Select(d => new Resource(d.Description, d.UploadDate, d.FileSize, d.Tag, d.FileName))
-                        .OrderBy(r => r.UploadDate)
+                    dg.OrderBy(r => r.UploadDate)
                 )
             ).OrderBy(rc => rc.CategoryName);
 

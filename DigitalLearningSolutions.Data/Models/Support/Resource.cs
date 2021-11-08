@@ -4,19 +4,11 @@
 
     public class Resource
     {
-        public Resource(string description, DateTime uploadDate, long fileSize, string tag, string fileName)
-        {
-            Description = description;
-            UploadDate = uploadDate;
-            FileSize = fileSize;
-            Tag = tag;
-            FileName = fileName;
-        }
-
-        public string Description { get; }
-        public DateTime UploadDate { get; }
-        public long FileSize { get; }
-        public string Tag { get; }
-        public string FileName { get; }
+        public string Category { get; set; }
+        public string Description { get; set; }
+        public DateTime UploadDate { get; set; }
+        public long FileSize { get; set; }
+        public string Tag { get; set; }
+        public string FileName { get; set; }
     }
 }

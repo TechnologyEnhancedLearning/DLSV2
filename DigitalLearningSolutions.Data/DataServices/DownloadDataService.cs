@@ -7,7 +7,7 @@
 
     public interface IDownloadDataService
     {
-        IEnumerable<Download> GetAllDownloads();
+        IEnumerable<Resource> GetAllResources();
     }
 
     public class DownloadDataService : IDownloadDataService
@@ -19,9 +19,9 @@
             this.connection = connection;
         }
 
-        public IEnumerable<Download> GetAllDownloads()
+        public IEnumerable<Resource> GetAllResources()
         {
-            return connection.Query<Download>(
+            return connection.Query<Resource>(
                 @"SELECT
                         Category,
                         Description,

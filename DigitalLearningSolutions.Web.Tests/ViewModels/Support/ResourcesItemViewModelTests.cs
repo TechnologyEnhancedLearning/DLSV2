@@ -13,7 +13,15 @@
         public void ResourcesItemViewModel_populates_properties_as_expected()
         {
             // Given
-            var resource = new Resource("description", new DateTime(2021, 1, 1), 120, "tag", "file.pdf");
+            var resource = new Resource
+            {
+                Category = "category",
+                Description = "description",
+                UploadDate = new DateTime(2021, 1, 1),
+                FileSize = 120,
+                Tag = "tag",
+                FileName = "file.pdf",
+            };
 
             // When
             var result = new ResourcesItemViewModel(resource, "www.test.com");

@@ -21,7 +21,7 @@
         public void GetAllDownloads_gets_expected_downloads()
         {
             // When
-            var result = downloadDataService.GetAllDownloads().ToList();
+            var result = downloadDataService.GetAllResources().ToList();
 
             // Then
             result.Count.Should().Be(96);
