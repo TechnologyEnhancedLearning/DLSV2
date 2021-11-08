@@ -211,7 +211,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseDelegatesDataService, CourseDelegatesDataService>();
             services.AddScoped<ICourseTopicsDataService, CourseTopicsDataService>();
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
-            services.AddScoped<IDownloadDataService, DownloadDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
@@ -224,6 +223,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<IResourceDataService, ResourceDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
