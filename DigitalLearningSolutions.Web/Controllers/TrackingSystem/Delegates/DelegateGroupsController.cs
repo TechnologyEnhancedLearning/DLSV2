@@ -183,6 +183,35 @@
             return View(model);
         }
 
+        [Route("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult GroupCourseRemove(int groupId, int groupCustomisationId)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupCourse = groupsService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+
+            var model = new GroupCourseRemoveViewModel(groupCourse.GroupCustomisationId, groupCourse.CourseName, groupName!);
+
+            return View(model);
+        }
+
+        [HttpPost("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult GroupCourseRemove(int groupId, int groupCustomisationId, GroupCourseRemoveViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, model.DeleteStartedEnrolments);
+
+            return RedirectToAction(nameof(GroupCourses), new { groupId = groupId });
+        }
+
         [Route("{groupId:int}/Delete")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult DeleteGroup(int groupId)

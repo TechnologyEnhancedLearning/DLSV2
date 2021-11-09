@@ -137,5 +137,26 @@
                 new { groupId }
             );
         }
+
+        public static async Task<IEnumerable<int>> GetCustomisationsForGroupAndCustomisation(this DbConnection connection, int groupId, int customisationId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT GroupCustomisationID
+                    FROM GroupCustomisations
+                    WHERE GroupID = @groupId AND CustomisationID=@customisationId
+                    ORDER BY GroupCustomisationID DESC",
+                new { groupId, customisationId }
+            );
+        }
+
+        public static async Task<IEnumerable<(int progressId, int removalMethodId, DateTime submittedTime, DateTime? removedDate)>> GetProgressRemovalsByCourse(this DbConnection connection, int customisationId)
+        {
+            return (await connection.QueryAsync<(int, int, DateTime, DateTime ?)>(
+                @"SELECT ProgressID, RemovalMethodID, SubmittedTime, RemovedDate
+                    FROM Progress
+                    WHERE CustomisationID=@customisationId",
+                new { customisationId }
+            ));
+        }
     }
 }

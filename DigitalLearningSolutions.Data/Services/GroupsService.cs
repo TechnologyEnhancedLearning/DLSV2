@@ -31,6 +31,10 @@
         );
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
+
+        GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+
+        void RemoveGroupCourseAndRelatedProgress(int customisationId, int groupId, bool deleteStartedEnrolment);
     }
 
     public class GroupsService : IGroupsService
@@ -215,6 +219,23 @@
             groupsDataService.DeleteGroupDelegates(groupId);
             groupsDataService.DeleteGroupCustomisations(groupId);
             groupsDataService.DeleteGroup(groupId);
+
+            transaction.Complete();
+        }
+
+        public GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        {
+            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+
+            return groupCourse;
+        }
+
+        public void RemoveGroupCourseAndRelatedProgress(int groupCustomisationId, int groupId, bool deleteStartedEnrolment)
+        {
+            using var transaction = new TransactionScope();
+
+            groupsDataService.RemoveRelatedProgressRecordsForCourse(groupId, groupCustomisationId, deleteStartedEnrolment, clockService.UtcNow);
+            groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
 
             transaction.Complete();
         }

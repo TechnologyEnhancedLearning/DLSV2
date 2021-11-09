@@ -426,5 +426,46 @@
             A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, true, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
+
+        [Test]
+        public void GroupCourseRemove_with_invalid_model_returns_view_with_error()
+        {
+            // Given
+            var groupId = 1;
+            var groupCustomisationId = 25;
+            var model = new GroupCourseRemoveViewModel();
+            delegateGroupsController.ModelState.AddModelError("Confirm", "Is Invalid.");
+
+            // When
+            var result = delegateGroupsController.GroupCourseRemove(groupId, groupCustomisationId, model);
+
+            // Then
+            result.Should().BeViewResult();
+            delegateGroupsController.ModelState.IsValid.Should().BeFalse();
+            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(A<int>._, A<int>._, A<bool>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void GroupCourseRemove_with_valid_model_calls_remove_service_and_redirects()
+        {
+            // Given
+            var groupId = 1;
+            var groupCustomisationId = 25;
+            var model = new GroupCourseRemoveViewModel
+            {
+                Confirm = true
+            };
+
+            // When
+            var result = delegateGroupsController.GroupCourseRemove(groupId, groupCustomisationId, model);
+
+            // Then
+            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, false))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult()
+                .WithActionName("GroupCourses")
+                .WithRouteValue("groupId", groupId);
+        }
     }
 }

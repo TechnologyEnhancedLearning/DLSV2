@@ -15,6 +15,8 @@
 
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
+        GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+
         string? GetGroupName(int groupId, int centreId);
 
         void RemoveRelatedProgressRecordsForGroup(int groupId, int? delegateId, bool removeStartedEnrolments, DateTime removedDate);
@@ -29,9 +31,13 @@
 
         void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink);
 
+        void RemoveRelatedProgressRecordsForCourse(int groupId, int groupCustomisationId, bool deleteStartedEnrolment, DateTime removedDate);
+
         void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
 
         void DeleteGroupDelegates(int groupId);
+
+        void DeleteGroupCustomisation(int groupCustomisationId);
 
         void DeleteGroupCustomisations(int groupId);
 
@@ -141,6 +147,39 @@
             );
         }
 
+        public GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        {
+            return connection.Query<GroupCourse>(
+                @"SELECT
+                        GroupCustomisationID,
+                        GroupID,
+                        gc.CustomisationID,
+                        ap.ApplicationName,
+                        CustomisationName,
+                        Mandatory AS IsMandatory,
+                        IsAssessed,
+                        AddedDate AS AddedToGroup,
+                        c.CurrentVersion,
+                        gc.SupervisorAdminID,
+                        au.Forename AS SupervisorFirstName,
+                        au.Surname AS SupervisorLastName,
+                        gc.CompleteWithinMonths,
+                        ValidityMonths
+                    FROM GroupCustomisations AS gc
+                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
+                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
+                    WHERE gc.GroupCustomisationID = @groupCustomisationId
+                        AND gc.GroupID = @groupId
+                        AND ca.CentreId = @centreId
+                        AND gc.InactivatedDate IS NULL
+                        AND ap.ArchivedDate IS NULL
+                        AND c.Active = 1",
+                new { groupCustomisationId, groupId, centreId }
+            ).FirstOrDefault();
+        }
+
         public string? GetGroupName(int groupId, int centreId)
         {
             return connection.Query<string>(
@@ -229,6 +268,15 @@
             );
         }
 
+        public void DeleteGroupCustomisation(int groupCustomisationId)
+        {
+            connection.Execute(
+                @"DELETE FROM GroupCustomisations
+                     WHERE GroupCustomisationID = @groupCustomisationId",
+                new { groupCustomisationId }
+            );
+        }
+
         public void DeleteGroupCustomisations(int groupId)
         {
             connection.Execute(
@@ -275,6 +323,38 @@
                                                 AND GD.DelegateID = P.CandidateID
                                                 AND GCInner.GroupID != GC.GroupID))",
                 new { groupId, removedDate, deleteStartedEnrolment, delegateId }
+            );
+        }
+
+        public void RemoveRelatedProgressRecordsForCourse(
+            int groupId,
+            int groupCustomisationId,
+            bool deleteStartedEnrolment,
+            DateTime removedDate
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                        SET
+                            RemovedDate = @removedDate,
+                            RemovalMethodID = 3
+                        WHERE ProgressID IN
+                            (SELECT ProgressID
+                             FROM Progress AS P
+                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+	                         INNER JOIN GroupDelegates AS GD ON GD.DelegateID = P.CandidateID AND GD.GroupID = GC.GroupID
+                             WHERE P.Completed IS NULL
+                             AND P.EnrollmentMethodID = 3
+                             AND GC.GroupID = @groupId
+                             AND GC.GroupCustomisationID = @groupCustomisationId
+                             AND P.RemovedDate IS NULL
+                             AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
+                             AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
+                                                INNER JOIN GroupDelegates AS GD ON GCInner.GroupID = GD.GroupID
+                                                WHERE GCInner.CustomisationID = P.CustomisationID
+                                                AND GD.DelegateID = P.CandidateID
+                                                AND GCInner.GroupID != GC.GroupID))",
+                new { groupId, removedDate, deleteStartedEnrolment, groupCustomisationId }
             );
         }
     }
