@@ -36,6 +36,9 @@
     <div id="activity-graph" class="js-only-block">
       <partial name="_ActivityGraph.cshtml" />
     </div>
+    <div id="activity-graph-data-error" class="js-only-block" hidden>
+      Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart.
+    </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
     <a class="nhsuk-button nhsuk-u-margin-top-6"
@@ -51,7 +54,8 @@
     <p>Summary of evaluation responses collected from delegates on completion of learning activities.</p>
 
     <ul class="nhsuk-card-group">
-      @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown) {
+      @foreach (var evaluationSummary in Model.EvaluationSummaryBreakdown)
+      {
         <li class="nhsuk-card-group__item">
           <partial name="_EvaluationSummaryCard.cshtml" model="evaluationSummary" />
         </li>

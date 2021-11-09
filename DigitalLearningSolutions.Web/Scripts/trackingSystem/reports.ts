@@ -1,4 +1,4 @@
-import Chartist from 'chartist';
+import Chartist, { IChartistData } from 'chartist';
 import getPathForEndpoint from '../common';
 
 // These constants are used in _ActivityTable.cshtml
@@ -9,7 +9,10 @@ const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
 
-const maxNumberOfEntriesForActivityGraph = 17;
+const mobileMaxNumberOfEntriesForActivityGraph = 17;
+const desktopMaxNumberOfEntriesForActivityGraph = 31;
+
+let chartData: IChartistData;
 
 interface IActivityDataRowModel {
   period: string;
@@ -35,48 +38,81 @@ function generateChart(request: XMLHttpRequest) {
   if (typeof request.response === 'string') {
     response = JSON.parse(response);
   }
-  const data = constructChartistData(response);
-  const numberOfEntries = data.labels?.length;
+  chartData = constructChartistData(response);
+  drawChartOrDataPointMessage();
+}
 
-  if (numberOfEntries !== undefined && numberOfEntries <= maxNumberOfEntriesForActivityGraph) {
-    const options = {
-      axisY: {
-        scaleMinSpace: 10,
-        onlyInteger: true,
-      },
-      chartPadding: {
-        bottom: 32,
-      },
-    };
+function drawChartOrDataPointMessage() {
+  const numberOfEntries = chartData.labels?.length;
+  const mediaQuery = window.matchMedia('(min-width: 641px)');
+  const maxNumberOfEntriesForGraph = mediaQuery.matches
+    ? desktopMaxNumberOfEntriesForActivityGraph
+    : mobileMaxNumberOfEntriesForActivityGraph;
 
-    const chart = new Chartist.Line('.ct-chart', data, options);
-
-    chart.on('draw',
-      // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (drawnElement: any) => {
-        const { element } = drawnElement;
-        // IE renders text in SVGs with 'text' tags that do not work with most CSS properties
-        // so we set the relevant attributes manually
-        if (element.getNode().tagName === 'text'
-          && element.classes().indexOf('ct-horizontal') >= 0
-          && element.classes().indexOf('ct-label') >= 0) {
-          const xOrigin = Number(element.getNode().getAttribute('x'));
-          const yOrigin = element.getNode().getAttribute('y');
-          const width = Number(element.getNode().getAttribute('width'));
-          // this should match the NHS tablet breakpoint
-          const mediaQuery = window.matchMedia('(min-width: 641px)');
-          const rotation = mediaQuery.matches ? -45 : -60;
-          element.attr({
-            transform: `translate(-${width}) rotate(${rotation} ${xOrigin + width} ${yOrigin})`,
-          });
-        }
-      });
+  if (numberOfEntries !== undefined && numberOfEntries <= maxNumberOfEntriesForGraph) {
+    drawChart();
   } else {
-    const chartContainer = document.getElementById('activity-graph');
-    if (chartContainer !== null) {
-      chartContainer.innerHTML = 'Too many data points selected. Please select a smaller date range or a bigger reporting interval to view a supporting graph.';
-    }
+    displayTooManyDataPointsMessage();
+  }
+}
+
+function drawChart() {
+  const options = {
+    axisY: {
+      scaleMinSpace: 10,
+      onlyInteger: true,
+    },
+    chartPadding: {
+      bottom: 32,
+    },
+  };
+
+  const chart = new Chartist.Line('.ct-chart', chartData, options);
+
+  chart.on('draw',
+    // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (drawnElement: any) => {
+      const { element } = drawnElement;
+      // IE renders text in SVGs with 'text' tags that do not work with most CSS properties
+      // so we set the relevant attributes manually
+      if (element.getNode().tagName === 'text'
+        && element.classes().indexOf('ct-horizontal') >= 0
+        && element.classes().indexOf('ct-label') >= 0) {
+        const xOrigin = Number(element.getNode().getAttribute('x'));
+        const yOrigin = element.getNode().getAttribute('y');
+        const width = Number(element.getNode().getAttribute('width'));
+        // this should match the NHS tablet breakpoint
+        const mediaQuery = window.matchMedia('(min-width: 641px)');
+        const rotation = mediaQuery.matches ? -45 : -60;
+        element.attr({
+          transform: `translate(-${width}) rotate(${rotation} ${xOrigin + width} ${yOrigin})`,
+        });
+      }
+    });
+
+  const dataPointErrorContainer = document.getElementById('activity-graph-data-error');
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = true;
+    dataPointErrorContainer.style.display = 'none';
+  }
+  const chartContainer = document.getElementById('activity-graph');
+  if (chartContainer !== null) {
+    chartContainer.hidden = false;
+    chartContainer.style.display = 'block';
+  }
+}
+
+function displayTooManyDataPointsMessage() {
+  const dataPointErrorContainer = document.getElementById('activity-graph-data-error');
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = false;
+    dataPointErrorContainer.style.display = 'block';
+  }
+  const chartContainer = document.getElementById('activity-graph');
+  if (chartContainer !== null) {
+    chartContainer.hidden = true;
+    chartContainer.style.display = 'none';
   }
 }
 
@@ -144,3 +180,4 @@ function setUpToggleActivityRowsButton() {
 setUpToggleActivityRowsButton();
 viewLessRows();
 makeChartistRequest();
+window.onresize = drawChartOrDataPointMessage;
