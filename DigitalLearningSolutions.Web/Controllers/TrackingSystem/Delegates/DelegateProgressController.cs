@@ -108,12 +108,12 @@
 
           [HttpPost]
           [Route("EditCompletionDate")]
-          public IActionResult EditCompletionDate(int progressId)
+          public IActionResult EditCompletionDate(int progressId, DelegateProgressEditCompletionDateViewModel model)
           {
               //we probably need to write a model to pass into this with the progress id and the date in the d.m.y format?
               Console.WriteLine("save the new date");
-              //courseService.
-              return RedirectToAction("Index");
+              courseService.UpdateCompletionDate(progressId, model.Day, model.Month, model.Year);
+              return RedirectToAction("Index"); //it should take you back to where you were before the same place the cancel link goes to
           }
     }
 }

@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
-        void SetCompletedDate(int progressId, DateTime? completeByDate);
+        void SetCompletionDate(int progressId, DateTime? completeByDate);
     }
 
     public class CourseDataService : ICourseDataService
@@ -611,21 +611,20 @@ namespace DigitalLearningSolutions.Data.DataServices
             ).FirstOrDefault();
         }
 
-        public void SetCompletedDate(int progressId, DateTime? completeByDate)
+        public void SetCompletionDate(int progressId, DateTime? completionDate)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                         SET Completed = @date
-                        WHERE ProgressID = @progressId
-                          AND CandidateID = @candidateId",
-                new { date = completeByDate, progressId }
+                        WHERE ProgressID = @progressId",
+                new { date = completionDate, progressId }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not setting current course complete by date as db update failed. " +
-                    $"Progress id: {progressId}, complete by date: {completeByDate}"
+                    "Not setting current course completion date as db update failed. " +
+                    $"Progress id: {progressId}, completion date: {completionDate}"
                 );
             }
         }

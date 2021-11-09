@@ -66,6 +66,8 @@
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
+
+        void UpdateCompletionDate(int progressId, int? day, int? month, int? year);
     }
 
     public class CourseService : ICourseService
@@ -252,6 +254,17 @@
                 courseOptions,
                 customisationId
             );
+        }
+
+        public void UpdateCompletionDate(int progressId, int? day, int? month, int? year)
+        {
+            DateTime? date = null;
+            if (day != null && month != null && year != null)
+            {
+                date = new DateTime(year.Value, month.Value, day.Value);
+            }
+
+            courseDataService.SetCompletionDate(progressId, date);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
