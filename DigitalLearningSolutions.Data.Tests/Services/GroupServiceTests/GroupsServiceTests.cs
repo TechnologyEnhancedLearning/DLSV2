@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -117,7 +118,45 @@
         [Test]
         public void GetGroupCoursesForCategory_filters_courses_by_category()
         {
-            throw new NotImplementedException();
+            // Given
+            var correctCategoryCourse = GroupTestHelper.GetDefaultGroupCourse();
+            var incorrectCategoryCourse = GroupTestHelper.GetDefaultGroupCourse(
+                2,
+                courseCategoryId: 255
+            );
+            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(new[] {
+                correctCategoryCourse,
+                incorrectCategoryCourse,
+            });
+
+            // When
+            var result = groupsService.GetGroupCoursesForCategory(1, 1, 1).ToList();
+
+            // Then
+            result.Should().Contain(correctCategoryCourse);
+            result.Should().NotContain(incorrectCategoryCourse);
+        }
+
+        [Test]
+        public void GetGroupCoursesForCategory_does_not_filter_by_null_category()
+        {
+            // Given
+            var oneCategoryCourse = GroupTestHelper.GetDefaultGroupCourse();
+            var otherCategoryCourse = GroupTestHelper.GetDefaultGroupCourse(
+                2,
+                courseCategoryId: 255
+            );
+            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(new[] {
+                oneCategoryCourse,
+                otherCategoryCourse,
+            });
+
+            // When
+            var result = groupsService.GetGroupCoursesForCategory(1, 1, null).ToList();
+
+            // Then
+            result.Should().Contain(oneCategoryCourse);
+            result.Should().Contain(otherCategoryCourse);
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
