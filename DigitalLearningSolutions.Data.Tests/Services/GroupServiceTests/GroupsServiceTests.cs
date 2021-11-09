@@ -114,6 +114,12 @@
             ).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void GetGroupCoursesForCategory_filters_courses_by_category()
+        {
+            throw new NotImplementedException();
+        }
+
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
             A.CallTo(() => clockService.UtcNow).Returns(validationTime);

@@ -31,6 +31,8 @@
         );
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
+
+        IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
     }
 
     public class GroupsService : IGroupsService
@@ -217,6 +219,12 @@
             groupsDataService.DeleteGroup(groupId);
 
             transaction.Complete();
+        }
+
+        public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
+        {
+            return groupsDataService.GetGroupCourses(groupId, centreId)
+                .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)

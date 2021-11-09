@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
@@ -45,6 +46,7 @@
             groupsDataService = A.Fake<IGroupsDataService>();
             groupsService = A.Fake<IGroupsService>();
             clockService = A.Fake<IClockService>();
+            var userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
@@ -59,7 +61,8 @@
                     groupsDataService,
                     centreCustomPromptsService,
                     clockService,
-                    groupsService
+                    groupsService,
+                    userDataService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
