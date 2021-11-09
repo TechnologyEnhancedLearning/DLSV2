@@ -41,6 +41,8 @@
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+
+        int GetCourseCategoryId(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -175,6 +177,11 @@
             }
 
             return true;
+        }
+
+        public int GetCourseCategoryId(int customisationId)
+        {
+            return courseDataService.GetCourseValidationDetails(customisationId).courseCategoryId!.Value;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

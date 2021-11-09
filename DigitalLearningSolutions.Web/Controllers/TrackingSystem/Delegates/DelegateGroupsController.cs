@@ -29,18 +29,24 @@
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IGroupsService groupsService;
+        private readonly IUserService userService;
+        private readonly ICourseService courseService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
             IClockService clockService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IUserService userService,
+            ICourseService courseService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
             this.groupsService = groupsService;
+            this.userService = userService;
+            this.courseService = courseService;
         }
 
         [Route("{page=1:int}")]
@@ -298,6 +304,39 @@
             );
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}/")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        public IActionResult AddCourseToGroup(int groupId, int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!.Value;
+            var groupLabel = groupsDataService.GetGroupName(groupId, centreId)!;
+            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
+            var supervisors = userService.GetSupervisorsAtCentreInCategory(centreId, courseDetails!.CourseCategoryId);
+            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseDetails);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}/")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
+        {
+            if (!ModelState.IsValid)
+            {
+                var courseCategoryId = courseService.GetCourseCategoryId(customisationId);
+                var supervisors = userService.GetSupervisorsAtCentreInCategory(User.GetCentreId(), courseCategoryId);
+                var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
+                return View(model);
+            }
+
+            // TODO HEEDLS-658 Save + Confirmation page
+            return RedirectToAction("GroupCourses", new { groupId });
         }
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)

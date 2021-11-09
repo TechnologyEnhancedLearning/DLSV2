@@ -353,7 +353,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.ApplyLPDefaultsToSelfEnrol,
                         {LastAccessedQuery},
                         {DelegateCountQuery},
-                        {CompletedCountQuery}
+                        {CompletedCountQuery},
+                        ap.CourseCategoryID
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId

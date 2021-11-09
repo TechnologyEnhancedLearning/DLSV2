@@ -28,6 +28,7 @@
         public string? RefreshToCustomisationName { get; set; }
         public int AutoRefreshMonths { get; set; }
         public bool ApplyLpDefaultsToSelfEnrol { get; set; }
+        public int CourseCategoryId { get; set; }
 
         public int InProgressCount => DelegateCount - CompletedCount;
 
