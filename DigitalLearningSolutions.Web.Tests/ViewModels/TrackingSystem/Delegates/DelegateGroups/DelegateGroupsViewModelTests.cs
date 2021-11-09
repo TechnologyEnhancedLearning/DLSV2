@@ -103,7 +103,7 @@
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
                 new List<CustomPrompt>(),
-                "My search string",
+                "K",
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -113,7 +113,7 @@
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
             model.DelegateGroups.First().Name.Should().BeEquivalentTo("K");
-            model.SearchString.Should().Be("My search string");
+            model.SearchString.Should().Be("K");
         }
     }
 }
