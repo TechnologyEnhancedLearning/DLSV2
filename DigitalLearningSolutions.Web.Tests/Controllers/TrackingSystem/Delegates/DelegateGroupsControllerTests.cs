@@ -426,5 +426,34 @@
             A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, true, removedDate)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
+
+        [Test]
+        public void EditDelegatesGroupDescription_should_redirect_to_index_action()
+        {
+            // Given
+            const int groupId = 103;
+            const int centreId = 2;
+            var model = new EditDelegateGroupDescriptionViewModel()
+            {
+                Description = "Test Description",
+            };
+
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(
+                    groupId,
+                    centreId,
+                    model.Description)).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.EditDescription(model, groupId);
+
+            // Then
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(
+                    groupId,
+                    centreId,
+                    model.Description))
+                .MustHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
     }
 }

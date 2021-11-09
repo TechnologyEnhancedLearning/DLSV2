@@ -32,7 +32,7 @@
           </dt>
           <partial name="_SummaryFieldValue" model="Model.Description" />
           <dd class="nhsuk-summary-list__actions">
-            <a href="#">
+            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id">
               Edit<span class="nhsuk-u-visually-hidden"> description</span>
             </a>
           </dd>
