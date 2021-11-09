@@ -20,12 +20,15 @@
     {
         private const int GenericNewProgressId = 17;
         private const int GenericRelatedTutorialId = 5;
-        private readonly MyAccountDetailsData reusableMyAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly DelegateUser reusableDelegateDetails =
             UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
 
         private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
+
+        private readonly MyAccountDetailsData reusableMyAccountDetailsData =
+            UserTestHelper.GetDefaultAccountDetailsData();
+
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
@@ -81,7 +84,7 @@
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
-                PopulateExisting = false
+                PopulateExisting = false,
             };
 
             const int returnId = 1;
@@ -124,10 +127,13 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(new[] {
-                correctCategoryCourse,
-                incorrectCategoryCourse,
-            });
+            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+                new[]
+                {
+                    correctCategoryCourse,
+                    incorrectCategoryCourse,
+                }
+            );
 
             // When
             var result = groupsService.GetGroupCoursesForCategory(1, 1, 1).ToList();
@@ -146,10 +152,13 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(new[] {
-                oneCategoryCourse,
-                otherCategoryCourse,
-            });
+            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+                new[]
+                {
+                    oneCategoryCourse,
+                    otherCategoryCourse,
+                }
+            );
 
             // When
             var result = groupsService.GetGroupCoursesForCategory(1, 1, null).ToList();
@@ -169,7 +178,12 @@
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<DateTime>._
+                )
             ).MustNotHaveHappened();
         }
 
@@ -215,7 +229,12 @@
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<DateTime>._
+                )
             ).DoesNothing();
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();

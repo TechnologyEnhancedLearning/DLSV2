@@ -203,7 +203,7 @@
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
-                PopulateExisting = false
+                PopulateExisting = false,
             };
 
             return groupsDataService.AddDelegateGroup(groupDetails);
@@ -246,7 +246,12 @@
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
             const bool removeStartedEnrolments = false;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, clockService.UtcNow);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                removeStartedEnrolments,
+                clockService.UtcNow
+            );
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
@@ -287,7 +292,7 @@
             var body = new BodyBuilder
             {
                 TextBody = emailBodyText,
-                HtmlBody = emailBodyHtml
+                HtmlBody = emailBodyHtml,
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);

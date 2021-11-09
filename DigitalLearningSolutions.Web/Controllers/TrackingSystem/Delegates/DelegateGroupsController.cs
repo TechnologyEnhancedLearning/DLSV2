@@ -161,7 +161,12 @@
             using var transaction = new TransactionScope();
 
             var currentDate = clockService.UtcNow;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, currentDate);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                model.RemoveStartedEnrolments,
+                currentDate
+            );
 
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
             transaction.Complete();
@@ -220,7 +225,7 @@
             {
                 GroupLabel = groupLabel,
                 DelegateCount = delegateCount,
-                CourseCount = courseCount
+                CourseCount = courseCount,
             };
 
             return View(model);
