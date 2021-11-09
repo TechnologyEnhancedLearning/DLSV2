@@ -19,7 +19,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDescription">
 
       <vc:text-area asp-for="@nameof(Model.Description)"
-                    label=""
+                    label="Description"
                     populate-with-current-value="true"
                     rows="8"
                     spell-check="true"
@@ -28,6 +28,7 @@
                     character-count="1000" />
 
       <button class="nhsuk-button" type="submit" value="save">Save</button>
+      <input type="hidden" asp-for="GroupName" />
     </form>
     <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
   </div>

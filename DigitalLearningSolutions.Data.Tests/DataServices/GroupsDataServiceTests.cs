@@ -455,17 +455,17 @@
                 // Given
                 const int centerId = 101;
                 const int groupId = 5;
-                const string expectedDescription = "Test group description1";
+                const string newDescription = "Test group description1";
 
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     centerId,
-                    expectedDescription);
+                    newDescription);
 
                 // Then
-                var result = this.GetGroupDescriptionById(groupId);
-                result.Should().Be(expectedDescription);
+                var result = GetGroupDescriptionById(groupId);
+                result.Should().Be(newDescription);
             }
             finally
             {
@@ -482,17 +482,17 @@
                 // Given
                 const int incorrectCentreId = 107;
                 const int groupId = 5;
-                const string expectedDescription = "Test group description1";
+                const string newDescription = "Test group description1";
 
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     incorrectCentreId,
-                    expectedDescription);
+                    newDescription);
 
                 //Then
-                var result = this.GetGroupDescriptionById(groupId);
-                result?.Should().NotBe(expectedDescription);
+                var result = GetGroupDescriptionById(groupId);
+                result?.Should().BeNull();
             }
             finally
             {

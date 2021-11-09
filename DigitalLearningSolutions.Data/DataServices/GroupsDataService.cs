@@ -44,7 +44,7 @@
 
         Group? GetGroupAtCentreById(int groupId, int centreId);
 
-        void UpdateGroupDescription(int groupId, int centreId, string groupDescription);
+        void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -320,7 +320,7 @@
             ).SingleOrDefault();
         }
 
-        public void UpdateGroupDescription(int groupId, int centreId, string groupDescription)
+        public void UpdateGroupDescription(int groupId, int centreId, string? groupDescription)
         {
             connection.Execute(
                 @"UPDATE Groups

@@ -294,7 +294,7 @@
             groupsDataService.UpdateGroupDescription(
                 groupId,
                 centreId,
-                model.Description!
+                model.Description
             );
 
             return RedirectToAction("Index");

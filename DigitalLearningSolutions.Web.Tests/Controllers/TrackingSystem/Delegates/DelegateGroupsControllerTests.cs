@@ -428,50 +428,20 @@
         }
 
         [Test]
-        public void EditDelegatesGroupDescription_should_do_nothing_with_invalid_group_for_centre()
+        public void EditDelegatesGroupDescription_should_redirect_to_index_action()
         {
             // Given
-            var model = new EditDelegateGroupDescriptionViewModel();
-            const int groupId = 103;
-            const int invalidCentreId = 1;
-            const string groupDescription = "Test group description";
-
-            A.CallTo(
-                () => groupsDataService.UpdateGroupDescription(
-                    groupId,
-                    invalidCentreId,
-                    groupDescription
-                )
-            ).DoesNothing();
-
-
-            // When
-            var result = delegateGroupsController.EditDescription(model, groupId);
-
-            // Then
-            A.CallTo(
-                () => groupsDataService.UpdateGroupDescription(
-                    groupId,
-                    invalidCentreId,
-                    groupDescription
-                )
-            ).MustNotHaveHappened();
-
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public void EditDelegatesGroupDescription_should_redirect_to__index_action()
-        {
-            // Given
-            var model = new EditDelegateGroupDescriptionViewModel();
             const int groupId = 103;
             const int centreId = 2;
+            var model = new EditDelegateGroupDescriptionViewModel()
+            {
+                Description = "Test Description",
+            };
 
             A.CallTo(() => groupsDataService.UpdateGroupDescription(
                     groupId,
                     centreId,
-                    A<string>._)).DoesNothing();
+                    model.Description)).DoesNothing();
 
             // When
             var result = delegateGroupsController.EditDescription(model, groupId);
@@ -480,7 +450,7 @@
             A.CallTo(() => groupsDataService.UpdateGroupDescription(
                     groupId,
                     centreId,
-                    A<string>._))
+                    model.Description))
                 .MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("Index");
