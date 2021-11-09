@@ -1,43 +1,35 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
-@using Microsoft.Extensions.Configuration
-@inject IConfiguration Configuration
 
 @if (User.HasCentreAdminPermissions()) {
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Centre)">
     <a class="nhsuk-header__navigation-link" asp-controller="Dashboard" asp-action="Index">
       Centre
       <partial name="_NhsChevronRight" />
     </a>
   </li>
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Delegates)">
     <a class="nhsuk-header__navigation-link" asp-controller="AllDelegates" asp-action="Index">
       Delegates
       <partial name="_NhsChevronRight" />
     </a>
   </li>
-  <li class="nhsuk-header__navigation-item">
+  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.CourseSetup)">
     <a class="nhsuk-header__navigation-link" asp-controller="CourseSetup" asp-action="Index">
       Course setup
       <partial name="_NhsChevronRight" />
     </a>
   </li>
 }
-@if (User.HasSuperAdminPermissions()) {
-  <li class="nhsuk-header__navigation-item">
-    <a class="nhsuk-header__navigation-link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-configuration">
-      Admin
-      <partial name="_NhsChevronRight" />
-    </a>
-  </li>
-}
-<li class="nhsuk-header__navigation-item">
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Support)">
   <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
     Support
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item">
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.TrackingSystem.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />

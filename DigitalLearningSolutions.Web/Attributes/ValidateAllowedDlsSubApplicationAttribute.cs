@@ -49,9 +49,10 @@
             if (!user.HasLearningPortalPermissions() && DlsSubApplication.LearningPortal.Equals(application) ||
                 !user.HasFrameworksAdminPermissions() && DlsSubApplication.Frameworks.Equals(application) ||
                 !user.HasSupervisorAdminPermissions() && DlsSubApplication.Supervisor.Equals(application) ||
-                !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application))
+                !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application) ||
+                !user.HasSuperAdminPermissions() && DlsSubApplication.SuperAdmin.Equals(application))
             {
-                RedirectToHome(context);
+                RedirectToAccessDenied(context);
             }
         }
 
@@ -75,9 +76,9 @@
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
         }
 
-        private void RedirectToHome(ActionExecutingContext context)
+        private void RedirectToAccessDenied(ActionExecutingContext context)
         {
-            context.Result = new RedirectToActionResult("Welcome", "Home", new { });
+            context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
         }
     }
 }
