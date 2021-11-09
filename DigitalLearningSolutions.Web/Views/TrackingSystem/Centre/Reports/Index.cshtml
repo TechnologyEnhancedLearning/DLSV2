@@ -37,7 +37,10 @@
       <partial name="_ActivityGraph.cshtml" />
     </div>
     <div id="activity-graph-data-error" class="js-only-block" hidden>
-      Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart.
+      <div class="nhsuk-inset-text nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4">
+        <span class="nhsuk-u-visually-hidden">Information: </span>
+        <p>Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart.</p>
+      </div>
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 
