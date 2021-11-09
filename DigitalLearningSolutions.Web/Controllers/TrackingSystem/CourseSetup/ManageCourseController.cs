@@ -55,7 +55,7 @@
 
             SetEditLearningPathwayDetailsTempData(model);
 
-            return RedirectToAction("EditLearningPathwayDefaults", new { customisationId });
+            return RedirectToAction(nameof(EditLearningPathwayDefaults), new { customisationId });
         }
 
         [HttpGet]

@@ -166,8 +166,8 @@
 
         public IEnumerable<(int id, string value)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId)
         {
-            var courses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId);
-            var orderedCourses = courses.OrderBy(c => c.ApplicationName);
+            var orderedCourses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId)
+                .OrderBy(c => c.ApplicationName);
             return orderedCourses.Select(c => (c.CustomisationId, c.ApplicationName + " - " + c.CustomisationName));
         }
 
