@@ -35,7 +35,8 @@
             string? refreshToApplicationName = null,
             string? refreshToCustomisationName = null,
             int autoRefreshMonths = 0,
-            bool applyLpDefaultsToSelfEnrol = false
+            bool applyLpDefaultsToSelfEnrol = false,
+            int courseCategoryId = 2
         )
         {
             return new CourseDetails
@@ -69,7 +70,8 @@
                 RefreshToApplicationName = refreshToApplicationName,
                 RefreshToCustomisationName = refreshToCustomisationName,
                 AutoRefreshMonths = autoRefreshMonths,
-                ApplyLpDefaultsToSelfEnrol = applyLpDefaultsToSelfEnrol
+                ApplyLpDefaultsToSelfEnrol = applyLpDefaultsToSelfEnrol,
+                CourseCategoryId = courseCategoryId
             };
         }
     }

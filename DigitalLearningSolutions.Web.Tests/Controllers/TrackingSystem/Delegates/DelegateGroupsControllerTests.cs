@@ -35,6 +35,9 @@
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsDataService groupsDataService = null!;
         private IGroupsService groupsService = null!;
+        private IUserService userService = null!;
+        private ICourseService courseService = null!;
+
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
 
@@ -45,6 +48,8 @@
             groupsDataService = A.Fake<IGroupsDataService>();
             groupsService = A.Fake<IGroupsService>();
             clockService = A.Fake<IClockService>();
+            userService = A.Fake<IUserService>();
+            courseService = A.Fake<ICourseService>();
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
@@ -59,7 +64,9 @@
                     groupsDataService,
                     centreCustomPromptsService,
                     clockService,
-                    groupsService
+                    groupsService,
+                    userService,
+                    courseService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

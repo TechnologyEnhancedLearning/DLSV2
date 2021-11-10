@@ -24,7 +24,7 @@
         public bool CohortLearners { get; set; }
         public int? SupervisorId { get; set; }
 
-        [WholeNumberWithinInclusiveRange(0, 12, "Enter a whole number from 0 to 12")]
+        [WholeNumberWithinInclusiveRange(0, 36, "Enter a whole number from 0 to 36")]
         public string? MonthsToComplete { get; set; }
 
         public string? GroupName { get; set; }
