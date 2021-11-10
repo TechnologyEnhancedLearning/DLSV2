@@ -14,7 +14,9 @@
             var model = ViewData.Model;
             var property = model.GetType().GetProperty(aspFor);
             var valueToSet = (bool)(property?.GetValue(model) ?? false);
-            var errorMessage = ViewData.ModelState[property?.Name]?.Errors[0]?.ErrorMessage;
+
+            var hasError = ViewData.ModelState[property?.Name]?.Errors?.Count > 0;
+            var errorMessage = hasError ? ViewData.ModelState[property?.Name]?.Errors[0].ErrorMessage : null;
 
             var viewModel = new CheckboxItemViewModel(
                 aspFor,
