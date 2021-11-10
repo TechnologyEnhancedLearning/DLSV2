@@ -35,8 +35,7 @@
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
-                courseDelegatesData!,
-                courseDelegatesData!.DelegateCourseInfo.DelegateId
+                courseDelegatesData!
             );
             return View(model);
         }

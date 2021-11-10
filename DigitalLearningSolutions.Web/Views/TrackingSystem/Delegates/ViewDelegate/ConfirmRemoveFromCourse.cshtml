@@ -1,19 +1,17 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @using Microsoft.Extensions.Configuration
 @model RemoveFromCourseViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"Remove delegate enrolment from {Model.CourseName}";
+  ViewData["Title"] = errorHasOccurred ? $"Error: Remove delegate enrolment from {Model.CourseName}" : $"Remove delegate enrolment from {Model.CourseName}";
   var cancelLinkRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
     <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Remove delegate enrolment from @Model.CourseName</h1>
@@ -30,7 +28,7 @@
                 I am sure that I want to remove @Model.Name from the @Model.CourseName course.
               </label>
               <div class="nhsuk-hint nhsuk-checkboxes__hint" id="confirm-item-hint">
-                This action will remove the course from the delegate's Current/Completed courses list and archive their progress.
+                This action will remove the course from the delegate's Current courses list and archive their progress.
               </div>
             </div>
           </div>

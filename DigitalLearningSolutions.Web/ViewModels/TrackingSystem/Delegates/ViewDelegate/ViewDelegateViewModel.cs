@@ -18,7 +18,7 @@
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
-            DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x, delegateUser.Id)).ToList();
+            DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
         }
 

@@ -34,8 +34,7 @@
                     missingNamesDelegateInfo,
                     new List<CustomPromptWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                missingNamesDelegateInfo.DelegateId
+                )
             );
             var fullNamesDelegateInfo = new DelegateCourseInfo
             {
@@ -56,8 +55,7 @@
                     fullNamesDelegateInfo,
                     new List<CustomPromptWithAnswer>(),
                     new AttemptStats(0, 0)
-                ),
-                missingNamesDelegateInfo.DelegateId
+                )
             );
 
             // Then
@@ -87,8 +85,11 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0)),
-                delegateInfo.DelegateId
+                new DelegateCourseDetails(
+                    delegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
 
             // Then
@@ -113,8 +114,11 @@
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0)),
-                delegateInfo.DelegateId
+                new DelegateCourseDetails(
+                    delegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
 
             // Then

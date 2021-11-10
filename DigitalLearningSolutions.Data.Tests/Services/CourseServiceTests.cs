@@ -229,6 +229,24 @@
         }
 
         [Test]
+        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>()
+            );
+
+            // When
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeFalse();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
         public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
         {
             // Given
@@ -264,24 +282,6 @@
             // Then
             A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
                 .MustHaveHappened();
-        }
-
-        [Test]
-        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
-        {
-            // Given
-            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress>()
-            );
-
-            // When
-            var result =
-                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
-
-            // then
-            result.Should().BeFalse();
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
-                .MustNotHaveHappened();
         }
 
         [Test]

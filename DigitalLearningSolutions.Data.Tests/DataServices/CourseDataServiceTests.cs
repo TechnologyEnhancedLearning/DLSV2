@@ -2,6 +2,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -11,6 +12,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -54,6 +56,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             101
         );
 
+        private SqlConnection connection = null!;
         private CourseDataService courseDataService = null!;
 
         [OneTimeSetUp]
@@ -65,7 +68,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<CourseDataService>>();
             courseDataService = new CourseDataService(connection, logger);
         }
@@ -234,6 +237,32 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
                 // Then
                 courseReturned.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public async Task Remove_current_course_sets_removal_date_and_method_correctly()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            try
+            {
+                // Given
+                var removedDate = DateTime.UtcNow;
+                const int progressId = 94323;
+                const int candidateId = 1;
+
+                // When
+                courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.NotRemoved);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
+
+                // Then
+                progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
+                progressFields.Item2.Should().BeCloseTo(removedDate);
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
 

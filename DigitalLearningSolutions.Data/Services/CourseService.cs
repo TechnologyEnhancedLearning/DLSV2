@@ -12,7 +12,11 @@
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
 
-        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod);
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        );
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
             int delegateId,
@@ -149,6 +153,30 @@
             );
         }
 
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        )
+        {
+            var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
+                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Select(p => p.ProgressId)
+                .ToList();
+
+            if (!currentProgressIds.Any())
+            {
+                return false;
+            }
+
+            foreach (var progressId in currentProgressIds)
+            {
+                courseDataService.RemoveCurrentCourse(progressId, delegateId, removalMethod);
+            }
+
+            return true;
+        }
+
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
             DelegateCourseInfo info,
             int centreId,
@@ -167,19 +195,6 @@
                 : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
-        }
-
-        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(int delegateId, int customisationId, RemovalMethod removalMethod)
-        {
-            var currentProgress = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
-                .FirstOrDefault(p => p.Completed == null && p.RemovedDate == null);
-            if (currentProgress == null)
-            {
-                return false;
-            }
-
-            courseDataService.RemoveCurrentCourse(currentProgress.ProgressId, delegateId, removalMethod);
-            return true;
         }
     }
 }

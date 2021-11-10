@@ -6,8 +6,8 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -67,7 +67,11 @@
 
             string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, delegateUser.CandidateNumber, baseUrl);
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                delegateUser.EmailAddress!,
+                delegateUser.CandidateNumber,
+                baseUrl
+            );
 
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
@@ -85,21 +89,17 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
         {
-            var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
             var course = courseDataService.GetCourseNameAndApplication(customisationId);
-            if (delegateUser == null || delegateUser.CentreId != centreId || course == null)
-            {
-                return new NotFoundResult();
-            }
 
             var model = new RemoveFromCourseViewModel
             {
-                DelegateId = delegateUser.Id,
+                DelegateId = delegateUser!.Id,
                 CustomisationId = customisationId,
-                CourseName = course.CourseName,
+                CourseName = course!.CourseName,
                 Name = delegateUser.FullName,
                 Confirm = false,
             };
@@ -108,21 +108,23 @@
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        public IActionResult ExecuteRemoveFromCourse(int delegateId, int customisationId, RemoveFromCourseViewModel model)
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        public IActionResult ExecuteRemoveFromCourse(
+            int delegateId,
+            int customisationId,
+            RemoveFromCourseViewModel model
+        )
         {
             if (!ModelState.IsValid)
             {
                 return View("ConfirmRemoveFromCourse", model);
             }
 
-            var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
-            if (delegateUser == null || delegateUser.CentreId != centreId ||
-                !courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
-                    delegateId,
-                    customisationId,
-                    RemovalMethod.RemovedByAdmin
-                ))
+            if (!courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+                delegateId,
+                customisationId,
+                RemovalMethod.RemovedByAdmin
+            ))
             {
                 return new NotFoundResult();
             }
