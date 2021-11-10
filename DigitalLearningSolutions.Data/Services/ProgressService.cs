@@ -29,7 +29,7 @@
                 throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
             }
 
-            if (courseInfo!.SupervisorAdminId == newSupervisorId)
+            if (courseInfo.SupervisorAdminId == newSupervisorId)
             {
                 return;
             }

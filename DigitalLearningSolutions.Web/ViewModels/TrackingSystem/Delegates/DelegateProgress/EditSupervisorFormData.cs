@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
-    using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public class EditSupervisorFormData
