@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -98,6 +99,42 @@
             );
 
             return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+        }
+
+        [HttpGet]
+        [Route("EditCourseOptions")]
+        public IActionResult EditCourseOptions(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCategoryId()!;
+
+            var courseOptions = courseService.GetCourseOptionsForAdminCategoryId(
+                customisationId,
+                centreId,
+                categoryId.GetValueOrDefault()
+            );
+
+            var model = new EditCourseOptionsViewModel(courseOptions!, customisationId);
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditCourseOptions")]
+        public IActionResult EditCourseOptions(
+            int customisationId,
+            EditCourseOptionsViewModel editCourseOptionsViewModel
+        )
+        {
+            var courseOptions = new CourseOptions
+            {
+                Active = editCourseOptionsViewModel.Active,
+                SelfRegister = editCourseOptionsViewModel.AllowSelfEnrolment,
+                HideInLearnerPortal = editCourseOptionsViewModel.HideInLearningPortal,
+                DiagObjSelect = editCourseOptionsViewModel.DiagnosticObjectiveSelection,
+            };
+
+            courseService.UpdateCourseOptions(courseOptions, customisationId);
+            return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
     }
 }

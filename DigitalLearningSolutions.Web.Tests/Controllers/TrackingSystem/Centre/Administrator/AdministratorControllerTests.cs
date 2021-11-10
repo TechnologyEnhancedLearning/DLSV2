@@ -35,13 +35,13 @@
             UserTestHelper.GetDefaultAdminUser(firstName: "l", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "m", lastName: "Surname"),
             UserTestHelper.GetDefaultAdminUser(firstName: "n", lastName: "Surname"),
-            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname")
+            UserTestHelper.GetDefaultAdminUser(firstName: "o", lastName: "Surname"),
         };
 
         private readonly List<Category> categories = new List<Category>
         {
             new Category { CategoryName = "All" },
-            new Category { CategoryName = "Office" }
+            new Category { CategoryName = "Office" },
         };
 
         private AdministratorController administratorController = null!;
@@ -158,33 +158,6 @@
         }
 
         [Test]
-        public void UnlockAccount_returns_not_found_if_admin_to_unlock_does_not_exist()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._)).Returns(null);
-
-            // When
-            var result = administratorController.UnlockAccount(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void UnlockAccount_returns_not_found_if_admin_to_unlock_is_at_different_centre()
-        {
-            // Given
-            A.CallTo(() => userDataService.GetAdminUserById(A<int>._))
-                .Returns(UserTestHelper.GetDefaultAdminUser(centreId: 3));
-
-            // When
-            var result = administratorController.UnlockAccount(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void UnlockAccount_unlocks_account_and_returns_to_page()
         {
             // Given
@@ -197,6 +170,45 @@
             // Then
             A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void DeactivateAdminUser_does_not_deactivate_admin_user_without_confirmation()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            const string expectedErrorMessage = "You must confirm before deactivating this account";
+
+            A.CallTo(() => userDataService.GetAdminUserById(1)).Returns(UserTestHelper.GetDefaultAdminUser());
+            var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = false };
+            administratorController.ModelState.AddModelError(nameof(DeactivateAdminViewModel.Confirm), expectedErrorMessage);
+
+
+            // When
+            var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
+            administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo(expectedErrorMessage);
+            A.CallTo(() => userDataService.DeactivateAdmin(1)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void DeactivateAdminUser_deactivates_admin_user_with_confirmation()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(active: true);
+            A.CallTo(() => userDataService.GetAdminUserById(1)).Returns(UserTestHelper.GetDefaultAdminUser());
+            var deactivateViewModel = new DeactivateAdminViewModel(adminUser) { Confirm = true };
+
+            // When
+            var result = administratorController.DeactivateAdmin(1, deactivateViewModel);
+
+            // Then
+            A.CallTo(() => userDataService.GetAdminUserById(1)).MustHaveHappened();
+            A.CallTo(() => userDataService.DeactivateAdmin(1)).MustHaveHappened();
+            result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
         }
     }
 }

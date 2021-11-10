@@ -13,16 +13,22 @@ else if (Model.CompletedDate != null)
     Complete
   </strong>
 }
-else if (Model.VerificationRequested > 0)
+else if (Model.SignOffRequested > 0)
 {
   <strong class="nhsuk-tag nhsuk-tag--red status-tag">
-    Review requested
+    Sign-off requested
   </strong>
 }
 else if (Model.ResultsVerificationRequests > 0)
 {
   <strong class="nhsuk-tag nhsuk-tag--orange status-tag">
-    Results to review
+    Results to verify
+  </strong>
+}
+else if (Model.SignedOff != null)
+{
+  <strong class="nhsuk-tag nhsuk-tag--green status-tag">
+    Signed off
   </strong>
 }
 else

@@ -33,13 +33,11 @@
 
         public static ActivityFilterData GetDefaultFilterData(AdminUser user)
         {
-            var categoryIdFilter = user.CategoryId == 0 ? (int?)null : user.CategoryId;
-
             return new ActivityFilterData(
                 DateTime.UtcNow.Date.AddYears(-1),
                 null,
                 null,
-                categoryIdFilter,
+                user.CategoryIdFilter,
                 null,
                 CourseFilterType.CourseCategory,
                 ReportInterval.Months

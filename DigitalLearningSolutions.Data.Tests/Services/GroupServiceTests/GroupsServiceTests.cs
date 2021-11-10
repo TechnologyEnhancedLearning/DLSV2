@@ -19,7 +19,7 @@
     {
         private const int GenericNewProgressId = 17;
         private const int GenericRelatedTutorialId = 5;
-        private readonly AccountDetailsData reusableAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+        private readonly MyAccountDetailsData reusableMyAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly DelegateUser reusableDelegateDetails =
             UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
@@ -124,7 +124,7 @@
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
             ).MustNotHaveHappened();
         }
 
@@ -170,7 +170,7 @@
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._, A<bool>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
             ).DoesNothing();
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();

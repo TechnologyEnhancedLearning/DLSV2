@@ -15,12 +15,13 @@
         )
         {
             var checkboxList = checkboxes.Select(
-                c => new CheckboxesItemViewModel(
+                c => new CheckboxItemViewModel(
                     c.AspFor,
                     c.AspFor,
                     c.Label,
                     GetValueFromModel(c.AspFor, populateWithCurrentValues),
-                    c.HintText
+                    c.HintText,
+                    null
                 )
             );
 

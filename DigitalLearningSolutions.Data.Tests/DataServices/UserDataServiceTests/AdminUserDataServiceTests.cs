@@ -193,5 +193,27 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void DeactivateAdminUser_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            var  adminUser = userDataService.GetAdminUserById(7)!;
+
+            try
+            {
+                // When
+                userDataService.DeactivateAdmin(7);
+                var updatedAdminUser = userDataService.GetAdminUserById(7)!;
+
+                // Then
+                adminUser.Active.Should().Be(true);
+                updatedAdminUser.Active.Should().Be(false);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

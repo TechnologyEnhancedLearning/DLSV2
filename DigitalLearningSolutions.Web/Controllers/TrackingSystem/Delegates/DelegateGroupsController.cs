@@ -4,9 +4,13 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
@@ -15,6 +19,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/Groups")]
     public class DelegateGroupsController : Controller
     {
@@ -147,7 +153,12 @@
             using var transaction = new TransactionScope();
 
             var currentDate = clockService.UtcNow;
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, currentDate, model.RemoveStartedEnrolments);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                model.RemoveStartedEnrolments,
+                currentDate
+            );
 
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
             transaction.Complete();
@@ -173,10 +184,56 @@
             return View(model);
         }
 
-        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        [Route("{groupId:int}/Delete")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult DeleteGroup(int groupId)
         {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Where(cp => cp.Options.Any());
+            var delegates = groupsDataService.GetGroupDelegates(groupId);
+            var courses = groupsDataService.GetGroupCourses(groupId, User.GetCentreId());
+
+            if (delegates.Any() || courses.Any())
+            {
+                return RedirectToAction("ConfirmDeleteGroup", new { groupId });
+            }
+
+            var removedDate = clockService.UtcNow;
+            groupsService.DeleteDelegateGroup(groupId, false, removedDate);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult ConfirmDeleteGroup(int groupId)
+        {
+            var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
+            var delegateCount = groupsDataService.GetGroupDelegates(groupId).Count();
+            var courseCount = groupsDataService.GetGroupCourses(groupId, User.GetCentreId()).Count();
+
+            var model = new ConfirmDeleteGroupViewModel
+            {
+                GroupLabel = groupLabel,
+                DelegateCount = delegateCount,
+                CourseCount = courseCount,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var removedDate = clockService.UtcNow;
+            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments, removedDate);
+
+            return RedirectToAction("Index");
         }
 
         [Route("Add")]
@@ -202,6 +259,47 @@
                 User.GetAdminId()!.Value
             );
             return RedirectToAction("Index");
+        }
+
+        [Route("{groupId:int}/EditDescription")]
+        [HttpGet]
+        public IActionResult EditDescription(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditDelegateGroupDescriptionViewModel(group);
+            return View(model);
+        }
+
+        [Route("{groupId:int}/EditDescription")]
+        [HttpPost]
+        public IActionResult EditDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            groupsDataService.UpdateGroupDescription(
+                groupId,
+                centreId,
+                model.Description
+            );
+
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        {
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+                .Where(cp => cp.Options.Any());
         }
     }
 }

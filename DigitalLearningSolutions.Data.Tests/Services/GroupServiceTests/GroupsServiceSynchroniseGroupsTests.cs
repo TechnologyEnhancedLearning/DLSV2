@@ -28,7 +28,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -61,7 +61,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -95,7 +95,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -130,7 +130,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -142,11 +142,11 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate,
-                    removeStartedEnrolments
+                    removeStartedEnrolments,
+                    testDate
                 )
             ).MustHaveHappened();
         }
@@ -178,7 +178,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -190,11 +190,11 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
-                    testDate,
-                    removeStartedEnrolments
+                    removeStartedEnrolments,
+                    testDate
                 )
             ).MustHaveHappened();
         }
@@ -218,7 +218,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -260,7 +260,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
