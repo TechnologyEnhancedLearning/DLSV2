@@ -42,7 +42,10 @@
             var courseDelegatesData =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
-            var model = new DelegateProgressViewModel(accessedVia, courseDelegatesData!);
+            var model = new DelegateProgressViewModel(
+                accessedVia,
+                courseDelegatesData!
+            );
             return View(model);
         }
 

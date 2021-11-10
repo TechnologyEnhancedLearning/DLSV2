@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
@@ -18,7 +19,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
 
-        void RemoveCurrentCourse(int progressId, int candidateId);
+        void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod);
 
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
 
@@ -190,16 +191,16 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public void RemoveCurrentCourse(int progressId, int candidateId)
+        public void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                     SET RemovedDate = getUTCDate(),
-                        RemovalMethodID = 1
+                        RemovalMethodID = @removalMethod
                     WHERE ProgressID = @progressId
                       AND CandidateID = @candidateId
                 ",
-                new { progressId, candidateId }
+                new { progressId, candidateId, removalMethod }
             );
 
             if (numberOfAffectedRows < 1)
