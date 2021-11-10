@@ -243,15 +243,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [Test]
         public async Task Remove_current_course_sets_removal_date_and_method_correctly()
         {
+            // Given
+            var removedDate = DateTime.UtcNow;
+            const int progressId = 94323;
+            const int candidateId = 1;
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
             try
             {
-                // Given
-                var removedDate = DateTime.UtcNow;
-                const int progressId = 94323;
-                const int candidateId = 1;
-
                 // When
                 courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.NotRemoved);
                 var progressFields = await connection.GetProgressRemovedFields(progressId);
@@ -484,7 +484,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             const int categoryId = 0;
 
-            var defaultCourseOptions = new CourseOptions()
+            var defaultCourseOptions = new CourseOptions
             {
                 Active = true,
                 DiagObjSelect = true,
@@ -543,7 +543,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
+        public void
+            GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
         {
             // Given
             const int customisationId = 1379;
@@ -562,7 +563,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
+        public void
+            GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
         {
             // Given
             const int customisationId = 1379;
