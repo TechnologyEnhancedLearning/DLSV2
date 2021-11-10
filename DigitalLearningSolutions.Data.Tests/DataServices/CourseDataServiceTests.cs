@@ -237,34 +237,34 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_returns_expected_count()
         {
             // When
-            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 0);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(2, null);
 
             // Then
             count.Should().Be(38);
         }
 
         [Test]
-        public void GetNumberOfActiveCoursesAtCentre_with_filtered_category_returns_expected_count()
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_with_filtered_category_returns_expected_count()
         {
             // When
-            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 2);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(2, 2);
 
             // Then
             count.Should().Be(3);
         }
 
         [Test]
-        public void GetCourseStatisticsAtCentreForAdminCategoryId_should_return_course_statistics_correctly()
+        public void GetCourseStatisticsAtCentreFilteredByCategory_should_return_course_statistics_correctly()
         {
             // Given
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var result = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId).ToList();
+            var result = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new CourseStatistics
@@ -291,12 +291,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseDetailsForAdminCategoryId_should_return_course_details_correctly()
+        public void GetCourseDetailsFilteredByCategory_should_return_course_details_correctly()
         {
             // Given
             const int customisationId = 100;
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
             var fixedCreationDateTime = DateTime.UtcNow;
             var expectedLastAccess = new DateTime(2014, 03, 31, 13, 00, 23, 457);
             var expectedCourseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
@@ -306,7 +306,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result =
-                courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId)!;
+                courseDataService.GetCourseDetailsFilteredByCategory(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
             result.CreatedDate = fixedCreationDateTime;
 
@@ -423,10 +423,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             {
                 // When
                 courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
-                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                     1,
                     2,
-                    0
+                    null
                 );
 
                 // Then
@@ -466,7 +466,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             {
                 // When
                 courseDataService.UpdateCourseOptions(defaultCourseOptions, customisationId);
-                var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                     customisationId,
                     centreId,
                     categoryId
@@ -488,15 +488,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
+        public void GetCourseOptionsFilteredByCategory_gets_correct_data_for_valid_centre_and_category_Id()
         {
             // Given
             const int customisationId = 1379;
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId
@@ -513,15 +513,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
+        public void GetCourseOptionsFilteredByCategory_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
         {
             // Given
             const int customisationId = 1379;
             const int centreId = 5;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId
@@ -532,7 +532,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
+        public void GetCourseOptionsFilteredByCategory_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
         {
             // Given
             const int customisationId = 1379;
@@ -540,7 +540,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int categoryId = 10;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId

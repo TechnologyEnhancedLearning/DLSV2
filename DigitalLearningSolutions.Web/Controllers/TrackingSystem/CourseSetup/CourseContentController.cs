@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -48,10 +49,10 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
             )!;
 
             var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
@@ -74,10 +75,10 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
             )!;
             var section = sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(customisationId, sectionId);
 

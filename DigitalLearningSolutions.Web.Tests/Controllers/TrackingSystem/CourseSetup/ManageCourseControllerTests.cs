@@ -26,7 +26,7 @@
         public void Index_returns_ManageCourse_page_when_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(new CourseDetails());
 
             // When
@@ -129,7 +129,7 @@
             ).Returns(true);
 
             A.CallTo(
-                () => courseService.GetCourseOptionsForAdminCategoryId(
+                () => courseService.GetCourseOptionsFilteredByCategory(
                     customisationId,
                     A<int>._,
                     A<int>._

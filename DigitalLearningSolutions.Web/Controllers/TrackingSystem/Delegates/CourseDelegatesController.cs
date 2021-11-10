@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -49,14 +50,13 @@
             );
 
             var centreId = User.GetCentreId();
-            int? categoryId = User.GetAdminCategoryId()!.Value;
-            categoryId = categoryId == 0 ? null : categoryId;
+            var categoryIdFilter = CourseCategoryHelper.GetCourseCategoryFilter(User.GetAdminCategoryId()!.Value);
             CourseDelegatesData courseDelegatesData;
 
             try
             {
                 courseDelegatesData =
-                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
+                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryIdFilter, customisationId);
             }
             catch (CourseNotFoundException)
             {

@@ -22,9 +22,9 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
 
-        int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
+        int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
 
-        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
 
@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
-        CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
 
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
-        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
     }
@@ -231,21 +231,19 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int adminCategoryId)
+        public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId)
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*)
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
+	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
                 new { centreId, adminCategoryId }
             );
         }
 
-        // Admins have a non-nullable category ID where 0 = all. This is why we have the
-        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
-        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId)
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId)
         {
             return connection.Query<CourseStatistics>(
                 @$"SELECT
@@ -269,7 +267,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
                     INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL",
@@ -317,9 +315,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return new AttemptStats(totalAttempts, attemptsPassed);
         }
 
-        // Admins have a non-nullable category ID where 0 = all. This is why we have the
-        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
-        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
             return connection.Query<CourseDetails>(
                 @$"SELECT
@@ -358,7 +354,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
@@ -459,7 +455,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
             return connection.Query<CourseOptions>(
                 @"SELECT
@@ -473,7 +469,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL 
                         AND cu.CustomisationID = @customisationId",

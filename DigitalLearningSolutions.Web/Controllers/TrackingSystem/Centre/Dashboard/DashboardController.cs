@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -60,7 +61,10 @@
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
             var courseCount =
-                courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
+                courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
+                    centreId,
+                    CourseCategoryHelper.GetCourseCategoryFilter(adminUser.CategoryId)
+                );
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             var centreRank = centresService.GetCentreRankForCentre(centreId);

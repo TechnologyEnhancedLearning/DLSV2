@@ -21,7 +21,7 @@
         public void Setup()
         {
             courseDataService = A.Fake<ICourseDataService>();
-            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
+            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseService = new CourseService(courseDataService, courseAdminFieldsService);

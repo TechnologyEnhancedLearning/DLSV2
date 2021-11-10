@@ -7,9 +7,9 @@
 
     public interface ICourseService
     {
-        public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId);
+        public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
+        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
             int delegateId,
@@ -21,7 +21,7 @@
 
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
 
-        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
@@ -33,7 +33,7 @@
 
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
-        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
     }
 
     public class CourseService : ICourseService
@@ -47,15 +47,15 @@
             this.courseAdminFieldsService = courseAdminFieldsService;
         }
 
-        public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
+        public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
         {
-            var allCourses = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId);
+            var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId)
+        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId)
         {
-            var allCourses = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId);
+            var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
             return allCourses.Where(c => c.CentreId == centreId);
         }
 
@@ -101,9 +101,9 @@
             return true;
         }
 
-        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
-            return courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
+            return courseDataService.GetCourseDetailsFilteredByCategory(customisationId, centreId, categoryId);
         }
 
         public void UpdateLearningPathwayDefaultsForCourse(
@@ -131,13 +131,12 @@
             );
         }
 
-        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
-            return courseDataService.GetCourseOptionsForAdminCategoryId(
+            return courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId
-            );
+                categoryId);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

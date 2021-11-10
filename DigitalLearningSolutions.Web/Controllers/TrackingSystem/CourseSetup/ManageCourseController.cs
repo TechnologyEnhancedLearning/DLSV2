@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -33,10 +34,10 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
             );
 
             var model = new ManageCourseViewModel(courseDetails!);
@@ -51,10 +52,10 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
             );
 
             var model = new EditLearningPathwayDefaultsViewModel(courseDetails!);
@@ -108,10 +109,10 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
-            var courseOptions = courseService.GetCourseOptionsForAdminCategoryId(
+            var courseOptions = courseService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.GetValueOrDefault()
+                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
             );
 
             var model = new EditCourseOptionsViewModel(courseOptions!, customisationId);
