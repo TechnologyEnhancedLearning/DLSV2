@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -56,5 +58,26 @@
         public IEnumerable<FilterViewModel> Filters { get; set; }
 
         public Dictionary<string, string> RouteData { get; set; }
+
+        protected IEnumerable<T> SortFilterAndPaginate<T>(IEnumerable<T> items) where T:BaseSearchableItem
+        {
+            var sortedItems = SortItems(items);
+            var filteredItems = FilterItems(sortedItems);
+            return PaginateItems(filteredItems);
+        }
+
+        protected IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
+        {
+            return GenericSortingHelper.SortAllItems(
+                items.AsQueryable(),
+                SortBy,
+                SortDirection
+            );
+        }
+
+        protected IEnumerable<T> FilterItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
+        {
+            return FilteringHelper.FilterItems(items.AsQueryable(), FilterBy).ToList();
+        }
     }
 }

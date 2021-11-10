@@ -72,7 +72,9 @@ export function getSortValue(
 }
 
 function getElementText(searchableElement: ISearchableElement, elementName: string): string {
-  return searchableElement.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim() ?? '';
+  return searchableElement.element.querySelector(`[data-name-for-sorting="${elementName}"]`)?.textContent?.trim()
+    ?? searchableElement.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim()
+    ?? '';
 }
 
 function parseDate(dateString: string): Date {

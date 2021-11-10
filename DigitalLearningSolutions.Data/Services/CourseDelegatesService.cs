@@ -3,11 +3,12 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
 
     public interface ICourseDelegatesService
     {
-        CourseDelegatesData? GetCoursesAndCourseDelegatesForCentre(
+        CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
             int? categoryId,
             int? customisationId
@@ -30,7 +31,7 @@
             this.courseDelegatesDataService = courseDelegatesDataService;
         }
 
-        public CourseDelegatesData? GetCoursesAndCourseDelegatesForCentre(
+        public CourseDelegatesData GetCoursesAndCourseDelegatesForCentre(
             int centreId,
             int? categoryId,
             int? customisationId
@@ -40,7 +41,10 @@
 
             if (customisationId != null && courses.All(c => c.CustomisationId != customisationId))
             {
-                return null;
+                var exceptionMessage =
+                    $"No course with customisationId {customisationId} available at centre {centreId} within " +
+                    $"{(categoryId.HasValue ? $"category {categoryId}" : "any category")}";
+                throw new CourseNotFoundException(exceptionMessage);
             }
 
             var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);

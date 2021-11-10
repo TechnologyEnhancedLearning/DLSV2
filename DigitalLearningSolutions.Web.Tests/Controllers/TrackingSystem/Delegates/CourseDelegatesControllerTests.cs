@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -12,6 +13,7 @@
 
     public class CourseDelegatesControllerTests
     {
+        private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
 
@@ -20,7 +22,8 @@
         {
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
 
-            controller = new CourseDelegatesController(courseDelegatesService).WithDefaultContext().WithMockUser(true);
+            controller = new CourseDelegatesController(courseDelegatesService).WithDefaultContext()
+                .WithMockUser(true, UserCentreId);
         }
 
         [Test]
@@ -28,7 +31,7 @@
         {
             // Given
             var course = new Course { CustomisationId = 1, Active = true };
-            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(2, null, null))
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, null))
                 .Returns(new CourseDelegatesData(1, new List<Course> { course }, new List<CourseDelegate>()));
 
             // When
@@ -42,14 +45,29 @@
         public void Index_returns_Not_Found_when_service_returns_null()
         {
             // Given
-            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(2, null, 2))
-                .Returns(null);
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, 2))
+                .Throws<CourseNotFoundException>();
 
             // When
             var result = controller.Index(2);
 
             // Then
             result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void AllCourseDelegates_gets_courses_for_user_details_only()
+        {
+            // Given
+            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
+                .Returns(new List<CourseDelegate>());
+
+            // When
+            controller.AllCourseDelegates(2);
+
+            // Then
+            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
+                .MustHaveHappened();
         }
     }
 }

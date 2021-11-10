@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -102,7 +103,7 @@
 
         [Test]
         public void
-            GetCoursesAndCourseDelegatesForCentre_returns_null_when_passed_in_customisation_id_does_not_have_accessible_course()
+            GetCoursesAndCourseDelegatesForCentre_throws_exception_when_passed_in_customisation_id_does_not_have_accessible_course()
         {
             // Given
             const int customisationId = 2;
@@ -111,17 +112,14 @@
             A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
                 .Returns(new List<Course> { new Course { CustomisationId = 1 } });
 
-            // When
-            var result = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+            // Then
+            Assert.Throws<CourseNotFoundException>(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
                 centreId,
                 categoryId,
                 customisationId
-            );
-
-            // Then
+            ));
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .MustNotHaveHappened();
-            result.Should().BeNull();
         }
     }
 }

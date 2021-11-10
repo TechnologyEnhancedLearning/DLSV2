@@ -2,13 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SelectedCourseDetails : BaseSearchablePageViewModel
+    public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel
     {
-        public SelectedCourseDetails(
+        public SelectedCourseDetailsViewModel(
             CourseDelegatesData courseDelegatesData,
             string sortBy,
             string sortDirection,
@@ -20,15 +21,7 @@
             Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
                 .Active;
 
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                courseDelegatesData.Delegates.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-            var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
-            MatchingSearchResults = filteredItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
+            var paginatedItems = SortFilterAndPaginate(courseDelegatesData.Delegates);
             Delegates = paginatedItems.Select(d => new SearchableCourseDelegateViewModel(d));
             Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels();
         }
@@ -36,15 +29,8 @@
         public bool Active { get; set; }
         public IEnumerable<SearchableCourseDelegateViewModel> Delegates { get; set; }
 
-        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
-        {
-            CourseDelegatesSortByOptions.Name,
-            CourseDelegatesSortByOptions.LastUpdatedDate,
-            CourseDelegatesSortByOptions.EnrolledDate,
-            CourseDelegatesSortByOptions.CompleteByDate,
-            CourseDelegatesSortByOptions.CompletedDate,
-            CourseDelegatesSortByOptions.PassRate,
-        };
+        public override IEnumerable<(string, string)> SortOptions { get; } =
+            Enumeration.GetAll<CourseDelegatesSortByOption>().Select(o => (o.DisplayText, o.PropertyName));
 
         public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;
     }

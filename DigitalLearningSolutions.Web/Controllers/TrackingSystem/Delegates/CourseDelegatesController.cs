@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,7 +18,6 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/CourseDelegates")]
-    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     public class CourseDelegatesController : Controller
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
@@ -40,7 +41,7 @@
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
+            var newFilterBy = FilteringHelper.GetFilterBy(
                 filterBy,
                 filterValue,
                 Request,
@@ -50,17 +51,28 @@
             var centreId = User.GetCentreId();
             int? categoryId = User.GetAdminCategoryId()!.Value;
             categoryId = categoryId == 0 ? null : categoryId;
-            var courseDelegatesData =
-                courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
+            CourseDelegatesData courseDelegatesData;
 
-            if (courseDelegatesData == null)
+            try
+            {
+                courseDelegatesData =
+                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
+            }
+            catch (CourseNotFoundException)
             {
                 return NotFound();
             }
 
-            var model = new CourseDelegatesViewModel(courseDelegatesData, sortBy, sortDirection, filterBy, page);
+            var model = new CourseDelegatesViewModel(
+                courseDelegatesData,
+                "customisationId",
+                sortBy,
+                sortDirection,
+                newFilterBy,
+                page
+            );
 
-            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterBy);
             return View(model);
         }
 

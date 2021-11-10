@@ -10,6 +10,7 @@
     {
         public CourseDelegatesViewModel(
             CourseDelegatesData courseDelegatesData,
+            string customisationIdQueryParameterName,
             string sortBy,
             string sortDirection,
             string? filterBy,
@@ -23,14 +24,14 @@
             Courses = SelectListHelper.MapOptionsToSelectListItems(courseOptions, courseDelegatesData.CustomisationId);
 
             CourseDetails = courseDelegatesData.CustomisationId.HasValue
-                ? new SelectedCourseDetails(
+                ? new SelectedCourseDetailsViewModel(
                     courseDelegatesData,
                     sortBy,
                     sortDirection,
                     filterBy,
                     page,
                     new Dictionary<string, string>
-                        { { "customisationId", courseDelegatesData.CustomisationId.Value.ToString() } }
+                        { { customisationIdQueryParameterName, courseDelegatesData.CustomisationId.Value.ToString() } }
                 )
                 : null;
         }
@@ -39,6 +40,6 @@
 
         public IEnumerable<SelectListItem> Courses { get; set; }
 
-        public SelectedCourseDetails? CourseDetails { get; set; }
+        public SelectedCourseDetailsViewModel? CourseDetails { get; set; }
     }
 }
