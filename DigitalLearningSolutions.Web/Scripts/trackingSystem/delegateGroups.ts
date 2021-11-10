@@ -1,5 +1,5 @@
-import {SearchSortFilterAndPaginate} from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
-import {getAndTrimPageNumber} from "../common";
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { getAndTrimPageNumber } from '../common';
 
 const currentPage = getAndTrimPageNumber();
 

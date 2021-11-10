@@ -7,15 +7,15 @@ export default function getPathForEndpoint(endpoint: string): string {
 
 export function getAndTrimPageNumber(): number | undefined {
   const currentPath = window.location.pathname;
-  const urlParts = currentPath.split('/')
-  const pageNumber = parseInt(urlParts[urlParts.length - 1]);
+  const urlParts = currentPath.split('/');
+  const pageNumber = parseInt(urlParts[urlParts.length - 1], 10);
 
-  if (isNaN(pageNumber)) {
+  if (Number.isNaN(pageNumber)) {
     return undefined;
   }
 
-  const newUrl = urlParts.slice(0, -1).join("/");
-  history.replaceState({}, "", newUrl);
+  const newUrl = urlParts.slice(0, -1).join('/');
+  window.history.replaceState({}, '', newUrl);
 
   return pageNumber;
 }
