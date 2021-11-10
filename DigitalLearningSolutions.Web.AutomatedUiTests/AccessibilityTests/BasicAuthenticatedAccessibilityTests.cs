@@ -67,6 +67,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "Edit supervisor for Digital Literacy for the Workplace - CC Test"
+        )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
