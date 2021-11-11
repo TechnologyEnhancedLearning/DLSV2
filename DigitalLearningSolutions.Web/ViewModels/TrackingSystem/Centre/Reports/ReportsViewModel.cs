@@ -56,7 +56,7 @@
                         last,
                         DateHelper.GetFormatStringForDateInTable(last.DateInformation.Interval)
                     )
-                    : new ActivityDataRowModel(first, DateHelper.StandardDateFormat, endDate, false);
+                    : new ActivityDataRowModel(last, DateHelper.StandardDateFormat, endDate, false);
 
                 var middleRows = activity.Skip(1).SkipLast(1).Select(
                     p => new ActivityDataRowModel(
