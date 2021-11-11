@@ -400,10 +400,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             const int categoryId = 1;
 
-            // When
-            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
-
-            // Then
             var expectedActiveCourse = new Course
             {
                 CustomisationId = 17468,
@@ -423,6 +419,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 Active = false,
             };
 
+            // When
+            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
             result.Should().ContainEquivalentOf(expectedActiveCourse);
             result.Should().ContainEquivalentOf(expectedInactiveCourse);
         }

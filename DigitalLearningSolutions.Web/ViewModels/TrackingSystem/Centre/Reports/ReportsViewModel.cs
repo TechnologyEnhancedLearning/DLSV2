@@ -42,22 +42,21 @@
             }
             else
             {
-                var first = new[] { activity.First() }.Select(
-                    p => p.DateInformation.Interval == ReportInterval.Days
-                        ? new ActivityDataRowModel(
-                            p,
-                            DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
-                        )
-                        : new ActivityDataRowModel(p, DateHelper.StandardDateFormat, startDate, true)
-                );
-                var last = new[] { activity.Last() }.Select(
-                    p => p.DateInformation.Interval == ReportInterval.Days
-                        ? new ActivityDataRowModel(
-                            p,
-                            DateHelper.GetFormatStringForDateInTable(p.DateInformation.Interval)
-                        )
-                        : new ActivityDataRowModel(p, DateHelper.StandardDateFormat, endDate, false)
-                );
+                var first = activity.First();
+                var firstRow = first.DateInformation.Interval == ReportInterval.Days
+                    ? new ActivityDataRowModel(
+                        first,
+                        DateHelper.GetFormatStringForDateInTable(first.DateInformation.Interval)
+                    )
+                    : new ActivityDataRowModel(first, DateHelper.StandardDateFormat, startDate, true);
+
+                var last = activity.Last();
+                var lastRow = last.DateInformation.Interval == ReportInterval.Days
+                    ? new ActivityDataRowModel(
+                        last,
+                        DateHelper.GetFormatStringForDateInTable(last.DateInformation.Interval)
+                    )
+                    : new ActivityDataRowModel(first, DateHelper.StandardDateFormat, endDate, false);
 
                 var middleRows = activity.Skip(1).SkipLast(1).Select(
                     p => new ActivityDataRowModel(
@@ -66,7 +65,7 @@
                     )
                 );
 
-                Rows = first.Concat(middleRows).Concat(last).Reverse();
+                Rows = middleRows.Prepend(firstRow).Append(lastRow).Reverse();
             }
         }
 

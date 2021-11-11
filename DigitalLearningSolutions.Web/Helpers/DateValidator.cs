@@ -136,16 +136,7 @@
 
         private static bool StartsWithVowel(string str)
         {
-            return str.StartsWith('a')
-                   || str.StartsWith('A')
-                   || str.StartsWith('e')
-                   || str.StartsWith('E')
-                   || str.StartsWith('i')
-                   || str.StartsWith('I')
-                   || str.StartsWith('o')
-                   || str.StartsWith('O')
-                   || str.StartsWith('u')
-                   || str.StartsWith('U');
+            return "aeiouAEIOU".Contains(str[0]);
         }
 
         public class DateValidationResult

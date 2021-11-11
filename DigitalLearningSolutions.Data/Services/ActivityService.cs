@@ -145,26 +145,26 @@
             }
             else
             {
-                var first = new[] { activityData.First() }.Select(
-                    p => new WorkbookRow(
-                        p.DateInformation.GetDateRangeLabel(DateHelper.StandardDateFormat, filterData.StartDate, true),
-                        p.Registrations,
-                        p.Completions,
-                        p.Evaluations
-                    )
+                var first = activityData.First();
+                var firstRow = new WorkbookRow(
+                    first.DateInformation.GetDateRangeLabel(DateHelper.StandardDateFormat, filterData.StartDate, true),
+                    first.Registrations,
+                    first.Completions,
+                    first.Evaluations
                 );
-                var last = new[] { activityData.Last() }.Select(
-                    p => new WorkbookRow(
-                        p.DateInformation.GetDateRangeLabel(
-                            DateHelper.StandardDateFormat,
-                            filterData.EndDate ?? DateTime.Now,
-                            true
-                        ),
-                        p.Registrations,
-                        p.Completions,
-                        p.Evaluations
-                    )
+
+                var last = activityData.Last();
+                var lastRow = new WorkbookRow(
+                    last.DateInformation.GetDateRangeLabel(
+                        DateHelper.StandardDateFormat,
+                        filterData.EndDate ?? DateTime.Now,
+                        true
+                    ),
+                    last.Registrations,
+                    last.Completions,
+                    last.Evaluations
                 );
+
                 var middleRows = activityData.Skip(1).SkipLast(1).Select(
                     p => new WorkbookRow(
                         p.DateInformation.GetDateLabel(DateHelper.StandardDateFormat),
@@ -173,7 +173,7 @@
                         p.Evaluations
                     )
                 );
-                workbookData = first.Concat(middleRows).Concat(last);
+                workbookData = middleRows.Prepend(firstRow).Append(lastRow);
             }
 
             var sheet = workbook.Worksheets.Add(SheetName);
