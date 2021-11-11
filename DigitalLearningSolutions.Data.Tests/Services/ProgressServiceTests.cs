@@ -121,5 +121,19 @@
             A.CallTo(() => courseDataService.SetCompleteByDate(progressId, delegateId, completeByDate))
                 .MustHaveHappened();
         }
+
+        [Test]
+        public void UpdateCompleteByDate_throws_exception_if_no_progress_record_found()
+        {
+            // Given
+            const int progressId = 1;
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(null);
+
+            // Then
+            Assert.Throws<ProgressNotFoundException>(() => progressService.UpdateCompleteByDate(progressId, null));
+            A.CallTo(
+                () => courseDataService.SetCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+            ).MustNotHaveHappened();
+        }
     }
 }

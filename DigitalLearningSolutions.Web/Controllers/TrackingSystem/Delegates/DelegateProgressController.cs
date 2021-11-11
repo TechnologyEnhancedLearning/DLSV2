@@ -85,12 +85,7 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
-            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
-            {
-                return RedirectToAction("Index", new { progressId, accessedVia });
-            }
-
-            return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
+            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 
         [HttpGet]
@@ -127,12 +122,21 @@
             
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
+            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
+        }
+
+        private IActionResult ReturnToPreviousPage(
+            int delegateId,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {
                 return RedirectToAction("Index", new { progressId, accessedVia });
             }
 
-            return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
     }
 }
