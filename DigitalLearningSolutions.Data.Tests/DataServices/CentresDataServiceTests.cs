@@ -301,5 +301,24 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetAllCentreSummaries_returns_all_summary_details_and_reference_data()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var summaries = centresDataService.GetAllCentreSummaries();
+
+                // Then
+                summaries.Should()
+                    .OnlyContain(c => c.CentreType != null && c.RegionName != null && (c.Active || !c.Active));
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

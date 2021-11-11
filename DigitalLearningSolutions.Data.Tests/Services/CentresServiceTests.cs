@@ -3,9 +3,12 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -68,6 +71,25 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAllCentreSummaries_calls_dataService_and_returns_all_summary_details()
+        {
+            // Given
+            var centres = Builder<Centre>.CreateListOfSize(10)
+                .All()
+                .With((c, i) => c.CentreId = i + 1)
+                .Build();
+            A.CallTo(() => centresDataService.GetAllCentreSummaries()).Returns(centres);
+
+            // When
+            var result = centresService.GetAllCentreSummaries();
+
+            // Then
+            result
+                .Should()
+                .HaveCount(10);
         }
     }
 }

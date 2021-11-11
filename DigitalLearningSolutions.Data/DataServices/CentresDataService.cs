@@ -14,6 +14,7 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
+        IEnumerable<Centre> GetAllCentreSummaries();
 
         void UpdateCentreManagerDetails(
             int centreId,
@@ -159,6 +160,28 @@
             }
 
             return centre;
+        }
+
+        public IEnumerable<Centre> GetAllCentreSummaries()
+        {
+            var centres = connection.Query<Centre>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.CentreTypeId,
+                            ct.CentreType,
+                            c.Active
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId"
+            );
+
+            return centres;
         }
 
         public void UpdateCentreManagerDetails(
