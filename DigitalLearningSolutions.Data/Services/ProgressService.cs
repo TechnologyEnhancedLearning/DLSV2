@@ -8,6 +8,7 @@
     public interface IProgressService
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
+
         void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
     }
 
@@ -60,7 +61,7 @@
                 throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
             }
 
-            courseDataService.SetCompleteByDate(progressId, courseInfo.DelegateId,completeByDate);
+            courseDataService.SetCompleteByDate(progressId, courseInfo.DelegateId, completeByDate);
         }
     }
 }
