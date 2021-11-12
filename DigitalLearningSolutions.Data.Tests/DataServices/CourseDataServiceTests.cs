@@ -2,14 +2,17 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
@@ -53,6 +56,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             101
         );
 
+        private SqlConnection connection = null!;
         private CourseDataService courseDataService = null!;
 
         [OneTimeSetUp]
@@ -64,7 +68,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<CourseDataService>>();
             courseDataService = new CourseDataService(connection, logger);
         }
@@ -227,12 +231,38 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 const int candidateId = 1;
 
                 // When
-                courseDataService.RemoveCurrentCourse(progressId, candidateId);
+                courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.RemovedByDelegate);
                 var courseReturned = courseDataService.GetCurrentCourses(candidateId).ToList()
                     .Any(c => c.ProgressID == progressId);
 
                 // Then
                 courseReturned.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public async Task Remove_current_course_sets_removal_date_and_method_correctly()
+        {
+            // Given
+            var removedDate = DateTime.UtcNow;
+            const int progressId = 94323;
+            const int candidateId = 1;
+
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            try
+            {
+                // When
+                courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.NotRemoved);
+                var progressFields = await connection.GetProgressRemovedFields(progressId);
+
+                // Then
+                progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
+                progressFields.Item2.Should().BeCloseTo(removedDate);
+            }
+            finally
+            {
+                transaction.Dispose();
             }
         }
 
@@ -454,7 +484,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             const int categoryId = 0;
 
-            var defaultCourseOptions = new CourseOptions()
+            var defaultCourseOptions = new CourseOptions
             {
                 Active = true,
                 DiagObjSelect = true,
@@ -513,7 +543,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
+        public void
+            GetCourseOptionsForAdminCategoryId_with_incorrect_centerId_and_correct_customisationId_and_categoryId_returns_null()
         {
             // Given
             const int customisationId = 1379;
@@ -532,7 +563,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
+        public void
+            GetCourseOptionsForAdminCategoryId_with_incorrect_categoryId_and_correct_customisationId_and_centerId_returns_null()
         {
             // Given
             const int customisationId = 1379;
