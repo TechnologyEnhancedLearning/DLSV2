@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -10,8 +11,6 @@
 
     public class TrackerActionServiceTests
     {
-        private const string EmptyObjectJson = "{}";
-
         private ITutorialContentDataService dataService = null!;
         private ITrackerActionService trackerActionService = null!;
 
@@ -28,16 +27,13 @@
         {
             // given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
-                .Returns(new[] { new Objective(1, "6,7,8", 4), new Objective(2, "17,18,19", 0) });
-            var expectedJson =
-                "{\"objectives\":[{\"tutorialid\":1,\"interactions\":[6,7,8],\"possible\":4,\"myscore\":0}," +
-                "{\"tutorialid\":2,\"interactions\":[17,18,19],\"possible\":0,\"myscore\":0}]}";
+                .Returns(new[] { new Objective(1, new List<int> { 6, 7, 8 }, 4), new Objective(2, new List<int> { 17, 18, 19 }, 0) });
 
             // when
             var result = trackerActionService.GetObjectiveArray(1, 1);
 
             // then
-            result.Should().Be(expectedJson);
+            result.Should().BeEquivalentTo(new GetObjectiveArrayData(new[] { new Objective(1, new List<int> { 6, 7, 8 }, 4), new Objective(2, new List<int> { 17, 18, 19 }, 0) }));
         }
 
         [Test]
@@ -51,27 +47,27 @@
             var result = trackerActionService.GetObjectiveArray(1, 1);
 
             // then
-            result.Should().Be(EmptyObjectJson);
+            result.Should().Be(null);
         }
 
         [Test]
         [TestCase(null, null)]
         [TestCase(1, null)]
         [TestCase(null, 1)]
-        public void GetObjectiveArray_returns_empty_object_json_if_parameter_missing(
+        public void GetObjectiveArray_returns_null_if_parameter_missing(
             int? customisationId,
             int? sectionId
         )
         {
             // given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
-                .Returns(new[] { new Objective(1, "1", 9) });
+                .Returns(new[] { new Objective(1, new List<int>{1}, 9) });
 
             // when
             var result = trackerActionService.GetObjectiveArray(customisationId, sectionId);
 
             // then
-            result.Should().Be(EmptyObjectJson);
+            result.Should().Be(null);
         }
     }
 }

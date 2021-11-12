@@ -4,6 +4,8 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Serialization;
 
     public interface ITrackerService
     {
@@ -14,11 +16,13 @@
     {
         private readonly ILogger<TrackerService> logger;
         private readonly ITrackerActionService trackerActionService;
+        private readonly JsonSerializerSettings settings;
 
         public TrackerService(ILogger<TrackerService> logger, ITrackerActionService trackerActionService)
         {
             this.logger = logger;
             this.trackerActionService = trackerActionService;
+            settings = new JsonSerializerSettings { ContractResolver = new LowercaseContractResolver() };
         }
 
         public string ProcessQuery(TrackerEndpointQueryParams query)
@@ -32,7 +36,7 @@
             {
                 if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
                 {
-                    return action switch
+                    var actionDataResult = action switch
                     {
                         TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(
                             query.CustomisationId,
@@ -40,6 +44,8 @@
                         ),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
+
+                    return ConvertToJsonString(actionDataResult);
                 }
 
                 return TrackerEndpointErrorResponse.InvalidAction;
@@ -48,6 +54,24 @@
             {
                 logger.LogError(ex, $"Error processing {query.Action}");
                 return TrackerEndpointErrorResponse.UnexpectedException;
+            }
+        }
+
+        private string ConvertToJsonString(ITrackerEndpointDataModel? foo)
+        {
+            if (foo == null)
+            {
+                return JsonConvert.SerializeObject(new { });
+            }
+
+            return JsonConvert.SerializeObject(foo, settings);
+        }
+
+        private class LowercaseContractResolver : DefaultContractResolver
+        {
+            protected override string ResolvePropertyName(string propertyName)
+            {
+                return propertyName.ToLower();
             }
         }
     }

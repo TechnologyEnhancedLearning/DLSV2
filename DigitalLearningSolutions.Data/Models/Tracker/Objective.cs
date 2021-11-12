@@ -1,16 +1,13 @@
-﻿namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models.Tracker
 {
     using System.Collections.Generic;
-    using System.Linq;
 
     public class Objective
     {
-        public Objective(int tutorialId, string interactions, int possible)
+        public Objective(int tutorialId, IEnumerable<int> interactions, int possible)
         {
             TutorialId = tutorialId;
-            Interactions = string.IsNullOrEmpty(interactions)
-                ? new List<int>()
-                : interactions.Split(',').Select(int.Parse);
+            Interactions = interactions;
             Possible = possible;
             MyScore = 0;
         }
