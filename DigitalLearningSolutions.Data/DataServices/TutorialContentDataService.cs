@@ -28,7 +28,7 @@
             bool learningEnabled
         );
 
-        IEnumerable<Objective> GetObjectivesBySectionId(int sectionId, int customisationId);
+        IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -347,7 +347,7 @@
             );
         }
 
-        public IEnumerable<Objective> GetObjectivesBySectionId(int sectionId, int customisationId)
+        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId)
         {
             return connection.Query<Objective>(
                 @"SELECT 

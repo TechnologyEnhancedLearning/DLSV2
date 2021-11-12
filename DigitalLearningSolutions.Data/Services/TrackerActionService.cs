@@ -28,7 +28,8 @@
                 return JsonConvert.SerializeObject(new { });
             }
 
-            var objectives = tutorialContentDataService.GetObjectivesBySectionId(sectionId.Value, customisationId.Value)
+            var objectives = tutorialContentDataService
+                .GetNonArchivedObjectivesBySectionAndCustomisationId(sectionId.Value, customisationId.Value)
                 .ToList();
 
             object objectiveArrayObject = objectives.Any() ? (object)new { objectives } : new { };

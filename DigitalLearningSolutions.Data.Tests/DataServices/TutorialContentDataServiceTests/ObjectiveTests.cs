@@ -8,10 +8,11 @@
     internal partial class TutorialContentDataServiceTests
     {
         [Test]
-        public void GetObjectivesBySectionId_returns_objectives_correctly()
+        public void GetNonArchivedObjectivesBySectionAndCustomisationId_returns_objectives_correctly()
         {
             // When
-            var result = tutorialContentDataService.GetObjectivesBySectionId(248, 22062).ToList();
+            var result = tutorialContentDataService.GetNonArchivedObjectivesBySectionAndCustomisationId(248, 22062)
+                .ToList();
 
             // Then
             using (new AssertionScope())

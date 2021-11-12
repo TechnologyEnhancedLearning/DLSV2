@@ -27,7 +27,7 @@
         public void GetObjectiveArray_returns_results_in_specified_json_format()
         {
             // given
-            A.CallTo(() => dataService.GetObjectivesBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
                 .Returns(new[] { new Objective(1, "6,7,8", 4), new Objective(2, "17,18,19", 0) });
             var expectedJson =
                 "{\"objectives\":[{\"tutorialid\":1,\"interactions\":[6,7,8],\"possible\":4,\"myscore\":0}," +
@@ -44,7 +44,7 @@
         public void GetObjectiveArray_returns_empty_object_json_if_no_results_found()
         {
             // given
-            A.CallTo(() => dataService.GetObjectivesBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
                 .Returns(new List<Objective>());
 
             // when
@@ -64,7 +64,7 @@
         )
         {
             // given
-            A.CallTo(() => dataService.GetObjectivesBySectionId(A<int>._, A<int>._))
+            A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
                 .Returns(new[] { new Objective(1, "1", 9) });
 
             // when
