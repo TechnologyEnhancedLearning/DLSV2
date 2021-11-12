@@ -37,7 +37,9 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+
+        IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
@@ -386,7 +388,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId)
+        public IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
                 @"SELECT
@@ -397,11 +399,32 @@ namespace DigitalLearningSolutions.Data.DataServices
                         c.CustomisationName,
                         c.Active
                     FROM Customisations AS c
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    WHERE (c.CentreID = @centreId OR (c.AllCentres = 1 AND ca.Active = 1))
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
+                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
+                    AND ca.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ca.CentreID = @centreId
+                    AND ap.ArchivedDate IS NULL",
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT DISTINCT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        ap.ApplicationName,
+                        c.CustomisationName,
+                        c.Active
+                    FROM Candidates AS cn
+                    INNER JOIN Progress AS p ON p.CandidateID = cn.CandidateID
+                    INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    WHERE cn.CentreID = @centreID
+	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
