@@ -455,5 +455,66 @@
 
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
+
+        [Test]
+        public void EditGroupName_should_redirect_to_index_action_when_update_is_successful()
+        {
+            // Given
+            const int groupId = 103;
+            const int centreId = 2;
+            var model = new EditGroupNameViewModel()
+            {
+                GroupName = "Test Group Name",
+            };
+
+            A.CallTo(() => groupsDataService.UpdateGroupName(
+                groupId,
+                centreId,
+                model.GroupName)).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.EditGroupName(model, groupId);
+
+            // Then
+            A.CallTo(() => groupsDataService.UpdateGroupName(
+                    groupId,
+                    centreId,
+                    model.GroupName))
+                .MustHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void EditGroupName_should_redirect_to_not_found_page_when_linked_to_field_is_not_zero()
+        {
+            // Given
+            var model = new EditGroupNameViewModel() { GroupName = "Test Group Name" };
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
+                .Returns(new Group{LinkedToField = 1});
+
+            // When
+            var result = delegateGroupsController.EditGroupName(1);
+
+            // Them
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void EditGroupName_should_redirect_to_not_found_page_with_incorrect_centre_id()
+        {
+            // Given
+            var model = new EditGroupNameViewModel() { GroupName = "Test Group Name" };
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
+                .Returns(null);
+
+            // When
+            var result = delegateGroupsController.EditGroupName(1);
+
+            // Them
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
+            result.Should().BeNotFoundResult();
+        }
     }
 }

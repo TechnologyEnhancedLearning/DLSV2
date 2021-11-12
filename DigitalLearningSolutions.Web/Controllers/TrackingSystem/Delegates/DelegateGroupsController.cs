@@ -300,6 +300,41 @@
             return RedirectToAction("Index");
         }
 
+        [Route("{groupId:int}/EditGroupName")]
+        [HttpGet]
+        public IActionResult EditGroupName(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group is null || group.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
+            var model = new EditGroupNameViewModel(groupId, group.GroupLabel);
+            return View(model);
+        }
+
+        [Route("{groupId:int}/EditGroupName")]
+        [HttpPost]
+        public IActionResult EditGroupName(EditGroupNameViewModel model, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            groupsDataService.UpdateGroupName(
+                groupId,
+                centreId,
+                model.GroupName
+            );
+
+            return RedirectToAction("Index");
+        }
+
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
