@@ -2,43 +2,29 @@
 @model AssessmentQuestion
 <span class="status-tag">
 
-  @if (Model.SelfAssessmentResultSupervisorVerificationId == null)
+  @if (Model.SelfAssessmentResultSupervisorVerificationId != null)
   {
-
-    if (Model.Result != null)
+    if (Model.Verified != null)
     {
-      <span class="nhsuk-tag nhsuk-tag status-tag">
-        Self assessed
-      </span>
+      if ((bool)Model.SignedOff)
+      {
+        <span class="nhsuk-tag nhsuk-tag--green status-tag">
+          Verified
+        </span>
+      }
+      else
+      {
+        <span class="nhsuk-tag nhsuk-tag--red status-tag">
+          Rejected
+        </span>
+      }
     }
     else
     {
-      <span class="nhsuk-tag nhsuk-tag--grey status-tag">
-        Not started
-      </span>
-    }
-  }
-  else if (Model.Verified != null)
-  {
-    if ((bool)Model.SignedOff)
-    {
-      <span class="nhsuk-tag nhsuk-tag--green status-tag">
-        Verified
-      </span>
-    }
-    else
-    {
-      <span class="nhsuk-tag nhsuk-tag--red status-tag">
-        Rejected
-      </span>
-    }
-  }
-  else
-  {
-
       <span class="nhsuk-tag nhsuk-tag--yellow status-tag">
         Awaiting verification
       </span>
-  }
+    }
 
+  }
 </span>

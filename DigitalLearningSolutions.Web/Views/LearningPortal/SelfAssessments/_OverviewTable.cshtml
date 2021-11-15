@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model IGrouping<string, Competency>;
 
-
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
   @if (!(bool)ViewData["linearNavigation"])
   {
@@ -18,9 +17,12 @@
       <th role="columnheader" class="" scope="col">
         My response
       </th>
-      <th role="columnheader" class="" scope="col">
-        Status
-      </th>
+      @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
+      {
+        <th role="columnheader" class="" scope="col">
+          Verification status
+        </th>
+      }
       <th role="columnheader" class="" scope="col">
         <span class="nhsuk-u-visually-hidden">Actions</span>
       </th>
