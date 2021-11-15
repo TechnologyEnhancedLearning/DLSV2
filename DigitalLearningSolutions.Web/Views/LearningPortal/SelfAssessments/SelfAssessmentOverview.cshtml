@@ -44,7 +44,10 @@
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
           }
 
-          <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
+          <partial name="SelfAssessments/_OverviewTable" view-data="@(
+            new ViewDataDictionary(ViewData) {
+              { "linearNavigation", Model.SelfAssessment.LinearNavigation },
+              { "selfAssessment", Model.SelfAssessment } })" model="competencyGroup" />
 
         </div>
       </details>
