@@ -2,16 +2,22 @@
 @model DeactivateAdminViewModel
 
 @{
-  ViewData["Title"] = !ViewData.ModelState.IsValid ? "Error: " : "" + "Deactivate Admin Account";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: " : "" + "Deactivate Admin Account";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+    }
+
     <h1 class="nhsuk-heading-l">Are you sure you would like to deactivate this admin account?</h1>
   </div>
 </div>
 
-<div class="nhsuk-grid-row nhsuk-u-margin-6">
+
+<div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s">
     <div class="nhsuk-u-font-weight-bold">
       User
