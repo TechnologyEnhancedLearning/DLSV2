@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using System;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -96,24 +95,52 @@
 
         [HttpGet]
         [Route("EditCompletionDate")]
-        public IActionResult DelegateProgressEditCompletionDateViewModel(int progressId, string customisationName)
+        public IActionResult EditCompletionDate(int progressId, DelegateProgressAccessRoute accessedVia)
         {
-            Console.WriteLine("hello");
-            //todo do we need to use 'Accessed via' in here?
+            var centreId = User.GetCentreId();
+            var delegateCourseProgress =
+                courseService.GetDelegateCourseProgress(progressId, centreId);
 
             //todo want to get the details of the course from a service method OR pass them in as temp data?
-            var model = new DelegateProgressEditCompletionDateViewModel(progressId, customisationName, null, null, null);
+            var model = new EditCompletionDateViewModel(progressId, accessedVia, delegateCourseProgress!.DelegateCourseInfo);
             return View(model);
         }
 
           [HttpPost]
           [Route("EditCompletionDate")]
-          public IActionResult EditCompletionDate(int progressId, DelegateProgressEditCompletionDateViewModel model)
+          public IActionResult EditCompletionDate(
+              EditCompletionDateFormData formData,
+              int progressId,
+              DelegateProgressAccessRoute accessedVia)
           {
-              //we probably need to write a model to pass into this with the progress id and the date in the d.m.y format?
-              Console.WriteLine("save the new date");
-              courseService.UpdateCompletionDate(progressId, model.Day, model.Month, model.Year);
-              return RedirectToAction("Index"); //it should take you back to where you were before the same place the cancel link goes to
+              if (!ModelState.IsValid)
+              {
+                  var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
+                  return View(model);
+              }
+
+              var completionDate = formData.Year != null
+                  ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                  : (DateTime?)null;
+
+              courseService.UpdateCompletionDate(progressId, completionDate);
+              return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
+          }
+
+          private IActionResult ReturnToPreviousPage(
+              int delegateId,
+              int progressId,
+              DelegateProgressAccessRoute accessedVia
+          )
+          {
+
+
+              if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+              {
+                  return RedirectToAction("Index", new { progressId, accessedVia });
+              }
+
+              return RedirectToAction("Index", "ViewDelegate", new { delegateId });
           }
     }
 }

@@ -1,5 +1,8 @@
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
-@model DelegateProgressEditCompletionDateViewModel
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EditCompletionDateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -9,6 +12,15 @@
   var exampleDate = DateTime.Today;
   var completionDateCss = "nhsuk-checkboxes__conditional"
                           + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  var routeParamsForBackLink = new Dictionary<string, string?>();
+
+  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
+    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+  }
+  //Console.WriteLine(routeParamsForBackLink["accessedVia"]);
 }
 
 <div class="nhsuk-grid-row">
@@ -17,7 +29,7 @@
       //<vc:error-summary order-of-property-names="@new []{ nameof(@Model.NewCompletionDate), nameof(@Model.NewCompletionDate) }" />
     }
 
-    <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CustomisationName</h1>
+    <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CourseName</h1>
 
     <p class="nhsuk-lede-text nhsuk-u-margin-top-4">
       For example 1 7 2021. Leave the boxes blank to clear the completion date.
@@ -39,7 +51,11 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    @* <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" /> *@
+     @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+          <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+        } else {
+          <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+        }
   </div>
 </div>
 
