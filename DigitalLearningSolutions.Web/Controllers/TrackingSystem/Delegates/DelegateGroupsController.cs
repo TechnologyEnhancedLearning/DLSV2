@@ -307,7 +307,7 @@
         }
 
         [HttpGet]
-        [Route("{groupId:int}/Courses/Add/{customisationId:int}/")]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult AddCourseToGroup(int groupId, int customisationId)
@@ -316,13 +316,13 @@
             var categoryId = User.GetAdminCategoryId()!.Value;
             var groupLabel = groupsDataService.GetGroupName(groupId, centreId)!;
             var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
-            var supervisors = userService.GetSupervisorsAtCentreInCategory(centreId, courseDetails!.CourseCategoryId);
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseDetails!.CourseCategoryId);
             var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseDetails);
             return View(viewModel);
         }
 
         [HttpPost]
-        [Route("{groupId:int}/Courses/Add/{customisationId:int}/")]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
@@ -330,7 +330,7 @@
             if (!ModelState.IsValid)
             {
                 var courseCategoryId = courseService.GetCourseCategoryId(customisationId);
-                var supervisors = userService.GetSupervisorsAtCentreInCategory(User.GetCentreId(), courseCategoryId);
+                var supervisors = userService.GetSupervisorsAtCentreForCategory(User.GetCentreId(), courseCategoryId);
                 var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
                 return View(model);
             }

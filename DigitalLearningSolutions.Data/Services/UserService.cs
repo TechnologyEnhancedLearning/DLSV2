@@ -59,7 +59,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
 
-        IEnumerable<AdminUser> GetSupervisorsAtCentreInCategory(int centreId, int categoryId);
+        IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId);
     }
 
     public class UserService : IUserService
@@ -373,7 +373,7 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor);
         }
 
-        public IEnumerable<AdminUser> GetSupervisorsAtCentreInCategory(int centreId, int categoryId)
+        public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
                 .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);

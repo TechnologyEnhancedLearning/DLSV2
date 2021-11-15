@@ -13,13 +13,13 @@
             int groupId,
             int customisationId,
             IEnumerable<AdminUser> supervisors,
-            string? groupName,
+            string groupName,
             CourseDetails courseDetails
         ) : base(groupName, courseDetails)
         {
             GroupId = groupId;
             CustomisationId = customisationId;
-            Supervisors = PopulateSupervisors(null, supervisors);
+            Supervisors = PopulateSupervisors(supervisors);
         }
 
         public AddCourseViewModel(
@@ -31,14 +31,14 @@
         {
             GroupId = groupId;
             CustomisationId = customisationId;
-            Supervisors = PopulateSupervisors(formData.SupervisorId, supervisors);
+            Supervisors = PopulateSupervisors(supervisors, formData.SupervisorId);
         }
 
         public int GroupId { get; set; }
         public int CustomisationId { get; set; }
         public IEnumerable<SelectListItem> Supervisors { get; set; }
 
-        private static IEnumerable<SelectListItem> PopulateSupervisors(int? supervisorId, IEnumerable<AdminUser> supervisors)
+        private static IEnumerable<SelectListItem> PopulateSupervisors(IEnumerable<AdminUser> supervisors, int? supervisorId = null)
         {
             var supervisorIdNames = supervisors.Select(s => (s.Id, s.FullName));
             return SelectListHelper.MapOptionsToSelectListItems(

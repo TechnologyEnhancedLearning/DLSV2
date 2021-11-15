@@ -7,7 +7,7 @@
     {
         public AddCourseFormData() { }
 
-        protected AddCourseFormData(string? groupName, CourseDetails courseDetails)
+        protected AddCourseFormData(string groupName, CourseDetails courseDetails)
         {
             GroupName = groupName;
             CourseName = courseDetails.CourseName;
@@ -27,7 +27,7 @@
         [WholeNumberWithinInclusiveRange(0, 36, "Enter a whole number from 0 to 36")]
         public string? MonthsToComplete { get; set; }
 
-        public string? GroupName { get; set; }
-        public string? CourseName { get; set; }
+        public string GroupName { get; set; }
+        public string CourseName { get; set; }
     }
 }
