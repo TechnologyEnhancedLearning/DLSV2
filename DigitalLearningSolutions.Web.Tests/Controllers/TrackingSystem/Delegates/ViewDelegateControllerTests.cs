@@ -81,7 +81,7 @@
             A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
                 .Returns(new CourseNameInfo());
             A.CallTo(
-                    () => courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+                    () => courseService.RemoveDelegateFromCourse(
                         1,
                         1,
                         RemovalMethod.RemovedByAdmin
@@ -106,7 +106,7 @@
             A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
                 .Returns(new CourseNameInfo());
             A.CallTo(
-                    () => courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+                    () => courseService.RemoveDelegateFromCourse(
                         1,
                         1,
                         RemovalMethod.RemovedByAdmin

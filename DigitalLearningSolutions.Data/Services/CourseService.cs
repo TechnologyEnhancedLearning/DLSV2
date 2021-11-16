@@ -12,7 +12,9 @@
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
 
-        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+        public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
+
+        public void RemoveDelegateFromCourse(
             int delegateId,
             int customisationId,
             RemovalMethod removalMethod
@@ -153,7 +155,14 @@
             );
         }
 
-        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+        public bool DelegateHasCurrentProgress(int delegateId, int customisationId)
+        {
+            return progressDataService
+                .GetDelegateProgressForCourse(delegateId, customisationId)
+                .Any(p => p.Completed == null && p.RemovedDate == null);
+        }
+
+        public void RemoveDelegateFromCourse(
             int delegateId,
             int customisationId,
             RemovalMethod removalMethod
@@ -164,17 +173,10 @@
                 .Select(p => p.ProgressId)
                 .ToList();
 
-            if (!currentProgressIds.Any())
-            {
-                return false;
-            }
-
             foreach (var progressId in currentProgressIds)
             {
                 courseDataService.RemoveCurrentCourse(progressId, delegateId, removalMethod);
             }
-
-            return true;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
