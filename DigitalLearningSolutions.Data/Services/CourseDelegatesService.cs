@@ -37,7 +37,7 @@
             int? customisationId
         )
         {
-            var courses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
+            var courses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
 
             if (customisationId != null && courses.All(c => c.CustomisationId != customisationId))
             {

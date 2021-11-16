@@ -109,7 +109,7 @@
             const int customisationId = 2;
             const int centreId = 2;
             const int categoryId = 1;
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(new List<Course> { new Course { CustomisationId = 1 } });
 
             // Then
