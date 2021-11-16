@@ -9,7 +9,6 @@
     public interface IProgressDataService
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
-
         void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
         int CreateNewDelegateProgress(
@@ -24,9 +23,11 @@
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
+        void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
+        void ClearAspProgressVerificationRequest(int progressId);
     }
 
-    public class ProgressDataService: IProgressDataService
+    public class ProgressDataService : IProgressDataService
     {
         private readonly IDbConnection connection;
 
@@ -34,7 +35,7 @@
         {
             this.connection = connection;
         }
-        
+
         public IEnumerable<Progress> GetDelegateProgressForCourse(
             int delegateId,
             int customisationId
@@ -128,6 +129,36 @@
                 @"INSERT INTO aspProgress (TutorialId, ProgressId)
                     VALUES (@tutorialId, @progressId)",
                 new { tutorialId, progressId }
+            );
+        }
+
+        public void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId)
+        {
+            connection.Execute(
+                @"INSERT INTO aspProgress
+                    (TutorialID, ProgressID)
+                    SELECT
+                        @tutorialID,
+                        ProgressID
+                    FROM Progress
+                    WHERE RemovedDate IS NULL
+                        AND CustomisationID = @customisationID
+                        AND ProgressID NOT IN
+                            (SELECT ProgressID
+                            FROM aspProgress
+                            WHERE TutorialID = @tutorialID
+                                AND CustomisationID = @customisationID)",
+                new { tutorialId, customisationId }
+            );
+        }
+
+        public void ClearAspProgressVerificationRequest(int progressId)
+        {
+            connection.Execute(
+                @"UPDATE aspProgress SET
+                        SupervisorVerificationRequested = NULL
+                    WHERE ProgressID = @progressId",
+                new { progressId }
             );
         }
     }

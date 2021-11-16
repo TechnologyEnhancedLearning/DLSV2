@@ -28,7 +28,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -61,7 +61,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -95,7 +95,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -115,6 +115,7 @@
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeStartedEnrolments = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -129,7 +130,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -141,9 +142,58 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
+                    removeStartedEnrolments,
+                    testDate
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            SynchroniseUserChangesWithGroups_removes_delegate_from_synchronised_old_answer_group_when_group_label_includes_prompt_name()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeStartedEnrolments = false;
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
+            A.CallTo(
+                () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
+                    reusableDelegateDetails.CentreId,
+                    1
+                )
+            ).Returns("Prompt Name");
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "Prompt Name - old answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { synchronisedGroup }
+            );
+
+            // When
+            groupsService.SynchroniseUserChangesWithGroups(
+                reusableDelegateDetails,
+                reusableMyAccountDetailsData,
+                centreAnswersData
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                    synchronisedGroup.GroupId,
+                    reusableDelegateDetails.Id
+                )
+            ).MustHaveHappened();
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    synchronisedGroup.GroupId,
+                    reusableDelegateDetails.Id,
+                    removeStartedEnrolments,
                     testDate
                 )
             ).MustHaveHappened();
@@ -168,7 +218,49 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
+                centreAnswersData
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.AddDelegateToGroup(
+                    reusableDelegateDetails.Id,
+                    synchronisedGroup.GroupId,
+                    testDate,
+                    1
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
+        public void
+            SynchroniseUserChangesWithGroups_adds_delegate_to_synchronised_new_answer_group_when_group_label_includes_prompt_name()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
+            A.CallTo(
+                () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
+                    reusableDelegateDetails.CentreId,
+                    1
+                )
+            ).Returns("Prompt Name");
+
+            var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
+                5,
+                "Prompt Name - new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { synchronisedGroup }
+            );
+
+            // When
+            groupsService.SynchroniseUserChangesWithGroups(
+                reusableDelegateDetails,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 

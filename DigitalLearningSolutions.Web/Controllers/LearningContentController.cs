@@ -1,22 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningContent;
     using Microsoft.AspNetCore.Mvc;
 
     [RedirectDelegateOnlyToLearningPortal]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+    [SetSelectedTab(nameof(NavMenuTab.Welcome))]
     public class LearningContentController : Controller
     {
         private const string ItSkillsPathwayBrand = "ITSkillsPathway";
-        private const string ItSkillsPathwayTitle = "IT skills pathway";
+        private const string ItSkillsPathwayTitle = "IT Skills Pathway";
         private const string ReasonableAdjustmentFlagBrand = "ReasonableAdjustmentFlag";
-        private const string ReasonableAdjustmentFlagTitle = "Reasonable adjustment flag";
+        private const string ReasonableAdjustmentFlagTitle = "Reasonable Adjustment Flag";
 
         private const string TerminologyAndClassificationsDeliveryServiceBrand =
             "TerminologyandClassificationsDeliveryService";
 
         private const string TerminologyAndClassificationsDeliveryServiceTitle =
-            "Terminology and classifications delivery service";
+            "Terminology and Classifications Delivery Service";
 
         public IActionResult ItSkillsPathway()
         {
@@ -35,7 +39,7 @@
             var model = new LearningContentViewModel(
                 TerminologyAndClassificationsDeliveryServiceBrand,
                 TerminologyAndClassificationsDeliveryServiceTitle,
-                titleIsLong: true
+                true
             );
             return View("Index", model);
         }

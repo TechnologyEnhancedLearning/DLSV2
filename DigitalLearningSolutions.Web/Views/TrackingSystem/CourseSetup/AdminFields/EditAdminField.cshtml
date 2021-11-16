@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Extensions
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -10,15 +11,8 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit Course Admin Field";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit course admin field" : "Edit course admin field";
+  var cancelLinkData = Html.GetRouteValues();
 }
 
 <div class="nhsuk-grid-row">

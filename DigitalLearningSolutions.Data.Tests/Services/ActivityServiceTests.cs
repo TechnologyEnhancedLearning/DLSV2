@@ -65,8 +65,8 @@
                     LogDate = DateTime.Parse("2015-12-22"),
                     LogYear = 2015,
                     LogQuarter = 4,
-                    LogMonth = 12
-                }
+                    LogMonth = 12,
+                },
             };
             GivenActivityDataServiceReturnsSpecifiedResult(expectedActivityResult);
 
@@ -205,10 +205,11 @@
         }
 
         [Test]
-        public void GetFilterOptions_returns_courses_in_alphabetical_order()
+        public void GetFilterOptions_returns_distinct_courses_in_active_status_then_alphabetical_order()
         {
             // Given
-            var expectedCourses = new[] { (2, "A Course"), (1, "B Course") };
+            var expectedCourses = new[]
+                { (2, "B Course"), (1, "C Course"), (4, "Inactive - A Course"), (3, "Inactive - D Course") };
 
             const int centreId = 1;
             const int categoryId = 1;
@@ -249,7 +250,7 @@
         }
 
         [Test]
-        public void GetFilterNames_returns_expected_job_group_name_with_non_null_job_groud_id_filter()
+        public void GetFilterNames_returns_expected_job_group_name_with_non_null_job_group_id_filter()
         {
             // Given
             var filterData = new ActivityFilterData(
@@ -324,18 +325,26 @@
             var categories = new List<Category>
             {
                 new Category { CourseCategoryID = 1, CategoryName = "Category 1" },
-                new Category { CourseCategoryID = 2, CategoryName = "Category 2" }
+                new Category { CourseCategoryID = 2, CategoryName = "Category 2" },
             };
-            var courses = new List<Course>
+            var availableCourses = new List<Course>
             {
-                new Course { CustomisationId = 1, ApplicationName = "B Course" },
-                new Course { CustomisationId = 2, ApplicationName = "A Course" }
+                new Course { CustomisationId = 1, ApplicationName = "C Course", Active = true },
+                new Course { CustomisationId = 2, ApplicationName = "B Course", Active = true },
+            };
+            var historicalCourses = new List<Course>
+            {
+                new Course { CustomisationId = 1, ApplicationName = "C Course", Active = true },
+                new Course { CustomisationId = 3, ApplicationName = "D Course", Active = false },
+                new Course { CustomisationId = 4, ApplicationName = "A Course", Active = false },
             };
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(jobGroups);
             A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId))
                 .Returns(categories);
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
-                .Returns(courses);
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(availableCourses);
+            A.CallTo(() => courseDataService.GetCoursesEverUsedAtCentreByCategory(centreId, categoryId))
+                .Returns(historicalCourses);
         }
 
         [Test]
@@ -471,8 +480,8 @@
                     LogDate = DateTime.Parse("2020-12-22"),
                     LogYear = 2020,
                     LogQuarter = 4,
-                    LogMonth = 12
-                }
+                    LogMonth = 12,
+                },
             };
             GivenActivityDataServiceReturnsSpecifiedResult(activityResult);
         }

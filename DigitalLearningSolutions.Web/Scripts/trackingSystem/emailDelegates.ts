@@ -1,33 +1,19 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { selectAll, deselectAll } from '../common';
 
 const selectedElements = document.querySelectorAll('.delegate-checkbox:checked') as NodeListOf<HTMLInputElement>;
 const selectedIds = Array.from(selectedElements).map((el) => el.value);
 const queryParams = selectedIds.map((id, index) => `selectedIds[${index}]=${id}`);
 const route = `TrackingSystem/Delegates/Email/AllEmailDelegateItems?${queryParams.join('&')}`;
+const checkboxSelector = '.delegate-checkbox';
 
 // eslint-disable-next-line no-new
 new SearchSortFilterAndPaginate(route, false, false, true, 'EmailDelegateFilter');
 setUpSelectAndDeselectButtons();
 
 function alertResultCount(): void {
-  // un-assign and re-assign the alert role to results-count so a screen-reader re-reads it
   const resultCount = document.getElementById('results-count') as HTMLSpanElement;
-  resultCount.setAttribute('role', '');
-  resultCount.setAttribute('role', 'alert');
-}
-
-function selectAll(): void {
-  const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (!checkbox.checked) checkbox.click();
-  });
-}
-
-function deselectAll(): void {
-  const allCheckboxes = document.querySelectorAll('.delegate-checkbox') as NodeListOf<HTMLInputElement>;
-  allCheckboxes.forEach((checkbox) => {
-    if (checkbox.checked) checkbox.click();
-  });
+  resultCount.innerHTML = getModifiedResultCountMessageForScreenReader(resultCount);
 }
 
 function setUpSelectAndDeselectButtons(): void {
@@ -39,13 +25,25 @@ function setUpSelectAndDeselectButtons(): void {
 
   selectAllButton.addEventListener('click',
     () => {
-      selectAll();
+      selectAll(checkboxSelector);
       alertResultCount();
     });
 
   deselectAllButton.addEventListener('click',
     () => {
-      deselectAll();
+      deselectAll(checkboxSelector);
       alertResultCount();
     });
+}
+
+function getModifiedResultCountMessageForScreenReader(
+  resultsCountElement: HTMLSpanElement,
+): string {
+  const resultCountMessage = resultsCountElement.innerHTML;
+  const indexOfSpace = resultCountMessage.search('&nbsp');
+
+  if (indexOfSpace === -1) {
+    return `${resultCountMessage}&nbsp`;
+  }
+  return resultCountMessage.substring(0, indexOfSpace);
 }

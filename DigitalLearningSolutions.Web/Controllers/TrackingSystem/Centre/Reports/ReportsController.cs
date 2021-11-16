@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("/TrackingSystem/Centre/Reports")]
     public class ReportsController : Controller
     {
@@ -59,7 +62,13 @@
 
             var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
 
-            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns);
+            var model = new ReportsViewModel(
+                activity,
+                filterModel,
+                evaluationResponseBreakdowns,
+                filterData.StartDate,
+                filterData.EndDate ?? DateTime.Today
+            );
             return View(model);
         }
 
@@ -173,6 +182,47 @@
             );
         }
 
+        [HttpGet]
+        [Route("DownloadEvaluationSummaries")]
+        public IActionResult DownloadEvaluationSummaries(
+            int? jobGroupId,
+            int? courseCategoryId,
+            int? customisationId,
+            string startDate,
+            string endDate,
+            ReportInterval reportInterval
+            )
+        {
+            var centreId = User.GetCentreId();
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var dateRange =
+                activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
+
+            if (dateRange == null)
+            {
+                return new NotFoundResult();
+            }
+
+            var filterData = new ActivityFilterData(
+                dateRange.Value.startDate,
+                dateRange.Value.endDate,
+                jobGroupId,
+                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                customisationId,
+                customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
+                reportInterval
+            );
+
+            var content = evaluationSummaryService.GetEvaluationSummaryFileForCentre(centreId, filterData);
+            return File(
+                content,
+                FileHelper.ExcelContentType,
+                $"DLS Evaluation Stats {DateTime.Today:yyyy-MM-dd}.xlsx"
+            );
+        }
+
         private ReportsFilterOptions GetDropdownValues(
             int centreId,
             AdminUser adminUser
@@ -180,7 +230,7 @@
         {
             return activityService.GetFilterOptions(
                 centreId,
-                adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                adminUser.CategoryIdFilter
             );
         }
     }

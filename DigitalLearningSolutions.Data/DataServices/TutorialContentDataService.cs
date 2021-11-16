@@ -20,6 +20,7 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
+        void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -295,8 +296,8 @@
                     FROM dbo.Tutorials AS tu
                     LEFT JOIN dbo.CustomisationTutorials AS ct
                         ON ct.TutorialID = tu.TutorialID AND ct.CustomisationID = @customisationId
-                    WHERE SectionID = @sectionId
-                    AND ArchivedDate IS NULL",
+                    WHERE tu.SectionID = @sectionId
+                    AND tu.ArchivedDate IS NULL",
                 new { sectionId, customisationId }
             );
         }
@@ -309,8 +310,32 @@
                     INNER JOIN Applications AS a ON c.ApplicationID = a.ApplicationID
                     INNER JOIN Sections AS s ON a.ApplicationID = s.ApplicationID
                     INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
-                    WHERE (c.CustomisationID = @customisationId)  ",
+                    WHERE (c.CustomisationID = @customisationId)",
                 new { customisationId }
+            );
+        }
+
+        public void UpdateOrInsertCustomisationTutorialStatuses(
+            int tutorialId,
+            int customisationId,
+            bool diagnosticEnabled,
+            bool learningEnabled
+        )
+        {
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                    SET
+                        Status = @learningEnabled,
+                        DiagStatus = @diagnosticEnabled
+                    WHERE CustomisationID = @customisationId
+                        AND TutorialID = @TutorialID
+
+                    IF @@ROWCOUNT = 0
+                    BEGIN
+                        INSERT INTO CustomisationTutorials (CustomisationID, TutorialID, [Status], DiagStatus)
+                        VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
+                    END",
+                new { customisationId, tutorialId, learningEnabled, diagnosticEnabled }
             );
         }
     }

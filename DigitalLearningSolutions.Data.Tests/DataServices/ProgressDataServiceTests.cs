@@ -15,6 +15,7 @@
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
         private TutorialContentTestHelper tutorialContentTestHelper = null!;
+        private ProgressTestHelper progressTestHelper = null!;
 
         [SetUp]
         public void SetUp()
@@ -22,6 +23,7 @@
             connection = ServiceTestHelper.GetDatabaseConnection();
             progressDataService = new ProgressDataService(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
+            progressTestHelper = new ProgressTestHelper(connection);
         }
 
         [Test]
@@ -154,6 +156,90 @@
 
                 // Then
                 createdAspProgressId.Should().NotBeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void InsertNewAspProgressRecordsForTutorialIfNoneExist_inserts_new_records()
+        {
+            // Given
+            const int tutorialId = 12732;
+            const int customisationId = 14019;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var initialProgressIdsOnAspProgressRecords = tutorialContentTestHelper
+                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorialId, customisationId);
+                var resultProgressIdsOnAspProgressRecords = tutorialContentTestHelper
+                    .GetDistinctProgressIdsOnAspProgressRecordsFromTutorialId(tutorialId).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    initialProgressIdsOnAspProgressRecords.Count.Should().Be(3);
+                    resultProgressIdsOnAspProgressRecords.Count.Should().Be(6);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            InsertNewAspProgressRecordsForTutorialIfNoneExist_does_not_insert_new_records_when_they_already_exist()
+        {
+            // Given
+            const int tutorialId = 12925;
+            const int customisationId = 27816;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                var initialAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorialId, customisationId);
+                var resultAspProgressIds = tutorialContentTestHelper
+                    .GetAspProgressFromTutorialId(tutorialId).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    initialAspProgressIds.Count.Should()
+                        .Be(resultAspProgressIds.Count);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void ClearAspProgressVerificationRequest_updates_aspProgress_records()
+        {
+            // Given
+            const int progressId = 285046;
+            const int aspProgressId = 8509834;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.ClearAspProgressVerificationRequest(progressId);
+                var result = progressTestHelper.GetSupervisorVerificationRequestedByAspProgressId(aspProgressId);
+
+                // Then
+                result.Should().BeNull();
             }
             finally
             {

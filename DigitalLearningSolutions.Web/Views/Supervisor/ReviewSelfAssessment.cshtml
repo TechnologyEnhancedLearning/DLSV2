@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewSelfAssessmentViewModel;
 @{
-  ViewData["Title"] = "Review Self Assessment";
+  ViewData["Title"] = "Review Profile Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -42,9 +42,9 @@
     <h2>@Model.DelegateSelfAssessment.RoleName</h2>
   </div>
   <div class="nhsuk-grid-column-one-third">
-    @if (Model.DelegateSelfAssessment.VerificationRequested > 0)
+    @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
     {
-      <a role="button" asp-action="SubmitProfileAssessmentReview" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Review profile assessment</a>
+      <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off profile assessment</a>
     }
     @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
     {
@@ -67,7 +67,7 @@
             Question
           </th>
           <th role="columnheader" class="" scope="col">
-            Response
+            Learner<br/>Response
           </th>
           <th role="columnheader" class="" scope="col">
             Status

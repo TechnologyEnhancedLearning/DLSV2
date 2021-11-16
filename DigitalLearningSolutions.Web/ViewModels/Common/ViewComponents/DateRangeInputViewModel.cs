@@ -7,7 +7,7 @@
             string label,
             DateInputViewModel startDateModel,
             DateInputViewModel endDateModel,
-            CheckboxesItemViewModel endDateCheckboxViewModel,
+            CheckboxItemViewModel endDateCheckboxViewModel,
             string? hintText = null
         )
         {
@@ -27,6 +27,6 @@
 
         public DateInputViewModel EndDateModel { get; set; }
 
-        public CheckboxesItemViewModel EndDateCheckbox { get; set; }
+        public CheckboxItemViewModel EndDateCheckbox { get; set; }
     }
 }

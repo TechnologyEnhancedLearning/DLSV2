@@ -4,7 +4,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="3">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="2">
         @Model.Name
       </span>
     </summary>
@@ -14,7 +14,7 @@
       </div>
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-third">
-          <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-brand" aria-describedby="@Model.Id-name">Brand</h5>
+          <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-brand" aria-describedby="@Model.Id-name">Brand</span>
           <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true"/>
 
           <p aria-describedby="@Model.Id-name @Model.Id-brand" name="brand">@Model.Brand</p>
@@ -22,7 +22,7 @@
         @if (Model.Category != null)
         {
           <div class="nhsuk-grid-column-one-third">
-            <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-category" aria-describedby="@Model.Id-name">Category</h5>
+            <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-category" aria-describedby="@Model.Id-name">Category</span>
             <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
             <p aria-describedby="@Model.Id-name @Model.Id-category" name="category">@Model.Category</p>
@@ -31,7 +31,7 @@
         @if (Model.Topic != null)
         {
           <div class="nhsuk-grid-column-one-third">
-            <h5 class="nhsuk-u-margin-bottom-2" id="@Model.Id-topic" aria-describedby="@Model.Id-name">Topic</h5>
+            <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-topic" aria-describedby="@Model.Id-name">Topic</span>
             <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
             <p aria-describedby="@Model.Id-name @Model.Id-topic" name="topic">@Model.Topic</p>

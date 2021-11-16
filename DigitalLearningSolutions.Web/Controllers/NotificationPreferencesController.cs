@@ -10,26 +10,24 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
 
-    [ValidateAllowedApplicationType]
+    [ValidateAllowedDlsSubApplication]
+    [SetDlsSubApplication]
+    [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {
-        private readonly ILogger<NotificationPreferencesController> logger;
         private readonly INotificationPreferencesService notificationPreferencesService;
 
         public NotificationPreferencesController(
-            INotificationPreferencesService notificationPreferencesService,
-            ILogger<NotificationPreferencesController> logger
+            INotificationPreferencesService notificationPreferencesService
         )
         {
             this.notificationPreferencesService = notificationPreferencesService;
-            this.logger = logger;
         }
 
-        [Route("/{application}/NotificationPreferences")]
+        [Route("/{dlsSubApplication}/NotificationPreferences")]
         [Route("/NotificationPreferences", Order = 1)]
-        public IActionResult Index(ApplicationType application)
+        public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var adminId = User.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
             var adminNotifications =
@@ -39,21 +37,25 @@ namespace DigitalLearningSolutions.Web.Controllers
             var delegateNotifications =
                 notificationPreferencesService.GetNotificationPreferencesForUser(UserType.DelegateUser, delegateId);
 
-            var model = new NotificationPreferencesViewModel(adminNotifications, delegateNotifications, application);
+            var model = new NotificationPreferencesViewModel(
+                adminNotifications,
+                delegateNotifications,
+                dlsSubApplication
+            );
 
             return View(model);
         }
 
         [Authorize]
         [HttpGet]
-        [Route("/{application}/NotificationPreferences/Edit/{userType}")]
+        [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
-        public IActionResult UpdateNotificationPreferences(UserType? userType, ApplicationType application)
+        public IActionResult UpdateNotificationPreferences(UserType? userType, DlsSubApplication dlsSubApplication)
         {
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             var notifications =
@@ -62,25 +64,25 @@ namespace DigitalLearningSolutions.Web.Controllers
                     userReference.Id
                 );
 
-            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, application);
+            var model = new UpdateNotificationPreferencesViewModel(notifications, userType!, dlsSubApplication);
 
             return View(model);
         }
 
         [Authorize]
         [HttpPost]
-        [Route("/{application}/NotificationPreferences/Edit/{userType}")]
+        [Route("/{dlsSubApplication}/NotificationPreferences/Edit/{userType}")]
         [Route("/NotificationPreferences/Edit/{userType}", Order = 1)]
         public IActionResult SaveNotificationPreferences(
             UserType? userType,
             IEnumerable<int> notificationIds,
-            ApplicationType application
+            DlsSubApplication dlsSubApplication
         )
         {
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             notificationPreferencesService.SetNotificationPreferencesForUser(
@@ -89,7 +91,11 @@ namespace DigitalLearningSolutions.Web.Controllers
                 notificationIds
             );
 
-            return RedirectToAction("Index", "NotificationPreferences", new { application = application.UrlSegment });
+            return RedirectToAction(
+                "Index",
+                "NotificationPreferences",
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
+            );
         }
 
         private UserReference? GetUserReference(UserType? userType)

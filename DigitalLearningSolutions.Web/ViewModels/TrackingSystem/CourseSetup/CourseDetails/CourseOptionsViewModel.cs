@@ -10,8 +10,10 @@
             AllowSelfEnrolment = courseDetails.SelfRegister;
             DiagnosticObjectiveSelection = courseDetails.DiagObjSelect;
             HideInLearningPortal = courseDetails.HideInLearnerPortal;
+            CustomisationId = courseDetails.CustomisationId;
         }
 
+        public int CustomisationId { get; set; }
         public bool Active { get; set; }
         public bool AllowSelfEnrolment { get; set; }
         public bool DiagnosticObjectiveSelection { get; set; }

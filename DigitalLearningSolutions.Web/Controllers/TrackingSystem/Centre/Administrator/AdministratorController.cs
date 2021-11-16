@@ -4,9 +4,15 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -14,6 +20,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("TrackingSystem/Centre/Administrators")]
     public class AdministratorController : Controller
     {
@@ -85,15 +93,11 @@
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult EditAdminRoles(int adminId)
         {
             var centreId = User.GetCentreId();
-            var adminUser = userDataService.GetAdminUserById(adminId);
-
-            if (adminUser == null || adminUser.CentreId != centreId)
-            {
-                return NotFound();
-            }
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
@@ -105,20 +109,13 @@
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
-        public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult EditAdminRoles(AdminRolesFormData formData, int adminId)
         {
-            var centreId = User.GetCentreId();
-            var adminUser = userDataService.GetAdminUserById(adminId);
-
-            if (adminUser == null || adminUser.CentreId != centreId)
-            {
-                return NotFound();
-            }
-
             userService.UpdateAdminUserPermissions(
                 adminId,
-                model.GetAdminRoles(),
-                model.LearningCategory
+                formData.GetAdminRoles(),
+                formData.LearningCategory
             );
 
             return RedirectToAction("Index");
@@ -126,19 +123,38 @@
 
         [Route("{adminId:int}/UnlockAccount")]
         [HttpPost]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult UnlockAccount(int adminId)
         {
-            var centreId = User.GetCentreId();
-            var adminUser = userDataService.GetAdminUserById(adminId);
-
-            if (adminUser == null || adminUser.CentreId != centreId)
-            {
-                return NotFound();
-            }
-
             userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult DeactivateAdmin(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            var model = new DeactivateAdminViewModel(adminUser!);
+            return View(model);
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpPost]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            userDataService.DeactivateAdmin(adminId);
+
+            return View("DeactivateAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)

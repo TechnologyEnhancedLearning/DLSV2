@@ -29,12 +29,15 @@
             int groupId,
             int? addedByAdminId = null
         );
+
+        void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
     }
 
     public class GroupsService : IGroupsService
     {
         private const string AddedByProcess = "AddDelegateToGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
+        private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IClockService clockService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
@@ -50,7 +53,8 @@
             IEmailService emailService,
             IJobGroupsDataService jobGroupsDataService,
             IProgressDataService progressDataService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ICentreCustomPromptsService centreCustomPromptsService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -60,6 +64,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.progressDataService = progressDataService;
             this.configuration = configuration;
+            this.centreCustomPromptsService = centreCustomPromptsService;
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -71,7 +76,8 @@
             var changedLinkedFields = LinkedFieldHelper.GetLinkedFieldChanges(
                 delegateAccountWithOldDetails.GetCentreAnswersData(),
                 newCentreAnswers,
-                jobGroupsDataService
+                jobGroupsDataService,
+                centreCustomPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
@@ -80,11 +86,13 @@
             foreach (var changedAnswer in changedLinkedFields)
             {
                 var groupToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.SingleOrDefault(
-                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber && g.GroupLabel == changedAnswer.OldValue
+                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
+                         GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.OldValue, changedAnswer.LinkedFieldName)
                 );
 
                 var groupToAddDelegateTo = allSynchronisedGroupsAtCentre.SingleOrDefault(
-                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber && g.GroupLabel == changedAnswer.NewValue
+                    g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
+                         GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
                 using var transaction = new TransactionScope();
@@ -199,10 +207,27 @@
             return groupsDataService.AddDelegateGroup(groupDetails);
         }
 
+        public void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
+        {
+            using var transaction = new TransactionScope();
+
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
+            groupsDataService.DeleteGroupDelegates(groupId);
+            groupsDataService.DeleteGroupCustomisations(groupId);
+            groupsDataService.DeleteGroup(groupId);
+
+            transaction.Complete();
+        }
+
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId)
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
+        }
+
+        private bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
+        {
+            return groupLabel == answer || groupLabel == linkedFieldName + " - " + answer;
         }
 
         private static bool ProgressShouldBeUpdatedOnEnrolment(Progress progress)
@@ -212,8 +237,9 @@
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
+            const bool removeStartedEnrolments = false;
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, clockService.UtcNow);
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow);
         }
 
         private Email BuildEnrolmentEmail(
@@ -228,19 +254,19 @@
             var linkToCourse = baseUrl + "/LearningMenu/" + course.CustomisationId;
             string emailBodyText = $@"
                 Dear {fullName}
-                This is an automated message to notify you that you have been enrolled on the course 
+                This is an automated message to notify you that you have been enrolled on the course
                 {course.CourseName}
                 by the system because a previous course completion has expired.
                 To login to the course directly click here:{linkToCourse}.
-                To login to the Learning Portal to access and complete your course click here: 
+                To login to the Learning Portal to access and complete your course click here:
                 {linkToLearningPortal}.";
             string emailBodyHtml = $@"
                 <p>Dear {fullName}</p>
-                <p>This is an automated message to notify you that you have been enrolled on the course 
-                <b>{course.CourseName}</b> 
+                <p>This is an automated message to notify you that you have been enrolled on the course
+                <b>{course.CourseName}</b>
                 by the system because a previous course completion has expired.</p>
                 <p>To login to the course directly <a href=""{linkToCourse}"">click here</a>.</p>
-                <p>To login to the Learning Portal to access and complete your course 
+                <p>To login to the Learning Portal to access and complete your course
                 <a href=""{linkToLearningPortal}"">click here</a>.</p>";
 
             if (completeByDate != null)

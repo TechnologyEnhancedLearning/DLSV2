@@ -1,21 +1,17 @@
 ﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model AdminFieldsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
 @{
-  ViewData["Title"] = "Manage Course Admin Fields";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = "Manage course admin fields";
   var canAddNewField = Model.CustomFields.Count < 3;
-  var backLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
+  var backLinkData = Html.GetRouteValues();
 }
 
 @section NavBreadcrumbs {

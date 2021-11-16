@@ -5,10 +5,6 @@
   ViewData["Title"] = "Registration Confirmation";
 }
 
-@section NavMenuItems {
-  <partial name="_NavMenuItems" />
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl">
@@ -23,8 +19,7 @@
       <span class="nhsuk-u-visually-hidden">Information: </span>
       <p>Your delegate number is <span class="nhsuk-u-font-weight-bold">@Model.CandidateNumber</span></p>
     </div>
-    @if (!Model.Approved)
-    {
+    @if (!Model.Approved) {
       <div class="nhsuk-warning-callout">
         <h2 class="nhsuk-warning-callout__label">
           <span role="text">

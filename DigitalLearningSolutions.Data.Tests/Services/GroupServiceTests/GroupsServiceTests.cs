@@ -19,7 +19,7 @@
     {
         private const int GenericNewProgressId = 17;
         private const int GenericRelatedTutorialId = 5;
-        private readonly AccountDetailsData reusableAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
+        private readonly MyAccountDetailsData reusableMyAccountDetailsData = UserTestHelper.GetDefaultAccountDetailsData();
 
         private readonly DelegateUser reusableDelegateDetails =
             UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
@@ -27,6 +27,7 @@
         private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
+        private ICentreCustomPromptsService centreCustomPromptsService = null!;
         private IClockService clockService = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
@@ -46,6 +47,8 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
+            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+
             A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
             groupsService = new GroupsService(
@@ -55,7 +58,8 @@
                 emailService,
                 jobGroupsDataService,
                 progressDataService,
-                configuration
+                configuration,
+                centreCustomPromptsService
             );
         }
 
@@ -120,7 +124,7 @@
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._))
                 .MustNotHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
             ).MustNotHaveHappened();
         }
 
@@ -166,7 +170,7 @@
         {
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(A<int>._, A<int>._)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(A<int>._, A<int>._, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(A<int>._, A<int>._, A<bool>._, A<DateTime>._)
             ).DoesNothing();
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();

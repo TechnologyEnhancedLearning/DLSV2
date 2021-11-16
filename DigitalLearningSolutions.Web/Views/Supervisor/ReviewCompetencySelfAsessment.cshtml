@@ -2,7 +2,7 @@
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Review Competency";
+  ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -81,7 +81,7 @@
 
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    Response
+    Learner response
   </dt>
   <dd class="nhsuk-summary-list__value">
     <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
@@ -134,7 +134,7 @@
         <fieldset class="nhsuk-fieldset">
           <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
             <h2 class="nhsuk-fieldset__heading">
-              Review @Model.Competency.Vocabulary Self Assessment Result
+              Verify Self Assessment of @Model.Competency.Vocabulary
             </h2>
           </legend>
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
@@ -146,7 +146,7 @@
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
               <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-                Verify self-assessment result
+                Verify self-assessment response
               </label>
               <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
                 I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()

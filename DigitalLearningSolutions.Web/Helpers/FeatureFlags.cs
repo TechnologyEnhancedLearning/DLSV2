@@ -3,5 +3,8 @@
     public static class FeatureFlags
     {
         public const string RefactoredTrackingSystem = "RefactoredTrackingSystem";
+        public const string WorkforceManagerInterface = "WorkforceManagerInterface";
+        public const string SupervisorProfileAssessmentInterface = "SupervisorProfileAssessmentInterface";
+        public const string RefactoredSuperAdminInterface = "RefactoredSuperAdminInterface";
     }
 }

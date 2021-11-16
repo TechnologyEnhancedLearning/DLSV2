@@ -1,14 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@model ApplicationType
+@model DlsSubApplication
 
-@if (ApplicationType.TrackingSystem.Equals(Model)) {
+@if (DlsSubApplication.TrackingSystem.Equals(Model)) {
   <partial name="../TrackingSystem/Shared/_NavMenuItems" />
-} else if (ApplicationType.LearningPortal.Equals(Model)) {
+} else if (DlsSubApplication.LearningPortal.Equals(Model)) {
   <partial name="../LearningPortal/Shared/_NavMenuItems" />
-} else if (ApplicationType.Frameworks.Equals(Model)) {
+} else if (DlsSubApplication.Frameworks.Equals(Model)) {
   <partial name="../Frameworks/Shared/_NavMenuItems" />
-} else if (ApplicationType.Supervisor.Equals(Model)) {
+} else if (DlsSubApplication.Supervisor.Equals(Model)) {
   <partial name="../Supervisor/Shared/_NavMenuItems" />
+} else if (DlsSubApplication.SuperAdmin.Equals(Model)) {
+  <partial name="../SuperAdmin/Shared/_NavMenuItems" />
 } else {
   <partial name="_NavMenuItems" />
 }

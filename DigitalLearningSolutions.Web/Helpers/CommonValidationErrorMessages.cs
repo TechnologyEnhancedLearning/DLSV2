@@ -15,5 +15,6 @@
         public const string PasswordRequired = "Enter a password";
         public const string PasswordMinLength = "Password must be 8 characters or more";
         public const string PasswordMaxLength = "Password must be 100 characters or fewer";
+        public const string StringMaxLengthValidation = "{0} must be {1} characters or fewer";
     }
 }
