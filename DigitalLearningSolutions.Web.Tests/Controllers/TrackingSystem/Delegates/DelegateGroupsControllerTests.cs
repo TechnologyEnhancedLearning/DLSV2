@@ -502,15 +502,12 @@
         }
 
         [Test]
-        public void EditGroupName_should_to_not_update_name_when_linked_to_field_is_not_zero()
+        public void EditGroupName_should_not_update_name_when_linked_to_field_is_not_zero()
         {
             // Given
             var model = new EditGroupNameViewModel() { GroupName = "Test Group Name" };
             A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
                 .Returns(new Group { LinkedToField = 1 });
-
-            A.CallTo(() => groupsDataService.UpdateGroupName(1, 2, model.GroupName))
-                .DoesNothing();
 
             // When
             var result = delegateGroupsController.EditGroupName(model, 1);
