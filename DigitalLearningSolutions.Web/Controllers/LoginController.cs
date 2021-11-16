@@ -173,8 +173,14 @@
             {
                 AllowRefresh = true,
                 IsPersistent = rememberMe,
-                IssuedUtc = DateTime.UtcNow
+                IssuedUtc = DateTime.UtcNow,
             };
+
+            if (!rememberMe)
+            {
+                authProperties.ExpiresUtc = DateTime.UtcNow.AddHours(8);
+            }
+
             await HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(claimsIdentity), authProperties);
 
             return RedirectToReturnUrl(returnUrl) ?? RedirectToAction("Index", "Home");
