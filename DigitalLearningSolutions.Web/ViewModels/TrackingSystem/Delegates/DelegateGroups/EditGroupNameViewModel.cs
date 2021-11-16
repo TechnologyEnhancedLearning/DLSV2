@@ -8,16 +8,14 @@
     {
         public EditGroupNameViewModel() { }
 
-        public EditGroupNameViewModel(int groupId, string? groupName)
+        public EditGroupNameViewModel(string groupName)
         {
-            GroupId = groupId;
             GroupName = groupName;
         }
 
-        public int GroupId { get; set; }
-
-        [DisplayName("Group Name")]
+        [DisplayName("Group name")]
         [StringLength(100, ErrorMessage = CommonValidationErrorMessages.StringMaxLengthValidation)]
-        public string? GroupName { get; set; }
+        [Required]
+        public string GroupName { get; set; }
     }
 }

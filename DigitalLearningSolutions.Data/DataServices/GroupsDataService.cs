@@ -46,7 +46,7 @@
 
         void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
 
-        void UpdateGroupName(int groupId, int centreId, string? groupName);
+        void UpdateGroupName(int groupId, int centreId, string groupName);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -333,7 +333,7 @@
             );
         }
 
-        public void UpdateGroupName(int groupId, int centreId, string? groupName)
+        public void UpdateGroupName(int groupId, int centreId, string groupName)
         {
             connection.Execute(
                 @"UPDATE Groups

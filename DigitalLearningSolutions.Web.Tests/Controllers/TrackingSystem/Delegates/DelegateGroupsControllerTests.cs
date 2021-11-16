@@ -502,18 +502,24 @@
         }
 
         [Test]
-        public void EditGroupName_should_redirect_to_not_found_page_with_incorrect_centre_id()
+        public void EditGroupName_should_to_not_update_name_when_linked_to_field_is_not_zero()
         {
             // Given
             var model = new EditGroupNameViewModel() { GroupName = "Test Group Name" };
             A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
-                .Returns(null);
+                .Returns(new Group { LinkedToField = 1 });
+
+            A.CallTo(() => groupsDataService.UpdateGroupName(1, 2, model.GroupName))
+                .DoesNothing();
 
             // When
-            var result = delegateGroupsController.EditGroupName(1);
+            var result = delegateGroupsController.EditGroupName(model, 1);
 
             // Them
             A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
+            A.CallTo(() => groupsDataService.UpdateGroupName(1, 2, model.GroupName))
+                .MustNotHaveHappened();
+
             result.Should().BeNotFoundResult();
         }
     }

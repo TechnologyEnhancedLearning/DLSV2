@@ -532,13 +532,12 @@
         public void UpdateGroupName_updates_record()
         {
             using var transaction = new TransactionScope();
+            const int centerId = 101;
+            const int groupId = 5;
+            const string newGroupName = "Test group name";
+
             try
             {
-                // Given
-                const int centerId = 101;
-                const int groupId = 5;
-                const string newGroupName = "Test group name";
-
                 // When
                 groupsDataService.UpdateGroupName(
                     groupId,
@@ -559,13 +558,13 @@
         public void UpdateGroupName_with_incorrect_centreId_does_not_update_record()
         {
             using var transaction = new TransactionScope();
+            const int incorrectCentreId = 101;
+            const int groupId = 59;
+            const string newGroupName = "Test group name";
+            const string expectedGroupName = "Nurses";
+
             try
             {
-                // Given
-                const int incorrectCentreId = 1;
-                const int groupId = 2;
-                const string newGroupName = "Test group name";
-
                 // When
                 groupsDataService.UpdateGroupName(
                     groupId,
@@ -575,6 +574,7 @@
                 //Then
                 var result = GetGroupNameById(groupId);
                 result?.Should().NotBe(newGroupName);
+                result?.Should().Be(expectedGroupName);
             }
             finally
             {

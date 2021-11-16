@@ -300,24 +300,27 @@
             return RedirectToAction("Index");
         }
 
-        [Route("{groupId:int}/EditGroupName")]
         [HttpGet]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditGroupName(int groupId)
         {
             var centreId = User.GetCentreId();
             var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
 
-            if (group is null || group.LinkedToField != 0)
+            if (group?.LinkedToField != 0)
             {
                 return NotFound();
             }
 
-            var model = new EditGroupNameViewModel(groupId, group.GroupLabel);
+            var model = new EditGroupNameViewModel(group?.GroupLabel!);
             return View(model);
         }
 
-        [Route("{groupId:int}/EditGroupName")]
+        
         [HttpPost]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditGroupName(EditGroupNameViewModel model, int groupId)
         {
             if (!ModelState.IsValid)
@@ -326,12 +329,19 @@
             }
 
             var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group?.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
             groupsDataService.UpdateGroupName(
                 groupId,
                 centreId,
                 model.GroupName
             );
-
+            
             return RedirectToAction("Index");
         }
 
