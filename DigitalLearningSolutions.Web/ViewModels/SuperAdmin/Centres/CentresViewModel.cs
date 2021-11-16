@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
-    using DigitalLearningSolutions.Data.Models;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
 
     public class CentresViewModel
     {

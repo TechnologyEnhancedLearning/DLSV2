@@ -24,7 +24,7 @@
                 ContactTelephone = "0123654789",
                 CentreTypeId = 4,
                 CentreType = "Social Care",
-                Active = true
+                Active = true,
             };
 
             // When

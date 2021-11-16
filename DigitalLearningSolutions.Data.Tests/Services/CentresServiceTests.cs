@@ -5,7 +5,6 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -15,8 +14,8 @@
     public class CentresServiceTests
     {
         private ICentresDataService centresDataService = null!;
-        private IClockService clockService = null!;
         private ICentresService centresService = null!;
+        private IClockService clockService = null!;
 
         [SetUp]
         public void Setup()
@@ -38,7 +37,7 @@
                     CentreTestHelper.GetCentreRank(7),
                     CentreTestHelper.GetCentreRank(8),
                     CentreTestHelper.GetCentreRank(9),
-                    CentreTestHelper.GetCentreRank(10)
+                    CentreTestHelper.GetCentreRank(10),
                 }
             );
         }

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Admins
+﻿namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;

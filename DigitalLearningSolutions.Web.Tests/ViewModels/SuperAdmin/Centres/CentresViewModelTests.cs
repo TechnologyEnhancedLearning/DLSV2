@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.SuperAdmin.Centres
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
-    using System.Collections.Generic;
 
     public class CentresViewModelTests
     {

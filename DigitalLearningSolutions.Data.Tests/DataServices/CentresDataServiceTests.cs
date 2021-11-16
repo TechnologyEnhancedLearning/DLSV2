@@ -303,22 +303,22 @@
         }
 
         [Test]
-        public void GetAllCentreSummaries_returns_all_summary_details_and_reference_data()
+        public void GetAllCentreSummaries_returns_active_and_inactive_summary_details_and_reference_data()
         {
-            using var transaction = new TransactionScope();
-            try
-            {
                 // When
-                var summaries = centresDataService.GetAllCentreSummaries();
+                var summaries = centresDataService.GetAllCentreSummaries().ToList();
 
                 // Then
-                summaries.Should()
-                    .OnlyContain(c => c.CentreType != null && c.RegionName != null && (c.Active || !c.Active));
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+                var activeCentre = summaries.Single(c => c.CentreId == 2);
+                var inActiveCentre = summaries.Single(c => c.CentreId == 6);
+
+                activeCentre.Active.Should().BeTrue();
+                activeCentre.CentreType.Should().Be("NHS Organisation");
+                activeCentre.RegionName.Should().Be("North West");
+
+                inActiveCentre.Active.Should().BeFalse();
+                inActiveCentre.CentreType.Should().Be("NHS Organisation");
+                inActiveCentre.RegionName.Should().Be("East Of England");
         }
     }
 }
