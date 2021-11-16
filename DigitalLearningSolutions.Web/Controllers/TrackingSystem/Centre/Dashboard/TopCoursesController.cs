@@ -2,7 +2,6 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -30,7 +29,7 @@
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var adminCategoryId = CourseCategoryHelper.GetCourseCategoryFilter(User.GetAdminCategoryId()!.Value);
+            var adminCategoryId = User.GetAdminCategoryId();
 
             var topCourses =
                 courseService.GetTopCourseStatistics(centreId, adminCategoryId).Take(NumberOfTopCourses);

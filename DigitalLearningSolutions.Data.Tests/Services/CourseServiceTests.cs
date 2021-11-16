@@ -163,14 +163,14 @@
 
         [Test]
         public void
-            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
+            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))

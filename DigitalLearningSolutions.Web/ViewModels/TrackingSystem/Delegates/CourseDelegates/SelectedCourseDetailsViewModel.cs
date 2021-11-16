@@ -21,8 +21,8 @@
             Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
                 .Active;
 
-            var paginatedItems = SortFilterAndPaginate(courseDelegatesData.Delegates);
-            Delegates = paginatedItems.Select(d => new SearchableCourseDelegateViewModel(d));
+            var courseDelegatesToShow = SortFilterAndPaginate(courseDelegatesData.Delegates);
+            Delegates = courseDelegatesToShow.Select(d => new SearchableCourseDelegateViewModel(d));
             Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels();
         }
 

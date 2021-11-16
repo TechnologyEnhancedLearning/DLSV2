@@ -56,9 +56,9 @@
                 return false;
             }
 
-            var categoryId = user.GetAdminCategoryId()!.Value;
+            var categoryId = user.GetAdminCategoryId();
 
-            if (details.CourseCategoryId != categoryId && categoryId != 0)
+            if (details.CourseCategoryId != categoryId && categoryId != null)
             {
                 return false;
             }

@@ -3,7 +3,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -58,9 +57,9 @@
             );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCategoryId();
             var centreCourses =
-                courseService.GetCentreSpecificCourseStatistics(centreId, CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value));
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
@@ -85,9 +84,9 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCategoryId();
             var centreCourses =
-                courseService.GetCentreSpecificCourseStatistics(centreId, CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value));
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -32,12 +31,12 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
+                categoryId
             );
 
             var model = new ManageCourseViewModel(courseDetails!);
@@ -50,12 +49,12 @@
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCategoryId();
 
             var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
+                categoryId
             );
 
             var model = new EditLearningPathwayDefaultsViewModel(courseDetails!);
@@ -107,12 +106,12 @@
         public IActionResult EditCourseOptions(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCategoryId();
 
             var courseOptions = courseService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                CourseCategoryHelper.GetCourseCategoryFilter(categoryId.Value)
+                categoryId
             );
 
             var model = new EditCourseOptionsViewModel(courseOptions!, customisationId);

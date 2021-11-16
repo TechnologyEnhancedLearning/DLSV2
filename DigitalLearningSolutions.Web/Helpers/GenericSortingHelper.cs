@@ -55,8 +55,8 @@
 
     public static class FrameworkSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) FrameworkName = ("Framework Name",
-            nameof(BaseFramework.FrameworkName));
+        public static readonly (string DisplayText, string PropertyName) FrameworkName =
+            ("Framework Name", nameof(BaseFramework.FrameworkName));
 
         public static readonly (string DisplayText, string PropertyName) FrameworkOwner =
             ("Owner", nameof(BaseFramework.Owner));
@@ -79,44 +79,44 @@
 
     public static class CourseSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) Name = ("Activity Name",
-            nameof(BaseLearningItem.Name));
+        public static readonly (string DisplayText, string PropertyName) Name =
+            ("Activity Name", nameof(BaseLearningItem.Name));
 
-        public static readonly (string DisplayText, string PropertyName) StartedDate = ("Enrolled Date",
-            nameof(CompletedCourse.StartedDate));
+        public static readonly (string DisplayText, string PropertyName) StartedDate =
+            ("Enrolled Date", nameof(CompletedCourse.StartedDate));
 
-        public static readonly (string DisplayText, string PropertyName) LastAccessed = ("Last Accessed Date",
-            nameof(CompletedCourse.LastAccessed));
+        public static readonly (string DisplayText, string PropertyName) LastAccessed =
+            ("Last Accessed Date", nameof(CompletedCourse.LastAccessed));
 
         public static readonly (string DisplayText, string PropertyName) CompleteByDate =
             ("Complete By Date", nameof(CurrentCourse.CompleteByDate));
 
-        public static readonly (string DisplayText, string PropertyName) CompletedDate = ("Completed Date",
-            nameof(CompletedCourse.Completed));
+        public static readonly (string DisplayText, string PropertyName) CompletedDate =
+            ("Completed Date", nameof(CompletedCourse.Completed));
 
-        public static readonly (string DisplayText, string PropertyName) DiagnosticScore = ("Diagnostic Score",
-            $"{nameof(BaseLearningItem.HasDiagnostic)},{nameof(CurrentCourse.DiagnosticScore)}");
+        public static readonly (string DisplayText, string PropertyName) DiagnosticScore =
+            ("Diagnostic Score", $"{nameof(BaseLearningItem.HasDiagnostic)},{nameof(CurrentCourse.DiagnosticScore)}");
 
-        public static readonly (string DisplayText, string PropertyName) PassedSections = ("Passed Sections",
-            $"{nameof(BaseLearningItem.IsAssessed)},{nameof(CurrentCourse.Passes)}");
+        public static readonly (string DisplayText, string PropertyName) PassedSections =
+            ("Passed Sections", $"{nameof(BaseLearningItem.IsAssessed)},{nameof(CurrentCourse.Passes)}");
 
-        public static readonly (string DisplayText, string PropertyName) Brand = ("Brand",
-            nameof(AvailableCourse.Brand));
+        public static readonly (string DisplayText, string PropertyName) Brand =
+            ("Brand", nameof(AvailableCourse.Brand));
 
-        public static readonly (string DisplayText, string PropertyName) Category = ("Category",
-            nameof(AvailableCourse.Category));
+        public static readonly (string DisplayText, string PropertyName) Category =
+            ("Category", nameof(AvailableCourse.Category));
 
-        public static readonly (string DisplayText, string PropertyName) Topic = ("Topic",
-            nameof(AvailableCourse.Topic));
+        public static readonly (string DisplayText, string PropertyName) Topic =
+            ("Topic", nameof(AvailableCourse.Topic));
 
-        public static readonly (string DisplayText, string PropertyName) CourseName = ("Course Name",
-            nameof(CourseStatistics.CourseName));
+        public static readonly (string DisplayText, string PropertyName) CourseName =
+            ("Course Name", nameof(CourseStatistics.CourseName));
 
         public static readonly (string DisplayText, string PropertyName) TotalDelegates =
             ("Total Delegates", nameof(CourseStatistics.DelegateCount));
 
-        public static readonly (string DisplayText, string PropertyName) InProgress = ("In Progress",
-            nameof(CourseStatistics.InProgressCount));
+        public static readonly (string DisplayText, string PropertyName) InProgress =
+            ("In Progress", nameof(CourseStatistics.InProgressCount));
     }
 
     public class CourseDelegatesSortByOption : Enumeration
@@ -176,14 +176,14 @@
 
     public static class DefaultSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) Name = (
-            BaseSearchablePageViewModel.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) Name =
+            (BaseSearchablePageViewModel.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
     }
 
     public static class DelegateSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) Name = ("Name",
-            nameof(DelegateUserCard.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) Name =
+            ("Name", nameof(DelegateUserCard.SearchableName));
 
         public static readonly (string DisplayText, string PropertyName) RegistrationDate =
             ("Registration Date", nameof(DelegateUserCard.DateRegistered));
@@ -191,7 +191,8 @@
 
     public static class DelegateGroupsSortByOptions
     {
-        public static readonly (string DisplayText, string PropertyName) Name = ("Name", nameof(Group.SearchableName));
+        public static readonly (string DisplayText, string PropertyName) Name =
+            ("Name", nameof(Group.SearchableName));
 
         public static readonly (string DisplayText, string PropertyName) NumberOfDelegates =
             ("Number of delegates", nameof(Group.DelegateCount));

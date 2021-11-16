@@ -26,7 +26,7 @@
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
 
-        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int categoryId);
+        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? categoryId);
 
         public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
@@ -92,7 +92,7 @@
             return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
         }
 
-        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
+        public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? adminCategoryIdClaim)
         {
             var (courseCentreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(customisationId);
 
@@ -106,7 +106,7 @@
                 return false;
             }
 
-            if (adminCategoryIdClaim != 0 && courseCategoryId != adminCategoryIdClaim)
+            if (adminCategoryIdClaim != null && courseCategoryId != adminCategoryIdClaim)
             {
                 return false;
             }
