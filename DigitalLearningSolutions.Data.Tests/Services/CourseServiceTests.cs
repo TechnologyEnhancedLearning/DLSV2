@@ -153,7 +153,7 @@
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 2);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -170,7 +170,7 @@
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 0);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -186,7 +186,7 @@
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -202,7 +202,7 @@
                 .Returns((1, 1));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -254,7 +254,7 @@
                 .Returns((null, null));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))

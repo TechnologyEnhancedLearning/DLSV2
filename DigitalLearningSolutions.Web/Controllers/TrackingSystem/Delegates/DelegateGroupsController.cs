@@ -29,18 +29,21 @@
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IGroupsService groupsService;
+        private readonly ICourseService courseService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
             IClockService clockService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ICourseService courseService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
             this.groupsService = groupsService;
+            this.courseService = courseService;
         }
 
         [Route("{page=1:int}")]
@@ -298,6 +301,32 @@
             );
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/SelectCourse")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult AddCourseToGroupSelectCourse(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var adminCategoryId = User.GetAdminCategoryId()!.Value;
+            var adminCategoryFilter = adminCategoryId == 0 ? (int?)null : adminCategoryId;
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+
+            var model = new AddCourseToGroupCoursesViewModel(courses, groupId, groupName!);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}/")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        public IActionResult AddCourseToGroup(int groupId, int customisationId)
+        {
+            // TODO HEEDLS-657 Implement form
+            return RedirectToAction("GroupCourses", new { groupId });
         }
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)

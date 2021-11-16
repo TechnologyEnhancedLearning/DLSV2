@@ -5,11 +5,11 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class VerifyAdminUserCanAccessCourse : IActionFilter
+    public class VerifyAdminUserCanManageCourse : IActionFilter
     {
         private readonly ICourseService courseService;
 
-        public VerifyAdminUserCanAccessCourse(
+        public VerifyAdminUserCanManageCourse(
             ICourseService courseService
         )
         {
@@ -30,7 +30,7 @@
             var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
 
             var validationResult =
-                courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value);
+                courseService.VerifyAdminUserCanManageCourse(customisationId, centreId, categoryId.Value);
 
             if (!validationResult.HasValue)
             {

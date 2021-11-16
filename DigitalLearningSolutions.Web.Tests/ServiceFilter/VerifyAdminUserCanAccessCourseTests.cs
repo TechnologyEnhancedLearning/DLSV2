@@ -43,11 +43,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(CustomisationId, A<int>._, A<int>._))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanManageCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -58,11 +58,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(CustomisationId, A<int>._, A<int>._))
                 .Returns(false);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanManageCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -74,11 +74,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(CustomisationId, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanManageCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+        IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
+        public (int? centreId, int? courseCategoryId, bool allCentres) GetCourseValidationDetails(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -388,23 +388,42 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
+        public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
-            return connection.Query<Course>(
-                @"SELECT
+            const string tutorialWithLearningCountQuery =
+                @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                WHERE ct.Status = 1 AND ct.CustomisationID = c.CustomisationID";
+
+            const string tutorialWithDiagnosticCountQuery =
+                @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                WHERE ct.DiagStatus = 1 AND ct.CustomisationID = c.CustomisationID";
+
+            return connection.Query<CourseAssessmentDetails>(
+                $@"SELECT
                         c.CustomisationID,
                         c.CentreID,
                         c.ApplicationID,
                         ap.ApplicationName,
                         c.CustomisationName,
-                        c.Active
+                        c.Active,
+                        c.IsAssessed,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        CASE WHEN ({tutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
+                        CASE WHEN ({tutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic,
+                        ap.ASPMenu
                     FROM Customisations AS c
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
-                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
-                    AND ca.CentreID = @centreID
-	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL",
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
                 new { centreId, categoryId }
             );
         }
@@ -430,10 +449,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
+        public (int? centreId, int? courseCategoryId, bool allCentres) GetCourseValidationDetails(int customisationId)
         {
-            return connection.QueryFirstOrDefault<(int?, int?)>(
-                @"SELECT c.CentreId, a.CourseCategoryId
+            return connection.QueryFirstOrDefault<(int?, int?, bool)>(
+                @"SELECT c.CentreId, a.CourseCategoryId, c.AllCentres
                         FROM Customisations AS c
                         INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE CustomisationID = @customisationId",
