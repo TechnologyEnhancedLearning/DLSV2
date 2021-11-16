@@ -26,6 +26,7 @@
                 EnrolledByAdminId = null,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
+                DelegateId = 1,
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
@@ -46,6 +47,7 @@
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
+                DelegateId = 2,
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
@@ -79,10 +81,15 @@
                 DelegateFirstName = "Bill",
                 DelegateLastName = "Ward",
                 DelegateEmail = null,
+                DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
+                new DelegateCourseDetails(
+                    delegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
 
             // Then
@@ -103,10 +110,15 @@
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
                 EnrolledBySurname = "Dio",
+                DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(
                 DelegateProgressAccessRoute.ViewDelegate,
-                new DelegateCourseDetails(delegateInfo, new List<CustomPromptWithAnswer>(), new AttemptStats(0, 0))
+                new DelegateCourseDetails(
+                    delegateInfo,
+                    new List<CustomPromptWithAnswer>(),
+                    new AttemptStats(0, 0)
+                )
             );
 
             // Then

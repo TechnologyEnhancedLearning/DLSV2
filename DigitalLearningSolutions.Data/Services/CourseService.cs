@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public interface ICourseService
@@ -10,6 +11,12 @@
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
+
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        );
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
             int delegateId,
@@ -40,11 +47,17 @@
     {
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
+        private readonly IProgressDataService progressDataService;
 
-        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService)
+        public CourseService(
+            ICourseDataService courseDataService,
+            ICourseAdminFieldsService courseAdminFieldsService,
+            IProgressDataService progressDataService
+        )
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
+            this.progressDataService = progressDataService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -137,6 +150,30 @@
                 customisationId,
                 centreId,
                 categoryId);
+        }
+
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        )
+        {
+            var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
+                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Select(p => p.ProgressId)
+                .ToList();
+
+            if (!currentProgressIds.Any())
+            {
+                return false;
+            }
+
+            foreach (var progressId in currentProgressIds)
+            {
+                courseDataService.RemoveCurrentCourse(progressId, delegateId, removalMethod);
+            }
+
+            return true;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

@@ -197,6 +197,7 @@
                              SA.Name,
                              SA.Description,
                              SA.UseFilteredApi,
+                             SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                              COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
@@ -213,7 +214,7 @@
                                INNER JOIN Competencies AS C
                                           ON SAS.CompetencyID = C.ID
                       WHERE CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL
-                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
+                      GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.UseFilteredApi, SA.SupervisorResultsReview, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId }
             );
         }
@@ -224,6 +225,7 @@
                              SA.Name,
                              SA.Description,
                              SA.UseFilteredApi,
+                             SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                              COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,
@@ -231,7 +233,8 @@
                              CA.CompleteByDate,
                              CA.UserBookmark,
                              CA.UnprocessedUpdates,
-                             CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
+                             CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt,
+                                                  CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                                                   CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles, COALESCE
                  ((SELECT TOP (1) RoleName
                   FROM    SelfAssessmentSupervisorRoles
