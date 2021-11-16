@@ -76,7 +76,7 @@
         }
 
         [Test]
-        public void DelegateGroupsViewModel_filters_should_be_set()
+        public void DelegateGroupsViewModel_filters_and_search_string_should_be_set()
         {
             // Given
             var admins = new[]
