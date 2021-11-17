@@ -164,18 +164,5 @@
             // Then
             result.Should().BeNotFoundResult();
         }
-
-        [Test]
-        public void DeactivateDelegateUser_on_wrong_centre_returns_not_found_result()
-        {
-            //Given
-            A.CallTo(() => userDataService.DeactivateDelegateUser(2)).DoesNothing();
-
-            // when
-            var result = viewDelegateController.DeactivateDelegate(2);
-
-            // then
-            result.Should().BeNotFoundResult();
-        }
     }
 }
