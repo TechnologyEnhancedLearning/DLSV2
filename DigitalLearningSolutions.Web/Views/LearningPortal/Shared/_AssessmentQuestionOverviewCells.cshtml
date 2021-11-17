@@ -7,10 +7,12 @@
   @Model.Question
 </td>
 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">My response </span>
+  <span class="nhsuk-table-responsive__heading">Self-assessment </span>
   <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
 </td>
-<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+@if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
+{
+  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
   <span class="nhsuk-table-responsive__heading">Questions </span>
   <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
 

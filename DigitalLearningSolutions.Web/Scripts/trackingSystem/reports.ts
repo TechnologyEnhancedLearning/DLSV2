@@ -36,6 +36,7 @@ function generateChart(request: XMLHttpRequest) {
   const data = constructChartistData(response);
 
   const options = {
+    fullWidth: true,
     axisY: {
       scaleMinSpace: 10,
       onlyInteger: true,

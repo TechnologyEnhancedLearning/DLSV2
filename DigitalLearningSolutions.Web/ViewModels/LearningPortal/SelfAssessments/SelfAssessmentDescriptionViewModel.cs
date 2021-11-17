@@ -14,6 +14,7 @@
         public readonly bool UnprocessedUpdates;
         public readonly bool LinearNavigation;
         public readonly bool IsSupervised;
+        public readonly bool IsSupervisorResultsReviewed;
         public readonly string? Vocabulary;
         public readonly string VocabPlural;
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }
@@ -27,6 +28,7 @@
             UnprocessedUpdates = selfAssessment.UnprocessedUpdates;
             LinearNavigation = selfAssessment.LinearNavigation;
             IsSupervised = selfAssessment.IsSupervised;
+            IsSupervisorResultsReviewed = selfAssessment.IsSupervisorResultsReviewed;
             Supervisors = supervisors;
             Vocabulary = selfAssessment.Vocabulary;
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary);
