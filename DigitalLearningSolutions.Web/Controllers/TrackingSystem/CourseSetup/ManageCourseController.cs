@@ -115,7 +115,7 @@
                 categoryId.Value
             );
 
-            var model = new EditCourseDetailsViewModel(courseDetails!);
+            var model = new EditCourseDetailsViewModel(courseDetails!, customisationId);
 
             return View(model);
         }
@@ -139,7 +139,7 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new EditCourseDetailsViewModel(formData, customisationId, centreId);
+                var model = new EditCourseDetailsViewModel(formData, customisationId);
                 return View("EditCourseDetails", model);
             }
 

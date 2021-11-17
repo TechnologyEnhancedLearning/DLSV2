@@ -1,41 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class EditCourseDetailsFormData
     {
         public EditCourseDetailsFormData() { }
-
-        public EditCourseDetailsFormData(
-            int applicationId,
-            string customisationName,
-            string? customisationNameSuffix,
-            bool passwordProtected,
-            string? password,
-            bool receiveNotificationEmails,
-            string? notificationEmails,
-            bool postLearningAssessment,
-            bool isAssessed,
-            bool diagAssess,
-            string? tutCompletionThreshold,
-            string? diagCompletionThreshold
-        )
-        {
-            ApplicationId = applicationId;
-            CustomisationName = customisationName;
-            CustomisationNameSuffix = customisationNameSuffix;
-            PasswordProtected = passwordProtected;
-            Password = password;
-            ReceiveNotificationEmails = receiveNotificationEmails;
-            NotificationEmails = notificationEmails;
-            PostLearningAssessment = postLearningAssessment;
-            IsAssessed = isAssessed;
-            DiagAssess = diagAssess;
-            TutCompletionThreshold = tutCompletionThreshold;
-            DiagCompletionThreshold = diagCompletionThreshold;
-        }
 
         protected EditCourseDetailsFormData(EditCourseDetailsFormData formData)
         {
@@ -51,6 +23,22 @@
             DiagAssess = formData.DiagAssess;
             TutCompletionThreshold = formData.TutCompletionThreshold;
             DiagCompletionThreshold = formData.DiagCompletionThreshold;
+        }
+
+        protected EditCourseDetailsFormData(CourseDetails courseDetails)
+        {
+            ApplicationId = courseDetails.ApplicationId;
+            CustomisationName = GetPartOfCustomisationName(courseDetails.CustomisationName, 0)!;
+            CustomisationNameSuffix = GetPartOfCustomisationName(courseDetails.CustomisationName, 1);
+            PasswordProtected = !string.IsNullOrEmpty(courseDetails.Password);
+            Password = courseDetails.Password;
+            ReceiveNotificationEmails = !string.IsNullOrEmpty(courseDetails.NotificationEmails);
+            NotificationEmails = courseDetails.NotificationEmails;
+            PostLearningAssessment = courseDetails.PostLearningAssessment;
+            IsAssessed = courseDetails.IsAssessed;
+            DiagAssess = courseDetails.DiagAssess;
+            TutCompletionThreshold = courseDetails.TutCompletionThreshold.ToString();
+            DiagCompletionThreshold = courseDetails.DiagCompletionThreshold.ToString();
         }
 
         public int ApplicationId { get; set; }
@@ -84,5 +72,15 @@
 
         [WholeNumberWithinInclusiveRange(0, 100, "Enter a whole number from 0 to 100")]
         public string? DiagCompletionThreshold { get; set; }
+
+        private static string? GetPartOfCustomisationName(string customisationName, int index)
+        {
+            if (customisationName.Contains(" - "))
+            {
+                return customisationName.Split(" - ")[index];
+            }
+
+            return index == 0 ? customisationName : null;
+        }
     }
 }

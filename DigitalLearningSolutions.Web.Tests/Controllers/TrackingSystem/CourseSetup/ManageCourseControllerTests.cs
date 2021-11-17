@@ -336,25 +336,25 @@
             string? diagCompletionThreshold = "75"
         )
         {
-            var formData = new EditCourseDetailsFormData(
-                applicationId,
-                customisationName,
-                customisationNameSuffix,
-                passwordProtected,
-                password,
-                receiveNotificationEmails,
-                notificationEmails,
-                postLearningAssessment,
-                isAssessed,
-                diagAssess,
-                tutCompletionThreshold,
-                diagCompletionThreshold
-            );
+            var formData = new EditCourseDetailsFormData
+            {
+                ApplicationId = applicationId,
+                CustomisationName = customisationName,
+                CustomisationNameSuffix = customisationNameSuffix,
+                PasswordProtected = passwordProtected,
+                Password = password,
+                ReceiveNotificationEmails = receiveNotificationEmails,
+                NotificationEmails = notificationEmails,
+                PostLearningAssessment = postLearningAssessment,
+                IsAssessed = isAssessed,
+                DiagAssess = diagAssess,
+                TutCompletionThreshold = tutCompletionThreshold,
+                DiagCompletionThreshold = diagCompletionThreshold,
+            };
 
             return new EditCourseDetailsViewModel(
                 formData,
-                customisationId,
-                centreId
+                customisationId
             );
         }
     }
