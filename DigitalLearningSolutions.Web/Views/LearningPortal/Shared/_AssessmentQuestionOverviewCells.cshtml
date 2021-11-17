@@ -13,14 +13,16 @@
 @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
 {
   <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Questions </span>
-  <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
+    <span class="nhsuk-table-responsive__heading">Questions </span>
+    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
 
-  @if (Model.SupervisorComments != null)
-  {
-    <a class="nhsuk-button nhsuk-button--secondary small-edit-button status-tag"
-       asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber=@Model.AssessmentQuestionInputTypeID>
-      View notes
-    </a>
-  }
-</td>
+    @if (Model.SupervisorComments != null)
+    {
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button status-tag"
+         asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber=@Model.AssessmentQuestionInputTypeID>
+        View notes
+      </a>
+    }
+
+  </td>
+}
