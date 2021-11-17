@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IActivityService
@@ -107,7 +108,7 @@
             var historicalCourses = courseDataService
                 .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId);
 
-            var courses = availableCourses.Union(historicalCourses)
+            var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
                 .OrderByDescending(c => c.Active)
                 .ThenBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
@@ -286,6 +287,19 @@
             public int Registrations { get; }
             public int Completions { get; }
             public int Evaluations { get; }
+        }
+
+        private class CourseEqualityComparer : IEqualityComparer<Course>
+        {
+            public bool Equals(Course? x, Course? y)
+            {
+                return x?.CustomisationId == y?.CustomisationId;
+            }
+
+            public int GetHashCode(Course obj)
+            {
+                return obj.CustomisationId;
+            }
         }
     }
 }

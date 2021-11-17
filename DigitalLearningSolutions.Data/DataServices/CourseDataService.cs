@@ -400,7 +400,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 @"SELECT COUNT(ct.TutorialID)
                 FROM CustomisationTutorials AS ct
                 INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
-                WHERE ct.DiagStatus = 1 AND ct.CustomisationID = c.CustomisationID";
+                INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
+                INNER JOIN Application AS a ON a.ApplicationID = c.ApplicationID
+                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID";
 
             return connection.Query<CourseAssessmentDetails>(
                 $@"SELECT
