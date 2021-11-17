@@ -24,6 +24,7 @@
         IEnumerable<Competency> GetCandidateAssessmentResultsToVerifyById(int selfAssessmentId, int candidateId);
         IEnumerable<Competency> GetCandidateAssessmentOptionalCompetencies(int selfAssessmentId, int candidateId);
         Competency GetCompetencyByCandidateAssessmentResultId(int resultId, int candidateAssessmentId, int adminId);
+        SelfAssessmentSupervisor GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetOtherSupervisorsForCandidate(int selfAssessmentId, int candidateId);
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
@@ -312,7 +313,7 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                     WHERE ID = @assessmentQuestionId",
                 new { assessmentQuestionId }
                 );
-            if(assessmentQuestion == null)
+            if (assessmentQuestion == null)
             {
                 logger.LogWarning(
                    "Not saving self assessment result as assessment question Id is invalid. " +
@@ -633,16 +634,36 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
             ).FirstOrDefault();
         }
 
+        public SelfAssessmentSupervisor GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId)
+        {
+            var supervisorDetails = connection.Query<SelfAssessmentSupervisor>(
+                  @"SELECT sd.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent,
+                   au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
+                   sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+                   FROM   SupervisorDelegates AS sd INNER JOIN
+                   CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
+                   CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                   AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+                   SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
+                   WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId)
+                   AND (ca.SelfAssessmentID = @selfAssessmentId)",
+                   new { selfAssessmentId, candidateId }
+                  ).FirstOrDefault();
+
+            return supervisorDetails;
+        }
+
         public IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
-        {return connection.Query<SelfAssessmentSupervisor>(
-               @"SELECT sd.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
+        {
+            return connection.Query<SelfAssessmentSupervisor>(
+                  @"SELECT sd.ID, sd.ID AS SupervisorDelegateID, sd.SupervisorAdminID, sd.SupervisorEmail, sd.NotificationSent, au.Forename + ' ' + au.Surname AS SupervisorName, COALESCE(sasr.RoleName, 'Supervisor') AS RoleName, sasr.SelfAssessmentReview, sasr.ResultsReview, sd.AddedByDelegate, sd.Confirmed
 FROM   SupervisorDelegates AS sd INNER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = @candidateId) AND (ca.SelfAssessmentID = @selfAssessmentId)", new { selfAssessmentId, candidateId }
-               );
+                  );
         }
         public IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId)
         {
@@ -760,7 +781,7 @@ WHERE (CA.CandidateID = @candidateId) AND (CA.RemovedDate IS NULL)
                             AND CA.SelfAssessmentID = @selfAssessmentId
                                    AND CA.CandidateID = @candidateId AND CA.RemovedDate IS NULL AND SAS.Optional = 1
 								   WHERE NOT EXISTS (SELECT * FROM CandidateAssessmentOptionalCompetencies WHERE CandidateAssessmentID = CA.ID AND CompetencyID = SAS.CompetencyID AND CompetencyGroupID = SAS.CompetencyGroupID)",
-                new {selfAssessmentId, candidateId});
+                new { selfAssessmentId, candidateId });
         }
 
         public void UpdateCandidateAssessmentOptionalCompetencies(int selfAssessmentStructureId, int candidateId)

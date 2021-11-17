@@ -118,30 +118,33 @@
         [Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}")]
         //[Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/ViewNotes")]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber)
-        {
+        {           
+            int candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/" + competencyNumber.ToString();
-            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+
+            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
+
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to display self assessment competency for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                logger.LogWarning($"Attempt to display self assessment overview for candidate {candidateId} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var competency = selfAssessmentService.GetNthCompetency(competencyNumber, assessment.Id, User.GetCandidateIdKnownNotNull());
-            if (competency == null)
+            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
+
+            if (competencies == null)
             {
                 return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id, vocabulary = assessment.Vocabulary });
             }
-            else
+                        
+            var competency = competencies.FirstOrDefault(x => x.Id == selfAssessmentId);
+            var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber, assessment.NumberOfCompetencies)
             {
-                foreach (AssessmentQuestion assessmentQuestion in competency.AssessmentQuestions)
-                {
-                    assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
-                }
-            }
+                SelfAssessmentSupervisor = selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId)
+            };
 
-            var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber, assessment.NumberOfCompetencies);
             return View("Comments/SupervisorComments", model);
         }
 
