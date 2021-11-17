@@ -309,9 +309,14 @@
         public IActionResult AddCourseToGroupSelectCourse(int groupId)
         {
             var centreId = User.GetCentreId();
+
+            // TODO Tidy this with new claims method from HEEDLS-564 when merged
             var adminCategoryId = User.GetAdminCategoryId()!.Value;
             var adminCategoryFilter = adminCategoryId == 0 ? (int?)null : adminCategoryId;
+
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+
+            // TODO Tidy this with service method from HEEDLS-657
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
 
             var model = new AddCourseToGroupCoursesViewModel(courses, groupId, groupName!);
