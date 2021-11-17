@@ -19,7 +19,7 @@
     @if (Model.SupervisorComments != null)
     {
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button status-tag"
-         asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber=@Model.AssessmentQuestionInputTypeID>
+         asp-action="SupervisorComments" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber=@Model.AssessmentQuestionInputTypeID>
         View notes
       </a>
     }

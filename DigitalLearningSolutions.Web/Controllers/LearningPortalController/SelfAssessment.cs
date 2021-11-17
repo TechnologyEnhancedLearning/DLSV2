@@ -115,8 +115,8 @@
             }
         }
 
-        //[Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}")]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/ViewNotes")]
+        [Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}")]
+        //[Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/ViewNotes")]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber)
         {
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/" + competencyNumber.ToString();
