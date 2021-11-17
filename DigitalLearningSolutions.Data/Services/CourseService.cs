@@ -96,7 +96,7 @@
 
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int adminCategoryIdClaim)
         {
-            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(customisationId);
+            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseCentreAndCategory(customisationId);
 
             if (courseCentreId == null || courseCategoryId == null)
             {
@@ -181,7 +181,7 @@
 
         public int GetCourseCategoryId(int customisationId)
         {
-            return courseDataService.GetCourseValidationDetails(customisationId).courseCategoryId!.Value;
+            return courseDataService.GetCourseCentreAndCategory(customisationId).courseCategoryId!.Value;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
