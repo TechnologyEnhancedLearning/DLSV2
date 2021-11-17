@@ -399,14 +399,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCentrallyManagedAndCentreCourses_returns_expected_values()
+        public void GetCoursesAvailableToCentreByCategory_returns_expected_values()
         {
             // Given
             const int centreId = 101;
             int? categoryId = null;
 
             // When
-            var result = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
+            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new Course
@@ -421,6 +421,79 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             result.Should().HaveCount(260);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
+        }
+
+        [Test]
+        public void GetCoursesAvailableToCentreByCategory_returns_active_and_inactive_all_centre_courses()
+        {
+            // Given
+            const int centreId = 101;
+            const int categoryId = 1;
+
+            var expectedActiveCourse = new Course
+            {
+                CustomisationId = 17468,
+                CentreId = 549,
+                ApplicationId = 206,
+                ApplicationName = "An Introduction to Cognition",
+                CustomisationName = "eLearning",
+                Active = true,
+            };
+            var expectedInactiveCourse = new Course
+            {
+                CustomisationId = 14738,
+                CentreId = 549,
+                ApplicationId = 76,
+                ApplicationName = "Mobile Directory",
+                CustomisationName = "eLearning",
+                Active = false,
+            };
+
+            // When
+            var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            result.Should().ContainEquivalentOf(expectedActiveCourse);
+            result.Should().ContainEquivalentOf(expectedInactiveCourse);
+        }
+
+        [Test]
+        public void GetCoursesEverUsedAtCentreByCategory_returns_courses_no_longer_available_to_centre()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            var expectedUnavailableCourse = new Course
+            {
+                CustomisationId = 18438,
+                CentreId = 101,
+                ApplicationId = 301,
+                ApplicationName = "5 Jan Test",
+                CustomisationName = "New",
+                Active = true,
+            };
+
+            // When
+            var everUsedResult = courseDataService.GetCoursesEverUsedAtCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            everUsedResult.Should().ContainEquivalentOf(expectedUnavailableCourse);
+        }
+
+        [Test]
+        public void GetCoursesAvailableToCentreByCategory_does_not_return_unavailable_courses()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var availableResult =
+                courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            availableResult.Select(c => c.CustomisationId).Should().NotContain(18438);
         }
 
         [Test]

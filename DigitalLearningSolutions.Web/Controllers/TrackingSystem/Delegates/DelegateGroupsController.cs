@@ -43,6 +43,7 @@
 
         [Route("{page=1:int}")]
         public IActionResult Index(
+            string? searchString = null,
             string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.Ascending,
             string? filterBy = null,
@@ -68,6 +69,7 @@
             var model = new DelegateGroupsViewModel(
                 groups,
                 GetRegistrationPromptsWithSetOptions(centreId),
+                searchString,
                 sortBy,
                 sortDirection,
                 filterBy,

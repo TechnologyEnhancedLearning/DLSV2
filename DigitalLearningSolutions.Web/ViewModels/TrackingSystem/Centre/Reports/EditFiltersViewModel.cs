@@ -123,7 +123,39 @@
                 )
                 .ToValidationResultList(nameof(StartDay), nameof(StartMonth), nameof(StartYear));
 
+            if (!startDateValidationResults.Any())
+            {
+                ValidateStartDateIsAfterDataStart(startDateValidationResults);
+            }
+
             validationResults.AddRange(startDateValidationResults);
+        }
+
+        private void ValidateStartDateIsAfterDataStart(List<ValidationResult> startDateValidationResults)
+        {
+            var startDate = GetValidatedStartDate();
+
+            if (startDate < DataStart)
+            {
+                startDateValidationResults.Add(
+                    new ValidationResult(
+                        "Enter a start date after the start of data for this centre",
+                        new[]
+                        {
+                            nameof(StartDay),
+                        }
+                    )
+                );
+                startDateValidationResults.Add(
+                    new ValidationResult(
+                        "",
+                        new[]
+                        {
+                            nameof(StartMonth), nameof(StartYear),
+                        }
+                    )
+                );
+            }
         }
 
         private void ValidateEndDate(List<ValidationResult> validationResults)
@@ -152,10 +184,10 @@
             {
                 endDateValidationResults.Add(
                     new ValidationResult(
-                        "End date must not precede start date",
+                        "Enter an end date after the start date",
                         new[]
                         {
-                            nameof(EndDay)
+                            nameof(EndDay),
                         }
                     )
                 );
@@ -164,7 +196,7 @@
                         "",
                         new[]
                         {
-                            nameof(EndMonth), nameof(EndYear)
+                            nameof(EndMonth), nameof(EndYear),
                         }
                     )
                 );

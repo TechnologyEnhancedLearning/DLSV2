@@ -34,7 +34,7 @@
             // Given
             const int centreId = 2;
             const int categoryId = 1;
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(new List<Course> { new Course { CustomisationId = 1 } });
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
@@ -59,7 +59,7 @@
         public void GetCoursesAndCourseDelegatesForCentre_contains_empty_lists_with_no_courses_in_category()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(2, 7)).Returns(new List<Course>());
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(2, 7)).Returns(new List<Course>());
 
             // When
             var result = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(2, 7, null);
@@ -82,7 +82,7 @@
             const int customisationId = 2;
             const int centreId = 2;
             const int categoryId = 1;
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(new List<Course> { new Course { CustomisationId = 1 } });
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
