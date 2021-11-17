@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\checkboxGroup.ts" />
     <None Remove="Scripts\common.ts" />
     <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
@@ -38,6 +39,7 @@
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
     <None Remove="Scripts\supervisor\staffList.ts" />
+    <None Remove="Scripts\supervisor\verify.ts" />
     <None Remove="Scripts\trackingSystem\allDelegates.ts" />
     <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
     <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
@@ -76,6 +78,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\common.ts" />
+    <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
     <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\fullscreen.ts" />
     <TypeScriptCompile Include="Scripts\learningMenu\postLearningContentViewer.ts" />
@@ -99,6 +102,7 @@
     <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
+    <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
