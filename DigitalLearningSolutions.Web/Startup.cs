@@ -290,7 +290,7 @@ namespace DigitalLearningSolutions.Web
                 endpoints =>
                     endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}")
             );
-            
+
             migrationRunner.MigrateUp();
         }
 
