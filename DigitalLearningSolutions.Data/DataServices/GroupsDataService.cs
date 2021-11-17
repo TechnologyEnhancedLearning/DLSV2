@@ -15,7 +15,7 @@
 
         IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
 
-        GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+        GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -147,7 +147,7 @@
             );
         }
 
-        public GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        public GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
         {
             return connection.Query<GroupCourse>(
                 @"SELECT

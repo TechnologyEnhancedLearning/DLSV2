@@ -440,7 +440,7 @@
             var result = delegateGroupsController.GroupCourseRemove(groupId, groupCustomisationId, model);
 
             // Then
-            result.Should().BeViewResult();
+            result.Should().BeViewResult().WithDefaultViewName();
             delegateGroupsController.ModelState.IsValid.Should().BeFalse();
             A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(A<int>._, A<int>._, A<bool>._))
                 .MustNotHaveHappened();

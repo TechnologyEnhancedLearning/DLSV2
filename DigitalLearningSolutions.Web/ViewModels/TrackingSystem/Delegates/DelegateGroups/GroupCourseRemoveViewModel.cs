@@ -7,14 +7,14 @@
     {
         public GroupCourseRemoveViewModel() { }
 
-        public GroupCourseRemoveViewModel(int courseId, string courseName, string groupName)
+        public GroupCourseRemoveViewModel(int groupCourseId, string courseName, string groupName)
         {
-            CourseId = courseId;
+            GroupCourseId = groupCourseId;
             CourseName = courseName;
             GroupName = groupName;
         }
 
-        public int CourseId { get; set; }
+        public int GroupCourseId { get; set; }
         public string CourseName { get; set; }
         public string GroupName { get; set; }
         public bool Confirm { get; set; }

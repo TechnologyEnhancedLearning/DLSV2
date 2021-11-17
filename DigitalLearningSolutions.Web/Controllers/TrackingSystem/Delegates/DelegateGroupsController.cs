@@ -192,7 +192,7 @@
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
             var groupCourse = groupsService.GetGroupCourse(groupCustomisationId, groupId, centreId);
 
-            var model = new GroupCourseRemoveViewModel(groupCourse.GroupCustomisationId, groupCourse.CourseName, groupName!);
+            var model = new GroupCourseRemoveViewModel(groupCourse!.GroupCustomisationId, groupCourse.CourseName, groupName!);
 
             return View(model);
         }

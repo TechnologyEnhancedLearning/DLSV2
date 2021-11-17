@@ -15,21 +15,31 @@
     public class VerifyAdminUserCanAccessGroupCourseTests
     {
         private IGroupsDataService groupsDataService = null!;
-        private readonly int GroupCustomisationId = 25;
-        private readonly int GroupId = 103;
+        private ActionExecutingContext context = null!;
+        private const int GroupCustomisationId = 25;
+        private const int GroupId = 103;
 
         [SetUp]
         public void SetUp()
         {
             groupsDataService = A.Fake<IGroupsDataService>();
+
+            var delegateGroupsController = new DelegateGroupsController(
+                A.Fake<IGroupsDataService>(),
+                A.Fake<ICentreCustomPromptsService>(),
+                A.Fake<IClockService>(),
+                A.Fake<IGroupsService>()
+            ).WithDefaultContext().WithMockUser(true);
+            context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
+            context.RouteData.Values["groupId"] = GroupId;
+            context.RouteData.Values["groupCustomisationId"] = GroupCustomisationId;
         }
 
         [Test]
         public void Returns_NotFound_if_groupCourse_not_in_users_centre()
         {
             // Given
-            var context = GetDefaultContext();
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null!);
+            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null);
 
             // When
             new VerifyAdminUserCanAccessGroupCourse(groupsDataService).OnActionExecuting(context);
@@ -42,7 +52,6 @@
         public void Does_not_return_action_if_groupCourse_is_in_users_centre()
         {
             // Given
-            var context = GetDefaultContext();
             A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
 
             // When
@@ -50,21 +59,6 @@
 
             // Then
             context.Result.Should().BeNull();
-        }
-
-        private ActionExecutingContext GetDefaultContext()
-        {
-            var delegateGroupsController = new DelegateGroupsController(
-                A.Fake<IGroupsDataService>(),
-                A.Fake<ICentreCustomPromptsService>(),
-                A.Fake<IClockService>(),
-                A.Fake<IGroupsService>()
-            ).WithDefaultContext().WithMockUser(true);
-            var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
-            context.RouteData.Values["groupId"] = GroupId;
-            context.RouteData.Values["groupCustomisationId"] = GroupCustomisationId;
-
-            return context;
         }
     }
 }

@@ -23,11 +23,11 @@
                 return;
             }
 
-            var centerId = controller.User.GetCentreId();
+            var centreId = controller.User.GetCentreId();
             var groupId = int.Parse(context.RouteData.Values["groupId"].ToString()!);
             var groupCustomisationId = int.Parse(context.RouteData.Values["groupCustomisationId"].ToString()!);
 
-            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centerId);
+            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
 
             if (groupCourse == null)
             {

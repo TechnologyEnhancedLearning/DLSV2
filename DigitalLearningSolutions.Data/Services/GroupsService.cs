@@ -32,7 +32,7 @@
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
 
-        GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+        GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
 
         void RemoveGroupCourseAndRelatedProgress(int customisationId, int groupId, bool deleteStartedEnrolment);
     }
@@ -223,11 +223,9 @@
             transaction.Complete();
         }
 
-        public GroupCourse GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        public GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
         {
-            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
-
-            return groupCourse;
+            return groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
         }
 
         public void RemoveGroupCourseAndRelatedProgress(int groupCustomisationId, int groupId, bool deleteStartedEnrolment)

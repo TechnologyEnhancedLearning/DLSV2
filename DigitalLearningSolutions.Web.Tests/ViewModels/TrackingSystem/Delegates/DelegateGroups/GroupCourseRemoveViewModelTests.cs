@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using NUnit.Framework;
     using FluentAssertions;
@@ -23,7 +20,7 @@
             var result = new GroupCourseRemoveViewModel(courseId, courseName, groupName);
 
             // Then
-            result.CourseId.Should().Be(1);
+            result.GroupCourseId.Should().Be(1);
             result.CourseName.Should().Be("Test Course");
             result.GroupName.Should().Be("Test Group");
         }
@@ -35,7 +32,7 @@
             var model = new GroupCourseRemoveViewModel();
 
             // When
-            var result = model.Validate(new ValidationContext(model));
+            var result = model.Validate(new ValidationContext(model)).ToList();
 
             // Then
             result.Should().NotBeEmpty();
@@ -48,7 +45,7 @@
             // Given
             var model = new GroupCourseRemoveViewModel
             {
-                Confirm = true
+                Confirm = true,
             };
 
             // When
