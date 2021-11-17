@@ -1,4 +1,4 @@
-﻿class CheckboxGroup {
+class CheckboxGroup {
   public static setUpSelectAndDeselectButtons(): void {
     const selectAllButtons = document.querySelectorAll('.select-all') as NodeListOf<HTMLAnchorElement>;
     selectAllButtons.forEach((button) => {
