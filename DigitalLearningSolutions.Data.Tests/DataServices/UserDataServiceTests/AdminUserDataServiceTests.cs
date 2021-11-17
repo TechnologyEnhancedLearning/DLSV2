@@ -198,13 +198,13 @@
         public void DeactivateAdminUser_updates_user()
         {
             using var transaction = new TransactionScope();
-            var  adminUser = userDataService.GetAdminUserById(7)!;
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
 
             try
             {
                 // When
-                userDataService.DeactivateAdmin(7);
-                var updatedAdminUser = userDataService.GetAdminUserById(7)!;
+                userDataService.DeactivateAdmin(adminUser.Id);
+                var updatedAdminUser = userDataService.GetAdminUserById(adminUser.Id)!;
 
                 // Then
                 adminUser.Active.Should().Be(true);
