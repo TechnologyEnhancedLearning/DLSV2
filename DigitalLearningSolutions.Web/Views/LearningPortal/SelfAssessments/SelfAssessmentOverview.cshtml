@@ -69,25 +69,25 @@
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-<div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-  <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-  @if (Model.SupervisorSignOffs.Any())
-  {
-<dl class="nhsuk-summary-list">
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    @Model.SelfAssessment.SignOffRoleName
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SupervisorSignOffs.FirstOrDefault().SupervisorName (@Model.SupervisorSignOffs.FirstOrDefault().SupervisorEmail)
-  </dd>
-  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
-  {
-    <dd class="nhsuk-summary-list__actions">
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
+    @if (Model.SupervisorSignOffs.Any())
+    {
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          @Model.SelfAssessment.SignOffRoleName
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.SupervisorSignOffs.FirstOrDefault().SupervisorName (@Model.SupervisorSignOffs.FirstOrDefault().SupervisorEmail)
+        </dd>
+        @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
+        {
+          <dd class="nhsuk-summary-list__actions">
 
-    </dd>
-  }
-</div>
+          </dd>
+        }
+    </div>
 
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
@@ -108,15 +108,15 @@
         }
       </dd>
       @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
-          {
-    <dd class="nhsuk-summary-list__actions">
-      @if ((Model.SupervisorSignOffs.FirstOrDefault().EmailSent == null && Model.SupervisorSignOffs.FirstOrDefault().Verified == null || (Model.SupervisorSignOffs.FirstOrDefault().Verified == null) && Model.SupervisorSignOffs.FirstOrDefault().EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
       {
-        <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.SupervisorSignOffs.FirstOrDefault().ID" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-candidateAssessmentSupervisorId="@Model.SupervisorSignOffs.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
-      }
-    </dd>
+        <dd class="nhsuk-summary-list__actions">
+          @if ((Model.SupervisorSignOffs.FirstOrDefault().EmailSent == null && Model.SupervisorSignOffs.FirstOrDefault().Verified == null || (Model.SupervisorSignOffs.FirstOrDefault().Verified == null) && Model.SupervisorSignOffs.FirstOrDefault().EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
+          {
+            <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.SupervisorSignOffs.FirstOrDefault().ID" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-candidateAssessmentSupervisorId="@Model.SupervisorSignOffs.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
           }
-      
+        </dd>
+      }
+
     </div>
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
@@ -131,26 +131,26 @@
 
         </dd>
       }
-      </div>
+    </div>
     @if ((Model.SupervisorSignOffs.Count() - 1) > 0)
     {
-<div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Previous sign off requests
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @(Model.SupervisorSignOffs.Count() - 1)
-  </dd>
-  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
-  {
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="SignOffHistory" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
-    </dd>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Previous sign off requests
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.SupervisorSignOffs.Count() - 1)
+        </dd>
+        @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
+        {
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="SignOffHistory" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
+          </dd>
+        }
+      </div>
+    }
+    </dl>
   }
-  </div>
-    }
-      </dl>
-    }
     @if (Model.AllQuestionsVerified())
     {
       @if (!Model.SupervisorSignOffs.Any())
@@ -158,7 +158,7 @@
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
 
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route="@Model.SelfAssessment.Id" >Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route="@Model.SelfAssessment.Id">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
     }
     else
     {

@@ -1,0 +1,45 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@model SelfAssessmentCompetencyViewModel
+
+@{
+  ViewData["Title"] = "Supervisor comments";
+  ViewData["Application"] = "Supervisor notes";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@Model.Assessment.Name</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@Model.VocabPlural()</a></li>
+        <li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.CompetencyNumber</li>
+      </ol>
+    </div>
+  </nav>
+}
+
+<div>
+  <h1>@Model.Competency.Name</h1>
+  <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
+    <div class="nhsuk-care-card__heading-container">
+      <h2 class="nhsuk-care-card__heading">
+        <span role="text">
+          Supervisor Notes
+          @* TODO: need to replace with supervisor name *@
+        </span>
+      </h2>
+      <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
+    </div>
+    <div class="nhsuk-care-card__content">
+      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.FirstOrDefault(x => x.Id == Model.Assessment.Id)" />
+
+      <p>@Model.Competency.AssessmentQuestions.FirstOrDefault(x => x.Id == Model.Assessment.Id)?.SupervisorComments</p>
+
+    </div>
+  </div>
+  <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
+</div>
