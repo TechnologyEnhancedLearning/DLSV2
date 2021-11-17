@@ -7,6 +7,8 @@
     public interface IProgressService
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
+
+        void UnlockProgress(int progressId, int delegateId);
     }
 
     public class ProgressService : IProgressService
@@ -47,6 +49,11 @@
             progressDataService.ClearAspProgressVerificationRequest(progressId);
 
             transaction.Complete();
+        }
+
+        public void UnlockProgress(int progressId, int delegateId)
+        {
+            progressDataService.UnlockProgress(progressId, delegateId);
         }
     }
 }

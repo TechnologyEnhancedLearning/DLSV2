@@ -74,11 +74,17 @@
          asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
         View progress
       </a>
-      @if (Model.Locked) {
-        <a class="nhsuk-button nhsuk-button--secondary expander-card__button" role="button">
+      @*@if (Model.Locked) {*@
+        <a class="nhsuk-button nhsuk-button--secondary expander-card__button"
+           role="button"
+           asp-controller="DelegateProgress"
+           asp-action="UnlockProgress"
+           asp-route-progressId="@Model.ProgressId"
+           asp-route-delegateId="@Model.DelegateId"
+           asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
           Unlock progress
         </a>
-      }
+      @*}*@
       @if (Model.RemovedDate == null) {
         <a class="nhsuk-button delete-button expander-card__button" role="button">
           Remove from course

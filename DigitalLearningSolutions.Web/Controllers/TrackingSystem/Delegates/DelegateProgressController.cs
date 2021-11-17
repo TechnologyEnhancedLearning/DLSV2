@@ -91,5 +91,22 @@
 
             return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
         }
+
+        [HttpPost]
+        [Route("/UnlockProgress/{delegateId:int}")]
+        public IActionResult UnlockProgress(
+            int progressId,
+            int delegateId,
+            DelegateProgressAccessRoute accessedVia)
+        {
+            progressService.UnlockProgress(progressId, delegateId);
+
+            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+            {
+                return RedirectToAction("Index", new { progressId, accessedVia });
+            }
+
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
     }
 }

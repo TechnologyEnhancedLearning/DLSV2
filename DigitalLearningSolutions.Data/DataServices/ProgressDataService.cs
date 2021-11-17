@@ -25,6 +25,7 @@
         void CreateNewAspProgress(int tutorialId, int progressId);
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
         void ClearAspProgressVerificationRequest(int progressId);
+        void UnlockProgress(int progressId, int delegateId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -159,6 +160,17 @@
                         SupervisorVerificationRequested = NULL
                     WHERE ProgressID = @progressId",
                 new { progressId }
+            );
+        }
+
+        public void UnlockProgress(int progressId, int delegateId)
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        PLLocked = 0
+                    WHERE ProgressID = @progressId
+                        AND CandidateID = @delegateId",
+                new { progressId, delegateId }
             );
         }
     }
