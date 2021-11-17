@@ -19,7 +19,7 @@
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
         private IProgressDataService progressDataService = null!;
-
+        
         [SetUp]
         public void Setup()
         {
