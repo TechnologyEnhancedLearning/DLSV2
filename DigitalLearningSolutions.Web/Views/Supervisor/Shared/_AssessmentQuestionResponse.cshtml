@@ -3,12 +3,11 @@
 
 @if (Model.Result == null)
 {
-  <span class="nhsuk-u-font-weight-bold status-tag">No response</span>
+  <span class="nhsuk-u-font-weight-bold status-tag"></span>
 }
 else
 {
   @if (Model.LevelDescriptors != null)
-
   {
     foreach (var levelDescriptor in Model.LevelDescriptors)
     {

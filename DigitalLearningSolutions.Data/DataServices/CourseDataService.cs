@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
@@ -18,7 +19,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
 
-        void RemoveCurrentCourse(int progressId, int candidateId);
+        void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod);
 
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
 
@@ -36,7 +37,9 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+
+        IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
@@ -190,16 +193,16 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public void RemoveCurrentCourse(int progressId, int candidateId)
+        public void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                     SET RemovedDate = getUTCDate(),
-                        RemovalMethodID = 1
+                        RemovalMethodID = @removalMethod
                     WHERE ProgressID = @progressId
                       AND CandidateID = @candidateId
                 ",
-                new { progressId, candidateId }
+                new { progressId, candidateId, removalMethod }
             );
 
             if (numberOfAffectedRows < 1)
@@ -385,7 +388,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId)
+        public IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
                 @"SELECT
@@ -396,11 +399,32 @@ namespace DigitalLearningSolutions.Data.DataServices
                         c.CustomisationName,
                         c.Active
                     FROM Customisations AS c
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    WHERE (c.CentreID = @centreId OR (c.AllCentres = 1 AND ca.Active = 1))
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
+                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
+                    AND ca.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ca.CentreID = @centreId
+                    AND ap.ArchivedDate IS NULL",
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT DISTINCT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        ap.ApplicationName,
+                        c.CustomisationName,
+                        c.Active
+                    FROM Candidates AS cn
+                    INNER JOIN Progress AS p ON p.CandidateID = cn.CandidateID
+                    INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    WHERE cn.CentreID = @centreID
+	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
