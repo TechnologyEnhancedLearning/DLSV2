@@ -259,7 +259,7 @@
         }
 
         [Test]
-        public void ActivateDelegateUser_deactivates_delegate_user()
+        public void DeactivateDelegateUser_deactivates_delegate_user()
         {
             using var transaction = new TransactionScope();
 
@@ -402,10 +402,9 @@
         public void ActivateDelegateUser_activates_delegate_user()
         {
             using var transaction = new TransactionScope();
-            const int delegateUserId = 29;
 
             // Given
-            userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeFalse();
+            const int delegateUserId = 29;
 
             // When
             userDataService.ActivateDelegateUser(delegateUserId);

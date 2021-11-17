@@ -132,9 +132,10 @@
             A.CallTo(() => userDataService.ActivateDelegateUser(1)).DoesNothing();
 
             // When
-            var result = viewDelegateController.ActivateDelegate(1);
+            var result = viewDelegateController.ReactivateDelegate(1);
 
             // Then
+            A.CallTo(() => userDataService.ActivateDelegateUser(1)).MustHaveHappened();
             result.Should().BeRedirectToActionResult();
         }
 
@@ -142,23 +143,23 @@
         public void ReactivateDelegate_nonexistent_delegate_returns_not_found_result()
         {
             //Given
-            A.CallTo(() => userDataService.ActivateDelegateUser(10)).DoesNothing();
-
+            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(null);
+            
             // When
-            var result = viewDelegateController.ActivateDelegate(10);
+            var result = viewDelegateController.ReactivateDelegate(10);
 
             // Then
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void ReactivateDelegat_delegate_on_wrong_centre_returns_not_found_result()
+        public void ReactivateDelegate_delegate_on_wrong_centre_returns_not_found_result()
         {
             //Given
-            A.CallTo(() => userDataService.ActivateDelegateUser(2)).DoesNothing();
+            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(new DelegateUserCard() { CentreId = 1});
 
             // When
-            var result = viewDelegateController.ActivateDelegate(2);
+            var result = viewDelegateController.ReactivateDelegate(2);
 
             // Then
             result.Should().BeNotFoundResult();
