@@ -149,14 +149,14 @@
         public void VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_and_categoryId_match()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(A<int>._))
                 .Returns((2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
@@ -166,14 +166,14 @@
             VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(A<int>._))
                 .Returns((2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
@@ -182,14 +182,14 @@
         public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_centre()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(A<int>._))
                 .Returns((2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
@@ -198,14 +198,14 @@
         public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_categoryID()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(A<int>._))
                 .Returns((1, 1));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
@@ -250,14 +250,14 @@
         public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(A<int>._))
                 .Returns((null, null));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseCentreAndCategory(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeNull();
         }

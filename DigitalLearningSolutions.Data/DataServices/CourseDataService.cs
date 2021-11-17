@@ -51,7 +51,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
+        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -408,7 +408,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
+        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId)
         {
             return connection.QueryFirstOrDefault<(int?, int?)>(
                 @"SELECT c.CentreId, a.CourseCategoryId
