@@ -52,6 +52,7 @@
     }
   </div>
 </div>
+
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
@@ -67,7 +68,7 @@
             Question
           </th>
           <th role="columnheader" class="" scope="col">
-            Learner<br/>Response
+            Learner<br />Response
           </th>
           <th role="columnheader" class="" scope="col">
             Status
@@ -96,4 +97,11 @@
       </tbody>
     </table>
   }
+}
+@if (Model.SupervisorSignOffs.Any())
+{
+<div class="nhsuk-u-margin-top-4">
+  <h3>Self Assessment Sign-off Status</h3>
+  <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
+</div>
 }
