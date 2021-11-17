@@ -125,12 +125,12 @@
         {
             var (courseCentreId, courseCategoryId, allCentres) = courseDataService.GetCourseValidationDetails(customisationId);
 
-            if (courseCentreId == null || courseCategoryId == null)
+            if (courseCentreId == null || courseCategoryId == null || allCentres == null)
             {
                 return null;
             }
 
-            if (courseCentreId != centreId && !allCentres)
+            if (courseCentreId != centreId && !allCentres.Value)
             {
                 return false;
             }

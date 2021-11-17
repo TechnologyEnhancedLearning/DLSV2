@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        public (int? centreId, int? courseCategoryId, bool allCentres) GetCourseValidationDetails(int customisationId);
+        public (int? centreId, int? courseCategoryId, bool? allCentres) GetCourseValidationDetails(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -449,9 +449,9 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId, bool allCentres) GetCourseValidationDetails(int customisationId)
+        public (int? centreId, int? courseCategoryId, bool? allCentres) GetCourseValidationDetails(int customisationId)
         {
-            return connection.QueryFirstOrDefault<(int?, int?, bool)>(
+            return connection.QueryFirstOrDefault<(int?, int?, bool?)>(
                 @"SELECT c.CentreId, a.CourseCategoryId, c.AllCentres
                         FROM Customisations AS c
                         INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID

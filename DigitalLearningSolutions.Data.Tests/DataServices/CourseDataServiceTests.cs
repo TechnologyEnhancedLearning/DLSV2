@@ -409,7 +409,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             var result = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId).ToList();
 
             // Then
-            var expectedFirstCourse = new Course
+            var expectedFirstCourse = new CourseAssessmentDetails
             {
                 CustomisationId = 100,
                 CentreId = 101,
@@ -417,6 +417,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
                 CustomisationName = "Standard",
                 Active = false,
+                AspMenu = true,
+                CategoryName = "Undefined",
+                CourseTopic = "Undefined",
+                HasDiagnostic = false,
+                HasLearning = true,
+                IsAssessed = false,
             };
 
             result.Should().HaveCount(260);
@@ -430,7 +436,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             const int categoryId = 1;
 
-            var expectedActiveCourse = new Course
+            var expectedActiveCourse = new CourseAssessmentDetails
             {
                 CustomisationId = 17468,
                 CentreId = 549,
@@ -438,8 +444,14 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationName = "An Introduction to Cognition",
                 CustomisationName = "eLearning",
                 Active = true,
+                AspMenu = true,
+                CategoryName = "Undefined",
+                CourseTopic = "Undefined",
+                HasDiagnostic = false,
+                HasLearning = true,
+                IsAssessed = false,
             };
-            var expectedInactiveCourse = new Course
+            var expectedInactiveCourse = new CourseAssessmentDetails
             {
                 CustomisationId = 14738,
                 CentreId = 549,
@@ -447,6 +459,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 ApplicationName = "Mobile Directory",
                 CustomisationName = "eLearning",
                 Active = false,
+                AspMenu = true,
+                CategoryName = "Undefined",
+                CourseTopic = "Undefined",
+                HasDiagnostic = false,
+                HasLearning = true,
+                IsAssessed = false,
             };
 
             // When
@@ -500,22 +518,36 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(100);
+            var (centreId, courseCategoryId, allCentres) = courseDataService.GetCourseValidationDetails(100);
 
             // Then
             centreId.Should().Be(101);
             courseCategoryId.Should().Be(2);
+            allCentres.Should().BeFalse();
         }
 
         [Test]
         public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(265);
+            var (centreId, courseCategoryId, allCentres) = courseDataService.GetCourseValidationDetails(265);
 
             // Then
             centreId.Should().BeNull();
             courseCategoryId.Should().BeNull();
+            allCentres.Should().BeNull();
+        }
+
+        [Test]
+        public void GetCourseValidationDetails_returns_all_centres_true_for_all_centres_course()
+        {
+            // When
+            var (centreId, courseCategoryId, allCentres) = courseDataService.GetCourseValidationDetails(14038);
+
+            // Then
+            centreId.Should().Be(549);
+            courseCategoryId.Should().Be(2);
+            allCentres.Should().BeTrue();
         }
 
         [Test]

@@ -62,7 +62,8 @@
                 A.Fake<IGroupsDataService>(),
                 A.Fake<ICentreCustomPromptsService>(),
                 A.Fake<IClockService>(),
-                A.Fake<IGroupsService>()
+                A.Fake<IGroupsService>(),
+                A.Fake<ICourseService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;

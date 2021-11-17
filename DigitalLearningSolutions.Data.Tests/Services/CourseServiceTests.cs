@@ -19,6 +19,7 @@
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
         private IProgressDataService progressDataService = null!;
+        private IGroupsDataService groupsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -28,7 +29,8 @@
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             progressDataService = A.Fake<IProgressDataService>();
-            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService);
+            groupsDataService = A.Fake<IGroupsDataService>();
+            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService, groupsDataService);
         }
 
         [Test]
@@ -150,7 +152,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, false));
 
             // When
             var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 2);
@@ -167,7 +169,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, false));
 
             // When
             var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 0);
@@ -183,7 +185,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, false));
 
             // When
             var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
@@ -199,7 +201,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((1, 1));
+                .Returns((1, 1, false));
 
             // When
             var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
@@ -251,7 +253,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((null, null));
+                .Returns((null, null, false));
 
             // When
             var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
