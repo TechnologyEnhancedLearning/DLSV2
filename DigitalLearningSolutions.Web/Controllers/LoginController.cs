@@ -173,7 +173,7 @@
             {
                 AllowRefresh = true,
                 IsPersistent = rememberMe,
-                IssuedUtc = DateTime.UtcNow,
+                IssuedUtc = DateTime.UtcNow
             };
 
             if (!rememberMe)
