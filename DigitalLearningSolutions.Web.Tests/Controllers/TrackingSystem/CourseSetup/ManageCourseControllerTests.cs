@@ -6,17 +6,20 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class ManageCourseControllerTests
     {
-        private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ManageCourseController controller = null!;
+        private ICourseService courseService = null!;
 
         [SetUp]
         public void Setup()
         {
+            courseService = A.Fake<ICourseService>();
+
             controller = new ManageCourseController(courseService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101);
@@ -112,7 +115,144 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            controller.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void SaveCourseDetails_calls_correct_service_method_with_valid_inputs()
+        {
+            // Given
+            var model = GetEditCourseDetailsViewModel();
+
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    1,
+                    "Name - v1",
+                    "Password",
+                    "hello@test.com",
+                    false,
+                    90,
+                    75
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            var model = GetEditCourseDetailsViewModel();
+            controller.ModelState.AddModelError("Email", "Email address must not contain any whitespace characters");
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState.IsValid.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_correctly_adds_model_error_if_customisation_name_is_not_unique()
+        {
+            // Given
+            var model = GetEditCourseDetailsViewModel();
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState["CustomisationNameSuffix"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("Course name must be unique, including any additions");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_clears_values_of_conditional_inputs_if_corresponding_checkboxes_or_radios_are_unchecked()
+        {
+            // Given
+            var model = GetEditCourseDetailsViewModel(
+                passwordProtected: false,
+                receiveNotificationEmails: false,
+                isAssessed: true
+            );
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(false);
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    1,
+                    "Name - v1",
+                    null!,
+                    null!,
+                    true,
+                    0,
+                    0
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -177,6 +317,45 @@
             ).MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
+        }
+
+        private static EditCourseDetailsViewModel GetEditCourseDetailsViewModel(
+            int customisationId = 1,
+            int centreId = 101,
+            int applicationId = 1,
+            string customisationName = "Name",
+            string customisationNameSuffix = "v1",
+            bool passwordProtected = true,
+            string password = "Password",
+            bool receiveNotificationEmails = true,
+            string notificationEmails = "hello@test.com",
+            bool postLearningAssessment = true,
+            bool isAssessed = false,
+            bool diagAssess = true,
+            string? tutCompletionThreshold = "90",
+            string? diagCompletionThreshold = "75"
+        )
+        {
+            var formData = new EditCourseDetailsFormData
+            {
+                ApplicationId = applicationId,
+                CustomisationName = customisationName,
+                CustomisationNameSuffix = customisationNameSuffix,
+                PasswordProtected = passwordProtected,
+                Password = password,
+                ReceiveNotificationEmails = receiveNotificationEmails,
+                NotificationEmails = notificationEmails,
+                PostLearningAssessment = postLearningAssessment,
+                IsAssessed = isAssessed,
+                DiagAssess = diagAssess,
+                TutCompletionThreshold = tutCompletionThreshold,
+                DiagCompletionThreshold = diagCompletionThreshold,
+            };
+
+            return new EditCourseDetailsViewModel(
+                formData,
+                customisationId
+            );
         }
     }
 }

@@ -12,55 +12,7 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
-@if (Model.SupervisorSignOffs.Any())
-{
-  <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
-    <caption class="nhsuk-table__caption"><h1>@Model.SelfAssessment.SignOffRoleName Sign-off History</h1></caption>
-    <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" class="" scope="col">
-          @Model.SelfAssessment.SignOffRoleName
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Status
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Comments
-        </th>
-      </tr>
-    </thead>
-    <tbody class="nhsuk-table__body">
-      @foreach (var supervisorSignOff in Model.SupervisorSignOffs)
-      {
-        <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">@Model.SelfAssessment.SignOffRoleName </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
-          </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Status </span>
-            @if (supervisorSignOff.Verified == null)
-            {
-              <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span> }
-            else if (supervisorSignOff.SignedOff && supervisorSignOff.Verified != null)
-            {
-              <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span> }
-            else
-            {
-              <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>}
-          </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Comments </span>@supervisorSignOff.Comments
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
-}
-else
-{
-  <h1>@Model.SelfAssessment.SignOffRoleName Sign-off History</h1>
-  <p class="nhsuk-body-l">There are no sign-off requests for this self assessment.</p>
-}
+<partial name="../../Supervisor/Shared/_SignOffHistory.cshtml" model="@Model.SupervisorSignOffs" />
 <div class="nhsuk-back-link">
   <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
