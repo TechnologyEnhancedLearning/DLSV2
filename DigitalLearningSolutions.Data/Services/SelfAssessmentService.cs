@@ -812,7 +812,7 @@ WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (ca.CandidateID = @candidate
         public IEnumerable<SupervisorSignOff>? GetSupervisorSignOffsForCandidateAssessment(int selfAssessmentId, int candidateId)
         {
             return connection.Query<SupervisorSignOff>(
-                @"SELECT casv.ID, casv.CandidateAssessmentSupervisorID, au.Forename + ' ' + au.Surname AS SupervisorName, au.Email AS SupervisorEmail, casv.Requested, casv.EmailSent, casv.Verified, casv.Comments, casv.SignedOff
+                @"SELECT casv.ID, casv.CandidateAssessmentSupervisorID, au.Forename + ' ' + au.Surname AS SupervisorName, au.Email AS SupervisorEmail, COALESCE(sasr.Rolename, 'Supervisor') AS SupervisorRoleName, casv.Requested, casv.EmailSent, casv.Verified, casv.Comments, casv.SignedOff
                     FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
                          CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
                          CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN

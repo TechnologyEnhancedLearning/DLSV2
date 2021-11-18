@@ -38,6 +38,23 @@
             bool autoRefresh
         );
 
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        );
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string password,
+            string notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        );
+
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
@@ -136,11 +153,39 @@
             );
         }
 
-        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
         {
-            courseDataService.UpdateCourseOptions(
-                courseOptions,
-                customisationId
+            return courseDataService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                applicationId
+            );
+        }
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string? password,
+            string? notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        )
+        {
+            courseDataService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password!,
+                notificationEmails!,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
             );
         }
 
@@ -175,6 +220,14 @@
             }
 
             return true;
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            courseDataService.UpdateCourseOptions(
+                courseOptions,
+                customisationId
+            );
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

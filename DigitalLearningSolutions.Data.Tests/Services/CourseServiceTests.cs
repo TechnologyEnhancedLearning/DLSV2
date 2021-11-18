@@ -285,6 +285,73 @@
         }
 
         [Test]
+        public void DoesCourseNameExistAtCentre_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const int centreId = 101;
+            const int applicationId = 1;
+
+            // When
+            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+
+            // Then
+            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCourseDetails_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const string notificationEmails = "hello@test.com";
+            const bool isAssessed = true;
+            const int tutCompletionThreshold = 0;
+            const int diagCompletionThreshold = 0;
+
+            A.CallTo(
+                () => courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password,
+                notificationEmails,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.UpdateCourseDetails(
+                        customisationId,
+                        customisationName,
+                        password,
+                        notificationEmails,
+                        isAssessed,
+                        tutCompletionThreshold,
+                        diagCompletionThreshold
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
         public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
         {
             // Given
