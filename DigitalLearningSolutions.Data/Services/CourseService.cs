@@ -41,7 +41,10 @@
             bool applyLpDefaultsToSelfEnrol = false
         );
 
-        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId);
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId
+        );
 
         public bool DoesCourseNameExistAtCentre(
             int customisationId,
@@ -164,29 +167,14 @@
             );
         }
 
-        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId)
-        {
-            return courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId);
-        }
-
-        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
-            DelegateCourseInfo info,
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(
             int centreId,
-            bool allowAllCentreCourses = false
+            int? categoryId
         )
         {
-            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
-                info,
-                info.CustomisationId,
-                centreId,
-                allowAllCentreCourses
-            );
-
-            var attemptStats = info.IsAssessed
-                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
-                : new AttemptStats(0, 0);
-
-            return new DelegateCourseDetails(info, customPrompts, attemptStats);
+            var orderedCourses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId)
+                .OrderBy(c => c.ApplicationName);
+            return orderedCourses.Select(c => (c.CustomisationId, c.ApplicationName + " - " + c.CustomisationName));
         }
 
         public bool DoesCourseNameExistAtCentre(
@@ -264,6 +252,26 @@
                 courseOptions,
                 customisationId
             );
+        }
+
+        public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
+            DelegateCourseInfo info,
+            int centreId,
+            bool allowAllCentreCourses = false
+        )
+        {
+            var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                info,
+                info.CustomisationId,
+                centreId,
+                allowAllCentreCourses
+            );
+
+            var attemptStats = info.IsAssessed
+                ? courseDataService.GetDelegateCourseAttemptStats(info.DelegateId, info.CustomisationId)
+                : new AttemptStats(0, 0);
+
+            return new DelegateCourseDetails(info, customPrompts, attemptStats);
         }
     }
 }

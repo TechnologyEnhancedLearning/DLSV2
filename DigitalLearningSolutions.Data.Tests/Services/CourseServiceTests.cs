@@ -293,19 +293,18 @@
             // Given
             const int categoryId = 1;
             const int centreId = 1;
-            var courseOptions = new List<(int, string)> { (1, "Application name - course name") };
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId))
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
                 .Returns(courseOptions);
 
             // When
             var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             // Then
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
                 .MustHaveHappened();
             result.Should().BeEquivalentTo(courseOptions);
         }
-
 
         [Test]
         public void DoesCourseNameExistAtCentre_calls_data_service()
@@ -320,7 +319,14 @@
             courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId))
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
                 .MustHaveHappened();
         }
 
