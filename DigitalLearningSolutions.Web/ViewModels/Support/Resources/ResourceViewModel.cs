@@ -4,18 +4,18 @@
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class ResourcesItemViewModel
+    public class ResourceViewModel
     {
         private readonly string currentSystemBaseUrl;
         private readonly string downloadTag;
 
-        public ResourcesItemViewModel(Resource resource, string currentSystemBaseUrl)
+        public ResourceViewModel(Resource resource, string currentSystemBaseUrl)
         {
             this.currentSystemBaseUrl = currentSystemBaseUrl;
             var fileNameParts = resource.FileName.Split('.');
             Resource = $"{resource.Description} (.{fileNameParts.Last()})";
-            Date = resource.UploadDate.ToString(DateHelper.StandardDateFormat);
-            Size = DisplayStringHelper.GenerateBytesDisplayString(resource.FileSize);
+            Date = resource.UploadDateTime.ToString(DateHelper.StandardDateFormat);
+            Size = DisplayStringHelper.GenerateSizeDisplayString(resource.FileSize);
             downloadTag = resource.Tag;
         }
 

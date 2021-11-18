@@ -25,7 +25,7 @@
                 @"SELECT
                         Category,
                         Description,
-                        UploadDTT AS UploadDate,
+                        UploadDTT AS UploadDateTime,
                         FileSize,
                         Tag,
                         Filename

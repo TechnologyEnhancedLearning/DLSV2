@@ -24,7 +24,7 @@
             };
 
             // When
-            var result = new ResourcesItemViewModel(resource, "www.test.com");
+            var result = new ResourceViewModel(resource, "www.test.com");
 
             // Then
             using (new AssertionScope())

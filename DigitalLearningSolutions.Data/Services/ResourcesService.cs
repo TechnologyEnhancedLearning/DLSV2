@@ -7,7 +7,7 @@
 
     public interface IResourcesService
     {
-        IEnumerable<ResourceCategory> GetAllResources();
+        IEnumerable<ResourceGroup> GetAllResources();
     }
 
     public class ResourcesService : IResourcesService
@@ -19,18 +19,18 @@
             this.resourceDataService = resourceDataService;
         }
 
-        public IEnumerable<ResourceCategory> GetAllResources()
+        public IEnumerable<ResourceGroup> GetAllResources()
         {
             var resources = resourceDataService.GetAllResources();
 
-            var resourceCategories = resources.GroupBy(d => d.Category).Select(
-                dg => new ResourceCategory(
-                    dg.Key,
-                    dg.OrderBy(r => r.UploadDate)
+            var resourceGroups = resources.GroupBy(r => r.Category).Select(
+                rg => new ResourceGroup(
+                    rg.Key,
+                    rg.OrderByDescending(r => r.UploadDateTime)
                 )
-            ).OrderBy(rc => rc.CategoryName);
+            ).OrderBy(rc => rc.Category);
 
-            return resourceCategories;
+            return resourceGroups;
         }
     }
 }

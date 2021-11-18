@@ -65,9 +65,9 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(3);
-                result[0].CategoryName.Should().Be("A Category");
-                result[1].CategoryName.Should().Be("B Category");
-                result[2].CategoryName.Should().Be("C Category");
+                result[0].Category.Should().Be("A Category");
+                result[1].Category.Should().Be("B Category");
+                result[2].Category.Should().Be("C Category");
             }
         }
 
@@ -77,9 +77,9 @@
             // Given
             var resources = new[]
             {
-                new Resource { UploadDate = new DateTime(2021, 10, 1) },
-                new Resource { UploadDate = new DateTime(2021, 9, 1) },
-                new Resource { UploadDate = new DateTime(2021, 8, 1) },
+                new Resource { UploadDateTime = new DateTime(2021, 10, 1) },
+                new Resource { UploadDateTime = new DateTime(2021, 9, 1) },
+                new Resource { UploadDateTime = new DateTime(2021, 8, 1) },
             };
             A.CallTo(() => resourceDataService.GetAllResources()).Returns(resources);
 
@@ -90,8 +90,8 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(1);
-                result.First().Resources.First().UploadDate.Should().Be(new DateTime(2021, 8, 1));
-                result.First().Resources.Last().UploadDate.Should().Be(new DateTime(2021, 10, 1));
+                result.First().Resources.First().UploadDateTime.Should().Be(new DateTime(2021, 10, 1));
+                result.First().Resources.Last().UploadDateTime.Should().Be(new DateTime(2021, 8, 1));
             }
         }
     }

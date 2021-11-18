@@ -2,15 +2,15 @@
 {
     using System.Collections.Generic;
 
-    public class ResourceCategory
+    public class ResourceGroup
     {
-        public ResourceCategory(string categoryName, IEnumerable<Resource> resources)
+        public ResourceGroup(string category, IEnumerable<Resource> resources)
         {
-            CategoryName = categoryName;
+            Category = category;
             Resources = resources;
         }
 
-        public string CategoryName { get; }
+        public string Category { get; }
         public IEnumerable<Resource> Resources { get; } 
     }
 }

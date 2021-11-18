@@ -11,14 +11,14 @@
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
-            IEnumerable<ResourceCategory> resourceCategories
+            IEnumerable<ResourceGroup> resourceGroups
         ) : base(dlsSubApplication, currentPage, currentSystemBaseUrl)
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
-            Categories = resourceCategories.Select(rc => new ResourcesCategoryViewModel(rc, currentSystemBaseUrl));
+            Categories = resourceGroups.Select(rc => new ResourceGroupViewModel(rc, currentSystemBaseUrl));
         }
 
-        public IEnumerable<ResourcesCategoryViewModel> Categories { get; }
+        public IEnumerable<ResourceGroupViewModel> Categories { get; }
     }
 }
