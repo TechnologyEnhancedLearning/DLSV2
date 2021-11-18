@@ -293,28 +293,15 @@
             // Given
             const int categoryId = 1;
             const int centreId = 1;
-            var courses = new List<Course>
-            {
-                new Course
-                {
-                    Active = true,
-                    ApplicationId = 1,
-                    ApplicationName = "Application name",
-                    CustomisationId = 1,
-                    CustomisationName = "course name",
-                    CentreId = 101,
-                    SearchableName = "course",
-                },
-            };
             var courseOptions = new List<(int, string)> { (1, "Application name - course name") };
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
-                .Returns(courses);
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId))
+                .Returns(courseOptions);
 
             // When
             var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             // Then
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId))
                 .MustHaveHappened();
             result.Should().BeEquivalentTo(courseOptions);
         }

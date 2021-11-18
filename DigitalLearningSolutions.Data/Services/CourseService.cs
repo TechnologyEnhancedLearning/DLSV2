@@ -41,7 +41,7 @@
             bool applyLpDefaultsToSelfEnrol = false
         );
 
-        public IEnumerable<(int id, string value)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId);
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId);
 
         public bool DoesCourseNameExistAtCentre(
             int customisationId,
@@ -164,11 +164,9 @@
             );
         }
 
-        public IEnumerable<(int id, string value)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId)
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(int centreId, int? categoryId)
         {
-            var orderedCourses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId)
-                .OrderBy(c => c.ApplicationName);
-            return orderedCourses.Select(c => (c.CustomisationId, c.ApplicationName + " - " + c.CustomisationName));
+            return courseDataService.GetCentrallyManagedAndCentreCoursesAlphabetical(centreId, categoryId);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
