@@ -12,6 +12,7 @@
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
 
     internal class ManageCourseControllerTests
@@ -172,7 +173,7 @@
         {
             // Given
             var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
-            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, "12", true);
+            var autoRefreshModel = GetEditAutoRefreshOptionsViewModel();
 
             var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
             controller.TempData.Set(learningPathwayData);
@@ -195,7 +196,7 @@
             ).DoesNothing();
 
             // When
-            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+            var result = controller.EditAutoRefreshOptions(1, autoRefreshModel);
 
             // Then
             A.CallTo(
@@ -218,7 +219,7 @@
         {
             // Given
             var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
-            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, null, true);
+            var autoRefreshModel = GetEditAutoRefreshOptionsViewModel(autoRefreshMonths: null);
 
             var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
             controller.TempData.Set(learningPathwayData);
@@ -241,7 +242,7 @@
             ).DoesNothing();
 
             // When
-            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+            var result = controller.EditAutoRefreshOptions(1, autoRefreshModel);
 
             // Then
             A.CallTo(
@@ -264,7 +265,7 @@
         {
             // Given
             var learningPathwayModel = new EditLearningPathwayDefaultsViewModel(1, "6", "12", false, false);
-            var autoRefreshModel = new EditAutoRefreshOptionsViewModel(1, 1, "13", true);
+            var autoRefreshModel = GetEditAutoRefreshOptionsViewModel(autoRefreshMonths: 13);
             controller.ModelState.AddModelError("AutoRefreshMonths", "Enter a whole number from 0 to 12");
 
             var learningPathwayData = new EditLearningPathwayDefaultsData(learningPathwayModel);
@@ -289,7 +290,7 @@
             controller.ModelState.AddModelError("RefreshToCustomisationId", "Select a course");
 
             // When
-            var result = controller.SaveAutoRefreshOptions(1, autoRefreshModel);
+            var result = controller.EditAutoRefreshOptions(1, autoRefreshModel);
 
             // Then
             A.CallTo(
@@ -305,7 +306,7 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditAutoRefreshOptionsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
+            controller.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]
@@ -509,9 +510,30 @@
             result.Should().BeRedirectToActionResult().WithControllerName("ManageCourse").WithActionName("Index");
         }
 
+        private static EditAutoRefreshOptionsViewModel GetEditAutoRefreshOptionsViewModel(
+            int customisationId = 1,
+            int refreshToCustomisationId = 1,
+            int? autoRefreshMonths = 12,
+            bool applyLpDefaultsToSelfEnrol = true
+        )
+        {
+            var formData = new EditAutoRefreshOptionsFormData
+            {
+                RefreshToCustomisationId = refreshToCustomisationId,
+                AutoRefreshMonths = autoRefreshMonths == null ? null : autoRefreshMonths.ToString(),
+                ApplyLpDefaultsToSelfEnrol = applyLpDefaultsToSelfEnrol,
+            };
+            var courseOptions = new List<SelectListItem>();
+
+            return new EditAutoRefreshOptionsViewModel(
+                formData,
+                customisationId,
+                courseOptions
+            );
+        }
+
         private static EditCourseDetailsViewModel GetEditCourseDetailsViewModel(
             int customisationId = 1,
-            int centreId = 101,
             int applicationId = 1,
             string customisationName = "Name",
             string customisationNameSuffix = "v1",

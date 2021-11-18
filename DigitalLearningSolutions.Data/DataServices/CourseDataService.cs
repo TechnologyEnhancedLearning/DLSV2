@@ -474,7 +474,12 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseNameExistAtCentre(int customisationId, string customisationName, int centreId, int applicationId)
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
         {
             return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
@@ -525,15 +530,23 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE CustomisationID = @customisationId",
                 new
                 {
-                    completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId,
-                    refreshToCustomisationId, autoRefreshMonths, applyLpDefaultsToSelfEnrol,
+                    completeWithinMonths,
+                    validityMonths,
+                    mandatory,
+                    autoRefresh,
+                    customisationId,
+                    refreshToCustomisationId,
+                    autoRefreshMonths,
+                    applyLpDefaultsToSelfEnrol,
                 }
             );
         }
 
-        public IEnumerable<(int id, string name)> GetCentrallyManagedAndCentreCoursesAlphabetical(int centreId, int? categoryId)
+        public IEnumerable<(int id, string name)> GetCentrallyManagedAndCentreCoursesAlphabetical(
+            int centreId,
+            int? categoryId
+        )
         {
-            //todo check with steve if we want to be joining on applications (we think we do)
             return connection.Query<(int, string)>(
                 @"SELECT
                         c.CustomisationID,

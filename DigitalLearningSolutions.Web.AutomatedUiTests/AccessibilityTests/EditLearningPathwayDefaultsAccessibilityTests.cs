@@ -28,8 +28,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
 
             Driver.ClickButtonByText("Save");
             ValidatePageHeading("Edit auto-refresh options");
+            var autoRefreshPageResult = new AxeBuilder(Driver).Analyze();
 
             editPageResult.Violations.Should().BeEmpty();
+            autoRefreshPageResult.Violations.Should().BeEmpty();
         }
     }
 }

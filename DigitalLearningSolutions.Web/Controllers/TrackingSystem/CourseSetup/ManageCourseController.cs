@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -13,6 +14,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -53,7 +55,7 @@
         {
             var model = new EditLearningPathwayDefaultsViewModel();
 
-            SetEditLearningPathwayDetailsTempData(model);
+            SetEditLearningPathwayDefaultsTempData(model);
 
             return RedirectToAction(nameof(EditLearningPathwayDefaults), new { customisationId });
         }
@@ -95,7 +97,7 @@
 
             if (model.AutoRefresh)
             {
-                SetEditLearningPathwayDetailsTempData(model);
+                SetEditLearningPathwayDefaultsTempData(model);
 
                 return RedirectToAction("EditAutoRefreshOptions", new { customisationId = model.CustomisationId });
             }
@@ -116,8 +118,8 @@
             return RedirectToAction("Index", new { customisationId = model.CustomisationId });
         }
 
-        [HttpGet]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditLearningPathwayDefaultsData>))]
+        [HttpGet]
         [Route("AutoRefreshOptions")]
         public IActionResult EditAutoRefreshOptions(int customisationId)
         {
@@ -128,38 +130,33 @@
                 customisationId,
                 centreId,
                 categoryId.Value
-            );
+            )!;
 
-            var model = new EditAutoRefreshOptionsViewModel(courseDetails!);
-
-            SetViewBagCourseOptions(customisationId, model.RefreshToCustomisationId);
+            var courseOptions = GetCourseOptionsSelectList(customisationId, courseDetails.RefreshToCustomisationId);
+            var model = new EditAutoRefreshOptionsViewModel(courseDetails, customisationId, courseOptions);
 
             return View(model);
         }
 
-        [HttpPost]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditLearningPathwayDefaultsData>))]
+        [HttpPost]
         [Route("AutoRefreshOptions")]
-        public IActionResult SaveAutoRefreshOptions(
+        public IActionResult EditAutoRefreshOptions(
             int customisationId,
-            EditAutoRefreshOptionsViewModel model
+            EditAutoRefreshOptionsFormData formData
         )
         {
-            if (customisationId != model.CustomisationId)
-            {
-                return new StatusCodeResult(500);
-            }
-
             if (!ModelState.IsValid)
             {
-                SetViewBagCourseOptions(customisationId, model.RefreshToCustomisationId);
-                return View("EditAutoRefreshOptions", model);
+                var courseOptions = GetCourseOptionsSelectList(customisationId, formData.RefreshToCustomisationId);
+                var model = new EditAutoRefreshOptionsViewModel(formData, customisationId, courseOptions);
+                return View(model);
             }
 
             var data = TempData.Peek<EditLearningPathwayDefaultsData>()!;
 
             var autoRefreshMonths =
-                model.AutoRefreshMonths == null ? 0 : int.Parse(model.AutoRefreshMonths);
+                formData.AutoRefreshMonths == null ? 0 : int.Parse(formData.AutoRefreshMonths);
 
             var completeWithinMonthsInt =
                 data.LearningPathwayDefaultsModel.CompleteWithinMonths == null
@@ -172,20 +169,20 @@
                     : int.Parse(data.LearningPathwayDefaultsModel.ValidityMonths);
 
             var refreshToCustomisationId =
-                model.RefreshToCustomisationId ?? 0;
+                formData.RefreshToCustomisationId ?? 0;
 
             courseService.UpdateLearningPathwayDefaultsForCourse(
-                model.CustomisationId,
+                customisationId,
                 completeWithinMonthsInt,
                 validityMonthsInt,
                 data.LearningPathwayDefaultsModel.Mandatory,
                 data.LearningPathwayDefaultsModel.AutoRefresh,
                 refreshToCustomisationId,
                 autoRefreshMonths,
-                model.ApplyLpDefaultsToSelfEnrol
+                formData.ApplyLpDefaultsToSelfEnrol
             );
 
-            return RedirectToAction("Index", new { customisationId = model.CustomisationId });
+            return RedirectToAction("Index", new { customisationId });
         }
 
         [HttpGet]
@@ -283,13 +280,13 @@
             return RedirectToAction("Index", "ManageCourse", new { customisationId });
         }
 
-        private void SetEditLearningPathwayDetailsTempData(EditLearningPathwayDefaultsViewModel model)
+        private void SetEditLearningPathwayDefaultsTempData(EditLearningPathwayDefaultsViewModel model)
         {
             var data = new EditLearningPathwayDefaultsData(model);
             TempData.Set(data);
         }
 
-        private void SetViewBagCourseOptions(int customisationId, int? selectedId = null)
+        private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int customisationId, int? selectedId = null)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
@@ -300,8 +297,7 @@
             centreCourses.RemoveAll(c => c.id == customisationId);
             centreCourses.Insert(0, (customisationId, "Same course"));
 
-            ViewBag.CourseOptions =
-                SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
+            return SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
         }
 
         private void ValidateCustomisationName(

@@ -1,42 +1,35 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
-    using System.ComponentModel.DataAnnotations;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Attributes;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class EditAutoRefreshOptionsViewModel
+    public class EditAutoRefreshOptionsViewModel : EditAutoRefreshOptionsFormData
     {
         public EditAutoRefreshOptionsViewModel() { }
 
-        public EditAutoRefreshOptionsViewModel(CourseDetails courseDetails)
+        public EditAutoRefreshOptionsViewModel(
+            EditAutoRefreshOptionsFormData formData,
+            int customisationId,
+            IEnumerable<SelectListItem> courseOptions
+        ) : base(formData)
         {
-            CustomisationId = courseDetails.CustomisationId;
-            RefreshToCustomisationId = courseDetails.RefreshToCustomisationId;
-            AutoRefreshMonths = courseDetails.AutoRefreshMonths.ToString();
-            ApplyLpDefaultsToSelfEnrol = courseDetails.ApplyLpDefaultsToSelfEnrol;
+            CustomisationId = customisationId;
+            CourseOptions = courseOptions;
         }
 
         public EditAutoRefreshOptionsViewModel(
+            CourseDetails courseDetails,
             int customisationId,
-            int? refreshToCustomisationId,
-            string? autoRefreshMonths,
-            bool applyLpDefaultsToSelfEnrol
-        )
+            IEnumerable<SelectListItem> courseOptions
+        ) : base(courseDetails)
         {
             CustomisationId = customisationId;
-            RefreshToCustomisationId = refreshToCustomisationId;
-            AutoRefreshMonths = autoRefreshMonths;
-            ApplyLpDefaultsToSelfEnrol = applyLpDefaultsToSelfEnrol;
+            CourseOptions = courseOptions;
         }
 
         public int CustomisationId { get; set; }
 
-        [Required(ErrorMessage = "Select a course")]
-        public int? RefreshToCustomisationId { get; set; }
-
-        [WholeNumberWithinInclusiveRange(0, 12, "Enter a whole number from 0 to 12")]
-        public string? AutoRefreshMonths { get; set; }
-
-        public bool ApplyLpDefaultsToSelfEnrol { get; set; }
+        public IEnumerable<SelectListItem> CourseOptions { get; set; }
     }
 }

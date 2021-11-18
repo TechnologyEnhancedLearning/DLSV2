@@ -22,7 +22,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate
           asp-controller="ManageCourse"
-          asp-action="SaveAutoRefreshOptions"
+          asp-action="EditAutoRefreshOptions"
           asp-route-customisationId="@Model.CustomisationId">
 
       <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
@@ -32,7 +32,7 @@
                       deselectable="false"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Select a field name"
-                      select-list-options="@ViewBag.CourseOptions" />
+                      select-list-options="@Model.CourseOptions" />
 
       <vc:numeric-input asp-for="@nameof(Model.AutoRefreshMonths)"
                         label="Enrol on refresher (months before expiry)"
@@ -41,20 +41,9 @@
                         hint-text="How many months prior to expiry of the previous course should be learner be enrolled on the refresher cause."
                         css-class="nhsuk-input--width-10" />
 
-      <div class="nhsuk-checkboxes">
-        <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
-          <input class="nhsuk-checkboxes__input"
-                 type="checkbox"
-                 id="AutoRefresh"
-                 asp-for="ApplyLpDefaultsToSelfEnrol">
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="AutoRefresh">
-            Apply to self-enrolments
-          </label>
-          <div class="nhsuk-hint nhsuk-checkboxes__hint">
-            Apply auto-refresh settings when a user has self enrolled on a course (rather than being enrolled by an administrator)
-          </div>
-        </div>
-      </div>
+      <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
+                          label="Apply to self-enrolments"
+                          hint-text="Apply auto-refresh settings when a user has self enrolled on a course (rather than being enrolled by an administrator)" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
