@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Controllers.Support
+﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
@@ -32,12 +32,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
         public async Task<IActionResult> Index(DlsSubApplication dlsSubApplication)
         {
-            if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
-                !DlsSubApplication.Frameworks.Equals(dlsSubApplication))
-            {
-                return NotFound();
-            }
-
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
