@@ -30,7 +30,7 @@
                 FileName = "casestudytemplate.pub",
                 FileSize = 205312,
                 Tag = "casestudytemplate",
-                UploadDate = new DateTime(2015, 05, 05, 09, 22, 36),
+                UploadDateTime = new DateTime(2015, 05, 05, 09, 22, 36),
             };
 
             // When

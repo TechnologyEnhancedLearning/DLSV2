@@ -17,7 +17,7 @@
             {
                 Category = "category",
                 Description = "description",
-                UploadDate = new DateTime(2021, 1, 1),
+                UploadDateTime = new DateTime(2021, 1, 1),
                 FileSize = 120,
                 Tag = "tag",
                 FileName = "file.pdf",
