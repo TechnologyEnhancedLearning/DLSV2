@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -12,9 +14,14 @@
     public class ValidateAllowedDlsSubApplicationAttribute : Attribute, IActionFilter
     {
         private readonly string applicationArgumentName;
+        private readonly IEnumerable<DlsSubApplication> validApplications;
 
-        public ValidateAllowedDlsSubApplicationAttribute(string applicationArgumentName = "dlsSubApplication")
+        public ValidateAllowedDlsSubApplicationAttribute(
+            string[] validApplicationNames,
+            string applicationArgumentName = "dlsSubApplication"
+        )
         {
+            validApplications = validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
             this.applicationArgumentName = applicationArgumentName;
         }
 
@@ -31,7 +38,7 @@
 
             if (HasModelBindingError(context))
             {
-                context.Result = new NotFoundResult();
+                SetNotFoundResult(context);
                 return;
             }
 
@@ -39,6 +46,12 @@
                 (context.ActionArguments.ContainsKey(applicationArgumentName)
                     ? context.ActionArguments[applicationArgumentName]
                     : null);
+
+            if (validApplications.Any() && !validApplications.Contains(application))
+            {
+                SetNotFoundResult(context);
+                return;
+            }
 
             if (user.IsDelegateOnlyAccount() && !DlsSubApplication.LearningPortal.Equals(application))
             {
@@ -79,6 +92,11 @@
         private void RedirectToAccessDenied(ActionExecutingContext context)
         {
             context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
+        }
+
+        private void SetNotFoundResult(ActionExecutingContext context)
+        {
+            context.Result = new NotFoundResult();
         }
     }
 }

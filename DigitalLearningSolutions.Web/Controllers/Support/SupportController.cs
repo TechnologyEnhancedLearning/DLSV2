@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.Support
+namespace DigitalLearningSolutions.Web.Controllers.Support
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
@@ -14,6 +14,9 @@
 
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
+    [ValidateAllowedDlsSubApplication(
+        new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) }
+    )]
     public class SupportController : Controller
     {
         private readonly IConfiguration configuration;

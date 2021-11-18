@@ -13,7 +13,7 @@
 
     [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
-    [ValidateAllowedDlsSubApplication]
+    [ValidateAllowedDlsSubApplication(new string[] { })]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
