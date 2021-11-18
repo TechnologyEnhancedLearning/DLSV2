@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
@@ -118,7 +119,7 @@
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseDataService.RemoveCurrentCourse(progressId, User.GetCandidateIdKnownNotNull());
+            courseDataService.RemoveCurrentCourse(progressId, User.GetCandidateIdKnownNotNull(), RemovalMethod.RemovedByDelegate);
             return RedirectToAction("Current");
         }
 

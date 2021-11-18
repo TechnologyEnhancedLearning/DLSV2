@@ -68,6 +68,16 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
              JobGroups AS jg RIGHT OUTER JOIN
              Candidates AS c ON jg.JobGroupID = c.JobGroupID ON ct.CentreID = c.CentreID ON sd.CandidateID = c.CandidateID ";
         private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
+        private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
+FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
+WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
+ORDER BY casv.Requested DESC) AS SignedOffDate,
+(SELECT TOP(1) casv.SignedOff
+FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
+WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
+ORDER BY casv.Requested DESC) AS SignedOff,";
         public SupervisorService(IDbConnection connection, ILogger<SupervisorService> logger)
         {
             this.connection = connection;
@@ -222,7 +232,8 @@ WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS Candid
                 @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
-                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+                {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
 FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
@@ -242,7 +253,8 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
-                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+                {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
@@ -256,10 +268,11 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId)
         {
             return connection.Query<DelegateSelfAssessment>(
-               @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
+               @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
-                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+                {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
@@ -275,7 +288,8 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
-                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+                {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
@@ -303,10 +317,11 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
-                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS VerificationRequested,
+                 WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+               {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                     FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
                     WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS ResultsVerificationRequests
@@ -658,7 +673,7 @@ FROM   NRPProfessionalGroups AS npg RIGHT OUTER JOIN
              SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN
              SelfAssessments AS sa INNER JOIN
              CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID AND casv.Verified IS NULL INNER JOIN
              CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID ON sa.ID = ca.SelfAssessmentID ON sasr.ID = cas.SelfAssessmentSupervisorRoleID ON nsg.ID = sa.NRPSubGroupID ON npg.ID = sa.NRPProfessionalGroupID LEFT OUTER JOIN
              NRPRoles AS nr ON sa.NRPRoleID = nr.ID
 WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDelegateId = @supervisorDelegateId)", new { candidateAssessmentId, supervisorDelegateId }

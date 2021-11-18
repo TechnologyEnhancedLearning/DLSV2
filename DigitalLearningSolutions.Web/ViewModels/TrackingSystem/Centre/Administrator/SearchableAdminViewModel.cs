@@ -13,6 +13,7 @@
             CategoryName = adminUser.CategoryName ?? "All";
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
+            IsCentreManager = adminUser.IsCentreManager;
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
 
@@ -29,5 +30,7 @@
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }
+
+        public bool IsCentreManager { get; set; }
     }
 }

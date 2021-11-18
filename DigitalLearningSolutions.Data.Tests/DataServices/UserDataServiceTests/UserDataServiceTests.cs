@@ -3,11 +3,13 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public partial class UserDataServiceTests
     {
         private IUserDataService userDataService = null!;
+        private SqlConnection connection = null!;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -18,7 +20,7 @@
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             userDataService = new UserDataService(connection);
         }
     }

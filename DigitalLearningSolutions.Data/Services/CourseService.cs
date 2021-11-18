@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public interface ICourseService
@@ -11,7 +12,17 @@
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int categoryId);
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId);
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        );
+
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+            int delegateId,
+            int centreId,
+            int? courseCategoryId
+        );
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
 
@@ -27,6 +38,23 @@
             bool autoRefresh
         );
 
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        );
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string password,
+            string notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        );
+
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
@@ -36,11 +64,17 @@
     {
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
+        private readonly IProgressDataService progressDataService;
 
-        public CourseService(ICourseDataService courseDataService, ICourseAdminFieldsService courseAdminFieldsService)
+        public CourseService(
+            ICourseDataService courseDataService,
+            ICourseAdminFieldsService courseAdminFieldsService,
+            IProgressDataService progressDataService
+        )
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
+            this.progressDataService = progressDataService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int categoryId)
@@ -55,11 +89,17 @@
             return allCourses.Where(c => c.CentreId == centreId);
         }
 
-        public IEnumerable<DelegateCourseDetails> GetAllCoursesForDelegate(int delegateId, int centreId)
+        public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
+            int delegateId,
+            int centreId,
+            int? courseCategoryId
+        )
         {
-            return courseDataService.GetDelegateCoursesInfo(delegateId).Select(
-                info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
-            ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
+            return courseDataService.GetDelegateCoursesInfo(delegateId)
+                .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
+                .Select(
+                    info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
+                ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
         }
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)
@@ -113,11 +153,39 @@
             );
         }
 
-        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
         {
-            courseDataService.UpdateCourseOptions(
-                courseOptions,
-                customisationId
+            return courseDataService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                applicationId
+            );
+        }
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string? password,
+            string? notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        )
+        {
+            courseDataService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password!,
+                notificationEmails!,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
             );
         }
 
@@ -127,6 +195,38 @@
                 customisationId,
                 centreId,
                 categoryId
+            );
+        }
+
+        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+            int delegateId,
+            int customisationId,
+            RemovalMethod removalMethod
+        )
+        {
+            var currentProgressIds = progressDataService.GetDelegateProgressForCourse(delegateId, customisationId)
+                .Where(p => p.Completed == null && p.RemovedDate == null)
+                .Select(p => p.ProgressId)
+                .ToList();
+
+            if (!currentProgressIds.Any())
+            {
+                return false;
+            }
+
+            foreach (var progressId in currentProgressIds)
+            {
+                courseDataService.RemoveCurrentCourse(progressId, delegateId, removalMethod);
+            }
+
+            return true;
+        }
+
+        public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)
+        {
+            courseDataService.UpdateCourseOptions(
+                courseOptions,
+                customisationId
             );
         }
 

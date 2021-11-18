@@ -24,6 +24,7 @@
 
         void CreateNewAspProgress(int tutorialId, int progressId);
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
+        void ClearAspProgressVerificationRequest(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -148,6 +149,16 @@
                             WHERE TutorialID = @tutorialID
                                 AND CustomisationID = @customisationID)",
                 new { tutorialId, customisationId }
+            );
+        }
+
+        public void ClearAspProgressVerificationRequest(int progressId)
+        {
+            connection.Execute(
+                @"UPDATE aspProgress SET
+                        SupervisorVerificationRequested = NULL
+                    WHERE ProgressID = @progressId",
+                new { progressId }
             );
         }
     }

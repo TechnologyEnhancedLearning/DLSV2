@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model IGrouping<string, Competency>;
 
-
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
   @if (!(bool)ViewData["linearNavigation"])
   {
@@ -16,13 +15,16 @@
         Question
       </th>
       <th role="columnheader" class="" scope="col">
-        Response
+        Self-assessment
       </th>
+      @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
+      {
+        <th role="columnheader" class="" scope="col">
+          Verification status
+        </th>
+      }
       <th role="columnheader" class="" scope="col">
-        Status
-      </th>
-      <th role="columnheader" class="" scope="col">
-        Actions
+        <span class="nhsuk-u-visually-hidden">Actions</span>
       </th>
     </tr>
   </thead>
@@ -36,7 +38,7 @@
     </td>
     <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-      <span class="nhsuk-table-responsive__heading">Actions </span>
+      <span class="nhsuk-table-responsive__heading">Action </span>
       <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
         Review
       </a>
