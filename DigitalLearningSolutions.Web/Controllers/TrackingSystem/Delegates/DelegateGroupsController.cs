@@ -45,6 +45,7 @@
 
         [Route("{page=1:int}")]
         public IActionResult Index(
+            string? searchString = null,
             string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.Ascending,
             string? filterBy = null,
@@ -70,6 +71,7 @@
             var model = new DelegateGroupsViewModel(
                 groups,
                 GetRegistrationPromptsWithSetOptions(centreId),
+                searchString,
                 sortBy,
                 sortDirection,
                 filterBy,
@@ -157,7 +159,12 @@
             using var transaction = new TransactionScope();
 
             var currentDate = clockService.UtcNow;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, currentDate);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                model.RemoveStartedEnrolments,
+                currentDate
+            );
 
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
             transaction.Complete();
@@ -242,7 +249,7 @@
             {
                 GroupLabel = groupLabel,
                 DelegateCount = delegateCount,
-                CourseCount = courseCount
+                CourseCount = courseCount,
             };
 
             return View(model);
@@ -262,12 +269,6 @@
             groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments, removedDate);
 
             return RedirectToAction("Index");
-        }
-
-        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
-        {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Where(cp => cp.Options.Any());
         }
 
         [Route("Add")]
@@ -293,6 +294,47 @@
                 User.GetAdminId()!.Value
             );
             return RedirectToAction("Index");
+        }
+
+        [Route("{groupId:int}/EditDescription")]
+        [HttpGet]
+        public IActionResult EditDescription(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditDelegateGroupDescriptionViewModel(group);
+            return View(model);
+        }
+
+        [Route("{groupId:int}/EditDescription")]
+        [HttpPost]
+        public IActionResult EditDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            groupsDataService.UpdateGroupDescription(
+                groupId,
+                centreId,
+                model.Description
+            );
+
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        {
+            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+                .Where(cp => cp.Options.Any());
         }
     }
 }

@@ -4,7 +4,7 @@
 
     public static class DateHelper
     {
-        public static string StandardDateFormat = "dd/MM/yyyy";
+        public static string StandardDateFormat = Data.Helpers.DateHelper.StandardDateFormat;
 
         public static string StandardDateAndTimeFormat = "dd/MM/yyyy HH:mm";
 

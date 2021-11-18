@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
@@ -32,7 +33,7 @@
         }
 
         [HttpPost]
-        public IActionResult Index(ForgotPasswordViewModel model)
+        public async Task<IActionResult> Index(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -43,7 +44,7 @@
 
             try
             {
-                passwordResetService.GenerateAndSendPasswordResetLink(
+                await passwordResetService.GenerateAndSendPasswordResetLink(
                     model.EmailAddress.Trim(),
                     baseUrl
                 );

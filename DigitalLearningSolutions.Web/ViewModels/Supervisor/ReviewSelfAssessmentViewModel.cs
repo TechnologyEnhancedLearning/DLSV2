@@ -10,6 +10,6 @@
         public SupervisorDelegateDetail? SupervisorDelegateDetail { get; set; }
         public DelegateSelfAssessment DelegateSelfAssessment { get; set; }
         public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
-
+        public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
     }
 }

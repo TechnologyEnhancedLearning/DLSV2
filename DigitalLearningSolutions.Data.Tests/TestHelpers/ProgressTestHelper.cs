@@ -1,10 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Linq;
+    using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.Data.SqlClient;
 
-    public static class ProgressTestHelper
+    public class ProgressTestHelper
     {
+        private readonly SqlConnection connection;
+
+        public ProgressTestHelper(SqlConnection connection)
+        {
+            this.connection = connection;
+        }
+
         public static Progress GetDefaultProgress(
             int progressId = 1,
             int candidateId = 1,
@@ -25,6 +35,16 @@
                 SupervisorAdminId = supervisorAdminId,
                 CompleteByDate = completeByDate
             };
+        }
+
+        public DateTime? GetSupervisorVerificationRequestedByAspProgressId(int aspProgressId)
+        {
+            return connection.Query<DateTime?>(
+                @"SELECT SupervisorVerificationRequested
+                    FROM aspProgress
+                    WHERE aspProgressId = @aspProgressId",
+                new { aspProgressId }
+            ).Single();
         }
     }
 }

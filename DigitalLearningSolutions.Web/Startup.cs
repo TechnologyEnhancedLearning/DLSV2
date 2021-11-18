@@ -184,6 +184,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();

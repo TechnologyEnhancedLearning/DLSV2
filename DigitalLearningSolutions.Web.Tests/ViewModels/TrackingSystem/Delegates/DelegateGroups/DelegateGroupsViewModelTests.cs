@@ -37,6 +37,7 @@
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
                 new List<CustomPrompt>(),
+                null!,
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -57,6 +58,7 @@
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
                 new List<CustomPrompt>(),
+                null!,
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -74,7 +76,7 @@
         }
 
         [Test]
-        public void DelegateGroupsViewModel_filters_should_be_set()
+        public void DelegateGroupsViewModel_filters_and_search_string_should_be_set()
         {
             // Given
             var admins = new[]
@@ -101,6 +103,7 @@
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
                 new List<CustomPrompt>(),
+                "K",
                 nameof(Group.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
@@ -110,6 +113,7 @@
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
             model.DelegateGroups.First().Name.Should().BeEquivalentTo("K");
+            model.SearchString.Should().Be("K");
         }
     }
 }
