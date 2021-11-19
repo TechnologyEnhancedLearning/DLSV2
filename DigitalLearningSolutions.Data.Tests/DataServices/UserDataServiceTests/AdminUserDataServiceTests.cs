@@ -207,7 +207,6 @@
                 var updatedAdminUser = userDataService.GetAdminUserById(adminUser.Id)!;
 
                 // Then
-                adminUser.Active.Should().Be(true);
                 updatedAdminUser.Active.Should().Be(false);
             }
             finally
