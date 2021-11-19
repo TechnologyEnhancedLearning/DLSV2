@@ -15,14 +15,16 @@
     public class TrackerService : ITrackerService
     {
         private readonly ILogger<TrackerService> logger;
+
+        private readonly JsonSerializerSettings settings = new JsonSerializerSettings
+            { ContractResolver = new LowercaseContractResolver() };
+
         private readonly ITrackerActionService trackerActionService;
-        private readonly JsonSerializerSettings settings;
 
         public TrackerService(ILogger<TrackerService> logger, ITrackerActionService trackerActionService)
         {
             this.logger = logger;
             this.trackerActionService = trackerActionService;
-            settings = new JsonSerializerSettings { ContractResolver = new LowercaseContractResolver() };
         }
 
         public string ProcessQuery(TrackerEndpointQueryParams query)
@@ -57,14 +59,14 @@
             }
         }
 
-        private string ConvertToJsonString(ITrackerEndpointDataModel? foo)
+        private string ConvertToJsonString(ITrackerEndpointDataModel? data)
         {
-            if (foo == null)
+            if (data == null)
             {
                 return JsonConvert.SerializeObject(new { });
             }
 
-            return JsonConvert.SerializeObject(foo, settings);
+            return JsonConvert.SerializeObject(data, settings);
         }
 
         private class LowercaseContractResolver : DefaultContractResolver

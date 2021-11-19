@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -27,13 +26,27 @@
         {
             // given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
-                .Returns(new[] { new Objective(1, new List<int> { 6, 7, 8 }, 4), new Objective(2, new List<int> { 17, 18, 19 }, 0) });
+                .Returns(
+                    new[]
+                    {
+                        new Objective(1, new List<int> { 6, 7, 8 }, 4),
+                        new Objective(2, new List<int> { 17, 18, 19 }, 0),
+                    }
+                );
 
             // when
             var result = trackerActionService.GetObjectiveArray(1, 1);
 
             // then
-            result.Should().BeEquivalentTo(new GetObjectiveArrayData(new[] { new Objective(1, new List<int> { 6, 7, 8 }, 4), new Objective(2, new List<int> { 17, 18, 19 }, 0) }));
+            result.Should().BeEquivalentTo(
+                new TrackerObjectiveArray(
+                    new[]
+                    {
+                        new Objective(1, new List<int> { 6, 7, 8 }, 4),
+                        new Objective(2, new List<int> { 17, 18, 19 }, 0),
+                    }
+                )
+            );
         }
 
         [Test]
@@ -61,7 +74,7 @@
         {
             // given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
-                .Returns(new[] { new Objective(1, new List<int>{1}, 9) });
+                .Returns(new[] { new Objective(1, new List<int> { 1 }, 9) });
 
             // when
             var result = trackerActionService.GetObjectiveArray(customisationId, sectionId);

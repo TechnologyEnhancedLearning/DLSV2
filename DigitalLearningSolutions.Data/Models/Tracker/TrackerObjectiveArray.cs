@@ -2,9 +2,9 @@
 
 namespace DigitalLearningSolutions.Data.Models.Tracker
 {
-    public class GetObjectiveArrayData : ITrackerEndpointDataModel
+    public class TrackerObjectiveArray : ITrackerEndpointDataModel
     {
-        public GetObjectiveArrayData(IEnumerable<Objective> objectives)
+        public TrackerObjectiveArray(IEnumerable<Objective> objectives)
         {
             Objectives = objectives;
         }

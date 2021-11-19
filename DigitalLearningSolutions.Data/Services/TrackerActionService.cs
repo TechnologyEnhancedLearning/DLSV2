@@ -8,7 +8,7 @@
 
     public interface ITrackerActionService
     {
-        GetObjectiveArrayData? GetObjectiveArray(int? customisationId, int? sectionId);
+        TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId);
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -20,7 +20,7 @@
             this.tutorialContentDataService = tutorialContentDataService;
         }
 
-        public GetObjectiveArrayData? GetObjectiveArray(int? customisationId, int? sectionId)
+        public TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId)
         {
             if (!customisationId.HasValue || !sectionId.HasValue)
             {
@@ -31,7 +31,7 @@
                 .GetNonArchivedObjectivesBySectionAndCustomisationId(sectionId.Value, customisationId.Value)
                 .ToList();
 
-            return objectives.Any() ? new GetObjectiveArrayData(objectives) : null;
+            return objectives.Any() ? new TrackerObjectiveArray(objectives) : null;
         }
     }
 }
