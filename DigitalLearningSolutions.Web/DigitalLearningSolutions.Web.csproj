@@ -31,6 +31,7 @@
     <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
+    <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
     <None Remove="Scripts\nhsuk.ts" />
     <None Remove="Scripts\searchSortFilterAndPaginate\paginate.ts" />
     <None Remove="Scripts\searchSortFilterAndPaginate\search.ts" />
@@ -77,6 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
     <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
@@ -90,6 +92,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\dlscommon.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
     <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\filter.ts" />
     <TypeScriptCompile Include="Scripts\searchSortFilterAndPaginate\paginate.ts" />
