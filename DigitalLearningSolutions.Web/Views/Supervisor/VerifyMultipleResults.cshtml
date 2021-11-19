@@ -6,6 +6,7 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/supervisor/verifyMultipleResults.css")" asp-append-version="true">
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -49,12 +50,28 @@
   <form method="post">
     @foreach (var competencyGroup in Model.CompetencyGroups)
     {
+      var vocabulary = competencyGroup.First().Vocabulary;
+      <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+          <span class="nhsuk-fieldset__heading">
+            @competencyGroup.Key
+          </span>
+        </legend>
+      </fieldset>
+      @if (competencyGroup.Count() > 1)
+      {
+        <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
+          <div class="nhsuk-grid-column-full">
+            <a class="nhsuk-button nhsuk-search__submit select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural(vocabulary).ToLower()</a>
+            <a class="nhsuk-button nhsuk-search__submit select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural(vocabulary).ToLower()</a>
+          </div>
+        </div>
+      }
       <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
         <thead role="rowgroup" class="nhsuk-table__head">
           <tr role="row">
             <th role="columnheader" class="" scope="col">
-              @competencyGroup.First().Vocabulary
+              @vocabulary
             </th>
             <th role="columnheader" class="" scope="col">
               Question
@@ -73,7 +90,7 @@
                 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
                   <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
                   <div class="nhsuk-checkboxes__item">
-                    <input class="nhsuk-checkboxes__input" id="result-check-@question.SelfAssessmentResultSupervisorVerificationId" name="resultChecked" type="checkbox" value="@question.SelfAssessmentResultSupervisorVerificationId">
+                    <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@question.SelfAssessmentResultSupervisorVerificationId" name="resultChecked" type="checkbox" value="@question.SelfAssessmentResultSupervisorVerificationId">
                     <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.SelfAssessmentResultSupervisorVerificationId">
                       @competency.Name
                     </label>
@@ -100,4 +117,8 @@ else
     Oops. There are no results awaiting verification.
   </p>
   <a class="nhsuk-button nhsuk-button--secondary" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">Cancel</a>
+}
+
+@section scripts {
+  <script src="@Url.Content("~/js/Supervisor/verifyMultipleResults.js")" asp-append-version="true"></script>
 }

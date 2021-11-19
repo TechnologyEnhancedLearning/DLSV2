@@ -37,7 +37,15 @@
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId = 0,
+            int autoRefreshMonths = 0,
+            bool applyLpDefaultsToSelfEnrol = false
+        );
+
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId
         );
 
         public bool DoesCourseNameExistAtCentre(
@@ -170,7 +178,10 @@
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId = 0,
+            int autoRefreshMonths = 0,
+            bool applyLpDefaultsToSelfEnrol = false
         )
         {
             courseDataService.UpdateLearningPathwayDefaultsForCourse(
@@ -178,8 +189,22 @@
                 completeWithinMonths,
                 validityMonths,
                 mandatory,
-                autoRefresh
+                autoRefresh,
+                refreshToCustomisationId,
+                autoRefreshMonths,
+                applyLpDefaultsToSelfEnrol
             );
+        }
+
+        public IEnumerable<(int id, string name)> GetCourseOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId
+        )
+        {
+            var activeCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
+                .Where(c => c.Active = true);
+            var orderedCourses = activeCourses.OrderBy(c => c.ApplicationName);
+            return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
         }
 
         public bool DoesCourseNameExistAtCentre(

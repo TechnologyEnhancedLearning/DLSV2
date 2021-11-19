@@ -21,7 +21,7 @@
 
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
 
-        DateTime GetStartOfActivityForCentre(int centreId);
+        DateTime GetActivityStartDateForCentre(int centreId);
 
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
 
@@ -116,9 +116,9 @@
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
 
-        public DateTime GetStartOfActivityForCentre(int centreId)
+        public DateTime GetActivityStartDateForCentre(int centreId)
         {
-            return activityDataService.GetStartOfActivityForCentre(centreId);
+            return activityDataService.GetStartOfActivityForCentre(centreId).Date;
         }
 
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
@@ -194,7 +194,7 @@
         )
         {
             var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
-            if (startDateInvalid || startDate < GetStartOfActivityForCentre(centreId))
+            if (startDateInvalid || startDate < GetActivityStartDateForCentre(centreId))
             {
                 return null;
             }

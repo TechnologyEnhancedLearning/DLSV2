@@ -379,6 +379,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -387,8 +390,27 @@
             courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
 
             // Then
-            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0, 0, false))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCourseOptionAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courseOptions);
+
+            // When
+            var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappened();
+            result.Should().BeEquivalentTo(courseOptions);
         }
 
         [Test]

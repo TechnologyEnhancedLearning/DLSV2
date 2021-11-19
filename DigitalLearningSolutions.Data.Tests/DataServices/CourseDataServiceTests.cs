@@ -611,13 +611,47 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults()
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_without_auto_refresh()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, false, 0, 0, false);
+                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                    1,
+                    2,
+                    0
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CompleteWithinMonths.Should().Be(6);
+                    courseDetails.ValidityMonths.Should().Be(12);
+                    courseDetails.Mandatory.Should().Be(true);
+                    courseDetails.AutoRefresh.Should().Be(false);
+                    courseDetails.RefreshToCustomisationId.Should().Be(0);
+                    courseDetails.AutoRefreshMonths.Should().Be(0);
+                    courseDetails.ApplyLpDefaultsToSelfEnrol.Should().Be(false);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_with_auto_refresh_params()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 1, 12, true);
                 var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
                     1,
                     2,
@@ -631,6 +665,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                     courseDetails.ValidityMonths.Should().Be(12);
                     courseDetails.Mandatory.Should().Be(true);
                     courseDetails.AutoRefresh.Should().Be(true);
+                    courseDetails.RefreshToCustomisationId.Should().Be(1);
+                    courseDetails.AutoRefreshMonths.Should().Be(12);
+                    courseDetails.ApplyLpDefaultsToSelfEnrol.Should().Be(true);
                 }
             }
             finally
