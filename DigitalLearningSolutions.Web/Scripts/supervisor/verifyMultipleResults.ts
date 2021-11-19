@@ -1,3 +1,3 @@
-import * as CheckboxGroup from '../checkboxGroup';
+import * as Checkboxes from '../checkboxes';
 
-CheckboxGroup.default.setUpSelectAndDeselectButtons();
+Checkboxes.default.setUpSelectAndDeselectInGroupButtons();
