@@ -6,13 +6,6 @@
 
 @{
   ViewData["Title"] = "Centre reports";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/reports.css")" asp-append-version="true">
@@ -33,8 +26,12 @@
 
     <h2 class="nhsuk-heading-m">Usage stats</h2>
 
-    <div class="js-only-block">
+    <div id="activity-graph" class="js-only-block">
       <partial name="_ActivityGraph.cshtml" />
+    </div>
+    <div id="activity-graph-data-error" class="js-only-block" hidden>
+      <vc:inset-text text="Too many chart data points to display. Please select a smaller date range or a bigger reporting interval to view data on a chart."
+                     css-class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-4" />
     </div>
     <partial name="_ActivityTable.cshtml" model="@Model.UsageStatsTableViewModel" />
 

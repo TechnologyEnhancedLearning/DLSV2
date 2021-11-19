@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("/TrackingSystem/Centre/Reports")]
     public class ReportsController : Controller
     {
@@ -59,7 +62,13 @@
 
             var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
 
-            var model = new ReportsViewModel(activity, filterModel, evaluationResponseBreakdowns);
+            var model = new ReportsViewModel(
+                activity,
+                filterModel,
+                evaluationResponseBreakdowns,
+                filterData.StartDate,
+                filterData.EndDate ?? DateTime.Today
+            );
             return View(model);
         }
 
@@ -90,7 +99,7 @@
 
             var filterOptions = GetDropdownValues(centreId, adminUser);
 
-            var dataStartDate = activityService.GetStartOfActivityForCentre(centreId);
+            var dataStartDate = activityService.GetActivityStartDateForCentre(centreId);
 
             var model = new EditFiltersViewModel(
                 filterData,
@@ -112,7 +121,7 @@
                 var adminUser = userDataService.GetAdminUserById(adminId)!;
                 var filterOptions = GetDropdownValues(centreId, adminUser);
                 model.SetUpDropdowns(filterOptions, adminUser.CategoryId);
-                model.DataStart = activityService.GetStartOfActivityForCentre(centreId);
+                model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
                 return View(model);
             }
 
@@ -221,7 +230,7 @@
         {
             return activityService.GetFilterOptions(
                 centreId,
-                adminUser.CategoryId == 0 ? (int?)null : adminUser.CategoryId
+                adminUser.CategoryIdFilter
             );
         }
     }

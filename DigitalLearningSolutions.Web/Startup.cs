@@ -58,7 +58,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Name = ".AspNet.SharedCookie";
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToHome;
+                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDenied;
                     }
                 );
 
@@ -184,6 +184,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
@@ -253,7 +254,11 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
             services.AddScoped<VerifyAdminUserCanAccessCourse>();
+            services.AddScoped<VerifyAdminUserCanAccessGroup>();
+            services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
+            services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
         }
@@ -300,9 +305,9 @@ namespace DigitalLearningSolutions.Web
             return Task.CompletedTask;
         }
 
-        private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
+        private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect("/Home");
+            context.HttpContext.Response.Redirect("/AccessDenied");
             return Task.CompletedTask;
         }
     }

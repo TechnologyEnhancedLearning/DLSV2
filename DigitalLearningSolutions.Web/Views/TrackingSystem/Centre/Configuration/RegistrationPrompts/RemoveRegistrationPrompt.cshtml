@@ -6,15 +6,8 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Remove delegate registration prompt" : "Remove delegate registration prompt";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
   var confirmError = ViewData.ModelState[nameof(RemoveRegistrationPromptViewModel.Confirm)]?.Errors?.Count > 0;
   var confirmFormErrorClass = confirmError ? "nhsuk-form-group--error" : "";
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">

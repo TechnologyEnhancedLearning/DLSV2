@@ -18,86 +18,105 @@
   <vc:error-summary order-of-property-names="@(new[] {nameof(Model.ResultIds) })" />
 }
 @if (Model.CompetencyGroups.Any())
-{ 
-<h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to verify.</h2>
-<form method="post">
-  <nhs-form-group nhs-validation-for="ResultIds">
-    @foreach (var competencyGroup in Model.CompetencyGroups)
-    {
-      <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
-        <thead role="rowgroup" class="nhsuk-table__head">
-          <tr role="row">
-            <th role="columnheader" class="" scope="col">
-              @competencyGroup.First().Vocabulary
-            </th>
-            <th role="columnheader" class="" scope="col">
-              Question
-            </th>
-            <th role="columnheader" class="" scope="col">
-              Response
-            </th>
-          </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-          @foreach (var competency in competencyGroup)
-          {
-            @foreach (var question in competency.AssessmentQuestions)
+{
+  <h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to verify.</h2>
+  <form method="post">
+    <nhs-form-group nhs-validation-for="ResultIds">
+      @foreach (var competencyGroup in Model.CompetencyGroups)
+      {
+        <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <span class="nhsuk-fieldset__heading">
+              @competencyGroup.Key
+            </span>
+          </legend>
+        </fieldset>
+        @if (competencyGroup.Count() > 1)
+        {
+          <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
+            <div class="nhsuk-grid-column-full">
+              <a class="nhsuk-button nhsuk-search__submit select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
+              <a class="nhsuk-button nhsuk-search__submit select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
+            </div>
+          </div>
+        }
+        <table role="table" class="nhsuk-table-responsive">
+          <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+              <th role="columnheader" class="" scope="col">
+                @competencyGroup.First().Vocabulary
+              </th>
+              <th role="columnheader" class="" scope="col">
+                Question
+              </th>
+              <th role="columnheader" class="" scope="col">
+                Response
+              </th>
+            </tr>
+          </thead>
+          <tbody class="nhsuk-table__body">
+            @foreach (var competency in competencyGroup)
             {
-              <tr role="row" class="nhsuk-table__row">
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                  <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
-                  <div class="nhsuk-checkboxes__item">
-                    <input class="nhsuk-checkboxes__input" id="result-check-@question.ResultId" name="ResultIds" checked="@(Model.ResultIds != null ? Model.ResultIds.Contains((int)question.ResultId) : false)" type="checkbox" value="@question.ResultId">
-                    <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
-                      @competency.Name
-                    </label>
-                  </div>
-                </td>
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                  <span class="nhsuk-table-responsive__heading">Questions </span>
+              @foreach (var question in competency.AssessmentQuestions)
+              {
+                <tr role="row" class="nhsuk-table__row">
+                  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>
+                    <div class="nhsuk-checkboxes__item">
+                      <input data-group="@competencyGroup.Key" class="nhsuk-checkboxes__input select-all-checkbox" id="result-check-@question.ResultId" name="ResultIds" checked="@(Model.ResultIds != null ? Model.ResultIds.Contains((int)question.ResultId) : false)" type="checkbox" value="@question.ResultId">
+                      <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="result-check-@question.ResultId">
+                        @competency.Name
+                      </label>
+                    </div>
+                  </td>
+                  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Questions </span>
                     @question.Question
-                </td>
-                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                  <span class="nhsuk-table-responsive__heading">Responses </span>
-                  <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
-                </td>
+                  </td>
+                  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Responses </span>
+                    <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="question" />
+                  </td>
 
-              </tr>
+                </tr>
+              }
             }
-          }
-        </tbody>
-      </table>
-    }
-  </nhs-form-group>
-  <input type="hidden" asp-for="SelfAssessmentName" />
-  <input type="hidden" asp-for="Vocabulary" />
-  <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-button--secondary" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
-        Back
-      </a>
-      <button class="nhsuk-button" type="submit">Next</button>
+          </tbody>
+        </table>
+      }
+    </nhs-form-group>
+    <input type="hidden" asp-for="SelfAssessmentName" />
+    <input type="hidden" asp-for="Vocabulary" />
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="VerificationPickSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+          Back
+        </a>
+        <button class="nhsuk-button" type="submit">Next</button>
+      </div>
     </div>
+  </form>
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link"
+       asp-action="SelfAssessmentOverview"
+       asp-route-selfAssessmentId="@Model.SelfAssessmentId" asp-route-vocabulary="@Model.VocabPlural()">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
+      Cancel
+    </a>
   </div>
-</form>
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link"
-     asp-action="SelfAssessmentOverview"
-     asp-route-selfAssessmentId="@Model.SelfAssessmentId" asp-route-vocabulary="@Model.VocabPlural()">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Cancel
-  </a>
-</div>
 }
 else
 {
-<p>
-  There are no self assessment results ready for verification.
-</p>
-<a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
-  Cancel
-</a>
+  <p>
+    There are no self assessment results ready for verification.
+  </p>
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+    Cancel
+  </a>
+}
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/verificationPickResults.js")" asp-append-version="true"></script>
 }

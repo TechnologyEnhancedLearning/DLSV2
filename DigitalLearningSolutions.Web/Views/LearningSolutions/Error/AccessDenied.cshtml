@@ -1,0 +1,12 @@
+﻿@{
+  ViewData["Title"] = "Access denied";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-two-thirds nhsuk-u-reading-width">
+    <h1>@ViewData["Title"]</h1>
+    <p>You do not have permission to access the requested page.</p>
+    <vc:action-link asp-controller="Home" asp-action="Index" link-text="Return to the Digital Learning Solutions homepage" />
+    <p>For support, please contact your centre.</p>
+  </div>
+</div>

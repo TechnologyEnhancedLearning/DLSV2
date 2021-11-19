@@ -29,9 +29,16 @@
             var categoryId = controller.User.GetAdminCategoryId()!;
             var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
 
-            if (!courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value))
+            var validationResult =
+                courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value);
+
+            if (!validationResult.HasValue)
             {
                 context.Result = new NotFoundResult();
+            }
+            else if (!validationResult.Value)
+            {
+                context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
             }
         }
     }

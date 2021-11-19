@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
@@ -115,6 +116,26 @@
                 ChangesToRegistrationDetailsShouldChangeGroupMembership =
                     changesToRegistrationDetailsShouldChangeGroupMembership
             };
+        }
+
+        public static async Task<IEnumerable<int>> GetCandidatesForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT DelegateID
+                    FROM GroupDelegates
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public static async Task<IEnumerable<int>> GetCustomisationsForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT GroupCustomisationID
+                    FROM GroupCustomisations
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
         }
     }
 }

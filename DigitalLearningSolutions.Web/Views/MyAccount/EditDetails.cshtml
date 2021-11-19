@@ -1,24 +1,15 @@
-﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.Common
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model EditDetailsViewModel
+@model MyAccountEditDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/myAccount/myAccount.css")" asp-append-version="true">
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit Details" : "Edit Details";
-  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
-  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
-  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
   };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="Model.DlsSubApplication" />
 }
 
 <div class="nhsuk-grid-row">
@@ -82,9 +73,9 @@
           deselectable="false"
           css-class="nhsuk-u-width-one-half"
           default-option="Select a job group"
-          select-list-options="@ViewBag.JobGroupOptions" />
+          select-list-options="@Model.JobGroups" />
 
-        @foreach (EditCustomFieldViewModel customField in ViewBag.CustomFields) {
+        @foreach (EditCustomFieldViewModel customField in Model.CustomFields) {
           @if (customField.Options.Any()) {
             <vc:select-list
               asp-for="@("Answer" + customField.CustomFieldId)"
