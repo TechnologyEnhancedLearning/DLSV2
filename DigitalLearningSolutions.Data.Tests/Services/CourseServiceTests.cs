@@ -400,7 +400,7 @@
             // Given
             const int categoryId = 1;
             const int centreId = 1;
-            var courseOptions = new List<Course>();
+            var courseOptions = new List<CourseAssessmentDetails>();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courseOptions);
 
