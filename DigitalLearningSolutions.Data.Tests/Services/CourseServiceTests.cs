@@ -155,7 +155,7 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_and_categoryId_match()
+        public void VerifyAdminUserCanManageCourse_should_return_true_when_centreId_and_categoryId_match()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
@@ -172,7 +172,7 @@
 
         [Test]
         public void
-            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
+            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
@@ -188,7 +188,7 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_centre()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_centre()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
@@ -204,7 +204,7 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_categoryID()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_categoryID()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
@@ -220,7 +220,7 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
+        public void VerifyAdminUserCanManageCourse_should_return_null_when_course_does_not_exist()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
@@ -404,7 +404,14 @@
             courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId))
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
                 .MustHaveHappened();
         }
 

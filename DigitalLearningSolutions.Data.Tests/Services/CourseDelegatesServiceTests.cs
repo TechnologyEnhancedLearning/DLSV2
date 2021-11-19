@@ -59,7 +59,8 @@
         public void GetCoursesAndCourseDelegatesForCentre_contains_empty_lists_with_no_courses_in_category()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(2, 7)).Returns(new List<CourseAssessmentDetails>());
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(2, 7))
+                .Returns(new List<CourseAssessmentDetails>());
 
             // When
             var result = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(2, 7, null);
