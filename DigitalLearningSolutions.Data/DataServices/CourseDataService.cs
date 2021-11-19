@@ -55,7 +55,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
         );
 
         public void UpdateCourseDetails(
@@ -466,7 +469,12 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseNameExistAtCentre(int customisationId, string customisationName, int centreId, int applicationId)
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
         {
             return connection.ExecuteScalar<bool>(
                 @"SELECT CASE WHEN EXISTS (
@@ -498,7 +506,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
         )
         {
             connection.Execute(
@@ -507,9 +518,22 @@ namespace DigitalLearningSolutions.Data.DataServices
                         CompleteWithinMonths = @completeWithinMonths,
                         ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
-                        AutoRefresh = @autoRefresh
+                        AutoRefresh = @autoRefresh,
+                        RefreshToCustomisationID = @refreshToCustomisationId,
+                        AutoRefreshMonths = @autoRefreshMonths,
+                        ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+                new
+                {
+                    completeWithinMonths,
+                    validityMonths,
+                    mandatory,
+                    autoRefresh,
+                    customisationId,
+                    refreshToCustomisationId,
+                    autoRefreshMonths,
+                    applyLpDefaultsToSelfEnrol,
+                }
             );
         }
 
