@@ -151,7 +151,6 @@
                 return View(model);
             }
 
-            var adminUser = userDataService.GetAdminUserById(adminId);
             userDataService.DeactivateAdmin(adminId);
 
             return View("DeactivateAdminConfirmation");
