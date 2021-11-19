@@ -602,6 +602,5 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Clear();
             return RedirectToAction("AddCollaborators", "Frameworks", new { actionname = "New", frameworkId = newFramework.ID });
         }
-
     }
 }

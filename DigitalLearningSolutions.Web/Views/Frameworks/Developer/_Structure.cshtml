@@ -56,8 +56,9 @@ else
   {
     <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
       <div class="nhsuk-grid-column-full">
-        <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() group</a>
-        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add new @Model.VocabSingular().ToLower() without a group</a>
+        <a class="nhsuk-button" asp-action="AddEditFrameworkCompetencyGroup" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add @Model.VocabSingular().ToLower() group</a>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddEditFrameworkCompetency" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Add ungrouped @Model.VocabSingular().ToLower()</a>
+        <a class="nhsuk-button nhsuk-button--secondary" asp-action="ImportCompetencies" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])">Import @Model.VocabPlural().ToLower() from Excel</a>
       </div>
     </div>
   }
