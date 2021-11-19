@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,7 @@
             if (!user.Identity.IsAuthenticated)
             {
                 RedirectToLogin(context);
+
                 return;
             }
 
@@ -76,7 +79,11 @@
 
         private void RedirectToLogin(ActionExecutingContext context)
         {
-            context.Result = new RedirectToActionResult("Index", "Login", new { });
+            context.Result = new RedirectToActionResult(
+                nameof(LoginController.Index),
+                ControllerHelper.GetControllerAspName(typeof(LoginController)),
+                new { }
+            );
         }
 
         private void RedirectToLearningPortalVersion(ActionExecutingContext context)
@@ -91,7 +98,11 @@
 
         private void RedirectToAccessDenied(ActionExecutingContext context)
         {
-            context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
+            context.Result = new RedirectToActionResult(
+                nameof(LearningSolutionsController.AccessDenied),
+                ControllerHelper.GetControllerAspName(typeof(LearningSolutionsController)),
+                new { }
+            );
         }
 
         private void SetNotFoundResult(ActionExecutingContext context)
