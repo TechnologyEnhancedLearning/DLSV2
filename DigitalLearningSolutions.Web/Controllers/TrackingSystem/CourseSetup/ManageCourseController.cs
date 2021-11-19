@@ -53,10 +53,6 @@
         [Route("LearningPathwayDefaults/New")]
         public IActionResult EditLearningPathwayDefaultsNew(int customisationId)
         {
-            var model = new EditLearningPathwayDefaultsViewModel();
-
-            SetEditLearningPathwayDefaultsTempData(model);
-
             return RedirectToAction(nameof(EditLearningPathwayDefaults), new { customisationId });
         }
 
@@ -73,14 +69,16 @@
                 categoryId.Value
             );
 
-            var model = new EditLearningPathwayDefaultsViewModel(courseDetails!);
+            var data = TempData.Get<EditLearningPathwayDefaultsData>();
+
+            var model = data?.LearningPathwayDefaultsModel ?? new EditLearningPathwayDefaultsViewModel(courseDetails!);
 
             return View(model);
         }
 
         [HttpPost]
         [Route("LearningPathwayDefaults")]
-        public IActionResult SaveLearningPathwayDefaults(
+        public IActionResult EditLearningPathwayDefaults(
             int customisationId,
             EditLearningPathwayDefaultsViewModel model
         )
@@ -92,7 +90,7 @@
 
             if (!ModelState.IsValid)
             {
-                return View("EditLearningPathwayDefaults", model);
+                return View(model);
             }
 
             if (model.AutoRefresh)
@@ -102,10 +100,8 @@
                 return RedirectToAction("EditAutoRefreshOptions", new { customisationId = model.CustomisationId });
             }
 
-            var completeWithinMonthsInt =
-                model.CompleteWithinMonths == null ? 0 : int.Parse(model.CompleteWithinMonths);
-            var validityMonthsInt =
-                model.ValidityMonths == null ? 0 : int.Parse(model.ValidityMonths);
+            var completeWithinMonthsInt = GetIntegerFromStringOrConvertToZeroIfNull(model.CompleteWithinMonths);
+            var validityMonthsInt = GetIntegerFromStringOrConvertToZeroIfNull(model.ValidityMonths);
 
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 model.CustomisationId,
@@ -155,21 +151,15 @@
 
             var data = TempData.Peek<EditLearningPathwayDefaultsData>()!;
 
-            var autoRefreshMonths =
-                formData.AutoRefreshMonths == null ? 0 : int.Parse(formData.AutoRefreshMonths);
+            var autoRefreshMonths = GetIntegerFromStringOrConvertToZeroIfNull(formData.AutoRefreshMonths);
 
             var completeWithinMonthsInt =
-                data.LearningPathwayDefaultsModel.CompleteWithinMonths == null
-                    ? 0
-                    : int.Parse(data.LearningPathwayDefaultsModel.CompleteWithinMonths);
+                GetIntegerFromStringOrConvertToZeroIfNull(data.LearningPathwayDefaultsModel.CompleteWithinMonths);
 
             var validityMonthsInt =
-                data.LearningPathwayDefaultsModel.ValidityMonths == null
-                    ? 0
-                    : int.Parse(data.LearningPathwayDefaultsModel.ValidityMonths);
+                GetIntegerFromStringOrConvertToZeroIfNull(data.LearningPathwayDefaultsModel.ValidityMonths);
 
-            var refreshToCustomisationId =
-                formData.RefreshToCustomisationId ?? 0;
+            var refreshToCustomisationId = formData.RefreshToCustomisationId ?? 0;
 
             courseService.UpdateLearningPathwayDefaultsForCourse(
                 customisationId,
@@ -298,6 +288,11 @@
             centreCourses.Insert(0, (customisationId, "Same course"));
 
             return SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
+        }
+
+        private int GetIntegerFromStringOrConvertToZeroIfNull(string? input)
+        {
+            return input == null ? 0 : int.Parse(input);
         }
 
         private void ValidateCustomisationName(

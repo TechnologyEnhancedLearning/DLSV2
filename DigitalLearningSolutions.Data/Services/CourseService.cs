@@ -174,7 +174,7 @@
         {
             var orderedCourses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId)
                 .OrderBy(c => c.ApplicationName);
-            return orderedCourses.Select(c => (c.CustomisationId, c.ApplicationName + " - " + c.CustomisationName));
+            return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
         }
 
         public bool DoesCourseNameExistAtCentre(

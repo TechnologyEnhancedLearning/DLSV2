@@ -46,17 +46,6 @@
         }
 
         [Test]
-        public void SetEditLearningPathwayDefaultsNew_sets_new_temp_data()
-        {
-            // When
-            var result = controller.EditLearningPathwayDefaultsNew(1);
-
-            // Then
-            controller.TempData.Peek<EditLearningPathwayDefaultsData>().Should().NotBeNull();
-            result.Should().BeRedirectToActionResult().WithActionName("EditLearningPathwayDefaults");
-        }
-
-        [Test]
         public void AddAdminField_post_updates_temp_data_and_redirects()
         {
             // Given
@@ -66,7 +55,7 @@
             controller.TempData.Set(initialTempData);
 
             // When
-            var result = controller.SaveLearningPathwayDefaults(1, inputViewModel);
+            var result = controller.EditLearningPathwayDefaults(1, inputViewModel);
 
             // Then
             using (new AssertionScope())
@@ -97,7 +86,7 @@
             ).DoesNothing();
 
             // When
-            var result = controller.SaveLearningPathwayDefaults(1, model);
+            var result = controller.EditLearningPathwayDefaults(1, model);
 
             // Then
             A.CallTo(
@@ -122,7 +111,7 @@
             var model = new EditLearningPathwayDefaultsViewModel(1, null, null, false, false);
 
             // When
-            var result = controller.SaveLearningPathwayDefaults(1, model);
+            var result = controller.EditLearningPathwayDefaults(1, model);
 
             // Then
             A.CallTo(
@@ -149,19 +138,19 @@
             controller.ModelState.AddModelError("CompleteWithinMonths", "Enter a whole number from 0 to 48");
 
             // When
-            var result = controller.SaveLearningPathwayDefaults(1, model);
+            var result = controller.EditLearningPathwayDefaults(1, model);
 
             // Then
             A.CallTo(
                 () => courseService.UpdateLearningPathwayDefaultsForCourse(
-                    1,
-                    49,
-                    12,
-                    false,
-                    false,
-                    0,
-                    0,
-                    false
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditLearningPathwayDefaultsViewModel>();
@@ -295,14 +284,14 @@
             // Then
             A.CallTo(
                 () => courseService.UpdateLearningPathwayDefaultsForCourse(
-                    1,
-                    6,
-                    12,
-                    false,
-                    false,
-                    1,
-                    13,
-                    false
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditAutoRefreshOptionsViewModel>();
