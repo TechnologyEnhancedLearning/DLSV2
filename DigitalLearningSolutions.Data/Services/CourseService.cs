@@ -172,8 +172,9 @@
             int? categoryId
         )
         {
-            var orderedCourses = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId)
-                .OrderBy(c => c.ApplicationName);
+            var activeCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
+                .Where(c => c.Active = true);
+            var orderedCourses = activeCourses.OrderBy(c => c.ApplicationName);
             return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
         }
 

@@ -645,32 +645,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCentrallyManagedAndCentreCourses_should_return_expected_items()
-        {
-            // Given
-            const int centreId = 101;
-            const int categoryId = 1;
-            var expectedFirstCourse = new Course
-            {
-                Active = false,
-                ApplicationId = 76,
-                ApplicationName = "Mobile Directory",
-                CentreId = 549,
-                CustomisationId = 14738,
-                CustomisationName = "eLearning",
-                SearchableName = "Mobile Directory - eLearning",
-            };
-
-            // When
-
-            var result = courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId).ToList();
-
-            // Then
-            result.Should().HaveCountGreaterOrEqualTo(15);
-            result.First().Should().BeEquivalentTo(expectedFirstCourse);
-        }
-
-        [Test]
         public void UpdateCourseDetails_correctly_updates_course_details()
         {
             using var transaction = new TransactionScope();

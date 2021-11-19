@@ -294,14 +294,14 @@
             const int categoryId = 1;
             const int centreId = 1;
             var courseOptions = new List<Course>();
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courseOptions);
 
             // When
             var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             // Then
-            A.CallTo(() => courseDataService.GetCentrallyManagedAndCentreCourses(centreId, categoryId))
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .MustHaveHappened();
             result.Should().BeEquivalentTo(courseOptions);
         }

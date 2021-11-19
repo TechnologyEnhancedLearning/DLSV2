@@ -35,6 +35,7 @@
         [HttpGet]
         public IActionResult Index(int customisationId)
         {
+            TempData.Clear();
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
 
