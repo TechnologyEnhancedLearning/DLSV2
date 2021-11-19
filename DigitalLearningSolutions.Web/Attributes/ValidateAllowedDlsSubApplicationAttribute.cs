@@ -35,7 +35,6 @@
             if (!user.Identity.IsAuthenticated)
             {
                 RedirectToLogin(context);
-
                 return;
             }
 

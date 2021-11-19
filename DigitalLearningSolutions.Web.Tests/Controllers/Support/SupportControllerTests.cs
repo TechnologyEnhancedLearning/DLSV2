@@ -40,21 +40,6 @@
         }
 
         [Test]
-        public async Task Invalid_application_name_should_redirect_to_404_page()
-        {
-            // Given
-            var controller = new SupportController(featureManager, configuration)
-                .WithDefaultContext()
-                .WithMockUser(true, isCentreAdmin: true, isFrameworkDeveloper: true);
-
-            // When
-            var result = await controller.Index("Main");
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public async Task Home_page_should_be_shown_when_accessing_tracking_system_support_without_appropriate_claims()
         {
             // Given
