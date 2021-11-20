@@ -6,6 +6,7 @@
 
     public class SelectCourseViewModel : BaseJavaScriptFilterableViewModel
     {
+        // TODO: Set up javascript filtering
         public SelectCourseViewModel() { }
 
         public SelectCourseViewModel(

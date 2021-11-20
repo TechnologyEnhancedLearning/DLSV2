@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
 
@@ -11,42 +12,65 @@
         {
             Id = Guid.NewGuid();
             SelectCourseViewModel = new SelectCourseViewModel();
+            SetCourseDetailsViewModel = new EditCourseDetailsFormData();
+            SetCourseOptionsViewModel = new EditCourseOptionsFormData();
+            SetCourseContentViewModel = new SetCourseContentViewModel();
+            SetCourseSectionViewModel = new EditCourseSectionFormData();
+            SummaryViewModel = new SummaryViewModel();
         }
 
         public Guid Id { get; set; }
-
         public SelectCourseViewModel SelectCourseViewModel { get; set; }
-        // TODO: public EditCourseDetailsViewModel EditCourseDetailsViewModel { get; set; }
-        public EditCourseOptionsViewModel SetCourseOptionsViewModel { get; set; }
-        public CourseContentViewModel CourseContentViewModel { get; set; }
-        public EditCourseSectionViewModel EditCourseSectionViewModel { get; set; }
+        public EditCourseDetailsFormData SetCourseDetailsViewModel { get; set; }
+        public EditCourseOptionsFormData SetCourseOptionsViewModel { get; set; }
+        public SetCourseContentViewModel SetCourseContentViewModel { get; set; }
+        public EditCourseSectionFormData SetCourseSectionViewModel { get; set; }
+        public SummaryViewModel SummaryViewModel { get; set; }
 
         public void SetCourse(SelectCourseViewModel model)
         {
             SelectCourseViewModel.CustomisationId = model.CustomisationId;
         }
 
-        public void SetCourseDetails(EditCourseDetailsViewModel model)
+        public void SetCourseDetails(EditCourseDetailsFormData formData)
         {
-            // TODO: Set course details
+            SetCourseDetailsViewModel.ApplicationId = formData.ApplicationId;
+            SetCourseDetailsViewModel.CustomisationName = formData.CustomisationName;
+            SetCourseDetailsViewModel.CustomisationNameSuffix = formData.CustomisationNameSuffix;
+            SetCourseDetailsViewModel.PasswordProtected = formData.PasswordProtected;
+            SetCourseDetailsViewModel.Password = formData.Password;
+            SetCourseDetailsViewModel.ReceiveNotificationEmails = formData.ReceiveNotificationEmails;
+            SetCourseDetailsViewModel.NotificationEmails = formData.NotificationEmails;
+            SetCourseDetailsViewModel.PostLearningAssessment = formData.PostLearningAssessment;
+            SetCourseDetailsViewModel.IsAssessed = formData.IsAssessed;
+            SetCourseDetailsViewModel.DiagAssess = formData.DiagAssess;
+            SetCourseDetailsViewModel.TutCompletionThreshold = formData.TutCompletionThreshold;
+            SetCourseDetailsViewModel.DiagCompletionThreshold = formData.DiagCompletionThreshold;
         }
 
-        public void SetCourseOptions(EditCourseOptionsViewModel model)
+        public void SetCourseOptions(EditCourseOptionsFormData model)
         {
             SetCourseOptionsViewModel.Active = model.Active;
             SetCourseOptionsViewModel.AllowSelfEnrolment = model.AllowSelfEnrolment;
-            SetCourseOptionsViewModel.HideInLearningPortal = model.HideInLearningPortal,
-            SetCourseOptionsViewModel.DiagnosticObjectiveSelection = model.DiagnosticObjectiveSelection,
+            SetCourseOptionsViewModel.HideInLearningPortal = model.HideInLearningPortal;
+            SetCourseOptionsViewModel.DiagnosticObjectiveSelection = model.DiagnosticObjectiveSelection;
         }
 
-        public void SetCourseContent(EditCourseSectionViewModel model)
+        public void SetCourseContent(SetCourseContentViewModel model)
         {
             // TODO: Set course content
         }
 
-        public void EditSectionContent(EditCourseSectionViewModel model)
+        public void SetSectionContent(EditCourseSectionFormData formData)
         {
-            // TODO: Set section content
+            SetCourseSectionViewModel.CourseName = formData.CourseName;
+            SetCourseSectionViewModel.SectionName = formData.SectionName;
+            SetCourseSectionViewModel.Tutorials = formData.Tutorials;
+        }
+
+        public void PopulateSummaryData(SummaryViewModel model)
+        {
+            // TODO: Populate summary data
         }
     }
 }
