@@ -1,7 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model SummaryViewModel
 @{
-  ViewData["Title"] =  "Add new centre course - Summary";
+  ViewData["Title"] = "Add new centre course - Summary";
 }
 
 <div class="nhsuk-grid-row">
@@ -43,7 +43,7 @@
           Password protected
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.Password ? Model.Password : "No")
+          @(Model.Password == null ? Model.Password : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -56,7 +56,7 @@
           Completion notification email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.NotificationEmails ? Model.NotificationEmails : "No")
+          @(Model.NotificationEmails == null ? Model.NotificationEmails : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -69,7 +69,7 @@
           Allow self-enrolment
         </dt>
         <dd class="nhsuk-summary-list__value">
-
+          @(Model.AllowSelfEnrolment ? "Yes" : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseOptions">
@@ -79,10 +79,23 @@
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
+          Hide in Learning Portal
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.HideInLearningPortal ? "Yes" : "No")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="SetCourseOptions">
+            Change<span class="nhsuk-u-visually-hidden"> Learning Portal access</span>
+          </a>
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
           Allow diagnostic objective selection
         </dt>
         <dd class="nhsuk-summary-list__value">
-
+          @(Model.DiagnosticObjectiveSelection ? "Yes" : "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseOptions">
@@ -95,7 +108,8 @@
           Course content
         </dt>
         <dd class="nhsuk-summary-list__value">
-
+          <p>@(Model.NumberOfLearning ? "Yes" : "No") learning</p>
+          <p>@(Model.NumberOfDiagnostic ? "Yes" : "No") diagnostic</p>
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseOptions">

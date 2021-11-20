@@ -1,9 +1,9 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
-@model EditCourseOptionsViewModel
+@model EditCourseOptionsFormData
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
@@ -20,7 +20,7 @@
     <h1 class="nhsuk-heading-xl">Set course options</h1>
 
     <form method="post" novalidate asp-action="SetCourseOptions">
-      // TODO: Add partial
+      // TODO: Extract partial from EditCourseOptions page and add here
     </form>
 
     <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseDetails" />

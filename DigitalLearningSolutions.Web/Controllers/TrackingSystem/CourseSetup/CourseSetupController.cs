@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -15,6 +18,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -120,8 +124,6 @@
         [Route("AddCourse/SelectCourse")]
         public IActionResult SelectCourse()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCategoryId()!;
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
@@ -153,11 +155,9 @@
         [Route("AddCourse/SetCourseDetails")]
         public IActionResult SetCourseDetails()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
             var model = new EditCourseDetailsViewModel();
 
-            return View("AddNewCentreCourse/SelectCourse", model);
+            return View("AddNewCentreCourse/SetCourseDetails", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -182,16 +182,14 @@
         [Route("AddCourse/SetCourseOptions")]
         public IActionResult SetCourseOptions()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
-            var model = new EditCourseOptionsViewModel();
+            var model = new EditCourseOptionsFormData();
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        public IActionResult SetCourseDetails(EditCourseOptionsViewModel model)
+        public IActionResult SetCourseDetails(EditCourseOptionsFormData model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
@@ -211,8 +209,6 @@
         [Route("AddCourse/SetCourseContent")]
         public IActionResult SetCourseContent()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
             var model = new SetCourseContentViewModel();
 
             return View("AddNewCentreCourse/SetCourseContent", model);
@@ -240,11 +236,9 @@
         [Route("AddCourse/EditSectionContent")]
         public IActionResult EditSectionContent()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var model = new EditCourseSectionFormData();
 
-            var model = new EditCourseSectionViewModel();
-
-            return View("AddNewCentreCourse/SetCourseContent", model);
+            return View("AddNewCentreCourse/EditSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -258,7 +252,7 @@
                 return View("AddNewCentreCourse/EditSectionContent", model);
             }
 
-            data.EditSectionContent(model);
+            data.SetSectionContent(model);
             TempData.Set(data);
 
             return RedirectToAction("Summary");
@@ -271,6 +265,7 @@
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
             var model = new SummaryViewModel();
+            data.PopulateSummaryData(model);
 
             return View("AddNewCentreCourse/Summary", model);
         }
@@ -279,15 +274,23 @@
         [HttpPost]
         public IActionResult Summary(SummaryViewModel model)
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
             if (!ModelState.IsValid)
             {
                 return View("AddNewCentreCourse/Summary", model);
             }
 
-            courseService.CreateNewCentreCourse();
-            tutorialService.UpdateTutorialsStatuses();
+            var data = TempData.Peek<AddNewCentreCourseData>()!;
+
+            // TODO: Use a try...catch statement to try saving the new course, and update the tutorial statuses
+
+            // courseService.CreateNewCentreCourse();
+            // tutorialService.UpdateTutorialsStatuses();
+
+            // TODO: Get the newly created course's customisationId and customisationName and save them in tempdata
+
+            // TempData.Clear();
+            // TempData.Add("customisationId", customisationId);
+            // TempData.Add("customisationName", customisationName);
 
             return RedirectToAction("Confirmation");
         }
@@ -296,7 +299,11 @@
         [Route("AddCourse/Summary")]
         public IActionResult Confirmation()
         {
-            var model = new ConfirmationViewModel();
+            var customisationId = (int)TempData.Peek("customisationId");
+            var customisationName = (string)TempData.Peek("courseName");
+            TempData.Clear();
+
+            var model = new ConfirmationViewModel(customisationId, customisationName);
 
             return View("AddNewCentreCourse/Confirmation", model);
         }

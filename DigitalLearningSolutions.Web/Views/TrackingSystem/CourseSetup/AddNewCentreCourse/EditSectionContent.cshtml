@@ -2,7 +2,7 @@
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
-@model EditCourseSectionViewModel
+@model EditCourseSectionFormData
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
@@ -19,7 +19,7 @@
     <h1 class="nhsuk-heading-xl">Edit section content</h1>
 
     <form method="post" novalidate asp-action="EditSectionContent">
-      // TODO: Add partial
+      // TODO: Extract partial from EditSectionContent page and add here
     </form>
 
     <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" />
