@@ -4,7 +4,7 @@
 
     public class SupportViewModel
     {
-        private readonly string currentSystemBaseUrl;
+        protected readonly string currentSystemBaseUrl;
 
         public SupportViewModel(DlsSubApplication dlsSubApplication, SupportPage currentPage, string currentSystemBaseUrl)
         {
