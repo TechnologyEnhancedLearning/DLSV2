@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -93,28 +94,33 @@
         [Test]
         public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
         {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
-
-            // Then
-            using (new AssertionScope())
+            using (new TransactionScope())
             {
-                returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
-                returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
-                returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
-                    (expectedDelegateUser.CandidateNumber);
-                returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
-                returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
-                returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
-                returnedDelegateUsers.First().EmailAddress.Should().BeEquivalentTo(expectedDelegateUser.EmailAddress);
-                returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
-                returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
-                returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
-                returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
-                returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+                using (new AssertionScope())
+                {
+                    // Given
+                    var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
+                    connection.Execute("UPDATE Candidates SET ResetPasswordID = 1 WHERE CandidateID = 2");
+
+                    // When
+                    var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
+
+                    // Then
+                    returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
+                    returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
+                    returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
+                        (expectedDelegateUser.CandidateNumber);
+                    returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
+                    returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
+                    returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
+                    returnedDelegateUsers.First().EmailAddress.Should()
+                        .BeEquivalentTo(expectedDelegateUser.EmailAddress);
+                    returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
+                    returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
+                    returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
+                    returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
+                    returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+                }
             }
         }
 

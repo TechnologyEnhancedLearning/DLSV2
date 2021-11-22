@@ -12,18 +12,20 @@
         public DelegateGroupsViewModel(
             List<Group> groups,
             IEnumerable<CustomPrompt> registrationPrompts,
+            string searchString,
             string sortBy,
             string sortDirection,
             string? filterBy,
             int page
-        ) : base(null, page, true, sortBy, sortDirection, filterBy)
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 groups.AsQueryable(),
                 sortBy,
                 sortDirection
             );
-            var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
+            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);

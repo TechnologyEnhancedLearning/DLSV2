@@ -139,7 +139,8 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
-                        jg.JobGroupName
+                        jg.JobGroupName,
+                        cd.ResetPasswordID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID

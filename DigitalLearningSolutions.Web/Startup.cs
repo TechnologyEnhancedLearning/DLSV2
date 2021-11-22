@@ -253,6 +253,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
             services.AddScoped<VerifyAdminUserCanAccessCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
