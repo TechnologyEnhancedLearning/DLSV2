@@ -115,12 +115,12 @@
             }
         }
 
-        [Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}")]
+        [Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}/{resultId:int}")]
         //[Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/ViewNotes")]
-        public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber)
+        public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
         {           
             int candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/" + competencyNumber.ToString();
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Proficiencies/" + competencyNumber.ToString()+"/Viewnotes";
 
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
 
@@ -131,18 +131,21 @@
                 logger.LogWarning($"Attempt to display self assessment overview for candidate {candidateId} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
+            
+            var supervisorComment = selfAssessmentService.GetSupervisorComments(candidateId, resultId);
 
-            var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
-
-            if (competencies == null)
+            if (supervisorComment == null)
             {
                 return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id, vocabulary = assessment.Vocabulary });
             }
-                        
-            var competency = competencies.FirstOrDefault(x => x.Id == selfAssessmentId);
-            var model = new SelfAssessmentCompetencyViewModel(assessment, competency, competencyNumber, assessment.NumberOfCompetencies)
-            {
-                SelfAssessmentSupervisor = selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId)
+
+            var model = new ViewModels.LearningPortal.SelfAssessments.SupervisorCommentsViewModel
+            {                
+                SupervisorComment = supervisorComment,
+                SelfAssessmentSupervisor = selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),
+                AssessmentQuestion = new AssessmentQuestion { Verified = supervisorComment.Verified,
+                    SelfAssessmentResultSupervisorVerificationId = supervisorComment.CandidateAssessmentSupervisorID,
+                SignedOff = supervisorComment.SignedOff}
             };
 
             return View("Comments/SupervisorComments", model);

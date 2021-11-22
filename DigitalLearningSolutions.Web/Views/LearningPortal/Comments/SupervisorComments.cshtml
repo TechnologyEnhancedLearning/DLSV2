@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
-@model SelfAssessmentCompetencyViewModel
+@model SupervisorCommentsViewModel
 
 @{
   ViewData["Title"] = "Supervisor comments";
@@ -16,29 +16,42 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@Model.Assessment.Name</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@Model.VocabPlural()</a></li>
-        <li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.CompetencyNumber</li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment"
+             asp-route-selfAssessmentId="@Model.SupervisorComment.AssessmentQuestionID">
+            @Model.SupervisorComment?.Name
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview"
+             asp-route-vocabulary="@Model.VocabPlural()"
+             asp-route-selfAssessmentId="@Model.SupervisorComment.AssessmentQuestionID"
+             asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
+             asp-fragment="comp-@Model.SupervisorComment.CandidateID">
+            @Model.VocabPlural()
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">View verifier notes</li>
       </ol>
-    </div>
+    </div>>
   </nav>
 }
 
 <div>
-  <h1>@Model.Competency.Name</h1>
+  <h1>@Model.SupervisorComment?.CompetencyName</h1>
   <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
     <div class="nhsuk-care-card__heading-container">
       <h2 class="nhsuk-care-card__heading">
         <span role="text">
-          @supervisorName Notes          
+          @supervisorName Notes
         </span>
       </h2>
       <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
     </div>
     <div class="nhsuk-care-card__content">
-      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.FirstOrDefault(x => x.Id == Model.Assessment.Id)" />
+      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
 
-      <p>@Model.Competency.AssessmentQuestions.FirstOrDefault(x => x.Id == Model.Assessment.Id)?.SupervisorComments</p>
+      <p>@Model.SupervisorComment.Comments</p>
 
     </div>
   </div>

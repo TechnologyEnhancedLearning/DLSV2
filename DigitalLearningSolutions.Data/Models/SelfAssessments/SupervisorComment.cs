@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SupervisorComments
+namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 {
-    public class SupervisorCommentsViewModel
+    public class SupervisorComment
     {
         public int? AssessmentQuestionID { get; set; }
-        public string? Name { get; set; }
+        public string? Name { get; set; }        
         public string? Comments { get; set; }
-        public int? CandidateID { get; set; }
+        public int? CandidateID { get; set; }        
         public int? CompetencyID { get; set; }
         public string? CompetencyName { get; set; }
         public int? SelfAssessmentID { get; set; }
@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SupervisorComme
         public int? SelfAssessmentResultId { get; set; }
         public DateTime? Verified { get; set; }
         public int? CompetencyGroupID { get; set; }
-
+        public string? Vocabulary { get; set; }
+        public bool SignedOff { get; set; }
     }
 }

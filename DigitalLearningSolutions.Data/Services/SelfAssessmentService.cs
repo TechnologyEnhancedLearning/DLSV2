@@ -18,6 +18,7 @@
         CurrentSelfAssessment? GetSelfAssessmentForCandidateById(int candidateId, int selfAssessmentId);
         Competency? GetNthCompetency(int n, int selfAssessmentId, int candidateId); // 1 indexed
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(int assessmentQuestionId, int minValue, int maxValue, bool zeroBased);
+        SupervisorComment GetSupervisorComments(int candidateId, int resultId);
         IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId);
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
         IEnumerable<Competency> GetCandidateAssessmentResultsForReviewById(int candidateAssessmentId, int adminId);
@@ -366,6 +367,21 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                     $"{PrintResult(competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result)}"
                 );
             }
+        }
+
+        public SupervisorComment GetSupervisorComments(int candidateId, int resultId)
+        {
+            return connection.Query<SupervisorComment>(
+              @"SELECT  sar.AssessmentQuestionID, sea.Name, sasv.Comments, sar.CandidateID, sar.CompetencyID, com.Name as CompetencyName,
+	sar.SelfAssessmentID, sasv.CandidateAssessmentSupervisorID, sasv.SelfAssessmentResultId, sasv.Verified,
+	 sar.ID, sstrc.CompetencyGroupID, sea.Vocabulary, sasv.SignedOff
+	 FROM SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
+	SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID
+	INNER JOIN SelfAssessments AS sea ON sar.SelfAssessmentID = sea.ID
+	INNER JOIN SelfAssessmentStructure AS sstrc ON sar.CompetencyID = sstrc.CompetencyID 
+	Inner JOIN Competencies AS com ON sar.CompetencyID = com.ID
+                    WHERE(sar.CandidateID = @candidateId) AND(sasv.SelfAssessmentResultId = @resultId)", new { candidateId, resultId }
+              ).FirstOrDefault();
         }
 
         public IEnumerable<Competency> GetMostRecentResults(int selfAssessmentId, int candidateId)

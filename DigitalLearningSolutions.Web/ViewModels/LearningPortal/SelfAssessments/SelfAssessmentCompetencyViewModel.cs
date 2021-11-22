@@ -9,7 +9,6 @@
         public readonly Competency Competency;
         public readonly int CompetencyNumber;
         public readonly int TotalNumberOfCompetencies;
-        public SelfAssessmentSupervisor? SelfAssessmentSupervisor { get; set; }
 
         public SelfAssessmentCompetencyViewModel(
             CurrentSelfAssessment assessment,
