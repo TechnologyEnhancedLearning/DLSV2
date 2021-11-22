@@ -121,6 +121,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Support/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -197,6 +198,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
+            services.AddScoped<IFaqsService, FaqsService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -229,6 +231,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
+            services.AddScoped<IFaqsDataService, FaqsDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)
