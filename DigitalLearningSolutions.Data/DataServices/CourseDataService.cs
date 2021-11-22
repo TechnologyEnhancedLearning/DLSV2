@@ -41,12 +41,34 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
+        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+
+        bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        );
+
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
+        );
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string password,
+            string notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
         );
 
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
@@ -426,6 +448,44 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
+        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT *
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId
+                        AND c.CentreID = @centreId
+                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    )
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT CustomisationID
+                        FROM dbo.Customisations
+                        WHERE [ApplicationID] = @applicationID
+                        AND [CentreID] = @centreID
+                        AND [CustomisationName] = @customisationName
+                        AND [CustomisationID] != @customisationId)
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, customisationName, centreId, applicationId }
+            );
+        }
+
         public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
         {
             return connection.QueryFirstOrDefault<(int?, int?)>(
@@ -442,7 +502,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
         )
         {
             connection.Execute(
@@ -451,9 +514,55 @@ namespace DigitalLearningSolutions.Data.DataServices
                         CompleteWithinMonths = @completeWithinMonths,
                         ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
-                        AutoRefresh = @autoRefresh
+                        AutoRefresh = @autoRefresh,
+                        RefreshToCustomisationID = @refreshToCustomisationId,
+                        AutoRefreshMonths = @autoRefreshMonths,
+                        ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+                new
+                {
+                    completeWithinMonths,
+                    validityMonths,
+                    mandatory,
+                    autoRefresh,
+                    customisationId,
+                    refreshToCustomisationId,
+                    autoRefreshMonths,
+                    applyLpDefaultsToSelfEnrol,
+                }
+            );
+        }
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string? password,
+            string? notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CustomisationName = @customisationName,
+                        Password = @password,
+                        NotificationEmails = @notificationEmails,
+                        IsAssessed = @isAssessed,
+                        TutCompletionThreshold = @tutCompletionThreshold,
+                        DiagCompletionThreshold = @diagCompletionThreshold
+                    WHERE CustomisationID = @customisationId",
+                new
+                {
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold,
+                    customisationId,
+                }
             );
         }
 
@@ -465,7 +574,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         SelfRegister = @SelfRegister,
                         HideInLearnerPortal = @HideInLearnerPortal,
                         DiagObjSelect = @DiagObjSelect
-                    FROM dbo.Customisations AS cu                   
+                    FROM dbo.Customisations AS cu
                     WHERE
                     cu.CustomisationID = @customisationId",
                 new
@@ -495,7 +604,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE
                         (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
                         AND cu.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL 
+                        AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();

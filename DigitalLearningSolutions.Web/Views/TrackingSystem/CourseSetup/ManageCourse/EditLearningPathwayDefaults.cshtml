@@ -18,7 +18,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate
           asp-controller="ManageCourse"
-          asp-action="SaveLearningPathwayDefaults"
+          asp-action="EditLearningPathwayDefaults"
           asp-route-customisationId="@Model.CustomisationId">
 
       <vc:numeric-input asp-for="@nameof(Model.CompleteWithinMonths)"
@@ -29,7 +29,6 @@
                                      course? Enter 0 or leave blank if you do not wish to configure this value."
                         css-class="nhsuk-input--width-10" />
 
-
       <vc:numeric-input asp-for="@nameof(Model.ValidityMonths)"
                         label="Completion valid for (in months)"
                         populate-with-current-value="true"
@@ -39,33 +38,13 @@
                                      to configure this value."
                         css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
 
-      <div class="nhsuk-checkboxes">
-        <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
-          <input class="nhsuk-checkboxes__input"
-                 type="checkbox"
-                 id="Mandatory"
-                 asp-for="Mandatory">
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="Mandatory">
-            Course is mandatory
-          </label>
-          <div class="nhsuk-hint nhsuk-checkboxes__hint">
-            Cannot be removed from the current course list by the learner after enrolment
-          </div>
-        </div>
+      <vc:single-checkbox asp-for="@nameof(Model.Mandatory)"
+                          label="Course is mandatory"
+                          hint-text="Cannot be removed from the current course list by the learner after enrolment" />
 
-        <div class="nhsuk-checkboxes__item nhsuk-u-margin-bottom-4">
-          <input class="nhsuk-checkboxes__input"
-                 type="checkbox"
-                 id="AutoRefresh"
-                 asp-for="AutoRefresh">
-          <label class="nhsuk-label nhsuk-checkboxes__label" for="AutoRefresh">
-            Enable auto-refresh
-          </label>
-          <div class="nhsuk-hint nhsuk-checkboxes__hint">
-            After the completion valid period expires, should the learner automatically be enrolled on a refresher course?
-          </div>
-        </div>
-      </div>
+      <vc:single-checkbox asp-for="@nameof(Model.AutoRefresh)"
+                          label="Enable auto-refresh"
+                          hint-text="After the completion valid period expires, should the learner automatically be enrolled on a refresher course?" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

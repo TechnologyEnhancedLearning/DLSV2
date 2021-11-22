@@ -272,6 +272,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -280,7 +283,100 @@
             courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
 
             // Then
-            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0, 0, false))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCourseOptionAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courseOptions);
+
+            // When
+            var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappened();
+            result.Should().BeEquivalentTo(courseOptions);
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const int centreId = 101;
+            const int applicationId = 1;
+
+            // When
+            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCourseDetails_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const string notificationEmails = "hello@test.com";
+            const bool isAssessed = true;
+            const int tutCompletionThreshold = 0;
+            const int diagCompletionThreshold = 0;
+
+            A.CallTo(
+                () => courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password,
+                notificationEmails,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.UpdateCourseDetails(
+                        customisationId,
+                        customisationName,
+                        password,
+                        notificationEmails,
+                        isAssessed,
+                        tutCompletionThreshold,
+                        diagCompletionThreshold
+                    )
+                )
                 .MustHaveHappened();
         }
 

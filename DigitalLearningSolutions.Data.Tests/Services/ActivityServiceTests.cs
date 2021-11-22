@@ -468,6 +468,21 @@
             dateRange!.Value.endDate.Should().Be(DateTime.Parse(endDateString));
         }
 
+        [Test]
+        public void GetActivityStartDateForCentre_strips_time_from_database_value()
+        {
+            // given
+            var dateWithTime = DateTime.Parse("2020/12/12 12:40:40");
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(A<int>._))
+                .Returns(dateWithTime);
+
+            // when
+            var result = activityService.GetActivityStartDateForCentre(1);
+
+            // then
+            result.Should().Be(dateWithTime.Date);
+        }
+
         private void GivenActivityDataServiceReturnsDataInExampleSheet()
         {
             var activityResult = new List<ActivityLog>
