@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\checkboxGroup.ts" />
+    <None Remove="Scripts\checkboxes.ts" />
     <None Remove="Scripts\common.ts" />
     <None Remove="Scripts\frameworks\branding.ts" />
     <None Remove="Scripts\helpers\constants.ts" />
@@ -78,7 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
+    <TypeScriptCompile Include="Scripts\checkboxes.ts" />
     <TypeScriptCompile Include="Scripts\common.ts" />
     <TypeScriptCompile Include="Scripts\checkboxGroup.ts" />
     <TypeScriptCompile Include="Scripts\frameworks\branding.ts" />
