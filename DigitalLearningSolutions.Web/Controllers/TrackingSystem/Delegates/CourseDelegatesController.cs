@@ -49,7 +49,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCategoryId();
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
             CourseDelegatesData courseDelegatesData;
 
             try

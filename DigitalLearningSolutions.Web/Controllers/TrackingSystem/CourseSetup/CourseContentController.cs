@@ -47,7 +47,7 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
             var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
@@ -73,7 +73,7 @@
         public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
             var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,

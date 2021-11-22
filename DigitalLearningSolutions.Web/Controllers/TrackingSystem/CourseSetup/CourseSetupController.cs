@@ -57,7 +57,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
             var centreCourses =
                 courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
@@ -84,7 +84,7 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
             var centreCourses =
                 courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)

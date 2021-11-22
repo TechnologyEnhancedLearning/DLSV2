@@ -29,7 +29,7 @@
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCategoryId();
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
 
             var topCourses =
                 courseService.GetTopCourseStatistics(centreId, adminCategoryId).Take(NumberOfTopCourses);
