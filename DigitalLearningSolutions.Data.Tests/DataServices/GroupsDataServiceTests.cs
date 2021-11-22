@@ -453,12 +453,12 @@
         [Test]
         public async Task DeleteGroupCustomisations_deletes_all_group_customisations()
         {
+            // Given
+            const int groupId = 8;
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int groupId = 8;
-
                 // When
                 groupsDataService.DeleteGroupCustomisations(groupId);
 
@@ -475,13 +475,13 @@
         [Test]
         public async Task DeleteGroupCustomisation_deletes_expected_group_customisation()
         {
+            // Given
+            const int groupCustomisationId = 25;
+            const int groupId = 101;
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int groupCustomisationId = 25;
-                const int groupId = 101;
- 
                 // When
                 groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
 
@@ -539,12 +539,12 @@
             bool deleteStartedEnrolment
         )
         {
+            // Given
+            var progressRemoved = new DateTime(2021, 11, 6, 22, 23, 24, 567);
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                var progressRemoved = new DateTime(2021, 11, 6, 22, 23, 24, 567);
-
                 // When
                 groupsDataService.RemoveRelatedProgressRecordsForCourse(
                     groupId,
@@ -568,14 +568,14 @@
         [Test]
         public async Task RemoveRelatedProgressRecordsForCourse_should_not_remove_progress_when_course_in_additional_groups()
         {
+            // Given
+            const int progressRecordId = 285130;
+            const int groupId = 8;
+            const int groupCustomisationId = 1;
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int progressRecordId = 285130;
-                const int groupId = 8;
-                const int groupCustomisationId = 1;
-
                 AddDelegateToGroupWithSharedCourse();
 
                 // When
@@ -601,14 +601,14 @@
         [Test]
         public void UpdateGroupDescription_updates_record()
         {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope();
             try
             {
-                // Given
-                const int centerId = 101;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
@@ -628,14 +628,14 @@
         [Test]
         public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
         {
+            // Given
+            const int incorrectCentreId = 107;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                
-                const int incorrectCentreId = 107;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,

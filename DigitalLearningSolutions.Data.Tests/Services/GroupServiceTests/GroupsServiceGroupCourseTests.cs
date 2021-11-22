@@ -5,7 +5,6 @@
     using FluentAssertions;
     using NUnit.Framework;
     using System;
-    using DigitalLearningSolutions.Data.Models.User;
     using FizzWare.NBuilder;
 
     partial class GroupsServiceTests
