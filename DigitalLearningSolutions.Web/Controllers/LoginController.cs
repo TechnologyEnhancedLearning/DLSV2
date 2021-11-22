@@ -176,6 +176,8 @@
                 IssuedUtc = DateTime.UtcNow
             };
 
+            //HEEDLS-673
+            //Curse progress doesn't get updated if the auth token gets expires by the end of the tutorial so it's set to max 8 hours
             if (!rememberMe)
             {
                 authProperties.ExpiresUtc = DateTime.UtcNow.AddHours(8);
