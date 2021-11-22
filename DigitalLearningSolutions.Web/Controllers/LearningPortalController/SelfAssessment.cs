@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SupervisorComments;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -115,8 +114,7 @@
             }
         }
 
-        [Route("/LearningPortal/SupervisorComments/{selfAssessmentId:int}/{competencyNumber:int}/{resultId:int}")]
-        //[Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/ViewNotes")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{resultId:int}/ViewNotes")]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
         {           
             int candidateId = User.GetCandidateIdKnownNotNull();
@@ -139,7 +137,7 @@
                 return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id, vocabulary = assessment.Vocabulary });
             }
 
-            var model = new ViewModels.LearningPortal.SelfAssessments.SupervisorCommentsViewModel
+            var model = new SupervisorCommentsViewModel
             {                
                 SupervisorComment = supervisorComment,
                 SelfAssessmentSupervisor = selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),

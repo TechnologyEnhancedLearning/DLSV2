@@ -18,14 +18,14 @@
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment"
-             asp-route-selfAssessmentId="@Model.SupervisorComment.AssessmentQuestionID">
+             asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID">
             @Model.SupervisorComment?.Name
           </a>
         </li>
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview"
              asp-route-vocabulary="@Model.VocabPlural()"
-             asp-route-selfAssessmentId="@Model.SupervisorComment.AssessmentQuestionID"
+             asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
              asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
              asp-fragment="comp-@Model.SupervisorComment.CandidateID">
             @Model.VocabPlural()
