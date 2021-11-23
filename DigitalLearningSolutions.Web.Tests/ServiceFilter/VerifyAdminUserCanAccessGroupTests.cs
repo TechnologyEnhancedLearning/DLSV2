@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -9,11 +9,7 @@
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.AspNetCore.Routing;
     using NUnit.Framework;
 
     public class VerifyAdminUserCanAccessGroupTests
@@ -62,7 +58,8 @@
                 A.Fake<IGroupsDataService>(),
                 A.Fake<ICentreCustomPromptsService>(),
                 A.Fake<IClockService>(),
-                A.Fake<IGroupsService>()
+                A.Fake<IGroupsService>(),
+                A.Fake<IUserDataService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;
