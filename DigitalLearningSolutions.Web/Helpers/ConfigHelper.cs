@@ -15,7 +15,6 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         public const string AppRootPathName = "AppRootPath";
         public const string MapsApiKey = "MapsAPIKey";
-        public const string LearningHubApiKey = "LearningHubAPIKey";
 
         public static IConfigurationRoot GetAppConfig()
         {
@@ -71,11 +70,6 @@
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
-        }
-
-        public static string GetLearningHubApiKey(this IConfiguration config)
-        {
-            return config[LearningHubApiKey];
         }
     }
 }

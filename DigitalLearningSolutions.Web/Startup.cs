@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
+    using DigitalLearningSolutions.Data.Helpers.ExternalApis;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
@@ -243,6 +244,7 @@ namespace DigitalLearningSolutions.Web
         private static void RegisterHelpers(IServiceCollection services)
         {
             services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
             services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();

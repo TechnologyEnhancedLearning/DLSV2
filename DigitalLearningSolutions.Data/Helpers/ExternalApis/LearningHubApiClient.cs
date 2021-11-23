@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Helpers.ExternalApis
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
+    using Microsoft.AspNetCore.WebUtilities;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
 
@@ -18,21 +21,25 @@
 
         Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId);
 
-        Task<ResourceReferenceWithReferenceDetails> GetResourcesBulk(IEnumerable<int> resourceReferenceIds);
+        Task<ResourceReferenceWithReferenceDetails> GetBulkResourcesByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
+        );
     }
 
     public class LearningHubApiClient : ILearningHubApiClient
     {
         private readonly HttpClient client;
-        private readonly string LearningHubApiBaseUrl;
+        private readonly string learningHubApiBaseUrl;
+        private readonly string learningHubApiKey;
 
         public LearningHubApiClient(HttpClient httpClient, IConfiguration config)
         {
-            var learningHubApiKey = config.GetLearningHubApiKey();
-            LHApiBaseUrl =
+            learningHubApiKey = config.GetLearningHubApiKey();
+            learningHubApiBaseUrl =
                 "https://uks-learninghubnhsuk-openapi-dev.azurewebsites.net";
 
-            client = httpClient;
+            client = new HttpClient { BaseAddress = new Uri(learningHubApiBaseUrl) };
+            client.DefaultRequestHeaders.Accept.Clear();
         }
 
         public async Task<ResourceSearchResult> SearchResource(
@@ -42,26 +49,80 @@
             IEnumerable<string>? resourceTypes = null
         )
         {
-            client.DefaultRequestHeaders.Accept.Clear();
-            var response = await client.GetStringAsync(mapsApiBaseUrl + postcode);
+            const string searchEndpoint = "/Resource/Search";
+
+            var endpointPath = learningHubApiBaseUrl + searchEndpoint;
+            var queryParams = GetSearchQueryParams(text, offset, limit, resourceTypes);
+            var requestUrl = QueryHelpers.AddQueryString(endpointPath, queryParams);
+
+            var response = await client.GetStringAsync(requestUrl);
             var result = JsonConvert.DeserializeObject<ResourceSearchResult>(response);
             return result;
         }
 
         public async Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId)
         {
-            client.DefaultRequestHeaders.Accept.Clear();
-            var response = await client.GetStringAsync(mapsApiBaseUrl + postcode);
+            const string resourceEndpoint = "/Resource/";
+            var requestUrl = learningHubApiBaseUrl + resourceEndpoint + resourceReferenceId;
+
+            var response = await client.GetStringAsync(requestUrl);
             var result = JsonConvert.DeserializeObject<ResourceReferenceWithReferenceDetails>(response);
             return result;
         }
 
-        public async Task<ResourceReferenceWithReferenceDetails> GetResourcesBulk(IEnumerable<int> resourceReferenceIds)
+        public async Task<ResourceReferenceWithReferenceDetails> GetBulkResourcesByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
+        )
         {
-            client.DefaultRequestHeaders.Accept.Clear();
-            var response = await client.GetStringAsync(mapsApiBaseUrl + postcode);
+            const string bulkEndpoint = "/Resource/Bulk";
+            var endpointPath = learningHubApiBaseUrl + bulkEndpoint;
+            var queryParams = GetBulkQueryParams(resourceReferenceIds);
+            var requestUrl = QueryHelpers.AddQueryString(endpointPath, queryParams);
+
+            var response = await client.GetStringAsync(requestUrl);
             var result = JsonConvert.DeserializeObject<ResourceReferenceWithReferenceDetails>(response);
             return result;
+        }
+
+        private Dictionary<string, string> GetSearchQueryParams(
+            string text,
+            int? offset = null,
+            int? limit = null,
+            IEnumerable<string>? resourceTypes = null
+        )
+        {
+            var queryParams = new Dictionary<string, string>
+            {
+                { "token", learningHubApiKey },
+                { "q", text },
+                { "hits", limit.ToString() },
+                { "offset", offset.ToString() },
+            };
+
+            if (resourceTypes.Any())
+            {
+                foreach (var resourceType in resourceTypes)
+                {
+                    queryParams.Add("resource_type", resourceType);
+                }
+            }
+
+            return queryParams;
+        }
+
+        private Dictionary<string, string> GetBulkQueryParams(IEnumerable<int>? resourceIds = null)
+        {
+            var queryParams = new Dictionary<string, string>();
+
+            if (resourceIds.Any())
+            {
+                foreach (var id in resourceIds)
+                {
+                    queryParams.Add("reference_id", id.ToString());
+                }
+            }
+
+            return queryParams;
         }
     }
 }

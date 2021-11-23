@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <UserSecretsId>cc50a716-0c33-41f2-aae9-55493a9f6437</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
