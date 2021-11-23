@@ -102,7 +102,6 @@
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
-            //todo want to get the details of the course from a service method OR pass them in as temp data?
             var model = new EditCompletionDateViewModel(progressId, accessedVia, delegateCourseProgress!.DelegateCourseInfo);
             return View(model);
         }
@@ -114,10 +113,12 @@
               int progressId,
               DelegateProgressAccessRoute accessedVia)
           {
-              Console.WriteLine("hi");
+
               if (!ModelState.IsValid)
               {
                   var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
+                  Console.WriteLine(formData.CourseName);
+                  Console.WriteLine(model.CourseName); //empty boo
                   return View(model);
               }
 
@@ -125,7 +126,7 @@
                   ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
                   : (DateTime?)null;
 
-              courseService.UpdateCompletionDate(progressId, completionDate);
+              progressService.UpdateCompletionDate(progressId, completionDate);
               return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
           }
 

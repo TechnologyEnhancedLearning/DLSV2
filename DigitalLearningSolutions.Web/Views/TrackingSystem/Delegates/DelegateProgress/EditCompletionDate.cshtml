@@ -34,7 +34,8 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate>
-
+       <input type="hidden" asp-for="DelegateId" />
+       <input type="hidden" asp-for="ProgressId" />
        <vc:date-input id="completion-date"
                              label=""
                              day-id="Day"

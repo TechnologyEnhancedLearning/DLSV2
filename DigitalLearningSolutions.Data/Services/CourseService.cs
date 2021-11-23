@@ -69,7 +69,7 @@
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        void UpdateCompletionDate(int progressId, DateTime? completionDate);
+
     }
 
     public class CourseService : ICourseService
@@ -256,20 +256,6 @@
                 courseOptions,
                 customisationId
             );
-        }
-
-
-        //this should be moved to the progress service
-        public void UpdateCompletionDate(int progressId, DateTime? date)
-        {
-            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
-
-            if (courseInfo == null)
-            {
-                throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
-            }
-
-            courseDataService.SetCompletionDate(progressId, date);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
