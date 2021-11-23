@@ -103,5 +103,37 @@
                 () => progressDataService.ClearAspProgressVerificationRequest(A<int>._)
             ).MustNotHaveHappened();
         }
+
+        [Test]
+        public void UpdateCompletionDate_calls_data_service()
+        {
+            // Given
+            const int progressId = 1;
+            const int delegateId = 1;
+            var completeByDate = new DateTime(2021, 09, 01);
+            var courseInfo = new DelegateCourseInfo { DelegateId = delegateId };
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(courseInfo);
+
+            // When
+            progressService.UpdateCompletionDate(progressId, completeByDate);
+
+            // Then
+            A.CallTo(() => courseDataService.SetCompletionDate(progressId, completeByDate))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCompletionDate_throws_exception_if_no_progress_record_found()
+        {
+            // Given
+            const int progressId = 1;
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(null);
+
+            // Then
+            Assert.Throws<ProgressNotFoundException>(() => progressService.UpdateCompletionDate(progressId, null));
+            A.CallTo(
+                () => courseDataService.SetCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
+            ).MustNotHaveHappened();
+        }
     }
 }

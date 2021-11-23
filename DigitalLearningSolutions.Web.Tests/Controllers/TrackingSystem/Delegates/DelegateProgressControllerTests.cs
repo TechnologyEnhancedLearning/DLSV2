@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -17,7 +18,7 @@
         private IProgressService progressService = null!;
         private IUserService userService = null!;
 
-        private static IEnumerable<TestCaseData> EditSupervisorPostTestData
+        private static IEnumerable<TestCaseData> EditPostTestData
         {
             get
             {
@@ -44,7 +45,7 @@
         [Test]
         [TestCaseSource(
             typeof(DelegateProgressControllerTests),
-            nameof(EditSupervisorPostTestData)
+            nameof(EditPostTestData)
         )]
         public void EditSupervisorPost_redirects_to_correct_action(
             DelegateProgressAccessRoute accessedVia,
@@ -60,6 +61,30 @@
 
             // When
             var result = delegateProgressController.EditSupervisor(formData, progressId, accessedVia);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
+                .WithActionName(expectedAction);
+        }
+
+        [Test]
+        [TestCaseSource(
+            typeof(DelegateProgressControllerTests),
+            nameof(EditPostTestData)
+        )]
+        public void EditCompletionDatePost_redirects_to_correct_action(
+            DelegateProgressAccessRoute accessedVia,
+            string expectedController,
+            string expectedAction
+        )
+        {
+            // Given
+            const int progressId = 1;
+            var formData = new EditCompletionDateFormData { Day = 1, Month = 1, Year = 2021 };
+            A.CallTo(() => progressService.UpdateCompletionDate(progressId, A<DateTime?>._)).DoesNothing();
+
+            // When
+            var result = delegateProgressController.EditCompletionDate(formData, progressId, accessedVia);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
