@@ -177,8 +177,8 @@
             };
 
 
-            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials as some
-               tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
+            /* Course progress doesn't get updated if the auth token expires by the end of the tutorials. 
+               Some tutorials are longer than the default auth token lifetime, so we set the auth expiry to 8 hours.
                See HEEDLS-637 for more details */
             if (!rememberMe)
             {
