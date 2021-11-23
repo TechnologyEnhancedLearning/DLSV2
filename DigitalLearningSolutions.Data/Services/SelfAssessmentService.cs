@@ -347,15 +347,32 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             AND CAQ.AssessmentQuestionID = @assessmentQuestionId
                     )
                     BEGIN
-                        INSERT INTO SelfAssessmentResults
-                          ([CandidateID]
-                          ,[SelfAssessmentID]
-                          ,[CompetencyID]
-                          ,[AssessmentQuestionID]
-                          ,[Result]
-                          ,[DateTime]
-                          ,[SupportingComments])
-                    VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
+                        DECLARE @existentResultId INT
+                        DECLARE @existentResult INT
+
+                        SELECT TOP 1 @existentResultId = ID, @existentResult = [Result]
+                        FROM SelfAssessmentResults
+                        WHERE [CandidateID] = @candidateId
+	                        AND [SelfAssessmentID] = @selfAssessmentId
+	                        AND [CompetencyID] = @competencyId
+	                        AND [AssessmentQuestionID] = @assessmentQuestionId
+                        ORDER BY DateTime DESC
+
+                        IF (@existentResultId IS NOT NULL AND @existentResult = @result)
+	                        UPDATE SelfAssessmentResults
+	                        SET [DateTime] = GETUTCDATE(),
+		                        [SupportingComments] = @supportingComments
+	                        WHERE ID = @existentResultId
+                        ELSE
+                            INSERT INTO SelfAssessmentResults
+                                ([CandidateID]
+                                ,[SelfAssessmentID]
+                                ,[CompetencyID]
+                                ,[AssessmentQuestionID]
+                                ,[Result]
+                                ,[DateTime]
+                                ,[SupportingComments])
+                            VALUES(@candidateId, @selfAssessmentId, @competencyId, @assessmentQuestionId, @result, GETUTCDATE(), @supportingComments)
                     END",
                 new { competencyId, selfAssessmentId, candidateId, assessmentQuestionId, result, supportingComments }
             );
