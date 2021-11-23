@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -58,8 +57,7 @@
                 A.Fake<IGroupsDataService>(),
                 A.Fake<ICentreCustomPromptsService>(),
                 A.Fake<IClockService>(),
-                A.Fake<IGroupsService>(),
-                A.Fake<IUserDataService>()
+                A.Fake<IGroupsService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;
