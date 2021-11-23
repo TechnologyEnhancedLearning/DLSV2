@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return DateValidator.ValidateDate(Day, Month, Year, "Complete by date", false)
+            return DateValidator.ValidateDate(Day, Month, Year, "Completion date", false, false, true)
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
     }

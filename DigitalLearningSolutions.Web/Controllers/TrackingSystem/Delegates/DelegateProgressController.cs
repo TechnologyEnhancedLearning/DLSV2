@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
+    using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -113,6 +114,7 @@
               int progressId,
               DelegateProgressAccessRoute accessedVia)
           {
+              Console.WriteLine("hi");
               if (!ModelState.IsValid)
               {
                   var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
@@ -133,8 +135,6 @@
               DelegateProgressAccessRoute accessedVia
           )
           {
-
-
               if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
               {
                   return RedirectToAction("Index", new { progressId, accessedVia });

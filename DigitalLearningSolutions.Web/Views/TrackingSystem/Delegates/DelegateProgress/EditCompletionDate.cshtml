@@ -1,17 +1,14 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCompletionDateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completion Date" : "Edit completion date";
-  //var cancelLinkData = new Dictionary<string, string> { { "progressId", Model.NewCompletionDate.ToString() } };
-  const string dateInputId = "new-completion-date";
-  var exampleDate = DateTime.Today;
-  var completionDateCss = "nhsuk-checkboxes__conditional"
-                          + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completion Date" : "Edit Completion Date";
+
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
@@ -20,13 +17,13 @@
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
-  //Console.WriteLine(routeParamsForBackLink["accessedVia"]);
+  var exampleDate = DateTime.Today;
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      //<vc:error-summary order-of-property-names="@new []{ nameof(@Model.NewCompletionDate), nameof(@Model.NewCompletionDate) }" />
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)}" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CourseName</h1>
@@ -38,17 +35,16 @@
     <form class="nhsuk-u-margin-bottom-3" method="post"
           novalidate>
 
-       <vc:date-input id="@dateInputId"
-                             label="Deliver email on or after:"
+       <vc:date-input id="completion-date"
+                             label=""
                              day-id="Day"
                              month-id="Month"
                              year-id="Year"
-                             css-class="@completionDateCss"
+                             css-class=""
                              key="1"
-                             hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                             hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the completion date" />
 
-
-      <button class="nhsuk-button" type="submit">Save</button>
+       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
      @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {

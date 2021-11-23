@@ -1,7 +1,8 @@
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+namespace DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
 
     public class EditCompletionDateViewModel : EditCompletionDateFormData
     {
