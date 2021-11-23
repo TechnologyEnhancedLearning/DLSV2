@@ -2,6 +2,7 @@
 @model SupervisorCommentsViewModel
 
 @{
+  Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Supervisor comments";
   ViewData["Application"] = "Supervisor notes";
   var supervisorName = string.IsNullOrWhiteSpace(Model.SelfAssessmentSupervisor?.SupervisorName) ?
@@ -9,10 +10,7 @@
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
-@section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
-}
-@section NavBreadcrumbs {
+@section breadcrumbs {
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
@@ -64,9 +62,9 @@
   </div>
   <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
-           asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
-           asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
-           asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
+       asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
+       asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
+       asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
       <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" height="24" width="24">
         <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
       </svg>
