@@ -118,7 +118,7 @@
               {
                   var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
                   Console.WriteLine(formData.CourseName);
-                  Console.WriteLine(model.CourseName); //empty boo
+                  Console.WriteLine(model.CourseName); //todo this isn't passing the data back in so when theres an error the course name disappears
                   return View(model);
               }
 
