@@ -48,19 +48,42 @@
     <div class="nhsuk-care-card__heading-container">
       <h2 class="nhsuk-care-card__heading">
         <span role="text">
-          @supervisorName Notes
+         Reviewer: @supervisorName
         </span>
       </h2>
       <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
     </div>
     <div class="nhsuk-care-card__content">
-      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
-
-      <p>@Model.SupervisorComment.Comments</p>
-
+      <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
+        <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Date of review
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.SupervisorComment.Verified.Value.ToShortDateString()
+        </dd>
     </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Status
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
+      </dd>
+    </div>
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+       Verifier comments
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.SupervisorComment.Comments
+      </dd>
+    </div>
+    </dl>
   </div>
-  <div class="nhsuk-back-link">
+</div>
+
+<div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
        asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
