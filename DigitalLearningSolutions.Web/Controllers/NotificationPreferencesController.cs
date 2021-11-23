@@ -11,7 +11,7 @@ namespace DigitalLearningSolutions.Web.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    [ValidateAllowedDlsSubApplication(new string[] { })]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new string[] { } })]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller

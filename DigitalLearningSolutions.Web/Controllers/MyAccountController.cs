@@ -15,7 +15,10 @@
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
-    [ValidateAllowedDlsSubApplication(new string[] { })]
+    [TypeFilter(
+        typeof(ValidateAllowedDlsSubApplication),
+        Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem) } }
+    )]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]

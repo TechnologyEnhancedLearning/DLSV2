@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Attributes
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
@@ -11,25 +10,28 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Microsoft.FeatureManagement;
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ValidateAllowedDlsSubApplicationAttribute : Attribute, IActionFilter
+    public class ValidateAllowedDlsSubApplication : IActionFilter
     {
         private readonly string applicationArgumentName;
+        private readonly IFeatureManager featureManager;
         private readonly IEnumerable<DlsSubApplication> validApplications;
 
-        public ValidateAllowedDlsSubApplicationAttribute(
+        public ValidateAllowedDlsSubApplication(
             string[] validApplicationNames,
+            IFeatureManager featureManager,
             string applicationArgumentName = "dlsSubApplication"
         )
         {
             validApplications = validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
+            this.featureManager = featureManager;
             this.applicationArgumentName = applicationArgumentName;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async void OnActionExecuting(ActionExecutingContext context)
         {
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
@@ -49,13 +51,22 @@
                     ? context.ActionArguments[applicationArgumentName]
                     : null);
 
+            if (DlsSubApplication.TrackingSystem.Equals(application) &&
+                !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem) ||
+                DlsSubApplication.SuperAdmin.Equals(application) &&
+                !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredSuperAdminInterface))
+            {
+                SetNotFoundResult(context);
+                return;
+            }
+
             if (validApplications.Any() && !validApplications.Contains(application))
             {
                 SetNotFoundResult(context);
                 return;
             }
 
-            if (user.IsDelegateOnlyAccount() && !DlsSubApplication.LearningPortal.Equals(application))
+            if (user.IsDelegateOnlyAccount() && DlsSubApplication.Main.Equals(application))
             {
                 RedirectToLearningPortalVersion(context);
                 return;

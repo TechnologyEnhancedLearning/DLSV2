@@ -7,28 +7,23 @@
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class SupportControllerTests
     {
-        private IFeatureManager featureManager = null!;
         private IConfiguration configuration = null!;
 
         [SetUp]
         public void Setup()
         {
-            featureManager = A.Fake<IFeatureManager>();
             configuration = A.Fake<IConfiguration>();
-            A.CallTo(() => featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem))
-                .Returns(true);
         }
 
         [Test]
         public async Task Frameworks_Support_page_should_be_shown_for_valid_claims()
         {
             // Given
-            var controller = new SupportController(featureManager, configuration)
+            var controller = new SupportController(configuration)
                 .WithDefaultContext()
                 .WithMockUser(true, isCentreAdmin: false, isFrameworkDeveloper: true);
 
@@ -43,24 +38,7 @@
         public async Task Home_page_should_be_shown_when_accessing_tracking_system_support_without_appropriate_claims()
         {
             // Given
-            var controller = new SupportController(featureManager, configuration)
-                .WithDefaultContext()
-                .WithMockUser(true, isCentreAdmin: false, isFrameworkDeveloper: true);
-
-            // When
-            var result = await controller.Index("TrackingSystem");
-
-            // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
-        }
-
-        [Test]
-        public async Task Home_page_should_be_shown_when_accessing_tracking_system_with_refactored_tracking_system_disabled()
-        {
-            // Given
-            A.CallTo(() => featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem))
-                .Returns(false);
-            var controller = new SupportController(featureManager, configuration)
+            var controller = new SupportController(configuration)
                 .WithDefaultContext()
                 .WithMockUser(true, isCentreAdmin: false, isFrameworkDeveloper: true);
 
@@ -75,7 +53,7 @@
         public async Task Home_page_should_be_shown_when_accessing_frameworks_support_without_appropriate_claims()
         {
             // Given
-            var controller = new SupportController(featureManager, configuration)
+            var controller = new SupportController(configuration)
                 .WithDefaultContext()
                 .WithMockUser(true, isCentreAdmin: true, isFrameworkDeveloper: false);
 
