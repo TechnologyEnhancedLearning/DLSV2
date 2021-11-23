@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -29,18 +30,21 @@
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IGroupsService groupsService;
+        private readonly IUserDataService userDataService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
             IClockService clockService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IUserDataService userDataService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
             this.groupsService = groupsService;
+            this.userDataService = userDataService;
         }
 
         [Route("{page=1:int}")]
@@ -179,7 +183,10 @@
                 return NotFound();
             }
 
-            var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
+            var adminId = User.GetAdminId()!.Value;
+            var adminUser = userDataService.GetAdminUserById(adminId)!;
+
+            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, adminUser.CategoryIdFilter);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 

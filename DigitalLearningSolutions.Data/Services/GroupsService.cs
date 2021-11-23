@@ -31,6 +31,8 @@
         );
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
+
+        IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
     }
 
     public class GroupsService : IGroupsService
@@ -201,7 +203,7 @@
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
-                PopulateExisting = false
+                PopulateExisting = false,
             };
 
             return groupsDataService.AddDelegateGroup(groupDetails);
@@ -217,6 +219,12 @@
             groupsDataService.DeleteGroup(groupId);
 
             transaction.Complete();
+        }
+
+        public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
+        {
+            return groupsDataService.GetGroupCourses(groupId, centreId)
+                .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
@@ -238,7 +246,12 @@
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
             const bool removeStartedEnrolments = false;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, clockService.UtcNow);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                removeStartedEnrolments,
+                clockService.UtcNow
+            );
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
@@ -279,7 +292,7 @@
             var body = new BodyBuilder
             {
                 TextBody = emailBodyText,
-                HtmlBody = emailBodyHtml
+                HtmlBody = emailBodyHtml,
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);
