@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -30,21 +29,18 @@
         private readonly IClockService clockService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IGroupsService groupsService;
-        private readonly IUserDataService userDataService;
 
         public DelegateGroupsController(
             IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
             IClockService clockService,
-            IGroupsService groupsService,
-            IUserDataService userDataService
+            IGroupsService groupsService
         )
         {
             this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.clockService = clockService;
             this.groupsService = groupsService;
-            this.userDataService = userDataService;
         }
 
         [Route("{page=1:int}")]
@@ -57,17 +53,13 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[DelegateGroupsFilterCookieName];
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                DelegateGroupsFilterCookieName
+            );
 
             var centreId = User.GetCentreId();
             var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
@@ -187,10 +179,9 @@
                 return NotFound();
             }
 
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
-            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, adminUser.CategoryIdFilter);
+            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 

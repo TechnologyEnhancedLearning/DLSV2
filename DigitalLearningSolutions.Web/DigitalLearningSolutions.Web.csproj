@@ -43,6 +43,7 @@
     <None Remove="Scripts\supervisor\verify.ts" />
     <None Remove="Scripts\trackingSystem\allDelegates.ts" />
     <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
+    <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
     <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
     <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
     <None Remove="Scripts\trackingSystem\reports.ts" />
@@ -107,6 +108,7 @@
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
