@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Attributes
+﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;

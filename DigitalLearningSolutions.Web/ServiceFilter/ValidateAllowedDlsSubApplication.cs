@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Attributes
+﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
     using System.Collections.Generic;
     using System.Linq;
