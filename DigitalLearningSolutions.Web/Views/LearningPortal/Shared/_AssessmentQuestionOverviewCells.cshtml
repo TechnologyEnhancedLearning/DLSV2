@@ -18,13 +18,16 @@
 
     @if (Model.SupervisorComments != null)
     {
-      <a class="nhsuk-button nhsuk-button--secondary small-edit-button status-tag"
-         asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
-         asp-route-competencyNumber=@Model.AssessmentQuestionInputTypeID
-         asp-route-resultId="@Model.ResultId" >
-        View notes
-      </a>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-full">
+          <a class="status-tag"
+             asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
+             asp-route-competencyNumber="@ViewData["competencyNumber"]"
+             asp-route-resultId="@Model.ResultId">
+            View notes
+          </a>
+        </div>
+      </div>
     }
-
   </td>
 }

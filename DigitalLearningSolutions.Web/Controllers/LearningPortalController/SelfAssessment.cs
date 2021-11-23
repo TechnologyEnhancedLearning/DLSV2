@@ -114,7 +114,7 @@
             }
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{resultId:int}/ViewNotes")]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/{resultId:int}/ViewNotes")]
         public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
         {           
             int candidateId = User.GetCandidateIdKnownNotNull();
@@ -146,7 +146,7 @@
                 SignedOff = supervisorComment.SignedOff}
             };
 
-            return View("Comments/SupervisorComments", model);
+            return View("SelfAssessments/SupervisorComments", model);
         }
 
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
