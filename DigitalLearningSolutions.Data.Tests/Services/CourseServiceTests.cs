@@ -226,7 +226,7 @@
         }
 
         [Test]
-        public void DelegateHasCurrentProgress_returns_true_if_delegate_has_no_current_progress()
+        public void DelegateHasCurrentProgress_returns_false_if_delegate_has_no_current_progress()
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
