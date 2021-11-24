@@ -52,7 +52,7 @@
   @foreach (var question in competency.AssessmentQuestions.Skip(1))
   {
     <tr role="row" class="nhsuk-table__row">
-      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
+      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
 
     </tr>
 

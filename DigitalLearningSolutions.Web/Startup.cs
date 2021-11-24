@@ -121,6 +121,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -186,6 +187,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
@@ -193,6 +195,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<ITrackerService, TrackerService>();
+            services.AddScoped<ITrackerActionService, TrackerActionService>();
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
@@ -222,6 +225,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<IResourceDataService, ResourceDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
