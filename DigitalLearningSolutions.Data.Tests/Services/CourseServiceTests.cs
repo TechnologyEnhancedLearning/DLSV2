@@ -377,31 +377,43 @@
         }
 
         [Test]
-        public void GetAllCoursesForDelegate_returns_only_courses_at_centre()
+        public void GetAllCoursesForDelegate_returns_only_courses_at_centre_or_all_centres_courses()
         {
             // Given
             const int delegateId = 1;
             const int centreId = 1;
             const int categoryId = 1;
-            var delegateCourseInfoAtCentre = new DelegateCourseInfo { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
-            var delegateCourseInfoNotAtCentre = new DelegateCourseInfo { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
+            var delegateCourseInfoAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
+            var delegateCourseInfoNotAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
+            var allCentresCourseInfoNotAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = 1000, CourseCategoryId = categoryId, AllCentresCourse = true };
             A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
-                .Returns(new[] { delegateCourseInfoAtCentre, delegateCourseInfoNotAtCentre });
+                .Returns(
+                    new[] { delegateCourseInfoAtCentre, delegateCourseInfoNotAtCentre, allCentresCourseInfoNotAtCentre }
+                );
 
             // When
-            var result = courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryId);
+            var result = courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryId).ToList();
 
             // Then
-            result.Count().Should().Be(1);
+            result.Count.Should().Be(2);
+            result.All(
+                x => x.DelegateCourseInfo.CustomisationCentreId == centreId || x.DelegateCourseInfo.AllCentresCourse
+            ).Should().BeTrue();
         }
 
         [Test]
         public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
         {
             // Given
-            var info1 = new DelegateCourseInfo{DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
-            var info2 = new DelegateCourseInfo{DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
-            var info3 = new DelegateCourseInfo{DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
+            var info1 = new DelegateCourseInfo
+                { DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info2 = new DelegateCourseInfo
+                { DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info3 = new DelegateCourseInfo
+                { DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
             A.CallTo(
                 () => courseDataService.GetDelegateCoursesInfo(1)
             ).Returns(new[] { info1, info2, info3 });
@@ -410,7 +422,7 @@
             var result = courseService.GetAllCoursesInCategoryForDelegate(1, 1, 1).ToList();
 
             // Then
-            result.Count().Should().Be(2);
+            result.Count.Should().Be(2);
             result.All(x => x.DelegateCourseInfo.CourseCategoryId == 1).Should().BeTrue();
         }
     }

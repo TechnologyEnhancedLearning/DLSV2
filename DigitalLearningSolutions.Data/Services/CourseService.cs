@@ -104,7 +104,7 @@
         )
         {
             return courseDataService.GetDelegateCoursesInfo(delegateId)
-                .Where(info => info.CustomisationCentreId == centreId)
+                .Where(info => info.CustomisationCentreId == centreId || info.AllCentresCourse)
                 .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
                 .Select(GetDelegateAttemptsAndCourseCustomPrompts)
                 .Where(info => info.DelegateCourseInfo.RemovedDate == null);
