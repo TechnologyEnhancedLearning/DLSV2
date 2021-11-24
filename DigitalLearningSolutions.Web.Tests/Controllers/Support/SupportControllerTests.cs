@@ -33,35 +33,5 @@
             // Then
             result.Should().BeViewResult().WithViewName("Support");
         }
-
-        [Test]
-        public async Task Home_page_should_be_shown_when_accessing_tracking_system_support_without_appropriate_claims()
-        {
-            // Given
-            var controller = new SupportController(configuration)
-                .WithDefaultContext()
-                .WithMockUser(true, isCentreAdmin: false, isFrameworkDeveloper: true);
-
-            // When
-            var result = await controller.Index("TrackingSystem");
-
-            // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
-        }
-
-        [Test]
-        public async Task Home_page_should_be_shown_when_accessing_frameworks_support_without_appropriate_claims()
-        {
-            // Given
-            var controller = new SupportController(configuration)
-                .WithDefaultContext()
-                .WithMockUser(true, isCentreAdmin: true, isFrameworkDeveloper: false);
-
-            // When
-            var result = await controller.Index("Frameworks");
-
-            // Then
-            result.Should().BeRedirectToActionResult().WithControllerName("Home").WithActionName("Index");
-        }
     }
 }
