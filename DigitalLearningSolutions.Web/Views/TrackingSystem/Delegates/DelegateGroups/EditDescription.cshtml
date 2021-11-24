@@ -15,7 +15,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Description) })" />
     }
 
-    <h1 class="nhsuk-heading-xl">Edit description for @Model.GroupName group (optional)</h1>
+    <h1 class="nhsuk-heading-xl word-break">Edit description for @Model.GroupName group (optional)</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDescription">
 
       <vc:text-area asp-for="@nameof(Model.Description)"
