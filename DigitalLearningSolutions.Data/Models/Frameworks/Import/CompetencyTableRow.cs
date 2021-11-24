@@ -8,8 +8,9 @@
     {
         NotYetProcessed,
         Skipped,
-        Registered,
-        Updated
+        CompetencyGroupInserted,
+        CompetencyGroupAndCompetencyInserted,
+        CompetencyInserted
     }
     public class CompetencyTableRow
     {

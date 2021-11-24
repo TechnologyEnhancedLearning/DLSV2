@@ -20,16 +20,16 @@
         )
         {
             ProcessedCount = competencyTableRows.Count;
-            RegisteredCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Registered);
-            UpdatedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Updated);
+            CompetenciesInsertedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
+            CompetencyGroupsInsertedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.CompetencyGroupInserted | dr.RowStatus == RowStatus.CompetencyGroupAndCompetencyInserted);
             SkippedCount = competencyTableRows.Count(dr => dr.RowStatus == RowStatus.Skipped);
             Errors = competencyTableRows.Where(dr => dr.Error.HasValue).Select(dr => (dr.RowNumber, dr.Error!.Value));
         }
 
         public IEnumerable<(int RowNumber, ErrorReason Reason)> Errors { get; set; }
         public int ProcessedCount { get; set; }
-        public int RegisteredCount { get; set; }
-        public int UpdatedCount { get; set; }
+        public int CompetenciesInsertedCount { get; set; }
+        public int CompetencyGroupsInsertedCount { get; set; }
         public int SkippedCount { get; set; }
     }
 }
