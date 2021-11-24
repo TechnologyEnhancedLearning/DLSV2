@@ -30,7 +30,7 @@
 
         [Route("/{dlsSubApplication}/Support")]
         [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
-        public async Task<IActionResult> Index(DlsSubApplication dlsSubApplication)
+        public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var model = new SupportViewModel(
                 dlsSubApplication,

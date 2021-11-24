@@ -33,6 +33,31 @@
             );
         }
 
+        public static ActionExecutingContext WithMockUser(
+            this ActionExecutingContext context,
+            bool isAuthenticated,
+            int centreId = CentreId,
+            int? adminId = AdminId,
+            int? delegateId = DelegateId,
+            string? emailAddress = EmailAddress,
+            bool isCentreAdmin = IsCentreAdmin,
+            bool isFrameworkDeveloper = IsFrameworkDeveloper,
+            int adminCategoryId = AdminCategoryId)
+        {
+            context.HttpContext.WithMockUser(
+                isAuthenticated,
+                centreId,
+                adminId,
+                delegateId,
+                emailAddress,
+                isCentreAdmin,
+                isFrameworkDeveloper,
+                adminCategoryId
+            );
+
+            return context;
+        }
+
         public static HttpContext WithMockUser(
             this HttpContext context,
             bool isAuthenticated,

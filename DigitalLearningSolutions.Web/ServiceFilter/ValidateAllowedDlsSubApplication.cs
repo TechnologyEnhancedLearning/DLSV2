@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
@@ -14,19 +15,16 @@
 
     public class ValidateAllowedDlsSubApplication : IActionFilter
     {
-        private readonly string applicationArgumentName;
         private readonly IFeatureManager featureManager;
         private readonly IEnumerable<DlsSubApplication> validApplications;
 
         public ValidateAllowedDlsSubApplication(
             string[] validApplicationNames,
-            IFeatureManager featureManager,
-            string applicationArgumentName = "dlsSubApplication"
+            IFeatureManager featureManager
         )
         {
             validApplications = validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
             this.featureManager = featureManager;
-            this.applicationArgumentName = applicationArgumentName;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -40,15 +38,20 @@
                 return;
             }
 
-            if (HasModelBindingError(context))
+            var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
+                .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
+
+            if (!string.IsNullOrEmpty(dlsSubApplicationParameterName) && HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
                 SetNotFoundResult(context);
                 return;
             }
 
-            var application = (DlsSubApplication?)
-                (context.ActionArguments.ContainsKey(applicationArgumentName)
-                    ? context.ActionArguments[applicationArgumentName]
+            var application = dlsSubApplicationParameterName == null
+                ? null
+                : (DlsSubApplication?)
+                (context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
+                    ? context.ActionArguments[dlsSubApplicationParameterName]
                     : null);
 
             if (DlsSubApplication.TrackingSystem.Equals(application) &&
@@ -68,7 +71,7 @@
 
             if (user.IsDelegateOnlyAccount() && DlsSubApplication.Main.Equals(application))
             {
-                RedirectToLearningPortalVersion(context);
+                RedirectToLearningPortalVersion(context, dlsSubApplicationParameterName!);
                 return;
             }
 
@@ -82,7 +85,7 @@
             }
         }
 
-        private bool HasModelBindingError(ActionExecutingContext context)
+        private bool HasModelBindingError(ActionExecutingContext context, string applicationArgumentName)
         {
             return context.ModelState.GetValidationState(applicationArgumentName) == ModelValidationState.Invalid;
         }
@@ -96,7 +99,7 @@
             );
         }
 
-        private void RedirectToLearningPortalVersion(ActionExecutingContext context)
+        private void RedirectToLearningPortalVersion(ActionExecutingContext context, string applicationArgumentName)
         {
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
             var routeValues = new Dictionary<string, object>

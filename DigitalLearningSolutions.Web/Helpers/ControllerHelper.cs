@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
+
     public static class ControllerHelper
     {
         public static string GetControllerAspName(Type controllerType)
