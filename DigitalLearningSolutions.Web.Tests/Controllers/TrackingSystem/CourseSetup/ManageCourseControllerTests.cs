@@ -323,7 +323,7 @@
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
                     1,
-                    "Name - v1",
+                    "Name",
                     "Password",
                     "hello@test.com",
                     false,
@@ -393,8 +393,44 @@
                 )
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
-            controller.ModelState["CustomisationNameSuffix"].Errors[0].ErrorMessage.Should()
+            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo("Course name must be unique, including any additions");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_correctly_adds_model_error_if_application_already_exists_with_blank_customisation_name()
+        {
+            // Given
+            var model = GetEditCourseDetailsViewModel(customisationName: "");
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    A<int>._,
+                    A<string>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SaveCourseDetails(1, model);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("A course with this name already exists, add on to the course name to make it unique");
         }
 
         [Test]
@@ -424,7 +460,7 @@
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
                     1,
-                    "Name - v1",
+                    "Name",
                     null!,
                     null!,
                     true,
@@ -525,7 +561,6 @@
             int customisationId = 1,
             int applicationId = 1,
             string customisationName = "Name",
-            string customisationNameSuffix = "v1",
             bool passwordProtected = true,
             string password = "Password",
             bool receiveNotificationEmails = true,
@@ -541,7 +576,6 @@
             {
                 ApplicationId = applicationId,
                 CustomisationName = customisationName,
-                CustomisationNameSuffix = customisationNameSuffix,
                 PasswordProtected = passwordProtected,
                 Password = password,
                 ReceiveNotificationEmails = receiveNotificationEmails,
