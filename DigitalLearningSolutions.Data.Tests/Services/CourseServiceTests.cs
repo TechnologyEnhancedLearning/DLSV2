@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -16,15 +18,17 @@
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
+        private IProgressDataService progressDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseDataService = A.Fake<ICourseDataService>();
-            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
+            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-            courseService = new CourseService(courseDataService, courseAdminFieldsService);
+            progressDataService = A.Fake<IProgressDataService>();
+            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService);
         }
 
         [Test]
@@ -155,14 +159,14 @@
 
         [Test]
         public void
-            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
+            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -203,6 +207,42 @@
         }
 
         [Test]
+        public void RemoveDelegateFromCourse_removes_delegate_from_course()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
+
+            // When
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeTrue();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>()
+            );
+
+            // When
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeFalse();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
         public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
         {
             // Given
@@ -228,6 +268,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -236,7 +279,100 @@
             courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
 
             // Then
-            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0, 0, false))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCourseOptionAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courseOptions);
+
+            // When
+            var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappened();
+            result.Should().BeEquivalentTo(courseOptions);
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const int centreId = 101;
+            const int applicationId = 1;
+
+            // When
+            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCourseDetails_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const string notificationEmails = "hello@test.com";
+            const bool isAssessed = true;
+            const int tutCompletionThreshold = 0;
+            const int diagCompletionThreshold = 0;
+
+            A.CallTo(
+                () => courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password,
+                notificationEmails,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.UpdateCourseDetails(
+                        customisationId,
+                        customisationName,
+                        password,
+                        notificationEmails,
+                        isAssessed,
+                        tutCompletionThreshold,
+                        diagCompletionThreshold
+                    )
+                )
                 .MustHaveHappened();
         }
 

@@ -184,6 +184,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
@@ -192,6 +193,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<ITrackerService, TrackerService>();
+            services.AddScoped<ITrackerActionService, TrackerActionService>();
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
@@ -252,6 +254,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
+            services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
             services.AddScoped<VerifyAdminUserCanAccessCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();

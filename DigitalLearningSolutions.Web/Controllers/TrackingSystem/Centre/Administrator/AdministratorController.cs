@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -51,16 +52,12 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[AdminFilterCookieName];
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                AdminFilterCookieName
+            );
 
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
@@ -128,6 +125,31 @@
             userDataService.UpdateAdminUserFailedLoginCount(adminId, 0);
 
             return RedirectToAction("Index");
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult DeactivateAdmin(int adminId)
+        {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+            var model = new DeactivateAdminViewModel(adminUser!);
+            return View(model);
+        }
+
+        [Route("{adminId:int}/DeactivateAdmin")]
+        [HttpPost]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
+        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            userDataService.DeactivateAdmin(adminId);
+
+            return View("DeactivateAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)

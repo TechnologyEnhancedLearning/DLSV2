@@ -34,6 +34,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
 
+            DelegateId = details.DelegateCourseInfo.DelegateId;
+
             CourseCustomPromptsWithAnswers = details.CustomPrompts;
             TotalAttempts = details.AttemptStats.TotalAttempts;
             AttemptsPassed = details.AttemptStats.AttemptsPassed;
@@ -42,6 +44,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
 
         public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
+        public int DelegateId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? SupervisorForename { get; set; }

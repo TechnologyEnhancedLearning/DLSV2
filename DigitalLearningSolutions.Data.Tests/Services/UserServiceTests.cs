@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Common;
     using NUnit.Framework;
@@ -902,6 +903,23 @@
                     A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
             )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void GetSupervisorsAtCentre_returns_expected_admins()
+        {
+            // Given
+            var adminUsers = Builder<AdminUser>.CreateListOfSize(10)
+                .TheFirst(5).With(au => au.IsSupervisor = true)
+                .TheRest().With(au => au.IsSupervisor = false).Build().ToList();
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
+
+            // When
+            var result = userService.GetSupervisorsAtCentre(1).ToList();
+
+            // Then
+            result.Count().Should().Be(5);
+            result.All(au => au.IsSupervisor).Should().BeTrue();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(
