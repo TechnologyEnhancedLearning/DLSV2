@@ -113,12 +113,17 @@
               int progressId,
               DelegateProgressAccessRoute accessedVia)
           {
+              Console.WriteLine(formData.CourseName); //no, form data not being set properly?
+              Console.WriteLine(formData.Day); //yes
+              Console.WriteLine(formData.DelegateName); //no
+              Console.WriteLine(formData.DelegateId); //yes
+              Console.WriteLine(formData.CourseName); //no
+              //todo not passing courseName back in so it disappears when we error
 
               if (!ModelState.IsValid)
               {
                   var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
-                  Console.WriteLine(formData.CourseName);
-                  Console.WriteLine(model.CourseName); //todo this isn't passing the data back in so when theres an error the course name disappears
+                  Console.WriteLine(model.CourseName);
                   return View(model);
               }
 

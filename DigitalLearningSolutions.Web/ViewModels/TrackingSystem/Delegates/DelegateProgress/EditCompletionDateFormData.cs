@@ -13,9 +13,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
         protected EditCompletionDateFormData(DelegateCourseInfo info)
         {
             DelegateId = info.DelegateId;
-            Day = info.CompleteBy?.Day;
-            Month = info.CompleteBy?.Month;
-            Year = info.CompleteBy?.Year;
+            Day = info.Completed?.Day;
+            Month = info.Completed?.Month;
+            Year = info.Completed?.Year;
             CustomisationId = info.CustomisationId;
             CourseName = info.CourseName;
             DelegateName = info.DelegateFirstName == null

@@ -1,6 +1,5 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCompletionDateViewModel
@@ -32,12 +31,12 @@
       For example 1 7 2021. Leave the boxes blank to clear the completion date.
     </p>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post"
-          novalidate>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
        <input type="hidden" asp-for="DelegateId" />
        <input type="hidden" asp-for="ProgressId" />
+       <input type=""/>
        <vc:date-input id="completion-date"
-                             label=""
+                             label="completion date inputs"
                              day-id="Day"
                              month-id="Month"
                              year-id="Year"
