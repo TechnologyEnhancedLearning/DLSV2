@@ -1,10 +1,10 @@
 namespace DigitalLearningSolutions.Data.Migrations
 {
     using FluentMigrator;
+
     [Migration(202111241539)]
-
-    public class AddPrnToCandidateTable: Migration {
-
+    public class AddPrnToCandidateTable : Migration
+    {
         public override void Up()
         {
             Alter.Table("Candidates")
