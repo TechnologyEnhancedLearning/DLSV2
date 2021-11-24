@@ -14,9 +14,8 @@ namespace DigitalLearningSolutions.Data.Migrations
 
         public override void Down()
         {
-            Alter.Table("Candidates")
-                .AddColumn("HasBeenPromptedForPrn").AsBoolean().NotNullable().WithDefault(0)
-                .AddColumn("ProfessionalRegistrationNumber").AsString(32).Nullable();
+            Delete.Column("HasBeenPromptedForPrn").FromTable("Candidates");
+            Delete.Column("ProfessionalRegistrationNumber").FromTable("Candidates");
         }
     }
 }
