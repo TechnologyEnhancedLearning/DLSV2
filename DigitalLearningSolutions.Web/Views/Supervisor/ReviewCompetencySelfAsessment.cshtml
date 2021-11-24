@@ -1,9 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
-  ViewData["Application"] = "Supervisor";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var descriptionLabel = string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.DescriptionLabel) ? "Description" :
+                           Model.DelegateSelfAssessment.DescriptionLabel;
+    ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
+    ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -62,7 +64,7 @@
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-      Description
+      @descriptionLabel
     </dt>
     <dd class="nhsuk-summary-list__value">
       @Html.Raw(Model.Competency.Description)
