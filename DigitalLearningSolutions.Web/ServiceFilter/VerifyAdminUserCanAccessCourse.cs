@@ -26,12 +26,19 @@
             }
 
             var centreId = controller.User.GetCentreId();
-            var categoryId = controller.User.GetAdminCategoryId()!;
+            var categoryId = controller.User.GetAdminCourseCategoryFilter();
             var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
 
-            if (!courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId.Value))
+            var validationResult =
+                courseService.VerifyAdminUserCanAccessCourse(customisationId, centreId, categoryId);
+
+            if (!validationResult.HasValue)
             {
                 context.Result = new NotFoundResult();
+            }
+            else if (!validationResult.Value)
+            {
+                context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
             }
         }
     }

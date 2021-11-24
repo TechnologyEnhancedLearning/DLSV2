@@ -1,0 +1,1 @@
+UPDATE GroupDelegates SET GroupID = 8 WHERE GroupDelegateID = 1389

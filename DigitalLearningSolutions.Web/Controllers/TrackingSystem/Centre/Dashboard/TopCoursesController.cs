@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Dashboard
 {
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.TopCourses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -10,6 +13,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("/TrackingSystem/Centre/TopCourses")]
     public class TopCoursesController : Controller
     {
@@ -24,10 +29,10 @@
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCategoryId()!;
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
 
             var topCourses =
-                courseService.GetTopCourseStatistics(centreId, adminCategoryId.Value).Take(NumberOfTopCourses);
+                courseService.GetTopCourseStatistics(centreId, adminCategoryId).Take(NumberOfTopCourses);
 
             var model = new TopCoursesViewModel(topCourses);
 

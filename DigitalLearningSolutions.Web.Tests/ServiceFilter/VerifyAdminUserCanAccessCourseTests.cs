@@ -19,6 +19,7 @@
     {
         private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ActionExecutingContext context = null!;
+        private const int CustomisationId = 2;
 
         [SetUp]
         public void Setup()
@@ -38,12 +39,12 @@
         }
 
         [Test]
-        public void Returns_NotFound_if_service_returns_false()
+        public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            context.RouteData.Values["customisationId"] = 2;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
-                .Returns(false);
+            context.RouteData.Values["customisationId"] = CustomisationId;
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
+                .Returns(null);
 
             // When
             new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
@@ -53,11 +54,27 @@
         }
 
         [Test]
-        public void Does_not_return_NotFound_if_service_returns_true()
+        public void Returns_AccessDenied_if_service_returns_false()
         {
             // Given
-            context.RouteData.Values["customisationId"] = 24286;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            context.RouteData.Values["customisationId"] = CustomisationId;
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
+                .Returns(false);
+
+            // When
+            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
+                .WithActionName("AccessDenied");
+        }
+
+        [Test]
+        public void Does_not_return_NotFound_Or_AccessDenied_if_service_returns_true()
+        {
+            // Given
+            context.RouteData.Values["customisationId"] = CustomisationId;
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(true);
 
             // When

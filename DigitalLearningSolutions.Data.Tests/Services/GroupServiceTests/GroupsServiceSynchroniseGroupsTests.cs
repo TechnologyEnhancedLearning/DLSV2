@@ -28,7 +28,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -61,7 +61,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -95,7 +95,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -115,6 +115,7 @@
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeStartedEnrolments = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             var synchronisedGroup = GroupTestHelper.GetDefaultGroup(
                 5,
@@ -129,7 +130,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -141,9 +142,10 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
+                    removeStartedEnrolments,
                     testDate
                 )
             ).MustHaveHappened();
@@ -155,6 +157,7 @@
         {
             // Given
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeStartedEnrolments = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
                 () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
@@ -175,7 +178,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -187,9 +190,10 @@
                 )
             ).MustHaveHappened();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
                     synchronisedGroup.GroupId,
                     reusableDelegateDetails.Id,
+                    removeStartedEnrolments,
                     testDate
                 )
             ).MustHaveHappened();
@@ -214,7 +218,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 
@@ -256,7 +260,7 @@
             // When
             groupsService.SynchroniseUserChangesWithGroups(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 centreAnswersData
             );
 

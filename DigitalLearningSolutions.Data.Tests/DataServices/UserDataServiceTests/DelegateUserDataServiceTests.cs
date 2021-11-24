@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -93,28 +94,33 @@
         [Test]
         public void GetDelegateUsersByEmailAddress_Returns_delegate_user()
         {
-            // Given
-            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
-
-            // When
-            var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
-
-            // Then
-            using (new AssertionScope())
+            using (new TransactionScope())
             {
-                returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
-                returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
-                returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
-                    (expectedDelegateUser.CandidateNumber);
-                returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
-                returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
-                returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
-                returnedDelegateUsers.First().EmailAddress.Should().BeEquivalentTo(expectedDelegateUser.EmailAddress);
-                returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
-                returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
-                returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
-                returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
-                returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+                using (new AssertionScope())
+                {
+                    // Given
+                    var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser(resetPasswordId: 1);
+                    connection.Execute("UPDATE Candidates SET ResetPasswordID = 1 WHERE CandidateID = 2");
+
+                    // When
+                    var returnedDelegateUsers = userDataService.GetDelegateUsersByEmailAddress("email@test.com");
+
+                    // Then
+                    returnedDelegateUsers.FirstOrDefault().Should().NotBeNull();
+                    returnedDelegateUsers.First().Id.Should().Be(expectedDelegateUser.Id);
+                    returnedDelegateUsers.First().CandidateNumber.Should().BeEquivalentTo
+                        (expectedDelegateUser.CandidateNumber);
+                    returnedDelegateUsers.First().CentreId.Should().Be(expectedDelegateUser.CentreId);
+                    returnedDelegateUsers.First().CentreName.Should().BeEquivalentTo(expectedDelegateUser.CentreName);
+                    returnedDelegateUsers.First().CentreActive.Should().Be(expectedDelegateUser.CentreActive);
+                    returnedDelegateUsers.First().EmailAddress.Should()
+                        .BeEquivalentTo(expectedDelegateUser.EmailAddress);
+                    returnedDelegateUsers.First().FirstName.Should().BeEquivalentTo(expectedDelegateUser.FirstName);
+                    returnedDelegateUsers.First().LastName.Should().BeEquivalentTo(expectedDelegateUser.LastName);
+                    returnedDelegateUsers.First().Password.Should().BeEquivalentTo(expectedDelegateUser.Password);
+                    returnedDelegateUsers.First().Approved.Should().Be(expectedDelegateUser.Approved);
+                    returnedDelegateUsers.First().ResetPasswordId.Should().Be(expectedDelegateUser.ResetPasswordId);
+                }
             }
         }
 
@@ -136,9 +142,9 @@
             try
             {
                 // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
 
                 // When
                 userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new[] { 2, 3 });
@@ -271,6 +277,131 @@
 
             // then
             userDataService.GetDelegateUserById(1)!.Active.Should().BeFalse();
+        }
+
+        [Test]
+        public void GetDelegateUsersByAliasId_returns_expected_delegates()
+        {
+            // Given
+            const string alias = "1086";
+            var expectedIds = new[]
+            {
+                17867,
+                19258,
+                202870,
+                203415,
+                165982,
+                166032,
+                166033,
+                166052,
+                169397,
+                170540,
+                170562,
+                170737,
+            };
+
+            // When
+            var result = userDataService.GetDelegateUsersByAliasId(alias).ToList();
+
+            // Then
+            result.Count.Should().Be(12);
+            result.Select(d => d.Id).Should().BeEquivalentTo(expectedIds);
+        }
+
+        [Test]
+        public void UpdateDelegate_updates_delegate()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int delegateId = 11;
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
+                const int jobGroupId = 1;
+                const bool active = true;
+                const string answer1 = "answer1";
+                const string answer2 = "answer2";
+                const string answer3 = "answer3";
+                const string answer4 = "answer4";
+                const string answer5 = "answer5";
+                const string answer6 = "answer6";
+                const string alias = "alias";
+
+                // When
+                userDataService.UpdateDelegate(
+                    delegateId,
+                    firstName,
+                    lastName,
+                    jobGroupId,
+                    active,
+                    answer1,
+                    answer2,
+                    answer3,
+                    answer4,
+                    answer5,
+                    answer6,
+                    alias,
+                    email
+                );
+                var delegateUser = userDataService.GetDelegateUserById(delegateId)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    delegateUser.FirstName.Should().Be(firstName);
+                    delegateUser.LastName.Should().Be(lastName);
+                    delegateUser.EmailAddress.Should().Be(email);
+                    delegateUser.JobGroupId.Should().Be(jobGroupId);
+                    delegateUser.Active.Should().Be(active);
+                    delegateUser.Answer1.Should().Be(answer1);
+                    delegateUser.Answer2.Should().Be(answer2);
+                    delegateUser.Answer3.Should().Be(answer3);
+                    delegateUser.Answer4.Should().Be(answer4);
+                    delegateUser.Answer5.Should().Be(answer5);
+                    delegateUser.Answer6.Should().Be(answer6);
+                    delegateUser.AliasId.Should().Be(alias);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateDelegateAccountDetails_updates_users()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
+
+                // When
+                userDataService.UpdateDelegateAccountDetails(firstName, lastName, email, new[] { 2, 3 });
+                var updatedUser = userDataService.GetDelegateUserById(2)!;
+                var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
+
+                // Then
+                using (new AssertionScope())
+                {
+                    updatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    updatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    updatedUser.EmailAddress.Should().BeEquivalentTo(email);
+
+                    secondUpdatedUser.FirstName.Should().BeEquivalentTo(firstName);
+                    secondUpdatedUser.LastName.Should().BeEquivalentTo(lastName);
+                    secondUpdatedUser.EmailAddress.Should().BeEquivalentTo(email);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

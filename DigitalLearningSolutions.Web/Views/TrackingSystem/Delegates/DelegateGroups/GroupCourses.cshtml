@@ -5,16 +5,9 @@
 
 @{
   ViewData["Title"] = "Group courses";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/groupDelegates.css")" asp-append-version="true">
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-}
 
 @section NavBreadcrumbs {
   <partial name="_DelegateGroupBreadcrumbs" />

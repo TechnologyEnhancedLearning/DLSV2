@@ -12,7 +12,7 @@
             GroupId = groupId;
             GroupName = groupName;
             DelegateName = DisplayStringHelper.GetDelegateNameString(delegateUser.FirstName, delegateUser.LastName);
-            RemoveProgressEnabled = progressId.HasValue;
+            RemoveStartedEnrolmentsEnabled = progressId.HasValue;
         }
 
         public int GroupId { get; set; }
@@ -23,8 +23,8 @@
 
         public bool ConfirmRemovalFromGroup { get; set; }
 
-        public bool RemoveProgress { get; set; }
+        public bool RemoveStartedEnrolments { get; set; }
 
-        public bool RemoveProgressEnabled { get; set; }
+        public bool RemoveStartedEnrolmentsEnabled { get; set; }
     }
 }

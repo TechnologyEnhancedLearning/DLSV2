@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -26,6 +27,30 @@
         private readonly ICourseService courseService = A.Fake<ICourseService>();
         private AdminFieldsController controller = null!;
 
+        private static IEnumerable<TestCaseData> AddAnswerModelErrorTestData
+        {
+            get
+            {
+                yield return new TestCaseData(
+                    new string('x', 1000),
+                    "xx",
+                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                ).SetName("Error_message_shows_zero_characters_remaining_if_options_string_is_at_max_length");
+                yield return new TestCaseData(
+                    new string('x', 998),
+                    "xx",
+                    "The complete list of answers must be 1000 characters or fewer (0 characters remaining for the new answer, 2 characters were entered)"
+                ).SetName(
+                    "Error_message_shows_zero_characters_remaining_if_options_string_is_two_less_than_max_length"
+                );
+                yield return new TestCaseData(
+                    new string('x', 996),
+                    "xxxx",
+                    "The complete list of answers must be 1000 characters or fewer (2 characters remaining for the new answer, 4 characters were entered)"
+                ).SetName("Error_message_shows_two_less_than_number_of_characters_remaining_if_possible_to_add_answer");
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -39,18 +64,20 @@
         }
 
         [Test]
-        public void AdminFields_returns_AdminFields_page_when_appropriate_course_found()
+        public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
+            controller.TempData.Set(samplePrompt1);
 
             // When
             var result = controller.Index(1);
 
             // Then
+            controller.TempData.Peek<CustomPrompt>().Should().BeNull();
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
         }
 
@@ -211,7 +238,7 @@
         }
 
         [Test]
-        public void AddAdminField_save_clears_temp_data_and_redirects_to_index()
+        public void AddAdminField_save_redirects_to_index()
         {
             // Given
             var model = new AddAdminFieldViewModel(1, "Test");
@@ -222,7 +249,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     "Test"
                 )
@@ -232,11 +258,7 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -251,7 +273,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     null
                 )
@@ -261,11 +282,7 @@
             var result = controller.AddAdminField(100, model, action);
 
             // Then
-            using (new AssertionScope())
-            {
-                controller.TempData.Peek<AddAdminFieldData>().Should().BeNull();
-                result.Should().BeRedirectToActionResult().WithActionName("Index");
-            }
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
         [Test]
@@ -280,7 +297,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     "Test"
                 )
@@ -336,6 +352,35 @@
             using (new AssertionScope())
             {
                 AssertAddTempDataIsExpected(expectedViewModel);
+            }
+        }
+
+        [Test]
+        [TestCaseSource(
+            typeof(AdminFieldsControllerTests),
+            nameof(AddAnswerModelErrorTestData)
+        )]
+        public void AddAdminField_adds_model_error_if_new_answer_surpasses_character_limit(
+            string optionsString,
+            string newAnswerInput,
+            string expectedErrorMessage
+        )
+        {
+            // Given
+            var initialViewModel = new AddAdminFieldViewModel(1, optionsString, newAnswerInput);
+            var initialTempData = new AddAdminFieldData(initialViewModel);
+            controller.TempData.Set(initialTempData);
+            const string action = "addPrompt";
+
+            // When
+            var result =
+                controller.AddAdminField(1, initialViewModel, action);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<AddAdminFieldViewModel>();
+                AssertModelStateErrorIsExpected(result, expectedErrorMessage);
             }
         }
 
@@ -527,6 +572,13 @@
         {
             controller.TempData.Peek<AddAdminFieldData>()!.AddModel.Should()
                 .BeEquivalentTo(expectedData);
+        }
+
+        private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
+        {
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+            errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
         }
     }
 }

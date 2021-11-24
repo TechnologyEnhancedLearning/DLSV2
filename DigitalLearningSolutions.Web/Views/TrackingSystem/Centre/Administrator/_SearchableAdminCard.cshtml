@@ -53,9 +53,16 @@
           Manage roles
         </a>
       }
-      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1" role="button">
-        Deactivate admin account
-      </a>
+      @if (!Model.IsCentreManager) { 
+        <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+           role="button"
+           aria-label="Deactivate admin account"
+           asp-controller="Administrator"
+           asp-action="DeactivateAdmin"
+           asp-route-adminId="@Model.Id">
+          Deactivate admin account
+        </a>
+      }
     </div>
   </details>
 </div>

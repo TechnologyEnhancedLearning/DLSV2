@@ -9,15 +9,6 @@
 
 @{
   ViewData["Title"] = "View delegate";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-  var activeTagCss = Model.DelegateInfo.IsActive ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
-  var passwordTagCss = Model.DelegateInfo.IsPasswordSet ? "nhsuk-tag nhsuk-tag--green" : "nhsuk-tag nhsuk-tag--red";
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -26,7 +17,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-two-thirds">
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">@Model.DelegateInfo.Name</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">@Model.DelegateInfo.Name</h1>
   </div>
   @if (Model.DelegateInfo.IsActive) {
     <div class="nhsuk-grid-column-one-third view-delegate-top-button-group">
@@ -95,7 +86,11 @@
 
     <div class="nhsuk-u-margin-top-4">
       @if (Model.DelegateInfo.IsActive) {
-        <a class="nhsuk-button view-delegate-button" role="button">
+        <a class="nhsuk-button view-delegate-button"
+           role="button"
+           asp-controller="EditDelegate"
+           asp-action="Index"
+           asp-route-delegateId="@Model.DelegateInfo.Id">
           Edit details
         </a>
         <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
@@ -106,7 +101,7 @@
            asp-route-isFromViewDelegatePage="true">
           Set password
         </a>
-        @if (User.HasCentreManagerPermissions()) {
+        @if (User.HasCentreManagerPermissions() && !Model.DelegateInfo.IsAdmin && Model.DelegateInfo.IsPasswordSet) {
           <a class="nhsuk-button nhsuk-button--secondary view-delegate-button"
              role="button"
              asp-controller="PromoteToAdmin"

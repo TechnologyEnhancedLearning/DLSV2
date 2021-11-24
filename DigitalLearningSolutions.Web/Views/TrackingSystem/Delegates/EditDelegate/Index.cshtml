@@ -1,0 +1,98 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate
+@using Microsoft.Extensions.Configuration
+@model EditDelegateViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate details" : "Edit delegate details";
+  var cancelRouteParams = new Dictionary<string, string?> {
+    { "delegateId", Model.DelegateId.ToString() }
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.AliasId) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="Index">
+
+      <div class="divider">
+        <vc:text-input asp-for="@nameof(Model.FirstName)"
+                       label="First name"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       autocomplete="given-name"
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+
+        <vc:text-input asp-for="@nameof(Model.LastName)"
+                       label="Last name"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       autocomplete="family-name"
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+
+        <vc:text-input asp-for="@nameof(Model.Email)"
+                       label="Email address"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       autocomplete="email"
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+
+        <vc:text-input asp-for="@nameof(Model.AliasId)"
+                       label="Alias ID"
+                       populate-with-current-value="true"
+                       type="text"
+                       spell-check="false"
+                       autocomplete=""
+                       hint-text=""
+                       css-class="nhsuk-u-width-one-half" />
+      </div>
+
+      <vc:select-list asp-for="@nameof(Model.JobGroupId)"
+                      label="Job group"
+                      value="@Model.JobGroupId.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a job group"
+                      select-list-options="@Model.JobGroups" />
+
+      @foreach (var customField in Model.CustomFields) {
+        @if (customField.Options.Any()) {
+          <vc:select-list asp-for="@("Answer" + customField.CustomFieldId)"
+                          label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                          value="@customField.Answer"
+                          hint-text=""
+                          deselectable="@(!customField.Mandatory)"
+                          css-class="nhsuk-u-width-one-half"
+                          default-option="Select a @customField.CustomPrompt.ToLower()"
+                          select-list-options="@customField.Options" />
+        } else {
+          <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
+                         label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="false"
+                         autocomplete=""
+                         hint-text=""
+                         css-class="nhsuk-u-width-one-half" />
+        }
+      }
+
+      <button name="action" class="nhsuk-button" value="save">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@cancelRouteParams" />
+  </div>
+</div>

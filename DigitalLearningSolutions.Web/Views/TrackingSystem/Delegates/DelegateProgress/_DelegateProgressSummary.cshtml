@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -12,7 +11,10 @@
       @Model.SupervisorFullName
     </dd>
     <dd class="nhsuk-summary-list__actions">
-      <a href="#">
+      <a asp-controller="DelegateProgress"
+         asp-action="EditSupervisor"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
       </a>
     </dd>
@@ -23,7 +25,7 @@
       Enrolled
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat)
+      @Model.Enrolled
     </dd>
     <dd class="nhsuk-summary-list__actions" />
   </div>
@@ -32,7 +34,7 @@
     <dt class="nhsuk-summary-list__key">
       Complete by
     </dt>
-    <partial name="_SummaryFieldValue" model="Model.CompleteBy?.ToString(DateHelper.StandardDateFormat)" />
+    <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
     <dd class="nhsuk-summary-list__actions">
       <a href="#">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
@@ -45,7 +47,7 @@
       Last updated
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat)
+      @Model.LastUpdated
     </dd>
     <dd class="nhsuk-summary-list__actions" />
   </div>
@@ -54,7 +56,7 @@
     <dt class="nhsuk-summary-list__key">
       Completion date
     </dt>
-    <partial name="_SummaryFieldValue" model="Model.Completed?.ToString(DateHelper.StandardDateAndTimeFormat)" />
+    <partial name="_SummaryFieldValue" model="Model.Completed" />
     <dd class="nhsuk-summary-list__actions">
       <a href="#">
         Edit<span class="nhsuk-u-visually-hidden"> completion date</span>
@@ -66,7 +68,7 @@
     <dt class="nhsuk-summary-list__key">
       Evaluation date
     </dt>
-    <partial name="_SummaryFieldValue" model="Model.Evaluated?.ToString(DateHelper.StandardDateAndTimeFormat)" />
+    <partial name="_SummaryFieldValue" model="Model.Evaluated" />
     <dd class="nhsuk-summary-list__actions" />
   </div>
 
@@ -74,7 +76,7 @@
     <dt class="nhsuk-summary-list__key">
       Removed date
     </dt>
-    <partial name="_SummaryFieldValue" model="Model.RemovedDate?.ToString(DateHelper.StandardDateFormat)" />
+    <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
     <dd class="nhsuk-summary-list__actions" />
   </div>
 
@@ -132,7 +134,7 @@
         Assessment attempts
       </dt>
       <dd class="nhsuk-summary-list__value">
-        @Model.AllAttempts
+        @Model.TotalAttempts
       </dd>
       <dd class="nhsuk-summary-list__actions" />
     </div>

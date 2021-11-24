@@ -5,14 +5,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
-    public class EditDetailsFormData
+    public class MyAccountEditDetailsFormData : EditDetailsFormData, IValidatableObject
     {
-        public EditDetailsFormData() { }
+        public MyAccountEditDetailsFormData() { }
 
-        public EditDetailsFormData(
+        protected MyAccountEditDetailsFormData(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups
@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = delegateUser?.Answer6;
         }
 
-        protected EditDetailsFormData(EditDetailsFormData formData)
+        protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
         {
             FirstName = formData.FirstName;
             LastName = formData.LastName;
@@ -52,20 +52,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer6 = formData.Answer6;
         }
 
-        [Required(ErrorMessage = "Enter your first name")]
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongFirstName)]
-        public string? FirstName { get; set; }
-
-        [Required(ErrorMessage = "Enter your last name")]
-        [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]
-        public string? LastName { get; set; }
-
-        [Required(ErrorMessage = "Enter your email address")]
-        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
-        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
-        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
-        public string? Email { get; set; }
-
         [Required(ErrorMessage = "Enter your current password")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
@@ -76,19 +62,5 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
-
-        public int? JobGroupId { get; set; }
-
-        public string? Answer1 { get; set; }
-
-        public string? Answer2 { get; set; }
-
-        public string? Answer3 { get; set; }
-
-        public string? Answer4 { get; set; }
-
-        public string? Answer5 { get; set; }
-
-        public string? Answer6 { get; set; }
     }
 }

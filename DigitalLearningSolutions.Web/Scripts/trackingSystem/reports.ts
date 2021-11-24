@@ -1,5 +1,22 @@
-import Chartist from 'chartist';
+import Chartist, { IChartistData } from 'chartist';
 import getPathForEndpoint from '../common';
+
+// These constants are used in _ActivityTable.cshtml
+const toggleableActivityButtonId = 'js-toggle-row-button';
+const toggleableActivityRowClass = 'js-toggleable-activity-row';
+
+// These constants are used in /Views/TrackingSystem/Centre/Reports/Index.cshtml
+const activityGraphId = 'activity-graph';
+const activityGraphDataErrorId = 'activity-graph-data-error';
+
+const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
+const activityToggleableRowDisplayNone = 'none';
+const activityToggleableRowDisplayTableRow = 'table-row';
+
+const mobileMaxNumberOfEntriesForActivityGraph = 17;
+const desktopMaxNumberOfEntriesForActivityGraph = 31;
+
+let chartData: IChartistData;
 
 interface IActivityDataRowModel {
   period: string;
@@ -18,29 +35,43 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   return { labels, series };
 }
 
-const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
-
-const request = new XMLHttpRequest();
-
-const options = {
-  axisY: {
-    scaleMinSpace: 10,
-    onlyInteger: true,
-  },
-  chartPadding: {
-    bottom: 32,
-  },
-};
-
-request.onload = () => {
+function saveChartData(request: XMLHttpRequest) {
   let { response } = request;
   // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
   // so we need to manually parse the JSON string if not already parsed
   if (typeof request.response === 'string') {
     response = JSON.parse(response);
   }
-  const data = constructChartistData(response);
-  const chart = new Chartist.Line('.ct-chart', data, options);
+  chartData = constructChartistData(response);
+}
+
+function drawChartOrDataPointMessage() {
+  const numberOfEntries = chartData.labels?.length;
+  const mediaQuery = window.matchMedia('(min-width: 641px)');
+  const maxNumberOfEntriesForGraph = mediaQuery.matches
+    ? desktopMaxNumberOfEntriesForActivityGraph
+    : mobileMaxNumberOfEntriesForActivityGraph;
+
+  if (numberOfEntries !== undefined && numberOfEntries <= maxNumberOfEntriesForGraph) {
+    drawChart();
+  } else {
+    displayTooManyDataPointsMessage();
+  }
+}
+
+function drawChart() {
+  const options = {
+    fullWidth: true,
+    axisY: {
+      scaleMinSpace: 10,
+      onlyInteger: true,
+    },
+    chartPadding: {
+      bottom: 32,
+    },
+  };
+
+  const chart = new Chartist.Line('.ct-chart', chartData, options);
 
   chart.on('draw',
     // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
@@ -63,8 +94,103 @@ request.onload = () => {
         });
       }
     });
-};
 
-request.open('GET', path, true);
-request.responseType = 'json';
-request.send();
+  const dataPointErrorContainer = getActivityGraphDataErrorElement();
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = true;
+    dataPointErrorContainer.style.display = 'none';
+  }
+  const chartContainer = getActivityGraphElement();
+  if (chartContainer !== null) {
+    chartContainer.hidden = false;
+    chartContainer.style.display = 'block';
+  }
+}
+
+function displayTooManyDataPointsMessage() {
+  const dataPointErrorContainer = getActivityGraphDataErrorElement();
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = false;
+    dataPointErrorContainer.style.display = 'block';
+  }
+  const chartContainer = getActivityGraphElement();
+  if (chartContainer !== null) {
+    chartContainer.hidden = true;
+    chartContainer.style.display = 'none';
+  }
+}
+
+function getActivityGraphElement(): HTMLElement | null {
+  return document.getElementById(activityGraphId);
+}
+
+function getActivityGraphDataErrorElement(): HTMLElement | null {
+  return document.getElementById(activityGraphDataErrorId);
+}
+
+function toggleVisibleActivityRows() {
+  const viewMoreLink = getViewMoreLink();
+  const activityRow = <HTMLElement>document.getElementsByClassName(toggleableActivityRowClass)
+    .item(0);
+
+  if (activityRow?.style.display === activityToggleableRowDisplayNone) {
+    viewMoreRows();
+    viewMoreLink.innerText = 'View less';
+  } else {
+    viewLessRows();
+    viewMoreLink.innerText = 'View more';
+  }
+}
+
+function viewMoreRows(): void {
+  const activityTableRows = <HTMLElement[]>Array.from(
+    document.getElementsByClassName(toggleableActivityRowClass),
+  );
+
+  activityTableRows.forEach((row) => {
+    const rowElement = row;
+    rowElement.style.display = activityToggleableRowDisplayTableRow;
+  });
+}
+
+function viewLessRows(): void {
+  const activityTableRows = <HTMLElement[]>Array.from(
+    document.getElementsByClassName(toggleableActivityRowClass),
+  );
+
+  activityTableRows.forEach((row) => {
+    const rowElement = row;
+    rowElement.style.display = activityToggleableRowDisplayNone;
+  });
+}
+
+function fetchChartDataAndDrawGraph() {
+  const request = new XMLHttpRequest();
+
+  request.onload = () => {
+    saveChartData(request);
+    drawChartOrDataPointMessage();
+  };
+
+  request.open('GET', path, true);
+  request.responseType = 'json';
+  request.send();
+}
+
+function getViewMoreLink() {
+  return <HTMLElement>document.getElementById(toggleableActivityButtonId);
+}
+
+function setUpToggleActivityRowsButton() {
+  const viewMoreLink = getViewMoreLink();
+
+  viewMoreLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleVisibleActivityRows();
+  });
+}
+
+setUpToggleActivityRowsButton();
+viewLessRows();
+fetchChartDataAndDrawGraph();
+window.onresize = drawChartOrDataPointMessage;

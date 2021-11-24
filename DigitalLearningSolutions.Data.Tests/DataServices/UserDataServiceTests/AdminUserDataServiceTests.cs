@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -65,13 +66,17 @@
         public void GetAdminUserByEmailAddress_Returns_admin_user()
         {
             // Given
-            var expectedAdminUser = UserTestHelper.GetDefaultAdminUser();
+            using (new TransactionScope())
+            {
+                var expectedAdminUser = UserTestHelper.GetDefaultAdminUser(resetPasswordId: 1);
+                connection.Execute("UPDATE AdminUsers SET ResetPasswordID = 1 WHERE AdminID = 7");
 
-            // When
-            var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
+                // When
+                var returnedAdminUser = userDataService.GetAdminUserByEmailAddress("test@gmail.com");
 
-            // Then
-            returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
+                // Then
+                returnedAdminUser.Should().BeEquivalentTo(expectedAdminUser);
+            }
         }
 
         [Test]
@@ -187,6 +192,27 @@
 
                 // Then
                 updatedUser.FailedLoginCount.Should().Be(3);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void DeactivateAdminUser_updates_user()
+        {
+            using var transaction = new TransactionScope();
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+
+            try
+            {
+                // When
+                userDataService.DeactivateAdmin(adminUser.Id);
+                var updatedAdminUser = userDataService.GetAdminUserById(adminUser.Id)!;
+
+                // Then
+                updatedAdminUser.Active.Should().Be(false);
             }
             finally
             {
