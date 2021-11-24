@@ -8,7 +8,7 @@
         public bool HasLearning { get; set; }
         public bool IsAssessed { get; set; }
         public bool IsSelfAssessment { get; set; }
-        public bool UseFilteredApi { get; set; }
+        public bool IncludesSignposting { get; set; }
 
         public override string SearchableName
         {
