@@ -18,7 +18,7 @@
     [Route("/MyAccount", Order = 2)]
     [TypeFilter(
         typeof(ValidateAllowedDlsSubApplication),
-        Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem) } }
+        Arguments = new object[] { new string[] { } }
     )]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
