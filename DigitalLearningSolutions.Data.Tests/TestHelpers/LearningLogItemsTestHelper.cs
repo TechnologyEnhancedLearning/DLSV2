@@ -2,6 +2,7 @@
 {
     using System;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using Microsoft.Data.SqlClient;
 
     public class LearningLogItemsTestHelper
@@ -13,15 +14,30 @@
             this.connection = connection;
         }
 
-        public LearningLogItemDetails? SelectLearningLogItemWithResourceLink(string resourceLink)
+        public LearningLogItem? SelectLearningLogItemWithResourceLink(string resourceLink)
         {
-            return connection.QuerySingleOrDefault<LearningLogItemDetails>(
+            return connection.QuerySingleOrDefault<LearningLogItem>(
                 @"SELECT
-                        LoggedDate AS AddedDate,
-                        LoggedByID AS DelegateId,
-                        Activity AS ResourceName,
-                        ExternalUri AS ResourceLink,
-                        LinkedCompetencyLearningResourceID AS CompetencyLearningResourceId
+                        LearningLogItemID,
+                        LoggedDate,
+                        LoggedByID,
+                        DueDate,
+                        CompletedDate,
+                        DurationMins,
+                        Activity,
+                        Outcomes,
+                        LinkedCustomisationID,
+                        VerifiedByID,
+                        VerifierComments,
+                        ArchivedDate,
+                        ArchivedByID,
+                        ICSGUID,
+                        LoggedByAdminID,
+                        ActivityTypeID,
+                        ExternalUri,
+                        SeqInt,
+                        LastAccessedDate,
+                        LinkedCompetencyLearningResourceID
                     FROM LearningLogItems
                     WHERE ExternalUri = @resourceLink",
                 new { resourceLink }
@@ -49,15 +65,6 @@
                         AssociatedDate
                     FROM LearningLogItemCompetencies"
             );
-        }
-
-        public class LearningLogItemDetails
-        {
-            public int CompetencyLearningResourceId { get; set; }
-            public int DelegateId { get; set; }
-            public string ResourceName { get; set; }
-            public string ResourceLink { get; set; }
-            public DateTime AddedDate { get; set; }
         }
 
         public class CandidateAssessmentLearningLogItem

@@ -51,7 +51,7 @@
 
             var competencyLearningResource = new CompetencyLearningResource
             {
-                LearningHubResourceReference = learningHubResourceId,
+                LearningHubResourceReferenceId = learningHubResourceId,
             };
             A.CallTo(
                 () => competencyLearningResourcesDataService.GetCompetencyLearningResourceById(
@@ -83,6 +83,8 @@
                 )
             ).Returns(learningLogId);
 
+            var expectedMatchingCompetencies = new[] { 2, 3, 5, 6, 8 };
+
             // When
             actionPlanService.AddResourceToActionPlan(competencyLearningResourceId, delegateId, selfAssessmentId);
 
@@ -102,6 +104,13 @@
                     learningLogId
                 )
             ).MustHaveHappenedOnceExactly();
+
+            foreach (var competencyId in expectedMatchingCompetencies)
+            {
+                A.CallTo(
+                    () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, competencyId, addedDate)
+                ).MustHaveHappenedOnceExactly();
+            }
             A.CallTo(
                 () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, A<int>._, addedDate)
             ).MustHaveHappened(5, Times.Exactly);

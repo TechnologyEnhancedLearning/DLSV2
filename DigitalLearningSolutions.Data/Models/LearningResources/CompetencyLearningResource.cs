@@ -6,7 +6,7 @@
 
         public int CompetencyId { get; set; }
 
-        public int LearningHubResourceReference { get; set; }
+        public int LearningHubResourceReferenceId { get; set; }
 
         public int AdminId { get; set; }
     }

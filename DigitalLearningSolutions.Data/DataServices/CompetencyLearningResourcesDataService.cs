@@ -10,7 +10,7 @@
     {
         CompetencyLearningResource GetCompetencyLearningResourceById(int competencyLearningResourceId);
 
-        IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReference);
+        IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReferenceId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -28,7 +28,7 @@
                 @"SELECT
                         ID,
                         CompetencyID,
-                        LHResourceReferenceID AS LearningHubResourceReference,
+                        LHResourceReferenceID AS LearningHubResourceReferenceId,
                         AdminID
                     FROM CompetencyLearningResources
                     WHERE ID = @competencyLearningResourceId",
@@ -36,14 +36,14 @@
             ).Single();
         }
 
-        public IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReference)
+        public IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReferenceId)
         {
             return connection.Query<int>(
                 @"SELECT
                         CompetencyID
                     FROM CompetencyLearningResources
-                    WHERE LHResourceReferenceID = @lhResourceReference",
-                new { lhResourceReference }
+                    WHERE LHResourceReferenceID = @lhResourceReferenceId",
+                new { lhResourceReferenceId }
             );
         }
     }

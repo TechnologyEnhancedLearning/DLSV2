@@ -38,11 +38,11 @@
                 competencyLearningResourcesDataService.GetCompetencyLearningResourceById(competencyLearningResourceId);
 
             var (resourceName, resourceLink) =
-                learningHubApiService.GetResourceNameAndLink(competencyLearningResource.LearningHubResourceReference);
+                learningHubApiService.GetResourceNameAndLink(competencyLearningResource.LearningHubResourceReferenceId);
 
             var otherCompetenciesForResource =
                 competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    competencyLearningResource.LearningHubResourceReference
+                    competencyLearningResource.LearningHubResourceReferenceId
                 );
 
             var selfAssessmentCompetencies =

@@ -25,7 +25,7 @@
                     (ID, CompetencyId, LHResourceReferenceID, AdminId)
                     OUTPUT Inserted.ID
                     VALUES (@id, @competencyId, @lhResourceId, @adminId)
-                    SET IDENTITY_INSERT dbo.Progress OFF",
+                    SET IDENTITY_INSERT dbo.CompetencyLearningResources OFF",
                 new { id, competencyId, lhResourceId, adminId }
             );
         }

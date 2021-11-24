@@ -32,7 +32,7 @@
                 {
                     Id = 1,
                     CompetencyId = 1,
-                    LearningHubResourceReference = 2,
+                    LearningHubResourceReferenceId = 2,
                     AdminId = 7,
                 };
                 InsertCompetencyLearningResources();
@@ -74,12 +74,12 @@
         private void InsertCompetencyLearningResources()
         {
             var adminId = UserTestHelper.GetDefaultAdminUser().Id;
-            var id1 = testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
-            var id2 = testHelper.InsertCompetencyLearningResource(2, 2, 2, adminId);
-            var id3 = testHelper.InsertCompetencyLearningResource(3, 3, 2, adminId);
-            var id4 = testHelper.InsertCompetencyLearningResource(4, 4, 3, adminId);
-            var id5 = testHelper.InsertCompetencyLearningResource(5, 5, 2, adminId);
-            var id6 = testHelper.InsertCompetencyLearningResource(6, 6, 2, adminId);
+            testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
+            testHelper.InsertCompetencyLearningResource(2, 2, 2, adminId);
+            testHelper.InsertCompetencyLearningResource(3, 3, 2, adminId);
+            testHelper.InsertCompetencyLearningResource(4, 4, 3, adminId);
+            testHelper.InsertCompetencyLearningResource(5, 5, 2, adminId);
+            testHelper.InsertCompetencyLearningResource(6, 6, 2, adminId);
         }
     }
 }

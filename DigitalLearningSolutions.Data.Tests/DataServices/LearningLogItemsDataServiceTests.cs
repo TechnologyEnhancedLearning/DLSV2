@@ -10,9 +10,9 @@
 
     public class LearningLogItemsDataServiceTests
     {
-        private ILearningLogItemsDataService service = null!;
-        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
         private CompetencyLearningResourcesTestHelper competencyLearningResourcesTestHelper = null!;
+        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
+        private ILearningLogItemsDataService service = null!;
 
         [SetUp]
         public void Setup()
@@ -57,12 +57,28 @@
                 using (new AssertionScope())
                 {
                     result.Should().NotBeNull();
-                    result!.DelegateId.Should().Be(delegateId);
-                    result.AddedDate.Should().Be(addedDate);
-                    result.CompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
-                    result.ResourceLink.Should().Be(resourceLink);
-                    result.ResourceName.Should().Be(resourceName);
-                } 
+                    result!.LoggedById.Should().Be(delegateId);
+                    result.LoggedDate.Should().Be(addedDate);
+                    result.LinkedCompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
+                    result.ExternalUri.Should().Be(resourceLink);
+                    result.Activity.Should().Be(resourceName);
+                    result.ActivityTypeId.Should().NotBe(0);
+                    result.LearningLogItemId.Should().NotBe(0);
+                    result.IcsGuid.Should().NotBeNull();
+
+                    result.DueDate.Should().BeNull();
+                    result.CompletedDate.Should().BeNull();
+                    result.DurationMins.Should().Be(0);
+                    result.Outcomes.Should().BeNull();
+                    result.LinkedCustomisationId.Should().BeNull();
+                    result.VerifiedById.Should().BeNull();
+                    result.VerifierComments.Should().BeNull();
+                    result.ArchivedDate.Should().BeNull();
+                    result.ArchivedById.Should().BeNull();
+                    result.LoggedByAdminId.Should().BeNull();
+                    result.SeqInt.Should().BeNull();
+                    result.LastAccessedDate.Should().BeNull();
+                }
             }
             finally
             {
