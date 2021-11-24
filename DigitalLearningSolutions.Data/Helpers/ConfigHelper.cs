@@ -6,7 +6,7 @@
     {
         public const string AppRootPathName = "AppRootPath";
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
-        public const string LearningHubApiKey = "LearningHubAPIKey";
+        private const string LearningHubApiKey = "LearningHubApiKey";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
