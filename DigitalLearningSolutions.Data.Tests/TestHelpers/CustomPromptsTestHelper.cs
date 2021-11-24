@@ -15,11 +15,10 @@
 
         public static CourseAdminFields GetDefaultCourseAdminFields(
             List<CustomPrompt> customPrompts,
-            int customisationId = 100,
-            int centreId = 101
+            int customisationId = 100
         )
         {
-            return new CourseAdminFields(customisationId, centreId, customPrompts);
+            return new CourseAdminFields(customisationId, customPrompts);
         }
 
         public static CustomPrompt GetDefaultCustomPrompt(

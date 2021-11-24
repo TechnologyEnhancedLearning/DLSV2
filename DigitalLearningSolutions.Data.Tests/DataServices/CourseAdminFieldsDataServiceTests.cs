@@ -35,29 +35,7 @@
                 );
 
             // When
-            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
-
-            // Then
-            returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
-        }
-
-        [Test]
-        public void GetCourseAdminFields_returns_populated_CourseAdminFieldsResult_for_AllCentres_course_when_allowed()
-        {
-            // Given
-            var expectedCourseAdminFieldsResult =
-                CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    2
-                );
-
-            // When
-            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(14038, 101, true);
+            var returnedCourseAdminFieldsResult = courseAdminFieldsDataService.GetCourseAdminFields(100);
 
             // Then
             returnedCourseAdminFieldsResult.Should().BeEquivalentTo(expectedCourseAdminFieldsResult);
@@ -74,7 +52,7 @@
 
                 // When
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 1, 1, options);
-                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
+                var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100);
 
                 // Then
                 using (new AssertionScope())
@@ -109,7 +87,7 @@
 
                 // When
                 courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
-                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100, 101);
+                var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100);
                 var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
                     .Single(c => c.id == 1)
                     .name;
