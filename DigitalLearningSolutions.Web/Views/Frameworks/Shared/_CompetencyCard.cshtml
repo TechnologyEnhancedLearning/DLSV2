@@ -27,7 +27,7 @@
         <br />
         <a asp-controller="ManageResources" asp-action="EditCompetencyLearningResources"
            asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])"
-           asp-route-frameworkCompetencyGrouypId="@(Model.FrameworkCompetencyGroupId)"
+           asp-route-frameworkCompetencyGroupId="@(Model.FrameworkCompetencyGroupId)"
            asp-route-frameworkCompetencyId="@(Model.FrameworkCompetency.CompetencyID)" >
           Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
         </a>
