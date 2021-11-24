@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre
 {
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Reports;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -16,14 +15,12 @@
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IActivityService activityService = null!;
-        private IUserDataService userDataService = null!;
         private IEvaluationSummaryService evaluationSummaryService = null!;
 
         [SetUp]
         public void Setup()
         {
             activityService = A.Fake<IActivityService>();
-            userDataService = A.Fake<IUserDataService>();
             evaluationSummaryService = A.Fake<IEvaluationSummaryService>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -31,7 +28,7 @@
             const string cookieName = "ReportsFilterCookie";
             const string cookieValue = "";
 
-            reportsController = new ReportsController(activityService, userDataService, evaluationSummaryService)
+            reportsController = new ReportsController(activityService, evaluationSummaryService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()

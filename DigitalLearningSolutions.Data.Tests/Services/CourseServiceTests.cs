@@ -27,7 +27,7 @@
         public void Setup()
         {
             courseDataService = A.Fake<ICourseDataService>();
-            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
+            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             progressDataService = A.Fake<IProgressDataService>();
@@ -172,14 +172,14 @@
 
         [Test]
         public void
-            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
+            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
                 .Returns((2, 2, false));
 
             // When
-            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))

@@ -47,21 +47,19 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[CourseFilterCookieName] ?? CourseStatusFilterOptions.IsActive.FilterValue;
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                CourseFilterCookieName,
+                CourseStatusFilterOptions.IsActive.FilterValue
+            );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreCourses =
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
@@ -86,8 +84,9 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreCourses =
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);

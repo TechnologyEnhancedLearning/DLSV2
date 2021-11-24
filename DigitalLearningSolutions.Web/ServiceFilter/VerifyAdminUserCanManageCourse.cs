@@ -26,11 +26,11 @@
             }
 
             var centreId = controller.User.GetCentreId();
-            var categoryId = controller.User.GetAdminCategoryId()!;
+            var categoryId = controller.User.GetAdminCourseCategoryFilter();
             var customisationId = int.Parse(context.RouteData.Values["customisationId"].ToString()!);
 
             var validationResult =
-                courseService.VerifyAdminUserCanManageCourse(customisationId, centreId, categoryId.Value);
+                courseService.VerifyAdminUserCanManageCourse(customisationId, centreId, categoryId);
 
             if (!validationResult.HasValue)
             {

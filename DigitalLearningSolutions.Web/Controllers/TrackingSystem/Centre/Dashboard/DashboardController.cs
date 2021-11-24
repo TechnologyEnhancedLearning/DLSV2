@@ -60,7 +60,10 @@
             var centre = centresDataService.GetCentreDetailsById(centreId)!;
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
             var courseCount =
-                courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, adminUser.CategoryId);
+                courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
+                    centreId,
+                    adminUser.CategoryIdFilter
+                );
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
             var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
             var centreRank = centresService.GetCentreRankForCentre(centreId);

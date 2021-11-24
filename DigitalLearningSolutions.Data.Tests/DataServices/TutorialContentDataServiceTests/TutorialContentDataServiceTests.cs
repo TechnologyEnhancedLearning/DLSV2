@@ -2,19 +2,21 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     internal partial class TutorialContentDataServiceTests
     {
-        private TutorialContentDataService tutorialContentDataService;
-        private TutorialContentTestHelper tutorialContentTestHelper;
-        private SectionContentTestHelper sectionContentTestHelper;
-        private CourseContentTestHelper courseContentTestHelper;
+        private SqlConnection connection = null!;
+        private TutorialContentDataService tutorialContentDataService = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
+        private SectionContentTestHelper sectionContentTestHelper = null!;
+        private CourseContentTestHelper courseContentTestHelper = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             tutorialContentDataService = new TutorialContentDataService(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
             sectionContentTestHelper = new SectionContentTestHelper(connection);

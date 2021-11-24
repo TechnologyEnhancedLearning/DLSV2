@@ -8,7 +8,14 @@
 
     public class CourseDelegatesViewModel
     {
-        public CourseDelegatesViewModel(CourseDelegatesData courseDelegatesData)
+        public CourseDelegatesViewModel(
+            CourseDelegatesData courseDelegatesData,
+            string customisationIdQueryParameterName,
+            string sortBy,
+            string sortDirection,
+            string? filterBy,
+            int page
+        )
         {
             CustomisationId = courseDelegatesData.CustomisationId;
 
@@ -16,14 +23,15 @@
                 .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
             Courses = SelectListHelper.MapOptionsToSelectListItems(courseOptions, courseDelegatesData.CustomisationId);
 
-            // TODO: HEEDLS-564 - paginate properly instead of taking 10.
-            var delegates = courseDelegatesData.Delegates.Take(10)
-                .Select(cd => new SearchableCourseDelegateViewModel(cd));
             CourseDetails = courseDelegatesData.CustomisationId.HasValue
-                ? new SelectedCourseDetails(
-                    courseDelegatesData.CustomisationId.Value,
-                    courseDelegatesData.Courses,
-                    delegates
+                ? new SelectedCourseDetailsViewModel(
+                    courseDelegatesData,
+                    sortBy,
+                    sortDirection,
+                    filterBy,
+                    page,
+                    new Dictionary<string, string>
+                        { { customisationIdQueryParameterName, courseDelegatesData.CustomisationId.Value.ToString() } }
                 )
                 : null;
         }
@@ -32,6 +40,6 @@
 
         public IEnumerable<SelectListItem> Courses { get; set; }
 
-        public SelectedCourseDetails? CourseDetails { get; set; }
+        public SelectedCourseDetailsViewModel? CourseDetails { get; set; }
     }
 }

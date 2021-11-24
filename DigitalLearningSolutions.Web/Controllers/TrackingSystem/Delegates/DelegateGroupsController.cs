@@ -56,17 +56,13 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[DelegateGroupsFilterCookieName];
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                DelegateGroupsFilterCookieName
+            );
 
             var centreId = User.GetCentreId();
             var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
@@ -186,7 +182,9 @@
                 return NotFound();
             }
 
-            var groupCourses = groupsDataService.GetGroupCourses(groupId, centreId);
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+
+            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 
@@ -311,12 +309,10 @@
         public IActionResult AddCourseToGroupSelectCourse(int groupId)
         {
             var centreId = User.GetCentreId();
+            
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
 
-            // TODO Tidy this with new claims method from HEEDLS-564 when merged
-            var adminCategoryId = User.GetAdminCategoryId()!.Value;
-            var adminCategoryFilter = adminCategoryId == 0 ? (int?)null : adminCategoryId;
-
-            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryId, groupId);
 
             // TODO Tidy this with service method from HEEDLS-657
             var groupName = groupsDataService.GetGroupName(groupId, centreId);

@@ -34,7 +34,7 @@
         public void Index_returns_Index_page_when_appropriate_course_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionsAndTutorialsForCustomisation(A<int>._, A<int>._))
                 .Returns(new List<Section>());
@@ -50,7 +50,7 @@
         public void EditSection_returns_NotFound_when_no_matching_section_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(null);
@@ -66,7 +66,7 @@
         public void EditSection_returns_EditSection_page_when_appropriate_course_and_section_found()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseDetailsForAdminCategoryId(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetCourseDetailsFilteredByCategory(A<int>._, A<int>._, A<int>._))
                 .Returns(CourseDetailsTestHelper.GetDefaultCourseDetails());
             A.CallTo(() => sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(A<int>._, A<int>._))
                 .Returns(new Section(1, "Section", new List<Tutorial>()));

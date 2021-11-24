@@ -126,6 +126,7 @@
                         GroupID,
                         gc.CustomisationID,
                         ap.ApplicationName,
+                        ap.CourseCategoryID,
                         CustomisationName,
                         Mandatory AS IsMandatory,
                         IsAssessed,
