@@ -1,16 +1,7 @@
-﻿using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Web.Helpers;
+﻿using DigitalLearningSolutions.Data.Exceptions;
+using DigitalLearningSolutions.Data.Services;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
-using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
-using System.Linq;
-using DigitalLearningSolutions.Web.Extensions;
-using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -19,8 +10,39 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Framework/{frameworkId}/Structure/Import")]
         public IActionResult ImportCompetencies(int frameworkId)
         {
-            
-            return View("Developer/ImportCompetencies");
+            var adminId = GetAdminID();
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
+            if (userRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var model = new ImportCompetenciesViewModel() {
+                FrameworkId = frameworkId
+            };
+            return View("Developer/ImportCompetencies", model);
+        }
+        [HttpPost]
+        [Route("/Framework/{frameworkId}/Structure/Import")]
+        public IActionResult StartImport(ImportCompetenciesViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Developer/ImportCompetencies", model);
+            }
+            try
+            {
+                var results = importCompetenciesFromFileService.ProcessCompetenciesFromFile(
+                    model.ImportFile!,
+                    GetAdminID(),
+                    model.FrameworkId
+                );
+
+                return View("UploadCompleted");
+            }
+            catch (InvalidHeadersException)
+            {
+                return View("UploadFailed");
+            }
         }
     }
 }
