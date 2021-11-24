@@ -43,6 +43,7 @@
             }
 
             // TODO HEEDLS-608 If the user is centre admin but tracking system is off we need to show a 404
+            // TODO HEEDLS-608 name these something appropriate
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
