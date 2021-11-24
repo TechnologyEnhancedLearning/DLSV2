@@ -1,14 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Tracker;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Serialization;
 
     public interface ITrackerActionService
     {
         TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId);
+
+        TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
     }
 
     public class TrackerActionService : ITrackerActionService
@@ -32,6 +33,20 @@
                 .ToList();
 
             return objectives.Any() ? new TrackerObjectiveArray(objectives) : null;
+        }
+
+        public TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning)
+        {
+
+            if (!customisationId.HasValue || !sectionId.HasValue || !isPostLearning.HasValue)
+            {
+                return null;
+            }
+
+            var ccObjectives = new List<CcObjective>();
+
+
+            return ccObjectives.Any() ? new TrackerObjectiveArrayCc(ccObjectives) : null;
         }
     }
 }

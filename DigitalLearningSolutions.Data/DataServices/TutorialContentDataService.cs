@@ -31,6 +31,7 @@
         );
 
         IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
+        IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(int sectionId, int customisationId, bool isPostLearning);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -367,6 +368,27 @@
                     AND ct.CustomisationID = @customisationId
                     AND tu.ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(int sectionId, int customisationId, bool isPostLearning)
+        {
+            return connection.Query<CcObjective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.TutorialName
+                        tu.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL
+                    AND (@isPostLearning OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
+                new { sectionId, customisationId, isPostLearning }
             );
         }
     }
