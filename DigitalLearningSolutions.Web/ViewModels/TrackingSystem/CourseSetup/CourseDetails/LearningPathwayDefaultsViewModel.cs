@@ -14,7 +14,7 @@
             AutoRefresh = courseDetails.AutoRefresh;
             RefreshToCustomisationId = courseDetails.RefreshToCustomisationId;
             RefreshToCourseName = courseDetails.RefreshToCourseName;
-            AutoRefreshMonths = SetMonthDisplayString(courseDetails.AutoRefreshMonths) + " < expiry";
+            AutoRefreshMonths = SetMonthDisplayString(courseDetails.AutoRefreshMonths) + " before expiry";
             ApplyLpDefaultsToSelfEnrol = courseDetails.ApplyLpDefaultsToSelfEnrol;
         }
 

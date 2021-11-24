@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -79,7 +80,7 @@
         public void GetCoursesAndCourseDelegatesForCentre_uses_passed_in_customisation_id()
         {
             // Given
-            const int customisationId = 2;
+            const int customisationId = 1;
             const int centreId = 2;
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
@@ -97,6 +98,28 @@
             // Then
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId))
                 .MustHaveHappened();
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public void
+            GetCoursesAndCourseDelegatesForCentre_throws_exception_when_passed_in_customisation_id_does_not_have_accessible_course()
+        {
+            // Given
+            const int customisationId = 2;
+            const int centreId = 2;
+            const int categoryId = 1;
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(new List<Course> { new Course { CustomisationId = 1 } });
+
+            // Then
+            Assert.Throws<CourseNotFoundException>(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                centreId,
+                categoryId,
+                customisationId
+            ));
+            A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
+                .MustNotHaveHappened();
         }
     }
 }

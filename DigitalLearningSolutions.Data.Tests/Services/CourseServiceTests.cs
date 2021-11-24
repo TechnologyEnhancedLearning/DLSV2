@@ -24,7 +24,7 @@
         public void Setup()
         {
             courseDataService = A.Fake<ICourseDataService>();
-            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
+            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             progressDataService = A.Fake<IProgressDataService>();
@@ -163,14 +163,14 @@
 
         [Test]
         public void
-            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_zero()
+            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
                 .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
@@ -272,6 +272,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -280,8 +283,27 @@
             courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
 
             // Then
-            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0, 0, false))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCourseOptionAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courseOptions);
+
+            // When
+            var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappened();
+            result.Should().BeEquivalentTo(courseOptions);
         }
 
         [Test]
@@ -297,7 +319,14 @@
             courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId))
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
                 .MustHaveHappened();
         }
 

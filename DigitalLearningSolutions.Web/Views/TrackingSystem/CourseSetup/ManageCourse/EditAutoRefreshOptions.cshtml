@@ -1,0 +1,54 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditAutoRefreshOptionsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit auto-refresh options" : "Edit auto-refresh options";
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.RefreshToCustomisationId), nameof(@Model.AutoRefreshMonths) }" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit auto-refresh options</h1>
+
+    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">
+      You have selected to enable auto-refresh on the course. Please specify the auto-refresh options.
+    </p>
+
+    <form class="nhsuk-u-margin-bottom-3"
+          method="post"
+          novalidate
+          asp-controller="ManageCourse"
+          asp-action="EditAutoRefreshOptions"
+          asp-route-customisationId="@Model.CustomisationId">
+
+      <vc:select-list asp-for="@nameof(Model.RefreshToCustomisationId)"
+                      label="Course to refresh to"
+                      value="@Model.RefreshToCustomisationId.ToString()"
+                      hint-text="Which course should the learner be enrolled on when auto-refreshing?"
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a field name"
+                      select-list-options="@Model.CourseOptions" />
+
+      <vc:numeric-input asp-for="@nameof(Model.AutoRefreshMonths)"
+                        label="Enrol on refresher (months before expiry)"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text="How many months prior to expiry of the previous course should be learner be enrolled on the refresher cause."
+                        css-class="nhsuk-input--width-10" />
+
+      <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
+                          label="Apply to self-enrolments"
+                          hint-text="Apply auto-refresh settings when a user has self enrolled on a course (rather than being enrolled by an administrator)" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+  </div>
+</div>

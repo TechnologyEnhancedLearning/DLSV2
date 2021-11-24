@@ -5,7 +5,7 @@
 <div class="searchable-element nhsuk-panel" id="@Model.DelegateId-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
-      <span class="nhsuk-details__summary-text searchable-element-title word-break" id="@Model.DelegateId-name" name="name">
+      <span class="nhsuk-details__summary-text searchable-element-title word-break" id="@Model.DelegateId-name" data-name-for-sorting="name">
         @Model.TitleName
       </span>
     </summary>
@@ -26,7 +26,7 @@
           <dt class="nhsuk-summary-list__key">
             Last updated
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
             @Model.LastUpdated
           </dd>
         </div>
@@ -34,7 +34,7 @@
           <dt class="nhsuk-summary-list__key">
             Enrolled
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
             @Model.Enrolled
           </dd>
         </div>
@@ -42,13 +42,17 @@
           <dt class="nhsuk-summary-list__key">
             Complete by
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
+            @(Model.CompleteBy ?? "-")
+          </dd>
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Completed date
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.Completed" />
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
+            @(Model.Completed ?? "-")
+          </dd>
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -60,7 +64,7 @@
           <dt class="nhsuk-summary-list__key">
             Pass rate
           </dt>
-          <dd class="nhsuk-summary-list__value">
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
             @Model.PassRate%
           </dd>
         </div>
