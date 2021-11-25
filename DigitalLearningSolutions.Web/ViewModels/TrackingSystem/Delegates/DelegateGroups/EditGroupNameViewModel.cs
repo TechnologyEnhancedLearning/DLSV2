@@ -15,7 +15,8 @@
 
         [DisplayName("Group name")]
         [StringLength(100, ErrorMessage = CommonValidationErrorMessages.StringMaxLengthValidation)]
-        [Required]
+        [Required(ErrorMessage = "Enter a group name")]
         public string GroupName { get; set; }
     }
+
 }

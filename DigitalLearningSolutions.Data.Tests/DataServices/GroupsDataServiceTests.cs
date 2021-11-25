@@ -558,11 +558,12 @@
         [Test]
         public void UpdateGroupName_with_incorrect_centreId_does_not_update_record()
         {
-            using var transaction = new TransactionScope();
+            // Given
             const int incorrectCentreId = 101;
             const int groupId = 59;
             const string expectedGroupName = "Nurses";
 
+            using var transaction = new TransactionScope();
             try
             {
                 // When
