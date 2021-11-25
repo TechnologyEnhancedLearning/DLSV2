@@ -73,7 +73,7 @@
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
-    Model.DelegateSelfAssessment.DescriptionLabel) 
+    Model.DelegateSelfAssessment.QuestionLabel) 
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.Competency.AssessmentQuestions.First().Question
