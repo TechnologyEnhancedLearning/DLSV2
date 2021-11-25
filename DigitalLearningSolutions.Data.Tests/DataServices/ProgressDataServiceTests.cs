@@ -14,8 +14,8 @@
     {
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
-        private TutorialContentTestHelper tutorialContentTestHelper = null!;
         private ProgressTestHelper progressTestHelper = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
 
         [SetUp]
         public void SetUp()
@@ -240,6 +240,30 @@
 
                 // Then
                 result.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UnlockCourseProgress_updates_progress_record()
+        {
+            // Given
+            const int progressId = 280244;
+            var statusBeforeUnlock = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.UnlockProgress(progressId);
+                var statusAfterUnlocked = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+                // Then
+                statusBeforeUnlock.Should().BeTrue();
+                statusAfterUnlocked.Should().BeFalse();
             }
             finally
             {

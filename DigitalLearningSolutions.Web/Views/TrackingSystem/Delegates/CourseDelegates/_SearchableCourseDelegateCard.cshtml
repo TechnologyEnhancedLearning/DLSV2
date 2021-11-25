@@ -64,6 +64,14 @@
             @Model.PassRate%
           </dd>
         </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Progress locked
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @(Model.Locked? "Yes": "No")
+          </dd>
+        </div>
       </dl>
 
       <a class="nhsuk-button expander-card__button"
@@ -74,17 +82,17 @@
          asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
         View progress
       </a>
-      @*@if (Model.Locked) {*@
+      @if (Model.Locked) {
         <a class="nhsuk-button nhsuk-button--secondary expander-card__button"
            role="button"
            asp-controller="DelegateProgress"
            asp-action="UnlockProgress"
            asp-route-progressId="@Model.ProgressId"
-           asp-route-delegateId="@Model.DelegateId"
+           asp-route-customisationId="@Model.CustomisationId"
            asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
           Unlock progress
         </a>
-      @*}*@
+      }
       @if (Model.RemovedDate == null) {
         <a class="nhsuk-button delete-button expander-card__button" role="button">
           Remove from course

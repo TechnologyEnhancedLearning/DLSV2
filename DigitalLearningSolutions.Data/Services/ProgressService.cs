@@ -8,7 +8,7 @@
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
 
-        void UnlockProgress(int progressId, int delegateId);
+        void UnlockProgress(int progressId);
     }
 
     public class ProgressService : IProgressService
@@ -51,9 +51,9 @@
             transaction.Complete();
         }
 
-        public void UnlockProgress(int progressId, int delegateId)
+        public void UnlockProgress(int progressId)
         {
-            progressDataService.UnlockProgress(progressId, delegateId);
+            progressDataService.UnlockProgress(progressId);
         }
     }
 }

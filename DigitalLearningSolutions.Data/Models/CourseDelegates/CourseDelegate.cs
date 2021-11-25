@@ -19,6 +19,7 @@
         public DateTime? Completed { get; set; }
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
+        public int CustomisationId { get; set; }
 
         public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
 
