@@ -8,6 +8,8 @@
 
         public string? Title { get; set; }
 
+        public string? Description { get; set; }
+
         public Catalogue Catalogue { get; set; }
 
         public string? ResourceType { get; set; }

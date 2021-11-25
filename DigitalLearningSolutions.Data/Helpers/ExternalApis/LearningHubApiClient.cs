@@ -27,15 +27,14 @@
     public class LearningHubApiClient : ILearningHubApiClient
     {
         private readonly HttpClient client;
-        private readonly string learningHubApiBaseUrl;
 
         public LearningHubApiClient(HttpClient httpClient, IConfiguration config)
         {
             string learningHubApiKey = config.GetLearningHubApiKey();
-            learningHubApiBaseUrl =
-                "https://uks-learninghubnhsuk-openapi-dev.azurewebsites.net";
+            string learningHubApiBaseUrl = config.GetLearningHubApiBaseUrl();
 
             client = httpClient;
+            client.BaseAddress = new Uri(learningHubApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("X-API-KEY", learningHubApiKey);
         }
@@ -47,22 +46,16 @@
             IEnumerable<string>? resourceTypes = null
         )
         {
-            const string searchEndpoint = "/Resource/Search";
+            var queryParams = GetSearchQueryParams(text, offset, limit, resourceTypes);
 
-            var endpointPath = learningHubApiBaseUrl + searchEndpoint;
-            var requestUrl = GetUrlWithSearchQueryParams(endpointPath, text, offset, limit, resourceTypes);
-
-            var response = await client.GetStringAsync(requestUrl);
+            var response = await client.GetStringAsync($"/Resource/Search?{queryParams}");
             var result = JsonConvert.DeserializeObject<ResourceSearchResult>(response);
             return result;
         }
 
         public async Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId)
         {
-            const string resourceEndpoint = "/Resource/";
-            var requestUrl = learningHubApiBaseUrl + resourceEndpoint + resourceReferenceId;
-
-            var response = await client.GetStringAsync(requestUrl);
+            var response = await client.GetStringAsync($"/Resource/{resourceReferenceId}");
             var result = JsonConvert.DeserializeObject<ResourceReferenceWithReferenceDetails>(response);
             return result;
         }
@@ -71,17 +64,14 @@
             IEnumerable<int>? resourceReferenceIds = null
         )
         {
-            const string bulkEndpoint = "/Resource/Bulk";
-            var endpointPath = learningHubApiBaseUrl + bulkEndpoint;
-            var requestUrl = GetUrlWithResourceReferenceIdQueryParams(endpointPath, resourceReferenceIds);
+            var queryParams = GetBulkResourcesQueryParams(resourceReferenceIds);
 
-            var response = await client.GetStringAsync(requestUrl);
+            var response = await client.GetStringAsync($"/Resource/Bulk{queryParams}");
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
         }
 
-        private static string GetUrlWithSearchQueryParams(
-            string endpointPath,
+        private static string GetSearchQueryParams(
             string text,
             int? offset = null,
             int? limit = null,
@@ -93,34 +83,33 @@
             var limitQueryString = GetQueryString("limit", limit.ToString());
             var resourceTypesQueryString = GetMultipleQueryStrings("resourceTypes", resourceTypes);
 
-            var requestUrl =
-                $"{endpointPath}?{textQueryString}{offSetQueryString}{limitQueryString}{resourceTypesQueryString}";
+            var queryParams =
+                $"{textQueryString}{offSetQueryString}{limitQueryString}{resourceTypesQueryString}";
 
-            requestUrl = GetUrlWithoutLastCharacter(requestUrl);
+            queryParams = GetStringWithoutLastCharacter(queryParams);
 
-            return requestUrl;
+            return queryParams;
         }
 
-        private static string GetUrlWithResourceReferenceIdQueryParams(
-            string endpointPath,
+        private static string GetBulkResourcesQueryParams(
             IEnumerable<int>? resourceIds = null
         )
         {
             if (resourceIds == null)
             {
-                return endpointPath;
+                return string.Empty;
             }
 
-            var requestUrl = endpointPath + "?";
+            var queryParams = "?";
 
             foreach (var resourceId in resourceIds)
             {
-                requestUrl = requestUrl + "resourceReferenceIds=" + resourceId + "&";
+                queryParams += "resourceReferenceIds=" + resourceId + "&";
             }
 
-            requestUrl = GetUrlWithoutLastCharacter(requestUrl);
+            queryParams = GetStringWithoutLastCharacter(queryParams);
 
-            return requestUrl;
+            return queryParams;
         }
 
         private static string GetMultipleQueryStrings(string key, IEnumerable<string>? values)
@@ -145,9 +134,9 @@
             return string.IsNullOrEmpty(value) ? "" : $"{key}={value}&";
         }
 
-        private static string GetUrlWithoutLastCharacter(string url)
+        private static string GetStringWithoutLastCharacter(string input)
         {
-            return url.Remove(url.Length - 1, 1);
+            return input.Remove(input.Length - 1, 1);
         }
     }
 }
