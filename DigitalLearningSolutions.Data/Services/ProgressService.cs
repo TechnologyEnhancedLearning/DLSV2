@@ -8,6 +8,7 @@
     public interface IProgressService
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
+
         void UpdateCompletionDate(int progressId, DateTime? completionDate);
     }
 

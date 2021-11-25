@@ -59,7 +59,11 @@
 
             // Then
             A.CallTo(
-                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(progressId, newSupervisorId, A<DateTime?>._)
+                () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
+                    progressId,
+                    newSupervisorId,
+                    A<DateTime?>._
+                )
             ).MustHaveHappened();
             A.CallTo(
                 () => progressDataService.ClearAspProgressVerificationRequest(progressId)

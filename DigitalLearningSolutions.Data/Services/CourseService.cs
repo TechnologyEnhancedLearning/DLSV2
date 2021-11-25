@@ -1,11 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public interface ICourseService
@@ -68,8 +66,6 @@
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
-
-
     }
 
     public class CourseService : ICourseService
@@ -223,7 +219,8 @@
             return courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId);
+                categoryId
+            );
         }
 
         public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(

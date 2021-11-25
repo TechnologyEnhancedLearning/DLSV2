@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -56,7 +55,11 @@
             try
             {
                 courseDelegatesData =
-                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, adminCategoryId, customisationId);
+                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                        centreId,
+                        adminCategoryId,
+                        customisationId
+                    );
             }
             catch (CourseNotFoundException)
             {
