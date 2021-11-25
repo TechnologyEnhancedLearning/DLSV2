@@ -52,6 +52,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/EditDescription", "Edit description for Activities worker or coordinator group (optional)")]
+        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
 
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",

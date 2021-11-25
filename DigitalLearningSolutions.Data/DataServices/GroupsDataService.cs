@@ -45,6 +45,8 @@
         Group? GetGroupAtCentreById(int groupId, int centreId);
 
         void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
+
+        void UpdateGroupName(int groupId, int centreId, string groupName);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -329,6 +331,17 @@
                         GroupDescription = @groupDescription
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupDescription, groupId, centreId }
+            );
+        }
+
+        public void UpdateGroupName(int groupId, int centreId, string groupName)
+        {
+            connection.Execute(
+                @"UPDATE Groups
+                    SET
+                        GroupLabel = @groupName
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupName, groupId, centreId }
             );
         }
     }
