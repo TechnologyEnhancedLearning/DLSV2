@@ -379,7 +379,7 @@
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
                         END AS TutorialID,
-                        tu.TutorialName
+                        tu.TutorialName,
                         tu.DiagAssessOutOf AS Possible
                     FROM dbo.Tutorials AS tu
                     LEFT JOIN dbo.CustomisationTutorials AS ct
@@ -387,7 +387,7 @@
                     WHERE tu.SectionID = @sectionId
                     AND ct.CustomisationID = @customisationId
                     AND tu.ArchivedDate IS NULL
-                    AND (@isPostLearning OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
+                    AND (@isPostLearning = 1 OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
                 new { sectionId, customisationId, isPostLearning }
             );
         }

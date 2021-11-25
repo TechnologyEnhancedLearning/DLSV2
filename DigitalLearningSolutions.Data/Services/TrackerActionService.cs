@@ -43,8 +43,9 @@
                 return null;
             }
 
-            var ccObjectives = new List<CcObjective>();
-
+            var ccObjectives = tutorialContentDataService
+                .GetNonArchivedCcObjectivesBySectionAndCustomisationId(sectionId.Value, customisationId.Value, isPostLearning.Value)
+                .ToList();
 
             return ccObjectives.Any() ? new TrackerObjectiveArrayCc(ccObjectives) : null;
         }

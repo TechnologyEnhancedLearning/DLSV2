@@ -82,5 +82,69 @@
             // then
             result.Should().Be(null);
         }
+
+        [Test]
+        public void GetObjectiveArrayCc_returns_results_in_specified_json_format()
+        {
+            // given
+            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(1, 1, true))
+                .Returns(
+                    new[]
+                    {
+                        new CcObjective(1, "name1", 4),
+                        new CcObjective(1, "name2", 0),
+                    }
+                );
+
+            // when
+            var result = trackerActionService.GetObjectiveArrayCc(1, 1, true);
+
+            // then
+            result.Should().BeEquivalentTo(
+                new TrackerObjectiveArrayCc(
+                    new[]
+                    {
+                        new CcObjective(1, "name1", 4),
+                        new CcObjective(1, "name2", 0),
+                    }
+                )
+            );
+        }
+
+        [Test]
+        public void GetObjectiveArrayCc_returns_empty_object_json_if_no_results_found()
+        {
+            // given
+            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(A<int>._, A<int>._, A<bool>._))
+                .Returns(new List<CcObjective>());
+
+            // when
+            var result = trackerActionService.GetObjectiveArrayCc(1, 1, true);
+
+            // then
+            result.Should().Be(null);
+        }
+
+        [Test]
+        [TestCase(null, null, null)]
+        [TestCase(null, 1, true)]
+        [TestCase(1, null, true)]
+        [TestCase(1, 1, null)]
+        public void GetObjectiveArrayCc_returns_null_if_parameter_missing(
+            int? customisationId,
+            int? sectionId,
+            bool? isPostLearning
+        )
+        {
+            // given
+            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(A<int>._, A<int>._, A<bool>._))
+                .Returns(new[] { new CcObjective(1, "name", 9) });
+
+            // when
+            var result = trackerActionService.GetObjectiveArrayCc(customisationId, sectionId, isPostLearning);
+
+            // then
+            result.Should().Be(null);
+        }
     }
 }
