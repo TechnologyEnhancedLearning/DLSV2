@@ -3,8 +3,6 @@
 @{
     ViewData["Title"] = "Review Profile Assessment";
     ViewData["Application"] = "Supervisor";
-    var questionLabel = string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
-                        Model.DelegateSelfAssessment.QuestionLabel;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -67,7 +65,8 @@
             @competencyGroup.First().Vocabulary
           </th>
           <th role="columnheader" class="" scope="col">
-            @questionLabel
+            @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
+                        Model.DelegateSelfAssessment.QuestionLabel)
           </th>
           <th role="columnheader" class="" scope="col">
             Learner<br />Response

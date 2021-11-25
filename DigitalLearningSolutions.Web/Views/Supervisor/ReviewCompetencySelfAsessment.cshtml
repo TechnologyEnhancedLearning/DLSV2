@@ -1,9 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var descriptionLabel = string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.DescriptionLabel) ? "Description" :
-                           Model.DelegateSelfAssessment.DescriptionLabel;
+    var errorHasOccurred = !ViewData.ModelState.IsValid;    
     ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
     ViewData["Application"] = "Supervisor";
 }
@@ -28,11 +26,11 @@
                asp-action="ReviewDelegateSelfAssessment"
                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
                asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName )
             </a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0,32) + "..." : Model.Competency.Name )
+            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0, 32) + "..." : Model.Competency.Name )
           </li>
         </ol>
       </div>
@@ -64,7 +62,8 @@
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-      @descriptionLabel
+      @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.DescriptionLabel) ? "Description" :
+                           Model.DelegateSelfAssessment.DescriptionLabel)
     </dt>
     <dd class="nhsuk-summary-list__value">
       @Html.Raw(Model.Competency.Description)
@@ -73,7 +72,8 @@
   }
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    Question
+    @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
+    Model.DelegateSelfAssessment.DescriptionLabel) 
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.Competency.AssessmentQuestions.First().Question
