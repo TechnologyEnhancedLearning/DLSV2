@@ -12,7 +12,8 @@
         @Model.First().Vocabulary
       </th>
       <th role="columnheader" class="" scope="col">
-        Question
+        @(string.IsNullOrWhiteSpace(Model.FirstOrDefault().QuestionLabel) ?
+                          "Question" : Model.FirstOrDefault().QuestionLabel)
       </th>
       <th role="columnheader" class="" scope="col">
         Self-assessment

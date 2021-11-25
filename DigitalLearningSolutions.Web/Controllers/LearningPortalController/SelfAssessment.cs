@@ -168,6 +168,7 @@
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             foreach (var competency in competencies)
             {
+                competency.QuestionLabel = assessment.QuestionLabel;
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
                     if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
@@ -184,6 +185,7 @@
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
                 SupervisorSignOffs = supervisorSignOffs
             };
+            
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
 
