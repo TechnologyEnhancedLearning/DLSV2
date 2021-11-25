@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.ForgotPassword
 {
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -51,24 +51,24 @@
         }
 
         [Test]
-        public void Successful_email_submission_should_render_confirm_page()
+        public async Task Successful_email_submission_should_render_confirm_page()
         {
             // Given
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._))
-                .DoesNothing();
+                .Returns(Task.CompletedTask);
 
             // When
-            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
+            var result = await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
 
         [Test]
-        public void Email_submission_should_call_password_reset_service()
+        public async Task Email_submission_should_call_password_reset_service()
         {
             // When
-            controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
+            await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._))
@@ -76,7 +76,7 @@
         }
 
         [Test]
-        public void Bad_email_submission_should_render_basic_form_with_error()
+        public async Task Bad_email_submission_should_render_basic_form_with_error()
         {
             string errorMessage = "No user account could be found with the specified email address";
 
@@ -85,7 +85,7 @@
                 .Throws(new UserAccountNotFoundException(errorMessage));
 
             // When
-            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
+            var result = await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName()
@@ -94,31 +94,32 @@
         }
 
         [Test]
-        public void Bad_database_insertion_should_render_unknown_error_page()
+        public async Task Bad_database_insertion_should_render_unknown_error_page()
         {
             // Given
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._))
                 .Throws(new ResetPasswordInsertException("DB Insert failed"));
 
             // When
-            var result = controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
+            var result = await controller.Index(new ForgotPasswordViewModel("recipient@example.com"));
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(500);
         }
 
         [Test]
-        public void Leading_trailing_whitespaces_in_email_should_be_ignored()
+        public async Task Leading_trailing_whitespaces_in_email_should_be_ignored()
         {
             // Given
             A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink(A<string>._, A<string>._))
-                .DoesNothing();
+                .Returns(Task.CompletedTask);
 
             // When
-            var result = controller.Index(new ForgotPasswordViewModel("  recipient@example.com\t"));
+            var result = await controller.Index(new ForgotPasswordViewModel("  recipient@example.com\t"));
 
             // Then
-            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", A<string>._)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", A<string>._))
+                .MustHaveHappened(1, Times.Exactly);
             result.Should().BeRedirectToActionResult().WithActionName("Confirm");
         }
     }

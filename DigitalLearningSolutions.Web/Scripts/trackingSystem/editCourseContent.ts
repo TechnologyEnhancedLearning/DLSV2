@@ -1,4 +1,4 @@
-import { selectAll, deselectAll } from '../common';
+import * as Checkboxes from '../checkboxes';
 
 function setUpSelectAllButtons() {
   const submits = Array.from(
@@ -9,7 +9,7 @@ function setUpSelectAllButtons() {
     element.addEventListener('click', (e) => {
       e.preventDefault();
       const checkboxSelectorClass = `.${element.value.replace('select-all', 'checkbox')}`;
-      selectAll(checkboxSelectorClass);
+      Checkboxes.default.selectAll(checkboxSelectorClass);
     });
   });
 }
@@ -23,7 +23,7 @@ function setUpDeselectAllButtons() {
     element.addEventListener('click', (e) => {
       e.preventDefault();
       const checkboxSelectorClass = `.${element.value.replace('deselect-all', 'checkbox')}`;
-      deselectAll(checkboxSelectorClass);
+      Checkboxes.default.deselectAll(checkboxSelectorClass);
     });
   });
 }

@@ -1,13 +1,22 @@
-import Chartist from 'chartist';
+import Chartist, { IChartistData } from 'chartist';
 import getPathForEndpoint from '../common';
 
 // These constants are used in _ActivityTable.cshtml
 const toggleableActivityButtonId = 'js-toggle-row-button';
 const toggleableActivityRowClass = 'js-toggleable-activity-row';
 
+// These constants are used in /Views/TrackingSystem/Centre/Reports/Index.cshtml
+const activityGraphId = 'activity-graph';
+const activityGraphDataErrorId = 'activity-graph-data-error';
+
 const path = getPathForEndpoint('TrackingSystem/Centre/Reports/Data');
 const activityToggleableRowDisplayNone = 'none';
 const activityToggleableRowDisplayTableRow = 'table-row';
+
+const mobileMaxNumberOfEntriesForActivityGraph = 17;
+const desktopMaxNumberOfEntriesForActivityGraph = 31;
+
+let chartData: IChartistData;
 
 interface IActivityDataRowModel {
   period: string;
@@ -26,16 +35,33 @@ function constructChartistData(data: Array<IActivityDataRowModel>): Chartist.ICh
   return { labels, series };
 }
 
-function generateChart(request: XMLHttpRequest) {
+function saveChartData(request: XMLHttpRequest) {
   let { response } = request;
   // IE does not support automatic parsing to JSON with XMLHttpRequest.responseType
   // so we need to manually parse the JSON string if not already parsed
   if (typeof request.response === 'string') {
     response = JSON.parse(response);
   }
-  const data = constructChartistData(response);
+  chartData = constructChartistData(response);
+}
 
+function drawChartOrDataPointMessage() {
+  const numberOfEntries = chartData.labels?.length;
+  const mediaQuery = window.matchMedia('(min-width: 641px)');
+  const maxNumberOfEntriesForGraph = mediaQuery.matches
+    ? desktopMaxNumberOfEntriesForActivityGraph
+    : mobileMaxNumberOfEntriesForActivityGraph;
+
+  if (numberOfEntries !== undefined && numberOfEntries <= maxNumberOfEntriesForGraph) {
+    drawChart();
+  } else {
+    displayTooManyDataPointsMessage();
+  }
+}
+
+function drawChart() {
   const options = {
+    fullWidth: true,
     axisY: {
       scaleMinSpace: 10,
       onlyInteger: true,
@@ -45,7 +71,7 @@ function generateChart(request: XMLHttpRequest) {
     },
   };
 
-  const chart = new Chartist.Line('.ct-chart', data, options);
+  const chart = new Chartist.Line('.ct-chart', chartData, options);
 
   chart.on('draw',
     // The type here is Chartist.ChartDrawData, but the type specification is missing getNode()
@@ -68,6 +94,38 @@ function generateChart(request: XMLHttpRequest) {
         });
       }
     });
+
+  const dataPointErrorContainer = getActivityGraphDataErrorElement();
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = true;
+    dataPointErrorContainer.style.display = 'none';
+  }
+  const chartContainer = getActivityGraphElement();
+  if (chartContainer !== null) {
+    chartContainer.hidden = false;
+    chartContainer.style.display = 'block';
+  }
+}
+
+function displayTooManyDataPointsMessage() {
+  const dataPointErrorContainer = getActivityGraphDataErrorElement();
+  if (dataPointErrorContainer !== null) {
+    dataPointErrorContainer.hidden = false;
+    dataPointErrorContainer.style.display = 'block';
+  }
+  const chartContainer = getActivityGraphElement();
+  if (chartContainer !== null) {
+    chartContainer.hidden = true;
+    chartContainer.style.display = 'none';
+  }
+}
+
+function getActivityGraphElement(): HTMLElement | null {
+  return document.getElementById(activityGraphId);
+}
+
+function getActivityGraphDataErrorElement(): HTMLElement | null {
+  return document.getElementById(activityGraphDataErrorId);
 }
 
 function toggleVisibleActivityRows() {
@@ -106,11 +164,12 @@ function viewLessRows(): void {
   });
 }
 
-function makeChartistRequest() {
+function fetchChartDataAndDrawGraph() {
   const request = new XMLHttpRequest();
 
   request.onload = () => {
-    generateChart(request);
+    saveChartData(request);
+    drawChartOrDataPointMessage();
   };
 
   request.open('GET', path, true);
@@ -133,4 +192,5 @@ function setUpToggleActivityRowsButton() {
 
 setUpToggleActivityRowsButton();
 viewLessRows();
-makeChartistRequest();
+fetchChartDataAndDrawGraph();
+window.onresize = drawChartOrDataPointMessage;
