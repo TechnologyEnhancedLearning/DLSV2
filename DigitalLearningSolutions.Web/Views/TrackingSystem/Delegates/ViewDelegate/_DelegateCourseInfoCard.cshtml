@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @model DelegateCourseInfoViewModel
 
 <div class="nhsuk-expander-group" id="@Model.CustomisationId-card">
@@ -25,7 +26,12 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Supervisor" />
           <dd class="nhsuk-summary-list__actions">
-            <a href="#">Edit<span class="nhsuk-u-visually-hidden"> supervisor</span></a>
+            <a asp-controller="DelegateProgress"
+               asp-action="EditSupervisor"
+               asp-route-progressId="@Model.ProgressId"
+               asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+              Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
+            </a>
           </dd>
         </div>
 
@@ -135,9 +141,24 @@
           </div>
         }
       </dl>
-
+      <a class="nhsuk-button"
+         role="button"
+         asp-controller="DelegateProgress"
+         asp-action="Index"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+        View progress
+      </a>
       <a class="nhsuk-button nhsuk-button--secondary" role="button">See learning log</a>
-      <a class="nhsuk-button delete-button" role="button">Remove</a>
+      <a
+        class="nhsuk-button delete-button"
+        role="button"
+        asp-controller="ViewDelegate"
+        asp-action="ConfirmRemoveFromCourse"
+        asp-route-delegateId="@Model.DelegateId"
+        asp-route-customisationId="@Model.CustomisationId">
+        Remove
+      </a>
     </div>
   </details>
 </div>

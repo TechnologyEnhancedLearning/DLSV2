@@ -141,6 +141,10 @@
                 DelegateSelfAssessment = delegateSelfAssessment,
                 CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
             };
+            if (superviseDelegate.CandidateID != null)
+            {
+                model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(delegateSelfAssessment.SelfAssessmentID, (int)superviseDelegate.CandidateID);
+            }
             return View("ReviewSelfAssessment", model);
         }
 
@@ -449,6 +453,23 @@
             supervisorService.UpdateCandidateAssessmentSupervisorVerificationById(model.CandidateAssessmentSupervisorVerificationId, model.SupervisorComments, model.SignedOff);
             frameworkNotificationService.SendProfileAssessmentSignedOff(supervisorDelegateId, candidateAssessmentId, model.SupervisorComments, model.SignedOff, GetAdminID());
             return RedirectToAction("ReviewDelegateSelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "Review" });
+        }
+        [Route("/Supervisor/Staff/{supervisorDelegateId:int}/ProfileAssessment/{candidateAssessmentId}/SignOffHistory")]
+        public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+            var delegateSelfAssessment = supervisorService.GetSelfAssessmentBaseByCandidateAssessmentId(candidateAssessmentId);
+            var model = new SignOffHistoryViewModel()
+            {
+                DelegateSelfAssessment = delegateSelfAssessment,
+                SupervisorDelegateDetail = superviseDelegate
+            };
+            if (superviseDelegate.CandidateID != null)
+            {
+                model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(delegateSelfAssessment.SelfAssessmentID, (int)superviseDelegate.CandidateID);
+            }
+            return View("SignOffHistory", model);
         }
     }
 }

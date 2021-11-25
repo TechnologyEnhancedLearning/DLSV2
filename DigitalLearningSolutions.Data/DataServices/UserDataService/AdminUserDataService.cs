@@ -132,7 +132,8 @@
                         au.IsWorkforceContributor,
                         au.IsLocalWorkforceManager,
                         au.ImportOnly,
-                        au.FailedLoginCount
+                        au.FailedLoginCount,
+                        au.ResetPasswordId
                     FROM AdminUsers AS au
                     INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     LEFT JOIN CourseCategories AS cc ON cc.CourseCategoryID = au.CategoryID
@@ -254,6 +255,17 @@
                         WHERE AdminID = @adminId",
                     new { adminId, updatedCount}
                 );
+        }
+
+        public void DeactivateAdmin(int adminId)
+        {
+            connection.Execute(
+                @"UPDATE AdminUsers
+                        SET
+                            Active = 0
+                        WHERE AdminID = @adminId",
+                new { adminId }
+            );
         }
     }
 }

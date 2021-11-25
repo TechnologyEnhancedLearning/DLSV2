@@ -58,13 +58,16 @@
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
 
             // Then
-            Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com")
+            Assert.ThrowsAsync<UserAccountNotFoundException>(
+                async () => await passwordResetService.GenerateAndSendPasswordResetLink(
+                    "recipient@example.com",
+                    "example.com"
+                )
             );
         }
 
         [Test]
-        public void Trying_to_send_password_reset_sends_email()
+        public async Task Trying_to_send_password_reset_sends_email()
         {
             // Given
             var emailAddress = "recipient@example.com";
@@ -76,7 +79,7 @@
                 .Returns((adminUser, new List<DelegateUser>()));
 
             // When
-            passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
+            await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
 
             // Then
             A.CallTo(
@@ -90,6 +93,30 @@
                                     e.Subject == "Digital Learning Solutions Tracking System Password Reset"
                             )
                         )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Requesting_password_reset_clears_previous_hashes()
+        {
+            // Given
+            var emailAddress = "recipient@example.com";
+            var resetPasswordId = 1;
+            var adminUser = Builder<AdminUser>.CreateNew()
+                .With(user => user.ResetPasswordId = resetPasswordId)
+                .Build();
+
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
+                .Returns((adminUser, new List<DelegateUser>()));
+
+            // When
+            await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
+
+            // Then
+            A.CallTo(
+                    () =>
+                        passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId)
                 )
                 .MustHaveHappened();
         }
@@ -166,7 +193,7 @@
         }
 
         [Test]
-        public async Task Removes_reset_password_for_exact_users_matching_email()
+        public async Task InvalidateResetPasswordForEmailAsync_removes_reset_password_for_exact_users_matching_email()
         {
             // Given
             var users = (
@@ -187,31 +214,60 @@
         }
 
         [Test]
-        public void Trying_get_null_user_when_generating_welcome_email_should_throw_an_exception()
+        public void GenerateAndSendDelegateWelcomeEmail_with_null_user_should_throw_an_exception()
         {
             // Given
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
 
             // Then
             Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail("recipient@example.com", "example.com")
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                    "recipient@example.com",
+                    "A1",
+                    "example.com"
+                )
             );
         }
 
         [Test]
-        public void Trying_to_send_password_reset_when_generating_welcome_email_sends_email()
+        public void GenerateAndSendDelegateWelcomeEmail_with_incorrect_candidate_number_should_throw_an_exception()
         {
             // Given
-            var emailAddress = "recipient@example.com";
+            const string emailAddress = "recipient@example.com";
+            const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
+                .Build();
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
+
+            // Then
+            Assert.Throws<UserAccountNotFoundException>(
+                () => passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                    "recipient@example.com",
+                    "IncorrectCandidateNumber",
+                    "example.com"
+                )
+            );
+        }
+
+        [Test]
+        public void GenerateAndSendDelegateWelcomeEmail_with_correct_details_sends_email()
+        {
+            // Given
+            const string emailAddress = "recipient@example.com";
+            const string candidateNumber = "A1";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
                 .Build();
 
             A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
                 .Returns(new List<DelegateUser> { delegateUser });
 
             // When
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, "example.com");
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(emailAddress, candidateNumber, "example.com");
 
             // Then
             A.CallTo(
@@ -230,14 +286,16 @@
         }
 
         [Test]
-        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email()
+        public void GenerateAndScheduleDelegateWelcomeEmail_schedules_email_with_correct_candidate_number()
         {
             // Given
             var deliveryDate = new DateTime(2200, 1, 1);
-            var emailAddress = "recipient@example.com";
-            var addedByProcess = "some process";
+            const string emailAddress = "recipient@example.com";
+            const string addedByProcess = "some process";
+            const string candidateNumber = "A1";
             var delegateUser = Builder<DelegateUser>.CreateNew()
                 .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
                 .Build();
 
             A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
@@ -246,6 +304,7 @@
             // When
             passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
                 emailAddress,
+                candidateNumber,
                 "example.com",
                 deliveryDate,
                 addedByProcess
@@ -269,6 +328,36 @@
                 .MustHaveHappened();
         }
 
+        [Test]
+        public void GenerateAndScheduleDelegateWelcomeEmail_throws_exception_with_incorrect_candidate_number()
+        {
+            // Given
+            var deliveryDate = new DateTime(2200, 1, 1);
+            const string emailAddress = "recipient@example.com";
+            const string addedByProcess = "some process";
+            const string candidateNumber = "A1";
+            var delegateUser = Builder<DelegateUser>.CreateNew()
+                .With(user => user.EmailAddress = emailAddress)
+                .With(user => user.CandidateNumber = candidateNumber)
+                .Build();
+
+            A.CallTo(() => userService.GetDelegateUsersByEmailAddress(emailAddress))
+                .Returns(new List<DelegateUser> { delegateUser });
+
+            // Then
+            Assert.Throws<UserAccountNotFoundException>(
+                () =>
+                    passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                        emailAddress,
+                        "IncorrectCandidateNumber",
+                        "example.com",
+                        deliveryDate,
+                        addedByProcess
+                    )
+            );
+        }
+
+        [Test]
         public void SendWelcomeEmailsToDelegates_schedules_emails_to_delegates()
         {
             // Given

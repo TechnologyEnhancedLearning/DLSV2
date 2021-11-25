@@ -1,10 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Security.Claims;
-    using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -12,74 +15,75 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/CourseDelegates")]
     public class CourseDelegatesController : Controller
     {
+        private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
         private readonly ICourseDelegatesService courseDelegatesService;
-        private readonly ICourseService courseService;
 
         public CourseDelegatesController(
-            ICourseDelegatesService courseDelegatesService,
-            ICourseService courseService
+            ICourseDelegatesService courseDelegatesService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
-            this.courseService = courseService;
         }
 
-        public IActionResult Index(int? customisationId = null)
+        [Route("{page:int=1}")]
+        public IActionResult Index(
+            int? customisationId = null,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string? filterBy = null,
+            string? filterValue = null,
+            int page = 1
+        )
         {
+            sortBy ??= DefaultSortByOptions.Name.PropertyName;
+            var newFilterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                CourseDelegatesFilterCookieName
+            );
+
             var centreId = User.GetCentreId();
-            int? categoryId = User.GetAdminCategoryId()!.Value;
-            // admins have a non-nullable category ID where 0 = all categories
-            categoryId = categoryId == 0 ? null : categoryId;
-            var courseDelegatesData =
-                courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, categoryId, customisationId);
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            CourseDelegatesData courseDelegatesData;
 
-            var model = new CourseDelegatesViewModel(courseDelegatesData);
-
-            return View(model);
-        }
-
-        [Route("DelegateProgress/{progressId:int}")]
-        public IActionResult DelegateProgress(int progressId)
-        {
-            var centreId = User.GetCentreId();
-            var courseDelegatesData =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
-
-            if (courseDelegatesData == null ||
-                !ProgressRecordIsAccessibleToUser(courseDelegatesData.DelegateCourseInfo, User))
+            try
+            {
+                courseDelegatesData =
+                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, adminCategoryId, customisationId);
+            }
+            catch (CourseNotFoundException)
             {
                 return NotFound();
             }
 
-            var model = new DelegateProgressViewModel(courseDelegatesData!);
+            var model = new CourseDelegatesViewModel(
+                courseDelegatesData,
+                "customisationId",
+                sortBy,
+                sortDirection,
+                newFilterBy,
+                page
+            );
+
+            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterBy);
             return View(model);
         }
 
-        private static bool ProgressRecordIsAccessibleToUser(DelegateCourseInfo details, ClaimsPrincipal user)
+        [Route("AllCourseDelegates/{customisationId:int}")]
+        public IActionResult AllCourseDelegates(int customisationId)
         {
-            var centreId = user.GetCentreId();
+            var centreId = User.GetCentreId();
+            var courseDelegates = courseDelegatesService.GetCourseDelegatesForCentre(customisationId, centreId);
 
-            if (details.DelegateCentreId != centreId)
-            {
-                return false;
-            }
+            var model = new AllCourseDelegatesViewModel(courseDelegates);
 
-            if (details.CustomisationCentreId != centreId && !details.AllCentresCourse)
-            {
-                return false;
-            }
-
-            var categoryId = user.GetAdminCategoryId()!.Value;
-
-            if (details.CourseCategoryId != categoryId && categoryId != 0)
-            {
-                return false;
-            }
-
-            return true;
+            return View(model);
         }
     }
 }

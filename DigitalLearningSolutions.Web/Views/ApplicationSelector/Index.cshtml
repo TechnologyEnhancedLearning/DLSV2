@@ -1,5 +1,4 @@
 ﻿@inject IConfiguration Configuration
-
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.ApplicationSelector
 @using Microsoft.Extensions.Configuration
@@ -87,6 +86,23 @@
             <a class="nhsuk-card__link" asp-controller="Frameworks" asp-action="Index">Frameworks</a>
           </h2>
           <p class="nhsuk-card__description">Create and distribute competency frameworks and role profiles.</p>
+        </div>
+      </div>
+    </div>
+  }
+  @if (Model.SuperAdminAccess) {
+    <div class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+      <div class="nhsuk-card nhsuk-card--clickable">
+        <div class="nhsuk-card__content">
+          <h2 class="nhsuk-card__heading nhsuk-heading-m">
+            <feature name="@(FeatureFlags.RefactoredSuperAdminInterface)">
+              <a class="nhsuk-card__link" asp-controller="Admins" asp-action="Index">Super admin</a>
+            </feature>
+            <feature name="@(FeatureFlags.RefactoredSuperAdminInterface)" negate="true">
+              <a class="nhsuk-card__link" href="@Configuration["CurrentSystemBaseUrl"]/tracking/admin-adminusers">Super admin</a>
+            </feature>
+          </h2>
+          <p class="nhsuk-card__description">Manage content and settings across the whole system.</p>
         </div>
       </div>
     </div>

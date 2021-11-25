@@ -15,6 +15,7 @@
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
         private TutorialContentTestHelper tutorialContentTestHelper = null!;
+        private ProgressTestHelper progressTestHelper = null!;
 
         [SetUp]
         public void SetUp()
@@ -22,6 +23,7 @@
             connection = ServiceTestHelper.GetDatabaseConnection();
             progressDataService = new ProgressDataService(connection);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
+            progressTestHelper = new ProgressTestHelper(connection);
         }
 
         [Test]
@@ -215,6 +217,29 @@
                     initialAspProgressIds.Count.Should()
                         .Be(resultAspProgressIds.Count);
                 }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void ClearAspProgressVerificationRequest_updates_aspProgress_records()
+        {
+            // Given
+            const int progressId = 285046;
+            const int aspProgressId = 8509834;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.ClearAspProgressVerificationRequest(progressId);
+                var result = progressTestHelper.GetSupervisorVerificationRequestedByAspProgressId(aspProgressId);
+
+                // Then
+                result.Should().BeNull();
             }
             finally
             {

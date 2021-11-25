@@ -26,7 +26,7 @@
         {
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = new DefaultHttpContext()
+                HttpContext = new DefaultHttpContext(),
             };
 
             return controller;
@@ -56,7 +56,7 @@
 
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = httpContext
+                HttpContext = httpContext,
             };
 
             return controller;
@@ -70,9 +70,9 @@
             var cookieCollection = A.Fake<IRequestCookieCollection>();
 
             var cookieList = new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>(cookieName, cookieValue)
-                };
+            {
+                new KeyValuePair<string, string>(cookieName, cookieValue),
+            };
 
             A.CallTo(() => cookieCollection[cookieName]).Returns(cookieValue);
             A.CallTo(() => cookieCollection.GetEnumerator()).Returns(cookieList.GetEnumerator());
@@ -103,10 +103,11 @@
                         new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
                         new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
                         new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
+                        new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
                         new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
                         new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
                         new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString())
+                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
                     },
                     authenticationType
                 )
@@ -158,7 +159,7 @@
 
             controller.ControllerContext = new ControllerContext
             {
-                HttpContext = httpContext
+                HttpContext = httpContext,
             };
 
             return controller;

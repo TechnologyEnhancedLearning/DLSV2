@@ -2,7 +2,10 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.ContractDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -10,6 +13,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("/TrackingSystem/Centre/ContractDetails")]
     public class ContractDetailsController : Controller
     {
@@ -33,7 +38,7 @@
             var centreId = User.GetCentreId();
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var numberOfCourses = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, 0);
+            var numberOfCourses = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(centreId, null);
 
             var model = new ContractDetailsViewModel(adminUsersAtCentre, centreDetails, numberOfCourses);
 

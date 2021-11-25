@@ -11,15 +11,8 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Edit course admin field";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit course admin field" : "Edit course admin field";
   var cancelLinkData = Html.GetRouteValues();
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 <div class="nhsuk-grid-row">

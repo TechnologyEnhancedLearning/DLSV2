@@ -15,7 +15,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Register;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement;
 
@@ -23,7 +22,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private const string CookieName = "RegistrationData";
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
@@ -296,17 +294,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private void SetDelegateRegistrationData(int? centreId, int? supervisorDelegateId, string? email)
         {
             var delegateRegistrationData = new DelegateRegistrationData(centreId, supervisorDelegateId, email);
-            var id = delegateRegistrationData.Id;
-
-            Response.Cookies.Append(
-                CookieName,
-                id.ToString(),
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
-                }
-            );
-
             TempData.Set(delegateRegistrationData);
         }
 

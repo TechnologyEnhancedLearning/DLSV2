@@ -19,7 +19,7 @@
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
-              <a href="#">
+              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
             }
@@ -32,7 +32,7 @@
           </dt>
           <partial name="_SummaryFieldValue" model="Model.Description" />
           <dd class="nhsuk-summary-list__actions">
-            <a href="#">
+            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id">
               Edit<span class="nhsuk-u-visually-hidden"> description</span>
             </a>
           </dd>
@@ -117,7 +117,7 @@
         View courses
       </a>
 
-      <a class="nhsuk-button delete-button expander-card__button" role="button">
+      <a class="nhsuk-button delete-button expander-card__button" role="button" asp-action="DeleteGroup" asp-route-groupId="@Model.Id">
         Delete group
       </a>
     </div>

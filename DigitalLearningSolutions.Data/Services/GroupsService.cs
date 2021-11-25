@@ -29,6 +29,10 @@
             int groupId,
             int? addedByAdminId = null
         );
+
+        void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
+
+        IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
     }
 
     public class GroupsService : IGroupsService
@@ -199,10 +203,28 @@
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
-                PopulateExisting = false
+                PopulateExisting = false,
             };
 
             return groupsDataService.AddDelegateGroup(groupDetails);
+        }
+
+        public void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
+        {
+            using var transaction = new TransactionScope();
+
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
+            groupsDataService.DeleteGroupDelegates(groupId);
+            groupsDataService.DeleteGroupCustomisations(groupId);
+            groupsDataService.DeleteGroup(groupId);
+
+            transaction.Complete();
+        }
+
+        public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
+        {
+            return groupsDataService.GetGroupCourses(groupId, centreId)
+                .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
@@ -223,7 +245,13 @@
 
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
-            groupsDataService.RemoveRelatedProgressRecordsForGroupDelegate(groupId, delegateId, clockService.UtcNow);
+            const bool removeStartedEnrolments = false;
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                removeStartedEnrolments,
+                clockService.UtcNow
+            );
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
@@ -239,19 +267,19 @@
             var linkToCourse = baseUrl + "/LearningMenu/" + course.CustomisationId;
             string emailBodyText = $@"
                 Dear {fullName}
-                This is an automated message to notify you that you have been enrolled on the course 
+                This is an automated message to notify you that you have been enrolled on the course
                 {course.CourseName}
                 by the system because a previous course completion has expired.
                 To login to the course directly click here:{linkToCourse}.
-                To login to the Learning Portal to access and complete your course click here: 
+                To login to the Learning Portal to access and complete your course click here:
                 {linkToLearningPortal}.";
             string emailBodyHtml = $@"
                 <p>Dear {fullName}</p>
-                <p>This is an automated message to notify you that you have been enrolled on the course 
-                <b>{course.CourseName}</b> 
+                <p>This is an automated message to notify you that you have been enrolled on the course
+                <b>{course.CourseName}</b>
                 by the system because a previous course completion has expired.</p>
                 <p>To login to the course directly <a href=""{linkToCourse}"">click here</a>.</p>
-                <p>To login to the Learning Portal to access and complete your course 
+                <p>To login to the Learning Portal to access and complete your course
                 <a href=""{linkToLearningPortal}"">click here</a>.</p>";
 
             if (completeByDate != null)
@@ -264,7 +292,7 @@
             var body = new BodyBuilder
             {
                 TextBody = emailBodyText,
-                HtmlBody = emailBodyHtml
+                HtmlBody = emailBodyHtml,
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);

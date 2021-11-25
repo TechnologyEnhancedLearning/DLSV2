@@ -2,9 +2,12 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using Microsoft.AspNetCore.Authorization;
@@ -13,6 +16,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
     [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
     public class CourseContentController : Controller
@@ -42,16 +47,16 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             )!;
 
             var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
                 customisationId,
-                courseDetails.ApplicationId
+                courseDetails!.ApplicationId
             );
             var model = new CourseContentViewModel(
                 customisationId,
@@ -68,11 +73,11 @@
         public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             )!;
             var section = sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(customisationId, sectionId);
 

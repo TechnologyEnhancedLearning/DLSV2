@@ -24,7 +24,7 @@
             // Then
             using (new AssertionScope())
             {
-                viewModel.AutoRefreshMonths.Should().Be("1 month < expiry");
+                viewModel.AutoRefreshMonths.Should().Be("1 month before expiry");
                 viewModel.CompleteWithinMonths.Should().Be("1 month");
                 viewModel.CompletionValidFor.Should().Be("1 month");
             }
@@ -46,7 +46,7 @@
             // Then
             using (new AssertionScope())
             {
-                viewModel.AutoRefreshMonths.Should().Be("0 months < expiry");
+                viewModel.AutoRefreshMonths.Should().Be("0 months before expiry");
                 viewModel.CompleteWithinMonths.Should().BeNull();
                 viewModel.CompletionValidFor.Should().BeNull();
             }
@@ -68,7 +68,7 @@
             // Then
             using (new AssertionScope())
             {
-                viewModel.AutoRefreshMonths.Should().Be("2 months < expiry");
+                viewModel.AutoRefreshMonths.Should().Be("2 months before expiry");
                 viewModel.CompleteWithinMonths.Should().Be("2 months");
                 viewModel.CompletionValidFor.Should().Be("2 months");
             }

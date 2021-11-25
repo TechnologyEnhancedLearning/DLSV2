@@ -12,20 +12,20 @@
     {
         private readonly string genericEmailBodyHtml = @"
                 <p>Dear newFirst newLast</p>
-                <p>This is an automated message to notify you that you have been enrolled on the course 
-                <b>application - customisation</b> 
+                <p>This is an automated message to notify you that you have been enrolled on the course
+                <b>application - customisation</b>
                 by the system because a previous course completion has expired.</p>
                 <p>To login to the course directly <a href=""baseUrl/LearningMenu/13"">click here</a>.</p>
-                <p>To login to the Learning Portal to access and complete your course 
+                <p>To login to the Learning Portal to access and complete your course
                 <a href=""baseUrl/LearningPortal/Current"">click here</a>.</p>";
 
         private readonly string genericEmailBodyText = @"
                 Dear newFirst newLast
-                This is an automated message to notify you that you have been enrolled on the course 
+                This is an automated message to notify you that you have been enrolled on the course
                 application - customisation
                 by the system because a previous course completion has expired.
                 To login to the course directly click here:baseUrl/LearningMenu/13.
-                To login to the Learning Portal to access and complete your course click here: 
+                To login to the Learning Portal to access and complete your course click here:
                 baseUrl/LearningPortal/Current.";
 
         [Test]
@@ -37,7 +37,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -77,7 +77,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -117,7 +117,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -157,7 +157,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -198,7 +198,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -238,7 +238,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -280,7 +280,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -319,7 +319,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -353,7 +353,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -387,7 +387,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -421,7 +421,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -457,7 +457,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 
@@ -488,7 +488,7 @@
             // When
             groupsService.EnrolDelegateOnGroupCourses(
                 reusableDelegateDetails,
-                reusableAccountDetailsData,
+                reusableMyAccountDetailsData,
                 1
             );
 

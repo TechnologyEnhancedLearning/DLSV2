@@ -9,12 +9,12 @@
         public readonly string Description;
         public readonly int Id;
         public readonly bool IncludesSignposting;
-        public readonly bool IsSupervisorResultsReviewed;
-        public readonly string Name;
-        public readonly string? UserBookmark;
-        public readonly bool UnprocessedUpdates;
-        public readonly bool LinearNavigation;
         public readonly bool IsSupervised;
+        public readonly bool IsSupervisorResultsReviewed;
+        public readonly bool LinearNavigation;
+        public readonly string Name;
+        public readonly bool UnprocessedUpdates;
+        public readonly string? UserBookmark;
         public readonly string VocabPlural;
         public readonly string? Vocabulary;
 
@@ -31,6 +31,7 @@
             UnprocessedUpdates = selfAssessment.UnprocessedUpdates;
             LinearNavigation = selfAssessment.LinearNavigation;
             IsSupervised = selfAssessment.IsSupervised;
+            IsSupervisorResultsReviewed = selfAssessment.IsSupervisorResultsReviewed;
             Supervisors = supervisors;
             Vocabulary = selfAssessment.Vocabulary;
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary);

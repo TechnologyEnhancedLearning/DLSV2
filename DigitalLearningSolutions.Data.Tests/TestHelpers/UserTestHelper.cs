@@ -170,7 +170,7 @@
             return users.Single();
         }
 
-        public static AccountDetailsData GetDefaultAccountDetailsData(
+        public static MyAccountDetailsData GetDefaultAccountDetailsData(
             int? adminId = null,
             int? delegateId = null,
             string password = "password",
@@ -180,7 +180,7 @@
             byte[]? profileImage = null
         )
         {
-            return new AccountDetailsData(
+            return new MyAccountDetailsData(
                 adminId,
                 delegateId,
                 password,

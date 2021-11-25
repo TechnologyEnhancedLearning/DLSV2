@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -16,15 +18,17 @@
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
+        private IProgressDataService progressDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseDataService = A.Fake<ICourseDataService>();
-            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(CentreId, AdminCategoryId))
+            A.CallTo(() => courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(CentreId, AdminCategoryId))
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
-            courseService = new CourseService(courseDataService, courseAdminFieldsService);
+            progressDataService = A.Fake<IProgressDataService>();
+            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService);
         }
 
         [Test]
@@ -65,7 +69,7 @@
                     CentreId = CentreId,
                     Active = true,
                     DelegateCount = 100,
-                    CompletedCount = 41
+                    CompletedCount = 41,
                 },
                 new CourseStatistics
                 {
@@ -73,7 +77,7 @@
                     CentreId = CentreId,
                     Active = false,
                     DelegateCount = 50,
-                    CompletedCount = 30
+                    CompletedCount = 30,
                 },
                 new CourseStatistics
                 {
@@ -81,8 +85,8 @@
                     CentreId = CentreId + 1,
                     Active = true,
                     DelegateCount = 500,
-                    CompletedCount = 99
-                }
+                    CompletedCount = 99,
+                },
             };
         }
 
@@ -99,19 +103,17 @@
                 .Returns(attemptStatsReturnedByDataService);
 
             // When
-            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
+            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
 
             // Then
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
-                    customisationId,
-                    CentreId,
-                    false
+                    customisationId
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(delegateId, customisationId))
-                .MustHaveHappened(1, Times.Exactly);
+                .MustHaveHappenedOnceExactly();
             results.DelegateCourseInfo.Should().BeEquivalentTo(info);
             results.AttemptStats.Should().Be(attemptStatsReturnedByDataService);
         }
@@ -125,52 +127,135 @@
                 { CustomisationId = customisationId, IsAssessed = false };
 
             // When
-            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info, CentreId);
+            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
 
             // Then
             A.CallTo(
                 () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                     info,
-                    customisationId,
-                    CentreId,
-                    false
+                    customisationId
                 )
-            ).MustHaveHappened(1, Times.Exactly);
+            ).MustHaveHappenedOnceExactly();
             A.CallTo(() => courseDataService.GetDelegateCourseAttemptStats(A<int>._, A<int>._)).MustNotHaveHappened();
             result.DelegateCourseInfo.Should().BeEquivalentTo(info);
             result.AttemptStats.Should().BeEquivalentTo(new AttemptStats(0, 0));
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_call_correct_data_service_method()
+        public void VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_and_categoryId_match()
         {
             // Given
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .Returns(true);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_return_false_with_incorrect_ids()
+        public void
+            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .Returns(false);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 1);
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
 
             // Then
-            A.CallTo(() => courseDataService.DoesCourseExistAtCentre(A<int>._, A<int>._, A<int>._))
-                .MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_centre()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((2, 2));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_categoryID()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((1, 1));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void RemoveDelegateFromCourse_removes_delegate_from_course()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+            );
+
+            // When
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeTrue();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>()
+            );
+
+            // When
+            var result =
+                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+
+            // then
+            result.Should().BeFalse();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((null, null));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -183,6 +268,9 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._,
                     A<bool>._
                 )
             ).DoesNothing();
@@ -191,8 +279,151 @@
             courseService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
 
             // Then
-            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true))
+            A.CallTo(() => courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 0, 0, false))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCourseOptionAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var courseOptions = new List<Course>();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courseOptions);
+
+            // When
+            var result = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappened();
+            result.Should().BeEquivalentTo(courseOptions);
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const int centreId = 101;
+            const int applicationId = 1;
+
+            // When
+            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.DoesCourseNameExistAtCentre(
+                        customisationId,
+                        customisationName,
+                        centreId,
+                        applicationId
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateCourseDetails_calls_data_service()
+        {
+            // Given
+            const int customisationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const string notificationEmails = "hello@test.com";
+            const bool isAssessed = true;
+            const int tutCompletionThreshold = 0;
+            const int diagCompletionThreshold = 0;
+
+            A.CallTo(
+                () => courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                )
+            ).DoesNothing();
+
+            // When
+            courseService.UpdateCourseDetails(
+                customisationId,
+                customisationName,
+                password,
+                notificationEmails,
+                isAssessed,
+                tutCompletionThreshold,
+                diagCompletionThreshold
+            );
+
+            // Then
+            A.CallTo(
+                    () => courseDataService.UpdateCourseDetails(
+                        customisationId,
+                        customisationName,
+                        password,
+                        notificationEmails,
+                        isAssessed,
+                        tutCompletionThreshold,
+                        diagCompletionThreshold
+                    )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetAllCoursesForDelegate_returns_only_courses_at_centre_or_all_centres_courses()
+        {
+            // Given
+            const int delegateId = 1;
+            const int centreId = 1;
+            const int categoryId = 1;
+            var delegateCourseInfoAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = centreId, CourseCategoryId = categoryId };
+            var delegateCourseInfoNotAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = 1000, CourseCategoryId = categoryId };
+            var allCentresCourseInfoNotAtCentre = new DelegateCourseInfo
+                { CustomisationCentreId = 1000, CourseCategoryId = categoryId, AllCentresCourse = true };
+            A.CallTo(() => courseDataService.GetDelegateCoursesInfo(delegateId))
+                .Returns(
+                    new[] { delegateCourseInfoAtCentre, delegateCourseInfoNotAtCentre, allCentresCourseInfoNotAtCentre }
+                );
+
+            // When
+            var result = courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryId).ToList();
+
+            // Then
+            result.Count.Should().Be(2);
+            result.All(
+                x => x.DelegateCourseInfo.CustomisationCentreId == centreId || x.DelegateCourseInfo.AllCentresCourse
+            ).Should().BeTrue();
+        }
+
+        [Test]
+        public void GetAllCoursesInCategoryForDelegate_filters_courses_by_category()
+        {
+            // Given
+            var info1 = new DelegateCourseInfo
+                { DelegateId = 1, CustomisationId = 1, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info2 = new DelegateCourseInfo
+                { DelegateId = 2, CustomisationId = 2, CourseCategoryId = 1, CustomisationCentreId = 1 };
+            var info3 = new DelegateCourseInfo
+                { DelegateId = 3, CustomisationId = 3, CourseCategoryId = 2, CustomisationCentreId = 1 };
+            A.CallTo(
+                () => courseDataService.GetDelegateCoursesInfo(1)
+            ).Returns(new[] { info1, info2, info3 });
+
+            // When
+            var result = courseService.GetAllCoursesInCategoryForDelegate(1, 1, 1).ToList();
+
+            // Then
+            result.Count.Should().Be(2);
+            result.All(x => x.DelegateCourseInfo.CourseCategoryId == 1).Should().BeTrue();
         }
     }
 }

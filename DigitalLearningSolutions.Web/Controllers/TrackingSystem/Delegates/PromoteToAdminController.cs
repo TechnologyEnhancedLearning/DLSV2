@@ -7,26 +7,30 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.PromoteToAdmin;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.FeatureManagement.Mvc;
-    using Serilog.Core;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
     [Route("TrackingSystem/Delegates/{delegateId:int}/PromoteToAdmin")]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class PromoteToAdminController : Controller
     {
         private readonly ICentreContractAdminUsageService centreContractAdminUsageService;
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly IUserDataService userDataService;
-        private readonly IRegistrationService registrationService;
         private readonly ILogger<PromoteToAdminController> logger;
+        private readonly IRegistrationService registrationService;
+        private readonly IUserDataService userDataService;
 
         public PromoteToAdminController(
             IUserDataService userDataService,
@@ -47,9 +51,9 @@
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            if (delegateUser == null || delegateUser.CentreId != centreId)
+            if (delegateUser.IsAdmin || !delegateUser.IsPasswordSet)
             {
                 return NotFound();
             }
@@ -67,7 +71,11 @@
         {
             try
             {
-                registrationService.PromoteDelegateToAdmin(formData.GetAdminRoles(), formData.LearningCategory, delegateId);
+                registrationService.PromoteDelegateToAdmin(
+                    formData.GetAdminRoles(),
+                    formData.LearningCategory,
+                    delegateId
+                );
             }
             catch (AdminCreationFailedException e)
             {

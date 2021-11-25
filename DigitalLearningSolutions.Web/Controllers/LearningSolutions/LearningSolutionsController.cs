@@ -2,16 +2,18 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
     public class LearningSolutionsController : Controller
     {
+        private readonly ICentresDataService centresDataService;
         private readonly IConfigService configService;
         private readonly ILogger<LearningSolutionsController> logger;
-        private readonly ICentresDataService centresDataService;
 
         public LearningSolutionsController(
             IConfigService configService,
@@ -65,11 +67,23 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
             Response.StatusCode = code;
 
             return code switch
-                {
+            {
                 404 => View("Error/PageNotFound", model),
                 403 => View("Error/Forbidden", model),
-                _ => View("Error/UnknownError", model)
-                };
+                _ => View("Error/UnknownError", model),
+            };
+        }
+
+        [Route("/AccessDenied")]
+        [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
+        public IActionResult AccessDenied()
+        {
+            if (User.IsDelegateOnlyAccount())
+            {
+                return RedirectToAction("AccessDenied", "LearningPortal");
+            }
+
+            return View("Error/AccessDenied");
         }
 
         private ErrorViewModel GetErrorModel()

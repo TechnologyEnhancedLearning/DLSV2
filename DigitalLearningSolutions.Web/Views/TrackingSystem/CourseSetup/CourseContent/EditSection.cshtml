@@ -9,14 +9,7 @@
 
 @{
   ViewData["Title"] = "Edit section content";
-  ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
-  ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-  ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
   var cancelRouteData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem"/>
 }
 
 <div class="nhsuk-grid-row">
