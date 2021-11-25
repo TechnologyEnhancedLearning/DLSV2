@@ -128,5 +128,21 @@
 
             return RedirectToAction("Index", new { delegateId });
         }
+
+        [HttpPost]
+        [Route("ReactivateDelegate")]
+        public IActionResult ReactivateDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser?.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            userDataService.ActivateDelegateUser(delegateId);
+
+            return RedirectToAction("Index", new { delegateId });
+        }
     }
 }
