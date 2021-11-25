@@ -33,12 +33,13 @@
                         ArchivedByID,
                         ICSGUID,
                         LoggedByAdminID,
-                        ActivityTypeID,
+                        TypeLabel AS ActivityType,
                         ExternalUri,
                         SeqInt,
                         LastAccessedDate,
                         LinkedCompetencyLearningResourceID
-                    FROM LearningLogItems
+                    FROM LearningLogItems l
+                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     WHERE ExternalUri = @resourceLink",
                 new { resourceLink }
             );

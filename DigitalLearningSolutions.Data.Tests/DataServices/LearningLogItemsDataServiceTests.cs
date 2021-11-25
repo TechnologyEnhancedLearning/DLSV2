@@ -62,7 +62,7 @@
                     result.LinkedCompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
                     result.ExternalUri.Should().Be(resourceLink);
                     result.Activity.Should().Be(resourceName);
-                    result.ActivityTypeId.Should().NotBe(0);
+                    result.ActivityType.Should().Be("Learning Hub Resource");
                     result.LearningLogItemId.Should().NotBe(0);
                     result.IcsGuid.Should().NotBeNull();
 
