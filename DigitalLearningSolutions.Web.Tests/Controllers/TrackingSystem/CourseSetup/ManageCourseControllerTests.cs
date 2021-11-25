@@ -306,13 +306,13 @@
 
             A.CallTo(
                 () => courseService.UpdateCourseDetails(
-                    A<int>._,
-                    A<string>._,
-                    A<string>._,
-                    A<string>._,
-                    A<bool>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "Name",
+                    "Password",
+                    "hello@test.com",
+                    false,
+                    75,
+                    90
                 )
             ).DoesNothing();
 
@@ -370,10 +370,10 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    A<int>._,
-                    A<string>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "Name",
+                    101,
+                    1
                 )
             ).Returns(true);
 
@@ -406,10 +406,10 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    A<int>._,
-                    A<string>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "",
+                    101,
+                    1
                 )
             ).Returns(true);
 
@@ -446,10 +446,10 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    A<int>._,
-                    A<string>._,
-                    A<int>._,
-                    A<int>._
+                    1,
+                    "Name",
+                    101,
+                    1
                 )
             ).Returns(false);
 
