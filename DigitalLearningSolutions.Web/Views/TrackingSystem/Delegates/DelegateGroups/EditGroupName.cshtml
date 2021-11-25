@@ -11,12 +11,11 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
 
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.GroupName) })" />
     }
 
-  <h1 class="nhsuk-heading-xl">Edit group name</h1>
+    <h1 class="nhsuk-heading-xl">Edit group name</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditGroupName">
 
       <vc:text-input asp-for="@nameof(Model.GroupName)"

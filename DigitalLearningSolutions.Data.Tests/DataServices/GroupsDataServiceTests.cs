@@ -531,11 +531,12 @@
         [Test]
         public void UpdateGroupName_updates_record()
         {
-            using var transaction = new TransactionScope();
+            // Given
             const int centerId = 101;
             const int groupId = 5;
             const string newGroupName = "Test group name";
 
+            using var transaction = new TransactionScope();
             try
             {
                 // When
