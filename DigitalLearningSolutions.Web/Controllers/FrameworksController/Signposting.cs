@@ -7,10 +7,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Signposting")]
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
-            var model = new CompetencyResourceSignpostingViewModel()
+            var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId,frameworkCompetencyId)
             {
                 NameOfCompetency = "I can organise my information and content using files and folders (either on my device, across multiple devices, or on the Cloud)",
                 CompetencyResourceLinks = new List<SignpostingCardViewModel>()
