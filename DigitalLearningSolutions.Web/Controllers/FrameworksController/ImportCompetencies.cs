@@ -36,12 +36,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     GetAdminID(),
                     model.FrameworkId
                 );
-
-                return View("UploadCompleted");
+                var resultsModel = new ImportCompetenciesResultsViewModel(results);
+                return View("ImportCompleted", resultsModel);
             }
             catch (InvalidHeadersException)
             {
-                return View("UploadFailed");
+                return View("ImportFailed");
             }
         }
     }

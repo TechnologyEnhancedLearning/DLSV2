@@ -1,0 +1,43 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using Microsoft.Extensions.Configuration
+@model ImportCompetenciesResultsViewModel
+@{
+  ViewData["Title"] = "Framework - Import Failed";
+  ViewData["Application"] = "Framework Service";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+<partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values[" frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+      <li class="nhsuk-breadcrumb__item">Excel import</li>
+    </ol>
+    <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values[" frameworkId"]" asp-route-tabname="Structure">>Back to framework structure</a></p>
+  </div>
+</nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Import failed</h1>
+
+    <p class="nhsuk-body-m">
+      The file that you uploaded does not have the correct column headers on the first row.
+    </p>
+
+    <p class="nhsuk-body-m">Ensure that you have downloaded the template using "Download delegates" button before adding/amending delegates and uploading.</p>
+
+    <vc:action-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Manage all delegates" />
+
+    <vc:back-link asp-controller="BulkUpload" asp-action="Index" asp-all-route-data="@null" link-text="Try again" />
+  </div>
+</div>
