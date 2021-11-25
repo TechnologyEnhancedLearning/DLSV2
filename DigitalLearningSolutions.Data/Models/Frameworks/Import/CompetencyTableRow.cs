@@ -18,14 +18,14 @@
         {
             string? FindFieldValue(string name)
             {
-                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString() == name).ColumnNumber();
+                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString().ToLower() == name).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
             }
 
             RowNumber = row.RowNumber();
-            CompetencyGroupName = FindFieldValue("CompetencyGroupName");
-            CompetencyName = FindFieldValue("CompetencyName");
-            CompetencyDescription = FindFieldValue("CompetencyDescription");
+            CompetencyGroupName = FindFieldValue("competency group");
+            CompetencyName = FindFieldValue("competency name");
+            CompetencyDescription = FindFieldValue("competency description");
             RowStatus = RowStatus.NotYetProcessed;
         }
         public int RowNumber { get; set; }

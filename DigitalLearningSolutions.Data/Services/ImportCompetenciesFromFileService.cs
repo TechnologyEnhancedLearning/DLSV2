@@ -1,4 +1,8 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("DigitalLearningSolutions.Data.Tests")]
+
+namespace DigitalLearningSolutions.Data.Services
 {
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
@@ -29,7 +33,7 @@
         internal IXLTable OpenCompetenciesTable(IFormFile file)
         {
             var workbook = new XLWorkbook(file.OpenReadStream());
-            var worksheet = workbook.Worksheet(0);
+            var worksheet = workbook.Worksheet(1);
             var table = worksheet.Tables.Table(0);
             if (!ValidateHeaders(table))
             {
@@ -60,7 +64,7 @@
             }
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
             int? frameworkCompetencyGroupId = null;
-            if(competencyRow.CompetencyGroupName != null)
+            if (competencyRow.CompetencyGroupName != null)
             {
                 var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyRow.CompetencyGroupName, adminUserId);
                 if (newCompetencyGroupId > 0)
@@ -86,15 +90,15 @@
             }
         }
 
-            private static bool ValidateHeaders(IXLTable table)
+        private static bool ValidateHeaders(IXLTable table)
         {
             var expectedHeaders = new List<string>
             {
-                "CompetencyGroupName",
-                "CompetencyName",
-                "CompetencyDescription"
+                "competency group",
+                "competency name",
+                "competency description"
             }.OrderBy(x => x);
-            var actualHeaders = table.Fields.Select(x => x.Name).OrderBy(x => x);
+            var actualHeaders = table.Fields.Select(x => x.Name.ToLower()).OrderBy(x => x);
             return actualHeaders.SequenceEqual(expectedHeaders);
         }
     }

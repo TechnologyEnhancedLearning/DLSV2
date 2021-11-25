@@ -37,11 +37,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     model.FrameworkId
                 );
                 var resultsModel = new ImportCompetenciesResultsViewModel(results);
-                return View("ImportCompleted", resultsModel);
+                return View("Developer/ImportCompleted", resultsModel);
             }
             catch (InvalidHeadersException)
             {
-                return View("ImportFailed");
+                return View("Developer/ImportFailed");
             }
         }
     }

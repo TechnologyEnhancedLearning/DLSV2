@@ -8,6 +8,7 @@
   ViewData["Application"] = "Framework Service";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var cancelLinkData = Html.GetRouteValues();
+    cancelLinkData.Add("tabname", "Structure");
 }
 <link rel="stylesheet" href="@Url.Content(" ~ /css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -18,10 +19,10 @@
   <div class="nhsuk-width-container">
     <ol class="nhsuk-breadcrumb__list">
       <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values[" frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+      <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
       <li class="nhsuk-breadcrumb__item">Excel import</li>
     </ol>
-    <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values[" frameworkId"]" asp-route-tabname="Structure">>Back to framework structure</a></p>
+    <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
   </div>
 </nav>
 }
@@ -34,10 +35,10 @@
       The file that you uploaded does not have the correct column headers on the first row.
     </p>
 
-    <p class="nhsuk-body-m">Ensure that you have downloaded the template using "Download delegates" button before adding/amending delegates and uploading.</p>
+    <p class="nhsuk-body-m">Refer to the instructions on the Import Competencies page to make sure your Excel file has the correct column headers.</p>
 
-    <vc:action-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@null" link-text="Manage all delegates" />
+    <vc:action-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Back to framework structure" />
 
-    <vc:back-link asp-controller="BulkUpload" asp-action="Index" asp-all-route-data="@null" link-text="Try again" />
+    <vc:back-link asp-controller="Frameworks" asp-action="ImportCompetencies" asp-all-route-data="@cancelLinkData" link-text="Try again" />
   </div>
 </div>
