@@ -25,7 +25,7 @@
           Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
         </a>
         <br />
-        <a asp-controller="ManageResources" asp-action="EditCompetencyLearningResources"
+        <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
            asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])"
            asp-route-frameworkCompetencyGroupId="@(Model.FrameworkCompetencyGroupId)"
            asp-route-frameworkCompetencyId="@(Model.FrameworkCompetency.CompetencyID)" >

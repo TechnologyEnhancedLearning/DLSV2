@@ -1,0 +1,56 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model SignpostingCardViewModel;
+<details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3" @(Model.Id == 1 ? "open" : "")>
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      @Model.Name
+    </span>
+  </summary>
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0">
+    <div class="nhsuk-u-margin-bottom-4">
+      <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
+      <div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div>
+    </div>
+    <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
+    <dl class="nhsuk-summary-list">
+      <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        Assessment Question
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @Model.AssessmentQuestion
+      </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Minimum result match
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.MinimumResultMatch
+    </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Maximum result match
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.MaximumResultMatch
+    </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Compare result to
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.CompareResultTo
+    </dd>
+  </div>
+  </dl>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="ManageParameter">Manage parameters</a>
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
+      <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
+    </div>
+  </div>
+</details>
