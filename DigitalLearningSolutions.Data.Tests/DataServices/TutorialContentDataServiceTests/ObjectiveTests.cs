@@ -46,7 +46,8 @@
                 connection.Execute("UPDATE CustomisationTutorials SET DiagStatus = 0 WHERE CusTutID = 704039");
 
                 // When
-                var result = tutorialContentDataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(248, 22062, false)
+                var result = tutorialContentDataService
+                    .GetNonArchivedCcObjectivesBySectionAndCustomisationId(248, 22062, false)
                     .ToList();
 
                 // Then
@@ -69,14 +70,16 @@
         }
 
         [Test]
-        public void GetNonArchivedCcObjectivesBySectionAndCustomisationId_returns_objectives_correctly_with_postlearning()
+        public void
+            GetNonArchivedCcObjectivesBySectionAndCustomisationId_returns_objectives_correctly_with_postlearning()
         {
             using (new TransactionScope())
             {
                 connection.Execute("UPDATE Tutorials SET OriginalTutorialID = 1 WHERE TutorialID = 179");
 
                 // When
-                var result = tutorialContentDataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(83, 2793, true)
+                var result = tutorialContentDataService
+                    .GetNonArchivedCcObjectivesBySectionAndCustomisationId(83, 2793, true)
                     .ToList();
 
                 // Then

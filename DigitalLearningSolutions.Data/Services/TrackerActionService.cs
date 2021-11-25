@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Tracker;
@@ -37,14 +36,17 @@
 
         public TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning)
         {
-
             if (!customisationId.HasValue || !sectionId.HasValue || !isPostLearning.HasValue)
             {
                 return null;
             }
 
             var ccObjectives = tutorialContentDataService
-                .GetNonArchivedCcObjectivesBySectionAndCustomisationId(sectionId.Value, customisationId.Value, isPostLearning.Value)
+                .GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+                    sectionId.Value,
+                    customisationId.Value,
+                    isPostLearning.Value
+                )
                 .ToList();
 
             return ccObjectives.Any() ? new TrackerObjectiveArrayCc(ccObjectives) : null;

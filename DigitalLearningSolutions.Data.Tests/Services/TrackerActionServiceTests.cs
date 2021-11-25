@@ -115,7 +115,13 @@
         public void GetObjectiveArrayCc_returns_empty_object_json_if_no_results_found()
         {
             // given
-            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(A<int>._, A<int>._, A<bool>._))
+            A.CallTo(
+                    () => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+                        A<int>._,
+                        A<int>._,
+                        A<bool>._
+                    )
+                )
                 .Returns(new List<CcObjective>());
 
             // when
@@ -137,7 +143,13 @@
         )
         {
             // given
-            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(A<int>._, A<int>._, A<bool>._))
+            A.CallTo(
+                    () => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+                        A<int>._,
+                        A<int>._,
+                        A<bool>._
+                    )
+                )
                 .Returns(new[] { new CcObjective(1, "name", 9) });
 
             // when
