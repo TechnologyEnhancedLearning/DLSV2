@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
@@ -41,7 +40,8 @@
             var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
                 .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
 
-            if (!string.IsNullOrEmpty(dlsSubApplicationParameterName) && HasModelBindingError(context, dlsSubApplicationParameterName!))
+            if (!string.IsNullOrEmpty(dlsSubApplicationParameterName) &&
+                HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
                 SetNotFoundResult(context);
                 return;
@@ -49,10 +49,7 @@
 
             var application = dlsSubApplicationParameterName == null
                 ? null
-                : (DlsSubApplication?)
-                (context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
-                    ? context.ActionArguments[dlsSubApplicationParameterName]
-                    : null);
+                : GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName);
 
             if (DlsSubApplication.TrackingSystem.Equals(application) &&
                 !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem) ||
@@ -121,6 +118,17 @@
         private void SetNotFoundResult(ActionExecutingContext context)
         {
             context.Result = new NotFoundResult();
+        }
+
+        private DlsSubApplication? GetDlsSubApplicationFromContext(
+            ActionExecutingContext context,
+            string dlsSubApplicationParameterName
+        )
+        {
+            return (DlsSubApplication?)
+                (context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
+                    ? context.ActionArguments[dlsSubApplicationParameterName]
+                    : null);
         }
     }
 }
