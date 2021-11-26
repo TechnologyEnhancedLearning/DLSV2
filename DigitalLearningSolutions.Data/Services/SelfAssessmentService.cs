@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using Microsoft.Extensions.Logging;
@@ -52,12 +53,15 @@
         void SetResultForCompetency(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId, int? result, string? supportingComments);
         void InsertCandidateAssessmentOptionalCompetenciesIfNotExist(int selfAssessmentId, int candidateId);
         void InsertCandidateAssessmentSupervisorVerification(int candidateAssessmentSupervisorId);
+
+        bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SelfAssessmentService> logger;
+        private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         private const string LatestAssessmentResults =
             @"LatestAssessmentResults AS
@@ -187,10 +191,14 @@
                         LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID";
 
-        public SelfAssessmentService(IDbConnection connection, ILogger<SelfAssessmentService> logger)
+        public SelfAssessmentService(
+            IDbConnection connection,
+            ILogger<SelfAssessmentService> logger,
+            ISelfAssessmentDataService selfAssessmentDataService)
         {
             this.connection = connection;
             this.logger = logger;
+            this.selfAssessmentDataService = selfAssessmentDataService;
         }
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId)
         {
@@ -925,6 +933,13 @@ WHERE (sd.Removed IS NULL) AND (sd.Confirmed IS NOT NULL) AND (sd.CandidateID = 
                     WHERE ID = @candidateAssessmentSupervisorVerificationId",
                 new { candidateAssessmentSupervisorVerificationId }
             );
+        }
+
+        public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)
+        {
+            var candidateAssessments = selfAssessmentDataService.GetCandidateAssessments(delegateId, selfAssessmentId);
+
+            return candidateAssessments.Any(ca => ca.CompletedDate == null && ca.RemovedDate == null);
         }
     }
 }

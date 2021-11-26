@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using Dapper;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -16,17 +17,19 @@
 
     public class SelfAssessmentServiceTests
     {
-        private SelfAssessmentService selfAssessmentService;
+        private SelfAssessmentService selfAssessmentService = null!;
+        private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private const int SelfAssessmentId = 1;
         private const int CandidateId = 11;
-        private SqlConnection connection;
+        private SqlConnection connection = null!;
 
         [SetUp]
         public void Setup()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<SelfAssessmentService>>();
-            selfAssessmentService = new SelfAssessmentService(connection, logger);
+            selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            selfAssessmentService = new SelfAssessmentService(connection, logger, selfAssessmentDataService);
         }
 
         [Test]

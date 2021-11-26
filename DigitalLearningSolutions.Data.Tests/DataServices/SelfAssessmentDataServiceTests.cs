@@ -3,7 +3,9 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class SelfAssessmentDataServiceTests
@@ -14,7 +16,8 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new SelfAssessmentDataService(connection);
+            var logger = A.Fake<ILogger<SelfAssessmentDataService>>();
+            service = new SelfAssessmentDataService(connection, logger);
         }
 
         [Test]
