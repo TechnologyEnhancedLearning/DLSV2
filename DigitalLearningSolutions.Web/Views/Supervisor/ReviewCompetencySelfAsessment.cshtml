@@ -143,15 +143,38 @@
           </nhs-form-group>
 
           <nhs-form-group nhs-validation-for="SignedOff">
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-                Verify self-assessment response
-              </label>
-              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
-                I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+            @*<div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
+                  Verify self-assessment response
+                </label>
+                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
+                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+                </div>
+              </div>*@
+
+            <div class="nhsuk-radios nhsuk-radios--inline">
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
+                <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
+                  Verify self-assessment response
+                </label>
+                <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+                </div>
               </div>
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" (ngModelChange)="checkCustomeName($event)" required="required" type="radio" value="false">
+                <label class="nhsuk-label nhsuk-radios__label" for="rb-reject">
+                  Reject self-assessment response
+                </label>
+                <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+                </div>
+              </div>
+
             </div>
+
           </nhs-form-group>
         </fieldset>
         <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
@@ -202,10 +225,24 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
 
       </div>
     </dl>
-    @if((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
-          {
-            <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
-          }
+    @if ((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+    {
+      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
+    }
   }
 }
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">  
+  $("input[name='SignedOff']").click(function () {
+    var radioValue = $("input[name='SignedOff']:checked").val();    
+    if (radioValue=="false") {      
+      if ($.trim($('#SupervisorComments').val()).length < 1) {
+        $('#SupervisorComments').prop("required", true);                
+      }
+    }
+    else {     
+      $('#SupervisorComments').attr('required', false);      
+      $('#SupervisorComments').removeAttr('required');     
+    }
+  });
+</script>
