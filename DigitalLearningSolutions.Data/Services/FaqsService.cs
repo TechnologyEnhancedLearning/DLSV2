@@ -15,19 +15,19 @@
     {
         private readonly IFaqsDataService faqsDataService;
 
-        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
-        {
-            return faqsDataService.GetFaqByIdForTargetGroup(faqId, true, targetGroup);
-        }
-
         public FaqsService(IFaqsDataService faqsDataService)
         {
             this.faqsDataService = faqsDataService;
         }
 
+        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
+        {
+            return faqsDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+        }
+
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
-            return faqsDataService.GetFaqsForTargetGroup(true, targetGroup);
+            return faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
         }
     }
 }

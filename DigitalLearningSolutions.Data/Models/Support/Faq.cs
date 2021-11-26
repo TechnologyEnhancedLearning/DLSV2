@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class Faq : BaseSearchableItem
+    public class Faq
     {
         public int FaqId { get; set; }
         public string Ahtml { get; set; }
@@ -12,10 +12,5 @@
         public string Qtext { get; set; }
         public int TargetGroup { get; set; }
         public int Weighting { get; set; }
-        public override string SearchableName
-        {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{Qtext} {Ahtml}";
-            set => SearchableNameOverrideForFuzzySharp = value;
-        }
     }
 }

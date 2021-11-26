@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -14,7 +13,7 @@
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
-            IEnumerable<Faq> faqs,
+            IEnumerable<FaqViewModel> faqs,
             int page,
             string? searchString,
             string sortBy,
@@ -31,7 +30,7 @@
                 sortDirection
             );
 
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString, 65, useFullProcessorMethod: true, useTokeniseScorer: true).ToList();
+            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(sortedItems, SearchString, 65).ToList();
             MatchingSearchResults = searchedItems.Count();
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(searchedItems);

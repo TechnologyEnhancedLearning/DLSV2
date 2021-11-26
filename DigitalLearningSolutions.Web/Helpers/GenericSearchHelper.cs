@@ -5,10 +5,10 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
+    using FuzzySharp.SimilarityRatio.Scorer;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 
     public class GenericSearchHelper
@@ -28,19 +28,22 @@
             "your", "framework", "competency", "capability", "competence", "skill"
         };
 
-        private static Func<T, string> FullProcessor<T>() where T : BaseSearchableItem =>
-            item => Regex.Replace(item.SearchableName, "[^ a-zA-Z0-9]", " ").ToLower().Trim();
-        
-        private static Func<T, string> SimpleProcessor<T>() where T : BaseSearchableItem =>
-            item => item.SearchableName.ToLower();
+        public static IEnumerable<T> SearchItemsUsingTokeniseScorer<T>(
+            IEnumerable<T> items,
+            string? searchString,
+            int matchCutOffScore = MatchCutoffScore,
+            bool stripStopWords = false
+        ) where T : BaseSearchableItem
+        {
+            return SearchItems(items, searchString, matchCutOffScore, stripStopWords, ScorerCache.Get<PartialTokenSetScorer>());
+        }
 
         public static IEnumerable<T> SearchItems<T>(
             IEnumerable<T> items,
             string? searchString,
             int matchCutOffScore = MatchCutoffScore,
             bool stripStopWords = false,
-            bool useFullProcessorMethod = false,
-            bool useTokeniseScorer = false
+            IRatioScorer? scorer = null
         ) where T : BaseSearchableItem
         {
             if (searchString == null)
@@ -56,18 +59,17 @@
             var query = Activator.CreateInstance(typeof(T)) as BaseSearchableItem;
             query!.SearchableName = searchString;
 
-            var ratioScorer = useTokeniseScorer ? ScorerCache.Get<PartialTokenSetScorer>() :
-                stripStopWords ? ScorerCache.Get<DefaultRatioScorer>() :
-                    ScorerCache.Get<PartialRatioScorer>();
+            var ratioScorer = scorer ??
+                (stripStopWords ? ScorerCache.Get<DefaultRatioScorer>() :
+                    ScorerCache.Get<PartialRatioScorer>());
 
             var results = Process.ExtractAll(
                 (T)query,
                 items,
-                useFullProcessorMethod ? FullProcessor<T>() : SimpleProcessor<T>(),
+                item => item.SearchableName.ToLower(),
                 ratioScorer,
                 matchCutOffScore
             );
-
             return results.Select(result => result.Value);
         }
 

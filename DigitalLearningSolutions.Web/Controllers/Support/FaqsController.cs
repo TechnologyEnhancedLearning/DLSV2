@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
+    using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -64,7 +65,7 @@
                 return NotFound();
             }
 
-            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value);
+            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value).Select(f => new FaqViewModel(f));
 
             var model = new FaqsViewModel(
                 dlsSubApplication,
@@ -113,7 +114,7 @@
                 return NotFound();
             }
 
-            var model = new SearchableFaqViewModel(dlsSubApplication, faq);
+            var model = new SearchableFaqViewModel(dlsSubApplication, new FaqViewModel(faq));
 
             return View(model);
         }
@@ -145,7 +146,7 @@
                 return NotFound();
             }
 
-            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value);
+            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value).Select(f => new FaqViewModel(f));
 
             var model = new FaqItemsViewModel(dlsSubApplication, faqs);
 

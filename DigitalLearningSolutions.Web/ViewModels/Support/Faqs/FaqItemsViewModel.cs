@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
@@ -10,7 +9,7 @@
     {
         public readonly IEnumerable<SearchableFaqViewModel> Faqs;
 
-        public FaqItemsViewModel(DlsSubApplication dlsSubApplication, IEnumerable<Faq> faqs)
+        public FaqItemsViewModel(DlsSubApplication dlsSubApplication, IEnumerable<FaqViewModel> faqs)
         {
             Faqs = faqs.Select(f => new SearchableFaqViewModel(dlsSubApplication, f));
         }

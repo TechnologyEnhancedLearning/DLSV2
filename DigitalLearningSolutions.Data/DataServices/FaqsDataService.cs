@@ -8,9 +8,9 @@
 
     public interface IFaqsDataService
     {
-        Faq? GetFaqByIdForTargetGroup(int faqId, bool onlyIfPublished, int? targetGroup);
+        Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup);
 
-        IEnumerable<Faq> GetFaqsForTargetGroup(bool onlyIfPublished, int? targetGroup);
+        IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
     }
 
     public class FaqsDataService : IFaqsDataService
@@ -22,7 +22,7 @@
             this.connection = connection;
         }
 
-        public Faq? GetFaqByIdForTargetGroup(int faqId, bool onlyIfPublished, int? targetGroup)
+        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
         {
             return connection.Query<Faq>(
                 @$"SELECT
@@ -36,13 +36,13 @@
 	                    Weighting
                     FROM FAQs
                     WHERE FAQID = @faqId
-                    AND (@targetGroup IS NULL OR TargetGroup = @targetGroup)
-                    AND (@onlyIfPublished = 0 OR Published = 1)",
-                new { faqId, onlyIfPublished, targetGroup }
+                    AND TargetGroup = @targetGroup
+                    AND Published = 1",
+                new { faqId, targetGroup }
             ).SingleOrDefault();
         }
 
-        public IEnumerable<Faq> GetFaqsForTargetGroup(bool onlyIfPublished, int? targetGroup)
+        public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
             return connection.Query<Faq>(
                 @$"SELECT
@@ -55,10 +55,9 @@
 	                    TargetGroup,
 	                    Weighting
                     FROM FAQs
-                    WHERE (@targetGroup IS NULL OR TargetGroup = @targetGroup)
-                    AND (@onlyIfPublished = 0 OR Published = 1)
-                    ORDER BY Weighting DESC, FAQID DESC",
-                new { onlyIfPublished, targetGroup }
+                    WHERE TargetGroup = @targetGroup
+                    AND Published = 1",
+                new { targetGroup }
             );
         }
     }
