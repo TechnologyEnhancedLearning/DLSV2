@@ -35,7 +35,7 @@
             var user = context.HttpContext.User;
             if (!user.Identity.IsAuthenticated)
             {
-                RedirectToLogin(context);
+                SetLoginRedirectResult(context);
                 return;
             }
 
@@ -70,7 +70,7 @@
 
             if (user.IsDelegateOnlyAccount() && DlsSubApplication.Main.Equals(application))
             {
-                RedirectToLearningPortalVersion(context, dlsSubApplicationParameterName!);
+                SetLearningPortalVersionRedirectResult(context, dlsSubApplicationParameterName!);
                 return;
             }
 
@@ -80,7 +80,7 @@
                 !user.HasCentreAdminPermissions() && DlsSubApplication.TrackingSystem.Equals(application) ||
                 !user.HasSuperAdminPermissions() && DlsSubApplication.SuperAdmin.Equals(application))
             {
-                RedirectToAccessDenied(context);
+                SetAccessDeniedRedirectResult(context);
             }
         }
 
@@ -89,7 +89,7 @@
             return context.ModelState.GetValidationState(applicationArgumentName) == ModelValidationState.Invalid;
         }
 
-        private void RedirectToLogin(ActionExecutingContext context)
+        private void SetLoginRedirectResult(ActionExecutingContext context)
         {
             context.Result = new RedirectToActionResult(
                 nameof(LoginController.Index),
@@ -98,7 +98,7 @@
             );
         }
 
-        private void RedirectToLearningPortalVersion(ActionExecutingContext context, string applicationArgumentName)
+        private void SetLearningPortalVersionRedirectResult(ActionExecutingContext context, string applicationArgumentName)
         {
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
             var routeValues = new Dictionary<string, object>
@@ -108,7 +108,7 @@
             context.Result = new RedirectToActionResult(descriptor.ActionName, descriptor.ControllerName, routeValues);
         }
 
-        private void RedirectToAccessDenied(ActionExecutingContext context)
+        private void SetAccessDeniedRedirectResult(ActionExecutingContext context)
         {
             context.Result = new RedirectToActionResult(
                 nameof(LearningSolutionsController.AccessDenied),
