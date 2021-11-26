@@ -122,6 +122,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(

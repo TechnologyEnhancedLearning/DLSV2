@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Support
-@model SupportViewModel
+@model ISupportViewModel
 
 @{
   var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
@@ -15,37 +14,45 @@
                      link-text="Support"
                      is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
 
-  @if (Model.CurrentPage == SupportPage.HelpDocumentation) {
+  @if (Model.CurrentPage == SupportPage.HelpDocumentation)
+  {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
       <span class="nhsuk-contents-list__current">Help documentation</span>
     </li>
-  } else {
+  }
+  else
+  {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@Model.HelpUrl" target="_blank">
+      <a class="side-nav__link" href="@Model.SupportSideNavViewModel.HelpUrl" target="_blank">
         Help documentation
       </a>
     </li>
   }
 
-  <vc:side-menu-link-with-href href="@Model.FaqUrl"
-                               link-text="FAQs"
-                               is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Faqs"
+                     asp-all-route-data="@routeData"
+                     link-text="FAQs"
+                     is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
-  <vc:side-menu-link-with-href href="@Model.ResourcesUrl"
+  <vc:side-menu-link-with-href href="@Model.SupportSideNavViewModel.ResourcesUrl"
                                link-text="Resources"
                                is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
-  <vc:side-menu-link-with-href href="@Model.SupportTicketsUrl"
+  <vc:side-menu-link-with-href href="@Model.SupportSideNavViewModel.SupportTicketsUrl"
                                link-text="Support tickets"
                                is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
-  @if (Model.CurrentPage == SupportPage.ChangeRequests) {
+  @if (Model.CurrentPage == SupportPage.ChangeRequests)
+  {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
       <span class="nhsuk-contents-list__current">Change requests</span>
     </li>
-  } else {
+  }
+  else
+  {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@Model.ChangeRequestsUrl" target="_blank" rel="noreferrer">
+      <a class="side-nav__link" href="@Model.SupportSideNavViewModel.ChangeRequestsUrl" target="_blank" rel="noreferrer">
         Change requests
       </a>
     </li>

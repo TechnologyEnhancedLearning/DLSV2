@@ -59,6 +59,8 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'in-progress-count'), 10);
     case 'CourseName':
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
+    case 'Weighting':
+      return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
     default:
       return '';
   }

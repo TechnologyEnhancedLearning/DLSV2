@@ -1,0 +1,32 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.Support.Faqs
+@using Microsoft.Extensions.Configuration
+@model SearchableFaqViewModel
+
+@{
+    ViewData["Title"] = $"FAQ - {@Model.Faq.Qtext}";
+    var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
+}
+
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item">
+          <a class="nhsuk-breadcrumb__link" asp-controller="Faqs" asp-action="Index" asp-all-route-data="@routeData">FAQs</a>
+        </li>
+      </ol>
+    </div>
+  </nav>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">@Model.Faq.Qtext</h1>
+
+    <div>
+      @Html.Raw(Model.Faq.Ahtml)
+    </div>
+  </div>
+</div>

@@ -3,15 +3,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Support;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class FaqItemsViewModel : BaseJavaScriptFilterableViewModel
     {
         public readonly IEnumerable<SearchableFaqViewModel> Faqs;
 
-        public FaqItemsViewModel(IEnumerable<Faq> faqs)
+        public FaqItemsViewModel(DlsSubApplication dlsSubApplication, IEnumerable<Faq> faqs)
         {
-            Faqs = faqs.Select(f => new SearchableFaqViewModel(f));
+            Faqs = faqs.Select(f => new SearchableFaqViewModel(dlsSubApplication, f));
         }
     }
 }

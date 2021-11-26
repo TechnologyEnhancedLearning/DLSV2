@@ -5,6 +5,7 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
@@ -27,11 +28,19 @@
             "your", "framework", "competency", "capability", "competence", "skill"
         };
 
+        private static Func<T, string> FullProcessor<T>() where T : BaseSearchableItem =>
+            item => Regex.Replace(item.SearchableName, "[^ a-zA-Z0-9]", " ").ToLower().Trim();
+        
+        private static Func<T, string> SimpleProcessor<T>() where T : BaseSearchableItem =>
+            item => item.SearchableName.ToLower();
+
         public static IEnumerable<T> SearchItems<T>(
             IEnumerable<T> items,
             string? searchString,
             int matchCutOffScore = MatchCutoffScore,
-            bool stripStopWords = false
+            bool stripStopWords = false,
+            bool useFullProcessorMethod = false,
+            bool useTokeniseScorer = false
         ) where T : BaseSearchableItem
         {
             if (searchString == null)
@@ -47,13 +56,18 @@
             var query = Activator.CreateInstance(typeof(T)) as BaseSearchableItem;
             query!.SearchableName = searchString;
 
+            var ratioScorer = useTokeniseScorer ? ScorerCache.Get<PartialTokenSetScorer>() :
+                stripStopWords ? ScorerCache.Get<DefaultRatioScorer>() :
+                    ScorerCache.Get<PartialRatioScorer>();
+
             var results = Process.ExtractAll(
                 (T)query,
                 items,
-                item => item.SearchableName.ToLower(),
-                stripStopWords ? ScorerCache.Get<DefaultRatioScorer>() : ScorerCache.Get<PartialRatioScorer>(),
+                useFullProcessorMethod ? FullProcessor<T>() : SimpleProcessor<T>(),
+                ratioScorer,
                 matchCutOffScore
             );
+
             return results.Select(result => result.Value);
         }
 

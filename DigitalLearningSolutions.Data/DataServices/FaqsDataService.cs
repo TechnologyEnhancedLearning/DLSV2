@@ -2,11 +2,14 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Support;
 
     public interface IFaqsDataService
     {
+        Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup);
+
         IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
     }
 
@@ -19,11 +22,11 @@
             this.connection = connection;
         }
 
-        public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
+        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
         {
             return connection.Query<Faq>(
                 @$"SELECT
-                        FAQID
+                        FAQID,
 	                    AHTML,
 	                    CreatedDate,
 	                    Published,
@@ -31,7 +34,27 @@
 	                    QText,
 	                    TargetGroup,
 	                    Weighting
-                    FROM FAQs AS f
+                    FROM FAQs
+                    WHERE FAQID = @faqId
+                    AND TargetGroup = @targetGroup
+                    AND Published = 1",
+                new { faqId, targetGroup }
+            ).SingleOrDefault();
+        }
+
+        public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
+        {
+            return connection.Query<Faq>(
+                @$"SELECT
+                        FAQID,
+	                    AHTML,
+	                    CreatedDate,
+	                    Published,
+	                    QAnchor,
+	                    QText,
+	                    TargetGroup,
+	                    Weighting
+                    FROM FAQs
                     WHERE TargetGroup = @targetGroup
                     AND Published = 1
                     ORDER BY Weighting DESC, FAQID DESC",

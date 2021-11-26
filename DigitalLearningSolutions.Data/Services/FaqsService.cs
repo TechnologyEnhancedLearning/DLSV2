@@ -6,12 +6,19 @@
 
     public interface IFaqsService
     {
+        Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup);
+
         IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
     }
 
     public class FaqsService : IFaqsService
     {
         private readonly IFaqsDataService faqsDataService;
+
+        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
+        {
+            return faqsDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+        }
 
         public FaqsService(IFaqsDataService faqsDataService)
         {
