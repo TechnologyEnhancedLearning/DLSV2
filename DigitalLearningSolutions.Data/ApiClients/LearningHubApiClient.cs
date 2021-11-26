@@ -21,7 +21,7 @@
 
         Task<ResourceReferenceWithResourceDetails> GetResourceByReferenceId(int resourceReferenceId);
 
-        Task<BulkResourceReference> GetBulkResourcesByReferenceIds(
+        Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
             IEnumerable<int> resourceReferenceIds
         );
     }
@@ -62,7 +62,7 @@
             return result;
         }
 
-        public async Task<BulkResourceReference> GetBulkResourcesByReferenceIds(
+        public async Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
             IEnumerable<int> resourceReferenceIds
         )
         {
@@ -71,7 +71,7 @@
             var queryString = string.Join("&", referenceIdQueryStrings);
 
             var response = await client.GetStringAsync($"/Resource/Bulk?{queryString}");
-            var result = JsonConvert.DeserializeObject<BulkResourceReference>(response);
+            var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
         }
 
