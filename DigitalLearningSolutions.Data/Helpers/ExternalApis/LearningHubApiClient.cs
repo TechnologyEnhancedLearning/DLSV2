@@ -21,7 +21,7 @@
         Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId);
 
         Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int> resourceReferenceIds
+            IEnumerable<int>? resourceReferenceIds = null
         );
     }
 
@@ -31,13 +31,13 @@
 
         public LearningHubApiClient(HttpClient httpClient, IConfiguration config)
         {
-            string learningHubApiKey = config.GetLearningHubApiKey();
-            string learningHubApiBaseUrl = config.GetLearningHubApiBaseUrl();
+            string learningHubOpenApiKey = config.GetLearningHubOpenApiKey();
+            string learningHubOpenApiBaseUrl = config.GetLearningHubOpenApiBaseUrl();
 
             client = httpClient;
-            client.BaseAddress = new Uri(learningHubApiBaseUrl);
+            client.BaseAddress = new Uri(learningHubOpenApiBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("X-API-KEY", learningHubApiKey);
+            client.DefaultRequestHeaders.Add("X-API-KEY", learningHubOpenApiKey);
         }
 
         public async Task<ResourceSearchResult> SearchResource(
@@ -62,12 +62,16 @@
         }
 
         public async Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int> resourceReferenceIds
+            IEnumerable<int>? resourceReferenceIds = null
         )
         {
-            var referenceIdQueryStrings =
-                resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
-            var queryString = JoinQueryStrings(referenceIdQueryStrings);
+            var queryString = "";
+            if (resourceReferenceIds != null)
+            {
+                var referenceIdQueryStrings =
+                    resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
+                queryString = JoinQueryStrings(referenceIdQueryStrings);
+            }
 
             var response = await client.GetStringAsync($"/Resource/Bulk?{queryString}");
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
