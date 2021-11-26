@@ -1,19 +1,21 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.LearningHubApiClient
 {
-    using System.Collections.Generic;
-
-    public class ResourceMetadata
+    public class ResourceReferenceWithResourceDetails
     {
         public int ResourceId { get; set; }
+
+        public int RefId { get; set; }
 
         public string Title { get; set; }
 
         public string Description { get; set; }
 
-        public List<ResourceReference> References { get; set; }
+        public Catalogue Catalogue { get; set; }
 
         public string ResourceType { get; set; }
 
         public decimal Rating { get; set; }
+
+        public string Link { get; set; }
     }
 }

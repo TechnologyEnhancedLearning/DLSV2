@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.LearningHubApiClient
 {
+    using System.Collections.Generic;
+
     public class ResourceSearchResult
     {
-        public ResourceMetadata[]? Results { get; set; }
+        public List<ResourceMetadata> Results { get; set; }
 
         public int Offset { get; set; }
 
