@@ -29,19 +29,7 @@
             A.CallTo(() => featureManager.IsEnabledAsync(FeatureFlags.RefactoredSuperAdminInterface))
                 .Returns(true);
 
-            context = ContextHelper
-                .GetDefaultActionExecutingContext(
-                    new NotificationPreferencesController(A.Fake<INotificationPreferencesService>())
-                )
-                .WithMockUser(true, 101);
-            context.ActionDescriptor.Parameters = new[]
-            {
-                new ParameterDescriptor
-                {
-                    BindingInfo = new BindingInfo(), Name = "dlsSubApplication",
-                    ParameterType = typeof(DlsSubApplication),
-                },
-            };
+            SetUpContextWithActionParameter();
         }
 
         [Test]
@@ -49,12 +37,12 @@
             ValidateAllowedDlsSubApplication_sets_not_found_result_if_accessing_wrong_application()
         {
             // Given
-            context.ActionArguments.Add("dlsSubApplication", DlsSubApplication.TrackingSystem);
+            GivenUserIsTryingToAccess(DlsSubApplication.TrackingSystem);
 
             var attribute =
                 new ValidateAllowedDlsSubApplication(
-                    new[] { nameof(DlsSubApplication.LearningPortal) },
-                    featureManager
+                    featureManager,
+                    new[] { nameof(DlsSubApplication.LearningPortal) }
                 );
 
             // When
@@ -69,12 +57,12 @@
             ValidateAllowedDlsSubApplication_does_not_set_not_found_result_for_matching_application()
         {
             // Given
-            context.ActionArguments.Add("dlsSubApplication", DlsSubApplication.LearningPortal);
+            GivenUserIsTryingToAccess(DlsSubApplication.LearningPortal);
 
             var attribute =
                 new ValidateAllowedDlsSubApplication(
-                    new[] { nameof(DlsSubApplication.LearningPortal) },
-                    featureManager
+                    featureManager,
+                    new[] { nameof(DlsSubApplication.LearningPortal) }
                 );
 
             // When
@@ -89,10 +77,10 @@
             ValidateAllowedDlsSubApplication_does_not_set_not_found_result_if_no_application_list_set()
         {
             // Given
-            context.ActionArguments.Add("dlsSubApplication", DlsSubApplication.LearningPortal);
+            GivenUserIsTryingToAccess(DlsSubApplication.LearningPortal);
 
             var attribute =
-                new ValidateAllowedDlsSubApplication(new string[] { }, featureManager);
+                new ValidateAllowedDlsSubApplication(featureManager);
 
             // When
             attribute.OnActionExecuting(context);
@@ -111,19 +99,42 @@
             )
         {
             // Given
-            context.ActionArguments.Add("dlsSubApplication", Enumeration.FromName<DlsSubApplication>(application));
+            GivenUserIsTryingToAccess(Enumeration.FromName<DlsSubApplication>(application));
 
             A.CallTo(() => featureManager.IsEnabledAsync(featureFlag))
                 .Returns(false);
 
             var attribute =
-                new ValidateAllowedDlsSubApplication(new string[] { }, featureManager);
+                new ValidateAllowedDlsSubApplication(featureManager);
 
             // When
             attribute.OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
+        }
+
+        private void SetUpContextWithActionParameter()
+        {
+            context = ContextHelper
+                .GetDefaultActionExecutingContext(
+                    new NotificationPreferencesController(A.Fake<INotificationPreferencesService>())
+                )
+                .WithMockUser(true, 101);
+            context.ActionDescriptor.Parameters = new[]
+            {
+                new ParameterDescriptor
+                {
+                    BindingInfo = new BindingInfo(),
+                    Name = "dlsSubApplication",
+                    ParameterType = typeof(DlsSubApplication),
+                },
+            };
+        }
+
+        private void GivenUserIsTryingToAccess(DlsSubApplication application)
+        {
+            context.ActionArguments.Add("dlsSubApplication", application);
         }
     }
 }

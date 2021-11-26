@@ -4,11 +4,11 @@
 
     public static class ControllerHelper
     {
-        public static string GetControllerAspName(Type controllerType)
+        public static string GetControllerNameForAspHttpMethods(Type controllerType)
         {
             var controllerName = controllerType.Name;
 
-            return controllerName.Substring(0, controllerName.LastIndexOf("Controller", StringComparison.Ordinal));
+            return controllerName.Replace("Controller", "");
         }
     }
 }

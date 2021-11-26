@@ -18,11 +18,13 @@
         private readonly IEnumerable<DlsSubApplication> validApplications;
 
         public ValidateAllowedDlsSubApplication(
-            string[] validApplicationNames,
-            IFeatureManager featureManager
+            IFeatureManager featureManager,
+            string[]? validApplicationNames = null
         )
         {
-            validApplications = validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
+            validApplications = validApplicationNames == null
+                ? new DlsSubApplication[] { }
+                : validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
             this.featureManager = featureManager;
         }
 
@@ -91,7 +93,7 @@
         {
             context.Result = new RedirectToActionResult(
                 nameof(LoginController.Index),
-                ControllerHelper.GetControllerAspName(typeof(LoginController)),
+                ControllerHelper.GetControllerNameForAspHttpMethods(typeof(LoginController)),
                 new { }
             );
         }
@@ -110,7 +112,7 @@
         {
             context.Result = new RedirectToActionResult(
                 nameof(LearningSolutionsController.AccessDenied),
-                ControllerHelper.GetControllerAspName(typeof(LearningSolutionsController)),
+                ControllerHelper.GetControllerNameForAspHttpMethods(typeof(LearningSolutionsController)),
                 new { }
             );
         }

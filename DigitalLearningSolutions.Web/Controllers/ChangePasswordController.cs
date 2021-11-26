@@ -14,7 +14,7 @@
 
     [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
-    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new string[] { } })]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]

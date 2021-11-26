@@ -16,10 +16,7 @@
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
-    [TypeFilter(
-        typeof(ValidateAllowedDlsSubApplication),
-        Arguments = new object[] { new string[] { } }
-    )]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
