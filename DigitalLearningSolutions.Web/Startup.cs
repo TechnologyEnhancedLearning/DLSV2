@@ -202,6 +202,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
+            services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
