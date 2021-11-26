@@ -139,7 +139,8 @@
             {
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessment = delegateSelfAssessment,
-                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup)
+                CompetencyGroups = reviewedCompetencies.GroupBy(competency => competency.CompetencyGroup),
+                IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed
             };
             if (superviseDelegate.CandidateID != null)
             {
