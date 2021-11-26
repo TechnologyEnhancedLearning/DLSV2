@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
@@ -20,7 +21,7 @@
         Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId);
 
         Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int>? resourceReferenceIds = null
+            IEnumerable<int> resourceReferenceIds
         );
     }
 
@@ -61,12 +62,14 @@
         }
 
         public async Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int>? resourceReferenceIds = null
+            IEnumerable<int> resourceReferenceIds
         )
         {
-            var queryParams = GetBulkResourcesQueryParams(resourceReferenceIds);
+            var referenceIdQueryStrings =
+                resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
+            var queryString = JoinQueryStrings(referenceIdQueryStrings);
 
-            var response = await client.GetStringAsync($"/Resource/Bulk{queryParams}");
+            var response = await client.GetStringAsync($"/Resource/Bulk?{queryString}");
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
         }
@@ -81,62 +84,28 @@
             var textQueryString = GetQueryString("text", text);
             var offSetQueryString = GetQueryString("offset", offset.ToString());
             var limitQueryString = GetQueryString("limit", limit.ToString());
-            var resourceTypesQueryString = GetMultipleQueryStrings("resourceTypes", resourceTypes);
 
-            var queryParams =
-                $"{textQueryString}{offSetQueryString}{limitQueryString}{resourceTypesQueryString}";
-
-            queryParams = GetStringWithoutLastCharacter(queryParams);
-
-            return queryParams;
-        }
-
-        private static string GetBulkResourcesQueryParams(
-            IEnumerable<int>? resourceIds = null
-        )
-        {
-            if (resourceIds == null)
+            var resourceTypesQueryString = "";
+            if (resourceTypes != null)
             {
-                return string.Empty;
+                var resourceTypesQueryStrings =
+                    resourceTypes.Select(r => GetQueryString("resourceTypes", r.ToString()));
+                resourceTypesQueryString = JoinQueryStrings(resourceTypesQueryStrings);
             }
 
-            var queryParams = "?";
-
-            foreach (var resourceId in resourceIds)
-            {
-                queryParams += "resourceReferenceIds=" + resourceId + "&";
-            }
-
-            queryParams = GetStringWithoutLastCharacter(queryParams);
-
-            return queryParams;
-        }
-
-        private static string GetMultipleQueryStrings(string key, IEnumerable<string>? values)
-        {
-            var queryString = "";
-
-            if (values == null)
-            {
-                return queryString;
-            }
-
-            foreach (var value in values)
-            {
-                queryString += string.IsNullOrEmpty(value) ? "" : $"{key}={value}&";
-            }
-
-            return queryString;
+            var queryStrings = new[] { textQueryString, offSetQueryString, limitQueryString, resourceTypesQueryString };
+            return JoinQueryStrings(queryStrings);
         }
 
         private static string GetQueryString(string key, string? value)
         {
-            return string.IsNullOrEmpty(value) ? "" : $"{key}={value}&";
+            return string.IsNullOrEmpty(value) ? "" : $"{key}={value}";
         }
 
-        private static string GetStringWithoutLastCharacter(string input)
+        private static string JoinQueryStrings(IEnumerable<string> queryStrings)
         {
-            return input.Remove(input.Length - 1, 1);
+            var validQueryStrings = queryStrings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            return string.Join("&", validQueryStrings);
         }
     }
 }
