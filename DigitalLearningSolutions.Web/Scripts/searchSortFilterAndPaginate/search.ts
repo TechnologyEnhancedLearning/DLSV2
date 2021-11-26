@@ -23,7 +23,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
   const searchEngine = new JsSearch.Search(['element', 'id']);
   searchEngine.searchIndex = new JsSearch.UnorderedSearchIndex();
   searchEngine.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
-  searchEngine.addIndex('title');
+  searchEngine.addIndex('content');
   searchEngine.addDocuments(searchableElements);
   const results = <ISearchableElement[]>searchEngine.search(query);
   return results;

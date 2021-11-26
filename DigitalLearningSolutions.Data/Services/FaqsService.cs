@@ -17,7 +17,7 @@
 
         public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
         {
-            return faqsDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+            return faqsDataService.GetFaqByIdForTargetGroup(faqId, true, targetGroup);
         }
 
         public FaqsService(IFaqsDataService faqsDataService)
@@ -27,7 +27,7 @@
 
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
-            return faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
+            return faqsDataService.GetFaqsForTargetGroup(true, targetGroup);
         }
     }
 }

@@ -2,7 +2,7 @@
 @model SearchableFaqViewModel
 
 @{
-    var routeData = new Dictionary<string, string?>
+  var routeData = new Dictionary<string, string?>
   {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
     { "faqId", Model.Faq.FaqId.ToString() }
@@ -14,7 +14,7 @@
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.Faq.FaqId-name">
-        <span class="searchable-element-title" name="name">@Model.Faq.Qtext (@Model.Faq.FaqId)</span>
+        <span class="searchable-element-title" name="name">@Model.Faq.Qtext</span>
       </span>
     </summary>
 

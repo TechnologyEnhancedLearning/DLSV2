@@ -11,7 +11,7 @@ import getPathForEndpoint from '../common';
 export interface ISearchableElement {
   parentIndex: number;
   element: Element;
-  title: string;
+  searchableContent: string;
 }
 
 export interface ISearchableData {
@@ -124,11 +124,11 @@ export class SearchSortFilterAndPaginate {
 
         elements.forEach((element, index) => {
           const searchableItems = searchableElementClassSuffixes
-            .map<ISearchableElement>((s:string) => ({
+            .map<ISearchableElement>((suffix: string) => ({
               parentIndex: index,
               element,
-              title: SearchSortFilterAndPaginate
-                .searchableContextFromElement(element, s),
+              searchableContent: SearchSortFilterAndPaginate
+                .searchableContentFromElement(element, suffix),
             }));
           searchableElements.push(...searchableItems);
         });
@@ -159,9 +159,9 @@ export class SearchSortFilterAndPaginate {
     });
   }
 
-  static searchableContextFromElement(element: Element, classSuffix: string): string {
-    const searchableContextSpan = <HTMLSpanElement>element.getElementsByClassName(`searchable-element-${classSuffix}`)[0];
-    return searchableContextSpan?.textContent ?? '';
+  static searchableContentFromElement(element: Element, classSuffix: string): string {
+    const searchableContentSpan = <HTMLSpanElement>element.getElementsByClassName(`searchable-element-${classSuffix}`)[0];
+    return searchableContentSpan?.textContent ?? '';
   }
 
   static filterValueFromElement(element: Element): string {
