@@ -42,6 +42,13 @@
             var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
                 .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
 
+            var actionDoesNotRequireApplication = dlsSubApplicationParameterName == null;
+
+            if (actionDoesNotRequireApplication)
+            {
+                return;
+            }
+
             if (!string.IsNullOrEmpty(dlsSubApplicationParameterName) &&
                 HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
@@ -49,9 +56,7 @@
                 return;
             }
 
-            var application = dlsSubApplicationParameterName == null
-                ? null
-                : GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName);
+            var application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
 
             if (DlsSubApplication.TrackingSystem.Equals(application) &&
                 !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem) ||
@@ -127,10 +132,10 @@
             string dlsSubApplicationParameterName
         )
         {
-            return (DlsSubApplication?)
-                (context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
-                    ? context.ActionArguments[dlsSubApplicationParameterName]
-                    : null);
+            var parsedArgument = context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
+                ? context.ActionArguments[dlsSubApplicationParameterName]
+                : null;
+            return (DlsSubApplication?)parsedArgument;
         }
     }
 }
