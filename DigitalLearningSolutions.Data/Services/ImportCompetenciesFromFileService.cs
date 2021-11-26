@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Data.Services
 
     public interface IImportCompetenciesFromFileService
     {
+
         public ImportCompetenciesResult ProcessCompetenciesFromFile(IFormFile file, int adminUserId, int frameworkId);
     }
     public class ImportCompetenciesFromFileService : IImportCompetenciesFromFileService
@@ -27,8 +28,10 @@ namespace DigitalLearningSolutions.Data.Services
         }
         public ImportCompetenciesResult ProcessCompetenciesFromFile(IFormFile file, int adminUserId, int frameworkId)
         {
+            int maxFrameworkCompetencyId = frameworkService.GetMaxFrameworkCompetencyID();
+            int maxFrameworkCompetencyGroupId = frameworkService.GetMaxFrameworkCompetencyGroupID();
             var table = OpenCompetenciesTable(file);
-            return ProcessCompetenciesTable(table, adminUserId, frameworkId);
+            return ProcessCompetenciesTable(table, adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId);
         }
         internal IXLTable OpenCompetenciesTable(IFormFile file)
         {
@@ -41,13 +44,13 @@ namespace DigitalLearningSolutions.Data.Services
             }
             return table;
         }
-        internal ImportCompetenciesResult ProcessCompetenciesTable(IXLTable table, int adminUserId, int frameworkId)
+        internal ImportCompetenciesResult ProcessCompetenciesTable(IXLTable table, int adminUserId, int frameworkId, int maxFrameworkCompetencyId, int maxFrameworkCompetencyGroupId)
         {
             var competenciesRows = table.Rows().Skip(1).Select(row => new CompetencyTableRow(table, row)).ToList();
 
             foreach (var competencyRow in competenciesRows)
             {
-                ProcessCompetencyRow(adminUserId, frameworkId, competencyRow);
+                ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, competencyRow);
             }
 
             return new ImportCompetenciesResult(competenciesRows);
@@ -55,6 +58,8 @@ namespace DigitalLearningSolutions.Data.Services
         private void ProcessCompetencyRow(
             int adminUserId,
             int frameworkId,
+            int maxFrameworkCompetencyId,
+            int maxFrameworkCompetencyGroupId,
             CompetencyTableRow competencyRow
         )
         {
@@ -70,7 +75,10 @@ namespace DigitalLearningSolutions.Data.Services
                 if (newCompetencyGroupId > 0)
                 {
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);
-                    competencyRow.RowStatus = RowStatus.CompetencyGroupInserted;
+                    if (frameworkCompetencyGroupId > maxFrameworkCompetencyGroupId)
+                    {
+                        competencyRow.RowStatus = RowStatus.CompetencyGroupInserted;
+                    }
                 }
             }
 
@@ -79,7 +87,7 @@ namespace DigitalLearningSolutions.Data.Services
             if (newCompetencyId > 0)
             {
                 var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminUserId, frameworkId);
-                if (newFrameworkCompetencyId > 0)
+                if (newFrameworkCompetencyId > maxFrameworkCompetencyId)
                 {
                     competencyRow.RowStatus = (competencyRow.RowStatus == RowStatus.CompetencyGroupInserted ? RowStatus.CompetencyGroupAndCompetencyInserted : RowStatus.CompetencyInserted);
                 }
