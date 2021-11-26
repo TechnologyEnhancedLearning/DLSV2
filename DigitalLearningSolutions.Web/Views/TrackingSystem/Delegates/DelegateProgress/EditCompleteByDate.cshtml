@@ -46,6 +46,8 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditCompleteByDate">
       <input type="hidden" asp-for="DelegateId" />
       <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="DelegateName" />
+      <input type="hidden" asp-for="CourseName" />
       <vc:date-input id="complete-by-date"
                      label="Complete by date:"
                      day-id="Day"
