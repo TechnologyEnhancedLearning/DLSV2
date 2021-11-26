@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class BulkResourceReference
+    public class BulkResourceReferences
     {
         public List<ResourceReferenceWithResourceDetails> ResourceReferences { get; set; }
 
