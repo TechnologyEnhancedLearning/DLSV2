@@ -18,10 +18,10 @@
             IEnumerable<string>? resourceTypes = null
         );
 
-        Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId);
+        Task<ResourceReferenceWithResourceDetails> GetResourceByReferenceId(int resourceReferenceId);
 
-        Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int>? resourceReferenceIds = null
+        Task<BulkResourceReference> GetBulkResourcesByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
         );
     }
 
@@ -47,38 +47,34 @@
             IEnumerable<string>? resourceTypes = null
         )
         {
-            var queryParams = GetSearchQueryParams(text, offset, limit, resourceTypes);
+            var queryString = GetSearchQueryString(text, offset, limit, resourceTypes);
 
-            var response = await client.GetStringAsync($"/Resource/Search?{queryParams}");
+            var response = await client.GetStringAsync($"/Resource/Search?{queryString}");
             var result = JsonConvert.DeserializeObject<ResourceSearchResult>(response);
             return result;
         }
 
-        public async Task<ResourceReferenceWithReferenceDetails> GetResourceByReferenceId(int resourceReferenceId)
+        public async Task<ResourceReferenceWithResourceDetails> GetResourceByReferenceId(int resourceReferenceId)
         {
             var response = await client.GetStringAsync($"/Resource/{resourceReferenceId}");
-            var result = JsonConvert.DeserializeObject<ResourceReferenceWithReferenceDetails>(response);
+            var result = JsonConvert.DeserializeObject<ResourceReferenceWithResourceDetails>(response);
             return result;
         }
 
-        public async Task<BulkResourceReferences> GetBulkResourcesByReferenceIds(
-            IEnumerable<int>? resourceReferenceIds = null
+        public async Task<BulkResourceReference> GetBulkResourcesByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
         )
         {
-            var queryString = "";
-            if (resourceReferenceIds != null)
-            {
-                var referenceIdQueryStrings =
-                    resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
-                queryString = JoinQueryStrings(referenceIdQueryStrings);
-            }
+            var referenceIdQueryStrings =
+                resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
+            var queryString = string.Join("&", referenceIdQueryStrings);
 
             var response = await client.GetStringAsync($"/Resource/Bulk?{queryString}");
-            var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
+            var result = JsonConvert.DeserializeObject<BulkResourceReference>(response);
             return result;
         }
 
-        private static string GetSearchQueryParams(
+        private static string GetSearchQueryString(
             string text,
             int? offset = null,
             int? limit = null,
@@ -89,27 +85,22 @@
             var offSetQueryString = GetQueryString("offset", offset.ToString());
             var limitQueryString = GetQueryString("limit", limit.ToString());
 
-            var resourceTypesQueryString = "";
+            var queryStrings = new List<string> { textQueryString, offSetQueryString, limitQueryString };
+
             if (resourceTypes != null)
             {
-                var resourceTypesQueryStrings =
-                    resourceTypes.Select(r => GetQueryString("resourceTypes", r.ToString()));
-                resourceTypesQueryString = JoinQueryStrings(resourceTypesQueryStrings);
+                var resourceTypesQueryStrings = resourceTypes.Where(x => !string.IsNullOrEmpty(x))
+                    .Select(r => GetQueryString("resourceTypes", r.ToString()));
+                queryStrings.AddRange(resourceTypesQueryStrings);
             }
 
-            var queryStrings = new[] { textQueryString, offSetQueryString, limitQueryString, resourceTypesQueryString };
-            return JoinQueryStrings(queryStrings);
+            var validQueryStrings = queryStrings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            return string.Join("&", validQueryStrings);
         }
 
         private static string GetQueryString(string key, string? value)
         {
             return string.IsNullOrEmpty(value) ? "" : $"{key}={value}";
-        }
-
-        private static string JoinQueryStrings(IEnumerable<string> queryStrings)
-        {
-            var validQueryStrings = queryStrings.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-            return string.Join("&", validQueryStrings);
         }
     }
 }
