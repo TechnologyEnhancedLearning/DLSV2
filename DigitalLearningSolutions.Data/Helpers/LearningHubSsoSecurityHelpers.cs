@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Data.Helpers
 {
+    using System;
     using System.Security.Cryptography;
+    using System.Text;
 
     public static class LearningHubSsoSecurityHelpers
     {
@@ -27,7 +25,7 @@ namespace DigitalLearningSolutions.Data.Helpers
             var toleranceInSec = 60;
 
             // loop optimisation, iterates 0,-1,-2,-3 .. -60,1,2,3 .. 60
-            for (int counter = 0; counter <= toleranceInSec * 2; counter++)
+            for (var counter = 0; counter <= toleranceInSec * 2; counter++)
             {
                 var step = counter > toleranceInSec ? counter - toleranceInSec : -1 * counter;
                 var pwd = encoder.GetBytes(state + (secondsSinceEpoch + step));
