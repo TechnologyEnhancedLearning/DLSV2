@@ -86,6 +86,13 @@ $button-hover-colour: #4c6272;
   }
 }
 
+.select-all-button {
+  @extend .right-submit-button;
+  width: auto;
+  border-radius: 4px;
+  margin-right: nhsuk-spacing(2);
+}
+
 .search-sort-container {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@
             var model = ViewData.Model;
             var property = model.GetType().GetProperty(aspFor);
             var valueToSet = (bool)(property?.GetValue(model) ?? false);
-            var errorMessage = ViewData.ModelState[property?.Name]?.Errors[0]?.ErrorMessage;
+            var errorMessage = ViewData.ModelState[property?.Name]?.Errors?.FirstOrDefault()?.ErrorMessage;
 
             var viewModel = new CheckboxItemViewModel(
                 aspFor,

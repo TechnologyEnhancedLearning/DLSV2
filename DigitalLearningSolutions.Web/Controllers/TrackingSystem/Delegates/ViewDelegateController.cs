@@ -46,10 +46,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
-
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
-            var categoryIdFilter = adminUser.CategoryIdFilter;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
             var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
             var delegateCourses =

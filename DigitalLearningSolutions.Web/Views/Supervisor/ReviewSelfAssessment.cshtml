@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewSelfAssessmentViewModel;
 @{
-  ViewData["Title"] = "Review Profile Assessment";
-  ViewData["Application"] = "Supervisor";
+    ViewData["Title"] = "Review Profile Assessment";
+    ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -52,6 +52,7 @@
     }
   </div>
 </div>
+
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
@@ -64,10 +65,11 @@
             @competencyGroup.First().Vocabulary
           </th>
           <th role="columnheader" class="" scope="col">
-            Question
+            @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
+                        Model.DelegateSelfAssessment.QuestionLabel)
           </th>
           <th role="columnheader" class="" scope="col">
-            Learner<br/>Response
+            Learner<br />Response
           </th>
           <th role="columnheader" class="" scope="col">
             Status
@@ -96,4 +98,11 @@
       </tbody>
     </table>
   }
+}
+@if (Model.SupervisorSignOffs.Any())
+{
+<div class="nhsuk-u-margin-top-4">
+  <h3>Self Assessment Sign-off Status</h3>
+  <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
+</div>
 }
