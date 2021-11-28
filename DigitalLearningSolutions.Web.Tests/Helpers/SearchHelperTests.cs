@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Linq;
+    using ClosedXML;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
     using SelfAssessmentHelper = DigitalLearningSolutions.Data.Tests.TestHelpers.SelfAssessmentHelper;
@@ -119,6 +121,20 @@
 
             // Then
             filteredIds.Should().Equal(expectedIds);
+        }
+
+        [Test]
+        public void SearchItemsUsingTokeniseScorer_returns_expected_result_from_available_courses()
+        {
+            // Given
+            var searchString = "title text";
+            var expectedId = 73;
+
+            // When
+            var result = GenericSearchHelper.SearchItemsUsingTokeniseScorer(availableCourses, searchString);
+
+            // Then
+            result.Should().Contain(r => r.Id == expectedId);
         }
     }
 }

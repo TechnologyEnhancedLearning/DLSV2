@@ -54,18 +54,13 @@
             var frameworksSupportEnabled = DlsSubApplication.Frameworks.Equals(dlsSubApplication) &&
                                            User.HasFrameworksAdminPermissions();
 
-            if (trackingSystemSupportEnabled && frameworksSupportEnabled)
+            if (!trackingSystemSupportEnabled && !frameworksSupportEnabled)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var targetGroup = dlsSubApplication.FaqTargetGroupId;
-            if (targetGroup == null)
-            {
-                return NotFound();
-            }
-
-            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value).Select(f => new FaqViewModel(f));
+            var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
+                .Select(f => new FaqViewModel(f));
 
             var model = new FaqsViewModel(
                 dlsSubApplication,
@@ -96,18 +91,12 @@
             var frameworksSupportEnabled = DlsSubApplication.Frameworks.Equals(dlsSubApplication) &&
                                            User.HasFrameworksAdminPermissions();
 
-            if (trackingSystemSupportEnabled && frameworksSupportEnabled)
+            if (!trackingSystemSupportEnabled && !frameworksSupportEnabled)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var targetGroup = dlsSubApplication.FaqTargetGroupId;
-            if (targetGroup == null)
-            {
-                return NotFound();
-            }
-
-            var faq = faqsService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup.Value);
+            var faq = faqsService.GetPublishedFaqByIdForTargetGroup(faqId, dlsSubApplication.FaqTargetGroupId!.Value);
 
             if (faq == null)
             {
@@ -135,18 +124,13 @@
             var frameworksSupportEnabled = DlsSubApplication.Frameworks.Equals(dlsSubApplication) &&
                                            User.HasFrameworksAdminPermissions();
 
-            if (trackingSystemSupportEnabled && frameworksSupportEnabled)
+            if (!trackingSystemSupportEnabled && !frameworksSupportEnabled)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var targetGroup = dlsSubApplication.FaqTargetGroupId;
-            if (targetGroup == null)
-            {
-                return NotFound();
-            }
-
-            var faqs = faqsService.GetPublishedFaqsForTargetGroup(targetGroup.Value).Select(f => new FaqViewModel(f));
+            var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
+                .Select(f => new FaqViewModel(f));
 
             var model = new FaqItemsViewModel(dlsSubApplication, faqs);
 

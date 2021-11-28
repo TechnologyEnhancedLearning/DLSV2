@@ -2,11 +2,13 @@
 {
     using DigitalLearningSolutions.Data.Models;
     using System;
-    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models.Support;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class FaqViewModel : BaseSearchableItem
     {
+        public FaqViewModel() { }
+
         public FaqViewModel(Faq model)
         {
             FaqId = model.FaqId;
@@ -29,7 +31,7 @@
         public int Weighting { get; set; }
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{Qtext} {Regex.Replace(Ahtml, "[^ a-zA-Z0-9]", " ")}";
+            get => SearchableNameOverrideForFuzzySharp ?? $"{Qtext} {StringHelper.ReplaceNoneAlphaNumericSpaceChars(Ahtml, " ")}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }
