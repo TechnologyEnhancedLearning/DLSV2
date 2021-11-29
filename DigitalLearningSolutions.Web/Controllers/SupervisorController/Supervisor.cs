@@ -173,6 +173,37 @@
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/")]
         public IActionResult ReviewCompetencySelfAssessment(int supervisorDelegateId, int candidateAssessmentId, string viewMode, int resultId)
         {
+            var model = ReviewCompetencySelfAsessmentData(supervisorDelegateId, candidateAssessmentId, resultId);
+
+            return View("ReviewCompetencySelfAsessment", model);
+        }
+        [HttpPost]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/")]
+        public IActionResult SubmitReviewCompetencySelfAssessment(int supervisorDelegateId,
+            int candidateAssessmentId, string viewMode, int resultId, int resultSupervisorVerificationId, string? supervisorComments, bool signedOff)
+        {
+            
+            if(!ModelState.IsValid ||
+                (!signedOff && string.IsNullOrWhiteSpace(supervisorComments)))
+            {
+                ModelState.AddModelError(string.Empty, "Please enter some comments");
+                var model = ReviewCompetencySelfAsessmentData(supervisorDelegateId, candidateAssessmentId, resultId);
+                                
+                return View("ReviewCompetencySelfAsessment", model);
+            }
+
+            if (supervisorService.UpdateSelfAssessmentResultSupervisorVerifications(resultSupervisorVerificationId, supervisorComments, signedOff, GetAdminID()))
+            {
+                //send notification to delegate:
+                frameworkNotificationService.SendSupervisorResultReviewed(GetAdminID(), supervisorDelegateId, candidateAssessmentId, resultId);
+            };
+
+            return RedirectToAction("ReviewCompetencySelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "View", resultId = resultId });
+        }
+
+        private ReviewCompetencySelfAsessmentViewModel ReviewCompetencySelfAsessmentData(int supervisorDelegateId,
+            int candidateAssessmentId, int resultId)
+        {
             var adminId = GetAdminID();
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
             var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
@@ -187,19 +218,10 @@
                 SupervisorComments = assessmentQuestion.SupervisorComments,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
             };
-            return View("ReviewCompetencySelfAsessment", model);
+
+            return model;
         }
-        [HttpPost]
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/{viewMode}/{resultId}/")]
-        public IActionResult SubmitReviewCompetencySelfAssessment(int supervisorDelegateId, int candidateAssessmentId, string viewMode, int resultId, int resultSupervisorVerificationId, string? supervisorComments, bool signedOff)
-        {
-            if (supervisorService.UpdateSelfAssessmentResultSupervisorVerifications(resultSupervisorVerificationId, supervisorComments, signedOff, GetAdminID()))
-            {
-                //send notification to delegate:
-                frameworkNotificationService.SendSupervisorResultReviewed(GetAdminID(), supervisorDelegateId, candidateAssessmentId, resultId);
-            };
-            return RedirectToAction("ReviewCompetencySelfAssessment", "Supervisor", new { supervisorDelegateId = supervisorDelegateId, candidateAssessmentId = candidateAssessmentId, viewMode = "View", resultId = resultId });
-        }
+
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/{candidateAssessmentId}/VerifyMultiple/")]
         public IActionResult VerifyMultipleResults(int supervisorDelegateId, int candidateAssessmentId)
         {

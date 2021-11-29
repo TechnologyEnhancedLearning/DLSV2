@@ -36,6 +36,7 @@
       </div>
     </nav>
 }
+
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -140,19 +141,10 @@
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
           <nhs-form-group nhs-validation-for="SupervisorComments">
             <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
+            <span asp-validation-for="SupervisorComments" class="text-danger"></span>
           </nhs-form-group>
 
           <nhs-form-group nhs-validation-for="SignedOff">
-            @*<div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
-                <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-                  Verify self-assessment response
-                </label>
-                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
-                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
-                </div>
-              </div>*@
-
             <div class="nhsuk-radios nhsuk-radios--inline">
               <div class="nhsuk-radios__item">
                 <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
@@ -164,17 +156,16 @@
                 </div>
               </div>
               <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" (ngModelChange)="checkCustomeName($event)" required="required" type="radio" value="false">
+                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" required="required" type="radio" value="false">
                 <label class="nhsuk-label nhsuk-radios__label" for="rb-reject">
                   Reject self-assessment response
                 </label>
                 <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
-                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
+                  I disagree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment response against this @Model.Competency.Vocabulary.ToLower() for the reasons stated above
                 </div>
               </div>
-
+              <span asp-validation-for="SignedOff" class="text-danger"></span>
             </div>
-
           </nhs-form-group>
         </fieldset>
         <button class="nhsuk-button nhsuk-u-margin-bottom-0" type="submit">
@@ -231,18 +222,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
     }
   }
 }
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script type="text/javascript">  
-  $("input[name='SignedOff']").click(function () {
-    var radioValue = $("input[name='SignedOff']:checked").val();    
-    if (radioValue=="false") {      
-      if ($.trim($('#SupervisorComments').val()).length < 1) {
-        $('#SupervisorComments').prop("required", true);                
-      }
-    }
-    else {     
-      $('#SupervisorComments').attr('required', false);      
-      $('#SupervisorComments').removeAttr('required');     
-    }
-  });
-</script>
+
+@section scripts {
+  <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
+}
