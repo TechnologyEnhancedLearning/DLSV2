@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Controllers;
     using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
@@ -39,40 +41,76 @@
                 return;
             }
 
-            var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
+            if (!TryGetDlsSubApplication(context, out var application, out var applicationParameterName))
+            {
+                return;
+            }
+
+            if (await ApplicationIsInaccessibleByPage(context, application))
+            {
+                return;
+            }
+
+            ValidateUserHasPermissionForApplication(context, user, application, applicationParameterName!);
+        }
+
+        private bool TryGetDlsSubApplication(
+            ActionExecutingContext context,
+            out DlsSubApplication? application,
+            out string? dlsSubApplicationParameterName
+        )
+        {
+            dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
                 .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
 
             var actionDoesNotRequireApplication = dlsSubApplicationParameterName == null;
-
             if (actionDoesNotRequireApplication)
             {
-                return;
+                application = null;
+                return false;
             }
 
-            if (!string.IsNullOrEmpty(dlsSubApplicationParameterName) &&
-                HasModelBindingError(context, dlsSubApplicationParameterName!))
+            if (HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
                 SetNotFoundResult(context);
-                return;
+                application = null;
+                return false;
             }
 
-            var application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
+            application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
+            return true;
+        }
 
+        private async Task<bool> ApplicationIsInaccessibleByPage(
+            ActionExecutingContext context,
+            DlsSubApplication? application
+        )
+        {
             if (DlsSubApplication.TrackingSystem.Equals(application) &&
                 !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem) ||
                 DlsSubApplication.SuperAdmin.Equals(application) &&
                 !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredSuperAdminInterface))
             {
                 SetNotFoundResult(context);
-                return;
+                return true;
             }
 
             if (validApplications.Any() && !validApplications.Contains(application))
             {
                 SetNotFoundResult(context);
-                return;
+                return true;
             }
 
+            return false;
+        }
+
+        private void ValidateUserHasPermissionForApplication(
+            ActionExecutingContext context,
+            ClaimsPrincipal user,
+            DlsSubApplication? application,
+            string dlsSubApplicationParameterName
+        )
+        {
             if (user.IsDelegateOnlyAccount() && DlsSubApplication.Main.Equals(application))
             {
                 SetLearningPortalVersionRedirectResult(context, dlsSubApplicationParameterName!);
@@ -103,7 +141,10 @@
             );
         }
 
-        private void SetLearningPortalVersionRedirectResult(ActionExecutingContext context, string applicationArgumentName)
+        private void SetLearningPortalVersionRedirectResult(
+            ActionExecutingContext context,
+            string applicationArgumentName
+        )
         {
             var descriptor = ((ControllerBase)context.Controller).ControllerContext.ActionDescriptor;
             var routeValues = new Dictionary<string, object>
