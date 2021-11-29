@@ -28,37 +28,35 @@
     <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CourseName</h1>
 
     <div class="nhsuk-grid-row">
-              <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-                Delegate
-              </div>
-              <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-                @Model.DelegateName
-              </div>
-            </div>
+      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
+        Delegate
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @Model.DelegateName
+      </div>
+    </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
-       <input type="hidden" asp-for="DelegateId" />
-       <input type="hidden" asp-for="ProgressId" />
-       <input type="hidden" asp-for="DelegateName"/>
-       <input type="hidden" asp-for="CourseName"/>
-       <vc:date-input id="completion-date"
-                             label="Completion date"
-                             day-id="Day"
-                             month-id="Month"
-                             year-id="Year"
-                             css-class=""
-                             key="1"
-                             hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the completion date" />
+      <input type="hidden" asp-for="DelegateId" />
+      <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="DelegateName" />
+      <input type="hidden" asp-for="CourseName" />
+      <vc:date-input id="completion-date"
+                     label="Completion date"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class=""
+                     key="1"
+                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the completion date" />
 
-       <button class="nhsuk-button" type="submit">Save</button>
+      <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-     @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
-          <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-        } else {
-          <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-        }
+    @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    } else {
+      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    }
   </div>
 </div>
-
-
