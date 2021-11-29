@@ -95,6 +95,7 @@
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
         void DeactivateAdmin(int adminId);
+        void ActivateDelegateUser(int delegateId);
     }
 
     public partial class UserDataService : IUserDataService

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
@@ -168,7 +169,7 @@
             controller.RemoveCurrentCourse(1);
 
             // Then
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, CandidateId)).MustHaveHappened();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, CandidateId, RemovalMethod.RemovedByDelegate)).MustHaveHappened();
         }
 
         [Test]

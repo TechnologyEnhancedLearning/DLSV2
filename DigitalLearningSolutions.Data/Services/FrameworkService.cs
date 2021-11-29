@@ -32,6 +32,8 @@
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
         FrameworkCompetency? GetFrameworkCompetencyById(int Id);
+        int GetMaxFrameworkCompetencyID();
+        int GetMaxFrameworkCompetencyGroupID();
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
         IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId);
@@ -554,6 +556,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
                 @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                    ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
@@ -1581,6 +1584,20 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public void MoveCompetencyAssessmentQuestion(int competencyId, int assessmentQuestionId, bool singleStep, string direction)
         {
             connection.Execute("ReorderCompetencyAssessmentQuestion", new { competencyId, assessmentQuestionId, direction, singleStep }, commandType: CommandType.StoredProcedure);
+        }
+
+        public int GetMaxFrameworkCompetencyID()
+        {
+            return connection.Query<int>(
+                "SELECT MAX(ID) FROM FrameworkCompetencies"
+                ).Single();
+        }
+
+        public int GetMaxFrameworkCompetencyGroupID()
+        {
+            return connection.Query<int>(
+                "SELECT MAX(ID) FROM FrameworkCompetencyGroups"
+                ).Single();
         }
     }
 }

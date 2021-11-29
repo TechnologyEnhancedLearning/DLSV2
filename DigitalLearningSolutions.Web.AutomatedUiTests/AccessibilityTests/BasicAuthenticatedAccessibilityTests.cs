@@ -52,7 +52,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/EditDescription", "Edit description for Activities worker or coordinator group (optional)")]
-        
+        [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
+
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
@@ -63,16 +64,25 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
+        [InlineData(
+            "/TrackingSystem/Delegates/3/View/100/Remove",
+            "Remove delegate enrolment from Entry Level - Win XP, Office 2003/07 OLD - Standard"
+        )]
         [InlineData("/TrackingSystem/Delegates/Approve", "Approve delegate registrations")]
         [InlineData("/TrackingSystem/Delegates/BulkUpload", "Bulk upload/update delegates")]
         [InlineData("/TrackingSystem/Delegates/Email", "Send welcome messages")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates", "Course delegates")]
         [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104", "Delegate progress")]
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
+            "Edit supervisor for Digital Literacy for the Workplace - CC Test"
+        )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
         [InlineData("/TrackingSystem/Support", "Support")]
+        [InlineData("/TrackingSystem/Resources", "Resources")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

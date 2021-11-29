@@ -2,9 +2,11 @@
 @model BaseSearchablePageViewModel
 
 <form method="get" role="search">
-  @if (Model.FilterEnabled)
-  {
+  @if (Model.FilterEnabled) {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+  }
+  @foreach (var (key, value) in Model.RouteData) {
+    <input type="hidden" name="@key" value="@value" />
   }
   <input type="hidden" name="sortBy" value="@Model.SortBy" />
   <input type="hidden" name="sortDirection" value="@Model.SortDirection" />

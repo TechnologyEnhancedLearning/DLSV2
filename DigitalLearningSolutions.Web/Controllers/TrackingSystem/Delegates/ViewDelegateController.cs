@@ -1,12 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@
     public class ViewDelegateController : Controller
     {
         private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserDataService userDataService;
@@ -29,23 +31,22 @@
             IUserDataService userDataService,
             CentreCustomPromptHelper centreCustomPromptHelper,
             ICourseService courseService,
-            IPasswordResetService passwordResetService
+            IPasswordResetService passwordResetService,
+            ICourseDataService courseDataService
         )
         {
             this.userDataService = userDataService;
             this.centreCustomPromptHelper = centreCustomPromptHelper;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
+            this.courseDataService = courseDataService;
         }
 
         public IActionResult Index(int delegateId)
         {
             var centreId = User.GetCentreId();
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
-
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
-            var categoryIdFilter = adminUser.CategoryIdFilter;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
             var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
             var delegateCourses =
@@ -63,7 +64,11 @@
 
             string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
-            passwordResetService.GenerateAndSendDelegateWelcomeEmail(delegateUser.EmailAddress!, delegateUser.CandidateNumber, baseUrl);
+            passwordResetService.GenerateAndSendDelegateWelcomeEmail(
+                delegateUser.EmailAddress!,
+                delegateUser.CandidateNumber,
+                baseUrl
+            );
 
             var model = new WelcomeEmailSentViewModel(delegateUser);
 
@@ -75,6 +80,67 @@
         public IActionResult DeactivateDelegate(int delegateId)
         {
             userDataService.DeactivateDelegateUser(delegateId);
+
+            return RedirectToAction("Index", new { delegateId });
+        }
+
+        [HttpGet]
+        [Route("{customisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
+        {
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            var course = courseDataService.GetCourseNameAndApplication(customisationId);
+
+            var model = new RemoveFromCourseViewModel
+            {
+                DelegateId = delegateUser!.Id,
+                CustomisationId = customisationId,
+                CourseName = course!.CourseName,
+                Name = delegateUser.FullName,
+                Confirm = false,
+            };
+            return View("ConfirmRemoveFromCourse", model);
+        }
+
+        [HttpPost]
+        [Route("{customisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        public IActionResult ExecuteRemoveFromCourse(
+            int delegateId,
+            int customisationId,
+            RemoveFromCourseViewModel model
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmRemoveFromCourse", model);
+            }
+
+            if (!courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+                delegateId,
+                customisationId,
+                RemovalMethod.RemovedByAdmin
+            ))
+            {
+                return new NotFoundResult();
+            }
+
+            return RedirectToAction("Index", new { delegateId });
+        }
+
+        [HttpPost]
+        [Route("ReactivateDelegate")]
+        public IActionResult ReactivateDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser?.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            userDataService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
         }

@@ -233,7 +233,8 @@
         public void GroupDelegatesRemovePost_should_return_not_found_with_invalid_group_for_centre()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+            var model = new GroupDelegatesRemoveViewModel
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns(null);
 
             // When
@@ -247,7 +248,8 @@
         public void GroupDelegatesRemovePost_should_return_not_found_with_delegate_not_in_group()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+            var model = new GroupDelegatesRemoveViewModel
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
 
@@ -279,7 +281,8 @@
         public void GroupDelegatesRemove_should_call_remove_progress_but_keep_started_enrolments_if_unchecked()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
+            var model = new GroupDelegatesRemoveViewModel
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
 
             const int groupId = 44;
             const int delegateId = 3274;
@@ -289,7 +292,12 @@
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = delegateId } });
             A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).DoesNothing();
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    model.RemoveStartedEnrolments,
+                    A<DateTime>._
+                )
             ).DoesNothing();
 
             // When
@@ -297,9 +305,15 @@
 
             // Then
             A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, model.RemoveStartedEnrolments, A<DateTime>._)
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    model.RemoveStartedEnrolments,
+                    A<DateTime>._
+                )
             ).MustHaveHappened();
-            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId)).MustHaveHappened();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId))
+                .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("GroupDelegates");
         }
 
@@ -307,7 +321,8 @@
         public void GroupDelegatesRemove_should_call_remove_progress_if_checked()
         {
             // Given
-            var model = new GroupDelegatesRemoveViewModel { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+            var model = new GroupDelegatesRemoveViewModel
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsDataService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsDataService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
@@ -377,7 +392,8 @@
             var result = delegateGroupsController.DeleteGroup(groupId);
 
             // Then
-            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -392,7 +408,7 @@
             var model = new ConfirmDeleteGroupViewModel
             {
                 DeleteEnrolments = false,
-                Confirm = true
+                Confirm = true,
             };
             const int groupId = 1;
 
@@ -400,7 +416,8 @@
             var result = delegateGroupsController.ConfirmDeleteGroup(groupId, model);
 
             // Then
-            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false, removedDate))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 
@@ -415,7 +432,7 @@
             var model = new ConfirmDeleteGroupViewModel
             {
                 DeleteEnrolments = true,
-                Confirm = true
+                Confirm = true,
             };
             const int groupId = 1;
 
@@ -433,27 +450,103 @@
             // Given
             const int groupId = 103;
             const int centreId = 2;
-            var model = new EditDelegateGroupDescriptionViewModel()
+            var model = new EditDelegateGroupDescriptionViewModel
             {
                 Description = "Test Description",
             };
 
-            A.CallTo(() => groupsDataService.UpdateGroupDescription(
+            A.CallTo(
+                () => groupsDataService.UpdateGroupDescription(
                     groupId,
                     centreId,
-                    model.Description)).DoesNothing();
+                    model.Description
+                )
+            ).DoesNothing();
 
             // When
             var result = delegateGroupsController.EditDescription(model, groupId);
 
             // Then
-            A.CallTo(() => groupsDataService.UpdateGroupDescription(
-                    groupId,
-                    centreId,
-                    model.Description))
+            A.CallTo(
+                    () => groupsDataService.UpdateGroupDescription(
+                        groupId,
+                        centreId,
+                        model.Description
+                    )
+                )
                 .MustHaveHappened();
 
             result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void EditGroupName_should_redirect_to_index_action_when_update_is_successful()
+        {
+            // Given
+            const int groupId = 103;
+            const int centreId = 2;
+            var model = new EditGroupNameViewModel
+            {
+                GroupName = "Test Group Name",
+            };
+
+            A.CallTo(
+                () => groupsDataService.UpdateGroupName(
+                    groupId,
+                    centreId,
+                    model.GroupName
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.EditGroupName(model, groupId);
+
+            // Then
+            A.CallTo(
+                    () => groupsDataService.UpdateGroupName(
+                        groupId,
+                        centreId,
+                        model.GroupName
+                    )
+                )
+                .MustHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void EditGroupName_should_redirect_to_not_found_page_when_linked_to_field_is_not_zero()
+        {
+            // Given
+            var model = new EditGroupNameViewModel { GroupName = "Test Group Name" };
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
+                .Returns(new Group { LinkedToField = 1 });
+
+            // When
+            var result = delegateGroupsController.EditGroupName(1);
+
+            // Them
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void EditGroupName_should_not_update_name_when_linked_to_field_is_not_zero()
+        {
+            // Given
+            var model = new EditGroupNameViewModel { GroupName = "Test Group Name" };
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2))
+                .Returns(new Group { LinkedToField = 1 });
+
+            // When
+            var result = delegateGroupsController.EditGroupName(model, 1);
+
+            // Them
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
+            A.CallTo(() => groupsDataService.UpdateGroupName(1, 2, model.GroupName))
+                .MustNotHaveHappened();
+
+            result.Should().BeNotFoundResult();
         }
     }
 }

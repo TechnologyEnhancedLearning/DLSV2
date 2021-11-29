@@ -1,0 +1,170 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditCourseDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Edit course details";
+  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  const string passwordId = "conditional-password";
+  const string emailId = "conditional-email";
+  const string completionCriteriaId = "conditional-completion-criteria";
+  var passwordCss = "nhsuk-checkboxes__conditional"
+                    + (Model.PasswordProtected ? "" : " nhsuk-checkboxes__conditional--hidden");
+  var emailCss = "nhsuk-checkboxes__conditional"
+                 + (Model.ReceiveNotificationEmails ? "" : " nhsuk-checkboxes__conditional--hidden");
+  var otherCompletionCriteriaCss = "nhsuk-radios__conditional"
+                                   + (!Model.IsAssessed ? "" : " nhsuk-radios__conditional--hidden");
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.CustomisationNameSuffix),
+                                                   nameof(Model.Password),
+                                                   nameof(Model.NotificationEmails),
+                                                   nameof(Model.TutCompletionThreshold),
+                                                   nameof(Model.DiagCompletionThreshold) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit course details</h1>
+
+    <form class="nhsuk-u-margin-bottom-3"
+          method="post"
+          novalidate
+          asp-controller="ManageCourse"
+          asp-action="SaveCourseDetails"
+          asp-route-customisationId="@Model.CustomisationId">
+
+      <input type="hidden" asp-for="ApplicationId" />
+      <input type="hidden" asp-for="CustomisationName" />
+      <input type="hidden" asp-for="PostLearningAssessment" />
+      <input type="hidden" asp-for="DiagAssess" />
+
+      <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
+
+        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s word-break">
+          <label class="nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+            Course name
+          </label>
+          <div class="nhsuk-u-margin-top-1">
+            @Model.CustomisationName -
+          </div>
+        </div>
+        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-1">
+          <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
+                         id="CustomisationNameSuffix"
+                         label="Add on to course name (optional)"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="true"
+                         autocomplete="off"
+                         hint-text=""
+                         css-class="nhsuk-u-width-three-quarters nhsuk-u-font-weight-normal" />
+        </div>
+      </div>
+
+      <div class="nhsuk-form-group nhsuk-u-margin-bottom-5">
+        <fieldset class="nhsuk-fieldset">
+          <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
+
+            <div class="nhsuk-u-margin-bottom-3">
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input"
+                       asp-for="PasswordProtected"
+                       type="checkbox"
+                       aria-controls="@passwordId"
+                       aria-expanded="@Model.PasswordProtected.ToString()">
+                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="PasswordProtected">
+                  Password protected
+                </label>
+              </div>
+
+              <div class="@passwordCss" id="@passwordId">
+                <vc:text-input asp-for="@nameof(Model.Password)"
+                               label="Enter the password for the course"
+                               populate-with-current-value="true"
+                               type="text"
+                               spell-check="false"
+                               autocomplete="off"
+                               hint-text=""
+                               css-class="nhsuk-u-width-one-half" />
+              </div>
+            </div>
+
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input"
+                     asp-for="ReceiveNotificationEmails"
+                     type="checkbox"
+                     aria-controls="@emailId"
+                     aria-expanded="@Model.ReceiveNotificationEmails.ToString()">
+              <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ReceiveNotificationEmails">
+                Receive course completion notification emails
+              </label>
+            </div>
+
+            <div class="@emailCss" id="@emailId">
+              <vc:text-input asp-for="@nameof(Model.NotificationEmails)"
+                             label="Enter an email address for receiving the notifications"
+                             populate-with-current-value="true"
+                             type="text"
+                             spell-check="false"
+                             autocomplete="off"
+                             hint-text=""
+                             css-class="nhsuk-u-width-one-half" />
+            </div>
+
+          </div>
+        </fieldset>
+      </div>
+
+      <h2 class="nhsuk-heading-s nhsuk-u-font-weight-normal">
+        Completion criteria
+      </h2>
+
+      <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset">
+          <div class="nhsuk-radios nhsuk-radios--conditional">
+
+            @if (Model.PostLearningAssessment) {
+              <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
+                <input class="nhsuk-radios__input"
+                       id="PostLearningAssessmentRadio"
+                       asp-for="IsAssessed"
+                       type="radio"
+                       value="true">
+                <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessmentRadio">
+                  Post learning assessment
+                </label>
+              </div>
+
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input"
+                       id="OtherCompletionCriteria"
+                       asp-for="IsAssessed"
+                       type="radio"
+                       value="false"
+                       aria-controls="@completionCriteriaId"
+                       aria-expanded="@Model.IsAssessed.ToString()">
+                <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
+                  Other completion criteria
+                </label>
+              </div>
+
+              <div class="@otherCompletionCriteriaCss" id="@completionCriteriaId">
+                <partial name="_OtherCompletionCriteriaInputs" model="Model" />
+              </div>
+            } else {
+              <partial name="_OtherCompletionCriteriaInputs" model="Model" />
+            }
+
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+  </div>
+</div>

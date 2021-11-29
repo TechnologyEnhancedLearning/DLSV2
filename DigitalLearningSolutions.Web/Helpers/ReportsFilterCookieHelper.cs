@@ -2,7 +2,6 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
 
@@ -28,13 +27,13 @@
             );
         }
 
-        public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, AdminUser user)
+        public static ActivityFilterData RetrieveFilterDataFromCookie(this IRequestCookieCollection cookies, int? categoryIdFilter)
         {
             var cookie = cookies[CookieName];
 
             if (cookie == null)
             {
-                return ActivityFilterData.GetDefaultFilterData(user);
+                return ActivityFilterData.GetDefaultFilterData(categoryIdFilter);
             }
 
             try
@@ -43,7 +42,7 @@
             }
             catch
             {
-                return ActivityFilterData.GetDefaultFilterData(user);
+                return ActivityFilterData.GetDefaultFilterData(categoryIdFilter);
             }
         }
     }

@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Data.DataServices
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.Extensions.Logging;
 
@@ -18,13 +19,13 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         void SetCompleteByDate(int progressId, int candidateId, DateTime? completeByDate);
 
-        void RemoveCurrentCourse(int progressId, int candidateId);
+        void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod);
 
         void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId);
 
-        int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int categoryId);
+        int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? categoryId);
 
-        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId);
+        IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId);
 
         IEnumerable<DelegateCourseInfo> GetDelegateCoursesInfo(int delegateId);
 
@@ -34,21 +35,45 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
-        CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId);
+        IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+
+        IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
+
+        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
+
+        bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        );
 
         void UpdateLearningPathwayDefaultsForCourse(
             int customisationId,
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
+        );
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string password,
+            string notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
         );
 
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
-        CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
+        CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
     }
@@ -190,16 +215,16 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public void RemoveCurrentCourse(int progressId, int candidateId)
+        public void RemoveCurrentCourse(int progressId, int candidateId, RemovalMethod removalMethod)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE Progress
                     SET RemovedDate = getUTCDate(),
-                        RemovalMethodID = 1
+                        RemovalMethodID = @removalMethod
                     WHERE ProgressID = @progressId
                       AND CandidateID = @candidateId
                 ",
-                new { progressId, candidateId }
+                new { progressId, candidateId, removalMethod }
             );
 
             if (numberOfAffectedRows < 1)
@@ -231,21 +256,19 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public int GetNumberOfActiveCoursesAtCentreForCategory(int centreId, int adminCategoryId)
+        public int GetNumberOfActiveCoursesAtCentreFilteredByCategory(int centreId, int? adminCategoryId)
         {
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*)
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId = 0)",
+	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
                 new { centreId, adminCategoryId }
             );
         }
 
-        // Admins have a non-nullable category ID where 0 = all. This is why we have the
-        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
-        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreForAdminCategoryId(int centreId, int categoryId)
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId)
         {
             return connection.Query<CourseStatistics>(
                 @$"SELECT
@@ -269,7 +292,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
                     INNER JOIN dbo.CourseCategories AS cc ON cc.CourseCategoryID = ap.CourseCategoryID
                     INNER JOIN dbo.CourseTopics AS ct ON ct.CourseTopicID = ap.CourseTopicId
-                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
+                    WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL",
@@ -317,9 +340,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return new AttemptStats(totalAttempts, attemptsPassed);
         }
 
-        // Admins have a non-nullable category ID where 0 = all. This is why we have the
-        // @categoryId = 0 in the WHERE clause, to prevent filtering on category ID when it is 0
-        public CourseDetails? GetCourseDetailsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
             return connection.Query<CourseDetails>(
                 @$"SELECT
@@ -358,7 +379,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0)
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
@@ -385,7 +406,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<Course> GetCentrallyManagedAndCentreCourses(int centreId, int? categoryId)
+        public IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
                 @"SELECT
@@ -396,13 +417,72 @@ namespace DigitalLearningSolutions.Data.DataServices
                         c.CustomisationName,
                         c.Active
                     FROM Customisations AS c
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    WHERE (c.CentreID = @centreId OR (c.AllCentres = 1 AND ca.Active = 1))
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
+                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
+                    AND ca.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ca.CentreID = @centreId
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<Course>(
+                @"SELECT DISTINCT
+                        c.CustomisationID,
+                        c.CentreID,
+                        c.ApplicationID,
+                        ap.ApplicationName,
+                        c.CustomisationName,
+                        c.Active
+                    FROM Candidates AS cn
+                    INNER JOIN Progress AS p ON p.CandidateID = cn.CandidateID
+                    INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    WHERE cn.CentreID = @centreID
+	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    AND ap.ArchivedDate IS NULL",
+                new { centreId, categoryId }
+            );
+        }
+
+        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT *
+                        FROM Customisations AS c
+                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                        WHERE CustomisationID = @customisationId
+                        AND c.CentreID = @centreId
+                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    )
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, centreId, categoryId }
+            );
+        }
+
+        public bool DoesCourseNameExistAtCentre(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            int applicationId
+        )
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+                        SELECT CustomisationID
+                        FROM dbo.Customisations
+                        WHERE [ApplicationID] = @applicationID
+                        AND [CentreID] = @centreID
+                        AND [CustomisationName] = @customisationName
+                        AND [CustomisationID] != @customisationId)
+                    THEN CAST(1 AS BIT)
+                    ELSE CAST(0 AS BIT) END",
+                new { customisationId, customisationName, centreId, applicationId }
             );
         }
 
@@ -422,7 +502,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             int completeWithinMonths,
             int validityMonths,
             bool mandatory,
-            bool autoRefresh
+            bool autoRefresh,
+            int refreshToCustomisationId,
+            int autoRefreshMonths,
+            bool applyLpDefaultsToSelfEnrol
         )
         {
             connection.Execute(
@@ -431,9 +514,55 @@ namespace DigitalLearningSolutions.Data.DataServices
                         CompleteWithinMonths = @completeWithinMonths,
                         ValidityMonths = @validityMonths,
                         Mandatory = @mandatory,
-                        AutoRefresh = @autoRefresh
+                        AutoRefresh = @autoRefresh,
+                        RefreshToCustomisationID = @refreshToCustomisationId,
+                        AutoRefreshMonths = @autoRefreshMonths,
+                        ApplyLpDefaultsToSelfEnrol = @applyLpDefaultsToSelfEnrol
                     WHERE CustomisationID = @customisationId",
-                new { completeWithinMonths, validityMonths, mandatory, autoRefresh, customisationId }
+                new
+                {
+                    completeWithinMonths,
+                    validityMonths,
+                    mandatory,
+                    autoRefresh,
+                    customisationId,
+                    refreshToCustomisationId,
+                    autoRefreshMonths,
+                    applyLpDefaultsToSelfEnrol,
+                }
+            );
+        }
+
+        public void UpdateCourseDetails(
+            int customisationId,
+            string customisationName,
+            string? password,
+            string? notificationEmails,
+            bool isAssessed,
+            int tutCompletionThreshold,
+            int diagCompletionThreshold
+        )
+        {
+            connection.Execute(
+                @"UPDATE Customisations
+                    SET
+                        CustomisationName = @customisationName,
+                        Password = @password,
+                        NotificationEmails = @notificationEmails,
+                        IsAssessed = @isAssessed,
+                        TutCompletionThreshold = @tutCompletionThreshold,
+                        DiagCompletionThreshold = @diagCompletionThreshold
+                    WHERE CustomisationID = @customisationId",
+                new
+                {
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold,
+                    customisationId,
+                }
             );
         }
 
@@ -445,7 +574,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         SelfRegister = @SelfRegister,
                         HideInLearnerPortal = @HideInLearnerPortal,
                         DiagObjSelect = @DiagObjSelect
-                    FROM dbo.Customisations AS cu                   
+                    FROM dbo.Customisations AS cu
                     WHERE
                     cu.CustomisationID = @customisationId",
                 new
@@ -459,7 +588,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId)
+        public CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId)
         {
             return connection.Query<CourseOptions>(
                 @"SELECT
@@ -473,9 +602,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId = 0) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
                         AND cu.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL 
+                        AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();

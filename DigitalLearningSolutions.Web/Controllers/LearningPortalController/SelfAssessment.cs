@@ -113,6 +113,42 @@
                 return new RedirectResult(Url.Action("SelfAssessmentOverview", new { selfAssessmentId = selfAssessmentId, vocabulary = assessment.Vocabulary, competencyGroupId = competencyGroupId }) + "#comp-" + competencyNumber.ToString());
             }
         }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Proficiencies/{competencyNumber:int}/{resultId:int}/ViewNotes")]
+        public IActionResult SupervisorComments(int selfAssessmentId, int competencyNumber, int resultId)
+        {           
+            int candidateId = User.GetCandidateIdKnownNotNull();
+            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId.ToString() + "/Proficiencies/" + competencyNumber.ToString()+"/Viewnotes";
+
+            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
+
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId);
+
+            if (assessment == null)
+            {
+                logger.LogWarning($"Attempt to display self assessment overview for candidate {candidateId} with no self assessment");
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            
+            var supervisorComment = selfAssessmentService.GetSupervisorComments(candidateId, resultId);
+
+            if (supervisorComment == null)
+            {
+                return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = assessment.Id, vocabulary = assessment.Vocabulary });
+            }
+
+            var model = new SupervisorCommentsViewModel
+            {                
+                SupervisorComment = supervisorComment,
+                SelfAssessmentSupervisor = selfAssessmentService.GetSupervisorForSelfAssessmentId(selfAssessmentId, candidateId),
+                AssessmentQuestion = new AssessmentQuestion { Verified = supervisorComment.Verified,
+                    SelfAssessmentResultSupervisorVerificationId = supervisorComment.CandidateAssessmentSupervisorID,
+                SignedOff = supervisorComment.SignedOff}
+            };
+
+            return View("SelfAssessments/SupervisorComments", model);
+        }
+
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(int selfAssessmentId, string vocabulary, int? competencyGroupId = null)
@@ -132,6 +168,7 @@
             var competencies = selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList();
             foreach (var competency in competencies)
             {
+                competency.QuestionLabel = assessment.QuestionLabel;
                 foreach (var assessmentQuestion in competency.AssessmentQuestions)
                 {
                     if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
@@ -148,6 +185,7 @@
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
                 SupervisorSignOffs = supervisorSignOffs
             };
+            
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
 
@@ -566,7 +604,7 @@
             var includedSelfAssessmentStructureIds = selfAssessmentService.GetCandidateAssessmentIncludedSelfAssessmentStructureIds(selfAssessmentId, candidateId);
             var model = new ManageOptionalCompetenciesViewModel()
             {
-               SelfAssessment = assessment,
+                SelfAssessment = assessment,
                 CompetencyGroups = optionalCompetencies.GroupBy(competency => competency.CompetencyGroup),
                 IncludedSelfAssessmentStructureIds = includedSelfAssessmentStructureIds
             };

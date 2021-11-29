@@ -54,6 +54,8 @@ namespace DigitalLearningSolutions.Data.Services
             EditDelegateDetailsData editDelegateDetailsData,
             CentreAnswersData centreAnswersData
         );
+
+        IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
     }
 
     public class UserService : IUserService
@@ -360,6 +362,11 @@ namespace DigitalLearningSolutions.Data.Services
                 editDelegateDetailsData,
                 centreAnswersData
             );
+        }
+
+        public IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)
