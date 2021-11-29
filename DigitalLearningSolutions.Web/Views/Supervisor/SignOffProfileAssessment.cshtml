@@ -154,7 +154,7 @@
               Sign-off self-assessment
             </label>
             <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
-              @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ? $"I confirm that this self-assessment accurately captures {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s current capability in the areas assessed." : Model.SelfAssessmentResultSummary.SignOffSupervisorStatement)
+              @Html.Raw((Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ? $"I confirm that this self-assessment accurately captures {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s current capability in the areas assessed." : Model.SelfAssessmentResultSummary.SignOffSupervisorStatement))
             </div>
           </div>
         </nhs-form-group>
