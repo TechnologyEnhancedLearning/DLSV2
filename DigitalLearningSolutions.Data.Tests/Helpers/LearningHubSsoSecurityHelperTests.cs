@@ -1,10 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System;
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
-    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
 
