@@ -226,6 +226,8 @@
                 @"SELECT CA.SelfAssessmentID AS Id,
                              SA.Name,
                              SA.Description,
+                             SA.QuestionLabel,
+							 SA.DescriptionLabel,
                              SA.IncludesSignposting,
                              SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                              COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
@@ -265,7 +267,12 @@
                         LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
                             ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
                             WHERE CA.CandidateID = @candidateId AND CA.SelfAssessmentID = @selfAssessmentId AND CA.RemovedDate IS NULL AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
-                            GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
+                            GROUP BY CA.SelfAssessmentID, SA.Name, SA.Description,
+                            SA.DescriptionLabel, SA.QuestionLabel,
+                            SA.IncludesSignposting, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'),
+                            CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates,
+                            CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
+                            SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
                 new { candidateId, selfAssessmentId }
             );
         }
@@ -637,7 +644,8 @@ LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
         {
             int adjustBy = zeroBased ? 1 : 0;
             return connection.Query<LevelDescriptor>(
-               @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, 0 AS UpdatedByAdminID
+               @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel,
+                    LevelDescription, 0 AS UpdatedByAdminID
                     FROM
                     (SELECT TOP (@maxValue + @adjustBy) n = ROW_NUMBER() OVER (ORDER BY number) - @adjustBy
                     FROM [master]..spt_values) AS q1
