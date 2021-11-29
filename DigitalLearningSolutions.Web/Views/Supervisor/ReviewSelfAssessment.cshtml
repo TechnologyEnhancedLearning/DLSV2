@@ -69,11 +69,14 @@
                         Model.DelegateSelfAssessment.QuestionLabel)
           </th>
           <th role="columnheader" class="" scope="col">
-            Learner<br />Response
+            Self-assessment
           </th>
-          <th role="columnheader" class="" scope="col">
-            Status
-          </th>
+          @if (Model.IsSupervisorResultsReviewed)
+          {
+            <th role="columnheader" class="" scope="col">
+              Verification status
+            </th>
+          }
           <th role="columnheader" class="" scope="col">
             Actions
           </th>
@@ -86,12 +89,16 @@
             <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
               <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
             </td>
-            <partial name="Shared/_AssessmentQuestionReviewCells" model="competency.AssessmentQuestions.First()" />
+            <partial name="Shared/_AssessmentQuestionReviewCells"
+                     model="competency.AssessmentQuestions.First()"
+                     view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})" />
           </tr>
           @foreach (var question in competency.AssessmentQuestions.Skip(1))
           {
             <tr role="row" class="nhsuk-table__row">
-              <partial name="Shared/_AssessmentQuestionReviewCells" model="question" />
+              <partial name="Shared/_AssessmentQuestionReviewCells"
+                       model="question"
+                       view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})"/>
             </tr>
           }
         }
