@@ -129,6 +129,7 @@
                                                   DENSE_RANK() OVER (ORDER BY SAS.Ordering) as RowNo,
                                                   C.Name AS Name,
                                                   C.Description AS Description,
+                                                  CAQ.Required,
                                                   CG.Name       AS CompetencyGroup,
                                                   CG.ID AS CompetencyGroupID,
                                                   COALESCE((SELECT TOP(1) FrameworkConfig FROM Frameworks F INNER JOIN FrameworkCompetencies AS FC ON FC.FrameworkID = F.ID WHERE FC.CompetencyID = C.ID), 'Capability') AS Vocabulary,

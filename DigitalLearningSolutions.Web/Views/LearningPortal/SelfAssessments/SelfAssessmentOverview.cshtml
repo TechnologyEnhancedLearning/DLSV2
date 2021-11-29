@@ -75,7 +75,7 @@
 <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
   <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
   <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
-    @if (Model.AllQuestionsVerified())
+    @if (Model.AllQuestionsVerifiedOrNotRequired())
     {
       @if (!Model.SupervisorSignOffs.Any())
       {
