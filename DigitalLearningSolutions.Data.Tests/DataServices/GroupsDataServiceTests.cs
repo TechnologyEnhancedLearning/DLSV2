@@ -582,14 +582,14 @@
         [Test]
         public void UpdateGroupDescription_updates_record()
         {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope();
             try
             {
-                // Given
-                const int centerId = 101;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
@@ -609,14 +609,14 @@
         [Test]
         public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
         {
+            // Given
+            const int incorrectCentreId = 107;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int incorrectCentreId = 107;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
