@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.Support
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportTicketsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
@@ -8,18 +7,10 @@
   ViewData["Title"] = "Support tickets";
 }
 
-@section NavMenuItems {
-  @if (Model.DlsSubApplication.Equals(DlsSubApplication.TrackingSystem)) {
-    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-  } else if (Model.DlsSubApplication.Equals(DlsSubApplication.Frameworks)) {
-    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
-  }
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
     </nav>
   </div>
 
@@ -31,7 +22,7 @@
     </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
     </nav>
   </div>
 </div>

@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
+    [Route("/{dlsSubApplication}/Support/Tickets")]
     [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
@@ -26,7 +27,6 @@
             this.configuration = configuration;
         }
 
-        [Route("/{dlsSubApplication}/Support/Tickets")]
         public async Task<IActionResult> Index(DlsSubApplication dlsSubApplication)
         {
             if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
@@ -35,6 +35,8 @@
                 return NotFound();
             }
 
+            // TODO HEEDLS-608 If the user is centre admin but tracking system is off we need to show a 404
+            // TODO HEEDLS-608 name these something appropriate
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
@@ -49,7 +51,7 @@
                     SupportPage.SupportTickets,
                     configuration.GetCurrentSystemBaseUrl()
                 );
-                return View("SupportTickets", model);
+                return View("Index", model);
             }
 
             return RedirectToAction("Index", "Home");
