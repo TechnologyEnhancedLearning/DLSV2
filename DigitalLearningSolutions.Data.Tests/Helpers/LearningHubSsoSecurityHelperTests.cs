@@ -1,82 +1,145 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
-    using System.Threading;
+    using System;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Services;
+    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class LearningHubSsoSecurityHelperTests
     {
-
-        // TODO HEEDLS-680 better control of time in tests, wider time-gapped tests?
-
         private const string Secret = "where the wild rose blooms";
 
         [Test]
         public void SimultaneousHashingIsConsistent()
         {
+            // given
+            var now = DateTime.UtcNow;
             var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now);
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
-            var hash1 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
-            var hash2 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var hash2 = helper.GenerateHash(stateString, Secret);
 
+            // then
             hash1.Should().BeEquivalentTo(hash2);
         }
 
         [Test]
-        [Parallelizable]
-        public async Task HashVariesWithCreationTime()
+        public void HashVariesWithCreationTime()
         {
+            // given
+            var now = DateTime.UtcNow;
             var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now.AddSeconds(1));
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
-            var hash1 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var hash2 = helper.GenerateHash(stateString, Secret);
 
-            await Task.Delay(1000);
+            // then
+            hash1.Should().NotBeEquivalentTo(hash2);
+        }
 
-            var hash2 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
+        [Test]
+        public void HashVariesWithState()
+        {
+            // given
+            var now = DateTime.UtcNow;
+            var stateString = "stateString";
+            var differentStateString = "stateStrinh";
+            var clockService = new BinaryClockService(now, now.AddSeconds(1));
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var hash2 = helper.GenerateHash(differentStateString, Secret);
+
+            // then
             hash1.Should().NotBeEquivalentTo(hash2);
         }
 
         [Test]
         public void HashesAreSalted()
         {
+            // given
+            var now = DateTime.UtcNow;
             var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now);
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
-            var hash1 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
-            var hash2 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, "open sesame");
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var hash2 = helper.GenerateHash(stateString, "open sesame");
 
+            // then
             hash1.Should().NotBeEquivalentTo(hash2);
         }
 
-
         [Test]
-        public void HashesAreVerifiable()
+        public void HashesAreVerifiable([Range(-60, 60, 10)] int delay)
         {
+            // given
+            var now = DateTime.UtcNow;
             var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now.AddSeconds(delay));
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
-            var hash1 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var result = helper.VerifyHash(stateString, Secret, hash1);
 
-            var result = LearningHubSsoSecurityHelpers.VerifyHash(stateString, Secret, hash1);
-
+            // then
             result.Should().BeTrue();
         }
 
-
         [Test]
-        [Parallelizable]
-        public async Task HashesAreVerifiableWithTimeDelay()
+        public void HashesAreNotVerifiableAfterDelay([Values(-61, 61)] int delay)
         {
+            // given
+            var now = DateTime.UtcNow;
             var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now.AddSeconds(delay));
+            var helper = new LearningHubSsoSecurityHelper(clockService);
 
-            var hash1 = LearningHubSsoSecurityHelpers.GenerateHash(stateString, Secret);
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var result = helper.VerifyHash(stateString, Secret, hash1);
 
-            await Task.Delay(1000);
+            // then
+            result.Should().BeFalse();
+        }
 
-            var result = LearningHubSsoSecurityHelpers.VerifyHash(stateString, Secret, hash1);
+        private class BinaryClockService : IClockService
+        {
+            public BinaryClockService(DateTime firstResult, DateTime secondResult)
+            {
+                FirstResult = firstResult;
+                SecondResult = secondResult;
+                Called = false;
+            }
 
-            result.Should().BeTrue();
+            private DateTime FirstResult { get; }
+            private DateTime SecondResult { get; }
+            private bool Called { get; set; }
+
+            public DateTime UtcNow => GetNow();
+
+            private DateTime GetNow()
+            {
+                if (Called)
+                {
+                    return SecondResult;
+                }
+
+                Called = true;
+                return FirstResult;
+            }
         }
     }
 }

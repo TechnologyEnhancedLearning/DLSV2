@@ -3,12 +3,20 @@
     using System;
     using System.Security.Cryptography;
     using System.Text;
+    using DigitalLearningSolutions.Data.Services;
 
-    public static class LearningHubSsoSecurityHelpers
+    public class LearningHubSsoSecurityHelper
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public static string GenerateHash(string state, string secretKey)
+        private readonly IClockService clockService;
+
+        public LearningHubSsoSecurityHelper(IClockService clockService)
+        {
+            this.clockService = clockService;
+        }
+
+        public string GenerateHash(string state, string secretKey)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
@@ -17,7 +25,7 @@
             return GetHash(pwd, salt);
         }
 
-        public static bool VerifyHash(string state, string secretKey, string hash)
+        public bool VerifyHash(string state, string secretKey, string hash)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
@@ -46,9 +54,9 @@
             return hash;
         }
 
-        private static long GetSecondsSinceEpoch()
+        private long GetSecondsSinceEpoch()
         {
-            return (long)(DateTime.UtcNow - UnixEpoch).TotalSeconds;
+            return (long)(clockService.UtcNow - UnixEpoch).TotalSeconds;
         }
     }
 }
