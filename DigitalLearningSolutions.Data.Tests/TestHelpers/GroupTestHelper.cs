@@ -46,7 +46,10 @@
             string? supervisorFirstName = null,
             string? supervisorLastName = null,
             int completeWithinMonths = 12,
-            int validityMonths = 0
+            int validityMonths = 0,
+            bool active = true,
+            DateTime? applicationArchivedDate = null,
+            DateTime? inactivatedDate = null
         )
         {
             return new GroupCourse
@@ -64,7 +67,10 @@
                 SupervisorFirstName = supervisorFirstName,
                 SupervisorLastName = supervisorLastName,
                 CompleteWithinMonths = completeWithinMonths,
-                ValidityMonths = validityMonths
+                ValidityMonths = validityMonths,
+                Active = active,
+                ApplicationArchivedDate = applicationArchivedDate,
+                InactivatedDate = inactivatedDate
             };
         }
 

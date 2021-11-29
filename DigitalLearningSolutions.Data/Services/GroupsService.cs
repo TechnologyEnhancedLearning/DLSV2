@@ -32,7 +32,7 @@
 
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
 
-        GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+        GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId);
 
         void RemoveGroupCourseAndRelatedProgress(int customisationId, int groupId, bool deleteStartedEnrolment);
     }
@@ -223,16 +223,33 @@
             transaction.Complete();
         }
 
-        public GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        public GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+
+            if (groupCourse == null || !groupCourse.Active || groupCourse.InactivatedDate != null ||
+                groupCourse.ApplicationArchivedDate != null)
+            {
+                return null;
         }
 
-        public void RemoveGroupCourseAndRelatedProgress(int groupCustomisationId, int groupId, bool deleteStartedEnrolment)
+            return groupCourse;
+        }
+
+        public void RemoveGroupCourseAndRelatedProgress(
+            int groupCustomisationId,
+            int groupId,
+            bool deleteStartedEnrolment
+        )
         {
             using var transaction = new TransactionScope();
 
-            groupsDataService.RemoveRelatedProgressRecordsForCourse(groupId, groupCustomisationId, deleteStartedEnrolment, clockService.UtcNow);
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                deleteStartedEnrolment,
+                clockService.UtcNow
+            );
             groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
 
             transaction.Complete();

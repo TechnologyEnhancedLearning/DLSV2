@@ -197,9 +197,13 @@
         {
             var centreId = User.GetCentreId();
             var groupName = groupsDataService.GetGroupName(groupId, centreId);
-            var groupCourse = groupsService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+            var groupCourse = groupsService.GetActiveGroupCourse(groupCustomisationId, groupId, centreId);
 
-            var model = new GroupCourseRemoveViewModel(groupCourse!.GroupCustomisationId, groupCourse.CourseName, groupName!);
+            var model = new GroupCourseRemoveViewModel(
+                groupCourse!.GroupCustomisationId,
+                groupCourse.CourseName,
+                groupName!
+            );
 
             return View(model);
         }
@@ -214,9 +218,13 @@
                 return View(model);
             }
 
-            groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, model.DeleteStartedEnrolments);
+            groupsService.RemoveGroupCourseAndRelatedProgress(
+                groupCustomisationId,
+                groupId,
+                model.DeleteStartedEnrolments
+            );
 
-            return RedirectToAction(nameof(GroupCourses), new { groupId = groupId });
+            return RedirectToAction(nameof(GroupCourses), new { groupId });
         }
 
         [Route("{groupId:int}/Delete")]

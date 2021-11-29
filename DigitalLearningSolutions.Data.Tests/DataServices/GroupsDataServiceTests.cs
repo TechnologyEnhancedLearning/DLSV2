@@ -454,52 +454,44 @@
         public async Task DeleteGroupCustomisations_deletes_all_group_customisations()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // Given
-                const int groupId = 8;
 
-                // When
-                groupsDataService.DeleteGroupCustomisations(groupId);
+            // Given
+            const int groupId = 8;
 
-                // Then
-                var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
-                groupCustomisations.Should().BeEmpty();
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            groupsDataService.DeleteGroupCustomisations(groupId);
+
+            // Then
+            var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
+            groupCustomisations.Should().BeEmpty();
+
+            transaction.Dispose();
         }
 
         [Test]
         public async Task DeleteGroupCustomisation_deletes_expected_group_customisation()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // Given
-                const int groupCustomisationId = 25;
-                const int groupId = 101;
- 
-                // When
-                groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
 
-                // Then
-                var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
-                groupCustomisations.Should().NotContain(groupCustomisationId);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Given
+            const int groupCustomisationId = 25;
+            const int groupId = 101;
+
+            // When
+            groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
+
+            // Then
+            var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
+            groupCustomisations.Should().NotContain(groupCustomisationId);
+
+            transaction.Dispose();
         }
 
         [TestCase("self_enrolled", 60, 13, 273606)]
         [TestCase("course_started", 60, 9, 282560)]
         [TestCase("course_completed", 60, 9, 282564)]
         [TestCase("non_group_candidate", 5, 28, 284992)]
-        public async Task RemoveRelatedProgressRecordsForCourse_should_not_remove_progress_for_case(
+        public async Task RemoveRelatedProgressRecordsForGroupCourse_should_not_remove_progress_for_case(
             string testCase,
             int groupId,
             int groupCustomisationId,
@@ -507,31 +499,27 @@
         )
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // When
-                groupsDataService.RemoveRelatedProgressRecordsForCourse(
-                    groupId,
-                    groupCustomisationId,
-                    false,
-                    DateTime.Now
-                );
 
-                // Then
-                var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                false,
+                DateTime.Now
+            );
 
-                removalMethod.Should().Be(0);
-                removalDate.Should().BeNull();
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+
+            removalMethod.Should().Be(0);
+            removalDate.Should().BeNull();
+
+            transaction.Dispose();
         }
 
         [TestCase("course_not_started", 60, 12, 282619, false)]
         [TestCase("course_started_force_remove", 60, 9, 282560, true)]
-        public async Task RemoveRelatedProgressRecordsForCourse_should_remove_progress_for_case(
+        public async Task RemoveRelatedProgressRecordsForGroupCourse_should_remove_progress_for_case(
             string testCase,
             int groupId,
             int groupCustomisationId,
@@ -540,62 +528,55 @@
         )
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // Given
-                var progressRemoved = new DateTime(2021, 11, 6, 22, 23, 24, 567);
 
-                // When
-                groupsDataService.RemoveRelatedProgressRecordsForCourse(
-                    groupId,
-                    groupCustomisationId,
-                    deleteStartedEnrolment,
-                    progressRemoved
-                );
+            // Given
+            var progressRemoved = new DateTime(2021, 11, 6, 22, 23, 24, 567);
 
-                // Then
-                var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                deleteStartedEnrolment,
+                progressRemoved
+            );
 
-                removalMethod.Should().Be(3);
-                removalDate.Should().Be(progressRemoved);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+
+            removalMethod.Should().Be(3);
+            removalDate.Should().Be(progressRemoved);
+
+            transaction.Dispose();
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForCourse_should_not_remove_progress_when_course_in_additional_groups()
+        public async Task
+            RemoveRelatedProgressRecordsForGroupCourse_should_not_remove_progress_when_course_in_additional_groups()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // Given
-                const int progressRecordId = 285130;
-                const int groupId = 8;
-                const int groupCustomisationId = 1;
 
-                AddDelegateToGroupWithSharedCourse();
+            // Given
+            const int progressRecordId = 285130;
+            const int groupId = 8;
+            const int groupCustomisationId = 1;
 
-                // When
-                groupsDataService.RemoveRelatedProgressRecordsForCourse(
-                    groupId,
-                    groupCustomisationId,
-                    false,
-                    DateTime.Now
-                );
+            AddDelegateToGroupWithSharedCourse();
 
-                // Then
-                var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressRecordId);
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                false,
+                DateTime.Now
+            );
 
-                removalMethod.Should().Be(0);
-                removalDate.Should().BeNull();
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressRecordId);
+
+            removalMethod.Should().Be(0);
+            removalDate.Should().BeNull();
+
+            transaction.Dispose();
         }
 
         [Test]

@@ -14,15 +14,15 @@
 
     public class VerifyAdminUserCanAccessGroupCourseTests
     {
-        private IGroupsDataService groupsDataService = null!;
-        private ActionExecutingContext context = null!;
         private const int GroupCustomisationId = 25;
         private const int GroupId = 103;
+        private ActionExecutingContext context = null!;
+        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void SetUp()
         {
-            groupsDataService = A.Fake<IGroupsDataService>();
+            groupsService = A.Fake<IGroupsService>();
 
             var delegateGroupsController = new DelegateGroupsController(
                 A.Fake<IGroupsDataService>(),
@@ -39,10 +39,10 @@
         public void Returns_NotFound_if_groupCourse_not_in_users_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null);
+            A.CallTo(() => groupsService.GetActiveGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessGroupCourse(groupsDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessGroupCourse(groupsService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -52,10 +52,10 @@
         public void Does_not_return_action_if_groupCourse_is_in_users_centre()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
+            A.CallTo(() => groupsService.GetActiveGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
 
             // When
-            new VerifyAdminUserCanAccessGroupCourse(groupsDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessGroupCourse(groupsService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

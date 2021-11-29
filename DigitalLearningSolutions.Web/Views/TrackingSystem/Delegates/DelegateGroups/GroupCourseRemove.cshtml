@@ -7,7 +7,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = $"{(errorHasOccurred ? "Error: " : "")}Groups - Remove group course";
 
-  var routeData = new Dictionary<string, string> {
+  var cancelLinkRouteData = new Dictionary<string, string> {
     { "groupId", ViewContext.RouteData.Values["groupId"].ToString()! }
   };
 }
@@ -18,7 +18,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteStartedEnrolments) })" />
     }
 
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Are you sure you would like to remove @Model.CourseName course from this group?</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">Are you sure you would like to remove the course @Model.CourseName from this group?</h1>
   </div>
 </div>
 
@@ -58,6 +58,6 @@
       <button class="nhsuk-button delete-button" type="submit">Remove course</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupCourses" asp-all-route-data="@routeData" />
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupCourses" asp-all-route-data="@cancelLinkRouteData" />
   </div>
 </div>
