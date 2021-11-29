@@ -6,13 +6,17 @@ selectRadioButtons.forEach((button) => {
       const radioValue = button.getAttribute('value') as string;
       const txtArea = document.getElementById('SupervisorComments');
             
-      if(radioValue ==='false'){        
-        if(txtArea){
+      if (radioValue === 'false')
+      {
+        if (txtArea)
+        {
         txtArea.setAttribute('required', 'required');
         }        
       }
-      else{
-        if(txtArea){
+      else
+      {
+        if (txtArea)
+        {
           txtArea.removeAttribute('required');
         }
       }
