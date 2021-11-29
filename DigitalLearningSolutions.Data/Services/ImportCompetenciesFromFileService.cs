@@ -50,12 +50,12 @@ namespace DigitalLearningSolutions.Data.Services
 
             foreach (var competencyRow in competenciesRows)
             {
-                ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, competencyRow);
+                maxFrameworkCompetencyGroupId = ProcessCompetencyRow(adminUserId, frameworkId, maxFrameworkCompetencyId, maxFrameworkCompetencyGroupId, competencyRow);
             }
 
             return new ImportCompetenciesResult(competenciesRows);
         }
-        private void ProcessCompetencyRow(
+        private int ProcessCompetencyRow(
             int adminUserId,
             int frameworkId,
             int maxFrameworkCompetencyId,
@@ -65,7 +65,7 @@ namespace DigitalLearningSolutions.Data.Services
         {
             if (!competencyRow.Validate())
             {
-                return;
+                return maxFrameworkCompetencyGroupId;
             }
             //If competency group is set, check if competency group exists within framework and add if not and get the Framework Competency Group ID
             int? frameworkCompetencyGroupId = null;
@@ -77,6 +77,7 @@ namespace DigitalLearningSolutions.Data.Services
                     frameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminUserId);
                     if (frameworkCompetencyGroupId > maxFrameworkCompetencyGroupId)
                     {
+                        maxFrameworkCompetencyGroupId = (int)frameworkCompetencyGroupId;
                         competencyRow.RowStatus = RowStatus.CompetencyGroupInserted;
                     }
                 }
@@ -96,6 +97,7 @@ namespace DigitalLearningSolutions.Data.Services
                     competencyRow.RowStatus = RowStatus.Skipped;
                 }
             }
+            return maxFrameworkCompetencyGroupId;
         }
 
         private static bool ValidateHeaders(IXLTable table)
