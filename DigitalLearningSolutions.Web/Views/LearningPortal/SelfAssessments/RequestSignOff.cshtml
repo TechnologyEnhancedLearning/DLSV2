@@ -44,9 +44,9 @@
       </nhs-form-group>
       <nhs-form-group nhs-validation-for="StatementChecked">
         <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input" id="cb-verify" name="StatementChecked" asp-for="StatementChecked" type="checkbox">
+          <input class="nhsuk-checkboxes__input" id="cb-sign-off" name="StatementChecked" asp-for="StatementChecked" type="checkbox">
           <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-            @(Model.SelfAssessment.SignOffRequestorStatement == null ? "I confirm that this profile self-assessment accurately captures my current capability in the areas assessed." : Model.SelfAssessment.SignOffRequestorStatement)
+            @Html.Raw((Model.SelfAssessment.SignOffRequestorStatement == null ? "I confirm that this profile self-assessment accurately captures my current capability in the areas assessed." : Model.SelfAssessment.SignOffRequestorStatement))
           </label>
         </div>
       </nhs-form-group>
