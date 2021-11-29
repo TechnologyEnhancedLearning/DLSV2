@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
 
+    [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
     public class SupportTicketsController : Controller
@@ -26,7 +27,6 @@
         }
 
         [Route("/{dlsSubApplication}/Support/Tickets")]
-        [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
         public async Task<IActionResult> Index(DlsSubApplication dlsSubApplication)
         {
             if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
