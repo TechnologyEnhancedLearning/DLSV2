@@ -471,7 +471,7 @@
             var groupCustomisationId = 25;
             var model = new GroupCourseRemoveViewModel
             {
-                Confirm = true
+                Confirm = true,
             };
 
             // When

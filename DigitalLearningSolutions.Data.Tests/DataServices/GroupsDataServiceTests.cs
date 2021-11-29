@@ -612,7 +612,7 @@
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                
+                // Given
                 const int incorrectCentreId = 107;
                 const int groupId = 5;
                 const string newDescription = "Test group description1";
