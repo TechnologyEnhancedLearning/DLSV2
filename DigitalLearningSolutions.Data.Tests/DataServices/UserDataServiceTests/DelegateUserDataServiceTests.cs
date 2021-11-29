@@ -397,5 +397,15 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void AddDelegateToGroup_get_delegates_not_registered_for_group_by_groupId()
+        {
+                // When
+                var result = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(5, 101);
+                    
+                // Then
+                result.Count.Should().Be(30);
+         }
     }
 }

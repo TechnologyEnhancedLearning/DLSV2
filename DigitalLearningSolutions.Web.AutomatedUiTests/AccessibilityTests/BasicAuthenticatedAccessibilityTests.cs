@@ -52,13 +52,14 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/EditDescription", "Edit description for Activities worker or coordinator group (optional)")]
-
+        
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
+        [InlineData("/TrackingSystem/Delegates/Groups/AddDelegateToGroup/5", "Add delegate to Activities worker or coordinator group")]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
