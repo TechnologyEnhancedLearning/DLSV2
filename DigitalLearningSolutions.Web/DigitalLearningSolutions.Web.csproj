@@ -39,6 +39,7 @@
     <None Remove="Scripts\searchSortFilterAndPaginate\sort.ts" />
     <None Remove="Scripts\spec\learningMenu\fullscreen.spec.ts" />
     <None Remove="Scripts\spec\setCompleteByDateSpec.ts" />
+    <None Remove="Scripts\supervisor\assessmentVerify.ts" />
     <None Remove="Scripts\supervisor\staffList.ts" />
     <None Remove="Scripts\supervisor\verify.ts" />
     <None Remove="Scripts\trackingSystem\allDelegates.ts" />
@@ -106,6 +107,7 @@
     <TypeScriptCompile Include="Scripts\spec\search.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\searchSortAndPaginate.spec.ts" />
     <TypeScriptCompile Include="Scripts\spec\sort.spec.ts" />
+    <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
