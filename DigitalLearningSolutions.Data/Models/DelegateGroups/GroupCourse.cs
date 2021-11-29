@@ -7,6 +7,7 @@
         public int GroupCustomisationId { get; set; }
         public int GroupId { get; set; }
         public int CustomisationId { get; set; }
+        public int CourseCategoryId { get; set; }
         public string ApplicationName { get; set; }
         public string? CustomisationName { get; set; }
         public bool IsMandatory { get; set; }

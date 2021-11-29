@@ -34,6 +34,8 @@
 
         GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId);
 
+        IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
+
         void RemoveGroupCourseAndRelatedProgress(int customisationId, int groupId, bool deleteStartedEnrolment);
     }
 
@@ -205,7 +207,7 @@
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
-                PopulateExisting = false
+                PopulateExisting = false,
             };
 
             return groupsDataService.AddDelegateGroup(groupDetails);
@@ -221,19 +223,6 @@
             groupsDataService.DeleteGroup(groupId);
 
             transaction.Complete();
-        }
-
-        public GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId)
-        {
-            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
-
-            if (groupCourse == null || !groupCourse.Active || groupCourse.InactivatedDate != null ||
-                groupCourse.ApplicationArchivedDate != null)
-            {
-                return null;
-        }
-
-            return groupCourse;
         }
 
         public void RemoveGroupCourseAndRelatedProgress(
@@ -255,6 +244,25 @@
             transaction.Complete();
         }
 
+        public GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        {
+            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
+
+            if (groupCourse == null || !groupCourse.Active || groupCourse.InactivatedDate != null ||
+                groupCourse.ApplicationArchivedDate != null)
+            {
+                return null;
+            }
+
+            return groupCourse;
+        }
+
+        public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
+        {
+            return groupsDataService.GetGroupCourses(groupId, centreId)
+                .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
+        }
+
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId)
@@ -274,7 +282,12 @@
         private void RemoveDelegateFromGroup(int delegateId, int groupId)
         {
             const bool removeStartedEnrolments = false;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, clockService.UtcNow);
+            groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                groupId,
+                delegateId,
+                removeStartedEnrolments,
+                clockService.UtcNow
+            );
             groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
         }
 
@@ -315,7 +328,7 @@
             var body = new BodyBuilder
             {
                 TextBody = emailBodyText,
-                HtmlBody = emailBodyHtml
+                HtmlBody = emailBodyHtml,
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);

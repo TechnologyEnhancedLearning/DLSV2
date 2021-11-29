@@ -12,7 +12,8 @@
         @Model.First().Vocabulary
       </th>
       <th role="columnheader" class="" scope="col">
-        Question
+        @(string.IsNullOrWhiteSpace(Model.FirstOrDefault().QuestionLabel) ?
+                          "Question" : Model.FirstOrDefault().QuestionLabel)
       </th>
       <th role="columnheader" class="" scope="col">
         Self-assessment
@@ -47,7 +48,7 @@
   @foreach (var question in competency.AssessmentQuestions.Skip(1))
   {
     <tr role="row" class="nhsuk-table__row">
-      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
+      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
 
     </tr>
 

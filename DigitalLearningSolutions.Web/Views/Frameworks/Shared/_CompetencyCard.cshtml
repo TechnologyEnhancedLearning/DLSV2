@@ -24,6 +24,13 @@
         <a asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.Id">
           Manage assessment questions (@(Model.FrameworkCompetency.AssessmentQuestions == 0 ? "None" : Model.FrameworkCompetency.AssessmentQuestions.ToString()) assigned)
         </a>
+        <br />
+        <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
+           asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])"
+           asp-route-frameworkCompetencyGroupId="@(Model.FrameworkCompetencyGroupId)"
+           asp-route-frameworkCompetencyId="@(Model.FrameworkCompetency.CompetencyID)" >
+          Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
+        </a>
       }
       else
       {

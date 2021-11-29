@@ -4,7 +4,9 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
     public interface ITutorialContentDataService
@@ -20,7 +22,15 @@
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
-        void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
+
+        void UpdateOrInsertCustomisationTutorialStatuses(
+            int tutorialId,
+            int customisationId,
+            bool diagnosticEnabled,
+            bool learningEnabled
+        );
+
+        IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -30,6 +40,7 @@
         public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
+            SqlMapper.AddTypeHandler(new EnumerableIntHandler());
         }
 
         public TutorialInformation? GetTutorialInformation(
@@ -336,6 +347,26 @@
                         VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
                     END",
                 new { customisationId, tutorialId, learningEnabled, diagnosticEnabled }
+            );
+        }
+
+        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId)
+        {
+            return connection.Query<Objective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.CMIInteractionIDs AS Interactions,
+                        tu.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL",
+                new { sectionId, customisationId }
             );
         }
     }

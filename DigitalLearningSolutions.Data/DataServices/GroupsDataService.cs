@@ -56,6 +56,8 @@
         Group? GetGroupAtCentreById(int groupId, int centreId);
 
         void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
+
+        void UpdateGroupName(int groupId, int centreId, string groupName);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -137,6 +139,7 @@
                         GroupID,
                         gc.CustomisationID,
                         ap.ApplicationName,
+                        ap.CourseCategoryID,
                         CustomisationName,
                         Mandatory AS IsMandatory,
                         IsAssessed,
@@ -374,6 +377,11 @@
             );
         }
 
+        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
+        }
+
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return connection.Query<Group>(
@@ -418,9 +426,15 @@
             );
         }
 
-        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
+        public void UpdateGroupName(int groupId, int centreId, string groupName)
         {
-            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
+            connection.Execute(
+                @"UPDATE Groups
+                    SET
+                        GroupLabel = @groupName
+                    WHERE GroupID = @groupId AND CentreId = @centreId",
+                new { groupName, groupId, centreId }
+            );
         }
     }
 }

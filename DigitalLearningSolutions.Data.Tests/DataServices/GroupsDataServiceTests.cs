@@ -660,6 +660,60 @@
             result.Should().BeNull();
         }
 
+        [Test]
+        public void UpdateGroupName_updates_record()
+        {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string newGroupName = "Test group name";
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.UpdateGroupName(
+                    groupId,
+                    centerId,
+                    newGroupName);
+
+                // Then
+                var result = GetGroupNameById(groupId);
+                result.Should().Be(newGroupName);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateGroupName_with_incorrect_centreId_does_not_update_record()
+        {
+            // Given
+            const int incorrectCentreId = 101;
+            const int groupId = 59;
+            const string expectedGroupName = "Nurses";
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.UpdateGroupName(
+                    groupId,
+                    incorrectCentreId,
+                    "Test group name");
+
+                //Then
+                var result = GetGroupNameById(groupId);
+                result?.Should().Be(expectedGroupName);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
         private void AddDelegateToGroupWithSharedCourse()
         {
             connection.Execute(
@@ -682,6 +736,15 @@
         {
             return connection.Query<string?>(
                 @"SELECT GroupDescription FROM Groups 
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            ).FirstOrDefault();
+        }
+
+        private string? GetGroupNameById(int groupId)
+        {
+            return connection.Query<string?>(
+                @"SELECT GroupLabel FROM Groups 
                     WHERE GroupID = @groupId",
                 new { groupId }
             ).FirstOrDefault();
