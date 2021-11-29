@@ -16,7 +16,7 @@
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
-    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural().ToLower()
+    Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
 @if (Model.SelfAssessment.IsSupervised)
