@@ -27,15 +27,13 @@
 
     <h1 class="nhsuk-heading-xl">Edit completion date for @Model.CourseName</h1>
 
-    <p class="nhsuk-lede-text nhsuk-u-margin-top-4">
-      For example 1 7 2021. Leave the boxes blank to clear the completion date.
-    </p>
-
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
        <input type="hidden" asp-for="DelegateId" />
        <input type="hidden" asp-for="ProgressId" />
+       <input type="hidden" asp-for="DelegateName"/>
+       <input type="hidden" asp-for="CourseName"/>
        <vc:date-input id="completion-date"
-                             label="completion date inputs"
+                             label="Completion date"
                              day-id="Day"
                              month-id="Month"
                              year-id="Year"
