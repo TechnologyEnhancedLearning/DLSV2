@@ -13,7 +13,7 @@
         private const string Secret = "where the wild rose blooms";
 
         [Test]
-        public void SimultaneousHashingIsConsistent()
+        public void GenerateHash_is_consistent()
         {
             // given
             var now = DateTime.UtcNow;
@@ -30,7 +30,7 @@
         }
 
         [Test]
-        public void HashVariesWithCreationTime()
+        public void GenerateHash_varies_hash_with_clock_time()
         {
             // given
             var now = DateTime.UtcNow;
@@ -47,7 +47,24 @@
         }
 
         [Test]
-        public void HashVariesWithState()
+        public void GenerateHash_varies_hash_with_clock_time_by_second()
+        {
+            // given
+            var now = DateTime.UtcNow.Date;
+            var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now.AddMilliseconds(999));
+            var helper = new LearningHubSsoSecurityHelper(clockService);
+
+            // when
+            var hash1 = helper.GenerateHash(stateString, Secret);
+            var hash2 = helper.GenerateHash(stateString, Secret);
+
+            // then
+            hash1.Should().BeEquivalentTo(hash2);
+        }
+
+        [Test]
+        public void GenerateHash_varies_hash_with_state_string()
         {
             // given
             var now = DateTime.UtcNow;
@@ -65,7 +82,7 @@
         }
 
         [Test]
-        public void HashesAreSalted()
+        public void GenerateHash_varies_hash_with_secret_key()
         {
             // given
             var now = DateTime.UtcNow;
@@ -82,7 +99,7 @@
         }
 
         [Test]
-        public void HashesAreVerifiable([Range(-60, 60, 10)] int delay)
+        public void VerifyHash_verifies_hash_created_within_60_seconds([Range(-60, 60, 10)] int delay)
         {
             // given
             var now = DateTime.UtcNow;
@@ -99,7 +116,7 @@
         }
 
         [Test]
-        public void HashesAreNotVerifiableAfterDelay([Values(-61, 61)] int delay)
+        public void VerifyHash_does_not_verify_hash_created_outside_60_seconds([Values(-61, 61)] int delay)
         {
             // given
             var now = DateTime.UtcNow;
