@@ -352,7 +352,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     FROM   SelfAssessmentResultSupervisorVerifications INNER JOIN
                          CandidateAssessmentSupervisors AS cas ON SelfAssessmentResultSupervisorVerifications.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
                          SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID
-                    WHERE SelfAssessmentResultSupervisorVerifications.ID = @selfAssessmentResultSupervisorVerificationId AND sd.SupervisorAdminID = @adminId  AND (Comments <> @comments OR SignedOff <> @signedOff)",
+                    WHERE SelfAssessmentResultSupervisorVerifications.ID = @selfAssessmentResultSupervisorVerificationId AND sd.SupervisorAdminID = @adminId",
                 new { selfAssessmentResultSupervisorVerificationId, comments, signedOff, adminId }
                 );
             if (numberOfAffectedRows > 0)
