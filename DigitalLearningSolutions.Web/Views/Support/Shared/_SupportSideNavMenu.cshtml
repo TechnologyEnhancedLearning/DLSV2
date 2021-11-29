@@ -30,9 +30,11 @@
                                link-text="FAQs"
                                is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
-  <vc:side-menu-link-with-href href="@Model.ResourcesUrl"
-                               link-text="Resources"
-                               is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Resources"
+                     asp-all-route-data="@routeData"
+                     link-text="Resources"
+                     is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="SupportTickets"

@@ -1,0 +1,34 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model EditGroupNameViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = $"{(errorHasOccurred ? "Error:" : "")} Edit group name";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.GroupName) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Edit group name</h1>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditGroupName">
+
+      <vc:text-input asp-for="@nameof(Model.GroupName)"
+                     label="Group name"
+                     populate-with-current-value="true"
+                     type="text"
+                     spell-check="false"
+                     hint-text=""
+                     autocomplete="off"
+                     css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit" value="save">Save</button>
+    </form>
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+  </div>
+</div>

@@ -43,7 +43,7 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(null);
 
             // When
@@ -58,7 +58,7 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(false);
 
             // When
@@ -74,7 +74,7 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(true);
 
             // When

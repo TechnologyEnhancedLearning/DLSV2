@@ -2,22 +2,26 @@
 @model DeactivateAdminViewModel
 
 @{
-  ViewData["Title"] = !ViewData.ModelState.IsValid ? "Error: " : "" + "Deactivate Admin Account";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: " : "" + "Deactivate Admin Account";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+    }
     <h1 class="nhsuk-heading-l">Are you sure you would like to deactivate this admin account?</h1>
   </div>
 </div>
 
-<div class="nhsuk-grid-row nhsuk-u-margin-6">
+<div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
   <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s">
     <div class="nhsuk-u-font-weight-bold">
       User
     </div>
   </div>
-  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-s nhsuk-u-font-weight-normal">
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-s nhsuk-u-font-weight-normal word-break">
     @Model.FullName (@Model.EmailAddress)
   </div>
 </div>
@@ -27,10 +31,9 @@
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="DeactivateAdmin">
       <div class="nhsuk-form-group">
 
-        <vc:confirm-checkbox asp-for="@nameof(Model.Confirm)"
-                             label="I am sure that I wish to deactivate this account. I understand that if the user has never logged in, their admin account will be deleted."
-                             populate-with-current-values="false"
-                             hint-text="" />
+        <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                            label="I am sure that I wish to deactivate this account. I understand that if the user has never logged in, their admin account will be deleted."
+                            hint-text="" />
       </div>
       <input type="hidden" asp-for="FullName" />
       <input type="hidden" asp-for="EmailAddress" />
