@@ -41,7 +41,7 @@
                 return;
             }
 
-            if (!TryGetDlsSubApplication(context, out var application, out var applicationParameterName))
+            if (!TryParseDlsSubApplication(context, out var application, out var applicationParameterName))
             {
                 return;
             }
@@ -54,7 +54,7 @@
             ValidateUserHasPermissionForApplication(context, user, application, applicationParameterName!);
         }
 
-        private bool TryGetDlsSubApplication(
+        private bool TryParseDlsSubApplication(
             ActionExecutingContext context,
             out DlsSubApplication? application,
             out string? dlsSubApplicationParameterName
