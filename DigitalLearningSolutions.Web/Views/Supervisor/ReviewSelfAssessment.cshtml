@@ -44,7 +44,7 @@
   <div class="nhsuk-grid-column-one-third">
     @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
     {
-      <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off profile assessment</a>
+      <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
     }
     @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
     {

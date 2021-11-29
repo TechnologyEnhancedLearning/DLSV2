@@ -2,7 +2,7 @@
 @model SignOffProfileAssessmentViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"Sign-off Profile Assessment";
+  ViewData["Title"] = $"Sign-off Self Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -30,7 +30,7 @@
             </a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            Sign-off Profile Assessment
+            Sign-off Self Assessment
           </li>
         </ol>
       </div>
@@ -51,7 +51,7 @@
 
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    Assessment questions in profile
+   Assessment questions
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.SelfAssessmentResultSummary.CompetencyAssessmentQuestionCount
@@ -139,7 +139,7 @@
       <fieldset class="nhsuk-fieldset">
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
           <h2 class="nhsuk-fieldset__heading">
-            Sign-off Profile Self Assessment
+            Sign-off Self Assessment
           </h2>
         </legend>
         <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
@@ -151,10 +151,10 @@
           <div class="nhsuk-checkboxes__item">
             <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
             <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-              Sign-off profile self-assessment
+              Sign-off self-assessment
             </label>
             <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
-              @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ? $"I confirm that this profile self-assessment accurately captures {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s current capability in the areas assessed." : Model.SelfAssessmentResultSummary.SignOffSupervisorStatement)
+              @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ? $"I confirm that this self-assessment accurately captures {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s current capability in the areas assessed." : Model.SelfAssessmentResultSummary.SignOffSupervisorStatement)
             </div>
           </div>
         </nhs-form-group>
