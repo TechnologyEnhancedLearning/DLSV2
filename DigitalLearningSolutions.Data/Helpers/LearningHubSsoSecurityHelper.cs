@@ -5,7 +5,14 @@
     using System.Text;
     using DigitalLearningSolutions.Data.Services;
 
-    public class LearningHubSsoSecurityHelper
+    public interface ILearningHubSsoSecurityHelper
+    {
+        string GenerateHash(string state, string secretKey);
+
+        bool VerifyHash(string state, string secretKey, string hash);
+    }
+
+    public class LearningHubSsoSecurityHelper : ILearningHubSsoSecurityHelper
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -21,8 +28,8 @@
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
             var salt = encoder.GetBytes(secretKey);
-            var pwd = encoder.GetBytes(state + secondsSinceEpoch);
-            return GetHash(pwd, salt);
+            var timedState = encoder.GetBytes(state + secondsSinceEpoch);
+            return GetHash(timedState, salt);
         }
 
         public bool VerifyHash(string state, string secretKey, string hash)
@@ -32,13 +39,12 @@
             var salt = encoder.GetBytes(secretKey);
             var toleranceInSec = 60;
 
-            // loop optimisation, iterates 0,-1,-2,-3 .. -60,1,2,3 .. 60
             for (var counter = 0; counter <= toleranceInSec * 2; counter++)
             {
                 var step = counter > toleranceInSec ? counter - toleranceInSec : -1 * counter;
-                var pwd = encoder.GetBytes(state + (secondsSinceEpoch + step));
+                var timedState = encoder.GetBytes(state + (secondsSinceEpoch + step));
 
-                if (hash == GetHash(pwd, salt))
+                if (hash == GetHash(timedState, salt))
                 {
                     return true;
                 }
@@ -47,9 +53,9 @@
             return false;
         }
 
-        private static string GetHash(byte[] password, byte[] salt)
+        private static string GetHash(byte[] input, byte[] salt)
         {
-            using var byteResult = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA512);
+            using var byteResult = new Rfc2898DeriveBytes(input, salt, 10000, HashAlgorithmName.SHA512);
             var hash = Convert.ToBase64String(byteResult.GetBytes(32));
             return hash;
         }
