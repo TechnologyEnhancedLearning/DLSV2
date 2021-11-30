@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     public partial class LearningPortalControllerTests
     {
         private LearningPortalController controller = null!;
+        private IActionPlanService actionPlanService = null!;
         private ICentresDataService centresDataService = null!;
         private ICourseDataService courseDataService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
@@ -32,6 +33,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         [SetUp]
         public void SetUp()
         {
+            actionPlanService = A.Fake<IActionPlanService>();
             centresDataService = A.Fake<ICentresDataService>();
             courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
@@ -58,7 +60,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 frameworkNotificationService,
                 logger,
                 config,
-                filteredApiHelperService
+                filteredApiHelperService,
+                actionPlanService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }

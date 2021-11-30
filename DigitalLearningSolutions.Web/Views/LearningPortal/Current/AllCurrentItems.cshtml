@@ -15,11 +15,15 @@
   <title></title>
 </head>
 <body>
-@foreach (var currentLearningItem in Model.CurrentCourses)
+@foreach (var currentLearningItem in Model.CurrentItems)
 {
   if (currentLearningItem is SelfAssessmentCardViewModel)
   {
     <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
+  }
+  else if (currentLearningItem is LearningResourceCardViewModel)
+  {
+    <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem"/>
   }
   else
   {

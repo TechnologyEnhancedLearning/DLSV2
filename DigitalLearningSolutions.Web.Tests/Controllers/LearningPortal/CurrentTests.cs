@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc;
@@ -13,7 +17,7 @@
     public partial class LearningPortalControllerTests
     {
         [Test]
-        public void Current_action_should_return_view_result()
+        public async Task Current_action_should_return_view_result()
         {
             // Given
             var currentCourses = new[]
@@ -26,14 +30,17 @@
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
+            var actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+
             
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanItems(CandidateId)).Returns(actionPlanItems);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
-            var result = controller.Current();
+            var result = await controller.Current();
 
             // Then
             var expectedModel = new CurrentPageViewModel(
@@ -42,6 +49,7 @@
                 "LastAccessed",
                 "Descending",
                 selfAssessments,
+                actionPlanItems,
                 bannerText,
                 1
             );
@@ -276,14 +284,14 @@
         }
 
         [Test]
-        public void Current_action_should_have_banner_text()
+        public async Task Current_action_should_have_banner_text()
         {
             // Given
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
-            var currentViewModel = CurrentCourseHelper.CurrentPageViewModelFromController(controller);
+            var currentViewModel = await CurrentCourseHelper.CurrentPageViewModelFromController(controller);
 
             // Then
             currentViewModel.BannerText.Should().Be(bannerText);

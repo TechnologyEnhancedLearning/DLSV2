@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model CurrentCourseViewModel
 
-<div class="searchable-element nhsuk-panel @Model.DateStyle()" id="@Model.Id-card">
+<div class="searchable-element nhsuk-panel @Model.DateStyle()" id="@Model.Id-course-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
       <span class="nhsuk-u-visually-hidden">@Model.DueByDescription()</span>
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name" role="heading" aria-level="2">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name-course" name="name" role="heading" aria-level="2">
         @Model.Name
       </span>
     </summary>
@@ -22,7 +22,7 @@
       </div>
       @if (Model.SelfEnrolled)
       {
-        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
+        <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name-course" asp-action="RemoveCurrentCourseConfirmation" asp-route-id="@Model.Id">
           Remove course
         </a>
       }
@@ -33,7 +33,7 @@
     <div class="nhsuk-grid-column-full">
       <a
         class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
-        aria-describedby="@Model.Id-name"
+        aria-describedby="@Model.Id-name-course"
         asp-controller="LearningMenu"
         asp-action="Index"
         asp-route-customisationId="@Model.Id">

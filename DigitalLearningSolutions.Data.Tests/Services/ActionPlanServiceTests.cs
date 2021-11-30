@@ -1,10 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
+    using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class ActionPlanServiceTests
@@ -12,17 +20,21 @@
         private IActionPlanService actionPlanService = null!;
         private IClockService clockService = null!;
         private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
+        private ILearningHubApiClient learningHubApiClient = null!;
         private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
+        private Catalogue genericCatalogue = null!;
 
         [SetUp]
         public void Setup()
         {
+            genericCatalogue = Builder<Catalogue>.CreateNew().With(c => c.Name = "Generic catalogue").Build();
             clockService = A.Fake<IClockService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
             learningHubApiService = A.Fake<ILearningHubApiService>();
+            learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
 
             actionPlanService = new ActionPlanService(
@@ -30,6 +42,7 @@
                 learningLogItemsDataService,
                 clockService,
                 learningHubApiService,
+                learningHubApiClient,
                 selfAssessmentDataService
             );
         }
@@ -108,12 +121,88 @@
             foreach (var competencyId in expectedMatchingCompetencies)
             {
                 A.CallTo(
-                    () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, competencyId, addedDate)
+                    () => learningLogItemsDataService.InsertLearningLogItemCompetencies(
+                        learningLogId,
+                        competencyId,
+                        addedDate
+                    )
                 ).MustHaveHappenedOnceExactly();
             }
+
             A.CallTo(
                 () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, A<int>._, addedDate)
             ).MustHaveHappened(5, Times.Exactly);
+        }
+
+        [Test]
+        public async Task GetIncompleteActionPlanItems_returns_empty_list_if_no_incomplete_learning_log_items_found()
+        {
+            // Given
+            const int delegateId = 1;
+            var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
+                .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
+                .And(i => i.LearningHubResourceReferenceId = 1)
+                .TheFirst(1).With(i => i.Activity = "completed").And(i => i.CompletedDate = DateTime.UtcNow)
+                .TheNext(1).With(i => i.Activity = "removed").And(i => i.ArchivedDate = DateTime.UtcNow)
+                .TheNext(1).With(i => i.Activity = "no resource link").And(i => i.LearningHubResourceReferenceId = null)
+                .Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+                .Returns(invalidLearningLogItems);
+
+            // When
+            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+
+            // Then
+            result.Should().BeEmpty();
+            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task GetIncompleteActionPlanItems_returns_correctly_matched_action_plan_items()
+        {
+            // Given
+            const int delegateId = 1;
+            var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
+            var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
+                .With(i => i.CompletedDate = null)
+                .And(i => i.ArchivedDate = null)
+                .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
+                .And((i, index) => i.LearningLogItemId = learningLogIds[index])
+                .Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+                .Returns(learningLogItems);
+            var matchedResources = Builder<ResourceReferenceWithResourceDetails>.CreateListOfSize(3).All()
+                .With((r, index) => r.RefId = learningResourceIds[index])
+                .And((r, index) => r.Title = $"Title {learningResourceIds[index]}")
+                .And(r => r.Catalogue = genericCatalogue).Build().ToList();
+            var unmatchedResourceReferences = new List<int>
+            {
+                learningResourceIds[3],
+                learningResourceIds[4],
+            };
+            var bulkReturnedItems = new BulkResourceReferences
+            {
+                ResourceReferences = matchedResources,
+                UnmatchedResourceReferenceIds = unmatchedResourceReferences
+            };
+            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._)).Returns(bulkReturnedItems);
+
+            // When
+            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+
+            // Then
+            List<(int id, string title)> resultIdsAndTitles = result.Select(r => (r.Id, r.Name)).ToList();
+            using (new AssertionScope())
+            {
+                resultIdsAndTitles.Count.Should().Be(3);
+                resultIdsAndTitles[0].Should().Be((4, "Title 15"));
+                resultIdsAndTitles[1].Should().Be((5, "Title 21"));
+                resultIdsAndTitles[2].Should().Be((6, "Title 33"));
+                A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>.That.IsSameSequenceAs(learningResourceIds)))
+                    .MustHaveHappenedOnceExactly();
+            }
         }
     }
 }
