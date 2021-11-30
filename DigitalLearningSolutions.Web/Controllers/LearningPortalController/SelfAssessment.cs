@@ -487,6 +487,7 @@
             sessionRequestVerification.SelfAssessmentID = selfAssessmentId;
             sessionRequestVerification.Vocabulary = selfAssessment.Vocabulary;
             sessionRequestVerification.SelfAssessmentName = selfAssessment.Name;
+            sessionRequestVerification.SupervisorSelfAssessmentReview = selfAssessment.SupervisorSelfAssessmentReview;
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
@@ -503,6 +504,7 @@
                 Supervisors = supervisors,
                 CandidateAssessmentSupervisorId = sessionRequestVerification.CandidateAssessmentSupervisorId
             };
+            ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/VerificationPickSupervisor", model);
         }
         [HttpPost]
@@ -516,6 +518,7 @@
                 var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), sessionRequestVerification.SelfAssessmentID);
                 model.SelfAssessment = selfAssessment;
                 model.Supervisors = selfAssessmentService.GetResultReviewSupervisorsForSelfAssessmentId(sessionRequestVerification.SelfAssessmentID, User.GetCandidateIdKnownNotNull()).ToList(); ;
+                ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification?.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickSupervisor", model);
             }
             sessionRequestVerification.CandidateAssessmentSupervisorId = model.CandidateAssessmentSupervisorId;
@@ -536,20 +539,22 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 ResultIds = sessionRequestVerification.ResultIds
             };
+            ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification?.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/VerificationPickResults", model);
         }
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
         {
+            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
             if (model.ResultIds == null)
             {
                 var competencies = PopulateCompetencyLevelDescriptors(selfAssessmentService.GetCandidateAssessmentResultsToVerifyById(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList());
                 model.CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup);
                 ModelState.AddModelError(nameof(model.ResultIds), "Please choose at least one result to verify.");
+                ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification?.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickResults", model);
             }
-            SessionRequestVerification sessionRequestVerification = TempData.Peek<SessionRequestVerification>();
             sessionRequestVerification.ResultIds = model.ResultIds;
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });

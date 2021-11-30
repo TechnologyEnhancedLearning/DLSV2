@@ -7,7 +7,7 @@
 }
 else
 {
-  @if (Model.LevelDescriptors != null && (ViewBag.SupervisorSelfAssessmentReview == null || ((bool?)ViewBag.SupervisorSelfAssessmentReview == true && Model.Verified.HasValue && Model.SignedOff == true)))
+  @if (Model.LevelDescriptors != null && (bool?)ViewBag.SupervisorSelfAssessmentReview == true && Model.Verified.HasValue && Model.SignedOff == true)
   {
     foreach (var levelDescriptor in Model.LevelDescriptors)
     {
