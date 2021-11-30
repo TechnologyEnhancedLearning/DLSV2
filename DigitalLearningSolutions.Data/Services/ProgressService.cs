@@ -61,7 +61,7 @@
                 throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
             }
 
-            courseDataService.SetCompletionDate(progressId, date);
+            progressDataService.SetCompletionDate(progressId, date);
         }
     }
 }

@@ -115,7 +115,6 @@
           {
               if (!ModelState.IsValid)
               {
-                  //todo not passing courseName back in so it disappears when we error
                   var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
                   return View(model);
               }

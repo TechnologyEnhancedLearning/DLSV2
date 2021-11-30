@@ -60,7 +60,10 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.Completed" />
     <dd class="nhsuk-summary-list__actions">
-      <a href="/TrackingSystem/Delegates/@DelegateProgressAccessRoute.CourseDelegates/DelegateProgress/@Model.ProgressId/EditCompletionDate">
+      <a asp-controller="DelegateProgress"
+         asp-action="EditCompletionDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
         Edit
       </a>
     </dd>

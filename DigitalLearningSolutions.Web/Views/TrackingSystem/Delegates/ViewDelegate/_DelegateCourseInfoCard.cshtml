@@ -60,7 +60,12 @@
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
           <dd class="nhsuk-summary-list__actions">
             @if (Model.Completed == null) {
-              <a href="/TrackingSystem/Delegates/@DelegateProgressAccessRoute.ViewDelegate/DelegateProgress/@Model.ProgressId/EditCompletionDate">Set completed date</a>
+              <a asp-controller="DelegateProgress"
+                 asp-action="EditCompletionDate"
+                 asp-route-progressId="@Model.ProgressId"
+                 asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+                Set completed date
+              </a>
             }
           </dd>
         </div>

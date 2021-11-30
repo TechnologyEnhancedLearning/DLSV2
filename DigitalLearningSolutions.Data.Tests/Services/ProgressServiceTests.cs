@@ -122,7 +122,7 @@
             progressService.UpdateCompletionDate(progressId, completeByDate);
 
             // Then
-            A.CallTo(() => courseDataService.SetCompletionDate(progressId, completeByDate))
+            A.CallTo(() => progressDataService.SetCompletionDate(progressId, completeByDate))
                 .MustHaveHappened();
         }
 
