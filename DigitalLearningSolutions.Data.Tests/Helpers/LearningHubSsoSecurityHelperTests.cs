@@ -107,7 +107,7 @@
 
             // When
             var hash1 = helper.GenerateHash(stateString, Secret);
-            var result = helper.VerifyHash(stateString, Secret, hash1, 60);
+            var result = helper.VerifyHash(stateString, Secret, hash1);
 
             // Then
             result.Should().BeTrue();
@@ -124,7 +124,7 @@
 
             // When
             var hash1 = helper.GenerateHash(stateString, Secret);
-            var result = helper.VerifyHash(stateString, Secret, hash1, 60);
+            var result = helper.VerifyHash(stateString, Secret, hash1);
 
             // Then
             result.Should().BeFalse();
