@@ -51,7 +51,7 @@
 
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-   Assessment questions
+    Assessment questions in profile
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.SelfAssessmentResultSummary.CompetencyAssessmentQuestionCount
@@ -80,57 +80,57 @@
   </div>
   @if (Model.CandidateAssessmentSupervisorVerificationSummaries.Any())
   {
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Response verifiers
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Response verifiers
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
       {
-        <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
+    <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
       }
-    </dd>
+  </dd>
 
-    </div>
+  </div>
   }
 
   @if (@Model.SelfAssessmentResultSummary.UngradedCount < Model.SelfAssessmentResultSummary.ResultCount)
   {
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Responses meeting role requirements
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SelfAssessmentResultSummary.MeetingCount
-    </dd>
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Responses meeting role requirements
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.SelfAssessmentResultSummary.MeetingCount
+  </dd>
 
-    </div>
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Responses partially meeting role requirements
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SelfAssessmentResultSummary.PartiallyMeetingCount
-    </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Responses partially meeting role requirements
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.SelfAssessmentResultSummary.PartiallyMeetingCount
+  </dd>
 
-    </div>
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Responses not meeting role requirements
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SelfAssessmentResultSummary.NotMeetingCount
-    </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Responses not meeting role requirements
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.SelfAssessmentResultSummary.NotMeetingCount
+  </dd>
 
-    </div>
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Responses with no role requirements set
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.SelfAssessmentResultSummary.UngradedCount
-    </dd>
-    </div>
+  </div>
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Responses with no role requirements set
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.SelfAssessmentResultSummary.UngradedCount
+  </dd>
+  </div>
   }
 </dl>
 <div class="nhsuk-card">
@@ -148,14 +148,30 @@
         </nhs-form-group>
 
         <nhs-form-group nhs-validation-for="SignedOff">
-          <div class="nhsuk-checkboxes__item">
-            <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
-            <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
-              Sign-off self-assessment
-            </label>
-            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
-              @Html.Raw((Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ? $"I confirm that this self-assessment accurately captures {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s current capability in the areas assessed." : Model.SelfAssessmentResultSummary.SignOffSupervisorStatement))
+          <div class="nhsuk-radios nhsuk-radios--inline">
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
+              <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
+                Sign-off profile self-assessment
+              </label>
+              <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                @(Model.SelfAssessmentResultSummary.SignOffSupervisorStatement == null ?
+                $"I confirm that this profile self-assessment accurately captures" +
+                $" {Model.SupervisorDelegate.FirstName} {Model.SupervisorDelegate.LastName}'s " +
+                $"current capability in the areas assessed." :
+                Model.SelfAssessmentResultSummary.SignOffSupervisorStatement)
+              </div>
             </div>
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" required="required" type="radio" value="false">
+              <label class="nhsuk-label nhsuk-radios__label" for="rb-reject">
+                Reject sign-off request
+              </label>
+              <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
+                You must provide sign-off comments indicating the reason for rejecting sign-off.
+              </div>
+            </div>
+            <span asp-validation-for="SignedOff" class="text-danger"></span>
           </div>
         </nhs-form-group>
       </fieldset>
@@ -177,3 +193,6 @@
     Cancel
   </a>
 </div>
+@section scripts {
+  <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
+}

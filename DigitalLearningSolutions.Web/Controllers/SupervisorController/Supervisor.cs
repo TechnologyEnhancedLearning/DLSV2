@@ -450,7 +450,7 @@
             {
                 SelfAssessmentResultSummary = selfAssessmentSummary,
                 SupervisorDelegate = supervisorDelegate,
-                CandidateAssessmentSupervisorVerificationId = selfAssessmentSummary.CandidateAssessmentSupervisorVerificationId,
+                CandidateAssessmentSupervisorVerificationId = selfAssessmentSummary?.CandidateAssessmentSupervisorVerificationId,
                 CandidateAssessmentSupervisorVerificationSummaries = verificationsSummary
             };
             return View("SignOffProfileAssessment", model);
