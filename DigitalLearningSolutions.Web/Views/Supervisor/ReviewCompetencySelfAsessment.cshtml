@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;    
-    ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
-    ViewData["Application"] = "Supervisor";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
+  ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -26,72 +26,77 @@
                asp-action="ReviewDelegateSelfAssessment"
                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
                asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName )
+              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
             </a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0, 32) + "..." : Model.Competency.Name )
+            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0,32) + "..." : Model.Competency.Name )
           </li>
         </ol>
       </div>
     </nav>
 }
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+     asp-action="ReviewDelegateSelfAssessment"
+     asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+     asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+    Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+  </a>
+  </p>
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
+    </div>
+  </details>
+  <h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
+  <dl class="nhsuk-summary-list">
 
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
-  </div>
-</details>
-<h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
-<dl class="nhsuk-summary-list">
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      @Model.Competency.Vocabulary
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.Competency.Name
+    </dd>
 
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    @Model.Competency.Vocabulary
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.Competency.Name
-  </dd>
-
-  </div>
-  @if (Model.Competency.Description != null)
+    </div>
+    @if (Model.Competency.Description != null)
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-      @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.DescriptionLabel) ? "Description" :
-                           Model.DelegateSelfAssessment.DescriptionLabel)
+      Description
     </dt>
     <dd class="nhsuk-summary-list__value">
       @Html.Raw(Model.Competency.Description)
     </dd>
     </div>
   }
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
-    Model.DelegateSelfAssessment.QuestionLabel) 
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.Competency.AssessmentQuestions.First().Question
-  </dd>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Question
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.Competency.AssessmentQuestions.First().Question
+    </dd>
 
-  </div>
+    </div>
 
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Learner response
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
-  </dd>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Learner response
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      <partial name="Shared/_AssessmentQuestionResponse" model="Model.Competency.AssessmentQuestions.First()" />
+    </dd>
 
-  </div>
-  @if (Model.Competency.AssessmentQuestions.First().ResultRAG > 0)
+    </div>
+    @if (Model.Competency.AssessmentQuestions.First().ResultRAG > 0)
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -103,7 +108,7 @@
 
     </div>
   }
-  @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
+    @if (Model.Competency.AssessmentQuestions.First().IncludeComments)
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
@@ -114,22 +119,22 @@
     </dd>
     </div>
   }
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Status
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
-  </dd>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Status
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.Competency.AssessmentQuestions.First()" />
+    </dd>
 
-  </div>
-</dl>
-@if (errorHasOccurred)
+    </div>
+  </dl>
+  @if (errorHasOccurred)
 {
   <vc:error-summary order-of-property-names="@new []{ nameof(ReviewCompetencySelfAsessmentViewModel) }" />
 }
 
-@if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Requested != null && ViewContext.RouteData.Values["viewMode"].ToString() == "Review" && (bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+  @if (Model.Competency.AssessmentQuestions.First().SelfAssessmentResultSupervisorVerificationId != null && Model.Competency.AssessmentQuestions.First().Requested != null && ViewContext.RouteData.Values["viewMode"].ToString() == "Review" && (bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
 {
   <div class="nhsuk-card">
     <div class="nhsuk-card__content">
@@ -143,30 +148,17 @@
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
           <nhs-form-group nhs-validation-for="SupervisorComments">
             <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
-            <span asp-validation-for="SupervisorComments" class="text-danger"></span>
           </nhs-form-group>
 
           <nhs-form-group nhs-validation-for="SignedOff">
-            <div class="nhsuk-radios nhsuk-radios--inline">
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
-                <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
-                  Verify self-assessment response
-                </label>
-                <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
-                  I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
-                </div>
+            <div class="nhsuk-checkboxes__item">
+              <input class="nhsuk-checkboxes__input" id="cb-verify" name="SignedOff" asp-for="SignedOff" type="checkbox">
+              <label class="nhsuk-label nhsuk-checkboxes__label" for="cb-sign-off">
+                Verify self-assessment response
+              </label>
+              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="cb-verify-item-hint">
+                I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
               </div>
-              <div class="nhsuk-radios__item">
-                <input class="nhsuk-radios__input" id="rb-reject" name="SignedOff" required="required" type="radio" value="false">
-                <label class="nhsuk-label nhsuk-radios__label" for="rb-reject">
-                  Reject self-assessment response
-                </label>
-                <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
-                  I disagree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment response against this @Model.Competency.Vocabulary.ToLower() for the reasons stated above
-                </div>
-              </div>
-              <span asp-validation-for="SignedOff" class="text-danger"></span>
             </div>
           </nhs-form-group>
         </fieldset>
@@ -182,49 +174,46 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
   <h2>Review Outcome</h2>
   @if (Model.Competency.AssessmentQuestions.First().Verified == null)
   {
-    <p>Awaiting review by @((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier? "you": "another supervisor") .</p>
+  <p>Awaiting review by @((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier? "you": "another supervisor") .</p>
   }
   else
   {
 
-    <dl class="nhsuk-summary-list">
-      @if (Model.SupervisorComments != null)
+  <dl class="nhsuk-summary-list">
+    @if (Model.SupervisorComments != null)
       {
-        <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Reviewer comments
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Html.Raw(Model.SupervisorComments)
-        </dd>
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Reviewer comments
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Html.Raw(Model.SupervisorComments)
+    </dd>
 
-        </div>
+    </div>
       }
 
-      <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Verified
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @if (Model.SignedOff)
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Verified
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @if (Model.SignedOff)
         {
-          <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
+      <span class="nhsuk-tag nhsuk-tag--green">Yes</span>
         }
         else
         {
-          <span class="nhsuk-tag nhsuk-tag--red">No</span>
+      <span class="nhsuk-tag nhsuk-tag--red">No</span>
         }
-      </dd>
+    </dd>
 
-      </div>
-    </dl>
-    @if ((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
-    {
-      <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
-    }
+    </div>
+  </dl>
+  @if((bool)Model.Competency.AssessmentQuestions.First().UserIsVerifier)
+          {
+  <a class="nhsuk-button nhsuk-button--secondary" asp-action="ReviewCompetencySelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-viewMode="Review" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-resultId="@ViewContext.RouteData.Values["resultId"]">Update</a>
+          }
   }
 }
 
-@section scripts {
-  <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
-}

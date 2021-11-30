@@ -28,87 +28,94 @@
       </div>
     </nav>
 }
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
-  </div>
-</details>
-<h2>Enrolment Summary</h2>
-<dl class="nhsuk-summary-list">
-
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Role profile
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.RoleProfile.RoleProfileName
-  </dd>
-
-  <dd class="nhsuk-summary-list__actions">
-
-    <a asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-      Change<span class="nhsuk-u-visually-hidden"> role profile</span>
-    </a>
-
-  </dd>
-
-  </div>
-
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Complete by date
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @(Model.CompleteByDate == null? "Not set" : Model.CompleteByDate.Value.ToShortDateString())
-  </dd>
-
-  <dd class="nhsuk-summary-list__actions">
-
-    <a asp-action="EnrolDelegateCompleteBy" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-      Change<span class="nhsuk-u-visually-hidden"> complete by date</span>
-    </a>
-
-  </dd>
-
-  </div>
-
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Supervisor role
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SupervisorRoleName
-  </dd>
-
-  <dd class="nhsuk-summary-list__actions">
-    @if (Model.SupervisorRoleCount > 1)
-    {
-    <a asp-action="EnrolDelegateSupervisorRole" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-      Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>
-    </a>
-    }
-    
-
-  </dd>
-
-  </div>
-
-</dl>
-<a class="nhsuk-button" asp-action="EnrolDelegateConfirm" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" asp-route-delegateId="@Model.SupervisorDelegateDetail.CandidateID.Value">
-  Confirm
-</a>
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-controller="Supervisor"
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
      asp-action="DelegateProfileAssessments"
      asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Cancel
+    Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
   </a>
-</div>
+  </p>
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+    </div>
+  </details>
+  <h2>Enrolment Summary</h2>
+  <dl class="nhsuk-summary-list">
+
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Role profile
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.RoleProfile.RoleProfileName
+    </dd>
+
+    <dd class="nhsuk-summary-list__actions">
+
+      <a asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+        Change<span class="nhsuk-u-visually-hidden"> role profile</span>
+      </a>
+
+    </dd>
+
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Complete by date
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @(Model.CompleteByDate == null? "Not set" : Model.CompleteByDate.Value.ToShortDateString())
+    </dd>
+
+    <dd class="nhsuk-summary-list__actions">
+
+      <a asp-action="EnrolDelegateCompleteBy" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+        Change<span class="nhsuk-u-visually-hidden"> complete by date</span>
+      </a>
+
+    </dd>
+
+    </div>
+
+    <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Supervisor role
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.SupervisorRoleName
+    </dd>
+
+    <dd class="nhsuk-summary-list__actions">
+      @if (Model.SupervisorRoleCount > 1)
+      {
+        <a asp-action="EnrolDelegateSupervisorRole" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+          Change<span class="nhsuk-u-visually-hidden"> supervisor role</span>
+        </a>
+      }
+
+
+    </dd>
+
+    </div>
+
+  </dl>
+  <a class="nhsuk-button" asp-action="EnrolDelegateConfirm" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" asp-route-delegateId="@Model.SupervisorDelegateDetail.CandidateID.Value">
+    Confirm
+  </a>
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-controller="Supervisor"
+       asp-action="DelegateProfileAssessments"
+       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
+      Cancel
+    </a>
+  </div>

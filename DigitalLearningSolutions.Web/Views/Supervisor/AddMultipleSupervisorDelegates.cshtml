@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model AddMultipleSupervisorDelegatesViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Add Mutiple Staff";
-    ViewData["Application"] = "Supervisor";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Add Mutiple Staff";
+  ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -20,21 +20,25 @@
     </div>
   </nav>
 }
-@if (errorHasOccurred)
-{
-  <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
-}
-<h1>Add staff members to your team</h1>
-<form method="post" novalidate>
-  <vc:text-area asp-for="DelegateEmails"
-                label="User email addresses"
-                populate-with-current-value="false"
-                rows="8"
-                spell-check="false"
-                hint-text="Provide the work email address of each member of staff to add to your supervision list on a separate line."
-                css-class=""
-                character-count="null"/>
-  <button class="nhsuk-button" type="submit">
-    Submit
-  </button>
-</form>
+
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a>
+  </p>
+  @if (errorHasOccurred)
+  {
+    <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
+  }
+  <h1>Add staff members to your team</h1>
+  <form method="post" novalidate>
+    <vc:text-area asp-for="DelegateEmails"
+                  label="User email addresses"
+                  populate-with-current-value="false"
+                  rows="8"
+                  spell-check="false"
+                  hint-text="Provide the work email address of each member of staff to add to your supervision list on a separate line."
+                  css-class=""
+                  character-count="null" />
+    <button class="nhsuk-button" type="submit">
+      Submit
+    </button>
+  </form>
