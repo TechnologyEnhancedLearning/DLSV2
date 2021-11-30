@@ -318,7 +318,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private void ValidateEmailAddress(PersonalInformationViewModel model)
         {
-            if (model.Email == null)
+            if (model.Email == null || !model.Centre.HasValue)
             {
                 return;
             }
