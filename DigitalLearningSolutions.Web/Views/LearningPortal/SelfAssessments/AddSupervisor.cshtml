@@ -3,15 +3,23 @@
 
 
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-    Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment";
-    ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  Layout = "SelfAssessments/_Layout";
+  ViewData["Title"] = "Self Assessment";
+  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a></li>
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a></li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a>
+  </li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
+  </li>
   <li class="nhsuk-breadcrumb__item">Add</li>
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+       asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">Back</a>
+  </p>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>New activity supervisor</h1>
@@ -23,42 +31,42 @@
         <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
       }
       <nhs-form-group nhs-validation-for="SupervisorAdminID">
-  <fieldset class="nhsuk-fieldset">
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <span class="nhsuk-fieldset__heading">
-        Add a supervisor
-      </span>
-    </legend>
+        <fieldset class="nhsuk-fieldset">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <span class="nhsuk-fieldset__heading">
+              Add a supervisor
+            </span>
+          </legend>
 
-    <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
-    <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
-    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <h2 class="nhsuk-fieldset__heading">
-        Choose a supervisor
-      </h2>
-    </legend>
-    <div class="nhsuk-hint" id="contact-hint">
-      Select your supervisor from the list below. If your supervisor is not listed, they will need to be given supervisor access by an administrator.
-    </div>
-    <div class="nhsuk-radios">
-      @foreach (var supervisor in Model.Supervisors)
-      {
-        <div class="nhsuk-radios__item">
-          <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
-          <label class="nhsuk-label nhsuk-radios__label" for="supervisor-@supervisor.AdminID">
-            @supervisor.Forename @supervisor.Surname 
-          </label>
-          <div class="nhsuk-hint nhsuk-radios__hint" id="supervisor-@supervisor.AdminID-item-hint">
-            @supervisor.Email
+          <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+          <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h2 class="nhsuk-fieldset__heading">
+              Choose a supervisor
+            </h2>
+          </legend>
+          <div class="nhsuk-hint" id="contact-hint">
+            Select your supervisor from the list below. If your supervisor is not listed, they will need to be given supervisor access by an administrator.
           </div>
-        </div>
-      }
-    </div>
-  </fieldset>
-</nhs-form-group>
-        <button class="nhsuk-button" type="submit">
-          Next
-        </button>
+          <div class="nhsuk-radios">
+            @foreach (var supervisor in Model.Supervisors)
+            {
+              <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
+                <label class="nhsuk-label nhsuk-radios__label" for="supervisor-@supervisor.AdminID">
+                  @supervisor.Forename @supervisor.Surname
+                </label>
+                <div class="nhsuk-hint nhsuk-radios__hint" id="supervisor-@supervisor.AdminID-item-hint">
+                  @supervisor.Email
+                </div>
+              </div>
+            }
+          </div>
+        </fieldset>
+      </nhs-form-group>
+      <button class="nhsuk-button" type="submit">
+        Next
+      </button>
     </form>
   </div>
 </div>
