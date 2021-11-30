@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
                 // Then
                 progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
-                progressFields.Item2.Should().BeCloseTo(removedDate);
+                progressFields.Item2.Should().BeCloseTo(removedDate, 500);
             }
             finally
             {
