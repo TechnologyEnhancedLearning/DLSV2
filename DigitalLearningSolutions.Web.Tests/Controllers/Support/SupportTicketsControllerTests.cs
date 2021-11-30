@@ -37,7 +37,7 @@
             var result = await controller.Index(DlsSubApplication.TrackingSystem);
 
             // Then
-            result.Should().BeViewResult().WithViewName("SupportTickets");
+            result.Should().BeViewResult().WithViewName("Index");
         }
 
         [Test]
@@ -52,7 +52,7 @@
             var result = await controller.Index(DlsSubApplication.Frameworks);
 
             // Then
-            result.Should().BeViewResult().WithViewName("SupportTickets");
+            result.Should().BeViewResult().WithViewName("Index");
         }
 
         [Test]
