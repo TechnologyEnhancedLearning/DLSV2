@@ -304,32 +304,26 @@
             EditCourseDetailsFormData formData
         )
         {
-            if (customisationName == string.Empty)
+            if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                formData.ApplicationId
+            ))
             {
-                if (courseService.DoesCourseNameExistAtCentre(
-                    customisationId,
-                    "",
-                    centreId,
-                    formData.ApplicationId
-                ))
-                {
-                    ModelState.AddModelError(
-                        nameof(EditCourseDetailsViewModel.CustomisationName),
-                        "A course with this name already exists, add on to the course name to make it unique"
-                    );
-                }
-
-                return;
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "A course with this name already exists, add on to the course name to make it unique"
+                );
             }
-
-            if (customisationName.Length > 250)
+            else if (customisationName.Length > 250)
             {
                 ModelState.AddModelError(
                     nameof(EditCourseDetailsViewModel.CustomisationName),
                     "Course name must be 250 characters or fewer, including any additions"
                 );
             }
-            else if (courseService.DoesCourseNameExistAtCentre(
+            else if (customisationName != string.Empty && courseService.DoesCourseNameExistAtCentre(
                 customisationId,
                 customisationName,
                 centreId,
