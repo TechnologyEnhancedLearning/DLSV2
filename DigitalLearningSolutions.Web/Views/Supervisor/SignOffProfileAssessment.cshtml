@@ -2,7 +2,7 @@
 @model SignOffProfileAssessmentViewModel;
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = $"Sign-off Profile Assessment";
+  ViewData["Title"] = $"Sign-off Self Assessment";
   ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -30,7 +30,7 @@
             </a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            Sign-off Profile Assessment
+            Sign-off Self Assessment
           </li>
         </ol>
       </div>
@@ -139,7 +139,7 @@
       <fieldset class="nhsuk-fieldset">
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
           <h2 class="nhsuk-fieldset__heading">
-            Sign-off Profile Self Assessment
+            Sign-off Self Assessment
           </h2>
         </legend>
         <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
