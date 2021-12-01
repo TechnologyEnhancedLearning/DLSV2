@@ -310,7 +310,7 @@
         {
             if (!ModelState.IsValid)
             {
-                var courseCategoryId = courseService.GetCourseCategoryId(customisationId);
+                var courseCategoryId = courseService.GetCourseCategoryId(customisationId)!.Value;
                 var supervisors = userService.GetSupervisorsAtCentreForCategory(User.GetCentreId(), courseCategoryId);
                 var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
                 return View(model);

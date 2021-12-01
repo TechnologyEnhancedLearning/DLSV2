@@ -59,7 +59,7 @@
 
         CourseOptions? GetCourseOptionsForAdminCategoryId(int customisationId, int centreId, int categoryId);
 
-        int GetCourseCategoryId(int customisationId);
+        int? GetCourseCategoryId(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -232,9 +232,9 @@
             );
         }
 
-        public int GetCourseCategoryId(int customisationId)
+        public int? GetCourseCategoryId(int customisationId)
         {
-            return courseDataService.GetCourseCentreAndCategory(customisationId).courseCategoryId!.Value;
+            return courseDataService.GetCourseCentreAndCategory(customisationId).courseCategoryId;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

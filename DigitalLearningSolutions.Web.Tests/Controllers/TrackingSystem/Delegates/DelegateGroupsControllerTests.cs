@@ -367,7 +367,6 @@
         public void DeleteGroup_deletes_group_with_no_delegates_or_courses()
         {
             // Given
-            var removedDate = DateTime.UtcNow;
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
                 .Returns(delegateGroupsController.User.GetCentreId());
             const int groupId = 1;
@@ -384,7 +383,6 @@
         public void ConfirmDeleteGroup_with_deleteEnrolments_false_deletes_group_correctly()
         {
             // Given
-            var removedDate = DateTime.UtcNow;
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
                 .Returns(delegateGroupsController.User.GetCentreId());
             var model = new ConfirmDeleteGroupViewModel
@@ -406,7 +404,6 @@
         public void ConfirmDeleteGroup_with_deleteEnrolments_true_deletes_group_correctly()
         {
             // Given
-            var removedDate = DateTime.UtcNow;
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
                 .Returns(delegateGroupsController.User.GetCentreId());
             var model = new ConfirmDeleteGroupViewModel
