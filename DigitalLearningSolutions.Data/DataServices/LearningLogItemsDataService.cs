@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using Microsoft.Extensions.Logging;
 
     public interface ILearningLogItemsDataService
     {
@@ -25,6 +26,8 @@
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
 
         void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
+
+        public void SetCompletedDate(int learningLogItemId, DateTime? completedDate);
 
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
     }
@@ -58,9 +61,12 @@
 
         private readonly IDbConnection connection;
 
-        public LearningLogItemsDataService(IDbConnection connection)
+        private readonly ILogger<LearningLogItemsDataService> logger;
+
+        public LearningLogItemsDataService(IDbConnection connection, ILogger<LearningLogItemsDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
@@ -175,6 +181,24 @@
                     WHERE LearningLogItemID = @id",
                 new { id, lastAccessedDate }
             );
+        }
+
+        public void SetCompletedDate(int learningLogItemId, DateTime? completedDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET CompletedDate = @completedDate
+                        WHERE LearningLogItemID = @learningLogitemId",
+                new { learningLogItemId, completedDate }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting current course complete by date as db update failed. " +
+                    $"Learning log item id: {learningLogItemId}, completed date: {completedDate}"
+                );
+            }
         }
 
         public void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate)

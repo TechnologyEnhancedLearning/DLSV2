@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -168,6 +169,50 @@
 
             // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
             return Redirect(learningResourceLink);
+        }
+
+        [Route("/LearningPortal/Current/MarkAsComplete/{id:int}")]
+        public IActionResult MarkCurrentCourseAsComplete(int id, int? day, int? month, int? year)
+        {
+            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var course = currentCourses.FirstOrDefault(c => c.Id == id);
+            if (course == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to set completed date for course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+            }
+
+            var model = new CurrentCourseViewModel(course);
+
+            if (day != null && month != null && year != null)
+            {
+                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            }
+
+            return View("Current/MarkAsComplete", model);
+        }
+
+        [HttpPost]
+        [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
+        public IActionResult MarkCurrentCourseAsComplete(int id, int day, int month, int year, int progressId)
+        {
+            if (day == 0 && month == 0 && year == 0)
+            {
+                learningLogItemsDataService.SetCompletedDate(progressId, User.GetCandidateIdKnownNotNull(), null);
+                return RedirectToAction("Current");
+            }
+
+            var validationResult = OldDateValidator.ValidateDate(day, month, year);
+            if (!validationResult.DateValid)
+            {
+                return RedirectToAction("MarkCurrentCourseAsComplete", new { id, day, month, year });
+            }
+
+            var completeByDate = new DateTime(year, month, day);
+            courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
+            return RedirectToAction("Current");
         }
 
         [HttpGet]

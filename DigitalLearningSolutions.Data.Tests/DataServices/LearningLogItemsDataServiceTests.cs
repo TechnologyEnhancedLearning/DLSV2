@@ -6,8 +6,10 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningLogItemsDataServiceTests
@@ -24,7 +26,9 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new LearningLogItemsDataService(connection);
+            var logger = A.Fake<ILogger<LearningLogItemsDataService>>();
+
+            service = new LearningLogItemsDataService(connection, logger);
 
             learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
             competencyLearningResourcesTestHelper = new CompetencyLearningResourcesTestHelper(connection);
