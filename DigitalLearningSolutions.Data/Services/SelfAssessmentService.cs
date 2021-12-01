@@ -231,6 +231,7 @@
 							 SA.DescriptionLabel,
                              SA.IncludesSignposting,
                              SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
+                             SA.SupervisorSelfAssessmentReview,
                              COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                              COUNT(C.ID)         AS NumberOfCompetencies,
                              CA.StartedDate,

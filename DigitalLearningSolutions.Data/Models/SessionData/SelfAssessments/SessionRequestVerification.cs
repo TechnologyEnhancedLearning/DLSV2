@@ -15,5 +15,6 @@
         public string Vocabulary { get; set; }
         public int CandidateAssessmentSupervisorId { get; set; }
         public List<int>? ResultIds { get; set; }
+        public bool SupervisorSelfAssessmentReview { get; set; }
     }
 }
