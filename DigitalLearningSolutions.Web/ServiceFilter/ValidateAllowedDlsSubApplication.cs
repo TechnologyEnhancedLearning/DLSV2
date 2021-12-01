@@ -48,10 +48,11 @@
 
             if (await ApplicationIsInaccessibleByPage(context, application))
             {
+                SetNotFoundResult(context);
                 return;
             }
 
-            ValidateUserHasPermissionForApplication(context, user, application, applicationParameterName!);
+            ValidateUserHasPermissionForApplicationAndSetAppropriateResult(context, user, application, applicationParameterName!);
         }
 
         private bool TryParseDlsSubApplication(
@@ -91,20 +92,18 @@
                 DlsSubApplication.SuperAdmin.Equals(application) &&
                 !await featureManager.IsEnabledAsync(FeatureFlags.RefactoredSuperAdminInterface))
             {
-                SetNotFoundResult(context);
                 return true;
             }
 
             if (validApplications.Any() && !validApplications.Contains(application))
             {
-                SetNotFoundResult(context);
                 return true;
             }
 
             return false;
         }
 
-        private void ValidateUserHasPermissionForApplication(
+        private void ValidateUserHasPermissionForApplicationAndSetAppropriateResult(
             ActionExecutingContext context,
             ClaimsPrincipal user,
             DlsSubApplication? application,
