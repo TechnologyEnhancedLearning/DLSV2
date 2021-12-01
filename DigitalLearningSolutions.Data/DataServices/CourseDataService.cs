@@ -424,7 +424,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
                     AND ca.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL",
+                    AND ap.ArchivedDate IS NULL
+                    AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -445,7 +446,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
 	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL",
+                    AND ap.ArchivedDate IS NULL
+                    AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -607,7 +609,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
-                        AND cu.CustomisationID = @customisationId",
+                        AND cu.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
         }
