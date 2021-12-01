@@ -81,7 +81,8 @@
             int minValue = 0,
             int maxValue = 10,
             int assessmentQuestionInputTypeID = 2,
-            bool includeComments = true
+            bool includeComments = true,
+            bool required = true
         )
         {
             return new AssessmentQuestion
@@ -94,7 +95,8 @@
                 MinValue = minValue,
                 MaxValue = maxValue,
                 AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID,
-                IncludeComments = true,
+                IncludeComments = includeComments,
+                Required = required
             };
         }
 

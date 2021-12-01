@@ -12,7 +12,8 @@
         @Model.First().Vocabulary
       </th>
       <th role="columnheader" class="" scope="col">
-        Question
+        @(string.IsNullOrWhiteSpace(Model.FirstOrDefault().QuestionLabel) ?
+                          "Question" : Model.FirstOrDefault().QuestionLabel)
       </th>
       <th role="columnheader" class="" scope="col">
         Self-assessment
@@ -36,7 +37,7 @@
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
       <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
     </td>
-    <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" />
+    <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
       <span class="nhsuk-table-responsive__heading">Action </span>
       <a asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-competencyNumber="@competency.RowNo">
@@ -47,7 +48,7 @@
   @foreach (var question in competency.AssessmentQuestions.Skip(1))
   {
     <tr role="row" class="nhsuk-table__row">
-      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" />
+      <partial name="Shared/_AssessmentQuestionOverviewCells" model="question" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
 
     </tr>
 

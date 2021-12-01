@@ -51,17 +51,13 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[DelegateGroupsFilterCookieName];
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                DelegateGroupsFilterCookieName
+            );
 
             var centreId = User.GetCentreId();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
@@ -170,7 +166,9 @@
                 return NotFound();
             }
 
-            var groupCourses = groupsService.GetGroupCourses(groupId, centreId);
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+
+            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
             var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
 
@@ -288,15 +286,60 @@
         }
 
         [HttpGet]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult EditGroupName(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group?.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
+            var model = new EditGroupNameViewModel(group?.GroupLabel!);
+            return View(model);
+        }
+
+        
+        [HttpPost]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult EditGroupName(EditGroupNameViewModel model, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            var group = groupsService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group?.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
+            groupsService.UpdateGroupName(
+                groupId,
+                centreId,
+                model.GroupName
+            );
+            
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
         [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
         public IActionResult AddCourseToGroup(int groupId, int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!.Value;
+            var categoryId = User.GetAdminCourseCategoryFilter();
             var groupLabel = groupsService.GetGroupName(groupId, centreId)!;
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId);
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(customisationId, centreId, categoryId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseDetails!.CourseCategoryId);
             var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseDetails);
             return View(viewModel);

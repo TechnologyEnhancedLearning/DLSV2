@@ -1,5 +1,5 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
-import { selectAll, deselectAll } from '../common';
+import * as Checkboxes from '../checkboxes';
 
 const selectedElements = document.querySelectorAll('.delegate-checkbox:checked') as NodeListOf<HTMLInputElement>;
 const selectedIds = Array.from(selectedElements).map((el) => el.value);
@@ -25,13 +25,13 @@ function setUpSelectAndDeselectButtons(): void {
 
   selectAllButton.addEventListener('click',
     () => {
-      selectAll(checkboxSelector);
+      Checkboxes.default.selectAll(checkboxSelector);
       alertResultCount();
     });
 
   deselectAllButton.addEventListener('click',
     () => {
-      deselectAll(checkboxSelector);
+      Checkboxes.default.deselectAll(checkboxSelector);
       alertResultCount();
     });
 }

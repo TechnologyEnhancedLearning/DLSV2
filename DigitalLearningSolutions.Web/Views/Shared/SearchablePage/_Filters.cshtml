@@ -21,7 +21,9 @@
           <input type="hidden" name="filterBy" value="@Model.FilterBy" />
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
-
+          @foreach (var (key, value) in Model.RouteData) {
+            <input type="hidden" name="@key" value="@value" />
+          }
           <div class="filter-value-container">
             <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
                     name="filterValue"

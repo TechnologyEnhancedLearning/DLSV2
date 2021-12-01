@@ -15,7 +15,7 @@
 
         public EditFiltersViewModel(
             ActivityFilterData filterData,
-            int userCategoryId,
+            int? userCategoryFilter,
             ReportsFilterOptions filterOptions,
             DateTime dataStartDate
         )
@@ -47,7 +47,7 @@
             ReportInterval = filterData.ReportInterval;
             DataStart = dataStartDate;
 
-            SetUpDropdowns(filterOptions, userCategoryId);
+            SetUpDropdowns(filterOptions, userCategoryFilter);
         }
 
         public int? JobGroupId { get; set; }
@@ -84,9 +84,9 @@
             return validationResults;
         }
 
-        public void SetUpDropdowns(ReportsFilterOptions filterOptions, int userCategoryId)
+        public void SetUpDropdowns(ReportsFilterOptions filterOptions, int? userCategoryFilter)
         {
-            CanFilterCourseCategories = userCategoryId == 0;
+            CanFilterCourseCategories = userCategoryFilter == null;
 
             JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(filterOptions.JobGroups, JobGroupId);
             CourseCategoryOptions =

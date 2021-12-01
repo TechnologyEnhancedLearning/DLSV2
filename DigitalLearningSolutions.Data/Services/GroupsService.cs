@@ -53,6 +53,10 @@
         );
 
         int? GetGroupCentreId(int groupId);
+
+        IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
+
+        void UpdateGroupName(int groupId, int centreId, string groupName);
     }
 
     public class GroupsService : IGroupsService
@@ -303,6 +307,17 @@
         public int? GetGroupCentreId(int groupId)
         {
             return groupsDataService.GetGroupCentreId(groupId);
+        }
+
+        public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
+        {
+            return groupsDataService.GetGroupCourses(groupId, centreId)
+                .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
+        }
+
+        public void UpdateGroupName(int groupId, int centreId, string groupName)
+        {
+            groupsDataService.UpdateGroupName(groupId, centreId, groupName);
         }
 
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
