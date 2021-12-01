@@ -22,12 +22,12 @@
         public int? SelfAssessmentResultSupervisorVerificationId { get; set; }
         public DateTime? Requested { get; set; }
         public DateTime? Verified { get; set; }
-        public bool Required { get; set; }
         public string? SupervisorComments { get; set; }
         public bool? SignedOff { get; set; }
         public bool? UserIsVerifier { get; set; }
         public int ResultRAG { get; set; }
         public string? CommentsPrompt { get; set; }
         public string? CommentsHint { get; set; }
+        public bool Required { get; set; }
     }
 }

@@ -8,6 +8,7 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
+        private const string UseSignposting = "FeatureManagement:UseSignposting";
 
         public static string GetAppRootPath(this IConfiguration config)
         {
@@ -27,6 +28,11 @@
         public static string GetLearningHubOpenApiBaseUrl(this IConfiguration config)
         {
             return config[LearningHubOpenApiBaseUrl];
+        }
+
+        public static bool IsSignpostingUsed(this IConfiguration config)
+        {
+            return bool.Parse(config[UseSignposting]);
         }
     }
 }
