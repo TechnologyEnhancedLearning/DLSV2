@@ -65,6 +65,8 @@
                     result.Last().Possible.Should().Be(3);
                     result.Last().WrongCount.Should().Be(0);
                     result.Last().MyScore.Should().Be(0);
+
+                    result.Select(x => x.TutorialId).Should().NotContain(1138);
                 }
             }
         }
@@ -75,11 +77,12 @@
         {
             using (new TransactionScope())
             {
-                connection.Execute("UPDATE Tutorials SET OriginalTutorialID = 1 WHERE TutorialID = 179");
+                connection.Execute("UPDATE Tutorials SET OriginalTutorialID = 1 WHERE TutorialID = 1137");
+                connection.Execute("UPDATE CustomisationTutorials SET DiagStatus = 0 WHERE CusTutID = 704039");
 
                 // When
                 var result = tutorialContentDataService
-                    .GetNonArchivedCcObjectivesBySectionAndCustomisationId(83, 2793, true)
+                    .GetNonArchivedCcObjectivesBySectionAndCustomisationId(248, 22062, true)
                     .ToList();
 
                 // Then
@@ -87,16 +90,14 @@
                 {
                     result.Count.Should().Be(4);
                     result.First().TutorialId.Should().Be(1);
-                    result.First().TutorialName.Should().Be("Open and arrange windows");
-                    result.First().Possible.Should().Be(6);
-                    result.First().WrongCount.Should().Be(0);
-                    result.First().MyScore.Should().Be(0);
 
-                    result.Last().TutorialId.Should().Be(182);
-                    result.Last().TutorialName.Should().Be("Change the zoom");
-                    result.Last().Possible.Should().Be(2);
-                    result.Last().WrongCount.Should().Be(0);
-                    result.Last().MyScore.Should().Be(0);
+                    result.Last().TutorialId.Should().Be(1257);
+
+                    var postLearnResult = result.Single(x => x.TutorialId == 1138);
+                    postLearnResult.TutorialName.Should().Be("Managing files");
+                    postLearnResult.Possible.Should().Be(1);
+                    postLearnResult.WrongCount.Should().Be(0);
+                    postLearnResult.MyScore.Should().Be(0);
                 }
             }
         }

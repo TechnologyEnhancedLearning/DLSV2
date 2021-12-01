@@ -382,7 +382,7 @@
                         tu.TutorialName,
                         tu.DiagAssessOutOf AS Possible
                     FROM dbo.Tutorials AS tu
-                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                    INNER JOIN dbo.CustomisationTutorials AS ct
                         ON ct.TutorialID = tu.TutorialID
                     WHERE tu.SectionID = @sectionId
                     AND ct.CustomisationID = @customisationId
