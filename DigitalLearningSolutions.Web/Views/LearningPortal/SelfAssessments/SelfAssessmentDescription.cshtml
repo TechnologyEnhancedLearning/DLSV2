@@ -11,6 +11,11 @@
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">@Model.Name</li>
 }
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Current">
+    Back to Current activities
+  </a>
+</p>
 <h1>@Model.Name</h1>
 @if (Model.IsSupervised)
 {

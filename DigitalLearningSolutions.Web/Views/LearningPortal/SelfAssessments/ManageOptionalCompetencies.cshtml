@@ -11,6 +11,13 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
 }
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+     asp-route-vocabulary="@Model.VocabPlural()"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+    Back to @Model.VocabPlural()
+  </a>
+</p>
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>Choose optional @Model.VocabPlural().ToLower()</h1>
 @if (errorHasOccurred)

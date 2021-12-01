@@ -11,6 +11,12 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a></li>
   <li class="nhsuk-breadcrumb__item">Add</li>
 }
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors"
+     asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+    Back to Manage Supervisors
+  </a>
+</p>
 <h1 class="">
   Supervisor Role
 </h1>

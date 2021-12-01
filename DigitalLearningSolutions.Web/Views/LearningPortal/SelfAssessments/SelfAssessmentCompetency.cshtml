@@ -10,6 +10,15 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">@Model.Competency.Vocabulary @Model.CompetencyNumber</li>
 }
+<p class="nhsuk-breadcrumb__back">
+  <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+     asp-route-vocabulary="@Model.VocabPlural()"
+     asp-route-selfAssessmentId="@Model.Assessment.Id"
+     asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID"
+     asp-fragment="comp-@Model.CompetencyNumber">
+    Back to @Model.VocabPlural()
+  </a>
+</p>
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
 <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
