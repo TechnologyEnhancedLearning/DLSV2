@@ -18,12 +18,12 @@
         <li class="nhsuk-breadcrumb__item">Add Staff Members</li>
       </ol>
     </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a>
+    </p>
   </nav>
 }
 
-<p class="nhsuk-breadcrumb__back">
-  <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a>
-  </p>
   @if (errorHasOccurred)
   {
     <vc:error-summary order-of-property-names="@new []{ nameof(AddMultipleSupervisorDelegatesViewModel.DelegateEmails) }" />
