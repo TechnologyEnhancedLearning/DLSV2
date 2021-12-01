@@ -16,6 +16,7 @@
         private readonly IConfigService configService;
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
+        private readonly IImportCompetenciesFromFileService importCompetenciesFromFileService;
 
         public FrameworksController(
             IFrameworkService frameworkService,
@@ -23,7 +24,8 @@
             IFrameworkNotificationService frameworkNotificationService,
             IConfigService configService,
             ILogger<FrameworksController> logger,
-            IConfiguration config
+            IConfiguration config,
+            IImportCompetenciesFromFileService importCompetenciesFromFileService
         )
         {
             this.frameworkService = frameworkService;
@@ -32,6 +34,7 @@
             this.configService = configService;
             this.logger = logger;
             this.config = config;
+            this.importCompetenciesFromFileService = importCompetenciesFromFileService;
         }
 
         private int? GetCentreId()

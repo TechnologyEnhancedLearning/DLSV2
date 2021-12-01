@@ -18,6 +18,7 @@
         private IConfigService configService;
         private IConfiguration config;
         private IFrameworkNotificationService frameworkNotificationService;
+        private IImportCompetenciesFromFileService importCompetenciesFromFileService;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CentreId = 101;
         private const int AdminId = 1;
@@ -31,6 +32,7 @@
             configService = A.Fake<ConfigService>();
             var logger = A.Fake<ILogger<FrameworksController>>();
             config = A.Fake<IConfiguration>();
+            importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -46,7 +48,8 @@
                 frameworkNotificationService,
                 configService,
                 logger,
-                config
+                config,
+                importCompetenciesFromFileService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
