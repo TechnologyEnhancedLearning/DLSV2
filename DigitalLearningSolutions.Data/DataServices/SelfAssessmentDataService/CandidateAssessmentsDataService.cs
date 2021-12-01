@@ -61,7 +61,11 @@
                         CA.CompleteByDate,
                         CA.UserBookmark,
                         CA.UnprocessedUpdates,
-                        CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders, SA.ManageOptionalCompetenciesPrompt,
+                        CA.LaunchCount,
+                        CA.SubmittedDate,
+                        SA.LinearNavigation,
+                        SA.UseDescriptionExpanders,
+                        SA.ManageOptionalCompetenciesPrompt,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                         CASE
                             WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0

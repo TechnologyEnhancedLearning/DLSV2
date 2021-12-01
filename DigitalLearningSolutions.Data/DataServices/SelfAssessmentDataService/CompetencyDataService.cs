@@ -38,7 +38,8 @@
                 LEFT OUTER JOIN SelfAssessmentResultSupervisorVerifications AS sv
                     ON s.ID = sv.SelfAssessmentResultId AND sv.Superceded = 0
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                    ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
+                    ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
+                        AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
                 WHERE CandidateID = @candidateId
                 AND s.SelfAssessmentID = @selfAssessmentId
             )";
@@ -59,10 +60,14 @@
                     sv.SignedOff, 
                     CAST(CASE WHEN COALESCE(sd.SupervisorAdminID, 0) = @adminId THEN 1 ELSE 0 END AS Bit) AS UserIsVerifier,
                     COALESCE (rr.LevelRAG, 0) AS ResultRAG
-                FROM CandidateAssessments ca INNER JOIN SelfAssessmentResults s ON s.CandidateID = ca.CandidateID AND s.SelfAssessmentID = ca.SelfAssessmentID
+                FROM CandidateAssessments ca
+                INNER JOIN SelfAssessmentResults s
+                    ON s.CandidateID = ca.CandidateID AND s.SelfAssessmentID = ca.SelfAssessmentID
                 INNER JOIN (
                     SELECT MAX(s1.ID) as ID
-                    FROM SelfAssessmentResults AS s1 INNER JOIN CandidateAssessments AS ca1 ON  s1.CandidateID = ca1.CandidateID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
+                    FROM SelfAssessmentResults AS s1
+                    INNER JOIN CandidateAssessments AS ca1
+                        ON  s1.CandidateID = ca1.CandidateID AND s1.SelfAssessmentID = ca1.SelfAssessmentID
                     WHERE ca1.ID = @candidateAssessmentId
                     GROUP BY CompetencyID, AssessmentQuestionID
                 ) t
@@ -74,7 +79,8 @@
                 LEFT OUTER JOIN SupervisorDelegates AS sd
                     ON cas.SupervisorDelegateId = sd.ID
                 LEFT OUTER JOIN CompetencyAssessmentQuestionRoleRequirements rr
-                    ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
+                    ON s.CompetencyID = rr.CompetencyID AND s.AssessmentQuestionID = rr.AssessmentQuestionID
+                        AND s.SelfAssessmentID = rr.SelfAssessmentID AND s.Result = rr.LevelValue
                 WHERE ca.ID = @candidateAssessmentId
             )";
 
@@ -85,8 +91,18 @@
             C.Description AS Description,
             CG.Name AS CompetencyGroup,
             CG.ID AS CompetencyGroupID,
-            COALESCE((SELECT TOP(1) FrameworkConfig FROM Frameworks F INNER JOIN FrameworkCompetencies AS FC ON FC.FrameworkID = F.ID WHERE FC.CompetencyID = C.ID), 'Capability') AS Vocabulary,
-            CASE WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0 THEN 1 ELSE 0 END AS HasDelegateNominatedRoles,
+            COALESCE(
+                (SELECT TOP(1) FrameworkConfig
+                FROM Frameworks F
+                INNER JOIN FrameworkCompetencies AS FC
+                    ON FC.FrameworkID = F.ID
+                WHERE FC.CompetencyID = C.ID),
+            'Capability') AS Vocabulary,
+            CASE
+                WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0
+                THEN 1
+                ELSE 0
+            END AS HasDelegateNominatedRoles,
             SAS.Optional,
             AQ.ID AS Id,
             AQ.Question,
@@ -169,7 +185,8 @@
                         INNER JOIN CandidateAssessments AS CA
                             ON CA.SelfAssessmentID = @selfAssessmentId AND CA.CandidateID = @candidateId
                         LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
-                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID AND sas.CompetencyGroupID = CAOC.CompetencyGroupID
+                            ON CA.ID = CAOC.CandidateAssessmentID AND sas.CompetencyID = CAOC.CompetencyID
+                                AND sas.CompetencyGroupID = CAOC.CompetencyGroupID
                         WHERE (sas.SelfAssessmentID = @selfAssessmentId) AND ((sas.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
                     ),
                     {LatestAssessmentResults}
@@ -181,11 +198,7 @@
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
-                    if (competencyResult == null)
-                    {
-                        competencyResult = competency;
-                    }
-
+                    competencyResult ??= competency;
                     competencyResult.AssessmentQuestions.Add(assessmentQuestion);
                     return competencyResult;
                 },
@@ -238,7 +251,8 @@
                 $@"WITH {SpecificAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {SpecificCompetencyTables}
-                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
+                    WHERE (LAR.Requested IS NOT NULL) AND (LAR.Verified IS NULL) AND (LAR.UserIsVerifier = 1)
+                        AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
@@ -256,7 +270,8 @@
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables}
-                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL) OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
+                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
+                        OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
