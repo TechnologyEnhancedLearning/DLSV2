@@ -11,12 +11,6 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
   <li class="nhsuk-breadcrumb__item">Manage Supervisors</li>
 }
-<p class="nhsuk-breadcrumb__back">
-  <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"     
-     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-    Back to @Model.SelfAssessment.Name
-  </a>
-</p>
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
 @if (Model.Supervisors.Any())
