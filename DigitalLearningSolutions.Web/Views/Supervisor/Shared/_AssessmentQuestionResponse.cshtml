@@ -7,12 +7,13 @@
 }
 else
 {
-  bool isVerifiedAndSignedOff = (bool?)ViewBag.SupervisorSelfAssessmentReview == true && Model.Verified.HasValue && Model.SignedOff == true;
-  string tagColour = (Model.ResultRAG == 0 || !isVerifiedAndSignedOff) ? "white"
+  bool isVerifiedOrVerificationNotRequired = (bool?)ViewBag.SupervisorSelfAssessmentReview == false | (Model.Verified.HasValue && Model.SignedOff == true);
+  string tagColour = (Model.ResultRAG == 0 || !isVerifiedOrVerificationNotRequired) ? "white"
     : Model.ResultRAG == 1 ? "red"
     : Model.ResultRAG == 2 ? "yellow"
     : "green";
-  string hiddenTagText = Model.ResultRAG == 0 ? "role expectations not specified"
+  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "not yet verified"
+    : Model.ResultRAG == 0 ? "role expectations not specified"
     : Model.ResultRAG == 1 ? "not meeting role expectations"
     : Model.ResultRAG == 2 ? "partially meeting role expectations"
     : "fully meeting role expectations";
