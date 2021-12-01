@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
@@ -13,6 +14,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class ActionPlanServiceTests
@@ -24,6 +26,7 @@
         private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
+        private IConfiguration config = null!;
         private Catalogue genericCatalogue = null!;
 
         [SetUp]
@@ -36,6 +39,7 @@
             learningHubApiService = A.Fake<ILearningHubApiService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            config = A.Fake<IConfiguration>();
 
             actionPlanService = new ActionPlanService(
                 competencyLearningResourcesDataService,
@@ -43,7 +47,8 @@
                 clockService,
                 learningHubApiService,
                 learningHubApiClient,
-                selfAssessmentDataService
+                selfAssessmentDataService,
+                config
             );
         }
 
@@ -135,10 +140,29 @@
         }
 
         [Test]
+        public async Task GetIncompleteActionPlanItems_returns_empty_list_if_signposting_is_disabled()
+        {
+            // Given
+            const int delegateId = 1;
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+
+            // Then
+            result.Should().BeEmpty();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(A<int>._))
+                .MustNotHaveHappened();
+            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
         public async Task GetIncompleteActionPlanItems_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -163,6 +187,7 @@
         {
             // Given
             const int delegateId = 1;
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()

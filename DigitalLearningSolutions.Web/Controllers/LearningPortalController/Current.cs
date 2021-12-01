@@ -26,7 +26,6 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            // TODO: HEEDLS-659, when feature flag is implemented, return an empty list instead of learning resources when UseSignposting=false
             var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,

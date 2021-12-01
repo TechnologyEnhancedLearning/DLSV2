@@ -6,7 +6,9 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using Microsoft.Extensions.Configuration;
 
     public interface IActionPlanService
     {
@@ -23,6 +25,7 @@
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
+        private readonly IConfiguration config;
 
         public ActionPlanService(
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
@@ -30,7 +33,8 @@
             IClockService clockService,
             ILearningHubApiService learningHubApiService,
             ILearningHubApiClient learningHubApiClient,
-            ISelfAssessmentDataService selfAssessmentDataService
+            ISelfAssessmentDataService selfAssessmentDataService,
+            IConfiguration config
         )
         {
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
@@ -39,6 +43,7 @@
             this.learningHubApiService = learningHubApiService;
             this.learningHubApiClient = learningHubApiClient;
             this.selfAssessmentDataService = selfAssessmentDataService;
+            this.config = config;
         }
 
         public void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId)
@@ -88,6 +93,11 @@
 
         public async Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId)
         {
+            if (!config.IsSignpostingUsed())
+            {
+                return new List<ActionPlanItem>();
+            }
+
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
                     i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
