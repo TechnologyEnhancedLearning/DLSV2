@@ -4,10 +4,7 @@
 
     public class Objective : ObjectiveBase
     {
-        public Objective(int tutorialId, IEnumerable<int> interactions, int possible) : base(
-            tutorialId,
-            possible
-        )
+        public Objective(int tutorialId, IEnumerable<int> interactions, int possible) : base(tutorialId, possible)
         {
             Interactions = interactions;
         }

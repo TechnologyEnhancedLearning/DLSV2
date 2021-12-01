@@ -19,8 +19,11 @@
         );
 
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
+
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
+
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
 
         void UpdateOrInsertCustomisationTutorialStatuses(
@@ -31,7 +34,12 @@
         );
 
         IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
-        IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(int sectionId, int customisationId, bool isPostLearning);
+
+        IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        );
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -351,7 +359,10 @@
             );
         }
 
-        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId)
+        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId
+        )
         {
             return connection.Query<Objective>(
                 @"SELECT 
@@ -371,7 +382,11 @@
             );
         }
 
-        public IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(int sectionId, int customisationId, bool isPostLearning)
+        public IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        )
         {
             return connection.Query<CcObjective>(
                 @"SELECT 

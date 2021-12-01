@@ -42,6 +42,7 @@
         {
             using (new TransactionScope())
             {
+                // Given
                 connection.Execute("UPDATE Tutorials SET OriginalTutorialID = 1 WHERE TutorialID = 1137");
                 connection.Execute("UPDATE CustomisationTutorials SET DiagStatus = 0 WHERE CusTutID = 704039");
 
@@ -77,6 +78,7 @@
         {
             using (new TransactionScope())
             {
+                // Given
                 connection.Execute("UPDATE Tutorials SET OriginalTutorialID = 1 WHERE TutorialID = 1137");
                 connection.Execute("UPDATE CustomisationTutorials SET DiagStatus = 0 WHERE CusTutID = 704039");
 

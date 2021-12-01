@@ -1,13 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Tracker
 {
-    using System.Collections.Generic;
-
     public class CcObjective : ObjectiveBase
     {
-        public CcObjective(int tutorialId, string tutorialName, int possible) : base(
-            tutorialId,
-            possible
-        )
+        public CcObjective(int tutorialId, string tutorialName, int possible) : base(tutorialId, possible)
         {
             TutorialName = tutorialName;
             WrongCount = 0;
