@@ -7,6 +7,5 @@
         public string CourseTopic { get; set; }
         public bool HasLearning { get; set; }
         public bool HasDiagnostic { get; set; }
-        public bool AspMenu { get; set; }
     }
 }

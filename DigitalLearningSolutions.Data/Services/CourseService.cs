@@ -126,19 +126,19 @@
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
         {
-            var (courseCentreId, courseCategoryId, _) = courseDataService.GetCourseValidationDetails(customisationId);
+            var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseCentreId == null || courseCategoryId == null)
+            if (courseValidationDetails == null)
             {
                 return null;
             }
 
-            if (courseCentreId != centreId)
+            if (courseValidationDetails.CentreId != centreId)
             {
                 return false;
             }
 
-            if (categoryId != null && courseCategoryId != categoryId)
+            if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
             {
                 return false;
             }
@@ -148,19 +148,25 @@
 
         public bool? VerifyAdminUserCanViewCourse(int customisationId, int centreId, int? categoryId)
         {
-            var (courseCentreId, courseCategoryId, allCentres) = courseDataService.GetCourseValidationDetails(customisationId);
+            var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseCentreId == null || courseCategoryId == null || allCentres == null)
+            if (courseValidationDetails == null || courseValidationDetails.AllCentres == null ||
+                courseValidationDetails.CentreHasApplication == null)
             {
                 return null;
             }
 
-            if (courseCentreId != centreId && !allCentres.Value)
+            if (courseValidationDetails.CentreId != centreId && !courseValidationDetails.AllCentres.Value)
             {
                 return false;
             }
 
-            if (categoryId != 0 && courseCategoryId != categoryId)
+            if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
+            {
+                return false;
+            }
+
+            if (courseValidationDetails.AllCentres.Value && !courseValidationDetails.CentreHasApplication.Value)
             {
                 return false;
             }
@@ -248,7 +254,8 @@
             return courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId);
+                categoryId
+            );
         }
 
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
@@ -258,7 +265,7 @@
         )
         {
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
-                .Where(c => c.Active && c.AspMenu);
+                .Where(c => c.Active);
 
             var groupCourseIds = groupsDataService.GetGroupCourses(centreId, groupId).Select(gc => gc.CustomisationId);
 

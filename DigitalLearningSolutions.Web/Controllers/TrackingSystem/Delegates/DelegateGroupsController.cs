@@ -310,9 +310,9 @@
         {
             var centreId = User.GetCentreId();
             
-            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
 
-            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryId, groupId);
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
 
             // TODO Tidy this with service method from HEEDLS-657
             var groupName = groupsDataService.GetGroupName(groupId, centreId);

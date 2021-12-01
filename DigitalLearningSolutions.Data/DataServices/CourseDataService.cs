@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        public (int? centreId, int? courseCategoryId, bool? allCentres) GetCourseValidationDetails(int customisationId);
+        public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -263,7 +263,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
+                        AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
                 new { centreId, adminCategoryId }
             );
         }
@@ -434,8 +434,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cc.CategoryName,
                         ct.CourseTopic,
                         CASE WHEN ({tutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
-                        CASE WHEN ({tutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic,
-                        ap.ASPMenu
+                        CASE WHEN ({tutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
                     FROM Customisations AS c
                     INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
@@ -463,7 +462,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
-	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
@@ -507,14 +506,26 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId, bool? allCentres) GetCourseValidationDetails(int customisationId)
+        public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId)
         {
-            return connection.QueryFirstOrDefault<(int?, int?, bool?)>(
-                @"SELECT c.CentreId, a.CourseCategoryId, c.AllCentres
-                        FROM Customisations AS c
-                        INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE CustomisationID = @customisationId",
-                new { customisationId }
+            return connection.QueryFirstOrDefault<CourseValidationDetails>(
+                @"SELECT
+                        c.CentreId,
+                        a.CourseCategoryId,
+                        c.AllCentres,
+                        CASE WHEN EXISTS (
+                                SELECT CentreApplicationID
+                                FROM CentreApplications
+                                WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreId) AND (Active = 1)
+                            )
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT)
+                        END AS CentreHasApplication
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                    INNER JOIN CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId, centreId }
             );
         }
 

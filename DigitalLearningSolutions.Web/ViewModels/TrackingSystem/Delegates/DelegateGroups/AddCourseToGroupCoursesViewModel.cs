@@ -24,9 +24,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
                 BaseSearchablePageViewModel.Ascending
             );
 
-            var paginatedCourses = sortedCourses.Take(10);
+            var coursesToShow = sortedCourses.Take(10);
 
-            Courses = paginatedCourses.Select(c => new SearchableCourseViewModel(c, groupId));
+            Courses = coursesToShow.Select(c => new SearchableCourseViewModel(c, groupId));
         }
 
         public int GroupId { get; set; }
