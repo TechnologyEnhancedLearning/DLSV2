@@ -8,7 +8,7 @@
 else
 {
   bool isVerifiedAndSignedOff = (bool?)ViewBag.SupervisorSelfAssessmentReview == true && Model.Verified.HasValue && Model.SignedOff == true;
-  string tagColour = (Model.ResultRAG == 0 || isVerifiedAndSignedOff) ? "white"
+  string tagColour = (Model.ResultRAG == 0 || !isVerifiedAndSignedOff) ? "white"
     : Model.ResultRAG == 1 ? "red"
     : Model.ResultRAG == 2 ? "yellow"
     : "green";
