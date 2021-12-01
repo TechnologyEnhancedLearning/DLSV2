@@ -118,9 +118,11 @@
           </button>
         </form>
       } else {
-        <a class="nhsuk-button view-delegate-button" role="button">
-          Reactivate account
-        </a>
+        <form asp-action="ReactivateDelegate" asp-route-delegateId="@Model.DelegateInfo.Id">
+          <button class="nhsuk-button view-delegate-button" type="submit">
+            Reactivate account
+          </button>
+        </form>
       }
     </div>
   </div>

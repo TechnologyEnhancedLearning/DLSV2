@@ -304,6 +304,51 @@
         }
 
         [HttpGet]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult EditGroupName(int groupId)
+        {
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group?.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
+            var model = new EditGroupNameViewModel(group?.GroupLabel!);
+            return View(model);
+        }
+
+        
+        [HttpPost]
+        [Route("{groupId:int}/EditGroupName")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult EditGroupName(EditGroupNameViewModel model, int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var centreId = User.GetCentreId();
+            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+
+            if (group?.LinkedToField != 0)
+            {
+                return NotFound();
+            }
+
+            groupsDataService.UpdateGroupName(
+                groupId,
+                centreId,
+                model.GroupName
+            );
+            
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
         [Route("{groupId:int}/Courses/Add/SelectCourse")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult AddCourseToGroupSelectCourse(int groupId)

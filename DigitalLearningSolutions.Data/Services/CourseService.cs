@@ -111,17 +111,17 @@
         )
         {
             return courseDataService.GetDelegateCoursesInfo(delegateId)
+                .Where(info => info.CustomisationCentreId == centreId || info.AllCentresCourse)
                 .Where(info => courseCategoryId == null || info.CourseCategoryId == courseCategoryId)
-                .Select(
-                    info => GetDelegateAttemptsAndCourseCustomPrompts(info, centreId)
-                ).Where(info => info.DelegateCourseInfo.RemovedDate == null);
+                .Select(GetDelegateAttemptsAndCourseCustomPrompts)
+                .Where(info => info.DelegateCourseInfo.RemovedDate == null);
         }
 
         public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)
         {
             var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
 
-            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info, centreId, true);
+            return info == null ? null : GetDelegateAttemptsAndCourseCustomPrompts(info);
         }
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
@@ -307,16 +307,12 @@
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
-            DelegateCourseInfo info,
-            int centreId,
-            bool allowAllCentreCourses = false
+            DelegateCourseInfo info
         )
         {
             var customPrompts = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
                 info,
-                info.CustomisationId,
-                centreId,
-                allowAllCentreCourses
+                info.CustomisationId
             );
 
             var attemptStats = info.IsAssessed

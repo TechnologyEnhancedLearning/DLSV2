@@ -44,11 +44,7 @@
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var centreId = User.GetCentreId();
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                customisationId,
-                centreId
-            );
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
 
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
@@ -66,10 +62,8 @@
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var centreId = User.GetCentreId();
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
-                    customisationId,
-                    centreId
+                    customisationId
                 ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
@@ -310,11 +304,8 @@
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
-
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 customisationId,
-                centreId,
                 model.AdminFieldId!.Value,
                 model.OptionsString
             ))
