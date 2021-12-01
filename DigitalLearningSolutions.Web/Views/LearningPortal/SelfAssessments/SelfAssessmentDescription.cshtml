@@ -11,48 +11,51 @@
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">@Model.Name</li>
 }
-<p class="nhsuk-breadcrumb__back">
-  <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Current">
-    Back to Current activities
-  </a>
-</p>
-<h1>@Model.Name</h1>
-@if (Model.IsSupervised)
+@section mobilebacklink
 {
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-two-thirds">
-      @(Html.Raw(Model.Description))
-    </div>
-    <div class="nhsuk-grid-column-one-third">
-      <partial name="Shared/_SupervisorsCard"
-               model="@Model.Supervisors" />
-    </div>
-  </div>
-}
-else
-{
-  <div class="nhsuk-u-reading-width">@(Html.Raw(Model.Description))</div>
-}
-
-@if (Model.LinearNavigation)
-{
-  @if (Model.UserBookmark != null)
-  {
-    <a class="nhsuk-button trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">
-      Continue
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Current">
+      Back to Current activities
     </a>
-  }
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
-  <a class=@(Model.UserBookmark != null ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button") asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">Go to @Model.Vocabulary 1</a>
+  </p>
 }
-else
-{
-  <a class="nhsuk-button trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural" asp-route-selfAssessmentId="@Model.Id">View @Model.VocabPlural</a>
-  @if (Model.UserBookmark != null)
+  <h1>@Model.Name</h1>
+  @if (Model.IsSupervised)
   {
-    <a class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue</a>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        @(Html.Raw(Model.Description))
+      </div>
+      <div class="nhsuk-grid-column-one-third">
+        <partial name="Shared/_SupervisorsCard"
+                 model="@Model.Supervisors" />
+      </div>
+    </div>
   }
-}
+  else
+  {
+    <div class="nhsuk-u-reading-width">@(Html.Raw(Model.Description))</div>
+  }
+
+  @if (Model.LinearNavigation)
+  {
+    @if (Model.UserBookmark != null)
+    {
+      <a class="nhsuk-button trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">
+        Continue
+      </a>
+    }
+    <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
+    <a class=@(Model.UserBookmark != null ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button") asp-action="SelfAssessmentCompetency" asp-route-selfAssessmentId="@Model.Id" asp-route-competencyNumber="1">Go to @Model.Vocabulary 1</a>
+  }
+  else
+  {
+    <a class="nhsuk-button trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural" asp-route-selfAssessmentId="@Model.Id">View @Model.VocabPlural</a>
+    @if (Model.UserBookmark != null)
+    {
+      <a class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue</a>
+    }
+  }
 
 
 

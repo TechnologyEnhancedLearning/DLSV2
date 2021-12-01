@@ -11,12 +11,15 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
   <li class="nhsuk-breadcrumb__item">@Model.VocabPlural()</li>
 }
-<p class="nhsuk-breadcrumb__back">
-  <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"     
-     asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-    Back to @Model.SelfAssessment.Name
-  </a>
-</p>
+@section mobilebacklink
+{
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+      Back to @Model.SelfAssessment.Name
+    </a>
+  </p>
+}
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 @if (Model.NumberOfOptionalCompetencies > 0)
@@ -78,9 +81,9 @@
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-<div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-  <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-  <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
+    <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
     @if (Model.AllQuestionsVerifiedOrNotRequired())
     {
       @if (!Model.SupervisorSignOffs.Any())
@@ -88,13 +91,13 @@
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
 
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" >Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
     }
     else
     {
       <p class="nhsuk-body-l">All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
     }
 
-    </div>
-  }
+  </div>
+}
 
