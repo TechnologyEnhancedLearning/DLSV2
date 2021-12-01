@@ -2,11 +2,11 @@
 @model IEnumerable<DelegateSelfAssessment>;
 
 <table role="table" class="nhsuk-table-responsive">
-  <caption class="nhsuk-table__caption"><h2>Profile assessments</h2></caption>
+  <caption class="nhsuk-table__caption"><h2>Self assessments</h2></caption>
   <thead role="rowgroup" class="nhsuk-table__head">
     <tr role="row">
       <th role="columnheader" class="" scope="col">
-        Profile
+        Self Assessment
       </th>
       <th role="columnheader" class="" scope="col">
         Role links
@@ -27,7 +27,7 @@
     {
     <tr role="row" class="nhsuk-table__row">
       <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-        <span class="nhsuk-table-responsive__heading">Profile </span>@delegateSelfAssessment.RoleName
+        <span class="nhsuk-table-responsive__heading">Self Assessment </span>@delegateSelfAssessment.RoleName
       </td>
       <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
         <span class="nhsuk-table-responsive__heading">Role links </span>@(delegateSelfAssessment.ProfessionalGroup != null ? delegateSelfAssessment.ProfessionalGroup : "None/Generic")

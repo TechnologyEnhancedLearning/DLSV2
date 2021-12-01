@@ -28,5 +28,6 @@
         public int ResultRAG { get; set; }
         public string? CommentsPrompt { get; set; }
         public string? CommentsHint { get; set; }
+        public bool Required { get; set; }
     }
 }

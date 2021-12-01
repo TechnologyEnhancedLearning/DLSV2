@@ -145,6 +145,7 @@
                                                   AQ.IncludeComments,
                                                   AQ.CommentsPrompt,
                                                   AQ.CommentsHint,
+                                                  CAQ.Required,
                                                   LAR.ResultId,
                                                   LAR.Result,
                                                   LAR.SupportingComments,

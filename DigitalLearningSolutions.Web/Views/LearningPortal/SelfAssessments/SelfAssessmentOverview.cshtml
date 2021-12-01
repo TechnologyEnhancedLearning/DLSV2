@@ -16,7 +16,7 @@
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
-    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural().ToLower()
+    Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
 @if (Model.SelfAssessment.IsSupervised)
@@ -75,7 +75,7 @@
 <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
   <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
   <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
-    @if (Model.AllQuestionsVerified())
+    @if (Model.AllQuestionsVerifiedOrNotRequired())
     {
       @if (!Model.SupervisorSignOffs.Any())
       {
@@ -86,7 +86,7 @@
     }
     else
     {
-      <p class="nhsuk-body-l">All @Model.VocabPlural().ToLower() must be self-assessed and verified by your @Model.SelfAssessment.VerificationRoleName, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
+      <p class="nhsuk-body-l">All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
     }
 
     </div>
