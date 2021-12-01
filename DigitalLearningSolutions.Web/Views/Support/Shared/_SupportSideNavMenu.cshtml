@@ -36,9 +36,11 @@
                      link-text="Resources"
                      is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
-  <vc:side-menu-link-with-href href="@Model.SupportTicketsUrl"
-                               link-text="Support tickets"
-                               is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SupportTickets"
+                     asp-all-route-data="@routeData"
+                     link-text="Support tickets"
+                     is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
   @if (Model.CurrentPage == SupportPage.ChangeRequests) {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
