@@ -410,5 +410,24 @@
             item.SeqInt.Should().BeNull();
             item.LastAccessedDate.Should().BeNull();
         }
+
+        /*[Test]
+        public void Set_completed_date_should_update_db()
+        {
+            // Given
+            const int learningLogItemsId = 1;
+            var newCompletedDate = new DateTime(2020, 7, 29);
+
+            using (new TransactionScope())
+            {
+                // When
+                service.SetCompletedDate(learningLogItemsId, newCompletedDate);
+                var modifiedCourse = courseDataService.GetCurrentCourses(candidateId).ToList()
+                    .First(c => c.ProgressID == progressId);
+
+                // Then
+                modifiedCourse.CompleteByDate.Should().Be(newCompleteByDate);
+            }
+        }*/
     }
 }
