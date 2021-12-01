@@ -67,6 +67,8 @@
         // Supervisor
         IEnumerable<SelfAssessmentSupervisor> GetSupervisorsForSelfAssessmentId(int selfAssessmentId, int candidateId);
 
+        SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
+
         IEnumerable<SupervisorSignOff> GetSupervisorSignOffsForCandidateAssessment(
             int selfAssessmentId,
             int candidateId
@@ -74,7 +76,6 @@
 
         SupervisorComment? GetSupervisorComments(int candidateId, int resultId);
 
-        SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
 
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,

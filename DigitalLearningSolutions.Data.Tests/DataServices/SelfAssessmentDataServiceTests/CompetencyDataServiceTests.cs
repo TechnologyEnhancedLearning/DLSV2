@@ -30,12 +30,14 @@
             // Given
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
                 competencyGroup: "Data, information and content",
-                name: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
-                description: "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
-                assessmentQuestions: new List<AssessmentQuestion>()
+                name:
+                "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
+                description:
+                "I can find, use and store information that exists in different digital locations e.g. on a PC, shared drives, via the internet",
+                assessmentQuestions: new List<AssessmentQuestion>
                 {
-                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(id: 1, question: "Where are you now"),
-                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(id: 2, question: "Where do you need to be")
+                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(1, "Where are you now"),
+                    SelfAssessmentHelper.CreateDefaultAssessmentQuestion(2, "Where do you need to be"),
                 }
             );
 
@@ -51,21 +53,24 @@
         {
             // Given
             var expectedCompetency = SelfAssessmentHelper.CreateDefaultCompetency(
-                id: 32,
+                32,
                 competencyGroup: "General questions",
                 competencyGroupId: 7,
-                name: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
-                description: "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
-                assessmentQuestions: new List<AssessmentQuestion>()
+                name:
+                "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
+                description:
+                "Taking an active role in my own learning is the most important thing that affects my digital literacy skills development",
+                assessmentQuestions: new List<AssessmentQuestion>
                 {
                     SelfAssessmentHelper.CreateDefaultAssessmentQuestion(
-                        id: 3,
+                        3,
                         maxValueDescription: "Strongly agree",
                         minValueDescription: "Strongly disagree",
                         question: "To what extent do you agree",
-                       assessmentQuestionInputTypeID: 1
-                    )
-                });
+                        assessmentQuestionInputTypeID: 1
+                    ),
+                }
+            );
 
             // When
             var result = selfAssessmentDataService.GetNthCompetency(32, SelfAssessmentId, CandidateId);
@@ -135,12 +140,27 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result + 1, null);
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result + 1,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
 
                 // Then
                 var competency = selfAssessmentDataService.GetNthCompetency(2, SelfAssessmentId, CandidateId);
-                var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId).Result;
+                var actualResult = competency.AssessmentQuestions.First(question => question.Id == assessmentQuestionId)
+                    .Result;
                 result.Should().Be(actualResult);
             }
         }
@@ -156,8 +176,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
-                var insertedResult = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).First();
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
+                var insertedResult = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                ).First();
 
                 // Then
                 insertedResult.Should().Be(result);
@@ -176,9 +208,28 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, firstResult, null);
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, secondResult, null);
-                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId).ToList();
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    firstResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    secondResult,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                ).ToList();
 
                 // Then
                 insertedResults.Should().HaveCount(2);
@@ -199,8 +250,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId, result, null);
-                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, invalidCandidateId, assessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    invalidCandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    invalidCandidateId,
+                    assessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -219,8 +282,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
-                var insertedResults = GetAssessmentResults(competencyId, invalidSelfAssessmentId, CandidateId, assessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    invalidSelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    invalidSelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -238,8 +313,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, result, null);
-                var insertedResults = GetAssessmentResults(invalidCompetencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    invalidCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    invalidCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -257,8 +344,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId, result, null);
-                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, invalidAssessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    invalidAssessmentQuestionId,
+                    result,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    invalidAssessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -276,8 +375,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult, null);
-                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    invalidResult,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -295,8 +406,20 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId, invalidResult, null);
-                var insertedResults = GetAssessmentResults(competencyId, SelfAssessmentId, CandidateId, assessmentQuestionId);
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    invalidResult,
+                    null
+                );
+                var insertedResults = GetAssessmentResults(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId
+                );
 
                 // Then
                 insertedResults.Should().BeEmpty();
@@ -321,19 +444,51 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult, null);
-                selfAssessmentDataService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
+                selfAssessmentDataService.SetResultForCompetency(
+                    firstCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    firstAssessmentQuestionId,
+                    firstResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    firstCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    secondAssessmentQuestionId,
+                    secondResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    thirdAssessmentQuestionId,
+                    thirdResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    fourthAssessmentQuestionId,
+                    fourthResult,
+                    null
+                );
 
                 // Then
                 var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);
-                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, firstAssessmentQuestionId).Should().Be(firstResult);
-                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, secondAssessmentQuestionId).Should().Be(secondResult);
-                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should().Be(thirdResult);
-                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should().Be(fourthResult);
+                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, firstAssessmentQuestionId).Should()
+                    .Be(firstResult);
+                SelfAssessmentHelper.GetQuestionResult(results, firstCompetencyId, secondAssessmentQuestionId).Should()
+                    .Be(secondResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should()
+                    .Be(thirdResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should()
+                    .Be(fourthResult);
                 SelfAssessmentHelper.GetQuestionResult(results, 4, 1).Should().BeNull();
             }
         }
@@ -356,23 +511,72 @@
             using (new TransactionScope())
             {
                 // When
-                selfAssessmentDataService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, firstAssessmentQuestionId, firstResult, null);
-                selfAssessmentDataService.SetResultForCompetency(firstCompetencyId, SelfAssessmentId, CandidateId, secondAssessmentQuestionId, secondResult, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, 9, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, 9, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, thirdAssessmentQuestionId, thirdResult, null);
-                selfAssessmentDataService.SetResultForCompetency(secondCompetencyId, SelfAssessmentId, CandidateId, fourthAssessmentQuestionId, fourthResult, null);
+                selfAssessmentDataService.SetResultForCompetency(
+                    firstCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    firstAssessmentQuestionId,
+                    firstResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    firstCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    secondAssessmentQuestionId,
+                    secondResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    thirdAssessmentQuestionId,
+                    9,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    fourthAssessmentQuestionId,
+                    9,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    thirdAssessmentQuestionId,
+                    thirdResult,
+                    null
+                );
+                selfAssessmentDataService.SetResultForCompetency(
+                    secondCompetencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    fourthAssessmentQuestionId,
+                    fourthResult,
+                    null
+                );
 
                 // Then
                 var results = selfAssessmentDataService.GetMostRecentResults(SelfAssessmentId, CandidateId).ToList();
 
                 results.Count.Should().Be(32);
-                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should().Be(thirdResult);
-                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should().Be(fourthResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, thirdAssessmentQuestionId).Should()
+                    .Be(thirdResult);
+                SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should()
+                    .Be(fourthResult);
             }
         }
 
-        private IEnumerable<int> GetAssessmentResults(int competencyId, int selfAssessmentId, int candidateId, int assessmentQuestionId)
+        private IEnumerable<int> GetAssessmentResults(
+            int competencyId,
+            int selfAssessmentId,
+            int candidateId,
+            int assessmentQuestionId
+        )
         {
             return connection.Query<int>(
                 @"SELECT Result FROM SelfAssessmentResults WHERE

@@ -278,9 +278,20 @@
         {
             return connection.Query<SupervisorComment>(
                 @"SELECT
-                        sar.AssessmentQuestionID, sea.Name, sasv.Comments, sar.CandidateID, sar.CompetencyID, com.Name as CompetencyName,
-                        sar.SelfAssessmentID, sasv.CandidateAssessmentSupervisorID, sasv.SelfAssessmentResultId, sasv.Verified,
-                        sar.ID, sstrc.CompetencyGroupID, sea.Vocabulary, sasv.SignedOff
+                        sar.AssessmentQuestionID,
+                        sea.Name,
+                        sasv.Comments,
+                        sar.CandidateID,
+                        sar.CompetencyID,
+                        com.Name as CompetencyName,
+                        sar.SelfAssessmentID,
+                        sasv.CandidateAssessmentSupervisorID,
+                        sasv.SelfAssessmentResultId,
+                        sasv.Verified,
+                        sar.ID,
+                        sstrc.CompetencyGroupID,
+                        sea.Vocabulary,
+                        sasv.SignedOff
                     FROM SelfAssessmentResultSupervisorVerifications AS sasv
                     INNER JOIN SelfAssessmentResults AS sar
                         ON sasv.SelfAssessmentResultId = sar.ID
@@ -304,11 +315,11 @@
             return connection.Query<Administrator>(
                 @"SELECT
                         AdminID,
-                       Forename,
-                       Surname,
-                       Email,
-                       ProfileImage,
-                       IsFrameworkDeveloper
+                        Forename,
+                        Surname,
+                        Email,
+                        ProfileImage,
+                        IsFrameworkDeveloper
                     FROM AdminUsers
                     WHERE (
                         (Supervisor = 1) AND (Active = 1) AND (CategoryID = 0) AND (CentreID = @centreId)

@@ -11,6 +11,13 @@
         [Test]
         public void GetSelfAssessmentForCandidateById_should_return_a_self_assessment()
         {
+            // Given
+            var description =
+                "When thinking about your current role, for each of the following statements rate your current confidence level " +
+                "(Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). " +
+                "Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously " +
+                "to build up a picture of digital capability across the workforce to help with service design and learning provision.";
+
             // When
             var result = selfAssessmentDataService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId);
 
@@ -18,7 +25,7 @@
             var expectedSelfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment(
                 SelfAssessmentId,
                 "Digital Capability Self Assessment",
-                "When thinking about your current role, for each of the following statements rate your current confidence level (Where are you now) and where your confidence leve ought to be to undertake your role successfully (Where do you need to be). Once you have submitted your ratings they will be used to recommend useful learning resources. We will also collect data anonymously to build up a picture of digital capability across the workforce to help with service design and learning provision.",
+                description,
                 32,
                 new DateTime(2020, 09, 01, 14, 10, 37, 447),
                 null,
