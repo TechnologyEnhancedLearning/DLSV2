@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
+    using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
@@ -16,14 +17,11 @@
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var configSettings = new Dictionary<string, string>
-            {
-                { "LearningHubSSO:ToleranceInSeconds", "3" },
-                { "LearningHubSSO:HashIterations", "1000" },
-                { "LearningHubSSO:ByteLength", "32" },
-            };
+            Config = A.Fake<IConfiguration>();
 
-            Config = new ConfigurationBuilder().AddInMemoryCollection(configSettings).Build();
+            A.CallTo(() => Config["LearningHubSSO:ToleranceInSeconds"]).Returns("3");
+            A.CallTo(() => Config["LearningHubSSO:HashIterations"]).Returns("1000");
+            A.CallTo(() => Config["LearningHubSSO:ByteLength"]).Returns("32");
         }
 
         [Test]

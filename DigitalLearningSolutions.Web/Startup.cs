@@ -317,6 +317,7 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
+            // TODO HEEDLS-609 update this
             var applicationPath = new Uri(ConfigHelper.GetAppRootPath(config)).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);

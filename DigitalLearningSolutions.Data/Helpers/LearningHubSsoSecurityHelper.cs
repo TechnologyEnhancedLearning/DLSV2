@@ -40,7 +40,7 @@
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
             var salt = encoder.GetBytes(secretKey);
-            var toleranceInSec = config.GetSection("LearningHubSSO").GetValue<int>("ToleranceInSeconds");
+            var toleranceInSec = config.GetLearningHubSsoHashTolerance();
 
             for (var counter = 0; counter <= toleranceInSec * 2; counter++)
             {
@@ -61,11 +61,11 @@
             using var byteResult = new Rfc2898DeriveBytes(
                 input,
                 salt,
-                config.GetSection("LearningHubSSO").GetValue<int>("HashIterations"),
+                config.GetLearningHubSsoHashIterations(),
                 HashAlgorithmName.SHA512
             );
             var hash = Convert.ToBase64String(
-                byteResult.GetBytes(config.GetSection("LearningHubSSO").GetValue<int>("ByteLength"))
+                byteResult.GetBytes(config.GetLearningHubSsoByteLength())
             );
             return hash;
         }
