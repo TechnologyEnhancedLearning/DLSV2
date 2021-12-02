@@ -6,14 +6,15 @@
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {
-        public SearchableAdminViewModel(AdminUser adminUser)
+        public SearchableAdminViewModel(AdminUser adminUser, bool hasSuperAdminAccess, int currentAdminUserId)
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
             CategoryName = adminUser.CategoryName ?? "All";
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
-            IsCentreManager = adminUser.IsCentreManager;
+            HasSuperAdminAccess = hasSuperAdminAccess;
+            CurrentAdminUserId = currentAdminUserId;
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
 
@@ -30,7 +31,9 @@
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }
+        
+        public bool HasSuperAdminAccess { get; set; }
 
-        public bool IsCentreManager { get; set; }
+        public int CurrentAdminUserId { get; set; }
     }
 }
