@@ -67,17 +67,28 @@
 <h2>Your to do list</h2>
 @if (Model.SupervisorDashboardToDoItems.Count() > 0)
 {
-  <ul class="nhsuk-contents-list__list">
-    @foreach (var toDoItem in Model.SupervisorDashboardToDoItems)
+<ul class="nhsuk-contents-list__list">
+  @foreach (var toDoItem in Model.SupervisorDashboardToDoItems)
+  {
+
+    if (toDoItem.SignOffRequest)
     {
       <li class="nhsuk-contents-list__item">
         <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
           Review and sign-off @toDoItem.DelegateName's @toDoItem.ProfileName
         </a>. Requested @toDoItem.Requested.ToShortDateString()
-
       </li>
     }
-  </ul>
+    else if(toDoItem.ResultsReviewRequest)
+    {
+      <li class="nhsuk-contents-list__item">
+        <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="VerifyDelegateSelfAssessment" asp-route-supervisorDelegateId="@toDoItem.SupervisorDelegateId" asp-route-candidateAssessmentId="@toDoItem.ID">
+          Verify self-assessment results for @toDoItem.DelegateName's @toDoItem.ProfileName
+        </a>. Requested @toDoItem.Requested.ToShortDateString()
+      </li>
+    }
+  }
+</ul>
 }
 else
 {
