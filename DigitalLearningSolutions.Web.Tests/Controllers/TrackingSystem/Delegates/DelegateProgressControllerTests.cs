@@ -18,7 +18,7 @@
         private IProgressService progressService = null!;
         private IUserService userService = null!;
 
-        private static IEnumerable<TestCaseData> EditPostTestData
+        private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
             get
             {
@@ -45,7 +45,7 @@
         [Test]
         [TestCaseSource(
             typeof(DelegateProgressControllerTests),
-            nameof(EditPostTestData)
+            nameof(EditEndpointRedirectTestData)
         )]
         public void EditSupervisorPost_redirects_to_correct_action(
             DelegateProgressAccessRoute accessedVia,
@@ -70,7 +70,7 @@
         [Test]
         [TestCaseSource(
             typeof(DelegateProgressControllerTests),
-            nameof(EditPostTestData)
+            nameof(EditEndpointRedirectTestData)
         )]
         public void EditCompleteByDatePost_redirects_to_correct_action(
             DelegateProgressAccessRoute accessedVia,

@@ -85,7 +85,7 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
-            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 
         [HttpGet]
@@ -122,10 +122,10 @@
             
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
-            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 
-        private IActionResult ReturnToPreviousPage(
+        private IActionResult RedirectToPreviousPage(
             int delegateId,
             int progressId,
             DelegateProgressAccessRoute accessedVia
