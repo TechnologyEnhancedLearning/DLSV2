@@ -20,7 +20,9 @@
         {
             var adminId = GetAdminID();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
-            var supervisorDashboardToDoItems = supervisorService.GetSupervisorDashboardToDoItems(adminId);
+            var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
+            var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
+            var supervisorDashboardToDoItems = Enumerable.Concat(signOffRequests, reviewRequests);
             var model = new SupervisorDashboardViewModel()
             {
                 DashboardData = dashboardData,
