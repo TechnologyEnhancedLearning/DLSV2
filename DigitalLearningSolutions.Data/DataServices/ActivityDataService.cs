@@ -48,13 +48,13 @@ namespace DigitalLearningSolutions.Data.DataServices
                         Completed,
                         Evaluated
                     FROM tActivityLog AS al
-                    JOIN Applications AS ap ON ap.CustomisationID = al.CustomisationID
+                    JOIN Applications AS ap ON ap.ApplicationID = al.ApplicationID
                         WHERE (LogDate >= @startDate
                             AND (@endDate IS NULL OR LogDate <= @endDate)
                             AND CentreID = @centreId
                             AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
-                            AND (@customisationId IS NULL OR CustomisationID = @customisationId)
-                            AND (@courseCategoryId IS NULL OR CourseCategoryId = @courseCategoryId)
+                            AND (@customisationId IS NULL OR al.CustomisationID = @customisationId)
+                            AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
                             AND (Registered = 1 OR Completed = 1 OR Evaluated = 1))
                             AND ap.DefaultContentTypeID <> 4",
                 new

@@ -316,7 +316,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 LearningMinutes = "N/A",
             };
 
-            result.Should().HaveCount(260);
+            result.Should().HaveCount(256);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 
@@ -419,7 +419,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 Active = false,
             };
 
-            result.Should().HaveCount(260);
+            result.Should().HaveCount(256);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 
