@@ -324,19 +324,21 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
         {
             return connection.Query<SupervisorDashboardToDoItem>(
-                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, sasv.Requested, 0 AS SignOffRequest, 1 AS ResultsReviewRequest
+                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, MAX(sasv.Requested), 0 AS SignOffRequest, 1 AS ResultsReviewRequest
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                     CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                     Candidates AS c ON ca.CandidateID = c.CandidateID INNER JOIN
                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
-					SelfAssessmentResults AS sar ON sar.SelfAssessmentID = sa.ID AND sar.DateTime = (
-						SELECT MAX(DateTime)
-						FROM SelfAssessmentResults
-						WHERE SelfAssessmentID = sar.SelfAssessmentID
-					) INNER JOIN
-                    SelfAssessmentResultSupervisorVerifications AS sasv ON sasv.SelfAssessmentResultId = sar.ID
-                WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL)", new { adminId }
+					SelfAssessmentResults AS sar ON sar.SelfAssessmentID = sa.ID INNER JOIN
+					Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN					
+                    SelfAssessmentResultSupervisorVerifications AS sasv ON sasv.SelfAssessmentResultId = sar.ID AND sar.DateTime = (
+						SELECT MAX(sar2.DateTime)
+						FROM SelfAssessmentResults AS sar2
+						WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
+					)
+                WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL)
+				GROUP BY sa.ID, ca.ID, sd.ID, c.FirstName, c.LastName, sa.Name", new { adminId }
                 );
         }
 
