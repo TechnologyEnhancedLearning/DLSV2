@@ -524,7 +524,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                         END AS CentreHasApplication
                     FROM Customisations AS c
                     INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                    INNER JOIN CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
                     WHERE CustomisationID = @customisationId",
                 new { customisationId, centreId }
             );

@@ -154,13 +154,12 @@
         {
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null || courseValidationDetails.AllCentres == null ||
-                courseValidationDetails.CentreHasApplication == null)
+            if (courseValidationDetails == null)
             {
                 return null;
             }
 
-            if (courseValidationDetails.CentreId != centreId && !courseValidationDetails.AllCentres.Value)
+            if (courseValidationDetails.CentreId != centreId && !courseValidationDetails.AllCentres)
             {
                 return false;
             }
@@ -170,7 +169,7 @@
                 return false;
             }
 
-            if (courseValidationDetails.AllCentres.Value && !courseValidationDetails.CentreHasApplication.Value)
+            if (courseValidationDetails.AllCentres && !courseValidationDetails.CentreHasApplication)
             {
                 return false;
             }

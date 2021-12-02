@@ -384,7 +384,7 @@
                 .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
@@ -408,7 +408,7 @@
                 .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, 0);
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, null);
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
