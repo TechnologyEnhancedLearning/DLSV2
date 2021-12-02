@@ -302,7 +302,6 @@
             return View(model);
         }
 
-        
         [HttpPost]
         [Route("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
@@ -326,34 +325,52 @@
                 centreId,
                 model.GroupName
             );
-            
+
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/SelectCourse")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult AddCourseToGroupSelectCourse(int groupId)
+        {
+            var centreId = User.GetCentreId();
+
+            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+
+            var model = new AddCourseToGroupCoursesViewModel(courses, groupId, groupName!);
+
+            return View(model);
         }
 
         [HttpGet]
         [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(int groupId, int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter();
             var groupLabel = groupsService.GetGroupName(groupId, centreId)!;
-            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(customisationId, centreId, categoryId);
-            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseDetails!.CourseCategoryId);
-            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseDetails);
+            var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;
+            var courseNameInfo = courseService.GetCourseNameAndApplication(customisationId)!;
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseCategoryId);
+            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseNameInfo);
             return View(viewModel);
         }
 
         [HttpPost]
         [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
         {
             if (!ModelState.IsValid)
             {
-                var courseCategoryId = courseService.GetCourseCategoryId(customisationId)!.Value;
+                var courseCategoryId = courseService.GetCourseCategoryId(customisationId, User.GetCentreId())!.Value;
                 var supervisors = userService.GetSupervisorsAtCentreForCategory(User.GetCentreId(), courseCategoryId);
                 var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
                 return View(model);

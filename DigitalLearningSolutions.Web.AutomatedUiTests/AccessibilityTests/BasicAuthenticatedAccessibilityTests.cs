@@ -59,6 +59,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses/Add/SelectCourse", "Add course to Activities worker or coordinator group")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
             "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"

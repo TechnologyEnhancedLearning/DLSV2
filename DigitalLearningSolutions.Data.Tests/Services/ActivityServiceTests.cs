@@ -327,10 +327,10 @@
                 new Category { CourseCategoryID = 1, CategoryName = "Category 1" },
                 new Category { CourseCategoryID = 2, CategoryName = "Category 2" },
             };
-            var availableCourses = new List<Course>
+            var availableCourses = new List<CourseAssessmentDetails>
             {
-                new Course { CustomisationId = 1, ApplicationName = "C Course", Active = true },
-                new Course { CustomisationId = 2, ApplicationName = "B Course", Active = true },
+                new CourseAssessmentDetails { CustomisationId = 1, ApplicationName = "C Course", Active = true },
+                new CourseAssessmentDetails { CustomisationId = 2, ApplicationName = "B Course", Active = true },
             };
             var historicalCourses = new List<Course>
             {

@@ -7,10 +7,10 @@
     {
         public AddCourseFormData() { }
 
-        protected AddCourseFormData(string groupName, CourseDetails courseDetails)
+        protected AddCourseFormData(string groupName, CourseNameInfo courseNameInfo)
         {
             GroupName = groupName;
-            CourseName = courseDetails.CourseName;
+            CourseName = courseNameInfo.CourseName;
         }
 
         protected AddCourseFormData(AddCourseFormData formData)

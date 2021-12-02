@@ -441,7 +441,7 @@
             // Given
             const int customisationId = 1;
             A.CallTo(
-                () => courseService.VerifyAdminUserCanAccessCourse(
+                () => courseService.VerifyAdminUserCanManageCourse(
                     customisationId,
                     A<int>._,
                     A<int>._

@@ -14,8 +14,8 @@
             int customisationId,
             IEnumerable<AdminUser> supervisors,
             string groupName,
-            CourseDetails courseDetails
-        ) : base(groupName, courseDetails)
+            CourseNameInfo courseNameInfo
+        ) : base(groupName, courseNameInfo)
         {
             GroupId = groupId;
             CustomisationId = customisationId;

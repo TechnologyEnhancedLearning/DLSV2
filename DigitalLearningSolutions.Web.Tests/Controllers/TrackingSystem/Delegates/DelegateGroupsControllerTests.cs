@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -33,7 +32,6 @@
 
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
-
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IUserService userService = null!;
