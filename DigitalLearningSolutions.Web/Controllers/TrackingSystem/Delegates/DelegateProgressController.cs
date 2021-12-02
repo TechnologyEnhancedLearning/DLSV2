@@ -56,7 +56,7 @@
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
-            var supervisors = userService.GetSupervisorsAtCentre(centreId);
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId);
 
             var model = new EditSupervisorViewModel(
                 progressId,

@@ -561,7 +561,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
+        public void GetCourseCentreAndCategory_returns_null_when_course_does_not_exist()
         {
             // When
             var validationDetails = courseDataService.GetCourseValidationDetails(265, 101);

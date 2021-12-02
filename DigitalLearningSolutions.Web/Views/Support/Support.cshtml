@@ -1,22 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.Support
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Support";
-  ViewData["Application"] = Model.DlsSubApplication.HeaderExtension;
-  ViewData["HeaderPath"] = Model.DlsSubApplication.HeaderPath;
-  ViewData["HeaderPathName"] = Model.DlsSubApplication.HeaderPathName;
-}
-
-@section NavMenuItems {
-  @if (Model.DlsSubApplication.Equals(DlsSubApplication.TrackingSystem)) {
-    <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-  } else if (Model.DlsSubApplication.Equals(DlsSubApplication.Frameworks)) {
-    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
-  }
 }
 
 <div class="nhsuk-grid-row">

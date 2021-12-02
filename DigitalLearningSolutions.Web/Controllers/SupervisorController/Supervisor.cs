@@ -146,6 +146,7 @@
             {
                 model.SupervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(delegateSelfAssessment.SelfAssessmentID, (int)superviseDelegate.CandidateID);
             }
+            ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return View("ReviewSelfAssessment", model);
         }
 
@@ -219,7 +220,7 @@
                 SupervisorComments = assessmentQuestion.SupervisorComments,
                 SignedOff = assessmentQuestion.SignedOff != null ? (bool)assessmentQuestion.SignedOff : false
             };
-
+            ViewBag.SupervisorSelfAssessmentReview = delegateSelfAssessment.SupervisorSelfAssessmentReview;
             return model;
         }
 

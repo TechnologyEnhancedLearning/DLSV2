@@ -6,6 +6,7 @@
     using MimeKit;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 
     public interface IFrameworkNotificationService
     {
@@ -33,14 +34,14 @@
         private readonly IFrameworkService frameworkService;
         private readonly IRoleProfileService roleProfileService;
         private readonly ISupervisorService supervisorService;
-        private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ISelfAssessmentDataService selfAssessmentDataService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
            IConfigService configService,
            IEmailService emailService,
            IRoleProfileService roleProfileService,
            ISupervisorService supervisorService,
-           ISelfAssessmentService selfAssessmentService
+           ISelfAssessmentDataService selfAssessmentDataService
        )
         {
             this.frameworkService = frameworkService;
@@ -48,7 +49,7 @@
             this.emailService = emailService;
             this.roleProfileService = roleProfileService;
             this.supervisorService = supervisorService;
-            this.selfAssessmentService = selfAssessmentService;
+            this.selfAssessmentDataService = selfAssessmentDataService;
         }
 
         public void SendCommentNotifications(int adminId, int frameworkId, int commentId, string comment, int? replyToCommentId, string? parentComment)
@@ -256,7 +257,7 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
         public void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId)
         {
             var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, 0);
-            var competency = selfAssessmentService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
+            var competency = selfAssessmentDataService.GetCompetencyByCandidateAssessmentResultId(resultId, candidateAssessmentId, adminId);
             var delegateSelfAssessment = supervisorService.GetSelfAssessmentBySupervisorDelegateCandidateAssessmentId(candidateAssessmentId, supervisorDelegateId);
             var selfAssessmentUrl = GetSelfAssessmentUrl(delegateSelfAssessment.SelfAssessmentID);
             var commentString = supervisorDelegate.SupervisorName + ((bool)competency.AssessmentQuestions.First().SignedOff ? " verified your self assessment " : " did not verify your self assessment ") + (competency.AssessmentQuestions.First().SupervisorComments != null ? "and left the following review comment: " + competency.AssessmentQuestions.First().SupervisorComments : "but did not leave a review comment.");

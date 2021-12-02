@@ -69,7 +69,11 @@
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
+        int? GetCourseCategoryId(int customisationId, int centreId);
+
         IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(int centreId, int? categoryId, int groupId);
+
+        CourseNameInfo? GetCourseNameAndApplication(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -274,6 +278,11 @@
             return coursesNotAlreadyInGroup;
         }
 
+        public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
+        {
+            return courseDataService.GetCourseNameAndApplication(customisationId);
+        }
+
         public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
             int delegateId,
             int customisationId,
@@ -304,6 +313,11 @@
                 courseOptions,
                 customisationId
             );
+        }
+
+        public int? GetCourseCategoryId(int customisationId, int centreId)
+        {
+            return courseDataService.GetCourseValidationDetails(customisationId, centreId)?.CourseCategoryId;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
