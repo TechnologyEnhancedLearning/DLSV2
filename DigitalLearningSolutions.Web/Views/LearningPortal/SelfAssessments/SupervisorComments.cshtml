@@ -31,59 +31,64 @@
         </li>
         <li class="nhsuk-breadcrumb__item">@Model.SelfAssessmentSupervisor.RoleName notes</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-           asp-route-vocabulary="@Model.VocabPlural()"
-           asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
-           asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
-           asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">Back to @Model.VocabPlural()</a>
-        </p>
-      </div>
-    </nav>
-}
 
-<div>
-  <h1>@Model.SupervisorComment?.CompetencyName</h1>
-  <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
-    <div class="nhsuk-care-card__heading-container">
-      <h2 class="nhsuk-care-card__heading">
-        <span role="text">
-         Reviewer: @supervisorName
-        </span>
-      </h2>
-      <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
     </div>
-    <div class="nhsuk-care-card__content">
-      <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
-        <div class="nhsuk-summary-list__row">
+  </nav>
+}
+@section mobilebacklink
+{
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+       asp-route-vocabulary="@Model.VocabPlural()"
+       asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
+       asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
+       asp-fragment="comp-@ViewContext.RouteData.Values["competencyNumber"]">
+      Back to @Model.VocabPlural()
+    </a>
+  </p>
+}
+  <div>
+    <h1>@Model.SupervisorComment?.CompetencyName</h1>
+    <div class="nhsuk-care-card nhsuk-care-card--non-urgent">
+      <div class="nhsuk-care-card__heading-container">
+        <h2 class="nhsuk-care-card__heading">
+          <span role="text">
+            Reviewer: @supervisorName
+          </span>
+        </h2>
+        <span class="nhsuk-care-card__arrow" aria-hidden="true"></span>
+      </div>
+      <div class="nhsuk-care-card__content">
+        <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
+          <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Date of review
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.SupervisorComment.Verified.Value.ToShortDateString()
+          </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Date of review
+          Status
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.SupervisorComment.Verified.Value.ToShortDateString()
+          <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
         </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Verifier comments
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.SupervisorComment.Comments
+        </dd>
+      </div>
+      </dl>
     </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Status
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <partial name="Shared/_AssessmentQuestionStatusTag" model="Model.AssessmentQuestion" />
-      </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-       Verifier comments
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.SupervisorComment.Comments
-      </dd>
-    </div>
-    </dl>
   </div>
-</div>
 
-<div class="nhsuk-back-link">
+  <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.SupervisorComment.SelfAssessmentID"
        asp-route-competencyGroupId="@Model.SupervisorComment.CompetencyGroupID"
@@ -94,4 +99,4 @@
       Back
     </a>
   </div>
-</div>
+  </div>

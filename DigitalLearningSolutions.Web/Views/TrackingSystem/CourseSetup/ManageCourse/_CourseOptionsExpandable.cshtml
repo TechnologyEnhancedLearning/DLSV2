@@ -11,42 +11,44 @@
   <div class="nhsuk-details__text">
     <dl class="nhsuk-summary-list details-list-with-button">
       <div class="nhsuk-summary-list__row details-list-with-button__row">
-      <dt class="nhsuk-summary-list__key">
-        Active
-      </dt>
-      <partial name="_SummaryBooleanField" model="Model.Active" />
-  </div>
+        <dt class="nhsuk-summary-list__key">
+          Active
+        </dt>
+        <partial name="_SummaryBooleanField" model="Model.Active" />
+      </div>
 
-  <div class="nhsuk-summary-list__row details-list-with-button__row">
-    <dt class="nhsuk-summary-list__key">
-      Allow self-enrolment
-    </dt>
-    <partial name="_SummaryBooleanField" model="Model.AllowSelfEnrolment" />
-  </div>
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Allow self-enrolment
+        </dt>
+        <partial name="_SummaryBooleanField" model="Model.AllowSelfEnrolment" />
+      </div>
 
-  <div class="nhsuk-summary-list__row details-list-with-button__row">
-    <dt class="nhsuk-summary-list__key">
-      Hide in Learning Portal
-    </dt>
-    <partial name="_SummaryBooleanField" model="Model.HideInLearningPortal" />
-  </div>
+      <div class="nhsuk-summary-list__row details-list-with-button__row">
+        <dt class="nhsuk-summary-list__key">
+          Hide in Learning Portal
+        </dt>
+        <partial name="_SummaryBooleanField" model="Model.HideInLearningPortal" />
+      </div>
 
-  <div class="nhsuk-summary-list__row details-list-with-button__row">
-    <dt class="nhsuk-summary-list__key">
-      Allow diagnostic objective selection
-    </dt>
-    <partial name="_SummaryBooleanField" model="Model.DiagnosticObjectiveSelection" />
-  </div>
-  </dl>
+      @if (Model.ShowDiagnosticObjectiveSelection) {
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Allow diagnostic objective selection
+          </dt>
+          <partial name="_SummaryBooleanField" model="Model.DiagnosticObjectiveSelection" />
+        </div>
+      }
+    </dl>
 
-  <a class="nhsuk-button nhsuk-u-margin-right-2"
-     role="button"
-     aria-label="Edit course options"
-     asp-controller="ManageCourse"
-     asp-action="EditCourseOptions"
-     asp-route-customisationId="@Model.CustomisationId">
-    Edit
-  </a>
+    <a class="nhsuk-button nhsuk-u-margin-right-2"
+       role="button"
+       aria-label="Edit course options"
+       asp-controller="ManageCourse"
+       asp-action="EditCourseOptions"
+       asp-route-customisationId="@Model.CustomisationId">
+      Edit
+    </a>
 
   </div>
 </details>

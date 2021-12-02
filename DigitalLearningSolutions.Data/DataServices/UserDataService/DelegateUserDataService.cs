@@ -384,6 +384,16 @@
             );
         }
 
+        public void ActivateDelegateUser(int delegateId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET Active = 1
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+        }
+
         public IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId)
         {
             return connection.Query<DelegateUser>(

@@ -258,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
                 // Then
                 progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
-                progressFields.Item2.Should().BeCloseTo(removedDate);
+                progressFields.Item2.Should().BeCloseTo(removedDate, 500);
             }
             finally
             {
@@ -527,10 +527,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
+        public void GetCourseCentreAndCategory_returns_centreId_and_categoryId_correctly()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(100);
+            var (centreId, courseCategoryId) = courseDataService.GetCourseCentreAndCategory(100);
 
             // Then
             centreId.Should().Be(101);
@@ -538,10 +538,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
+        public void GetCourseCentreAndCategory_returns_null_when_course_does_not_exist()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(265);
+            var (centreId, courseCategoryId) = courseDataService.GetCourseCentreAndCategory(265);
 
             // Then
             centreId.Should().BeNull();

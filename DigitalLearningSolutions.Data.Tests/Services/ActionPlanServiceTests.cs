@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -108,9 +109,14 @@
             foreach (var competencyId in expectedMatchingCompetencies)
             {
                 A.CallTo(
-                    () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, competencyId, addedDate)
+                    () => learningLogItemsDataService.InsertLearningLogItemCompetencies(
+                        learningLogId,
+                        competencyId,
+                        addedDate
+                    )
                 ).MustHaveHappenedOnceExactly();
             }
+
             A.CallTo(
                 () => learningLogItemsDataService.InsertLearningLogItemCompetencies(learningLogId, A<int>._, addedDate)
             ).MustHaveHappened(5, Times.Exactly);
