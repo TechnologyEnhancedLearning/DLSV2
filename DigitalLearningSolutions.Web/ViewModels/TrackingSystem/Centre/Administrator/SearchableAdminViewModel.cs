@@ -13,8 +13,8 @@
             CategoryName = adminUser.CategoryName ?? "All";
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
-            HasSuperAdminAccess = hasSuperAdminAccess;
-            CurrentAdminUserId = currentAdminUserId;
+            CanShowDeactivateAdminButton = hasSuperAdminAccess
+                                           && currentAdminUserId != adminUser.Id;
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
 
@@ -31,9 +31,7 @@
         public string? EmailAddress { get; set; }
 
         public bool IsLocked { get; set; }
-        
-        public bool HasSuperAdminAccess { get; set; }
 
-        public int CurrentAdminUserId { get; set; }
+        public bool CanShowDeactivateAdminButton { get; set; }
     }
 }

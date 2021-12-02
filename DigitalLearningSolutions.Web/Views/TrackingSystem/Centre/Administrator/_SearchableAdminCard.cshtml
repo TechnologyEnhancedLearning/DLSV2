@@ -53,7 +53,7 @@
           Manage roles
         </a>
       }
-      @if (Model.HasSuperAdminAccess && Model.CurrentAdminUserId != Model.Id)  { 
+      @if (Model.CanShowDeactivateAdminButton)  { 
         <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
            role="button"
            aria-label="Deactivate admin account"
