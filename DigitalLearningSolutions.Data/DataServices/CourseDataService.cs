@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
+        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -373,7 +373,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.ApplyLPDefaultsToSelfEnrol,
                         {LastAccessedQuery},
                         {DelegateCountQuery},
-                        {CompletedCountQuery}
+                        {CompletedCountQuery},
+                        ap.CourseCategoryID
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = cu.ApplicationID
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
@@ -486,7 +487,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId)
+        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId)
         {
             return connection.QueryFirstOrDefault<(int?, int?)>(
                 @"SELECT c.CentreId, a.CourseCategoryId

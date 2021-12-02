@@ -1,17 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
     public class VerifyAdminUserCanAccessGroup : IActionFilter
     {
-        private readonly IGroupsDataService groupsDataService;
+        private readonly IGroupsService groupsService;
 
-        public VerifyAdminUserCanAccessGroup(IGroupsDataService groupsDataService)
+        public VerifyAdminUserCanAccessGroup(IGroupsService groupsService)
         {
-            this.groupsDataService = groupsDataService;
+            this.groupsService = groupsService;
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -24,7 +24,7 @@
             }
 
             var groupId = int.Parse(context.RouteData.Values["groupId"].ToString()!);
-            var groupCentreId = groupsDataService.GetGroupCentreId(groupId);
+            var groupCentreId = groupsService.GetGroupCentreId(groupId);
 
             if (controller.User.GetCentreId() != groupCentreId)
             {

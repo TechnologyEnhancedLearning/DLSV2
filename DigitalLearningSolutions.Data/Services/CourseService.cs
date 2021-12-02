@@ -66,6 +66,8 @@
         void UpdateCourseOptions(CourseOptions courseOptions, int customisationId);
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
+
+        int? GetCourseCategoryId(int customisationId);
     }
 
     public class CourseService : ICourseService
@@ -119,7 +121,7 @@
 
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? adminCategoryIdClaim)
         {
-            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(customisationId);
+            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseCentreAndCategory(customisationId);
 
             if (courseCentreId == null || courseCategoryId == null)
             {
@@ -252,6 +254,11 @@
                 courseOptions,
                 customisationId
             );
+        }
+
+        public int? GetCourseCategoryId(int customisationId)
+        {
+            return courseDataService.GetCourseCentreAndCategory(customisationId).courseCategoryId;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
