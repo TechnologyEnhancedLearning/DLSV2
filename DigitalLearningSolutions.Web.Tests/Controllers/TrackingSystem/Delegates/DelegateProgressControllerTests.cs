@@ -14,7 +14,7 @@
     {
         private ICourseService courseService = null!;
         private DelegateProgressController delegateProgressController = null!;
-        private INotificationService notificationService = null;
+        private INotificationService notificationService = null!;
         private IProgressService progressService = null!;
         private IUserService userService = null!;
 
