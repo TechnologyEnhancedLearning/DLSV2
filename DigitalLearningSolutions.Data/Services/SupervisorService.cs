@@ -19,7 +19,8 @@
         SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateId);
         IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int adminId);
         DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId);
-        IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId);
+        IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId);
+        IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId);
         DelegateSelfAssessment GetSelfAssessmentBaseByCandidateAssessmentId(int candidateAssessmentId);
         IEnumerable<RoleProfile> GetAvailableRoleProfilesForDelegate(int candidateId, int centreId);
         RoleProfile GetRoleProfileById(int selfAssessmentId);
@@ -50,12 +51,16 @@
     {
         private readonly IDbConnection connection;
         private readonly ILogger<SupervisorService> logger;
-        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID, sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed, sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5, c.Answer6, c.CandidateNumber,
-             cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2, cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5, cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID)
-             AS CentreID, au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
-FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
-             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount ";
+        private const string supervisorDelegateDetailFields = @"sd.ID, sd.SupervisorEmail, sd.SupervisorAdminID,
+        sd.DelegateEmail, sd.CandidateID, sd.Added, sd.AddedByDelegate, sd.NotificationSent, sd.Confirmed, sd.Removed,
+        sd.InviteHash, c.FirstName, c.LastName, jg.JobGroupName, c.Answer1, c.Answer2, c.Answer3, c.Answer4, c.Answer5,
+        c.Answer6, c.CandidateNumber, cp1.CustomPrompt AS CustomPrompt1, cp2.CustomPrompt AS CustomPrompt2,
+        cp3.CustomPrompt AS CustomPrompt3, cp4.CustomPrompt AS CustomPrompt4, cp5.CustomPrompt AS CustomPrompt5,
+        cp6.CustomPrompt AS CustomPrompt6, COALESCE(au.CentreID, c.CentreID) AS CentreID,
+        au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
+        FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+        CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+        WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount ";
         private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd LEFT OUTER JOIN
              AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
              CustomPrompts AS cp6 RIGHT OUTER JOIN
@@ -303,10 +308,10 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                 WHERE  (ca.RemovedDate IS NULL) AND (cas.SupervisorDelegateId = @supervisorDelegateId) AND (ca.ID = @candidateAssessmentId)", new { candidateAssessmentId, supervisorDelegateId }
                ).FirstOrDefault();
         }
-        public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItems(int adminId)
+        public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedSignOffs(int adminId)
         {
             return connection.Query<SupervisorDashboardToDoItem>(
-                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, casv.Requested
+                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, casv.Requested, 1 AS SignOffRequest, 0 AS ResultsReviewRequest
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                     CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
@@ -316,14 +321,32 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                 WHERE (sd.SupervisorAdminID = @adminId) AND (casv.Verified IS NULL)", new { adminId }
                 );
         }
+        public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
+        {
+            return connection.Query<SupervisorDashboardToDoItem>(
+                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, MAX(sasv.Requested) AS Requested, 0 AS SignOffRequest, 1 AS ResultsReviewRequest
+                    FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
+                    CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+                    Candidates AS c ON ca.CandidateID = c.CandidateID INNER JOIN
+                    SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
+                    SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
+					SelfAssessmentResults AS sar ON sar.SelfAssessmentID = sa.ID INNER JOIN
+					Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN					
+                    SelfAssessmentResultSupervisorVerifications AS sasv ON sasv.SelfAssessmentResultId = sar.ID
+                        AND sasv.CandidateAssessmentSupervisorID = cas.ID AND sar.DateTime = (
+						    SELECT MAX(sar2.DateTime)
+						    FROM SelfAssessmentResults AS sar2
+						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
+					)
+                WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL)
+				GROUP BY sa.ID, ca.ID, sd.ID, c.FirstName, c.LastName, sa.Name", new { adminId }
+                );
+        }
 
         public DelegateSelfAssessment GetSelfAssessmentByCandidateAssessmentId(int candidateAssessmentId, int adminId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview,
-                sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate,
-                sa.QuestionLabel, sa.DescriptionLabel, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate,
-                r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,
+                @$"SELECT ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup, sa.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
@@ -351,7 +374,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     FROM   SelfAssessmentResultSupervisorVerifications INNER JOIN
                          CandidateAssessmentSupervisors AS cas ON SelfAssessmentResultSupervisorVerifications.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
                          SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID
-                    WHERE SelfAssessmentResultSupervisorVerifications.ID = @selfAssessmentResultSupervisorVerificationId AND sd.SupervisorAdminID = @adminId  AND (Comments <> @comments OR SignedOff <> @signedOff)",
+                    WHERE SelfAssessmentResultSupervisorVerifications.ID = @selfAssessmentResultSupervisorVerificationId AND sd.SupervisorAdminID = @adminId",
                 new { selfAssessmentResultSupervisorVerificationId, comments, signedOff, adminId }
                 );
             if (numberOfAffectedRows > 0)

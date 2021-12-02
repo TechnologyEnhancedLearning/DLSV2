@@ -23,5 +23,6 @@
         public string? RoleProfile { get; set; }
         public int SignOffRequested { get; set; }
         public int ResultsVerificationRequests { get; set; }
+        public bool IsSupervisorResultsReviewed { get; set; }
     }
 }

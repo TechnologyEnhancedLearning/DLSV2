@@ -60,6 +60,11 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/103/Courses/25/Remove", "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Courses/Add/SelectCourse", "Add course to Activities worker or coordinator group")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
+            "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]

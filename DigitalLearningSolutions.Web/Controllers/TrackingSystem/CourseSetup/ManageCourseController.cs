@@ -19,7 +19,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+    [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Manage")]
