@@ -3,5 +3,6 @@
     public enum TrackerEndpointAction
     {
         GetObjectiveArray,
+        GetObjectiveArrayCc,
     }
 }

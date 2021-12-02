@@ -38,12 +38,16 @@
             {
                 if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
                 {
-                    var actionDataResult = action switch
+                    ITrackerEndpointDataModel? actionDataResult = action switch
                     {
                         TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(
                             query.CustomisationId,
                             query.SectionId
                         ),
+                        TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
+                            query.CustomisationId,
+                            query.SectionId,
+                            query.IsPostLearning),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
 
