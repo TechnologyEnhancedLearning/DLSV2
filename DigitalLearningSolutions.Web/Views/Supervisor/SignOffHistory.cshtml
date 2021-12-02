@@ -19,7 +19,10 @@
              asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="ReviewDelegateSelfAssessment" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
+            <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
+               asp-action="ReviewDelegateSelfAssessment"
+               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+               asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
               @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
             </a>
           </li>
@@ -28,6 +31,15 @@
           </li>
         </ol>
       </div>
+      <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+           asp-action="ReviewDelegateSelfAssessment"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+           asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">
+          Back to @(Model.DelegateSelfAssessment.RoleName.Length > 35 ?
+      Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+        </a>
+      </p>
     </nav>
 }
 <partial name="Shared/_SignOffHistory" model="@Model.SupervisorSignOffs" />

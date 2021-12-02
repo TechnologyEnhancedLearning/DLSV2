@@ -18,26 +18,29 @@
         <li class="nhsuk-breadcrumb__item">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</li>
       </ol>
     </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor" asp-action="MyStaffList">Back to My Staff</a>
+    </p>
   </nav>
 }
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
-  </div>
-</details>
-@if (Model.DelegateSelfAssessments.Any())
-{
-  <partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
-}
-else
-{
-  <p class="nhsuk-lede-text">You are not supervising any profile assessments for this member of staff, yet.</p>
-}
-<a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-  Enrol on new assessment
-</a>
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+    </div>
+  </details>
+  @if (Model.DelegateSelfAssessments.Any())
+  {
+    <partial name="Shared/_DelegateProfileAssessmentGrid" model="Model.DelegateSelfAssessments" />
+  }
+  else
+  {
+    <p class="nhsuk-lede-text">You are not supervising any profile assessments for this member of staff, yet.</p>
+  }
+  <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="StartEnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+    Enrol on new assessment
+  </a>
