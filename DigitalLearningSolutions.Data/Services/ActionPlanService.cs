@@ -6,6 +6,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using Microsoft.Extensions.Configuration;
@@ -21,11 +22,11 @@
     {
         private readonly IClockService clockService;
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
-        private readonly ILearningHubApiService learningHubApiService;
+        private readonly IConfiguration config;
         private readonly ILearningHubApiClient learningHubApiClient;
+        private readonly ILearningHubApiService learningHubApiService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
-        private readonly IConfiguration config;
 
         public ActionPlanService(
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,

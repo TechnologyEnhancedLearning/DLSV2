@@ -1,0 +1,50 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@model AddCourseViewModel
+
+@{
+  var errorHasOccured = !ViewData.ModelState.IsValid;
+  var title = $"Set enrolment for {Model.CourseName} course in {Model.GroupName} group";
+  ViewData["Title"] = errorHasOccured ? $"Error: {title}" : title;
+  var routeParamsForBackLink = new Dictionary<string, string> {
+    { "groupId", Model.GroupId.ToString() },
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccured) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SupervisorId) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl word-break">@title</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="AddCourseToGroup" novalidate>
+      <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="GroupName" />
+
+      <vc:single-checkbox asp-for="@nameof(Model.CohortLearners)"
+                          label="Cohort learners"
+                          hint-text="Cohorting learners allows them to be supervised as a group. Selecting this will set the course completion as mandatory." />
+
+      <vc:select-list asp-for="@nameof(Model.SupervisorId)"
+                      label="Supervisor"
+                      value="@Model.SupervisorId.ToString()"
+                      hint-text=""
+                      deselectable="true"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="No supervisor"
+                      select-list-options="@Model.Supervisors" />
+
+      <vc:numeric-input asp-for="@nameof(Model.MonthsToComplete)"
+                        label="Months that course needs to be completed within"
+                        populate-with-current-value="true"
+                        type="text"
+                        hint-text=""
+                        css-class="nhsuk-u-width-one-half" />
+
+      <button class="nhsuk-button" type="submit">Add course</button>
+    </form>
+
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupCourses" asp-all-route-data="@routeParamsForBackLink" />
+  </div>
+</div>

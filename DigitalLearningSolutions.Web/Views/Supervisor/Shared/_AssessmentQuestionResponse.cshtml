@@ -7,14 +7,25 @@
 }
 else
 {
+  bool isVerifiedOrVerificationNotRequired = (bool?)ViewBag.SupervisorSelfAssessmentReview == false | (Model.Verified.HasValue && Model.SignedOff == true);
+  string tagColour = (Model.ResultRAG == 0 || !isVerifiedOrVerificationNotRequired) ? "white"
+    : Model.ResultRAG == 1 ? "red"
+    : Model.ResultRAG == 2 ? "yellow"
+    : "green";
+  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "not yet verified"
+    : Model.ResultRAG == 0 ? "role expectations not specified"
+    : Model.ResultRAG == 1 ? "not meeting role expectations"
+    : Model.ResultRAG == 2 ? "partially meeting role expectations"
+    : "fully meeting role expectations";
+
   @if (Model.LevelDescriptors != null)
   {
     foreach (var levelDescriptor in Model.LevelDescriptors)
     {
       if (levelDescriptor.LevelValue == Model.Result)
       {
-<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
-  @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "not meeting role expectations" : Model.ResultRAG == 2 ? "partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+<span class="nhsuk-tag nhsuk-tag--@(tagColour)">
+  @levelDescriptor.LevelLabel  <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
 </span>
         break;
       }
@@ -22,8 +33,8 @@ else
   }
   else
   {
-<span class="nhsuk-tag nhsuk-tag--@(Model.ResultRAG == 0 ? "white" : Model.ResultRAG == 1 ? "red" : Model.ResultRAG == 2 ? "yellow" : "green"  )">
-  @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(Model.ResultRAG == 0 ? "role expectations not specified" : Model.ResultRAG == 1 ? "(not meeting role expectations" : Model.ResultRAG == 2 ? " partially meeting role expectations" : "fully meeting role expectations"  ))</span>
+<span class="nhsuk-tag nhsuk-tag--@(tagColour)">
+  @Model.Result/@Model.MaxValue <span class="nhsuk-u-visually-hidden">(@(hiddenTagText))</span>
 </span>
   }
 }

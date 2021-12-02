@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;

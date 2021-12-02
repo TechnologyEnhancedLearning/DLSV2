@@ -918,8 +918,34 @@
             var result = userService.GetSupervisorsAtCentre(1).ToList();
 
             // Then
-            result.Count().Should().Be(5);
+            result.Should().HaveCount(5);
             result.All(au => au.IsSupervisor).Should().BeTrue();
+        }
+
+        [Test]
+        public void GetSupervisorsAtCentreForCategory_returns_expected_admins()
+        {
+            // Given
+            var adminUsers = Builder<AdminUser>.CreateListOfSize(10)
+                .TheFirst(3)
+                .With(au => au.IsSupervisor = true)
+                .With(au => au.CategoryId = 1)
+                .TheNext(2)
+                .With(au => au.IsSupervisor = true)
+                .With(au => au.CategoryId = 0)
+                .TheNext(3)
+                .With(au => au.IsSupervisor = true)
+                .With(au => au.CategoryId = 2)
+                .TheRest().With(au => au.IsSupervisor = false).Build().ToList();
+            A.CallTo(() => userDataService.GetAdminUsersByCentreId(A<int>._)).Returns(adminUsers);
+
+            // When
+            var result = userService.GetSupervisorsAtCentreForCategory(1, 1).ToList();
+
+            // Then
+            result.Should().HaveCount(5);
+            result.Should().OnlyContain(au => au.IsSupervisor);
+            result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
         }
 
         private void AssertAdminPermissionsCalledCorrectly(
