@@ -57,7 +57,7 @@
                         SeqInt,
                         LastAccessedDate,
                         LinkedCompetencyLearningResourceID,
-						clr.LHResourceReferenceID AS LearningHubResourceReferenceID
+                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
 					INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID

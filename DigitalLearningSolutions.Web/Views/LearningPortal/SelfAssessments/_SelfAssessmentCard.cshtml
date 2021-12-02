@@ -5,9 +5,16 @@
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
       <span class="nhsuk-u-visually-hidden">@Model.DueByDescription()</span>
-      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name-sa" name="name" role="heading" aria-level="2">
-        @Model.Name
-      </span>
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-three-quarters">
+          <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name-sa" name="name" role="heading" aria-level="2">
+            @Model.Name
+          </span>
+        </div>
+        <div class="nhsuk-grid-column-one-quarter right-align-tag-column">
+          <strong class="nhsuk-tag nhsuk-tag--blue">Self assessment</strong>
+        </div>
+      </div>
     </summary>
     <div class="nhsuk-details__text nhsuk-u-padding-left-0">
       <div class="nhsuk-u-padding-left-3">
@@ -22,7 +29,7 @@
   </details>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0" aria-describedby="@Model.Id-name-sa" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Id">
+      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0" aria-describedby="@Model.Id-name-sa" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Id">
         Launch self assessment
       </a>
     </div>

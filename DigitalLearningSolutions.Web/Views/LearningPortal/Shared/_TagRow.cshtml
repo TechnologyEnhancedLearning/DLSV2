@@ -49,11 +49,11 @@
     }
   }
   @if (Model is LearningResourceCardViewModel resource) {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      @resource.ResourceType
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.ResourceType</strong>
     </div>
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      @resource.CatalogueName
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.CatalogueName</strong>
     </div>
   }
 
