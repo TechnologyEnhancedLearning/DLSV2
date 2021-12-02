@@ -332,10 +332,11 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
                     SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
 					SelfAssessmentResults AS sar ON sar.SelfAssessmentID = sa.ID INNER JOIN
 					Competencies AS co ON sar.CompetencyID = co.ID INNER JOIN					
-                    SelfAssessmentResultSupervisorVerifications AS sasv ON sasv.SelfAssessmentResultId = sar.ID AND sar.DateTime = (
-						SELECT MAX(sar2.DateTime)
-						FROM SelfAssessmentResults AS sar2
-						WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
+                    SelfAssessmentResultSupervisorVerifications AS sasv ON sasv.SelfAssessmentResultId = sar.ID
+                        AND sasv.CandidateAssessmentSupervisorID = cas.ID AND sar.DateTime = (
+						    SELECT MAX(sar2.DateTime)
+						    FROM SelfAssessmentResults AS sar2
+						    WHERE sar2.SelfAssessmentID = sar.SelfAssessmentID AND sar2.CompetencyID = co.ID
 					)
                 WHERE (sd.SupervisorAdminID = @adminId) AND (sasv.Verified IS NULL)
 				GROUP BY sa.ID, ca.ID, sd.ID, c.FirstName, c.LastName, sa.Name", new { adminId }
