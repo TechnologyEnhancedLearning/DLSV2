@@ -42,17 +42,17 @@
 
         public static int GetLearningHubSsoHashTolerance(this IConfiguration config)
         {
-            return int.Parse(config[string.Join(':', LearningHubSsoSectionKey, LearningHubSsoToleranceKey)]);
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoToleranceKey}"]);
         }
 
         public static int GetLearningHubSsoHashIterations(this IConfiguration config)
         {
-            return int.Parse(config[string.Join(':', LearningHubSsoSectionKey, LearningHubSsoIterationsKey)]);
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoIterationsKey}"]);
         }
 
         public static int GetLearningHubSsoByteLength(this IConfiguration config)
         {
-            return int.Parse(config[string.Join(':', LearningHubSsoSectionKey, LearningHubSsoByteLengthKey)]);
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoByteLengthKey}"]);
         }
     }
 }
