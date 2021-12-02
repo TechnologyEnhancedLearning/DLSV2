@@ -8,9 +8,9 @@
 
     public interface ILearningHubSsoSecurityHelper
     {
-        string GenerateHash(string state, string secretKey);
+        string GenerateHash(string state);
 
-        bool VerifyHash(string state, string secretKey, string hash);
+        bool VerifyHash(string state, string hash);
     }
 
     public class LearningHubSsoSecurityHelper : ILearningHubSsoSecurityHelper
@@ -26,20 +26,20 @@
             this.config = config;
         }
 
-        public string GenerateHash(string state, string secretKey)
+        public string GenerateHash(string state)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(secretKey);
+            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
             var timedState = encoder.GetBytes(state + secondsSinceEpoch);
             return GetHash(timedState, salt);
         }
 
-        public bool VerifyHash(string state, string secretKey, string hash)
+        public bool VerifyHash(string state, string hash)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(secretKey);
+            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
             var toleranceInSec = config.GetLearningHubSsoHashTolerance();
 
             for (var counter = 0; counter <= toleranceInSec * 2; counter++)
