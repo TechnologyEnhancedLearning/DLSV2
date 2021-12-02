@@ -324,7 +324,7 @@ WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Verified IS NULL)) AS Resu
         public IEnumerable<SupervisorDashboardToDoItem> GetSupervisorDashboardToDoItemsForRequestedReviews(int adminId)
         {
             return connection.Query<SupervisorDashboardToDoItem>(
-                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, MAX(sasv.Requested), 0 AS SignOffRequest, 1 AS ResultsReviewRequest
+                @"SELECT ca.ID, sd.ID AS SupervisorDelegateId, c.FirstName + ' ' + c.LastName AS DelegateName, sa.Name AS ProfileName, MAX(sasv.Requested) AS Requested, 0 AS SignOffRequest, 1 AS ResultsReviewRequest
                     FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
                     CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
                     Candidates AS c ON ca.CandidateID = c.CandidateID INNER JOIN
