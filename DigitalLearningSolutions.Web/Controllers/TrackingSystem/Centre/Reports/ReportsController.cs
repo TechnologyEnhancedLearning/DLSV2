@@ -3,10 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -25,26 +23,22 @@
     {
         private readonly IActivityService activityService;
         private readonly IEvaluationSummaryService evaluationSummaryService;
-        private readonly IUserDataService userDataService;
 
         public ReportsController(
             IActivityService activityService,
-            IUserDataService userDataService,
             IEvaluationSummaryService evaluationSummaryService
         )
         {
             this.activityService = activityService;
-            this.userDataService = userDataService;
             this.evaluationSummaryService = evaluationSummaryService;
         }
 
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
             Response.Cookies.SetReportsFilterCookie(filterData, DateTime.UtcNow);
 
@@ -57,7 +51,7 @@
                 jobGroupName,
                 courseCategoryName,
                 courseName,
-                adminUser.CategoryId == 0
+                categoryIdFilter == null
             );
 
             var evaluationResponseBreakdowns = evaluationSummaryService.GetEvaluationSummary(centreId, filterData);
@@ -77,10 +71,9 @@
         public IEnumerable<ActivityDataRowModel> GetGraphData()
         {
             var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
             var activity = activityService.GetFilteredActivity(centreId, filterData!);
             return activity.Select(
@@ -93,17 +86,16 @@
         public IActionResult EditFilters()
         {
             var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
-            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(adminUser);
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+            var filterData = Request.Cookies.RetrieveFilterDataFromCookie(categoryIdFilter);
 
-            var filterOptions = GetDropdownValues(centreId, adminUser);
+            var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
 
-            var dataStartDate = activityService.GetStartOfActivityForCentre(centreId);
+            var dataStartDate = activityService.GetActivityStartDateForCentre(centreId);
 
             var model = new EditFiltersViewModel(
                 filterData,
-                adminUser.CategoryId,
+                categoryIdFilter,
                 filterOptions,
                 dataStartDate
             );
@@ -117,11 +109,10 @@
             if (!ModelState.IsValid)
             {
                 var centreId = User.GetCentreId();
-                var adminId = User.GetAdminId()!.Value;
-                var adminUser = userDataService.GetAdminUserById(adminId)!;
-                var filterOptions = GetDropdownValues(centreId, adminUser);
-                model.SetUpDropdowns(filterOptions, adminUser.CategoryId);
-                model.DataStart = activityService.GetStartOfActivityForCentre(centreId);
+                var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+                var filterOptions = GetDropdownValues(centreId, categoryIdFilter);
+                model.SetUpDropdowns(filterOptions, categoryIdFilter);
+                model.DataStart = activityService.GetActivityStartDateForCentre(centreId);
                 return View(model);
             }
 
@@ -152,8 +143,7 @@
         )
         {
             var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -167,7 +157,7 @@
                 dateRange.Value.startDate,
                 dateRange.Value.endDate,
                 jobGroupId,
-                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
                 customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
                 reportInterval
@@ -194,8 +184,7 @@
             )
         {
             var centreId = User.GetCentreId();
-            var adminId = User.GetAdminId()!.Value;
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var adminCategoryIdFilter = User.GetAdminCourseCategoryFilter();
 
             var dateRange =
                 activityService.GetValidatedUsageStatsDateRange(startDate, endDate, centreId);
@@ -209,7 +198,7 @@
                 dateRange.Value.startDate,
                 dateRange.Value.endDate,
                 jobGroupId,
-                adminUser.CategoryId == 0 ? courseCategoryId : adminUser.CategoryId,
+                adminCategoryIdFilter ?? courseCategoryId,
                 customisationId,
                 customisationId.HasValue ? CourseFilterType.Course : CourseFilterType.CourseCategory,
                 reportInterval
@@ -225,12 +214,12 @@
 
         private ReportsFilterOptions GetDropdownValues(
             int centreId,
-            AdminUser adminUser
+            int? categoryIdFilter
         )
         {
             return activityService.GetFilterOptions(
                 centreId,
-                adminUser.CategoryIdFilter
+                categoryIdFilter
             );
         }
     }

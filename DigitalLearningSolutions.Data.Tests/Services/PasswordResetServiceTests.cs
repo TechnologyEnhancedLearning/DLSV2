@@ -58,13 +58,16 @@
             A.CallTo(() => userService.GetUsersByEmailAddress(A<string>._)).Returns((null, new List<DelegateUser>()));
 
             // Then
-            Assert.Throws<UserAccountNotFoundException>(
-                () => passwordResetService.GenerateAndSendPasswordResetLink("recipient@example.com", "example.com")
+            Assert.ThrowsAsync<UserAccountNotFoundException>(
+                async () => await passwordResetService.GenerateAndSendPasswordResetLink(
+                    "recipient@example.com",
+                    "example.com"
+                )
             );
         }
 
         [Test]
-        public void Trying_to_send_password_reset_sends_email()
+        public async Task Trying_to_send_password_reset_sends_email()
         {
             // Given
             var emailAddress = "recipient@example.com";
@@ -76,7 +79,7 @@
                 .Returns((adminUser, new List<DelegateUser>()));
 
             // When
-            passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
+            await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
 
             // Then
             A.CallTo(
@@ -90,6 +93,30 @@
                                     e.Subject == "Digital Learning Solutions Tracking System Password Reset"
                             )
                         )
+                )
+                .MustHaveHappened();
+        }
+
+        [Test]
+        public async Task Requesting_password_reset_clears_previous_hashes()
+        {
+            // Given
+            var emailAddress = "recipient@example.com";
+            var resetPasswordId = 1;
+            var adminUser = Builder<AdminUser>.CreateNew()
+                .With(user => user.ResetPasswordId = resetPasswordId)
+                .Build();
+
+            A.CallTo(() => userService.GetUsersByEmailAddress(emailAddress))
+                .Returns((adminUser, new List<DelegateUser>()));
+
+            // When
+            await passwordResetService.GenerateAndSendPasswordResetLink(emailAddress, "example.com");
+
+            // Then
+            A.CallTo(
+                    () =>
+                        passwordResetDataService.RemoveResetPasswordAsync(resetPasswordId)
                 )
                 .MustHaveHappened();
         }

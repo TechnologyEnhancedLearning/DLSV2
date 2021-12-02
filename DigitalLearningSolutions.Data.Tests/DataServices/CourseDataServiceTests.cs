@@ -259,7 +259,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
                 // Then
                 progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
-                progressFields.Item2.Should().BeCloseTo(removedDate);
+                progressFields.Item2.Should().BeCloseTo(removedDate, 500);
             }
             finally
             {
@@ -268,34 +268,34 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetNumberOfActiveCoursesAtCentre_returns_expected_count()
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_returns_expected_count()
         {
             // When
-            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 0);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(2, null);
 
             // Then
             count.Should().Be(38);
         }
 
         [Test]
-        public void GetNumberOfActiveCoursesAtCentre_with_filtered_category_returns_expected_count()
+        public void GetNumberOfActiveCoursesAtCentreFilteredByCategory_with_filtered_category_returns_expected_count()
         {
             // When
-            var count = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(2, 2);
+            var count = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(2, 2);
 
             // Then
             count.Should().Be(3);
         }
 
         [Test]
-        public void GetCourseStatisticsAtCentreForAdminCategoryId_should_return_course_statistics_correctly()
+        public void GetCourseStatisticsAtCentreFilteredByCategory_should_return_course_statistics_correctly()
         {
             // Given
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var result = courseDataService.GetCourseStatisticsAtCentreForAdminCategoryId(centreId, categoryId).ToList();
+            var result = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId).ToList();
 
             // Then
             var expectedFirstCourse = new CourseStatistics
@@ -322,12 +322,12 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseDetailsForAdminCategoryId_should_return_course_details_correctly()
+        public void GetCourseDetailsFilteredByCategory_should_return_course_details_correctly()
         {
             // Given
             const int customisationId = 100;
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
             var fixedCreationDateTime = DateTime.UtcNow;
             var expectedLastAccess = new DateTime(2014, 03, 31, 13, 00, 23, 457);
             var expectedCourseDetails = CourseDetailsTestHelper.GetDefaultCourseDetails(
@@ -337,7 +337,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // When
             var result =
-                courseDataService.GetCourseDetailsForAdminCategoryId(customisationId, centreId, categoryId)!;
+                courseDataService.GetCourseDetailsFilteredByCategory(customisationId, centreId, categoryId)!;
             // Overwrite the created time as it is populated by a default constraint and not consistent over different databases
             result.CreatedDate = fixedCreationDateTime;
 
@@ -498,6 +498,36 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void DoesCourseExistAtCentre_returns_true_if_course_exists()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, null);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 2, 0);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseExistAtCentre_returns_false_if_course_does_not_exist_with_categoryId()
+        {
+            // When
+            var result = courseDataService.DoesCourseExistAtCentre(100, 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
         public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
         {
             // When
@@ -520,17 +550,81 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults()
+        public void DoesCourseNameExistAtCentre_returns_true_if_course_name_exists_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "Standard", 101, 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_at_centre()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "This course name does not exist", 101, 99);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_with_applicationId()
+        {
+            // When
+            var result = courseDataService.DoesCourseNameExistAtCentre(1, "Standard", 101, 2);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_without_auto_refresh()
         {
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true);
-                var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, false, 0, 0, false);
+                var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                     1,
                     2,
-                    0
+                    null
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CompleteWithinMonths.Should().Be(6);
+                    courseDetails.ValidityMonths.Should().Be(12);
+                    courseDetails.Mandatory.Should().Be(true);
+                    courseDetails.AutoRefresh.Should().Be(false);
+                    courseDetails.RefreshToCustomisationId.Should().Be(0);
+                    courseDetails.AutoRefreshMonths.Should().Be(0);
+                    courseDetails.ApplyLpDefaultsToSelfEnrol.Should().Be(false);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            UpdateLearningPathwayDefaultsForCourse_correctly_updates_learning_pathway_defaults_with_auto_refresh_params()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                courseDataService.UpdateLearningPathwayDefaultsForCourse(1, 6, 12, true, true, 1, 12, true);
+                var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
+                    1,
+                    2,
+                    null
                 );
 
                 // Then
@@ -540,6 +634,60 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                     courseDetails.ValidityMonths.Should().Be(12);
                     courseDetails.Mandatory.Should().Be(true);
                     courseDetails.AutoRefresh.Should().Be(true);
+                    courseDetails.RefreshToCustomisationId.Should().Be(1);
+                    courseDetails.AutoRefreshMonths.Should().Be(12);
+                    courseDetails.ApplyLpDefaultsToSelfEnrol.Should().Be(true);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void UpdateCourseDetails_correctly_updates_course_details()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int customisationId = 1;
+                const string customisationName = "Name";
+                const string password = "Password";
+                const string notificationEmails = "hello@test.com";
+                const bool isAssessed = true;
+                const int tutCompletionThreshold = 0;
+                const int diagCompletionThreshold = 0;
+                const int centreId = 2;
+                int? categoryId = null;
+
+                // When
+                courseDataService.UpdateCourseDetails(
+                    customisationId,
+                    customisationName,
+                    password,
+                    notificationEmails,
+                    isAssessed,
+                    tutCompletionThreshold,
+                    diagCompletionThreshold
+                );
+
+                var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
+                    customisationId,
+                    centreId,
+                    categoryId
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CustomisationName.Should().Be(customisationName);
+                    courseDetails.Password.Should().Be(password);
+                    courseDetails.NotificationEmails.Should().Be(notificationEmails);
+                    courseDetails.IsAssessed.Should().Be(isAssessed);
+                    courseDetails.TutCompletionThreshold.Should().Be(tutCompletionThreshold);
+                    courseDetails.DiagCompletionThreshold.Should().Be(diagCompletionThreshold);
                 }
             }
             finally
@@ -556,7 +704,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             const int customisationId = 100;
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             var defaultCourseOptions = new CourseOptions
             {
@@ -570,19 +718,19 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             {
                 // When
                 courseDataService.UpdateCourseOptions(defaultCourseOptions, customisationId);
-                var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+                var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                     customisationId,
                     centreId,
                     categoryId
-                );
+                )!;
 
                 // Then
                 using (new AssertionScope())
                 {
-                    updatedCourseOptions?.Active.Should().BeTrue();
-                    updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
-                    updatedCourseOptions?.SelfRegister.Should().BeFalse();
-                    updatedCourseOptions?.HideInLearnerPortal.Should().BeFalse();
+                    updatedCourseOptions.Active.Should().BeTrue();
+                    updatedCourseOptions.DiagObjSelect.Should().BeTrue();
+                    updatedCourseOptions.SelfRegister.Should().BeFalse();
+                    updatedCourseOptions.HideInLearnerPortal.Should().BeFalse();
                 }
             }
             finally
@@ -592,27 +740,27 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseOptionsForAdminCategoryId_gets_correct_data_for_valid_centre_and_category_Id()
+        public void GetCourseOptionsFilteredByCategory_gets_correct_data_for_valid_centre_and_category_Id()
         {
             // Given
             const int customisationId = 1379;
             const int centreId = 101;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId
-            );
+            )!;
 
             // Then
             using (new AssertionScope())
             {
-                updatedCourseOptions?.Active.Should().BeTrue();
-                updatedCourseOptions?.DiagObjSelect.Should().BeTrue();
-                updatedCourseOptions?.SelfRegister.Should().BeTrue();
-                updatedCourseOptions?.HideInLearnerPortal.Should().BeTrue();
+                updatedCourseOptions.Active.Should().BeTrue();
+                updatedCourseOptions.DiagObjSelect.Should().BeTrue();
+                updatedCourseOptions.SelfRegister.Should().BeTrue();
+                updatedCourseOptions.HideInLearnerPortal.Should().BeTrue();
             }
         }
 
@@ -623,10 +771,10 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             // Given
             const int customisationId = 1379;
             const int centreId = 5;
-            const int categoryId = 0;
+            int? categoryId = null;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId
@@ -646,7 +794,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int categoryId = 10;
 
             // When
-            var updatedCourseOptions = courseDataService.GetCourseOptionsForAdminCategoryId(
+            var updatedCourseOptions = courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
                 categoryId

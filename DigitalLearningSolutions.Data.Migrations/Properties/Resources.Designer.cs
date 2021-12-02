@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@SingleStep bit
         ///AS
         ///BEGIN
-        ///	-- SET NOCOUNT ON added  [rest of string was truncated]&quot;;.
+        ///	-- SET NOCOUNT ON added to prevent e [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CreateOrAlterReorderFrameworkCompetenciesAndGroupsSPs {
             get {
@@ -123,7 +123,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@Active as bit,
         ///	@ApplicationID as int,
         ///	@CentreID as int,
-        ///	@CustomisationName as nvarch [rest of string was truncated]&quot;;.
+        ///	@CustomisationName as nvarchar(250),
+        ///	@Passw [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_106_CreateOrAlterInsertCustomisation_V3 {
             get {
@@ -157,7 +158,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add t [rest of string was truncated]&quot;;.
+        ///	-- Add the paramete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_AdjustScoresForFilteredSP {
             get {
@@ -177,7 +178,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	-- Add t [rest of string was truncated]&quot;;.
+        ///	-- Add the paramete [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_133_UnAdjustScoresForFilteredSP {
             get {
@@ -210,7 +211,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///BEGIN
         ///INSERT INTO @ResTable
         ///	SELECT CompetencyGroupID, [1] AS Confidence, [2] AS Relevance
-        ///FROM    [rest of string was truncated]&quot;;.
+        ///FROM   (SELECT comp.CompetencyG [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredFunctionTweak {
             get {
@@ -234,7 +235,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Description:	Returns user self assessment responses (AVG) for Filtered competency
         ///-- =============================================
         ///CREATE OR ALTER PROCEDURE [dbo].[GetFilteredCompetencyResponsesForCandidate]
-        ///	 [rest of string was truncated]&quot;;.
+        ///	-- Add the para [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_153_DropFilteredSPFixes {
             get {
@@ -490,7 +491,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///        PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime);
         ///GO
         ///
-        ///ALTER TABLE Framework [rest of string was truncated]&quot;;.
+        ///ALTER TABLE Frameworks
+        ///    SET (S [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_AddSystemVersioning {
             get {
@@ -514,7 +516,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///DROP TABLE dbo.FrameworkCompetencyGroupsHistory;
         ///GO
         ///
-        ///--  [rest of string was truncated]&quot;;.
+        ///-- Remove versioni [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_95_RemoveSystemVersioning {
             get {
@@ -620,11 +622,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 05/10/2020
         ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
         ///-- =============================================
-        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreF [rest of string was truncated]&quot;;.
+        ///CREATE PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetActiveAvailableV5 {
             get {
                 return ResourceManager.GetString("GetActiveAvailableV5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 22/06/2021 09:46:28 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN {
+            get {
+                return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V5]    Script Date: 17/11/2021 16:40:41 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 05/10/2020
+        ///-- Description:	Returns active available customisations for centre v5 adds SelfAssessments.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetActiveAvailableCustomisationsForCentreFilter [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP {
+            get {
+                return ResourceManager.GetString("HEEDLS_667_GetActiveAvailableCustomisationsForCentreFiltered_V5_Signposting_UP", resourceCulture);
             }
         }
     }

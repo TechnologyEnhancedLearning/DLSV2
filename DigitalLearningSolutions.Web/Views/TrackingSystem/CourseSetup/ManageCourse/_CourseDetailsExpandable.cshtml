@@ -67,7 +67,12 @@
 
     </dl>
 
-    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" href="" aria-label="Edit course details">
+    <a class="nhsuk-button nhsuk-u-margin-right-2"
+       role="button"
+       aria-label="Edit course details"
+       asp-controller="ManageCourse"
+       asp-action="EditCourseDetails"
+       asp-route-customisationId="@Model.CustomisationId">
       Edit
     </a>
 

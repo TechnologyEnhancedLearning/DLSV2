@@ -19,7 +19,7 @@
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
-              <a href="#">
+              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
             }

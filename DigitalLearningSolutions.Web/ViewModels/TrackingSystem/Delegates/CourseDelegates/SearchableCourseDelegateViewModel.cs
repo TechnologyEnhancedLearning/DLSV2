@@ -16,7 +16,7 @@
             Locked = courseDelegate.Locked;
             LastUpdated = courseDelegate.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
             Enrolled = courseDelegate.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
-            CompleteBy = courseDelegate.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
+            CompleteBy = courseDelegate.CompleteByDate?.ToString(DateHelper.StandardDateAndTimeFormat);
             Completed = courseDelegate.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
             RemovedDate = courseDelegate.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
             CustomisationId = courseDelegate.CustomisationId;

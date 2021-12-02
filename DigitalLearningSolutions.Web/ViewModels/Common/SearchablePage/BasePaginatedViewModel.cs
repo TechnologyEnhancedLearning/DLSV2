@@ -1,8 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public abstract class BasePaginatedViewModel
     {
@@ -38,6 +41,14 @@
             {
                 Page = 1;
             }
+        }
+
+        protected IEnumerable<T> PaginateItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
+        {
+            var listedItems = items.ToList();
+            MatchingSearchResults = listedItems.Count;
+            SetTotalPages();
+            return GetItemsOnCurrentPage(listedItems);
         }
 
         private int OffsetFromPageNumber(int pageNumber)

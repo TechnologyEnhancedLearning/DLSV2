@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model ImportCompetenciesViewModel
+@{
+    ViewData["Title"] = "Framework - Import Competencies";
+    ViewData["Application"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item">Excel import</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">>Back to framework structure</a></p>
+    </div>
+  </nav>
+}
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ImportFile) })" />
+    }
+    <h1 class="nhsuk-heading-xl">Import from Excel</h1>
+    <vc:inset-text css-class="" text="The building blocks for your framework will be referred to as 'competencies' for the purpose of importing. Once they have been imported, they will be referred to using your chosen vocabulary."></vc:inset-text>
+    <p class="nhsuk-body-m">
+      To import competencies from Excel, you will need an .xlsx worksheet file saved to your computer that meets the following requirements:
+      <ul>
+        <li>Has import data on the first worksheet in the file</li>
+        <li>
+          Has the following column titles on the cells in the first row:
+          <ul>
+            <li><strong>Competency group</strong> (cell A1)</li>
+            <li><strong>Competency name</strong> (cell A2)</li>
+            <li><strong>Competency description</strong> (cell A3)</li>
+          </ul>
+        </li>
+        <li>Import data in subsequent rows with no blank rows (including hidden rows)</li>
+        <li>Import data rows must include a <strong>Competency name</strong></li>
+        <li>If <strong>Competency group</strong> is left blank, the competency will be imported without a group and listed after grouped competencies in the framework</li>
+      </ul>
+    </p>
+    <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+      <input type="hidden" asp-for="@Model.FrameworkId" />
+      <vc:file-input asp-for="@nameof(Model.ImportFile)" label="Excel file ready for import" hint-text="" css-class="nhsuk-u-width-one-half" />
+      <button class="nhsuk-button" type="submit">Upload and import</button>
+    </form>
+    <vc:cancel-link asp-controller="Frameworks" asp-action="ViewFramework" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+  </div>
+</div>

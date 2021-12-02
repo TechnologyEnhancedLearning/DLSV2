@@ -47,7 +47,7 @@
                         p.PLLocked AS Locked,
                         p.SubmittedTime AS LastUpdated,
                         c.DateRegistered AS Enrolled,
-                        p.CompleteByDate AS CompleteBy,
+                        p.CompleteByDate,
                         p.RemovedDate,
                         p.Completed,
                         p.CustomisationId,

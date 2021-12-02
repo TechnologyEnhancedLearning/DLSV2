@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class CourseDelegate
+    public class CourseDelegate : BaseSearchableItem
     {
         public int DelegateId { get; set; }
         public string CandidateNumber { get; set; }
@@ -14,7 +14,7 @@
         public bool Locked { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime Enrolled { get; set; }
-        public DateTime? CompleteBy { get; set; }
+        public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
         public int AllAttempts { get; set; }
@@ -28,5 +28,11 @@
         public bool Removed => RemovedDate.HasValue;
 
         public double PassRate => AllAttempts == 0 ? 0 : Math.Round(100 * AttemptsPassed / (double)AllAttempts);
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? FullName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

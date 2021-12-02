@@ -1,17 +1,15 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace DigitalLearningSolutions.Web.Extensions
+﻿namespace DigitalLearningSolutions.Web.Extensions
 {
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System.Linq;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     internal static class ModelStateDictionaryExtensions
     {
         internal static bool HasError(this ModelStateDictionary modelStateDictionary, string fieldName)
         {
             return !string.IsNullOrWhiteSpace(fieldName)
-                          && modelStateDictionary.TryGetValue(fieldName, out var entry)
-                          && (entry.Errors?.Any() ?? false);
+                   && modelStateDictionary.TryGetValue(fieldName, out var entry)
+                   && (entry.Errors?.Any() ?? false);
         }
 
         internal static void ClearAllErrors(this ModelStateDictionary modelStateDictionary)
@@ -29,6 +27,15 @@ namespace DigitalLearningSolutions.Web.Extensions
                 modelStateDictionary[key].Errors.Clear();
                 modelStateDictionary[key].ValidationState = ModelValidationState.Valid;
             }
+        }
+
+        public static void ClearErrorsOnField(
+            this ModelStateDictionary modelStateDictionary,
+            string fieldName
+        )
+        {
+            modelStateDictionary[fieldName].Errors.Clear();
+            modelStateDictionary[fieldName].ValidationState = ModelValidationState.Valid;
         }
     }
 }
