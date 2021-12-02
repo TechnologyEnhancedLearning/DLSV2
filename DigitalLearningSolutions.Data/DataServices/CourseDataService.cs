@@ -263,7 +263,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
+	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
+                        AND a.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
             );
         }
@@ -307,7 +308,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
-                        AND pr.RemovedDate IS NULL",
+                        AND pr.RemovedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { delegateId }
             );
         }
