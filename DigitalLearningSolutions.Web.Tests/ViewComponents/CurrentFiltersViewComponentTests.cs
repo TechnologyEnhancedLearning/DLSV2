@@ -42,6 +42,8 @@
                 categories,
                 searchString,
                 "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
+                1,
+                false,
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>

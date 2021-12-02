@@ -40,6 +40,8 @@
                 new List<string>(),
                 null,
                 null,
+                1,
+                false,
                 1
             );
 
@@ -56,7 +58,9 @@
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                false,
+                1
             );
 
             model.Admins.Count().Should().Be(5);
@@ -95,7 +99,9 @@
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                false,
+                1
             );
 
             // Then
