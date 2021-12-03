@@ -15,7 +15,7 @@
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
-    public class VerifyAdminUserCanAccessCourseTests
+    public class VerifyAdminUserCanViewCourseTests
     {
         private readonly ICourseService courseService = A.Fake<ICourseService>();
         private ActionExecutingContext context = null!;
@@ -43,11 +43,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanViewCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(null);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanViewCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -58,11 +58,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanViewCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(false);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanViewCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -74,11 +74,11 @@
         {
             // Given
             context.RouteData.Values["customisationId"] = CustomisationId;
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(CustomisationId, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanViewCourse(CustomisationId, A<int>._, A<int?>._))
                 .Returns(true);
 
             // When
-            new VerifyAdminUserCanAccessCourse(courseService).OnActionExecuting(context);
+            new VerifyAdminUserCanViewCourse(courseService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

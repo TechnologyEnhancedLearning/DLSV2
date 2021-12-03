@@ -35,13 +35,17 @@
                      link-text="FAQs"
                      is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
-  <vc:side-menu-link-with-href href="@Model.SupportSideNavViewModel.ResourcesUrl"
-                               link-text="Resources"
-                               is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Resources"
+                     asp-all-route-data="@routeData"
+                     link-text="Resources"
+                     is-current-page="@(Model.CurrentPage == SupportPage.Resources)" />
 
-  <vc:side-menu-link-with-href href="@Model.SupportSideNavViewModel.SupportTicketsUrl"
-                               link-text="Support tickets"
-                               is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="SupportTickets"
+                     asp-all-route-data="@routeData"
+                     link-text="Support tickets"
+                     is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
   @if (Model.CurrentPage == SupportPage.ChangeRequests)
   {

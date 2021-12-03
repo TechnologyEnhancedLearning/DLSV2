@@ -136,5 +136,21 @@
                 )
             };
         }
+
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourse(CourseAssessmentDetails details)
+        {
+            return new List<SearchableTagViewModel>
+            {
+                details.IsAssessed
+                    ? new SearchableTagViewModel(AddCourseToGroupAssessedFilterOptions.IsAssessed)
+                    : new SearchableTagViewModel(AddCourseToGroupAssessedFilterOptions.IsNotAssessed),
+                details.HasLearning
+                    ? new SearchableTagViewModel(AddCourseToGroupLearningFilterOptions.HasLearning)
+                    : new SearchableTagViewModel(AddCourseToGroupLearningFilterOptions.NoLearning, true),
+                details.IsAssessed
+                    ? new SearchableTagViewModel(AddCourseToGroupDiagnosticFilterOptions.HasDiagnostic)
+                    : new SearchableTagViewModel(AddCourseToGroupDiagnosticFilterOptions.NoDiagnostic, true),
+            };
+        }
     }
 }

@@ -19,7 +19,7 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
-    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+    [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     public class CourseContentController : Controller
     {
         public const string SelectAllDiagnosticAction = "diagnostic-select-all";
@@ -47,11 +47,11 @@
         public IActionResult Index(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             )!;
 
             var courseSections = sectionService.GetSectionsAndTutorialsForCustomisation(
@@ -73,11 +73,11 @@
         public IActionResult EditSection(int customisationId, int sectionId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var courseDetails = courseDataService.GetCourseDetailsForAdminCategoryId(
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             )!;
             var section = sectionService.GetSectionAndTutorialsBySectionIdForCustomisation(customisationId, sectionId);
 

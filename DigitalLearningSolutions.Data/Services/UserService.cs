@@ -11,7 +11,9 @@ namespace DigitalLearningSolutions.Data.Services
     public interface IUserService
     {
         (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username);
+
         (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress);
+
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
@@ -56,6 +58,8 @@ namespace DigitalLearningSolutions.Data.Services
         );
 
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
+
+        IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId);
     }
 
     public class UserService : IUserService
@@ -367,6 +371,12 @@ namespace DigitalLearningSolutions.Data.Services
         public IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId)
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor);
+        }
+
+        public IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId)
+        {
+            return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
+                .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

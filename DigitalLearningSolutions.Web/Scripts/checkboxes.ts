@@ -1,11 +1,11 @@
-class CheckboxGroup {
-  public static setUpSelectAndDeselectButtons(): void {
+class Checkboxes {
+  public static setUpSelectAndDeselectInGroupButtons(): void {
     const selectAllButtons = document.querySelectorAll('.select-all') as NodeListOf<HTMLAnchorElement>;
     selectAllButtons.forEach((button) => {
       button.addEventListener('click',
         () => {
           const group = button.getAttribute('data-group') as string;
-          this.selectAll(group);
+          this.selectAllInGroup(group);
         });
     });
 
@@ -14,12 +14,12 @@ class CheckboxGroup {
       button.addEventListener('click',
         () => {
           const group = button.getAttribute('data-group') as string;
-          this.deselectAll(group);
+          this.deselectAllinGroup(group);
         });
     });
   }
 
-  static selectAll(group: string): void {
+  static selectAllInGroup(group: string): void {
     const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
     allCheckboxes.forEach((checkbox) => {
       if (checkbox.getAttribute('data-group') === group) {
@@ -28,7 +28,7 @@ class CheckboxGroup {
     });
   }
 
-  static deselectAll(group: string): void {
+  static deselectAllinGroup(group: string): void {
     const allCheckboxes = document.querySelectorAll('.select-all-checkbox') as NodeListOf<HTMLInputElement>;
     allCheckboxes.forEach((checkbox) => {
       if (checkbox.getAttribute('data-group') === group) {
@@ -36,6 +36,20 @@ class CheckboxGroup {
       }
     });
   }
+
+  static selectAll(selectorClass: string): void {
+    const allCheckboxes = document.querySelectorAll(selectorClass) as NodeListOf<HTMLInputElement>;
+    allCheckboxes.forEach((checkbox) => {
+      if (!checkbox.checked) checkbox.click();
+    });
+  }
+
+  static deselectAll(selectorClass: string): void {
+    const allCheckboxes = document.querySelectorAll(selectorClass) as NodeListOf<HTMLInputElement>;
+    allCheckboxes.forEach((checkbox) => {
+      if (checkbox.checked) checkbox.click();
+    });
+  }
 }
 
-export default CheckboxGroup;
+export default Checkboxes;

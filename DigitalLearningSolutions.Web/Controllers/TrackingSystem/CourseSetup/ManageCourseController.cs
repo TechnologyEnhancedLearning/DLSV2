@@ -19,7 +19,7 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
-    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+    [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Manage")]
@@ -37,12 +37,12 @@
         {
             TempData.Clear();
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter();
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             );
 
             var model = new ManageCourseViewModel(courseDetails!);
@@ -62,12 +62,12 @@
         public IActionResult EditLearningPathwayDefaults(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter();
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             );
 
             var data = TempData.Get<EditLearningPathwayDefaultsData>();
@@ -121,12 +121,12 @@
         public IActionResult EditAutoRefreshOptions(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter();
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             )!;
 
             var courseOptions = GetCourseOptionsSelectList(customisationId, courseDetails.RefreshToCustomisationId);
@@ -181,12 +181,12 @@
         public IActionResult EditCourseDetails(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter()!;
 
-            var courseDetails = courseService.GetCourseDetailsForAdminCategoryId(
+            var courseDetails = courseService.GetCourseDetailsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.Value
+                categoryId
             );
 
             var model = new EditCourseDetailsViewModel(courseDetails!, customisationId);
@@ -240,12 +240,12 @@
         public IActionResult EditCourseOptions(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter();
 
-            var courseOptions = courseService.GetCourseOptionsForAdminCategoryId(
+            var courseOptions = courseService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId.GetValueOrDefault()
+                categoryId
             );
 
             var model = new EditCourseOptionsViewModel(courseOptions!, customisationId);
@@ -280,7 +280,7 @@
         private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int customisationId, int? selectedId = null)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter()!;
             var categoryIdFilter = categoryId == 0 ? null : categoryId;
 
             var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)

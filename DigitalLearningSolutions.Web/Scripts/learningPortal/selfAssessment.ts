@@ -1,4 +1,4 @@
-import * as CheckboxGroup from '../checkboxGroup';
+import * as Checkboxes from '../checkboxes';
 
 function onSliderUpdate(inputElement: HTMLInputElement) {
   const selectedRatio = parseInt(inputElement.value, 10) / parseInt(inputElement.max, 10);
@@ -16,4 +16,4 @@ inputs.forEach((e) => {
   e.addEventListener('change', () => onSliderUpdate(e));
 });
 
-CheckboxGroup.default.setUpSelectAndDeselectButtons();
+Checkboxes.default.setUpSelectAndDeselectInGroupButtons();

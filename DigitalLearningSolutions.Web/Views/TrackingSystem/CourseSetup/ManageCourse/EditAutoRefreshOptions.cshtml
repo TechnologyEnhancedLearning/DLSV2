@@ -4,7 +4,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit auto-refresh options" : "Edit auto-refresh options";
-  var cancelLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
+  var backLinkData = new Dictionary<string, string> { { "customisationId", Model.CustomisationId.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -32,23 +32,23 @@
                       hint-text="Which course should the learner be enrolled on when auto-refreshing?"
                       deselectable="false"
                       css-class="nhsuk-u-width-one-half"
-                      default-option="Select a field name"
+                      default-option="Select a course"
                       select-list-options="@Model.CourseOptions" />
 
       <vc:numeric-input asp-for="@nameof(Model.AutoRefreshMonths)"
                         label="Enrol on refresher (months before expiry)"
                         populate-with-current-value="true"
                         type="text"
-                        hint-text="How many months prior to expiry of the previous course should be learner be enrolled on the refresher cause."
+                        hint-text="How many months prior to expiry of the previous course should the learner be enrolled on the refresher course?"
                         css-class="nhsuk-input--width-10" />
 
       <vc:single-checkbox asp-for="@nameof(Model.ApplyLpDefaultsToSelfEnrol)"
                           label="Apply to self-enrolments"
-                          hint-text="Apply auto-refresh settings when a user has self enrolled on a course (rather than being enrolled by an administrator)" />
+                          hint-text="Apply auto-refresh settings when a user has self-enrolled on a course (rather than being enrolled by an administrator)" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@cancelLinkData" />
+    <vc:back-link asp-controller="ManageCourse" asp-action="EditLearningPathwayDefaults" asp-all-route-data="@backLinkData" link-text="Go back" />
   </div>
 </div>

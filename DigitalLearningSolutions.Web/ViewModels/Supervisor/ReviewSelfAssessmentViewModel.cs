@@ -12,6 +12,7 @@
         public DelegateSelfAssessment DelegateSelfAssessment { get; set; }
         public IEnumerable<IGrouping<string, Competency>> CompetencyGroups { get; set; }
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
+        public bool IsSupervisorResultsReviewed { get; set; }
 
         public string VocabPlural(string vocabulary)
         {
