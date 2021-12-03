@@ -313,7 +313,7 @@
             {
                 ModelState.AddModelError(
                     nameof(EditCourseDetailsViewModel.CustomisationName),
-                    "A course with this name already exists, add on to the course name to make it unique"
+                    "A course with no add on already exists"
                 );
             }
             else if (customisationName.Length > 250)
@@ -323,7 +323,7 @@
                     "Course name must be 250 characters or fewer, including any additions"
                 );
             }
-            else if (customisationName != string.Empty && courseService.DoesCourseNameExistAtCentre(
+            else if (courseService.DoesCourseNameExistAtCentre(
                 customisationId,
                 customisationName,
                 centreId,
