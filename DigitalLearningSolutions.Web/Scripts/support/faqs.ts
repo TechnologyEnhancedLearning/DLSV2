@@ -9,4 +9,4 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
 
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate(`${matches[1]}/Support/FAQs/AllItems`, true, true, false, undefined, ['title', 'content']);
-})();
+}());
