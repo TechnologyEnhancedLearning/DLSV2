@@ -237,7 +237,7 @@
         }
 
         [Test]
-        public async Task AccessLearningResource_returns_null_if_signposting_is_disabled()
+        public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_returns_null_if_signposting_is_disabled()
         {
             // Given
             const int learningLogItemId = 1;
@@ -245,7 +245,8 @@
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
-            var result = await actionPlanService.AccessLearningResource(learningLogItemId, delegateId);
+            var result =
+                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
 
             // Then
             result.Should().BeNull();
@@ -257,7 +258,7 @@
 
         [Test]
         public async Task
-            AccessLearningResource_returns_null_if_delegate_does_not_have_active_action_plan_item_with_matching_id()
+            GetLearningResourceLinkAndUpdateLastAccessedDate_returns_null_if_delegate_does_not_have_active_action_plan_item_with_matching_id()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -276,7 +277,8 @@
                 .Returns(learningLogItems);
 
             // When
-            var result = await actionPlanService.AccessLearningResource(learningLogItemId, delegateId);
+            var result =
+                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
 
             // Then
             result.Should().BeNull();
@@ -287,7 +289,7 @@
         }
 
         [Test]
-        public async Task AccessLearningResource_updates_last_accessed_returns_resource_link()
+        public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_updates_last_accessed_returns_resource_link()
         {
             // Given
             var testDate = new DateTime(2021, 12, 2);
@@ -314,7 +316,8 @@
                 .Returns(matchedResource);
 
             // When
-            var result = await actionPlanService.AccessLearningResource(learningLogItemId, delegateId);
+            var result =
+                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
 
             // Then
             result.Should().Be(resourceLink);

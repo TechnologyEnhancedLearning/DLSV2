@@ -17,7 +17,7 @@
 
         Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId);
 
-        Task<string?> AccessLearningResource(int learningLogItemId, int delegateId);
+        Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -122,7 +122,7 @@
             return incompleteActionPlanItems;
         }
 
-        public async Task<string?> AccessLearningResource(int learningLogItemId, int delegateId)
+        public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId)
         {
             if (!config.IsSignpostingUsed())
             {

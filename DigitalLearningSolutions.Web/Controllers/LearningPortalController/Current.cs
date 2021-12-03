@@ -154,7 +154,8 @@
         public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
-            var learningResourceLink = await actionPlanService.AccessLearningResource(learningLogItemId, delegateId);
+            var learningResourceLink =
+                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
 
             if (string.IsNullOrWhiteSpace(learningResourceLink))
             {

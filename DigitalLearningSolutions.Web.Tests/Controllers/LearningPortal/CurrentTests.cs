@@ -305,14 +305,15 @@
         {
             // Given
             const int learningLogItemId = 1;
-            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11)).Returns((string?)null);
+            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
+                .Returns((string?)null);
 
             // When
             var result = await controller.LaunchLearningResource(learningLogItemId);
 
             // Then
             result.Should().BeNotFoundResult();
-            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11))
+            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -322,14 +323,15 @@
             // Given
             const int learningLogItemId = 1;
             const string resourceLink = "www.resource.com";
-            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11)).Returns(resourceLink);
+            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
+                .Returns(resourceLink);
 
             // When
             var result = await controller.LaunchLearningResource(learningLogItemId);
 
             // Then
             result.Should().BeRedirectResult().WithUrl(resourceLink);
-            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11))
+            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
                 .MustHaveHappenedOnceExactly();
         }
     }
