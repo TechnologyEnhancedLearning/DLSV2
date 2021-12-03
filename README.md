@@ -109,11 +109,11 @@ The docs have a good list of things that you can do, but I’ve given a few comm
 
 #### Listing migrations
 
-`dotnet-fm list migrations -p "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;"`
+`dotnet-fm list migrations -p "<path-to-repo-root>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;"`
 
 #### Migrating to a certain version
 
-`dotnet-fm migrate -p SqlServer2016 -a "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" <down/up> -t <TimestampOfTargetMigration`
+`dotnet-fm migrate -p SqlServer2016 -a "<path-to-repo-root>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" <down/up> -t <timestamp-of-target-migration>`
 
 E.g. To migrate to `202111231427_IncreaseSelfassessmentSignOffRequestorStatementLength` from a later version, I ran:
 
@@ -123,7 +123,7 @@ E.g. To migrate to `202111231427_IncreaseSelfassessmentSignOffRequestorStatement
 
 Just leave out the -t option from the script to migrate up to a certain version:
 
-`dotnet-fm migrate -p SqlServer2016 -a "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" up`
+`dotnet-fm migrate -p SqlServer2016 -a "<path-to-repo-root>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" up`
 
 # Setting up the old code
 
