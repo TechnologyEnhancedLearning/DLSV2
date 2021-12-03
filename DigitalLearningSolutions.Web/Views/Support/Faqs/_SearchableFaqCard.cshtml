@@ -2,7 +2,7 @@
 @model SearchableFaqViewModel
 
 @{
-  var routeData = new Dictionary<string, string?>
+  var viewFagRouteData = new Dictionary<string, string?>
   {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
     { "faqId", Model.Faq.FaqId.ToString() }
@@ -14,18 +14,21 @@
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.Faq.FaqId-name">
-        <span class="searchable-element-title" name="name">@Model.Faq.Qtext</span>
+        <span class="searchable-element-title" name="name">@Model.Faq.Qtext (@Model.Faq.FaqId)</span>
       </span>
     </summary>
 
     <div class="nhsuk-details__text">
       <div class="display-none" name="faq-weighting" aria-hidden="true">@Model.Faq.Weighting</div>
-      <div><span class="searchable-element-content">@Html.Raw(Model.Faq.Ahtml)</span></div>
+      <div class="display-none" name="faq-id" aria-hidden="true">@Model.Faq.FaqId</div>
+      <div class="nhsuk-u-margin-bottom-4">
+        <span class="searchable-element-content">@Html.Raw(Model.Faq.Ahtml)</span>
+      </div>
 
       <a class="nhsuk-button nhsuk-button--secondary"
          asp-controller="Faqs"
          asp-action="ViewFaq"
-         asp-all-route-data="@routeData"
+         asp-all-route-data="@viewFagRouteData"
          role="button">
         View on separate page
       </a>

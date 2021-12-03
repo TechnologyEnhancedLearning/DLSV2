@@ -86,8 +86,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
         [InlineData("/TrackingSystem/Support", "Support")]
-        [InlineData("/TrackingSystem/Faqs", "Faqs")]
-        [InlineData("/TrackingSystem/Faqs/View/81", "Read me first - TroubleShooter Checklist")]
+        [InlineData("/TrackingSystem/Support/FAQs", "Faqs")]
         [InlineData("/TrackingSystem/Resources", "Resources")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {

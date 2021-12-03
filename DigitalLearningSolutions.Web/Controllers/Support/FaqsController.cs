@@ -22,8 +22,8 @@
     public class FaqsController : Controller
     {
         private readonly IConfiguration configuration;
-        private readonly IFeatureManager featureManager;
         private readonly IFaqsService faqsService;
+        private readonly IFeatureManager featureManager;
 
         public FaqsController(IFeatureManager featureManager, IConfiguration configuration, IFaqsService faqsService)
         {
@@ -39,7 +39,7 @@
             string? searchString = null,
             string sortBy = "Weighting,FaqId",
             string sortDirection = BaseSearchablePageViewModel.Descending
-         )
+        )
         {
             if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 !DlsSubApplication.Frameworks.Equals(dlsSubApplication))
@@ -47,6 +47,8 @@
                 return NotFound();
             }
 
+            // TODO HEEDLS-608 If the user is centre admin but tracking system is off we need to show a 404
+            // TODO HEEDLS-608 name these something appropriate
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
@@ -84,6 +86,8 @@
                 return NotFound();
             }
 
+            // TODO HEEDLS-608 If the user is centre admin but tracking system is off we need to show a 404
+            // TODO HEEDLS-608 name these something appropriate
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&
@@ -117,6 +121,8 @@
                 return NotFound();
             }
 
+            // TODO HEEDLS-608 If the user is centre admin but tracking system is off we need to show a 404
+            // TODO HEEDLS-608 name these something appropriate
             var trackingSystemSupportEnabled =
                 DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
                 User.HasCentreAdminPermissions() &&

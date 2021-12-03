@@ -15,6 +15,20 @@
 
     public class FaqsDataService : IFaqsDataService
     {
+        private const string PublishedFaqsForTargetGroupSql =
+            @"SELECT
+                    FAQID,
+	                AHTML,
+	                CreatedDate,
+	                Published,
+	                QAnchor,
+	                QText,
+	                TargetGroup,
+	                Weighting
+                FROM FAQs
+                WHERE TargetGroup = @targetGroup
+                AND Published = 1";
+
         private readonly IDbConnection connection;
 
         public FaqsDataService(IDbConnection connection)
@@ -25,19 +39,7 @@
         public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
         {
             return connection.Query<Faq>(
-                @$"SELECT
-                        FAQID,
-	                    AHTML,
-	                    CreatedDate,
-	                    Published,
-	                    QAnchor,
-	                    QText,
-	                    TargetGroup,
-	                    Weighting
-                    FROM FAQs
-                    WHERE FAQID = @faqId
-                    AND TargetGroup = @targetGroup
-                    AND Published = 1",
+                @$"{PublishedFaqsForTargetGroupSql} AND FAQID = @faqId",
                 new { faqId, targetGroup }
             ).SingleOrDefault();
         }
@@ -45,18 +47,7 @@
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
             return connection.Query<Faq>(
-                @$"SELECT
-                        FAQID,
-	                    AHTML,
-	                    CreatedDate,
-	                    Published,
-	                    QAnchor,
-	                    QText,
-	                    TargetGroup,
-	                    Weighting
-                    FROM FAQs
-                    WHERE TargetGroup = @targetGroup
-                    AND Published = 1",
+                PublishedFaqsForTargetGroupSql,
                 new { targetGroup }
             );
         }

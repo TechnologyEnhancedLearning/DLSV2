@@ -12,7 +12,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
     </nav>
   </div>
 
@@ -20,7 +20,7 @@
     <h1 class="nhsuk-heading-xl">FAQs</h1>
 
     <partial name="SearchablePage/_Search" model="Model" />
-    <input type="hidden" id="select-sort-by" value="@Model.SortBy" />
+    <input type="hidden" id="select-sort-by" value="@Model.SortBy" data-sort-by-multiple="true" />
     <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
 
     @if (Model.NoDataFound)
@@ -36,7 +36,7 @@
       <div id="searchable-elements">
         @foreach (var faq in Model.Faqs)
         {
-          <partial name="Faqs/_SearchableFaqCard" model="faq" />
+          <partial name="_SearchableFaqCard" model="faq" />
         }
       </div>
     }
@@ -46,7 +46,7 @@
     }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="Shared/_SupportSideNavMenu.cshtml" model="@Model" />
+      <partial name="~/Views/Support/Shared/_SupportSideNavMenu.cshtml" model="@Model" />
     </nav>
   </div>
 </div>

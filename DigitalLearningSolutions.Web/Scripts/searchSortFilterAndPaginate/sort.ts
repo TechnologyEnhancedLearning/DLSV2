@@ -10,13 +10,15 @@ export function setUpSort(onSortUpdated: VoidFunction): void {
 export function sortSearchableElements(
   searchableElements: ISearchableElement[],
 ): ISearchableElement[] {
-  const sortBy = getSortBy();
+  const sortByValue = getSortBy();
+  const sortByIteratees = document.querySelector('[data-sort-by-multiple]') ? sortByValue.split(',') : [sortByValue];
   const sortDirection = getSortDirection();
 
   return _.orderBy<ISearchableElement>(
     searchableElements,
-    [(searchableElement) => getSortValue(searchableElement, sortBy)],
-    [(sortDirection === 'Descending') ? 'desc' : 'asc'],
+    sortByIteratees
+      .map((sortBy: string) => (searchableElement) => getSortValue(searchableElement, sortBy)),
+    sortByIteratees.map(() => ((sortDirection === 'Descending') ? 'desc' : 'asc')),
   );
 }
 
@@ -68,6 +70,8 @@ export function getSortValue(
       return getElementText(searchableElement, 'course-name').toLocaleLowerCase();
     case 'Weighting':
       return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
+    case 'FaqId':
+      return parseInt(getElementText(searchableElement, 'faq-id'), 10);
     default:
       return '';
   }

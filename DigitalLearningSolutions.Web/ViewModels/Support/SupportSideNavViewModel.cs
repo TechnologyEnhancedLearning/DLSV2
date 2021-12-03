@@ -10,7 +10,6 @@
         }
 
         public string HelpUrl => $"{currentSystemBaseUrl}/help/Introduction.html";
-        public string ResourcesUrl => $"{currentSystemBaseUrl}/tracking/resources";
         public string SupportTicketsUrl => $"{currentSystemBaseUrl}/tracking/tickets";
         public string ChangeRequestsUrl =>
             "https://github.com/TechnologyEnhancedLearning/DLSV2/projects/1?fullscreen=true";
