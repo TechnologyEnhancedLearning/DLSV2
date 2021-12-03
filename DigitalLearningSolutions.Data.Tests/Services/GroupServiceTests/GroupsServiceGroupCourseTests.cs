@@ -30,7 +30,8 @@
             var groupCourse = Builder<GroupCourse>.CreateNew()
                 .With(g => g.Active = false)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(groupCourse);
 
             // When
             var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
@@ -48,7 +49,8 @@
                 .With(g => g.Active = true)
                 .With(g => g.ApplicationArchivedDate = DateTime.Now)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(groupCourse);
 
             // When
             var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
@@ -66,7 +68,8 @@
                 .With(g => g.Active = true)
                 .With(g => g.InactivatedDate = DateTime.Now)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(groupCourse);
 
             // When
             var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);

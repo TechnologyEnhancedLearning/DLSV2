@@ -3,11 +3,11 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public class GroupCourseRemoveViewModel : IValidatableObject
+    public class RemoveGroupCourseViewModel : IValidatableObject
     {
-        public GroupCourseRemoveViewModel() { }
+        public RemoveGroupCourseViewModel() { }
 
-        public GroupCourseRemoveViewModel(int groupCourseId, string courseName, string groupName)
+        public RemoveGroupCourseViewModel(int groupCourseId, string courseName, string groupName)
         {
             GroupCourseId = groupCourseId;
             CourseName = courseName;

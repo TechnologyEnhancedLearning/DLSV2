@@ -6,10 +6,10 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
 
-    public class GroupCourseRemoveViewModelTests
+    public class RemoveGroupCourseViewModelTests
     {
         [Test]
-        public void GroupCourseRemoveViewModel_Constructor_CorrectlySetsProperties()
+        public void RemoveGroupCourseViewModel_Constructor_CorrectlySetsProperties()
         {
             // Given
             var courseId = 1;
@@ -17,7 +17,7 @@
             var groupName = "Test Group";
 
             // When
-            var result = new GroupCourseRemoveViewModel(courseId, courseName, groupName);
+            var result = new RemoveGroupCourseViewModel(courseId, courseName, groupName);
 
             // Then
             result.GroupCourseId.Should().Be(1);
@@ -26,10 +26,10 @@
         }
 
         [Test]
-        public void GroupCourseRemoveViewModel_Validate_returns_error_when_confirm_is_false()
+        public void RemoveGroupCourseViewModel_Validate_returns_error_when_confirm_is_false()
         {
             // Given
-            var model = new GroupCourseRemoveViewModel();
+            var model = new RemoveGroupCourseViewModel();
 
             // When
             var result = model.Validate(new ValidationContext(model)).ToList();
@@ -40,10 +40,10 @@
         }
 
         [Test]
-        public void GroupCourseRemoveViewModel_Validate_does_not_return_error_when_confirm_is_true()
+        public void RemoveGroupCourseViewModel_Validate_does_not_return_error_when_confirm_is_true()
         {
             // Given
-            var model = new GroupCourseRemoveViewModel
+            var model = new RemoveGroupCourseViewModel
             {
                 Confirm = true,
             };

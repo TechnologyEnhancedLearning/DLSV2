@@ -108,7 +108,7 @@
 
         [HttpGet]
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
+        public IActionResult RemoveGroupDelegates(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -122,14 +122,14 @@
 
             var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
-            var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
+            var model = new RemoveGroupDelegatesViewModel(delegateUser, groupName, groupId, progressId);
 
             return View(model);
         }
 
         [HttpPost]
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
+        public IActionResult RemoveGroupDelegates(RemoveGroupDelegatesViewModel model, int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -144,7 +144,7 @@
             if (!model.ConfirmRemovalFromGroup)
             {
                 ModelState.AddModelError(
-                    nameof(GroupDelegatesRemoveViewModel.ConfirmRemovalFromGroup),
+                    nameof(RemoveGroupDelegatesViewModel.ConfirmRemovalFromGroup),
                     "You must confirm before removing this user from the group"
                 );
                 return View(model);
@@ -178,13 +178,13 @@
         [Route("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
-        public IActionResult GroupCourseRemove(int groupId, int groupCustomisationId)
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
             var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
 
-            var model = new GroupCourseRemoveViewModel(
+            var model = new RemoveGroupCourseViewModel(
                 groupCourse!.GroupCustomisationId,
                 groupCourse.CourseName,
                 groupName!
@@ -196,7 +196,7 @@
         [HttpPost("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
-        public IActionResult GroupCourseRemove(int groupId, int groupCustomisationId, GroupCourseRemoveViewModel model)
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, RemoveGroupCourseViewModel model)
         {
             if (!ModelState.IsValid)
             {

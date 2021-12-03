@@ -28,7 +28,7 @@
                 FirstName = firstName,
                 LastName = lastName,
                 EmailAddress = emailAddress,
-                CandidateNumber = candidateNumber
+                CandidateNumber = candidateNumber,
             };
         }
 
@@ -72,7 +72,7 @@
                 ValidityMonths = validityMonths,
                 Active = active,
                 ApplicationArchivedDate = applicationArchivedDate,
-                InactivatedDate = inactivatedDate
+                InactivatedDate = inactivatedDate,
             };
         }
 
@@ -122,7 +122,7 @@
                 LinkedToFieldName = linkedToFieldName,
                 ShouldAddNewRegistrantsToGroup = shouldAddNewRegistrantsToGroup,
                 ChangesToRegistrationDetailsShouldChangeGroupMembership =
-                    changesToRegistrationDetailsShouldChangeGroupMembership
+                    changesToRegistrationDetailsShouldChangeGroupMembership,
             };
         }
 
@@ -136,7 +136,10 @@
             );
         }
 
-        public static async Task<IEnumerable<int>> GetGroupCustomisationIdsForGroup(this DbConnection connection, int groupId)
+        public static async Task<IEnumerable<int>> GetGroupCustomisationIdsForGroup(
+            this DbConnection connection,
+            int groupId
+        )
         {
             return await connection.QueryAsync<int>(
                 @"SELECT GroupCustomisationID

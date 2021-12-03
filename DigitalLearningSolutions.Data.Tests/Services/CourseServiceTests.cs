@@ -633,7 +633,8 @@
                 .Build();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(groupId, centreId)).Returns(new List<GroupCourse>());
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(groupId, centreId))
+                .Returns(new List<GroupCourse>());
 
             // When
             var result = courseService.GetEligibleCoursesToAddToGroup(centreId, categoryId, groupId);

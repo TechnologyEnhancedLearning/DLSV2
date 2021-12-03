@@ -49,7 +49,7 @@
                 LinkedToField = 4,
                 LinkedToFieldName = "Job group",
                 ShouldAddNewRegistrantsToGroup = true,
-                ChangesToRegistrationDetailsShouldChangeGroupMembership = true
+                ChangesToRegistrationDetailsShouldChangeGroupMembership = true,
             };
 
             // When
@@ -155,7 +155,12 @@
                 const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
@@ -182,7 +187,12 @@
                 const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
@@ -210,7 +220,12 @@
                 AddProgressRecordForGroupWithSharedCourse();
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(8, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    8,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(285172);
 
                 // Then
@@ -267,7 +282,7 @@
                     LinkedToField = 0,
                     SyncFieldChanges = false,
                     AddNewRegistrants = false,
-                    PopulateExisting = false
+                    PopulateExisting = false,
                 };
 
                 // When
@@ -314,7 +329,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -347,7 +363,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -594,7 +611,8 @@
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     centerId,
-                    newDescription);
+                    newDescription
+                );
 
                 // Then
                 var result = GetGroupDescriptionById(groupId);
@@ -604,7 +622,7 @@
             {
                 transaction.Dispose();
             }
-        }        
+        }
 
         [Test]
         public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
@@ -621,7 +639,8 @@
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     incorrectCentreId,
-                    newDescription);
+                    newDescription
+                );
 
                 //Then
                 var result = GetGroupDescriptionById(groupId);
@@ -675,7 +694,8 @@
                 groupsDataService.UpdateGroupName(
                     groupId,
                     centerId,
-                    newGroupName);
+                    newGroupName
+                );
 
                 // Then
                 var result = GetGroupNameById(groupId);
@@ -702,7 +722,8 @@
                 groupsDataService.UpdateGroupName(
                     groupId,
                     incorrectCentreId,
-                    "Test group name");
+                    "Test group name"
+                );
 
                 //Then
                 var result = GetGroupNameById(groupId);

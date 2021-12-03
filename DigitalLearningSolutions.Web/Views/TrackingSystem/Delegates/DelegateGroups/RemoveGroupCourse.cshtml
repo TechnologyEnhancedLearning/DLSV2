@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration;
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
-@model GroupCourseRemoveViewModel
+@model RemoveGroupCourseViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -40,7 +40,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <form class="nhsuk-u-margin-bottom-3" method="post"
-          asp-action="GroupCourseRemove"
+          asp-action="RemoveGroupCourse"
           asp-route-groupCustomisationid="@Model.GroupCourseId">
 
       <input type="hidden" asp-for="GroupCourseId" />
