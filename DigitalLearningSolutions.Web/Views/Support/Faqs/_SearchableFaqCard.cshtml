@@ -2,10 +2,9 @@
 @model SearchableFaqViewModel
 
 @{
-  var viewFagRouteData = new Dictionary<string, string?>
-  {
+  var viewFagRouteData = new Dictionary<string, string?> {
     { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
-    { "faqId", Model.Faq.FaqId.ToString() }
+    { "faqId", Model.Faq.FaqId.ToString() },
   };
 }
 

@@ -16,14 +16,39 @@
             FaqTestHelper.GetDefaultFaq(aHtml: "helpful documents"),
             FaqTestHelper.GetDefaultFaq(2, weighting: 65, aHtml: "word documents", qText: "doc help"),
             FaqTestHelper.GetDefaultFaq(3, weighting: 75, aHtml: "excel documents", qText: "spreadsheets"),
-            FaqTestHelper.GetDefaultFaq(4, weighting: 67, aHtml: "document creator updates", qText: "how to update software"),
-            FaqTestHelper.GetDefaultFaq(5, weighting: 85, aHtml: "advanced word document processing", qText: "advanced doc help"),
-            FaqTestHelper.GetDefaultFaq(6, weighting: 85, aHtml: "first time user instructions document", qText: "read me first"),
+            FaqTestHelper.GetDefaultFaq(
+                4,
+                weighting: 67,
+                aHtml: "document creator updates",
+                qText: "how to update software"
+            ),
+            FaqTestHelper.GetDefaultFaq(
+                5,
+                weighting: 85,
+                aHtml: "advanced word document processing",
+                qText: "advanced doc help"
+            ),
+            FaqTestHelper.GetDefaultFaq(
+                6,
+                weighting: 85,
+                aHtml: "first time user instructions document",
+                qText: "read me first"
+            ),
             FaqTestHelper.GetDefaultFaq(7, weighting: 95, aHtml: "more help documents", qText: "general help"),
             FaqTestHelper.GetDefaultFaq(8, weighting: 70, aHtml: "tips and tricks documents", qText: "cheatsheet"),
-            FaqTestHelper.GetDefaultFaq(9, weighting: 62, aHtml: "presentations instructions document", qText: "help with slides"),
+            FaqTestHelper.GetDefaultFaq(
+                9,
+                weighting: 62,
+                aHtml: "presentations instructions document",
+                qText: "help with slides"
+            ),
             FaqTestHelper.GetDefaultFaq(10, weighting: 73, aHtml: "printing documents", qText: "printer help"),
-            FaqTestHelper.GetDefaultFaq(11, weighting: 73, aHtml: "dual monitors setup documentation", qText: "monitor setup"),
+            FaqTestHelper.GetDefaultFaq(
+                11,
+                weighting: 73,
+                aHtml: "dual monitors setup documentation",
+                qText: "monitor setup"
+            ),
         };
 
         [Test]
@@ -79,7 +104,7 @@
         {
             // Given
             var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f)).ToList();
-            var expectedFaqIds = new List<int>{ 1, 2, 5, 7, 9, 10 };
+            var expectedFaqIds = new List<int> { 1, 2, 5, 7, 9, 10 };
 
             // When
             var result = new FaqsViewModel(
@@ -105,8 +130,14 @@
         {
             // Given
             var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f)).ToList();
-            var expectedFirstFaq = new SearchableFaqViewModel(DlsSubApplication.TrackingSystem, faqViewModels.ElementAt(4));
-            var expectedSecondFaq = new SearchableFaqViewModel(DlsSubApplication.TrackingSystem, faqViewModels.ElementAt(1));
+            var expectedFirstFaq = new SearchableFaqViewModel(
+                DlsSubApplication.TrackingSystem,
+                faqViewModels.ElementAt(4)
+            );
+            var expectedSecondFaq = new SearchableFaqViewModel(
+                DlsSubApplication.TrackingSystem,
+                faqViewModels.ElementAt(1)
+            );
 
             // When
             var result = new FaqsViewModel(

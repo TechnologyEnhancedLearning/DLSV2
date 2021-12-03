@@ -25,7 +25,7 @@
             "but", "by", "could", "do", "each", "either", "en", "for", "from", "has", "have", "how", "i", "if", "in",
             "is", "it", "its", "just", "of", "or", "so", "some", "such", "that", "the", "their", "these", "thing",
             "this", "to", "too", "very", "was", "we", "well", "what", "when", "where", "who", "will", "with", "you",
-            "your", "framework", "competency", "capability", "competence", "skill"
+            "your", "framework", "competency", "capability", "competence", "skill",
         };
 
         public static IEnumerable<T> SearchItemsUsingTokeniseScorer<T>(
@@ -35,7 +35,13 @@
             bool stripStopWords = false
         ) where T : BaseSearchableItem
         {
-            return SearchItems(items, searchString, matchCutOffScore, stripStopWords, ScorerCache.Get<PartialTokenSetScorer>());
+            return SearchItems(
+                items,
+                searchString,
+                matchCutOffScore,
+                stripStopWords,
+                ScorerCache.Get<PartialTokenSetScorer>()
+            );
         }
 
         public static IEnumerable<T> SearchItems<T>(
@@ -60,8 +66,9 @@
             query!.SearchableName = searchString;
 
             var ratioScorer = scorer ??
-                (stripStopWords ? ScorerCache.Get<DefaultRatioScorer>() :
-                    ScorerCache.Get<PartialRatioScorer>());
+                              (stripStopWords
+                                  ? ScorerCache.Get<DefaultRatioScorer>()
+                                  : ScorerCache.Get<PartialRatioScorer>());
 
             var results = Process.ExtractAll(
                 (T)query,

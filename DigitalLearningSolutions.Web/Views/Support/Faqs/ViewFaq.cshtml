@@ -4,8 +4,8 @@
 @model SearchableFaqViewModel
 
 @{
-    ViewData["Title"] = $"FAQ - {@Model.Faq.Qtext}";
-    var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
+  ViewData["Title"] = $"FAQ - {Model.Faq.Qtext}";
+  var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
 }
 
 @section NavBreadcrumbs {

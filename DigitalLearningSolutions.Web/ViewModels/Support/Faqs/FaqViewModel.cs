@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Support.Faqs
 {
-    using DigitalLearningSolutions.Data.Models;
     using System;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;
 
@@ -29,9 +29,11 @@
         public string Qtext { get; set; }
         public int TargetGroup { get; set; }
         public int Weighting { get; set; }
+
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{Qtext} {StringHelper.ReplaceNoneAlphaNumericSpaceChars(Ahtml, " ")}";
+            get => SearchableNameOverrideForFuzzySharp ??
+                   $"{Qtext} {StringHelper.ReplaceNoneAlphaNumericSpaceChars(Ahtml, " ")}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }

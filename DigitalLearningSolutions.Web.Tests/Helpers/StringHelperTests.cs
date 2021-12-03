@@ -1,6 +1,4 @@
-﻿
-
-namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;

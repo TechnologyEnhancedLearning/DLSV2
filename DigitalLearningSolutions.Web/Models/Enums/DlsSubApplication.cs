@@ -61,12 +61,13 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             false
         );
 
+        public readonly bool DisplayHelpMenuItem;
+        public readonly int? FaqTargetGroupId;
+
         public readonly string HeaderExtension;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
         public readonly string? UrlSegment;
-        public readonly bool DisplayHelpMenuItem;
-        public readonly int? FaqTargetGroupId;
 
         private DlsSubApplication(
             int id,

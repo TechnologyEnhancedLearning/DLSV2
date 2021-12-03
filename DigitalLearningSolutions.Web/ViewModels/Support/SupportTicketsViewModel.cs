@@ -15,13 +15,12 @@
             SupportSideNavViewModel = new SupportSideNavViewModel(currentSystemBaseUrl);
         }
 
+        public string IframeUrl => $"{SupportSideNavViewModel.SupportTicketsUrl}?nonav=true";
+
         public SupportPage CurrentPage { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 
         public SupportSideNavViewModel SupportSideNavViewModel { get; set; }
-
-        public string IframeUrl => $"{SupportSideNavViewModel.SupportTicketsUrl}?nonav=true";
-
     }
 }

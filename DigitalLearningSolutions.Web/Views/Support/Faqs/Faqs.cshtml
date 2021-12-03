@@ -23,25 +23,20 @@
     <input type="hidden" id="select-sort-by" value="@Model.SortBy" data-sort-by-multiple="true" />
     <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
 
-    @if (Model.NoDataFound)
-    {
+    @if (Model.NoDataFound) {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No FAQs found.</b>
       </p>
-    }
-    else
-    {
+    } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var faq in Model.Faqs)
-        {
+        @foreach (var faq in Model.Faqs) {
           <partial name="_SearchableFaqCard" model="faq" />
         }
       </div>
     }
-    @if (Model.TotalPages > 1)
-    {
+    @if (Model.TotalPages > 1) {
       <partial name="SearchablePage/_Pagination" model="Model" />
     }
 

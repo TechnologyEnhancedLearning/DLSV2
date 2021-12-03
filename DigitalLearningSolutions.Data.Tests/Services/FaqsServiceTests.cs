@@ -29,7 +29,8 @@
             // Given
             const int expectedFaqId = 1;
             const int expectedTargetGroup = 0;
-            var expectedFaq = Builder<Faq>.CreateNew().With(f => f.Published = true).And(f => f.TargetGroup = 0).Build();
+            var expectedFaq = Builder<Faq>.CreateNew().With(f => f.Published = true).And(f => f.TargetGroup = 0)
+                .Build();
 
             A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(expectedFaqId, expectedTargetGroup))
                 .Returns(expectedFaq);
@@ -72,7 +73,8 @@
         {
             // Given
             const int expectedTargetGroup = 3;
-            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All().With(f => f.Published = true).And(f => f.TargetGroup = 3).Build();
+            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All().With(f => f.Published = true)
+                .And(f => f.TargetGroup = 3).Build();
 
             A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(expectedTargetGroup))
                 .Returns(expectedFaqs);

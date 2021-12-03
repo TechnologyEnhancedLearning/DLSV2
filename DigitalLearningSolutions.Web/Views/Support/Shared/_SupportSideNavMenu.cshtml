@@ -14,14 +14,11 @@
                      link-text="Support"
                      is-current-page="@(Model.CurrentPage == SupportPage.Support)" />
 
-  @if (Model.CurrentPage == SupportPage.HelpDocumentation)
-  {
+  @if (Model.CurrentPage == SupportPage.HelpDocumentation) {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
       <span class="nhsuk-contents-list__current">Help documentation</span>
     </li>
-  }
-  else
-  {
+  } else {
     <li class="side-nav__item">
       <a class="side-nav__link" href="@Model.SupportSideNavViewModel.HelpUrl" target="_blank">
         Help documentation
@@ -47,14 +44,11 @@
                      link-text="Support tickets"
                      is-current-page="@(Model.CurrentPage == SupportPage.SupportTickets)" />
 
-  @if (Model.CurrentPage == SupportPage.ChangeRequests)
-  {
+  @if (Model.CurrentPage == SupportPage.ChangeRequests) {
     <li class="side-nav__item side-nav__item--selected" aria-current="page">
       <span class="nhsuk-contents-list__current">Change requests</span>
     </li>
-  }
-  else
-  {
+  } else {
     <li class="side-nav__item">
       <a class="side-nav__link" href="@Model.SupportSideNavViewModel.ChangeRequestsUrl" target="_blank" rel="noreferrer">
         Change requests

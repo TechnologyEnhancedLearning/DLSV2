@@ -1,12 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Linq;
-    using ClosedXML;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
-    using FakeItEasy;
     using FluentAssertions;
     using NUnit.Framework;
     using SelfAssessmentHelper = DigitalLearningSolutions.Data.Tests.TestHelpers.SelfAssessmentHelper;
@@ -25,26 +23,26 @@
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "b: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
-                CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
+                CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course"),
             };
             currentCoursesWithSelfAssessment = new CurrentLearningItem[]
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(71, "d: course"),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(72, "C: Course"),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(74, "a: self assessment"),
-                CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course")
+                CurrentCourseHelper.CreateDefaultCurrentCourse(73, "A: Course"),
             };
             completedCourses = new[]
             {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(71, "First course"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(72, "Course 20: the best course"),
-                CompletedCourseHelper.CreateDefaultCompletedCourse(73, "Last course 30105 and a lot of other text")
+                CompletedCourseHelper.CreateDefaultCompletedCourse(73, "Last course 30105 and a lot of other text"),
             };
             availableCourses = new[]
             {
                 AvailableCourseHelper.CreateDefaultAvailableCourse(71, "One great course"),
                 AvailableCourseHelper.CreateDefaultAvailableCourse(72, "The course v1"),
-                AvailableCourseHelper.CreateDefaultAvailableCourse(73, "Course 1: some more title text")
+                AvailableCourseHelper.CreateDefaultAvailableCourse(73, "Course 1: some more title text"),
             };
         }
 

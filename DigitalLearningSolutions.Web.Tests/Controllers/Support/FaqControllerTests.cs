@@ -20,16 +20,16 @@
 
     public class FaqControllerTests
     {
-        private IFeatureManager featureManager = null!;
-        private IConfiguration configuration = null!;
-        private IFaqsService faqsService = null!;
-
         private readonly IEnumerable<Faq> Faqs = new List<Faq>
         {
             FaqTestHelper.GetDefaultFaq(),
             FaqTestHelper.GetDefaultFaq(2, weighting: 95, aHtml: "word documents", qText: "doc help"),
             FaqTestHelper.GetDefaultFaq(3, weighting: 75, aHtml: "excel documents", qText: "spreadsheets"),
         };
+
+        private IConfiguration configuration = null!;
+        private IFaqsService faqsService = null!;
+        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
@@ -171,7 +171,6 @@
                 .Model.Should().BeOfType<SearchableFaqViewModel>()
                 .Subject.Faq.FaqId.Should().Be(2);
         }
-
 
         [Test]
         public async Task Not_Found_page_should_be_shown_for_invalid_faq_item_view_request()
