@@ -208,6 +208,33 @@
             }
         }
 
+        [Test]
+        public void UpdateLearningLogItemLastAccessedDate_should_set_date_correctly()
+        {
+            // Given
+            const int learningLogItemId = 2;
+            var testDate = new DateTime(2021, 11, 1);
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                service.UpdateLearningLogItemLastAccessedDate(learningLogItemId, testDate);
+                var result = learningLogItemsTestHelper.SelectLearningLogItemById(learningLogItemId);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    result.Should().NotBeNull();
+                    result!.LastAccessedDate.Should().Be(testDate);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
         private void AssertLearningLogItemHasCorrectValuesForLearningHubResource(
             LearningLogItem item,
             int delegateId,

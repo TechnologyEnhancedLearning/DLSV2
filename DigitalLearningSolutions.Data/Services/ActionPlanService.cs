@@ -16,6 +16,8 @@
         void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId);
 
         Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId);
+
+        Task<string?> AccessLearningResource(int learningLogItemId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -111,14 +113,42 @@
 
             var incompleteResourceIds = incompleteLearningLogItems.Select(i => i.LearningHubResourceReferenceId!.Value);
             var bulkResponse = await learningHubApiClient.GetBulkResourcesByReferenceIds(incompleteResourceIds);
-            var matchedLearningResources = bulkResponse.ResourceReferences;
-            var incompleteActionPlanItems = matchedLearningResources.Select(
+            var incompleteActionPlanItems = bulkResponse.ResourceReferences.Select(
                 resource => new ActionPlanItem(
                     incompleteLearningLogItems.Single(i => i.LearningHubResourceReferenceId!.Value == resource.RefId),
                     resource
                 )
             );
             return incompleteActionPlanItems;
+        }
+
+        public async Task<string?> AccessLearningResource(int learningLogItemId, int delegateId)
+        {
+            if (!config.IsSignpostingUsed())
+            {
+                return null;
+            }
+
+            var actionPlanItem = learningLogItemsDataService.GetLearningLogItems(delegateId)
+                .SingleOrDefault(
+                    i => i.LearningLogItemId == learningLogItemId
+                         && i.LearningHubResourceReferenceId != null
+                         && i.ArchivedDate == null
+                );
+
+            if (actionPlanItem == null)
+            {
+                return null;
+            }
+
+            learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, clockService.UtcNow);
+
+            var resource =
+                await learningHubApiClient.GetResourceByReferenceId(
+                    actionPlanItem.LearningHubResourceReferenceId!.Value
+                );
+
+            return resource.Link;
         }
     }
 }

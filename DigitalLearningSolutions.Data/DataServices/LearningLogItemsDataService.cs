@@ -21,6 +21,8 @@
         void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId);
 
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
+
+        void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
     }
 
     public class LearningLogItemsDataService : ILearningLogItemsDataService
@@ -60,9 +62,9 @@
                         clr.LHResourceReferenceID AS LearningHubResourceReferenceID
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-					INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
                     WHERE LoggedById = @delegateId
-					AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
+                    AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
                 new { delegateId }
             );
         }
@@ -140,6 +142,16 @@
                     VALUES
                     (@learningLogId, @competencyId, @associatedDate)",
                 new { learningLogId, competencyId, associatedDate }
+            );
+        }
+
+        public void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate)
+        {
+            connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET LastAccessedDate = @lastAccessedDate
+                    WHERE LearningLogItemID = @id",
+                new { id, lastAccessedDate }
             );
         }
     }

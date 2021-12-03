@@ -23,7 +23,7 @@
             var currentCourses = new[]
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(),
-                CurrentCourseHelper.CreateDefaultCurrentCourse()
+                CurrentCourseHelper.CreateDefaultCurrentCourse(),
             };
             var selfAssessments = new[]
             {
@@ -32,7 +32,6 @@
             };
             var actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
 
-            
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
@@ -61,10 +60,13 @@
         public void Trying_to_edit_complete_by_date_when_not_self_enrolled_should_return_403()
         {
             // Given
-            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(enrollmentMethodId: 0, completeByDate: new DateTime(2020, 1, 1));
+            var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(
+                enrollmentMethodId: 0,
+                completeByDate: new DateTime(2020, 1, 1)
+            );
             var currentCourses = new[]
             {
-                currentCourse
+                currentCourse,
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -85,7 +87,7 @@
             // Given
             var currentCourses = new[]
             {
-                CurrentCourseHelper.CreateDefaultCurrentCourse(2)
+                CurrentCourseHelper.CreateDefaultCurrentCourse(2),
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -177,7 +179,8 @@
             controller.RemoveCurrentCourse(1);
 
             // Then
-            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, CandidateId, RemovalMethod.RemovedByDelegate)).MustHaveHappened();
+            A.CallTo(() => courseDataService.RemoveCurrentCourse(1, CandidateId, RemovalMethod.RemovedByDelegate))
+                .MustHaveHappened();
         }
 
         [Test]
@@ -188,7 +191,7 @@
             var currentCourse = CurrentCourseHelper.CreateDefaultCurrentCourse(customisationId);
             var currentCourses = new[]
             {
-                currentCourse
+                currentCourse,
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -207,7 +210,7 @@
             // Given
             var currentCourses = new[]
             {
-                CurrentCourseHelper.CreateDefaultCurrentCourse(2)
+                CurrentCourseHelper.CreateDefaultCurrentCourse(2),
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -229,7 +232,7 @@
             const int progressId = 1;
             var currentCourses = new[]
             {
-                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId, locked: true)
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId, locked: true),
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -246,7 +249,7 @@
             // Given
             var currentCourses = new[]
             {
-                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: 2, locked: true)
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: 2, locked: true),
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -268,7 +271,7 @@
             const int progressId = 2;
             var currentCourses = new[]
             {
-                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId)
+                CurrentCourseHelper.CreateDefaultCurrentCourse(progressId: progressId),
             };
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
@@ -295,6 +298,39 @@
 
             // Then
             currentViewModel.BannerText.Should().Be(bannerText);
+        }
+
+        [Test]
+        public async Task LaunchLearningResource_should_redirect_to_not_found_if_link_cannot_be_retrieved()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11)).Returns((string?)null);
+
+            // When
+            var result = await controller.LaunchLearningResource(learningLogItemId);
+
+            // Then
+            result.Should().BeNotFoundResult();
+            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task LaunchLearningResource_should_redirect_to_returned_link()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            const string resourceLink = "www.resource.com";
+            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11)).Returns(resourceLink);
+
+            // When
+            var result = await controller.LaunchLearningResource(learningLogItemId);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(resourceLink);
+            A.CallTo(() => actionPlanService.AccessLearningResource(learningLogItemId, 11))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

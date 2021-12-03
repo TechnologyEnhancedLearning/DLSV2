@@ -124,7 +124,11 @@
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseDataService.RemoveCurrentCourse(progressId, User.GetCandidateIdKnownNotNull(), RemovalMethod.RemovedByDelegate);
+            courseDataService.RemoveCurrentCourse(
+                progressId,
+                User.GetCandidateIdKnownNotNull(),
+                RemovalMethod.RemovedByDelegate
+            );
             return RedirectToAction("Current");
         }
 
@@ -144,6 +148,21 @@
 
             notificationService.SendUnlockRequest(progressId);
             return View("Current/UnlockCurrentCourse");
+        }
+
+        [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
+        public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
+        {
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var learningResourceLink = await actionPlanService.AccessLearningResource(learningLogItemId, delegateId);
+
+            if (string.IsNullOrWhiteSpace(learningResourceLink))
+            {
+                return NotFound();
+            }
+
+            // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
+            return Redirect(learningResourceLink);
         }
     }
 }
