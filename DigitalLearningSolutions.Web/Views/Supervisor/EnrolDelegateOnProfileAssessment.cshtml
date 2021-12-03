@@ -37,7 +37,10 @@
     </p>
   </nav>
 }
-
+@if (errorHasOccurred)
+{
+  <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SessionEnrolOnRoleProfile.SelfAssessmentID) })" />
+}
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
