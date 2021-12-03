@@ -27,7 +27,7 @@
             var groupId = int.Parse(context.RouteData.Values["groupId"].ToString()!);
             var groupCustomisationId = int.Parse(context.RouteData.Values["groupCustomisationId"].ToString()!);
 
-            var groupCourse = groupService.GetActiveGroupCourse(groupCustomisationId, groupId, centreId);
+            var groupCourse = groupService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
 
             if (groupCourse == null)
             {

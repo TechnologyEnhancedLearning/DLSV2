@@ -183,10 +183,10 @@
             const int groupId = 1;
             const int centreId = 1;
             var groupCourses = Builder<GroupCourse>.CreateListOfSize(10).Build();
-            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId)).Returns(groupCourses);
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(groupId, centreId)).Returns(groupCourses);
 
             // When
-            var result = groupsService.GetGroupCourses(groupId, centreId).ToList();
+            var result = groupsService.GetUsableGroupCoursesForCentre(groupId, centreId).ToList();
 
             // Then
             result.Should().HaveCount(10);
@@ -309,7 +309,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1, 1)).Returns(
                 new[]
                 {
                     correctCategoryCourse,
@@ -334,7 +334,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1, 1)).Returns(
                 new[]
                 {
                     oneCategoryCourse,
@@ -448,7 +448,7 @@
         )
         {
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            A.CallTo(() => groupsDataService.GetGroupCourses(A<int>._, A<int>._)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._, A<int>._)).Returns(
                 new List<GroupCourse> { groupCourse }
             );
             var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };

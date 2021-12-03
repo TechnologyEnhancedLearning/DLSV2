@@ -13,9 +13,9 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
+        IEnumerable<GroupCourse> GetGroupCoursesForCentre(int groupId, int centreId);
 
-        GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId);
+        GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -72,6 +72,32 @@
                 AND gc.InactivatedDate IS NULL
                 AND ap.ArchivedDate IS NULL
                 AND c.Active = 1";
+
+        private const string GroupCourseSql = @"SELECT
+                        GroupCustomisationID,
+                        GroupID,
+                        gc.CustomisationID,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        CustomisationName,
+                        Mandatory AS IsMandatory,
+                        IsAssessed,
+                        AddedDate AS AddedToGroup,
+                        c.CurrentVersion,
+                        gc.SupervisorAdminID,
+                        au.Forename AS SupervisorFirstName,
+                        au.Surname AS SupervisorLastName,
+                        gc.CompleteWithinMonths,
+                        ValidityMonths,
+                        c.Active,
+                        ap.ArchivedDate AS ApplicationArchivedDate,
+                        gc.InactivatedDate
+                    FROM GroupCustomisations AS gc
+                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
+                    WHERE gc.GroupID = @groupId
+                        AND c.CentreId = @centreId";
 
         private readonly IDbConnection connection;
 
@@ -131,72 +157,18 @@
             );
         }
 
-        public IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId)
+        public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int groupId, int centreId)
         {
             return connection.Query<GroupCourse>(
-                @"SELECT
-                        GroupCustomisationID,
-                        GroupID,
-                        gc.CustomisationID,
-                        ap.ApplicationName,
-                        ap.CourseCategoryID,
-                        CustomisationName,
-                        Mandatory AS IsMandatory,
-                        IsAssessed,
-                        AddedDate AS AddedToGroup,
-                        c.CurrentVersion,
-                        gc.SupervisorAdminID,
-                        au.Forename AS SupervisorFirstName,
-                        au.Surname AS SupervisorLastName,
-                        gc.CompleteWithinMonths,
-                        ValidityMonths,
-                        c.Active,
-                        ap.ArchivedDate AS ApplicationArchivedDate,
-                        gc.InactivatedDate
-                    FROM GroupCustomisations AS gc
-                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
-                    WHERE gc.GroupID = @groupId
-                        AND ca.CentreId = @centreId
-                        AND gc.InactivatedDate IS NULL
-                        AND ap.ArchivedDate IS NULL
-                        AND c.Active = 1",
+                GroupCourseSql,
                 new { groupId, centreId }
             );
         }
 
-        public GroupCourse? GetGroupCourse(int groupCustomisationId, int groupId, int centreId)
+        public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
         {
             return connection.Query<GroupCourse>(
-                @"SELECT
-                        GroupCustomisationID,
-                        GroupID,
-                        gc.CustomisationID,
-                        ap.ApplicationName,
-                        ap.CourseCategoryID,
-                        CustomisationName,
-                        Mandatory AS IsMandatory,
-                        IsAssessed,
-                        AddedDate AS AddedToGroup,
-                        c.CurrentVersion,
-                        gc.SupervisorAdminID,
-                        au.Forename AS SupervisorFirstName,
-                        au.Surname AS SupervisorLastName,
-                        gc.CompleteWithinMonths,
-                        ValidityMonths,
-                        c.Active,
-                        ap.ArchivedDate AS ApplicationArchivedDate,
-                        gc.InactivatedDate
-                    FROM GroupCustomisations AS gc
-                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
-                    WHERE gc.GroupCustomisationID = @groupCustomisationId
-                        AND gc.GroupID = @groupId
-                        AND ca.CentreId = @centreId",
+                @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
                 new { groupCustomisationId, groupId, centreId }
             ).FirstOrDefault();
         }

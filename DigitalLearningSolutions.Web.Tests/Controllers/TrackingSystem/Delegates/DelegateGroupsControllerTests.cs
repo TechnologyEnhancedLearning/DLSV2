@@ -113,7 +113,7 @@
         {
             // Given
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupCourses(1, 2)).Returns(new List<GroupCourse>());
+            A.CallTo(() => groupsService.GetUsableGroupCoursesForCentre(1, 2)).Returns(new List<GroupCourse>());
 
             // When
             var result = delegateGroupsController.GroupCourses(1);
@@ -348,7 +348,7 @@
             // Given
             A.CallTo(() => groupsService.GetGroupCentreId(A<int>._))
                 .Returns(delegateGroupsController.User.GetCentreId());
-            A.CallTo(() => groupsService.GetGroupCourses(A<int>._, A<int>._))
+            A.CallTo(() => groupsService.GetUsableGroupCoursesForCentre(A<int>._, A<int>._))
                 .Returns(new List<GroupCourse> { new GroupCourse() });
             const int groupId = 1;
 

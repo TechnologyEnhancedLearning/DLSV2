@@ -89,7 +89,7 @@
             var expectedFirstGroupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
 
             // When
-            var result = groupsDataService.GetGroupCourses(8, 101).ToList();
+            var result = groupsDataService.GetGroupCoursesForCentre(8, 101).ToList();
 
             // Then
             using (new AssertionScope())
@@ -440,7 +440,7 @@
             );
 
             // When
-            var result = groupsDataService.GetGroupCourse(25, 103, 101);
+            var result = groupsDataService.GetGroupCourseForCentre(25, 103, 101);
 
             // Then
             using (new AssertionScope())

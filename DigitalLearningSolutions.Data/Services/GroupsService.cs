@@ -36,8 +36,6 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
-
         string? GetGroupName(int groupId, int centreId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
@@ -56,7 +54,9 @@
 
         int? GetGroupCentreId(int groupId);
 
-        GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId);
+        IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId);
+
+        GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId);
 
         IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
 
@@ -158,7 +158,7 @@
             int? addedByAdminId = null
         )
         {
-            var groupCourses = groupsDataService.GetGroupCourses(groupId, delegateAccountWithOldDetails.CentreId);
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
 
             foreach (var groupCourse in groupCourses)
             {
@@ -263,9 +263,22 @@
             return groupsDataService.GetGroupDelegates(groupId);
         }
 
-        public IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId)
+        public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCourses(groupId, centreId);
+            return groupsDataService.GetGroupCoursesForCentre(groupId, centreId)
+                .Where(gc => gc.IsUsable);
+        }
+
+        public GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
+        {
+            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, groupId, centreId);
+
+            if (!groupCourse?.IsUsable ?? true)
+            {
+                return null;
+            }
+
+            return groupCourse;
         }
 
         public string? GetGroupName(int groupId, int centreId)
@@ -326,19 +339,6 @@
             transaction.Complete();
         }
 
-        public GroupCourse? GetActiveGroupCourse(int groupCustomisationId, int groupId, int centreId)
-        {
-            var groupCourse = groupsDataService.GetGroupCourse(groupCustomisationId, groupId, centreId);
-
-            if (groupCourse == null || !groupCourse.Active || groupCourse.InactivatedDate != null ||
-                groupCourse.ApplicationArchivedDate != null)
-            {
-                return null;
-            }
-
-            return groupCourse;
-        }
-
         public int? GetGroupCentreId(int groupId)
         {
             return groupsDataService.GetGroupCentreId(groupId);
@@ -346,7 +346,7 @@
 
         public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
         {
-            return groupsDataService.GetGroupCourses(groupId, centreId)
+            return GetUsableGroupCoursesForCentre(groupId, centreId)
                 .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
         }
 

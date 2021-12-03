@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -25,10 +24,10 @@
             groupsService = A.Fake<IGroupsService>();
 
             var delegateGroupsController = new DelegateGroupsController(
-                A.Fake<IGroupsDataService>(),
                 A.Fake<ICentreCustomPromptsService>(),
-                A.Fake<IClockService>(),
-                A.Fake<IGroupsService>()
+                A.Fake<IGroupsService>(),
+                A.Fake<IUserService>(),
+                A.Fake<ICourseService>()
             ).WithDefaultContext().WithMockUser(true);
             context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;
@@ -39,7 +38,7 @@
         public void Returns_NotFound_if_groupCourse_not_in_users_centre()
         {
             // Given
-            A.CallTo(() => groupsService.GetActiveGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null);
+            A.CallTo(() => groupsService.GetUsableGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(null);
 
             // When
             new VerifyAdminUserCanAccessGroupCourse(groupsService).OnActionExecuting(context);
@@ -52,7 +51,7 @@
         public void Does_not_return_action_if_groupCourse_is_in_users_centre()
         {
             // Given
-            A.CallTo(() => groupsService.GetActiveGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
+            A.CallTo(() => groupsService.GetUsableGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
 
             // When
             new VerifyAdminUserCanAccessGroupCourse(groupsService).OnActionExecuting(context);

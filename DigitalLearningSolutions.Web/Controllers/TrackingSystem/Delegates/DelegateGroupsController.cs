@@ -181,8 +181,8 @@
         public IActionResult GroupCourseRemove(int groupId, int groupCustomisationId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
-            var groupCourse = groupsService.GetActiveGroupCourse(groupCustomisationId, groupId, centreId);
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+            var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
 
             var model = new GroupCourseRemoveViewModel(
                 groupCourse!.GroupCustomisationId,
@@ -217,7 +217,7 @@
         public IActionResult DeleteGroup(int groupId)
         {
             var delegates = groupsService.GetGroupDelegates(groupId);
-            var courses = groupsService.GetGroupCourses(groupId, User.GetCentreId());
+            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
 
             if (delegates.Any() || courses.Any())
             {
@@ -235,7 +235,7 @@
         {
             var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
-            var courseCount = groupsService.GetGroupCourses(groupId, User.GetCentreId()).Count();
+            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId()).Count();
 
             var model = new ConfirmDeleteGroupViewModel
             {

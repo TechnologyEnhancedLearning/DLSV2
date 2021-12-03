@@ -13,14 +13,14 @@
         public void GetActiveGroupCourse_returns_null_when_data_service_returns_null()
         {
             // Given
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(null);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(null);
 
             // When
-            var result = groupsService.GetActiveGroupCourse(25, 103, 15);
+            var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => groupsDataService.GetGroupCourse(25, 103, 15)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(25, 103, 15)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -30,14 +30,14 @@
             var groupCourse = Builder<GroupCourse>.CreateNew()
                 .With(g => g.Active = false)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
 
             // When
-            var result = groupsService.GetActiveGroupCourse(25, 103, 15);
+            var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => groupsDataService.GetGroupCourse(25, 103, 15)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(25, 103, 15)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -48,14 +48,14 @@
                 .With(g => g.Active = true)
                 .With(g => g.ApplicationArchivedDate = DateTime.Now)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
 
             // When
-            var result = groupsService.GetActiveGroupCourse(25, 103, 15);
+            var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => groupsDataService.GetGroupCourse(25, 103, 15)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(25, 103, 15)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -66,14 +66,14 @@
                 .With(g => g.Active = true)
                 .With(g => g.InactivatedDate = DateTime.Now)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(groupCourse);
 
             // When
-            var result = groupsService.GetActiveGroupCourse(25, 103, 15);
+            var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 15);
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => groupsDataService.GetGroupCourse(25, 103, 15)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(25, 103, 15)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -89,16 +89,16 @@
                 .With(g => g.InactivatedDate = null)
                 .With(g => g.ApplicationArchivedDate = null)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(A<int>._, A<int>._, A<int>._))
                 .Returns(expectedGroupCourse);
 
             // When
-            var result = groupsService.GetActiveGroupCourse(25, 103, 101);
+            var result = groupsService.GetUsableGroupCourseForCentre(25, 103, 101);
 
             // Then
             result.Should().NotBeNull()
                 .And.BeEquivalentTo(expectedGroupCourse);
-            A.CallTo(() => groupsDataService.GetGroupCourse(25, 103, 101)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(25, 103, 101)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
