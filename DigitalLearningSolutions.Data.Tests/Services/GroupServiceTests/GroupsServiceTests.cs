@@ -182,7 +182,8 @@
             // Given
             const int groupId = 1;
             const int centreId = 1;
-            var groupCourses = Builder<GroupCourse>.CreateListOfSize(10).Build();
+            var groupCourses = Builder<GroupCourse>.CreateListOfSize(10).All().With(g => g.Active = true)
+                .With(g => g.ApplicationArchivedDate = null).With(g => g.InactivatedDate = null).Build();
             A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(groupId, centreId)).Returns(groupCourses);
 
             // When

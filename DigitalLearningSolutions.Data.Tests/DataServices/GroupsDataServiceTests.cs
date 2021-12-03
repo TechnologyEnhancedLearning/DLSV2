@@ -82,7 +82,7 @@
         }
 
         [Test]
-        public void GetGroupCourses_returns_expected_courses()
+        public void GetGroupCoursesForCentre_returns_expected_courses()
         {
             // Given
             var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
@@ -94,7 +94,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(2);
+                result.Should().HaveCount(1);
                 result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupCourse);
             }
         }
@@ -442,7 +442,7 @@
         }
 
         [Test]
-        public void GetGroupCourse_returns_expected_course()
+        public void GetGroupCourseForCentre_returns_expected_course()
         {
             // Given
             var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);

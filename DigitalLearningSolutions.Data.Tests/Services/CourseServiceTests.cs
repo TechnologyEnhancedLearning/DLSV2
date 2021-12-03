@@ -654,7 +654,7 @@
                 .All()
                 .With(c => c.Active = true)
                 .Build();
-            var groupCourse = new GroupCourse { CustomisationId = 2 };
+            var groupCourse = new GroupCourse { CustomisationId = 2, Active = true };
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
             A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(groupId, centreId))
