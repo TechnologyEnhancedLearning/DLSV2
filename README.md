@@ -74,7 +74,7 @@ It can be useful to have a look at what's in the database, to test out and plan 
 ## Making changes to the database
 If you just want to make temporary changes to the database for testing (e.g. adding in some specific data to a table to test something) then you can do that in SQL Management Studio with the SQL scripts as described in the previous section. However if you want to make a permanent change to the database, for example to add a new table, then you need to use a migration.
 
-We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. Our migrations will live in DigitalLearningSolutions.Data.Migrations but we don't currently have any. The migrations will be applied by the RegisterMigrationRunner method in MigrationHelperMethods.cs. They should get applied when you run the app and when you run the data unit tests.
+We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. Our migrations live in DigitalLearningSolutions.Data.Migrations. The migrations are applied by the RegisterMigrationRunner method in MigrationHelperMethods.cs. They should get applied when you run the app and when you run the data unit tests.
 
 ### Add a new migration
 Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. The fluent migrator docs have a good example of what a migration should look like: https://fluentmigrator.github.io/.
@@ -94,6 +94,36 @@ If the migration has already been deployed and therefore has run on any other da
 * If you added the migration's assembly to the 'ScanIn' statement in MigrationHelperMethods.cs, remove it from that `ScanIn` statement
 * In Configure in Startup.cs call migrationRunner.MigrateDown(ID) where ID is the id of the migration before the one you want to reverse. Run the app once and then remove this change.
 * Delete the migration file.
+
+### Running migrations via CLI
+It’s possible to run / reverse migrations using the [dotnet-fm CLI](https://fluentmigrator.github.io/articles/runners/dotnet-fm.html).
+
+#### Installation
+
+Run `dotnet tool install -g --ignore-failed-sources FluentMigrator.DotNet.Cli`.
+
+(Including `--ignore-failed-sources` keeps the command from failing if it doesn’t manage to access some sources you have set up - e.g. private sources that require a login)
+Commands
+
+The docs have a good list of things that you can do, but I’ve given a few common commands here for convenience.
+
+#### Listing migrations
+
+`dotnet-fm list migrations -p "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;"`
+
+#### Migrating to a certain version
+
+`dotnet-fm migrate -p SqlServer2016 -a "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" <down/up> -t <TimestampOfTargetMigration`
+
+E.g. To migrate to `202111231427_IncreaseSelfassessmentSignOffRequestorStatementLength` from a later version, I ran:
+
+`dotnet-fm migrate -p SqlServer2016 -a "C:\work\hee\DLSV2\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" down -t 202111231708`
+
+#### Migrating to the latest version
+
+Just leave out the -t option from the script to migrate up to a certain version:
+
+`dotnet-fm migrate -p SqlServer2016 -a "<PathToRepoRoot>\DigitalLearningSolutions.Data.Migrations\bin\Debug\netcoreapp3.1\DigitalLearningSolutions.Data.Migrations.dll" -c "Data Source=localhost;Initial Catalog=mbdbx101;Integrated Security=True;" up`
 
 # Setting up the old code
 
