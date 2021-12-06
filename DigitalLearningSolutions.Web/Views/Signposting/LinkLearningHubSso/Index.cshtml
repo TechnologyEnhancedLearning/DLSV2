@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso
+@model LinkLearningHubViewModel
+
+@{
+    ViewData["Title"] = "Recommended learning resource - Account linked";
+    var actionLinkRouteData = new Dictionary<string, string> { { "resourceId", Model.ResourceLinkId?.ToString() } };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <h1 class="nhsuk-heading-xl">Account linked</h1>
+
+    <p>Your account has been linked with Learning Hub.</p>
+    <p>You will now be able to view the resources directly.</p>
+    @if (Model.ShowResourceLink) {
+      <p><vc:action-link asp-controller="Signposting" asp-action="ViewResource" asp-all-route-data="@actionLinkRouteData" link-text="Continue to resource" /></p>
+    }
+  </div>
+</div>

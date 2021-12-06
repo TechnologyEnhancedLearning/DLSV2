@@ -948,6 +948,21 @@
             result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
         }
 
+        [Test]
+        public void SetDelegateUserLearningHubAuthId_calls_expected_data_service()
+        {
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1;
+
+            // When
+            userService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId);
+
+            // Then
+            A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId))
+                .MustHaveHappenedOnceExactly();
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

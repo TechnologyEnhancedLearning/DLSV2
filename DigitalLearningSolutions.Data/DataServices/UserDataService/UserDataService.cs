@@ -92,6 +92,8 @@
         void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
         void DeactivateAdmin(int adminId);
         void ActivateDelegateUser(int delegateId);
+        int? GetDelegateUserLearningHubAuthId(int delegateId);
+        void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
     }
 
     public partial class UserDataService : IUserDataService

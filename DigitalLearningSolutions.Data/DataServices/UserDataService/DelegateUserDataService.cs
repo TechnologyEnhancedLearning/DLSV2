@@ -427,5 +427,25 @@
                 new { aliasId }
             );
         }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            ).Single();
+        }
+
+        public void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET LearningHubAuthId = @learningHubAuthId
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, learningHubAuthId }
+            );
+        }
     }
 }
