@@ -4,7 +4,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
-        private readonly IFilteredApiHelperService filteredApiHelperService;
+
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly INotificationService notificationService;
@@ -34,7 +33,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
-            IFilteredApiHelperService filteredApiHelperService,
             IActionPlanService actionPlanService
         )
         {
@@ -46,7 +44,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
             this.config = config;
-            this.filteredApiHelperService = filteredApiHelperService;
             this.actionPlanService = actionPlanService;
         }
 
@@ -54,11 +51,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         public IActionResult AccessDenied()
         {
             return View("~/Views/LearningSolutions/Error/AccessDenied.cshtml");
-        }
-
-        private string GetCandidateNumber()
-        {
-            return User.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber) ?? "";
         }
 
         private int GetCandidateId()

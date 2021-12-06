@@ -60,7 +60,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 frameworkNotificationService,
                 logger,
                 config,
-                filteredApiHelperService,
                 actionPlanService
             )
             {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.Common.Users;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
@@ -26,6 +27,8 @@
         void IncrementLaunchCount(int selfAssessmentId, int candidateId);
 
         void SetCompleteByDate(int selfAssessmentId, int candidateId, DateTime? completeByDate);
+
+        bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId);
 
         // Competencies
         IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId);
@@ -75,7 +78,6 @@
         );
 
         SupervisorComment? GetSupervisorComments(int candidateId, int resultId);
-
 
         IEnumerable<SelfAssessmentSupervisor> GetAllSupervisorsForSelfAssessmentId(
             int selfAssessmentId,
@@ -287,6 +289,13 @@
         public void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset)
         {
             selfAssessmentDataService.LogAssetLaunch(candidateId, selfAssessmentId, learningAsset);
+        }
+
+        public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)
+        {
+            var candidateAssessments = selfAssessmentDataService.GetCandidateAssessments(delegateId, selfAssessmentId);
+
+            return candidateAssessments.Any(ca => ca.CompletedDate == null && ca.RemovedDate == null);
         }
 
         public IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestion(
