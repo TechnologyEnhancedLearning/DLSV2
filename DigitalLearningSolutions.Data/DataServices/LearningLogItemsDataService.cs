@@ -195,7 +195,7 @@
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not setting current course complete by date as db update failed. " +
+                    "Not setting current course completed date as db update failed. " +
                     $"Learning log item id: {learningLogItemId}, completed date: {completedDate}"
                 );
             }
