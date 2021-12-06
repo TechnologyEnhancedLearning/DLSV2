@@ -29,8 +29,6 @@
 
         public void SetCompletionDate(int learningLogItemId, DateTime? completedDate);
 
-        public void SetCompletedDate(int learningLogItemId, DateTime? completedDate);
-
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
     }
 

@@ -8,7 +8,7 @@
     {
         public SetLearningLogItemCompletionDateFormData() { }
 
-        protected SetLearningLogItemCompletionDateFormData(SetLearningLogItemCompletionDateFormData formData)
+        public SetLearningLogItemCompletionDateFormData(SetLearningLogItemCompletionDateFormData formData)
         {
             Day = formData.Day;
             Month = formData.Month;
