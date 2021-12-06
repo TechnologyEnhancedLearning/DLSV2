@@ -1,13 +1,14 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
-@model CurrentCourseViewModel
+@model LearningResourceCardViewModel
 
-<div class="searchable-element nhsuk-panel @Model.DateStyle()" id="@Model.Id-course-card">
+<div class="searchable-element nhsuk-panel @Model.DateStyle()" id="@Model.Id-lhr-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
       <span class="nhsuk-u-visually-hidden">@Model.DueByDescription()</span>
       <span class="nhsuk-details__summary-text searchable-element-title"
-            id="@Model.Id-name-course"
+            id="@Model.Id-name-lhr"
             name="name"
+            data-name-for-sorting="name"
             role="heading"
             aria-level="2">
         @Model.Name
@@ -18,32 +19,35 @@
         <div class="nhsuk-grid-row">
           <partial name="Shared/_TagRow" model="@Model" />
         </div>
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-3">
+            @Html.Raw(Model.ResourceDescription)
+          </div>
+        </div>
+
         <div class="nhsuk-grid-row">
           <partial name="Shared/_Dates" model="@Model" />
         </div>
-        <partial name="Shared/_Scores" model="@Model" />
-        <partial name="Current/CurrentCourseCard/_Unlock" model="@Model" />
       </div>
-      @if (Model.SelfEnrolled) {
-        <a class="nhsuk-button delete-button small-edit-button"
-           aria-describedby="@Model.Id-name-course"
-           asp-action="RemoveCurrentCourseConfirmation"
-           asp-route-id="@Model.Id">
-          Remove course
-        </a>
-      }
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-bottom-4"
+         aria-describedby="@Model.Id-name-lhr">
+        Mark as complete
+      </a>
+      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name-lhr">
+        Remove learning resource
+      </a>
+
     </div>
   </details>
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <a
-        class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-        aria-describedby="@Model.Id-name-course"
-        asp-controller="LearningMenu"
-        asp-action="Index"
-        asp-route-customisationId="@Model.Id">
-        Launch course
+      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
+         aria-describedby="@Model.Id-name-lhr"
+         asp-action="LaunchLearningResource"
+         asp-route-learningLogItemId="@Model.Id">
+        Launch learning resource
       </a>
     </div>
   </div>

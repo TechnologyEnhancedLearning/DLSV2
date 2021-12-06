@@ -8,7 +8,7 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
-        private const string UseSignposting = "FeatureManagement:UseSignposting";
+        public const string UseSignposting = "FeatureManagement:UseSignposting";
 
         public static string GetAppRootPath(this IConfiguration config)
         {

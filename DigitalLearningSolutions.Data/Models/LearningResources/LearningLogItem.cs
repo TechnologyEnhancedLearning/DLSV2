@@ -25,5 +25,6 @@
         public int? LoggedByAdminId { get; set; }
         public int? SeqInt { get; set; }
         public DateTime? LastAccessedDate { get; set; }
+        public int? LearningHubResourceReferenceId { get; set; }
     }
 }

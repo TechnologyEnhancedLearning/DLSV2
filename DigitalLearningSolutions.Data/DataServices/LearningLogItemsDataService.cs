@@ -1,11 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ILearningLogItemsDataService
     {
+        IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId);
+
         int InsertLearningLogItem(
             int delegateId,
             DateTime addedDate,
@@ -17,15 +21,52 @@
         void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId);
 
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
+
+        void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
     }
 
     public class LearningLogItemsDataService : ILearningLogItemsDataService
     {
+        private const string LearningHubResourceActivityLabel = "Learning Hub Resource";
         private readonly IDbConnection connection;
 
         public LearningLogItemsDataService(IDbConnection connection)
         {
             this.connection = connection;
+        }
+
+        public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
+        {
+            return connection.Query<LearningLogItem>(
+                $@"SELECT
+                        LearningLogItemID,
+                        LoggedDate,
+                        LoggedByID,
+                        DueDate,
+                        CompletedDate,
+                        DurationMins,
+                        Activity,
+                        Outcomes,
+                        LinkedCustomisationID,
+                        VerifiedByID,
+                        VerifierComments,
+                        ArchivedDate,
+                        ArchivedByID,
+                        ICSGUID,
+                        LoggedByAdminID,
+                        TypeLabel AS ActivityType,
+                        ExternalUri,
+                        SeqInt,
+                        LastAccessedDate,
+                        LinkedCompetencyLearningResourceID,
+                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID
+                    FROM LearningLogItems l
+                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
+                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    WHERE LoggedById = @delegateId
+                    AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
+                new { delegateId }
+            );
         }
 
         public int InsertLearningLogItem(
@@ -101,6 +142,16 @@
                     VALUES
                     (@learningLogId, @competencyId, @associatedDate)",
                 new { learningLogId, competencyId, associatedDate }
+            );
+        }
+
+        public void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate)
+        {
+            connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET LastAccessedDate = @lastAccessedDate
+                    WHERE LearningLogItemID = @id",
+                new { id, lastAccessedDate }
             );
         }
     }
