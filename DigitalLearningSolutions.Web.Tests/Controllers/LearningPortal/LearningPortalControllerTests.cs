@@ -24,6 +24,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private IFrameworkNotificationService frameworkNotificationService = null!;
         private IConfiguration config = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
+        private ILearningLogItemsService learningLogItemsService = null!;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
@@ -43,6 +44,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
+            learningLogItemsService = A.Fake<ILearningLogItemsService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -61,7 +63,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 logger,
                 config,
                 filteredApiHelperService,
-                actionPlanService
+                actionPlanService,
+                learningLogItemsService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }

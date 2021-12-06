@@ -343,6 +343,24 @@
             item.LastAccessedDate.Should().BeNull();
         }
 
+        [Test]
+        public void Set_completed_date_should_update_db()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            var newCompletedDate = new DateTime(2020, 7, 29);
+
+            using (new TransactionScope())
+            {
+                // When
+                service.SetCompletionDate(learningLogItemId, newCompletedDate);
+                var modifiedItem = service.GetLearningLogItem(learningLogItemId);
+
+                // Then
+                modifiedItem!.CompletedDate.Should().Be(newCompletedDate);
+            }
+        }
+
         private int InsertLearningLogItem(
             int delegateId,
             DateTime addedDate,
