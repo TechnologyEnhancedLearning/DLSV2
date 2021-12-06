@@ -265,15 +265,15 @@
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCoursesForCentre(groupId, centreId)
-                .Where(gc => gc.IsUsable);
+            return groupsDataService.GetGroupCoursesForCentre(centreId)
+                .Where(gc => gc.IsUsable && gc.GroupId == groupId);
         }
 
         public GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
         {
-            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, groupId, centreId);
+            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId);
 
-            if (!groupCourse?.IsUsable ?? true)
+            if ((!groupCourse?.IsUsable ?? true) || groupCourse.GroupId != groupId)
             {
                 return null;
             }

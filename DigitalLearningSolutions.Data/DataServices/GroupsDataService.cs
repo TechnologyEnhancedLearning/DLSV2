@@ -13,9 +13,9 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCoursesForCentre(int groupId, int centreId);
+        IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId);
 
-        GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId);
+        GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -96,8 +96,7 @@
                     JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
-                    WHERE gc.GroupID = @groupId
-                        AND c.CentreId = @centreId";
+                    WHERE c.CentreId = @centreId";
 
         private readonly IDbConnection connection;
 
@@ -157,19 +156,19 @@
             );
         }
 
-        public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int groupId, int centreId)
+        public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
                 GroupCourseSql,
-                new { groupId, centreId }
+                new { centreId }
             );
         }
 
-        public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
+        public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId)
         {
             return connection.Query<GroupCourse>(
                 @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
-                new { groupCustomisationId, groupId, centreId }
+                new { groupCustomisationId, centreId }
             ).FirstOrDefault();
         }
 
@@ -350,11 +349,6 @@
             );
         }
 
-        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
-        {
-            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
-        }
-
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return connection.Query<Group>(
@@ -408,6 +402,11 @@
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupName, groupId, centreId }
             );
+        }
+
+        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
         }
     }
 }

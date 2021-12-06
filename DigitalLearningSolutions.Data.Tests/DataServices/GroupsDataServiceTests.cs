@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -86,16 +87,27 @@
         {
             // Given
             var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
-            var expectedFirstGroupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
+            var expectedFGroupCourseIds = new List<int>
+            {
+                1,
+                2,
+                21,
+                22,
+                23,
+                24,
+                25,
+                28,
+            };
 
             // When
-            var result = groupsDataService.GetGroupCoursesForCentre(8, 101).ToList();
+            var result = groupsDataService.GetGroupCoursesForCentre(101).ToList();
 
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(1);
-                result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupCourse);
+                result.Should().HaveCount(8);
+                result.Should().OnlyHaveUniqueItems();
+                result.Should().OnlyContain(c => expectedFGroupCourseIds.Contains(c.GroupCustomisationId));
             }
         }
 
@@ -457,7 +469,7 @@
             );
 
             // When
-            var result = groupsDataService.GetGroupCourseForCentre(25, 103, 101);
+            var result = groupsDataService.GetGroupCourseForCentre(25, 101);
 
             // Then
             using (new AssertionScope())
