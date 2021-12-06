@@ -173,45 +173,39 @@
 
         [Route("/LearningPortal/Current/MarkAsComplete/{id:int}")]
         public IActionResult MarkCurrentCourseAsComplete(int id, int? day, int? month, int? year)
+        [HttpGet]
+        [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
+        public IActionResult MarkCurrentLearningLogItemAsComplete(int learningLogItemId)
         {
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
-            var course = currentCourses.FirstOrDefault(c => c.Id == id);
-            if (course == null)
+            var learningLogItem =
+                learningLogItemsService.SelectLearningLogItemById(learningLogItemId);
+
+            if (learningLogItem == null)
             {
-                logger.LogWarning(
-                    $"Attempt to set completed date for course with id {id} which is not a current course for user with id {User.GetCandidateIdKnownNotNull()}"
-                );
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
+                return new NotFoundResult();
             }
 
-            var model = new CurrentCourseViewModel(course);
-
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
+            var model = new SetLearningLogItemCompletionDateViewModel(learningLogItemId, learningLogItem.Activity!);
 
             return View("Current/MarkAsComplete", model);
         }
 
         [HttpPost]
-        [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult MarkCurrentCourseAsComplete(int id, int day, int month, int year, int progressId)
+        [Route("/LearningPortal/Current/CompleteBy/{learningLogItemId:int}")]
+        public IActionResult MarkCurrentLearningLogItemAsComplete(
+            int learningLogItemId,
+            SetLearningLogItemCompletionDateFormData formData
+        )
         {
-            if (day == 0 && month == 0 && year == 0)
+            if (!ModelState.IsValid)
             {
-                learningLogItemsDataService.SetCompletedDate(progressId, User.GetCandidateIdKnownNotNull(), null);
-                return RedirectToAction("Current");
+                var model = new SetLearningLogItemCompletionDateViewModel(formData, learningLogItemId);
+                return View("Current/MarkAsComplete", model);
             }
 
-            var validationResult = OldDateValidator.ValidateDate(day, month, year);
-            if (!validationResult.DateValid)
-            {
-                return RedirectToAction("MarkCurrentCourseAsComplete", new { id, day, month, year });
-            }
+            var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
-            var completeByDate = new DateTime(year, month, day);
-            courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
+            learningLogItemsService.SetCompletionDate(learningLogItemId, completionDate);
             return RedirectToAction("Current");
         }
 

@@ -1,96 +1,45 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using Microsoft.Extensions.Configuration
-@model CurrentLearningItemViewModel
+@model SetLearningLogItemCompletionDateViewModel
 @inject IConfiguration Configuration
 
 @{
-  ViewData["Title"] = $"Mark {Model.Name} as complete";
+  ViewData["Title"] = $"Mark {Model.ResourceName} as complete";
   ViewData["Application"] = "Learning Portal";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Current";
   ViewData["HeaderPathName"] = "My Current Activities";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var exampleDate = DateTime.Today;
 }
 
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
 
-@{
-  var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
-  string prefillDay;
-  string prefillMonth;
-  string prefillYear;
-  if (Model.CompleteByValidationResult?.DateValid == false) {
-    prefillDay = Model.CompleteByValidationResult?.Day.ToString() ?? "";
-    prefillMonth = Model.CompleteByValidationResult?.Month.ToString() ?? "";
-    prefillYear = Model.CompleteByValidationResult?.Year.ToString() ?? "";
-    prefillDay = prefillDay == "0" ? "" : prefillDay;
-    prefillMonth = prefillMonth == "0" ? "" : prefillMonth;
-    prefillYear = prefillYear == "0" ? "" : prefillYear;
-  } else {
-    prefillDay = Model.CompleteByDate?.Day.ToString() ?? "";
-    prefillMonth = Model.CompleteByDate?.Month.ToString() ?? "";
-    prefillYear = Model.CompleteByDate?.Year.ToString() ?? "";
-  }
-  var dayErrorClass = Model.CompleteByValidationResult?.DayValid == false ? "nhsuk-input--error" : "";
-  var monthErrorClass = Model.CompleteByValidationResult?.MonthValid == false ? "nhsuk-input--error" : "";
-  var yearErrorClass = Model.CompleteByValidationResult?.YearValid == false ? "nhsuk-input--error" : "";
-  var formErrorClass = Model.CompleteByValidationResult?.DateValid == false ? "nhsuk-form-group--error" : "";
-}
+<
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)}" />
+    }
 
-<div>
-  <div class="nhsuk-form-group" id="form-group">
-    <form asp-action="MarkCurrentCourseAsComplete" class="@formErrorClass">
-      <fieldset class="nhsuk-fieldset" aria-labelledby="form-heading" aria-describedby="example-hint" role="group">
-        <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-          Mark @Model.Name as complete
-        </h1>
-        <span class="nhsuk-hint" id="example-hint">
-          For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
-        </span>
-        @if (Model is CurrentCourseViewModel) {
-          <span class="nhsuk-hint">
-            Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity.
-          </span>
-        }
-        @if (Model.CompleteByValidationResult?.DateValid == false) {
-          <span class="nhsuk-error-message" id="validation-message" role="alert">
-            <span class="nhsuk-u-visually-hidden">Error:</span>@Model.CompleteByValidationResult?.ErrorMessage
-          </span>
-        }
-        <div class="nhsuk-date-input" id="date">
-          <div class="nhsuk-date-input__item">
-            <div class="nhsuk-form-group">
-              <label class="nhsuk-label nhsuk-date-input__label" for="day">
-                Day
-              </label>
-              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @dayErrorClass" id="day" name="day" type="number" value="@prefillDay">
-            </div>
-          </div>
-          <div class="nhsuk-date-input__item">
-            <div class="nhsuk-form-group">
-              <label class="nhsuk-label nhsuk-date-input__label" for="month">
-                Month
-              </label>
-              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-2 @monthErrorClass" id="month" name="month" type="number" value="@prefillMonth">
-            </div>
-          </div>
-          <div class="nhsuk-date-input__item">
-            <div class="nhsuk-form-group">
-              <label class="nhsuk-label nhsuk-date-input__label" for="year">
-                Year
-              </label>
-              <input class="nhsuk-input nhsuk-date-input__input nhsuk-input--width-4 @yearErrorClass" id="year" name="year" type="number" value="@prefillYear">
-            </div>
-          </div>
-        </div>
-        @if (Model is CurrentCourseViewModel) {
-          <input name="progressId" type="hidden" value="@Model.ProgressId" />
-        } else {
-          <input name="selfAssessmentId" type="hidden" value="@Model.Id" />
-        }
-      </fieldset>
-      <button class="nhsuk-button nhsuk-u-margin-top-5" id="save-button" type="submit">Save</button>
+    <h1 class="nhsuk-heading-xl word-break">Mark @Model.ResourceName as complete</h1>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
+      <input type="hidden" asp-for="LearningLogItemId" />
+      <input type="hidden" asp-for="ResourceName" />
+      <vc:date-input id="completion-date"
+                     label="Completion date"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class=""
+                     key="1"
+                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
     </form>
+
+    <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
   </div>
-  <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
 </div>

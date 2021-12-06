@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using Microsoft.Extensions.Logging;
@@ -27,7 +28,7 @@
 
         void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
 
-        public void SetCompletedDate(int learningLogItemId, DateTime? completedDate);
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate);
 
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
     }
@@ -183,7 +184,7 @@
             );
         }
 
-        public void SetCompletedDate(int learningLogItemId, DateTime? completedDate)
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate)
         {
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE LearningLogItems

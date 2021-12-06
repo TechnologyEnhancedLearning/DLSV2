@@ -334,5 +334,67 @@
             A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
                 .MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public void MarkAsComplete_calls_correct_service_method()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            const int day = 1;
+            const int month = 1;
+            const int year = 2021;
+            var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.MarkCurrentLearningLogItemAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void MarkAsComplete_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            const int day = 1;
+            const int month = 14;
+            const int year = 2021;
+            var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            controller.MarkCurrentLearningLogItemAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void MarkAsComplete_returns_not_found_if_learning_log_item_does_not_exist()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            const int day = 1;
+            const int month = 14;
+            const int year = 2021;
+            var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+            A.CallTo(() => learningLogItemsService.SelectLearningLogItemById(learningLogItemId).Returns(null);
+
+            // When
+            controller.MarkCurrentLearningLogItemAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustNotHaveHappened();
+        }
     }
 }
