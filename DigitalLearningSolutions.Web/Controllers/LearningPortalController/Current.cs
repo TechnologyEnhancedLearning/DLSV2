@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
@@ -150,6 +151,7 @@
             return View("Current/UnlockCurrentCourse");
         }
 
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
         [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
         public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
         {
@@ -164,6 +166,25 @@
 
             // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
             return Redirect(learningResourceLink);
+        }
+
+        [HttpGet]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
+        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
+        {
+            var actionPlanItem = await actionPlanService.GetActionPlanItem(learningLogItemId);
+            var model = new RemoveActionPlanItemViewModel(actionPlanItem!.Id, actionPlanItem.Name);
+            return View("Current/RemoveCurrentActionPlanItemConfirmation", model);
+        }
+
+        [HttpPost]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
+        public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
+        {
+            actionPlanService.RemoveActionPlanItem(learningLogItemId, User.GetCandidateIdKnownNotNull());
+            return RedirectToAction("Current");
         }
     }
 }

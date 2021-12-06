@@ -17,7 +17,13 @@
 
         Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId);
 
+        Task<ActionPlanItem?> GetActionPlanItem(int learningLogItemId);
+
         Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
+
+        void RemoveActionPlanItem(int learningLogItemId, int delegateId);
+
+        bool? VerifyDelegateCanAccessActionPlanItem(int learningLogItemId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -96,11 +102,6 @@
 
         public async Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId)
         {
-            if (!config.IsSignpostingUsed())
-            {
-                return new List<ActionPlanItem>();
-            }
-
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
                     i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
@@ -122,24 +123,23 @@
             return incompleteActionPlanItems;
         }
 
-        public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId)
+        public async Task<ActionPlanItem?> GetActionPlanItem(int learningLogItemId)
         {
-            if (!config.IsSignpostingUsed())
-            {
-                return null;
-            }
+            var learningLogItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
-            var actionPlanItem = learningLogItemsDataService.GetLearningLogItems(delegateId)
-                .SingleOrDefault(
-                    i => i.LearningLogItemId == learningLogItemId
-                         && i.LearningHubResourceReferenceId != null
-                         && i.ArchivedDate == null
+            var response =
+                await learningHubApiClient.GetResourceByReferenceId(
+                    learningLogItem.LearningHubResourceReferenceId!.Value
                 );
+            return new ActionPlanItem(learningLogItem, response);
+        }
 
-            if (actionPlanItem == null)
-            {
-                return null;
-            }
+        public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(
+            int learningLogItemId,
+            int delegateId
+        )
+        {
+            var actionPlanItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
             learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, clockService.UtcNow);
 
@@ -149,6 +149,29 @@
                 );
 
             return resource.Link;
+        }
+
+        public void RemoveActionPlanItem(int learningLogItemId, int delegateId)
+        {
+            var removalDate = clockService.UtcNow;
+            learningLogItemsDataService.RemoveLearningLogItem(learningLogItemId, delegateId, removalDate);
+        }
+
+        public bool? VerifyDelegateCanAccessActionPlanItem(int learningLogItemId, int delegateId)
+        {
+            if (!config.IsSignpostingUsed())
+            {
+                return null;
+            }
+
+            var actionPlanItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
+
+            if (!(actionPlanItem is { ArchivedDate: null }) || actionPlanItem.LearningHubResourceReferenceId == null)
+            {
+                return null;
+            }
+
+            return actionPlanItem.LoggedById == delegateId;
         }
     }
 }
