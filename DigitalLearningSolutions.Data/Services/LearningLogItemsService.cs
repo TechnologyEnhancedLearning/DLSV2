@@ -2,9 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ILearningLogItemsService
     {
+        public LearningLogItem? SelectLearningLogItemById(int learningLogItemId);
+
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
     }
 
@@ -17,6 +20,11 @@
         )
         {
             this.learningLogItemsDataService = learningLogItemsDataService;
+        }
+
+        public LearningLogItem? SelectLearningLogItemById(int learningLogItemId)
+        {
+            return learningLogItemsDataService.SelectLearningLogItemById(learningLogItemId);
         }
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate)

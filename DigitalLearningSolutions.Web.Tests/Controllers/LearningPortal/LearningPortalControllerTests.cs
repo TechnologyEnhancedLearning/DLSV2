@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using FakeItEasy;
@@ -14,22 +15,23 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 
     public partial class LearningPortalControllerTests
     {
-        private LearningPortalController controller = null!;
-        private IActionPlanService actionPlanService = null!;
-        private ICentresDataService centresDataService = null!;
-        private ICourseDataService courseDataService = null!;
-        private ISelfAssessmentService selfAssessmentService = null!;
-        private ISupervisorService supervisorService = null!;
-        private INotificationService notificationService = null!;
-        private IFrameworkNotificationService frameworkNotificationService = null!;
-        private IConfiguration config = null!;
-        private IFilteredApiHelperService filteredApiHelperService = null!;
-        private ILearningLogItemsService learningLogItemsService = null!;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
         private const string Vocabulary = "Capabilities";
         private const int CentreId = 2;
+        private IActionPlanService actionPlanService = null!;
+        private ICentresDataService centresDataService = null!;
+        private IConfiguration config = null!;
+        private LearningPortalController controller = null!;
+        private ICourseDataService courseDataService = null!;
+        private IFilteredApiHelperService filteredApiHelperService = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
+        private ILearningLogItemsService learningLogItemsService = null!;
+        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
+        private INotificationService notificationService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
+        private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void SetUp()
@@ -46,13 +48,21 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
             learningLogItemsService = A.Fake<ILearningLogItemsService>();
 
+            var connection = ServiceTestHelper.GetDatabaseConnection();
+            learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
+
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim("learnCandidateID", CandidateId.ToString()),
-                new Claim("UserCentreID", CentreId.ToString())
-            }, "mock"));
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim("learnCandidateID", CandidateId.ToString()),
+                        new Claim("UserCentreID", CentreId.ToString()),
+                    },
+                    "mock"
+                )
+            );
             controller = new LearningPortalController(
                 centresDataService,
                 courseDataService,
@@ -67,7 +77,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 learningLogItemsService
             )
             {
-                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
             };
         }
     }

@@ -3,10 +3,10 @@
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -171,8 +171,6 @@
             return Redirect(learningResourceLink);
         }
 
-        [Route("/LearningPortal/Current/MarkAsComplete/{id:int}")]
-        public IActionResult MarkCurrentCourseAsComplete(int id, int? day, int? month, int? year)
         [HttpGet]
         [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
         public IActionResult MarkCurrentLearningLogItemAsComplete(int learningLogItemId)
@@ -182,6 +180,10 @@
 
             if (learningLogItem == null)
             {
+                logger.LogWarning(
+                    $"Attempt to access learning log item with id {learningLogItemId} however found no item with that id"
+                );
+
                 return new NotFoundResult();
             }
 
@@ -191,7 +193,7 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/Current/CompleteBy/{learningLogItemId:int}")]
+        [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
         public IActionResult MarkCurrentLearningLogItemAsComplete(
             int learningLogItemId,
             SetLearningLogItemCompletionDateFormData formData

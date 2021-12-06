@@ -311,43 +311,11 @@
             }
         }
 
-        private void AssertLearningLogItemHasCorrectValuesForLearningHubResource(
-            LearningLogItem item,
-            int delegateId,
-            DateTime addedDate,
-            int competencyLearningResourceId,
-            string resourceName,
-            string resourceLink
-        )
-        {
-            item.LoggedById.Should().Be(delegateId);
-            item.LoggedDate.Should().Be(addedDate);
-            item.LinkedCompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
-            item.ExternalUri.Should().Be(resourceLink);
-            item.Activity.Should().Be(resourceName);
-            item.ActivityType.Should().Be("Learning Hub Resource");
-            item.LearningLogItemId.Should().NotBe(0);
-            item.IcsGuid.Should().NotBeNull();
-
-            item.DueDate.Should().BeNull();
-            item.CompletedDate.Should().BeNull();
-            item.DurationMins.Should().Be(0);
-            item.Outcomes.Should().BeNull();
-            item.LinkedCustomisationId.Should().BeNull();
-            item.VerifiedById.Should().BeNull();
-            item.VerifierComments.Should().BeNull();
-            item.ArchivedDate.Should().BeNull();
-            item.ArchivedById.Should().BeNull();
-            item.LoggedByAdminId.Should().BeNull();
-            item.SeqInt.Should().BeNull();
-            item.LastAccessedDate.Should().BeNull();
-        }
-
         [Test]
         public void Set_completed_date_should_update_db()
         {
             // Given
-            const int learningLogItemId = 1;
+            const int learningLogItemId = 4;
             var newCompletedDate = new DateTime(2020, 7, 29);
 
             using (new TransactionScope())
@@ -380,6 +348,38 @@
                 GenericResourceLink,
                 competencyLearningResourceId
             );
+        }
+
+        private void AssertLearningLogItemHasCorrectValuesForLearningHubResource(
+            LearningLogItem item,
+            int delegateId,
+            DateTime addedDate,
+            int competencyLearningResourceId,
+            string resourceName,
+            string resourceLink
+        )
+        {
+            item.LoggedById.Should().Be(delegateId);
+            item.LoggedDate.Should().Be(addedDate);
+            item.LinkedCompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
+            item.ExternalUri.Should().Be(resourceLink);
+            item.Activity.Should().Be(resourceName);
+            item.ActivityType.Should().Be("Learning Hub Resource");
+            item.LearningLogItemId.Should().NotBe(0);
+            item.IcsGuid.Should().NotBeNull();
+
+            item.DueDate.Should().BeNull();
+            item.CompletedDate.Should().BeNull();
+            item.DurationMins.Should().Be(0);
+            item.Outcomes.Should().BeNull();
+            item.LinkedCustomisationId.Should().BeNull();
+            item.VerifiedById.Should().BeNull();
+            item.VerifierComments.Should().BeNull();
+            item.ArchivedDate.Should().BeNull();
+            item.ArchivedById.Should().BeNull();
+            item.LoggedByAdminId.Should().BeNull();
+            item.SeqInt.Should().BeNull();
+            item.LastAccessedDate.Should().BeNull();
         }
     }
 }
