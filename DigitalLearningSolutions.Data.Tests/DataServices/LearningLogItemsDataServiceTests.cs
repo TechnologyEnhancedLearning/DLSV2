@@ -12,14 +12,13 @@
 
     public class LearningLogItemsDataServiceTests
     {
-        private CompetencyLearningResourcesTestHelper competencyLearningResourcesTestHelper = null!;
-        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
-        private ILearningLogItemsDataService service = null!;
         private const int GenericCompetencyLearningResourceId = 1;
         private const int GenericDelegateId = 2;
         private const string GenericActivityName = "generic activity";
         private const string GenericResourceLink = "generic resource link";
-
+        private CompetencyLearningResourcesTestHelper competencyLearningResourcesTestHelper = null!;
+        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
+        private ILearningLogItemsDataService service = null!;
 
         [SetUp]
         public void Setup()
@@ -232,7 +231,13 @@
             using var transaction = new TransactionScope();
             try
             {
-                var newId = InsertLearningLogItem(GenericDelegateId, addedDate, GenericCompetencyLearningResourceId, GenericActivityName, GenericResourceLink);
+                var newId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericCompetencyLearningResourceId,
+                    GenericActivityName,
+                    GenericResourceLink
+                );
 
                 // When
                 var result = service.GetLearningLogItem(newId);
@@ -267,7 +272,13 @@
             using var transaction = new TransactionScope();
             try
             {
-                var newId = InsertLearningLogItem(GenericDelegateId, addedDate, GenericCompetencyLearningResourceId, GenericActivityName, GenericResourceLink);
+                var newId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericCompetencyLearningResourceId,
+                    GenericActivityName,
+                    GenericResourceLink
+                );
 
                 // When
                 service.UpdateLearningLogItemLastAccessedDate(newId, updatedDate);
@@ -296,7 +307,13 @@
             using var transaction = new TransactionScope();
             try
             {
-                var newId = InsertLearningLogItem(GenericDelegateId, addedDate, GenericCompetencyLearningResourceId, GenericActivityName, GenericResourceLink);
+                var newId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericCompetencyLearningResourceId,
+                    GenericActivityName,
+                    GenericResourceLink
+                );
 
                 // When
                 service.RemoveLearningLogItem(newId, GenericDelegateId, removedDate);
@@ -348,7 +365,13 @@
             item.LastAccessedDate.Should().BeNull();
         }
 
-        private int InsertLearningLogItem(int delegateId, DateTime addedDate, int competencyLearningResourceId, string activityName, string resourceLink)
+        private int InsertLearningLogItem(
+            int delegateId,
+            DateTime addedDate,
+            int competencyLearningResourceId,
+            string activityName,
+            string resourceLink
+        )
         {
             competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                 1,
