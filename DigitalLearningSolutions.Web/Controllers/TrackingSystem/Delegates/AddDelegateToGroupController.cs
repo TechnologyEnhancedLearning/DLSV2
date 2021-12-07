@@ -73,9 +73,6 @@
             var delegateUsers = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
             var groupName = userDataService.GetGroupNameById(groupId);
 
-            TempData.Clear();
-            TempData["groupId"] = groupId;
-
             var model = new AddDelegateToGroupViewModel(
                 delegateUsers,
                 jobGroups,
@@ -107,11 +104,11 @@
 
             var newDetails = new MyAccountDetailsData(
                 adminId,
-                delegateUser?.Id,
+                delegateUser.Id,
                 string.Empty,
-                delegateUser?.FirstName!,
-                delegateUser?.LastName!,
-                delegateUser?.EmailAddress!,
+                delegateUser.FirstName!,
+                delegateUser.LastName!,
+                delegateUser.EmailAddress!,
                 null
             );
 
@@ -129,14 +126,13 @@
                 adminId
             );
 
-            var model = new DelegateAddedToGroupConfirmationViewModel(delegateUser?.FullName!, groupName!, groupId);
+            var model = new DelegateAddedToGroupConfirmationViewModel(delegateUser.FullName, groupName!, groupId);
             return View(model);
         }
 
-        [Route("AddDelegateToGroupItems")]
-        public IActionResult AddDelegateToGroupItems()
+        [Route("AddDelegateToGroupItems/{groupId:int}")]
+        public IActionResult AddDelegateToGroupItems(int groupId)
         {
-            var groupId = (int)TempData["groupId"];
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);

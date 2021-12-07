@@ -20,6 +20,7 @@
         <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">@ViewData["Title"]</h1>
       </div>
     </div>
+    <input id="selected-group-Id" type="hidden" asp-for="@Model.GroupId" />
 
     <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
 
