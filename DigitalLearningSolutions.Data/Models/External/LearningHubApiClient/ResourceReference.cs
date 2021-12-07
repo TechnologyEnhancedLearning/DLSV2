@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Models.LearningHubApiClient
+﻿namespace DigitalLearningSolutions.Data.Models.External.LearningHubApiClient
 {
     public class ResourceReference
     {
