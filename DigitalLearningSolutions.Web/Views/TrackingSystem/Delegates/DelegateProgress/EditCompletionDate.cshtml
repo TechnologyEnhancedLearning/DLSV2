@@ -10,11 +10,15 @@
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
+  var cancelLinkController = "";
+
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    cancelLinkController = "DelegateProgress";
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+    cancelLinkController = "ViewDelegate";
   }
   var exampleDate = DateTime.Today;
 }
@@ -53,10 +57,6 @@
       <button class="nhsuk-button" type="submit">Save</button>
     </form>
 
-    @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
-      <vc:cancel-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-    } else {
-      <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
-    }
+    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>

@@ -91,7 +91,7 @@
                 return RedirectToAction("Index", new { progressId, accessedVia });
             }
 
-            return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
+            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 
         [HttpGet]
@@ -102,43 +102,48 @@
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
 
-            var model = new EditCompletionDateViewModel(progressId, accessedVia, delegateCourseProgress!.DelegateCourseInfo);
+            var model = new EditCompletionDateViewModel(
+                progressId,
+                accessedVia,
+                delegateCourseProgress!.DelegateCourseInfo
+            );
             return View(model);
         }
 
-          [HttpPost]
-          [Route("EditCompletionDate")]
-          public IActionResult EditCompletionDate(
-              EditCompletionDateFormData formData,
-              int progressId,
-              DelegateProgressAccessRoute accessedVia)
-          {
-              if (!ModelState.IsValid)
-              {
-                  var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
-                  return View(model);
-              }
+        [HttpPost]
+        [Route("EditCompletionDate")]
+        public IActionResult EditCompletionDate(
+            EditCompletionDateFormData formData,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
+                return View(model);
+            }
 
-              var completionDate = formData.Year != null
-                  ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
-                  : (DateTime?)null;
+            var completionDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
 
-              progressService.UpdateCompletionDate(progressId, completionDate);
-              return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
-          }
+            progressService.UpdateCompletionDate(progressId, completionDate);
+            return ReturnToPreviousPage(formData.DelegateId, progressId, accessedVia);
+        }
 
-          private IActionResult ReturnToPreviousPage(
-              int delegateId,
-              int progressId,
-              DelegateProgressAccessRoute accessedVia
-          )
-          {
-              if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
-              {
-                  return RedirectToAction("Index", new { progressId, accessedVia });
-              }
+        private IActionResult ReturnToPreviousPage(
+            int delegateId,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+            {
+                return RedirectToAction("Index", new { progressId, accessedVia });
+            }
 
-              return RedirectToAction("Index", "ViewDelegate", new { delegateId });
-          }
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
     }
 }

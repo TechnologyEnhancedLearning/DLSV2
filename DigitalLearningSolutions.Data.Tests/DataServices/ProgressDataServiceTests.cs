@@ -16,8 +16,8 @@
     {
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
-        private TutorialContentTestHelper tutorialContentTestHelper = null!;
         private ProgressTestHelper progressTestHelper = null!;
+        private TutorialContentTestHelper tutorialContentTestHelper = null!;
 
         [SetUp]
         public void SetUp()
@@ -260,26 +260,20 @@
             var completionDate = new DateTime(2020, 12, 25);
 
             using var transaction = new TransactionScope();
-            try
-            {
-                // When
-                progressDataService.SetCompletionDate(
-                    progressId,
-                    completionDate
-                );
-                var progressRecords = progressDataService.GetDelegateProgressForCourse(
-                    candidateIdForProgressRecord,
-                    customisationIdForProgressRecord
-                );
 
-                // Then
-                var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
-                updatedProgressRecord.Completed.Should().Be(completionDate);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // When
+            progressDataService.SetCompletionDate(
+                progressId,
+                completionDate
+            );
+            var progressRecords = progressDataService.GetDelegateProgressForCourse(
+                candidateIdForProgressRecord,
+                customisationIdForProgressRecord
+            );
+
+            // Then
+            var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
+            updatedProgressRecord.Completed.Should().Be(completionDate);
         }
     }
 }
