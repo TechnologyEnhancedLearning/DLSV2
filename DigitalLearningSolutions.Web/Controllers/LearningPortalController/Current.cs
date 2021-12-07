@@ -4,7 +4,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
@@ -169,6 +171,7 @@
         }
 
         [HttpGet]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)

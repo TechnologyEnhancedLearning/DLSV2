@@ -12,7 +12,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     using Microsoft.Extensions.Logging;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
-    [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
     public partial class LearningPortalController : Controller
     {
         private readonly IActionPlanService actionPlanService;
