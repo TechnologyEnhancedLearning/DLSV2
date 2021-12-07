@@ -42,6 +42,29 @@
         }
 
         [Test]
+        public void CanDelegateAccessSelfAssessment_returns_true_with_at_least_one_valid_assessment()
+        {
+            // Given
+            var candidateAssessments = Builder<CandidateAssessment>.CreateListOfSize(5)
+                .TheFirst(2)
+                .With(ca => ca.RemovedDate = DateTime.UtcNow)
+                .TheNext(2)
+                .With(ca => ca.CompletedDate = DateTime.UtcNow)
+                .TheRest()
+                .With(ca => ca.CompletedDate = null)
+                .With(ca => ca.RemovedDate = null)
+                .Build().ToList();
+            A.CallTo(() => selfAssessmentDataService.GetCandidateAssessments(A<int>._, A<int>._))
+                .Returns(candidateAssessments);
+
+            // When
+            var result = selfAssessmentService.CanDelegateAccessSelfAssessment(1, 1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
         public void CanDelegateAccessSelfAssessment_returns_false_with_only_completed_or_removed_assessments()
         {
             // Given

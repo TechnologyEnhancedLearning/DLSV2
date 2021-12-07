@@ -1,6 +1,10 @@
-﻿@{
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
+@model RecommendedLearningViewModel
+
+@{
   Layout = "../SelfAssessments/_Layout";
   ViewData["Title"] = "Recommended learning";
+  ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
 
 <div class="nhsuk-grid-row">

@@ -16,8 +16,8 @@
 
     public class VerifyDelegateUserCanAccessSelfAssessmentTests
     {
-        private readonly int DelegateId = 2;
-        private readonly int SelfAssessmentId = 1;
+        private const int DelegateId = 2;
+        private const int SelfAssessmentId = 1;
         private ILogger<VerifyDelegateUserCanAccessSelfAssessment> logger = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
 
@@ -47,7 +47,7 @@
         }
 
         [Test]
-        public void Does_not_return_action_if_delegate_has_self_assessment()
+        public void Does_not_return_access_denied_if_delegate_has_self_assessment()
         {
             // Given
             var context = GetDefaultContext();

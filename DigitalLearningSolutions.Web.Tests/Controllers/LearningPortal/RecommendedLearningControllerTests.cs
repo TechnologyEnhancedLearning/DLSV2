@@ -44,7 +44,6 @@
             SelfAssessmentResults_redirect_to_expected_action_does_not_call_filtered_api_when_using_signposting()
         {
             // Given
-
             A.CallTo(() => configuration[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
