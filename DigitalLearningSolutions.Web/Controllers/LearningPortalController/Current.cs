@@ -235,7 +235,7 @@
         {
             if (day == 0 && month == 0 && year == 0)
             {
-                learningLogItemsDataService.SetCompletedDate(progressId, User.GetCandidateIdKnownNotNull(), null);
+                actionPlanService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
             }
 

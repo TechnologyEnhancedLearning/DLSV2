@@ -18,16 +18,15 @@
     @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
   </p>
 </div>
-@if (Model is CurrentLearningItemViewModel currentLearningItemViewModel)
-{
-<div class="nhsuk-grid-row nhsuk-grid-column-one-half">
-  <div class="nhsuk-grid-column-three-quarters">
-    <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</span>
-    <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
-  </div>
-  <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-    <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
-      @(currentLearningItemViewModel.CompleteByDate == null ?
+@if (Model is CurrentLearningItemViewModel currentLearningItemViewModel) {
+  <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
+    <div class="nhsuk-grid-column-three-quarters">
+      <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</span>
+      <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
+    </div>
+    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
+        @(currentLearningItemViewModel.CompleteByDate == null ?
           Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
           Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
     </p>
@@ -64,6 +63,8 @@
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
          aria-describedby="@Model.Id-name"
          aria-label="Edit complete by date"
+         asp-action="EditLearningLogItemCompleteByDate"
+         asp-route-learningLogItemId="@Model.Id">
          role="button">
         Edit
       </a>
@@ -71,8 +72,7 @@
   }
 </div>
 }
-@if (Model is CompletedCourseViewModel completedCourseViewModel)
-{
+@if (Model is CompletedCourseViewModel completedCourseViewModel) {
   <div class="nhsuk-grid-column-one-quarter">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
@@ -84,8 +84,8 @@
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
     <p aria-describedby="@Model.Id-name @Model.Id-evaluated-title" name="evaluated-date">
-      @(completedCourseViewModel.EvaluatedDate == null ?
-        Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
-        Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
+    @(completedCourseViewModel.EvaluatedDate == null ?
+      Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
+      Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
   </div>
 }

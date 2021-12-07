@@ -219,6 +219,24 @@
             }
         }
 
+        public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET DueDate = @completeByDate
+                        WHERE LearningLogItemID = @learningLogitemId",
+                new { learningLogItemId, completedDate = completeByDate }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting current course completed date as db update failed. " +
+                    $"Learning log item id: {learningLogItemId}, completed date: {completeByDate}"
+                );
+            }
+        }
+
         public void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate)
         {
             connection.Execute(
