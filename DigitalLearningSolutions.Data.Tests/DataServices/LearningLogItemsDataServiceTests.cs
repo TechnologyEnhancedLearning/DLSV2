@@ -151,64 +151,57 @@
             var addedDate = new DateTime(2021, 11, 1);
 
             using var transaction = new TransactionScope();
-            try
+            competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
+                1,
+                competencyLearningResourceId,
+                1,
+                7
+            );
+            service.InsertLearningLogItem(
+                delegateId,
+                addedDate,
+                firstActivityName,
+                firstResourceLink,
+                competencyLearningResourceId
+            );
+            service.InsertLearningLogItem(
+                delegateId,
+                addedDate,
+                secondActivityName,
+                secondResourceLink,
+                competencyLearningResourceId
+            );
+            service.InsertLearningLogItem(
+                differentDelegateId,
+                addedDate,
+                "activity 3",
+                "resource link 3",
+                competencyLearningResourceId
+            );
+
+            // When
+            var result = service.GetLearningLogItems(delegateId).ToList();
+
+            // Then
+            using (new AssertionScope())
             {
-                competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
-                    1,
+                result.Count.Should().Be(2);
+                AssertLearningLogItemHasCorrectValuesForLearningHubResource(
+                    result[0],
+                    delegateId,
+                    addedDate,
                     competencyLearningResourceId,
-                    1,
-                    7
-                );
-                service.InsertLearningLogItem(
-                    delegateId,
-                    addedDate,
                     firstActivityName,
-                    firstResourceLink,
-                    competencyLearningResourceId
+                    firstResourceLink
                 );
-                service.InsertLearningLogItem(
+                AssertLearningLogItemHasCorrectValuesForLearningHubResource(
+                    result[1],
                     delegateId,
                     addedDate,
+                    competencyLearningResourceId,
                     secondActivityName,
-                    secondResourceLink,
-                    competencyLearningResourceId
+                    secondResourceLink
                 );
-                service.InsertLearningLogItem(
-                    differentDelegateId,
-                    addedDate,
-                    "activity 3",
-                    "resource link 3",
-                    competencyLearningResourceId
-                );
-
-                // When
-                var result = service.GetLearningLogItems(delegateId).ToList();
-
-                // Then
-                using (new AssertionScope())
-                {
-                    result.Count.Should().Be(2);
-                    AssertLearningLogItemHasCorrectValuesForLearningHubResource(
-                        result[0],
-                        delegateId,
-                        addedDate,
-                        competencyLearningResourceId,
-                        firstActivityName,
-                        firstResourceLink
-                    );
-                    AssertLearningLogItemHasCorrectValuesForLearningHubResource(
-                        result[1],
-                        delegateId,
-                        addedDate,
-                        competencyLearningResourceId,
-                        secondActivityName,
-                        secondResourceLink
-                    );
-                }
-            }
-            finally
-            {
-                transaction.Dispose();
             }
         }
 
@@ -229,36 +222,29 @@
             var addedDate = new DateTime(2021, 11, 1);
 
             using var transaction = new TransactionScope();
-            try
+            var itemId = InsertLearningLogItem(
+                GenericDelegateId,
+                addedDate,
+                GenericCompetencyLearningResourceId,
+                GenericActivityName,
+                GenericResourceLink
+            );
+
+            // When
+            var result = service.GetLearningLogItem(itemId);
+
+            // Then
+            using (new AssertionScope())
             {
-                var newId = InsertLearningLogItem(
+                result.Should().NotBeNull();
+                AssertLearningLogItemHasCorrectValuesForLearningHubResource(
+                    result!,
                     GenericDelegateId,
                     addedDate,
                     GenericCompetencyLearningResourceId,
                     GenericActivityName,
                     GenericResourceLink
                 );
-
-                // When
-                var result = service.GetLearningLogItem(newId);
-
-                // Then
-                using (new AssertionScope())
-                {
-                    result.Should().NotBeNull();
-                    AssertLearningLogItemHasCorrectValuesForLearningHubResource(
-                        result!,
-                        GenericDelegateId,
-                        addedDate,
-                        GenericCompetencyLearningResourceId,
-                        GenericActivityName,
-                        GenericResourceLink
-                    );
-                }
-            }
-            finally
-            {
-                transaction.Dispose();
             }
         }
 
@@ -270,30 +256,23 @@
             var updatedDate = new DateTime(2021, 11, 1);
 
             using var transaction = new TransactionScope();
-            try
-            {
-                var newId = InsertLearningLogItem(
-                    GenericDelegateId,
-                    addedDate,
-                    GenericCompetencyLearningResourceId,
-                    GenericActivityName,
-                    GenericResourceLink
-                );
+            var itemId = InsertLearningLogItem(
+                GenericDelegateId,
+                addedDate,
+                GenericCompetencyLearningResourceId,
+                GenericActivityName,
+                GenericResourceLink
+            );
 
-                // When
-                service.UpdateLearningLogItemLastAccessedDate(newId, updatedDate);
-                var result = service.GetLearningLogItem(newId);
+            // When
+            service.UpdateLearningLogItemLastAccessedDate(itemId, updatedDate);
+            var result = service.GetLearningLogItem(itemId);
 
-                // Then
-                using (new AssertionScope())
-                {
-                    result.Should().NotBeNull();
-                    result!.LastAccessedDate.Should().Be(updatedDate);
-                }
-            }
-            finally
+            // Then
+            using (new AssertionScope())
             {
-                transaction.Dispose();
+                result.Should().NotBeNull();
+                result!.LastAccessedDate.Should().Be(updatedDate);
             }
         }
 
@@ -305,31 +284,25 @@
             var removedDate = new DateTime(2021, 12, 6);
 
             using var transaction = new TransactionScope();
-            try
-            {
-                var newId = InsertLearningLogItem(
-                    GenericDelegateId,
-                    addedDate,
-                    GenericCompetencyLearningResourceId,
-                    GenericActivityName,
-                    GenericResourceLink
-                );
 
-                // When
-                service.RemoveLearningLogItem(newId, GenericDelegateId, removedDate);
-                var result = service.GetLearningLogItem(newId);
+            var itemId = InsertLearningLogItem(
+                GenericDelegateId,
+                addedDate,
+                GenericCompetencyLearningResourceId,
+                GenericActivityName,
+                GenericResourceLink
+            );
 
-                // Then
-                using (new AssertionScope())
-                {
-                    result.Should().NotBeNull();
-                    result!.ArchivedDate.Should().Be(removedDate);
-                    result.ArchivedById.Should().Be(GenericDelegateId);
-                }
-            }
-            finally
+            // When
+            service.RemoveLearningLogItem(itemId, GenericDelegateId, removedDate);
+            var result = service.GetLearningLogItem(itemId);
+
+            // Then
+            using (new AssertionScope())
             {
-                transaction.Dispose();
+                result.Should().NotBeNull();
+                result!.ArchivedDate.Should().Be(removedDate);
+                result.ArchivedById.Should().Be(GenericDelegateId);
             }
         }
 
