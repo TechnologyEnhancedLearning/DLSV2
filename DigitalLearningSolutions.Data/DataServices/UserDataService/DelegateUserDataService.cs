@@ -34,7 +34,9 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
-                        jg.JobGroupName
+                        jg.JobGroupName,
+                        cd.HasBeenPromptedForPrn,
+                        cd.ProfessionalRegistrationNumber
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
@@ -258,7 +260,7 @@
                     record.Answer6,
                     record.AliasId,
                     record.Approved,
-                    record.Email
+                    record.Email,
                 },
                 commandType: CommandType.StoredProcedure
             );
@@ -382,7 +384,7 @@
                     answer5,
                     answer6,
                     aliasId,
-                    emailAddress
+                    emailAddress,
                 }
             );
         }
