@@ -9,20 +9,20 @@
       <ol class="nhsuk-breadcrumb__list">
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">Competency Resource Signposting</li>
+        <li class="nhsuk-breadcrumb__item">Signposting</li>
       </ol>
       <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to Framework Structure</a></p>
     </div>
   </nav>
 }
-<h2>Competency Resource Signposting</h2>
+<h1>Competency Resource Signposting</h1>
 <div class="nhsuk-inset-text">
   <span class="nhsuk-u-visually-hidden">Information: </span>
   <p>
     @Model.NameOfCompetency
   </p>
 </div>
-<h3>Competency Resource Links</h3>
+<h2>Competency Resource Links</h2>
 
 @if (Model.CompetencyResourceLinks.Any())
 {
