@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using Microsoft.FeatureManagement;
     using NUnit.Framework;
 
     public class UnlockServiceTests
@@ -12,6 +13,7 @@
         private IEmailService emailService;
         private INotificationDataService notificationDataService;
         private NotificationService notificationService;
+        private IFeatureManager featureManager;
 
         [SetUp]
         public void Setup()
@@ -19,6 +21,7 @@
             notificationDataService = A.Fake<INotificationDataService>();
             configService = A.Fake<IConfigService>();
             emailService = A.Fake<IEmailService>();
+            featureManager = A.Fake<IFeatureManager>();
 
             A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(new UnlockData
             {
@@ -32,7 +35,7 @@
 
             A.CallTo(() => configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)).Returns("https://example.com");
 
-            notificationService = new NotificationService(notificationDataService, configService, emailService);
+            notificationService = new NotificationService(notificationDataService, configService, emailService, featureManager);
         }
 
         [Test]
