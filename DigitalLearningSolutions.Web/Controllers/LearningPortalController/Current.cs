@@ -178,16 +178,7 @@
             var learningLogItem =
                 learningLogItemsService.SelectLearningLogItemById(learningLogItemId);
 
-            if (learningLogItem == null)
-            {
-                logger.LogWarning(
-                    $"Attempt to access learning log item with id {learningLogItemId} however found no item with that id"
-                );
-
-                return new NotFoundResult();
-            }
-
-            var model = new SetLearningLogItemCompletionDateViewModel(learningLogItemId, learningLogItem.Activity!);
+            var model = new SetLearningLogItemCompletionDateViewModel(learningLogItemId, learningLogItem!.Activity!);
 
             return View("Current/MarkAsComplete", model);
         }

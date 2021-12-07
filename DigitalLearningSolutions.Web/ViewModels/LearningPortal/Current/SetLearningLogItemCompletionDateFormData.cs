@@ -21,7 +21,7 @@
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            return DateValidator.ValidateDate(Day, Month, Year, "Completion date", true, false, true)
+            return DateValidator.ValidateDate(Day, Month, Year, "completion date", true, false, true)
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
     }

@@ -16,7 +16,7 @@
         }
 
         [Test]
-        public void UpdateCompletionDate_calls_data_service()
+        public void SetCompletionDate_calls_data_service()
         {
             // Given
             const int learningLogItemId = 1;
