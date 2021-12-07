@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.LearningResources
 {
     using System;
-    using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
     public class ActionPlanItem : CurrentLearningItem
     {
