@@ -2,6 +2,7 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -12,7 +13,7 @@
     public partial class LearningPortalController
     {
         [Route("/LearningPortal/Current/{page=1:int}")]
-        public IActionResult Current(
+        public async Task<IActionResult> Current(
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.Descending,
@@ -20,29 +21,33 @@
         )
         {
             sortBy ??= CourseSortByOptions.LastAccessed.PropertyName;
-
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var bannerText = GetBannerText();
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
                 sortBy,
                 sortDirection,
                 selfAssessments,
+                learningResources,
                 bannerText,
                 page
             );
             return View("Current/Current", model);
         }
 
-        public IActionResult AllCurrentItems()
+        public async Task<IActionResult> AllCurrentItems()
         {
-            var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(User.GetCandidateIdKnownNotNull());
-            var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
 
@@ -119,7 +124,11 @@
         [HttpPost]
         public IActionResult RemoveCurrentCourse(int progressId)
         {
-            courseDataService.RemoveCurrentCourse(progressId, User.GetCandidateIdKnownNotNull(), RemovalMethod.RemovedByDelegate);
+            courseDataService.RemoveCurrentCourse(
+                progressId,
+                User.GetCandidateIdKnownNotNull(),
+                RemovalMethod.RemovedByDelegate
+            );
             return RedirectToAction("Current");
         }
 
@@ -139,6 +148,22 @@
 
             notificationService.SendUnlockRequest(progressId);
             return View("Current/UnlockCurrentCourse");
+        }
+
+        [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
+        public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
+        {
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var learningResourceLink =
+                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
+
+            if (string.IsNullOrWhiteSpace(learningResourceLink))
+            {
+                return NotFound();
+            }
+
+            // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
+            return Redirect(learningResourceLink);
         }
     }
 }

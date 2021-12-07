@@ -2,8 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
@@ -26,21 +24,21 @@
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
-        private readonly IClockService clockService;
-        private readonly IGroupsDataService groupsDataService;
+        private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
+        private readonly IUserService userService;
 
         public DelegateGroupsController(
-            IGroupsDataService groupsDataService,
             ICentreCustomPromptsService centreCustomPromptsService,
-            IClockService clockService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            IUserService userService,
+            ICourseService courseService
         )
         {
-            this.groupsDataService = groupsDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
-            this.clockService = clockService;
             this.groupsService = groupsService;
+            this.userService = userService;
+            this.courseService = courseService;
         }
 
         [Route("{page=1:int}")]
@@ -62,7 +60,7 @@
             );
 
             var centreId = User.GetCentreId();
-            var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
+            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
 
             var model = new DelegateGroupsViewModel(
                 groups,
@@ -83,7 +81,7 @@
         public IActionResult AllDelegateGroups()
         {
             var centreId = User.GetCentreId();
-            var groups = groupsDataService.GetGroupsForCentre(centreId).ToList();
+            var groups = groupsService.GetGroupsForCentre(centreId).ToList();
 
             var model = new AllDelegateGroupsViewModel(groups, GetRegistrationPromptsWithSetOptions(centreId));
 
@@ -94,14 +92,14 @@
         public IActionResult GroupDelegates(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupName = groupsService.GetGroupName(groupId, centreId);
 
             if (groupName == null)
             {
                 return NotFound();
             }
 
-            var groupDelegates = groupsDataService.GetGroupDelegates(groupId);
+            var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
             var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
 
@@ -113,8 +111,8 @@
         public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
-            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+            var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
             if (groupName == null || delegateUser == null)
@@ -122,7 +120,7 @@
                 return NotFound();
             }
 
-            var progressId = groupsDataService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
+            var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
             var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
 
@@ -134,8 +132,8 @@
         public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
-            var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+            var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
             if (groupName == null || delegateUser == null)
@@ -152,18 +150,7 @@
                 return View(model);
             }
 
-            using var transaction = new TransactionScope();
-
-            var currentDate = clockService.UtcNow;
-            groupsDataService.RemoveRelatedProgressRecordsForGroup(
-                groupId,
-                delegateId,
-                model.RemoveStartedEnrolments,
-                currentDate
-            );
-
-            groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId);
-            transaction.Complete();
+            groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments);
 
             return RedirectToAction("GroupDelegates", new { groupId });
         }
@@ -172,7 +159,7 @@
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();
-            var groupName = groupsDataService.GetGroupName(groupId, centreId);
+            var groupName = groupsService.GetGroupName(groupId, centreId);
 
             if (groupName == null)
             {
@@ -192,16 +179,15 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult DeleteGroup(int groupId)
         {
-            var delegates = groupsDataService.GetGroupDelegates(groupId);
-            var courses = groupsDataService.GetGroupCourses(groupId, User.GetCentreId());
+            var delegates = groupsService.GetGroupDelegates(groupId);
+            var courses = groupsService.GetGroupCourses(groupId, User.GetCentreId());
 
             if (delegates.Any() || courses.Any())
             {
                 return RedirectToAction("ConfirmDeleteGroup", new { groupId });
             }
 
-            var removedDate = clockService.UtcNow;
-            groupsService.DeleteDelegateGroup(groupId, false, removedDate);
+            groupsService.DeleteDelegateGroup(groupId, false);
             return RedirectToAction("Index");
         }
 
@@ -210,9 +196,9 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId)
         {
-            var groupLabel = groupsDataService.GetGroupName(groupId, User.GetCentreId())!;
-            var delegateCount = groupsDataService.GetGroupDelegates(groupId).Count();
-            var courseCount = groupsDataService.GetGroupCourses(groupId, User.GetCentreId()).Count();
+            var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
+            var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
+            var courseCount = groupsService.GetGroupCourses(groupId, User.GetCentreId()).Count();
 
             var model = new ConfirmDeleteGroupViewModel
             {
@@ -234,8 +220,7 @@
                 return View(model);
             }
 
-            var removedDate = clockService.UtcNow;
-            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments, removedDate);
+            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments);
 
             return RedirectToAction("Index");
         }
@@ -270,7 +255,7 @@
         public IActionResult EditDescription(int groupId)
         {
             var centreId = User.GetCentreId();
-            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+            var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             if (group == null)
             {
@@ -291,7 +276,7 @@
             }
 
             var centreId = User.GetCentreId();
-            groupsDataService.UpdateGroupDescription(
+            groupsService.UpdateGroupDescription(
                 groupId,
                 centreId,
                 model.Description
@@ -306,7 +291,7 @@
         public IActionResult EditGroupName(int groupId)
         {
             var centreId = User.GetCentreId();
-            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+            var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             if (group?.LinkedToField != 0)
             {
@@ -317,7 +302,6 @@
             return View(model);
         }
 
-        
         [HttpPost]
         [Route("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
@@ -329,20 +313,71 @@
             }
 
             var centreId = User.GetCentreId();
-            var group = groupsDataService.GetGroupAtCentreById(groupId, centreId);
+            var group = groupsService.GetGroupAtCentreById(groupId, centreId);
 
             if (group?.LinkedToField != 0)
             {
                 return NotFound();
             }
 
-            groupsDataService.UpdateGroupName(
+            groupsService.UpdateGroupName(
                 groupId,
                 centreId,
                 model.GroupName
             );
-            
+
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/SelectCourse")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult AddCourseToGroupSelectCourse(int groupId)
+        {
+            var centreId = User.GetCentreId();
+
+            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+
+            var model = new AddCourseToGroupCoursesViewModel(courses, groupId, groupName!);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        public IActionResult AddCourseToGroup(int groupId, int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var groupLabel = groupsService.GetGroupName(groupId, centreId)!;
+            var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;
+            var courseNameInfo = courseService.GetCourseNameAndApplication(customisationId)!;
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseCategoryId);
+            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseNameInfo);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Courses/Add/{customisationId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
+        {
+            if (!ModelState.IsValid)
+            {
+                var courseCategoryId = courseService.GetCourseCategoryId(customisationId, User.GetCentreId())!.Value;
+                var supervisors = userService.GetSupervisorsAtCentreForCategory(User.GetCentreId(), courseCategoryId);
+                var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
+                return View(model);
+            }
+
+            // TODO HEEDLS-658 Save + Confirmation page
+            return RedirectToAction("GroupCourses", new { groupId });
         }
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)

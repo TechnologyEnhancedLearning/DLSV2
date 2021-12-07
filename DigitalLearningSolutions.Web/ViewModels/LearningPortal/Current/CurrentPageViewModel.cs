@@ -4,6 +4,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -19,16 +20,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortBy,
             string sortDirection,
             IEnumerable<SelfAssessment> selfAssessments,
+            IEnumerable<ActionPlanItem> actionPlanItems,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
         {
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
-            foreach (SelfAssessment selfAssessment in selfAssessments)
-            {
-                allItems.Add(selfAssessment);
-            }
+            allItems.AddRange(selfAssessments);
+            allItems.AddRange(actionPlanItems);
 
             var sortedItems = GenericSortingHelper.SortAllItems(
                 allItems.AsQueryable(),
@@ -40,20 +40,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
-            CurrentCourses = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(
-                course =>
+            CurrentActivities = paginatedItems.Select<BaseLearningItem, CurrentLearningItemViewModel>(
+                activity =>
                 {
-                    if (course is CurrentCourse currentCourse)
+                    return activity switch
                     {
-                        return new CurrentCourseViewModel(currentCourse);
-                    }
-
-                    return new SelfAssessmentCardViewModel((SelfAssessment)course);
+                        CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse),
+                        SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment),
+                        _ => new LearningResourceCardViewModel((ActionPlanItem)activity)
+                    };
                 }
             );
         }
 
-        public IEnumerable<CurrentLearningItemViewModel> CurrentCourses { get; }
+        public IEnumerable<CurrentLearningItemViewModel> CurrentActivities { get; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
@@ -65,6 +65,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             CourseSortByOptions.PassedSections
         };
 
-        public override bool NoDataFound => !CurrentCourses.Any() && NoSearchOrFilter;
+        public override bool NoDataFound => !CurrentActivities.Any() && NoSearchOrFilter;
     }
 }

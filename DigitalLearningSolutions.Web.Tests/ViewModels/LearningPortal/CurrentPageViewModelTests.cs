@@ -4,8 +4,10 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -14,6 +16,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
         private CurrentPageViewModel model = null!;
         private CurrentCourse[] currentCourses = null!;
         private SelfAssessment[] selfAssessments = null!;
+        private ActionPlanItem[] actionPlanItems = null!;
 
         [SetUp]
         public void SetUp()
@@ -84,12 +87,15 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     Description = "Self Assessment 2 Description"
                 },
             };
+            actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+
             model = new CurrentPageViewModel(
                 currentCourses,
                 null,
                 "Name",
                 "Ascending",
                 selfAssessments,
+                actionPlanItems,
                 null,
                 1
             );
@@ -159,7 +165,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             bool expectedIsSupervisor,
             bool expectedIsGroup)
         {
-            var course = model.CurrentCourses.ElementAt(index) as CurrentCourseViewModel;
+            var course = model.CurrentActivities.ElementAt(index) as CurrentCourseViewModel;
             course!.Id.Should().Be(expectedId);
             course.Name.Should().Be(expectedName);
             course.HasDiagnosticAssessment.Should().Be(expectedDiagnostic);
@@ -197,18 +203,20 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
+
             model = new CurrentPageViewModel(
                 courses,
                 null,
                 "Name",
                 "Ascending",
                 selfAssessments,
+                actionPlanItems,
                 null,
                 1
             );
 
-            model.CurrentCourses.Count().Should().Be(10);
-            model.CurrentCourses.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
+            model.CurrentActivities.Count().Should().Be(10);
+            model.CurrentActivities.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
         }
 
         [Test]
@@ -233,6 +241,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
+            actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
 
             model = new CurrentPageViewModel(
                 courses,
@@ -240,12 +249,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
+                actionPlanItems,
                 null,
                 2
             );
 
-            model.CurrentCourses.Count().Should().Be(3);
-            model.CurrentCourses.First().Name.Should().Be("k course 11");
+            model.CurrentActivities.Count().Should().Be(5);
+            model.CurrentActivities.First().Name.Should().Be("k course 11");
         }
 
         [Test]
@@ -276,6 +286,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
+                actionPlanItems,
                 null,
                 1
             );

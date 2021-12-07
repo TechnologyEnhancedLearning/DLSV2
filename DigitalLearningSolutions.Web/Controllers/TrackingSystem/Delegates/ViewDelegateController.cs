@@ -86,7 +86,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
@@ -105,7 +105,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult ExecuteRemoveFromCourse(
             int delegateId,
             int customisationId,
