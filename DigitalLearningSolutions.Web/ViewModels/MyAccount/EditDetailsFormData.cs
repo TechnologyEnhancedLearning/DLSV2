@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Http;
 
-    public class EditDetailsFormData
+    public class EditDetailsFormData: IValidatableObject
     {
         public EditDetailsFormData() { }
 
@@ -33,6 +33,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer4 = delegateUser?.Answer4;
             Answer5 = delegateUser?.Answer5;
             Answer6 = delegateUser?.Answer6;
+            
+            if (IsDelegateUser)
+            {
+               HasBeenPromptedForPrn = delegateUser!.HasBeenPromptedForPrn;
+               ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber!;
+            }
         }
 
         protected EditDetailsFormData(EditDetailsFormData formData)
@@ -90,5 +96,25 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public string? Answer5 { get; set; }
 
         public string? Answer6 { get; set; }
+
+        public bool HasBeenPromptedForPrn { get; set; }
+
+        public string ProfessionalRegistrationNumber { get; set; }
+
+        public string SelectedProfessionalRegOption { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!IsDelegateUser)
+            {
+                if (string.IsNullOrEmpty(SelectedProfessionalRegOption))
+                {
+                    yield return new ValidationResult("Must select professional registration number option");
+                }
+
+            }
+            
+        }
     }
 }
+
