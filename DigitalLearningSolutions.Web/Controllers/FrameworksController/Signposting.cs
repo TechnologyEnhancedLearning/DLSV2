@@ -23,7 +23,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
-            model.SortEnabled = false;
             model.NameOfCompetency = "I can organise my information and content using files and folders (either on my device, across multiple devices, or on the Cloud)";
             model.CompetencyResourceLinks = new List<SignpostingCardViewModel>()
             {
