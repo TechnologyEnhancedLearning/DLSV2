@@ -1,0 +1,58 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@model EditDetailsViewModel
+
+@{
+ 
+  bool optionSelected = false;
+  var optionNoSelected = HasBeenPromptedForPrn && string.IsNullOrEmpty(ProfessionalRegNumber);
+  var optionYesSelected = HasBeenPromptedForPrn && !string.IsNullOrEmpty(ProfessionalRegNumber);
+  var professionalRegConditionalId = "professional-reg-conditional-Id";
+}
+
+<div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
+    <div class="nhsuk-hint" id="professional-registration-hint">
+      Do you have a Professional Registration Number?
+    </div>
+
+    <div class="nhsuk-radios nhsuk-radios--conditional">
+      <div class="nhsuk-radios__item">
+        <input name="@nameof(optionSelected)"
+               class="nhsuk-radios__input"
+               id="optionNo"
+               type="radio"
+               value="@optionSelected"
+               @(professionalViewModel.OptionSelected = optionSelected? "No": "")/>
+        <label class="nhsuk-label nhsuk-radios__label" for="optionNo">
+          No
+        </label>
+      </div>
+
+      <div class="nhsuk-radios__item">
+        <input name="@nameof(optionSelected)"
+               class="nhsuk-radios__input"
+               id="optionYes"
+               type="radio"
+               value="@optionYesSelected"
+               aria-controls="@professionalRegConditionalId"
+               aria-expanded="@(optionSelected ? "true" : "false")"
+               @(optionYesSelected = optionSelected? true: false)
+               @(optionSelected ? "checked" : "")
+               @(professionalViewModel.OptionSelected = optionSelected? "Yes": "")/>
+        <label class="nhsuk-label nhsuk-radios__label" for="optionYes">
+          Yes
+        </label>
+      </div>
+      <div class="nhsuk-radios__conditional @(optionYesSelected ? " " : " nhsuk-radios__conditional--hidden")" id="@professionalRegConditionalId">
+          <vc:text-input asp-for="ProfessionalRegNumberEditViewModel.ProfessionalRegNumber"
+                       label="Professional Registration Number"
+                       populate-with-current-value="false"
+                       type="text"
+                       spell-check="false"
+                       hint-text=""
+                       autocomplete="off"
+                       css-class="nhsuk-u-width-one-half" />
+        </div>
+    </div>
+  </fieldset>
+</div>
