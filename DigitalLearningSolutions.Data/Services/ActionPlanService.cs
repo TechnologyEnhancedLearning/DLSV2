@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -18,6 +19,10 @@
         Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId);
 
         Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
+
+        public LearningLogItem? SelectLearningLogItemById(int learningLogItemId);
+
+        public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -149,6 +154,16 @@
                 );
 
             return resource.Link;
+        }
+
+        public LearningLogItem? SelectLearningLogItemById(int learningLogItemId)
+        {
+            return learningLogItemsDataService.SelectLearningLogItemById(learningLogItemId);
+        }
+
+        public void SetCompletionDate(int learningLogItemId, DateTime completedDate)
+        {
+            learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
         }
     }
 }

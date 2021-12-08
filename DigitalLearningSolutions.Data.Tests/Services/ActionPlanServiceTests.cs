@@ -330,5 +330,20 @@
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(resourceReferenceId))
                 .MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public void SetCompletionDate_calls_data_service()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            var completedDate = new DateTime(2021, 09, 01);
+
+            // When
+            learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
+
+            // Then
+            A.CallTo(() => learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappenedOnceExactly();
+        }
     }
 }
