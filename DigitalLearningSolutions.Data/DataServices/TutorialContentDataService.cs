@@ -1,10 +1,9 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
@@ -307,7 +306,7 @@
         public IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId)
         {
             return connection.Query<Tutorial>(
-                @"SELECT
+                @"SELECT 
                         tu.TutorialID,
                         tu.TutorialName,
                         ct.[Status],
@@ -364,7 +363,7 @@
         )
         {
             return connection.Query<Objective>(
-                @"SELECT
+                @"SELECT 
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
@@ -388,7 +387,7 @@
         )
         {
             return connection.Query<CcObjective>(
-                @"SELECT
+                @"SELECT 
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
