@@ -25,7 +25,7 @@
         )
         {
             validApplications = validApplicationNames == null
-                ? new DlsSubApplication[] { }
+                ? Enumeration.GetAll<DlsSubApplication>()
                 : validApplicationNames.Select(Enumeration.FromName<DlsSubApplication>);
             this.featureManager = featureManager;
         }
@@ -41,50 +41,40 @@
                 return;
             }
 
-            if (!TryParseDlsSubApplication(context, out var application, out var applicationParameterName))
+            var (application, applicationParameterName) = TryParseDlsSubApplication(context);
+
+            if (applicationParameterName == null)
             {
                 return;
             }
-
-            if (await ApplicationIsInaccessibleByPage(context, application))
+            
+            if (application == null || await ApplicationIsInaccessibleByPage(application!))
             {
                 SetNotFoundResult(context);
                 return;
             }
 
-            ValidateUserHasPermissionForApplicationAndSetAppropriateResult(context, user, application, applicationParameterName!);
+            ValidateUserHasPermissionForApplicationAndSetAppropriateResult(context, user, application!, applicationParameterName!);
         }
 
-        private bool TryParseDlsSubApplication(
-            ActionExecutingContext context,
-            out DlsSubApplication? application,
-            out string? dlsSubApplicationParameterName
+        private (DlsSubApplication? application, string? applicationParameterName) TryParseDlsSubApplication(
+            ActionExecutingContext context
         )
         {
-            dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
+            var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters?
                 .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
 
-            var actionDoesNotRequireApplication = dlsSubApplicationParameterName == null;
-            if (actionDoesNotRequireApplication)
+            DlsSubApplication? application = null;
+            if (!HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
-                application = null;
-                return false;
+                application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
             }
 
-            if (HasModelBindingError(context, dlsSubApplicationParameterName!))
-            {
-                SetNotFoundResult(context);
-                application = null;
-                return false;
-            }
-
-            application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
-            return true;
+            return (application, dlsSubApplicationParameterName);
         }
 
         private async Task<bool> ApplicationIsInaccessibleByPage(
-            ActionExecutingContext context,
-            DlsSubApplication? application
+            DlsSubApplication application
         )
         {
             if (DlsSubApplication.TrackingSystem.Equals(application) &&
@@ -95,18 +85,13 @@
                 return true;
             }
 
-            if (validApplications.Any() && !validApplications.Contains(application))
-            {
-                return true;
-            }
-
-            return false;
+            return !validApplications.Contains(application);
         }
 
         private void ValidateUserHasPermissionForApplicationAndSetAppropriateResult(
             ActionExecutingContext context,
             ClaimsPrincipal user,
-            DlsSubApplication? application,
+            DlsSubApplication application,
             string dlsSubApplicationParameterName
         )
         {

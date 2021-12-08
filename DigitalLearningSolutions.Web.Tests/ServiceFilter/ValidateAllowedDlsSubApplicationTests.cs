@@ -54,6 +54,47 @@
 
         [Test]
         public void
+            ValidateAllowedDlsSubApplication_does_not_set_result_if_no_application_parameter_found()
+        {
+            // Given
+            GivenUserIsTryingToAccess(DlsSubApplication.TrackingSystem);
+            context.ActionDescriptor.Parameters = new ParameterDescriptor[] { };
+
+            var attribute =
+                new ValidateAllowedDlsSubApplication(
+                    featureManager,
+                    new[] { nameof(DlsSubApplication.LearningPortal) }
+                );
+
+            // When
+            attribute.OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeNull();
+        }
+
+        [Test]
+        public void
+            ValidateAllowedDlsSubApplication_sets_not_found_result_if_application_is_null()
+        {
+            // Given
+            GivenUserIsTryingToAccess(null);
+
+            var attribute =
+                new ValidateAllowedDlsSubApplication(
+                    featureManager,
+                    new[] { nameof(DlsSubApplication.LearningPortal) }
+                );
+
+            // When
+            attribute.OnActionExecuting(context);
+
+            // Then
+            context.Result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void
             ValidateAllowedDlsSubApplication_does_not_set_not_found_result_for_matching_application()
         {
             // Given
@@ -132,7 +173,7 @@
             };
         }
 
-        private void GivenUserIsTryingToAccess(DlsSubApplication application)
+        private void GivenUserIsTryingToAccess(DlsSubApplication? application)
         {
             context.ActionArguments.Add("dlsSubApplication", application);
         }
