@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Dapper;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Data.SqlClient;
 
@@ -192,6 +193,8 @@
                 firstName,
                 surname,
                 email,
+                null,
+                YesNoSelectionEnum.No,
                 profileImage
             );
         }

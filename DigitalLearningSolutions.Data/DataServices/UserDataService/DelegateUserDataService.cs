@@ -190,7 +190,14 @@
             return users;
         }
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids)
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
+            int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -198,9 +205,11 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             EmailAddress = @email,
-                            ProfileImage = @profileImage
+                            ProfileImage = @profileImage,
+                            ProfessionalRegistrationNumber = @professionalRegNumber,
+                            HasBeenPromptedForPrn = @hasBeenPromptedForPrn
                         WHERE CandidateID in @ids",
-                new { firstName, surname, email, profileImage, ids }
+                new { firstName, surname, email, profileImage, ids, professionalRegNumber, hasBeenPromptedForPrn }
             );
         }
 
