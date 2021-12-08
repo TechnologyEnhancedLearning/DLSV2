@@ -65,7 +65,7 @@
                 .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
 
             DlsSubApplication? application = null;
-            if (!HasModelBindingError(context, dlsSubApplicationParameterName!))
+            if (dlsSubApplicationParameterName != null && !HasModelBindingError(context, dlsSubApplicationParameterName!))
             {
                 application = GetDlsSubApplicationFromContext(context, dlsSubApplicationParameterName!);
             }
