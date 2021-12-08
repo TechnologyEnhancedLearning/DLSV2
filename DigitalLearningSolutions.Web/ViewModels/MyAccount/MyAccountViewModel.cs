@@ -23,6 +23,7 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
+            ProfessionalRegNumber = delegateUser?.ProfessionalRegistrationNumber;
 
             CustomFields = new List<CustomFieldViewModel>();
             if (customPrompts != null)
@@ -50,6 +51,8 @@
         public byte[]? ProfilePicture { get; set; }
 
         public string? JobGroup { get; set; }
+
+        public string? ProfessionalRegNumber { get; set; }
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
 

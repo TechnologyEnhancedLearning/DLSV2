@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Dapper;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
 
     public static class UserTestHelper
@@ -187,6 +188,8 @@
                 firstName,
                 surname,
                 email,
+                null,
+                YesNoSelectionEnum.No,
                 profileImage
             );
         }

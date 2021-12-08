@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -139,9 +140,10 @@
                 var firstName = "TestFirstName";
                 var lastName = "TestLastName";
                 var email = "test@email.com";
+                var professionalRegNumber = "test-1234";
 
                 // When
-                userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new[] { 2, 3 });
+                userDataService.UpdateDelegateUsers(firstName, lastName, email, null, professionalRegNumber, true, new[] { 2, 3 });
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
                 var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 

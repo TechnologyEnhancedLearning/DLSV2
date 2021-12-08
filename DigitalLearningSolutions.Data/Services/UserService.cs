@@ -167,6 +167,8 @@ namespace DigitalLearningSolutions.Data.Services
                     accountDetailsData.Surname,
                     accountDetailsData.Email,
                     accountDetailsData.ProfileImage,
+                    accountDetailsData.ProfessionalRegNumber,
+                    accountDetailsData.HasBeenPromptedForPrn,
                     delegateIds
                 );
 

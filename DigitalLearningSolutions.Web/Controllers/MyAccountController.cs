@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
@@ -14,6 +15,7 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
@@ -131,6 +133,24 @@
             if (!ModelState.IsValid)
             {
                 var model = new EditDetailsViewModel(formData, dlsSubApplication);
+                var validationResults = model.Validate(new ValidationContext(model, null, null));
+                foreach (var result in validationResults)
+                {
+                    var key = string.Join("", result.MemberNames);
+                    if (ModelState.TryGetValue(key, out var value))
+                    {
+                        if (value.ValidationState == ModelValidationState.Invalid)
+                        {
+                            continue;
+                        }
+                    }
+
+                    ModelState.TryAddModelError(
+                        key,
+                        result.ErrorMessage
+                    );
+                }
+
                 return View(model);
             }
 
@@ -255,6 +275,8 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
+                formData.ProfessionalRegistrationNumber,
+                formData.ProfessionalRegNumberSelectionAnswer,
                 formData.ProfileImage
             );
 

@@ -42,6 +42,15 @@
           }
         }
 
+        @if (!string.IsNullOrEmpty(Model.ProfessionalRegNumber)) {
+          <div class="nhsuk-summary-list__row details-list-with-button__row">
+            <dt class="nhsuk-summary-list__key">
+              Professional registration number
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegNumber" />
+          </div>
+        }
+
         <div class="nhsuk-summary-list__row details-list-with-button__row">
           <dt class="nhsuk-summary-list__key profile-picture__label">
             Profile picture (optional)
