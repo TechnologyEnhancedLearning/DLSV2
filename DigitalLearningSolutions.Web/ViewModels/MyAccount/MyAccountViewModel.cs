@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -28,8 +27,6 @@
             ProfessionalRegistrationNumber = delegateUser?.HasBeenPromptedForPrn == true
                 ? delegateUser.ProfessionalRegistrationNumber ?? "Not professionally registered"
                 : "Not yet provided";
-
-            Console.WriteLine(delegateUser);
 
             CustomFields = new List<CustomFieldViewModel>();
             if (customPrompts != null)
