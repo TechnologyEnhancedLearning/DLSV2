@@ -34,7 +34,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
-    using ConfigHelper = Data.Helpers.ConfigHelper;
+    using ConfigHelper = Web.Helpers.ConfigHelper;
 
     public class Startup
     {
