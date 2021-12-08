@@ -1,14 +1,13 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
-    public class LearningHubSsoSecurityHelperTests
+    public class LearningHubSsoSecurityServiceTests
     {
         private IConfiguration Config { get; set; } = null!;
         private const int TestTolerance = 3;
@@ -33,7 +32,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -50,7 +49,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -67,7 +66,7 @@
             var now = DateTime.UtcNow.Date;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddMilliseconds(999));
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -85,7 +84,7 @@
             var stateString = "stateString";
             var differentStateString = "stateStrinh";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -102,7 +101,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             var alternateConfig = A.Fake<IConfiguration>();
 
@@ -111,7 +110,7 @@
             A.CallTo(() => alternateConfig["LearningHubSSO:ByteLength"]).Returns(TestLength.ToString());
             A.CallTo(() => alternateConfig["LearningHubSSO:SecretKey"]).Returns("open sesame");
 
-            var helper2 = new LearningHubSsoSecurityHelper(clockService, alternateConfig);
+            var helper2 = new LearningHubSsoSecurityService(clockService, alternateConfig);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -128,11 +127,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var result = helper.VerifyHash(stateString, hash1);
+            var hash = helper.GenerateHash(stateString);
+            var result = helper.VerifyHash(stateString, hash);
 
             // Then
             result.Should().BeTrue();
@@ -145,11 +144,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityHelper(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var result = helper.VerifyHash(stateString, hash1);
+            var hash = helper.GenerateHash(stateString);
+            var result = helper.VerifyHash(stateString, hash);
 
             // Then
             result.Should().BeFalse();

@@ -4,6 +4,7 @@
 
     public static class ConfigHelper
     {
+        public const string DefaultConnectionStringName = "DefaultConnection";
         public const string AppRootPathName = "AppRootPath";
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";

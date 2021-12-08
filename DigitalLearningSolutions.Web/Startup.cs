@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
@@ -35,7 +34,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
-    using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
+    using ConfigHelper = Data.Helpers.ConfigHelper;
 
     public class Startup
     {
@@ -208,6 +207,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
+            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -250,7 +250,6 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
-            services.AddScoped<ILearningHubSsoSecurityHelper, LearningHubSsoSecurityHelper>();
         }
 
         private static void RegisterHttpClients(IServiceCollection services)
