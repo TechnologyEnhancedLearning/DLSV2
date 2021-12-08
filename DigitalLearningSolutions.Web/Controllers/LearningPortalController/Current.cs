@@ -173,19 +173,19 @@
 
         [HttpGet]
         [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
-        public IActionResult MarkCurrentLearningLogItemAsComplete(int learningLogItemId)
+        public IActionResult MarkCurrentActionPlanItemAsComplete(int learningLogItemId)
         {
             var learningLogItem =
-                learningLogItemsService.SelectLearningLogItemById(learningLogItemId);
+                actionPlanService.GetLearningLogItem(learningLogItemId);
 
             var model = new SetLearningLogItemCompletionDateViewModel(learningLogItemId, learningLogItem!.Activity!);
 
-            return View("Current/MarkAsComplete", model);
+            return View("Current/MarkActionPlanItemAsComplete", model);
         }
 
         [HttpPost]
         [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
-        public IActionResult MarkCurrentLearningLogItemAsComplete(
+        public IActionResult MarkCurrentActionPlanItemAsComplete(
             int learningLogItemId,
             SetLearningLogItemCompletionDateFormData formData
         )
@@ -193,12 +193,12 @@
             if (!ModelState.IsValid)
             {
                 var model = new SetLearningLogItemCompletionDateViewModel(formData, learningLogItemId);
-                return View("Current/MarkAsComplete", model);
+                return View("Current/MarkActionPlanItemAsComplete", model);
             }
 
             var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
-            learningLogItemsService.SetCompletionDate(learningLogItemId, completionDate);
+            actionPlanService.SetCompletionDate(learningLogItemId, completionDate);
             return RedirectToAction("Current");
         }
 

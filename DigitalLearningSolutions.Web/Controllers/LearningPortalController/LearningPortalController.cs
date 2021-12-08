@@ -20,7 +20,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly ICourseDataService courseDataService;
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
-        private readonly ILearningLogItemsService learningLogItemsService;
         private readonly ILogger<LearningPortalController> logger;
         private readonly INotificationService notificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
@@ -36,8 +35,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             ILogger<LearningPortalController> logger,
             IConfiguration config,
             IFilteredApiHelperService filteredApiHelperService,
-            IActionPlanService actionPlanService,
-            ILearningLogItemsService learningLogItemsService
+            IActionPlanService actionPlanService
         )
         {
             this.centresDataService = centresDataService;
@@ -50,7 +48,6 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.config = config;
             this.filteredApiHelperService = filteredApiHelperService;
             this.actionPlanService = actionPlanService;
-            this.learningLogItemsService = learningLogItemsService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

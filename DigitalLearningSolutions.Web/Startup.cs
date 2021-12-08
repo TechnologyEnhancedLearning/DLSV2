@@ -183,7 +183,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<ILearningHubApiService, LearningHubApiService>();
-            services.AddScoped<ILearningLogItemsService, LearningLogItemsService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
@@ -282,7 +281,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
-            services.AddScoped<VerifyLearningLogItemExists>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

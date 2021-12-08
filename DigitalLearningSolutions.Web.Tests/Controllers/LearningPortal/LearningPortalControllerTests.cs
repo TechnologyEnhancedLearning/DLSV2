@@ -27,7 +27,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ICourseDataService courseDataService = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private IFrameworkNotificationService frameworkNotificationService = null!;
-        private ILearningLogItemsService learningLogItemsService = null!;
         private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
@@ -46,7 +45,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
-            learningLogItemsService = A.Fake<ILearningLogItemsService>();
 
             var connection = ServiceTestHelper.GetDatabaseConnection();
             learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
@@ -73,8 +71,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 logger,
                 config,
                 filteredApiHelperService,
-                actionPlanService,
-                learningLogItemsService
+                actionPlanService
             )
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
