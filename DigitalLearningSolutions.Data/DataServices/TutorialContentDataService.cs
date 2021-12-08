@@ -49,7 +49,6 @@
         public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
-            SqlMapper.AddTypeHandler(new EnumerableIntHandler());
         }
 
         public TutorialInformation? GetTutorialInformation(
@@ -308,7 +307,7 @@
         public IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId)
         {
             return connection.Query<Tutorial>(
-                @"SELECT 
+                @"SELECT
                         tu.TutorialID,
                         tu.TutorialName,
                         ct.[Status],
@@ -365,7 +364,7 @@
         )
         {
             return connection.Query<Objective>(
-                @"SELECT 
+                @"SELECT
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
@@ -389,7 +388,7 @@
         )
         {
             return connection.Query<CcObjective>(
-                @"SELECT 
+                @"SELECT
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
