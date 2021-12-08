@@ -20,7 +20,5 @@
         }
 
         public int LearningLogItemId { get; set; }
-
-        public string ResourceName { get; set; }
     }
 }

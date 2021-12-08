@@ -10,11 +10,13 @@
 
         protected SetLearningLogItemCompletionDateFormData(SetLearningLogItemCompletionDateFormData formData)
         {
+            ResourceName = formData.ResourceName;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
         }
 
+        public string ResourceName { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }

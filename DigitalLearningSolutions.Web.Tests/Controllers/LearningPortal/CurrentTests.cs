@@ -345,7 +345,7 @@
             const int year = 2021;
             var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
             var completedDate = new DateTime(year, month, day);
-            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
             var result = controller.MarkCurrentLearningLogItemAsComplete(learningLogItemId, formData);
@@ -365,15 +365,14 @@
             const int month = 1;
             const int year = 4000;
             var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
-            var completedDate = new DateTime(year, month, day);
             controller.ModelState.AddModelError("year", "message");
-            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
             controller.MarkCurrentLearningLogItemAsComplete(learningLogItemId, formData);
 
             // Then
-            A.CallTo(() => learningLogItemsService.SetCompletionDate(learningLogItemId, completedDate))
+            A.CallTo(() => learningLogItemsService.SetCompletionDate(A<int>._, A<DateTime>._))
                 .MustNotHaveHappened();
         }
     }
