@@ -348,7 +348,7 @@
             A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
-            var result = controller.MarkCurrentActionPlanItemAsComplete(learningLogItemId, formData);
+            var result = controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
 
             // Then
             A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
@@ -369,7 +369,7 @@
             A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
-            controller.MarkCurrentActionPlanItemAsComplete(learningLogItemId, formData);
+            controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
 
             // Then
             A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._))

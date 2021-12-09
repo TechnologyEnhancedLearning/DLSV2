@@ -6,7 +6,6 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -172,28 +171,28 @@
         }
 
         [HttpGet]
-        [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
-        public IActionResult MarkCurrentActionPlanItemAsComplete(int learningLogItemId)
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
+        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
         {
-            var learningLogItem =
-                actionPlanService.GetLearningLogItem(learningLogItemId);
-
-            var model = new SetLearningLogItemCompletionDateViewModel(learningLogItemId, learningLogItem!.Activity!);
-
-            return View("Current/MarkActionPlanItemAsComplete", model);
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+            var model = new MarkActionPlanResourceAsCompleteViewModel(learningLogItemId, actionPlanResource!.Name);
+            return View("Current/MarkActionPlanResourceAsComplete", model);
         }
 
         [HttpPost]
-        [Route("/LearningPortal/Current/MarkAsComplete/{learningLogItemId:int}")]
-        public IActionResult MarkCurrentActionPlanItemAsComplete(
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
+        public IActionResult MarkActionPlanResourceAsComplete(
             int learningLogItemId,
             SetLearningLogItemCompletionDateFormData formData
         )
         {
             if (!ModelState.IsValid)
             {
-                var model = new SetLearningLogItemCompletionDateViewModel(formData, learningLogItemId);
-                return View("Current/MarkActionPlanItemAsComplete", model);
+                var model = new MarkActionPlanResourceAsCompleteViewModel(formData, learningLogItemId);
+                return View("Current/MarkActionPlanResourceAsComplete", model);
             }
 
             var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);

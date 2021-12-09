@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
-    public class SetLearningLogItemCompletionDateViewModel : SetLearningLogItemCompletionDateFormData
+    public class MarkActionPlanResourceAsCompleteViewModel : SetLearningLogItemCompletionDateFormData
     {
-        public SetLearningLogItemCompletionDateViewModel(
+        public MarkActionPlanResourceAsCompleteViewModel(
             int learningLogItemId,
             string resourceName
         )
@@ -11,7 +11,7 @@
             ResourceName = resourceName;
         }
 
-        public SetLearningLogItemCompletionDateViewModel(
+        public MarkActionPlanResourceAsCompleteViewModel(
             SetLearningLogItemCompletionDateFormData formData,
             int learningLogItemId
         ) : base(formData)

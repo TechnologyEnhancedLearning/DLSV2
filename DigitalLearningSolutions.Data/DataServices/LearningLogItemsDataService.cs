@@ -188,7 +188,7 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE LearningLogItems
                         SET CompletedDate = @completedDate
-                        WHERE LearningLogItemID = @learningLogitemId",
+                        WHERE LearningLogItemID = @learningLogItemId",
                 new { learningLogItemId, completedDate }
             );
 
