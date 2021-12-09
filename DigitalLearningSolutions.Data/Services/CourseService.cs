@@ -70,6 +70,8 @@
 
     public class CourseService : ICourseService
     {
+        private const int OldCompetencySelfAssessmentContentTypeId = 4;
+
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
         private readonly IProgressDataService progressDataService;
@@ -119,9 +121,11 @@
 
         public bool? VerifyAdminUserCanAccessCourse(int customisationId, int centreId, int? adminCategoryIdClaim)
         {
-            var (courseCentreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(customisationId);
+            var (courseCentreId, courseCategoryId, defaultContentTypeId) =
+                courseDataService.GetCourseValidationDetails(customisationId);
 
-            if (courseCentreId == null || courseCategoryId == null)
+            if (courseCentreId == null || courseCategoryId == null ||
+                defaultContentTypeId == OldCompetencySelfAssessmentContentTypeId)
             {
                 return null;
             }
@@ -219,7 +223,8 @@
             return courseDataService.GetCourseOptionsFilteredByCategory(
                 customisationId,
                 centreId,
-                categoryId);
+                categoryId
+            );
         }
 
         public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(

@@ -527,25 +527,27 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseValidationDetails_returns_centreId_and_categoryId_correctly()
+        public void GetCourseValidationDetails_returns_centreId_categoryId_and_defaultContentTypeId_correctly()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(100);
+            var (centreId, courseCategoryId, defaultContentTypeId) = courseDataService.GetCourseValidationDetails(100);
 
             // Then
             centreId.Should().Be(101);
             courseCategoryId.Should().Be(2);
+            defaultContentTypeId.Should().Be(1);
         }
 
         [Test]
         public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
         {
             // When
-            var (centreId, courseCategoryId) = courseDataService.GetCourseValidationDetails(265);
+            var (centreId, courseCategoryId, defaultContentTypeId) = courseDataService.GetCourseValidationDetails(265);
 
             // Then
             centreId.Should().BeNull();
             courseCategoryId.Should().BeNull();
+            defaultContentTypeId.Should().BeNull();
         }
 
         [Test]

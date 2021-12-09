@@ -146,7 +146,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
@@ -163,7 +163,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
@@ -179,7 +179,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2));
+                .Returns((2, 2, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
@@ -195,7 +195,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((1, 1));
+                .Returns((1, 1, 2));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
@@ -204,6 +204,22 @@
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanAccessCourse_should_return_null_with_content_type_id_4()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
+                .Returns((1, 1, 4));
+
+            // When
+            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeNull();
         }
 
         [Test]
@@ -247,7 +263,7 @@
         {
             // Given
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((null, null));
+                .Returns((null, null, null));
 
             // When
             var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
