@@ -25,7 +25,7 @@
                 return;
             }
 
-            // Candidate Id will be known as Authorize(User.Only) attribute will always be executed first
+            // Candidate Id will be non-null as Authorize(User.Only) attribute will always be executed first
             // because https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-3.1#filter-types-1
             var delegateId = controller.User.GetCandidateIdKnownNotNull();
             var learningLogItemId = int.Parse(context.RouteData.Values["learningLogItemId"].ToString()!);

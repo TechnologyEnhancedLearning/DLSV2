@@ -29,7 +29,7 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -49,7 +49,7 @@
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -176,9 +176,9 @@
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
-            var actionPlanItem = await actionPlanService.GetActionPlanItem(learningLogItemId);
-            var model = new RemoveActionPlanItemViewModel(actionPlanItem!.Id, actionPlanItem.Name);
-            return View("Current/RemoveCurrentActionPlanItemConfirmation", model);
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+            var model = new RemoveActionPlanResourceViewModel(actionPlanResource!.Id, actionPlanResource.Name);
+            return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }
 
         [HttpPost]
@@ -186,7 +186,7 @@
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
         {
-            actionPlanService.RemoveActionPlanItem(learningLogItemId, User.GetCandidateIdKnownNotNull());
+            actionPlanService.RemoveActionPlanResource(learningLogItemId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("Current");
         }
     }

@@ -145,7 +145,7 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanItems_returns_empty_list_if_no_incomplete_learning_log_items_found()
+        public async Task GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
@@ -161,7 +161,7 @@
                 .Returns(invalidLearningLogItems);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
             result.Should().BeEmpty();
@@ -170,7 +170,7 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanItems_returns_correctly_matched_action_plan_items()
+        public async Task GetIncompleteActionPlanResources_returns_correctly_matched_action_plan_items()
         {
             // Given
             const int delegateId = 1;
@@ -203,7 +203,7 @@
                 .Returns(bulkReturnedItems);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
             List<(int id, string title)> resultIdsAndTitles = result.Select(r => (r.Id, r.Name)).ToList();
@@ -265,7 +265,7 @@
         }
 
         [Test]
-        public void RemoveActionPlanItem_removes_item()
+        public void RemoveActionPlanResource_removes_item()
         {
             // Given
             var testDate = new DateTime(2021, 12, 6);
@@ -276,7 +276,7 @@
                 .DoesNothing();
 
             // When
-            actionPlanService.RemoveActionPlanItem(actionPlanId, delegateId);
+            actionPlanService.RemoveActionPlanResource(actionPlanId, delegateId);
 
             // Then
             A.CallTo(() => learningLogItemsDataService.RemoveLearningLogItem(actionPlanId, delegateId, testDate))

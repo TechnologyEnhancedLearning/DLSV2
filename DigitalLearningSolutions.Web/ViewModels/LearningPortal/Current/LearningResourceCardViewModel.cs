@@ -4,7 +4,7 @@
 
     public class LearningResourceCardViewModel : CurrentLearningItemViewModel
     {
-        public LearningResourceCardViewModel(ActionPlanItem item) : base(item)
+        public LearningResourceCardViewModel(ActionPlanResource item) : base(item)
         {
             LaunchResourceLink = item.ResourceLink;
             ResourceDescription = item.ResourceDescription;

@@ -15,13 +15,13 @@
     {
         void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId);
 
-        Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId);
+        Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId);
 
-        Task<ActionPlanItem?> GetActionPlanItem(int learningLogItemId);
+        Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
 
         Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
 
-        void RemoveActionPlanItem(int learningLogItemId, int delegateId);
+        void RemoveActionPlanResource(int learningLogItemId, int delegateId);
 
         bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
     }
@@ -100,7 +100,7 @@
             transaction.Complete();
         }
 
-        public async Task<IEnumerable<ActionPlanItem>> GetIncompleteActionPlanItems(int delegateId)
+        public async Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId)
         {
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
@@ -109,21 +109,21 @@
 
             if (!incompleteLearningLogItems.Any())
             {
-                return new List<ActionPlanItem>();
+                return new List<ActionPlanResource>();
             }
 
             var incompleteResourceIds = incompleteLearningLogItems.Select(i => i.LearningHubResourceReferenceId!.Value);
             var bulkResponse = await learningHubApiClient.GetBulkResourcesByReferenceIds(incompleteResourceIds);
-            var incompleteActionPlanItems = bulkResponse.ResourceReferences.Select(
-                resource => new ActionPlanItem(
+            var incompleteActionPlanResources = bulkResponse.ResourceReferences.Select(
+                resource => new ActionPlanResource(
                     incompleteLearningLogItems.Single(i => i.LearningHubResourceReferenceId!.Value == resource.RefId),
                     resource
                 )
             );
-            return incompleteActionPlanItems;
+            return incompleteActionPlanResources;
         }
 
-        public async Task<ActionPlanItem?> GetActionPlanItem(int learningLogItemId)
+        public async Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId)
         {
             var learningLogItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
@@ -131,7 +131,7 @@
                 await learningHubApiClient.GetResourceByReferenceId(
                     learningLogItem.LearningHubResourceReferenceId!.Value
                 );
-            return new ActionPlanItem(learningLogItem, response);
+            return new ActionPlanResource(learningLogItem, response);
         }
 
         public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(
@@ -139,19 +139,19 @@
             int delegateId
         )
         {
-            var actionPlanItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
+            var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
             learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, clockService.UtcNow);
 
             var resource =
                 await learningHubApiClient.GetResourceByReferenceId(
-                    actionPlanItem.LearningHubResourceReferenceId!.Value
+                    actionPlanResource.LearningHubResourceReferenceId!.Value
                 );
 
             return resource.Link;
         }
 
-        public void RemoveActionPlanItem(int learningLogItemId, int delegateId)
+        public void RemoveActionPlanResource(int learningLogItemId, int delegateId)
         {
             var removalDate = clockService.UtcNow;
             learningLogItemsDataService.RemoveLearningLogItem(learningLogItemId, delegateId, removalDate);
@@ -164,14 +164,14 @@
                 return null;
             }
 
-            var actionPlanItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
+            var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
 
-            if (!(actionPlanItem is { ArchivedDate: null }) || actionPlanItem.LearningHubResourceReferenceId == null)
+            if (!(actionPlanResource is { ArchivedDate: null }) || actionPlanResource.LearningHubResourceReferenceId == null)
             {
                 return null;
             }
 
-            return actionPlanItem.LoggedById == delegateId;
+            return actionPlanResource.LoggedById == delegateId;
         }
     }
 }

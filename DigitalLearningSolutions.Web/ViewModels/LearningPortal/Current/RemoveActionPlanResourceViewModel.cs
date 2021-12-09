@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
-    public class RemoveActionPlanItemViewModel
+    public class RemoveActionPlanResourceViewModel
     {
-        public RemoveActionPlanItemViewModel(int learningLogItemId, string name)
+        public RemoveActionPlanResourceViewModel(int learningLogItemId, string name)
         {
             LearningLogItemId = learningLogItemId;
             Name = name;
