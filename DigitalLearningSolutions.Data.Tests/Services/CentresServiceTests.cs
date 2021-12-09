@@ -76,10 +76,7 @@
         public void GetAllCentreSummaries_calls_dataService_and_returns_all_summary_details()
         {
             // Given
-            var centres = Builder<Centre>.CreateListOfSize(10)
-                .All()
-                .With((c, i) => c.CentreId = i + 1)
-                .Build();
+            var centres = Builder<Centre>.CreateListOfSize(10).Build();
             A.CallTo(() => centresDataService.GetAllCentreSummaries()).Returns(centres);
 
             // When

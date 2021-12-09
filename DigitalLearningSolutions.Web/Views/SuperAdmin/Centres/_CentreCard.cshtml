@@ -13,78 +13,79 @@
       <dl class="nhsuk-summary-list">
 
         <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Centre id
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CentreId
-        </dd>
-    </div>
+          <dt class="nhsuk-summary-list__key">
+            Centre Id
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CentreId
+          </dd>
+        </div>
 
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Centre type
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.CentreType
-      </dd>
-    </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre type
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CentreType
+          </dd>
+        </div>
 
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Region
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.RegionName
-      </dd>
-    </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Region
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.RegionName
+          </dd>
+        </div>
 
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Contact
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.ContactForename @Model.ContactSurname
-      </dd>
-    </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Contact
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.ContactForename @Model.ContactSurname
+          </dd>
+        </div>
 
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Contact email
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.ContactEmail
-      </dd>
-    </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Contact email
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.ContactEmail" />
+        </div>
 
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Telephone
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.ContactTelephone
-      </dd>
-    </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Telephone
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.ContactTelephone" />
+        </div>
 
-    </dl>
-    <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
-       role="button"
-       href="#">
-      Manage centre
-    </a>
-    <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
-       role="button"
-       href="#">
-      View courses
-    </a>
-    @if (Model.Active)
-    {
-      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
+      </dl>
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
          role="button"
          href="#">
-        Deactivate centre
+        Manage centre
       </a>
-    }
-</div>
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button"
+         href="#">
+        View courses
+      </a>
+      @if (Model.Active) {
+        <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
+           role="button"
+           href="#">
+          Deactivate centre
+        </a>
+      } else {
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           role="button"
+           href="#">
+          Reactivate centre
+        </a>
+      }
+    </div>
   </details>
 </div>
