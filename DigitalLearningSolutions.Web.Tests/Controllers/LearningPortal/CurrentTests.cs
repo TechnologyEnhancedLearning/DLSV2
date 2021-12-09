@@ -226,38 +226,17 @@
             // Given
             const int id = 1;
             const int progressId = 1;
-            const int day = 31;
-            const int month = 2;
+            const int day = 1;
+            const int month = 1;
             const int year = 2020;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            controller.ModelState.AddModelError("year", "message");
 
             // When
             controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
             A.CallTo(() => courseDataService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void Setting_an_invalid_complete_by_date_should_redirect_with_an_error_message()
-        {
-            // Given
-            const int id = 1;
-            const int progressId = 1;
-            const int day = 31;
-            const int month = 2;
-            const int year = 2020;
-            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
-
-            // When
-            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
-
-            // Then
-            result.ActionName.Should().Be("SetCurrentCourseCompleteByDate");
-            result.RouteValues["id"].Should().Be(id);
-            result.RouteValues["day"].Should().Be(day);
-            result.RouteValues["month"].Should().Be(month);
-            result.RouteValues["year"].Should().Be(year);
         }
 
         [Test]
@@ -466,7 +445,48 @@
                 .MustNotHaveHappened();
         }
 
-        private void GivenCurrentActivitesAreEmptyLists()
+        [Test]
+        public void EditCompleteByDate_calls_correct_service_method()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 2021;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            var completeByDate = new DateTime(year, month, day);
+            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.SetCurrentActionPlanItemCompleteByDate(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void EditCompleteByDate_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 4000;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            controller.ModelState.AddModelError("year", "message");
+            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
+
+            // When
+            controller.SetCurrentActionPlanItemCompleteByDate(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._))
+                .MustNotHaveHappened();
+        }
+
+        private void GivenCurrentActivitiesAreEmptyLists()
         {
             A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))
