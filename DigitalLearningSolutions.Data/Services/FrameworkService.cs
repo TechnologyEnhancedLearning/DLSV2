@@ -1224,7 +1224,9 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
                                                   AQ.IncludeComments,
-                                                  AQ.MinValue AS Result
+                                                  AQ.MinValue AS Result,
+                                                  AQ.CommentsPrompt,
+                                                  AQ.CommentsHint
 												  FROM   Competencies AS C INNER JOIN
              FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID INNER JOIN
              FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
