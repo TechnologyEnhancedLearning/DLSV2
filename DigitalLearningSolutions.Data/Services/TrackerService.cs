@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
+    using static System.Boolean;
 
     public interface ITrackerService
     {
@@ -47,7 +48,7 @@
                         TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
                             query.SectionId,
-                            query.IsPostLearning),
+                            ConvertToNullableBoolean(query.IsPostLearning)),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
 
@@ -60,6 +61,24 @@
             {
                 logger.LogError(ex, $"Error processing {query.Action}");
                 return TrackerEndpointErrorResponse.UnexpectedException;
+            }
+        }
+
+        private bool? ConvertToNullableBoolean(string? value)
+        {
+            if (TryParse(value, out var result))
+            {
+                return result;
+            }
+
+            switch (value)
+            {
+                case "1":
+                    return true;
+                case "2":
+                    return false;
+                default:
+                    return null;
             }
         }
 
