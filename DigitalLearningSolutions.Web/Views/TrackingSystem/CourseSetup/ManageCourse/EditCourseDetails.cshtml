@@ -20,7 +20,7 @@
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.CustomisationNameSuffix),
+                                                   nameof(Model.CustomisationName),
                                                    nameof(Model.Password),
                                                    nameof(Model.NotificationEmails),
                                                    nameof(Model.TutCompletionThreshold),
@@ -37,22 +37,22 @@
           asp-route-customisationId="@Model.CustomisationId">
 
       <input type="hidden" asp-for="ApplicationId" />
-      <input type="hidden" asp-for="CustomisationName" />
+      <input type="hidden" asp-for="ApplicationName" />
       <input type="hidden" asp-for="PostLearningAssessment" />
       <input type="hidden" asp-for="DiagAssess" />
 
       <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
 
-        <div class="nhsuk-grid-column-one-quarter nhsuk-heading-s">
+        <div class="nhsuk-grid-column-one-half nhsuk-heading-s word-break">
           <label class="nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
             Course name
           </label>
           <div class="nhsuk-u-margin-top-1">
-            @Model.CustomisationName -
+            @Model.ApplicationName -
           </div>
         </div>
         <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-1">
-          <vc:text-input asp-for="@nameof(Model.CustomisationNameSuffix)"
+          <vc:text-input asp-for="@nameof(Model.CustomisationName)"
                          id="CustomisationNameSuffix"
                          label="Add on to course name (optional)"
                          populate-with-current-value="true"

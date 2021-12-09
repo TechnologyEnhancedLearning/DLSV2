@@ -11,73 +11,83 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
 }
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<h1>Choose optional @Model.VocabPlural().ToLower()</h1>
-@if (errorHasOccurred)
+@section mobilebacklink
 {
-  <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedSelfAssessmentStructureIds) })" />
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+       asp-route-vocabulary="@Model.VocabPlural()"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+      Back to @Model.VocabPlural()
+    </a>
+  </p>
 }
-<h2><small>Which optional @Model.VocabPlural().ToLower() would you like to include in your self-assessment?</small></h2>
-@if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
-{
-  <div class="nhsuk-warning-callout">
-    <h3 class="nhsuk-warning-callout__label">
-      <span role="text">
-        <span class="nhsuk-u-visually-hidden">Important: </span>
-        How to choose your optional @Model.VocabPlural().ToLower()
-      </span>
-    </h3>
-    <div>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</div>
-  </div>
-}
-<form method="post">
-  <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
-    @foreach (var competencyGroup in Model.CompetencyGroups)
-    {
-      <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
-        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-          <span class="nhsuk-fieldset__heading">
-            @competencyGroup.Key
-          </span>
-        </legend>
-        @if (competencyGroup.Count() > 1)
-        {
-          <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
-            <div class="nhsuk-grid-column-full">
-              <a class="nhsuk-button nhsuk-search__submit select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
-              <a class="nhsuk-button nhsuk-search__submit select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
-            </div>
-          </div>
-        }
-
-        <div class="nhsuk-checkboxes">
-          @foreach (var competency in competencyGroup)
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <h1>Choose optional @Model.VocabPlural().ToLower()</h1>
+  @if (errorHasOccurred)
+  {
+    <vc:error-summary order-of-property-names="@(new[] {nameof(Model.IncludedSelfAssessmentStructureIds) })" />
+  }
+  <h2><small>Which optional @Model.VocabPlural().ToLower() would you like to include in your self-assessment?</small></h2>
+  @if (Model.SelfAssessment.ManageOptionalCompetenciesPrompt != null)
+  {
+    <div class="nhsuk-warning-callout">
+      <h3 class="nhsuk-warning-callout__label">
+        <span role="text">
+          <span class="nhsuk-u-visually-hidden">Important: </span>
+          How to choose your optional @Model.VocabPlural().ToLower()
+        </span>
+      </h3>
+      <div>@Html.Raw(Model.SelfAssessment.ManageOptionalCompetenciesPrompt)</div>
+    </div>
+  }
+  <form method="post">
+    <nhs-form-group nhs-validation-for="IncludedSelfAssessmentStructureIds">
+      @foreach (var competencyGroup in Model.CompetencyGroups)
+      {
+        <fieldset class="nhsuk-fieldset nhsuk-u-margin-bottom-4">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <span class="nhsuk-fieldset__heading">
+              @competencyGroup.Key
+            </span>
+          </legend>
+          @if (competencyGroup.Count() > 1)
           {
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.Id" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
-              <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
-                @competency.Name
-              </label>
+            <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
+              <div class="nhsuk-grid-column-full">
+                <a class="nhsuk-button nhsuk-search__submit select-all-button select-all status-tag" data-group="@competencyGroup.Key" name="selectAll" value="true">Select all @Model.VocabPlural().ToLower()</a>
+                <a class="nhsuk-button nhsuk-search__submit select-all-button deselect-all status-tag" data-group="@competencyGroup.Key" id="" name="selectAll" value="false">Deselect all @Model.VocabPlural().ToLower()</a>
+              </div>
             </div>
           }
-        </div>
-      </fieldset>
-    }
-  </nhs-form-group>
-  <button class="nhsuk-button" type="submit">Submit</button>
-</form>
 
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link"
-     asp-action="SelfAssessmentOverview"
-     asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Cancel
-  </a>
-</div>
+          <div class="nhsuk-checkboxes">
+            @foreach (var competency in competencyGroup)
+            {
+              <div class="nhsuk-checkboxes__item">
+                <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.Key" id="competency-check-@competency.Id" name="IncludedSelfAssessmentStructureIds" checked="@(Model.IncludedSelfAssessmentStructureIds != null ? Model.IncludedSelfAssessmentStructureIds.Contains((int)competency.Id) : false)" type="checkbox" value="@competency.Id">
+                <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.Id">
+                  @competency.Name
+                </label>
+              </div>
+            }
+          </div>
+        </fieldset>
+      }
+    </nhs-form-group>
+    <button class="nhsuk-button" type="submit">Submit</button>
+  </form>
 
-@section scripts {
-  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
-}
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link"
+       asp-action="SelfAssessmentOverview"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
+      Cancel
+    </a>
+  </div>
+
+  @section scripts {
+    <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+  }

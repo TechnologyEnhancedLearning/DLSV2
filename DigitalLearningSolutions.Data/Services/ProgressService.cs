@@ -9,6 +9,8 @@
     {
         void UpdateSupervisor(int progressId, int? newSupervisorId);
 
+        void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
+
         void UpdateCompletionDate(int progressId, DateTime? completionDate);
     }
 
@@ -50,6 +52,18 @@
             progressDataService.ClearAspProgressVerificationRequest(progressId);
 
             transaction.Complete();
+        }
+
+        public void UpdateCompleteByDate(int progressId, DateTime? completeByDate)
+        {
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (courseInfo == null)
+            {
+                throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
+            }
+
+            courseDataService.SetCompleteByDate(progressId, courseInfo.DelegateId, completeByDate);
         }
 
         public void UpdateCompletionDate(int progressId, DateTime? date)

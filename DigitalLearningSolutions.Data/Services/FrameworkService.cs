@@ -32,6 +32,8 @@
         IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
         FrameworkCompetency? GetFrameworkCompetencyById(int Id);
+        int GetMaxFrameworkCompetencyID();
+        int GetMaxFrameworkCompetencyGroupID();
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
         IEnumerable<AssessmentQuestion> GetFrameworkDefaultQuestionsById(int frameworkId, int adminId);
@@ -1222,14 +1224,17 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
                                                   AQ.MaxValue,
                                                   AQ.AssessmentQuestionInputTypeID,
                                                   AQ.IncludeComments,
-                                                  AQ.MinValue AS Result
+                                                  AQ.MinValue AS Result,
+                                                  AQ.CommentsPrompt,
+                                                  AQ.CommentsHint
 												  FROM   Competencies AS C INNER JOIN
              FrameworkCompetencies AS FC ON C.ID = FC.CompetencyID INNER JOIN
              FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
              CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
              AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
-             WHERE (FC.ID = @frameworkCompetencyId)",
+             WHERE (FC.ID = @frameworkCompetencyId)
+             ORDER BY CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
@@ -1582,6 +1587,20 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public void MoveCompetencyAssessmentQuestion(int competencyId, int assessmentQuestionId, bool singleStep, string direction)
         {
             connection.Execute("ReorderCompetencyAssessmentQuestion", new { competencyId, assessmentQuestionId, direction, singleStep }, commandType: CommandType.StoredProcedure);
+        }
+
+        public int GetMaxFrameworkCompetencyID()
+        {
+            return connection.Query<int>(
+                "SELECT MAX(ID) FROM FrameworkCompetencies"
+                ).Single();
+        }
+
+        public int GetMaxFrameworkCompetencyGroupID()
+        {
+            return connection.Query<int>(
+                "SELECT MAX(ID) FROM FrameworkCompetencyGroups"
+                ).Single();
         }
     }
 }

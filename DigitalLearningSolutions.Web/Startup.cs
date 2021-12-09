@@ -6,7 +6,9 @@ namespace DigitalLearningSolutions.Web
     using System.IO;
     using System.Threading.Tasks;
     using System.Web;
+    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
@@ -151,11 +153,13 @@ namespace DigitalLearningSolutions.Web
             RegisterServices(services);
             RegisterDataServices(services);
             RegisterHelpers(services);
+            RegisterHttpClients(services);
             RegisterWebServiceFilters(services);
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddScoped<IActionPlanService, ActionPlanService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
@@ -178,6 +182,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
+            services.AddScoped<ILearningHubApiService, LearningHubApiService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
@@ -200,6 +205,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
+            services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -207,6 +213,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
@@ -217,6 +224,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -227,6 +235,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
             services.AddScoped<IResourceDataService, ResourceDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
+            services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
@@ -237,10 +246,15 @@ namespace DigitalLearningSolutions.Web
 
         private static void RegisterHelpers(IServiceCollection services)
         {
-            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<CentreCustomPromptHelper>();
-            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
+        }
+
+        private static void RegisterHttpClients(IServiceCollection services)
+        {
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
+            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
@@ -258,7 +272,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
-            services.AddScoped<VerifyAdminUserCanAccessCourse>();
+            services.AddScoped<VerifyAdminUserCanManageCourse>();
+            services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();

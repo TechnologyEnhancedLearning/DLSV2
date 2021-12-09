@@ -120,7 +120,7 @@
                     enrollmentMethodId,
                     enrolledByAdminId,
                     completeByDate,
-                    supervisorAdminId
+                    supervisorAdminId,
                 }
             );
 

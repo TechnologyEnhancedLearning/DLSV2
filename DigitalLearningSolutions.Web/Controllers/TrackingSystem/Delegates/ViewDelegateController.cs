@@ -86,7 +86,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
@@ -105,7 +105,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult ExecuteRemoveFromCourse(
             int delegateId,
             int customisationId,
@@ -125,6 +125,22 @@
             {
                 return new NotFoundResult();
             }
+
+            return RedirectToAction("Index", new { delegateId });
+        }
+
+        [HttpPost]
+        [Route("ReactivateDelegate")]
+        public IActionResult ReactivateDelegate(int delegateId)
+        {
+            var centreId = User.GetCentreId();
+            var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
+            if (delegateUser?.CentreId != centreId)
+            {
+                return new NotFoundResult();
+            }
+
+            userDataService.ActivateDelegateUser(delegateId);
 
             return RedirectToAction("Index", new { delegateId });
         }

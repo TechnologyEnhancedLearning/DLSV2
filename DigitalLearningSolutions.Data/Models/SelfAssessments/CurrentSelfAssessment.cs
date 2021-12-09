@@ -9,6 +9,7 @@
         public DateTime? SubmittedDate { get; set; }
         public bool IsSupervised { get; set; }
         public bool IsSupervisorResultsReviewed { get; set; }
+        public bool SupervisorSelfAssessmentReview { get; set; }
         public string? Vocabulary { get; set; }
         public string? VerificationRoleName { get; set; }
         public string? SignOffRoleName { get; set; }
