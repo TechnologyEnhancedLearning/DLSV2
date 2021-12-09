@@ -30,12 +30,12 @@
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
-            var actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+            var actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanItems(CandidateId)).Returns(actionPlanItems);
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).Returns(actionPlanResources);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -48,7 +48,7 @@
                 "LastAccessed",
                 "Descending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 bannerText,
                 1
             );
