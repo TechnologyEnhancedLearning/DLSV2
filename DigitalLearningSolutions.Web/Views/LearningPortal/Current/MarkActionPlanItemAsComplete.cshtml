@@ -10,6 +10,7 @@
   ViewData["HeaderPathName"] = "My Current Activities";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
 @section NavMenuItems {
@@ -33,8 +34,7 @@
                      month-id="Month"
                      year-id="Year"
                      css-class=""
-                     key="1"
-                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                     hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

@@ -160,6 +160,11 @@
             learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
         }
 
+        public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate)
+        {
+            learningLogItemsDataService.SetCompleteByDate(learningLogItemId, completeByDate);
+        }
+
         public void RemoveActionPlanResource(int learningLogItemId, int delegateId)
         {
             var removalDate = clockService.UtcNow;

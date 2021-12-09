@@ -3,11 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -201,31 +203,35 @@
 
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, int day, int month, int year)
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, EditCompleteByDateFormData formData)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+
             if (assessment is { Id: 0 })
             {
                 logger.LogWarning($"Attempt to set complete by date for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            if (day == 0 && month == 0 && year == 0)
+
+            if (formData.Day == 0 && formData.Month == 0 && formData.Year == 0)
             {
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
             }
 
-            var validationResult = OldDateValidator.ValidateDate(day, month, year);
-            if (!validationResult.DateValid)
-                return RedirectToAction("SetSelfAssessmentCompleteByDate", new { selfAssessmentId, day, month, year });
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompleteByDateViewModel(formData, selfAssessmentId);
+                return View("Current/SetCompleteByDate", model);
+            }
 
-            var completeByDate = new DateTime(year, month, day);
+            var completeByDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
             selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), completeByDate);
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
-        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, int? day, int? month, int? year)
+        public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
             if (assessment == null)
@@ -234,10 +240,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var model = new SelfAssessmentCardViewModel(assessment);
-
-            if (day != null && month != null && year != null)
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
+            var model = new EditCompleteByDateViewModel(selfAssessmentId, assessment.Name, type: LearningItemType.SelfAssessment);
 
             return View("Current/SetCompleteByDate", model);
         }

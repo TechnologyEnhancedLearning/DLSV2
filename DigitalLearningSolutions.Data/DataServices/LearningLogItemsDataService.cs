@@ -225,14 +225,14 @@
                 @"UPDATE LearningLogItems
                         SET DueDate = @completeByDate
                         WHERE LearningLogItemID = @learningLogitemId",
-                new { learningLogItemId, completedDate = completeByDate }
+                new { learningLogItemId, completeByDate }
             );
 
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    "Not setting current course completed date as db update failed. " +
-                    $"Learning log item id: {learningLogItemId}, completed date: {completeByDate}"
+                    "Not setting current learning log item complete by date as db update failed. " +
+                    $"Learning log item id: {learningLogItemId}, complete by date: {completeByDate}"
                 );
             }
         }

@@ -13,10 +13,12 @@
     <legend class="nhsuk-fieldset__legend nhsuk-label">
       @Model.Label
     </legend>
-    @if (Model.HintText != null) {
-      <div class="nhsuk-hint" id="@Model.Id-hint">
-        @Model.HintText
-      </div>
+    @if (Model.HintTextLines != null) {
+      @foreach (var hintText in Model.HintTextLines) {
+        <div class="nhsuk-hint" id="@Model.Id-hint">
+          @hintText
+        </div>
+      }
     }
 
     @if (Model.HasError) {

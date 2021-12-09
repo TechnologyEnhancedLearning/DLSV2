@@ -5,9 +5,9 @@
     using System.Collections.ObjectModel;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -312,7 +312,7 @@
                 SelfAssessment = selfAssessment,
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = 1,
-                SupervisorSignOffs = supervisorSignOffs 
+                SupervisorSignOffs = supervisorSignOffs
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
             A.CallTo(() => selfAssessmentService.GetMostRecentResults(selfAssessment.Id, CandidateId)).Returns(competencies);
@@ -352,11 +352,12 @@
             const int newMonth = 7;
             const int newYear = 3020;
             var newDate = new DateTime(newYear, newMonth, newDay);
+            var formData = new EditCompleteByDateFormData { Day = newDay, Month = newMonth, Year = newYear };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, newDay, newMonth, newYear);
+            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, formData);
 
             // Then
             A.CallTo(
@@ -369,11 +370,15 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            const int day = 0;
+            const int month = 0;
+            const int year = 0;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, 0, 0, 0);
+            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, formData);
 
             // Then
             A.CallTo(
@@ -386,11 +391,15 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            const int day = 29;
+            const int month = 7;
+            const int year = 3020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, 29, 7, 3020);
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, formData);
 
             // Then
             result.ActionName.Should().Be("Current");
@@ -401,11 +410,15 @@
         {
             // Given
             const int selfAssessmentId = 1;
+            const int day = 31;
+            const int month = 2;
+            const int year = 2020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            controller.SetSelfAssessmentCompleteByDate(31, 2, 2020, selfAssessmentId);
+            controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, formData);
 
             // Then
             A.CallTo(
@@ -421,11 +434,12 @@
             const int day = 31;
             const int month = 2;
             const int year = 2020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(selfAssessment);
 
             // When
-            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, day, month, year);
+            var result = (RedirectToActionResult)controller.SetSelfAssessmentCompleteByDate(selfAssessmentId, formData);
 
             // Then
             result.ActionName.Should().Be("SetSelfAssessmentCompleteByDate");
@@ -438,10 +452,14 @@
         public void SetSelfAssessmentCompleteByDate_get_action_without_self_assessment_should_return_403()
         {
             // Given
+            const int day = 2;
+            const int month = 2;
+            const int year = 2020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId)).Returns(null);
 
             // When
-            var result = controller.SetSelfAssessmentCompleteByDate(2, 2, 2020, 999);
+            var result = controller.SetSelfAssessmentCompleteByDate(999, formData);
 
             // Then
             result.Should()

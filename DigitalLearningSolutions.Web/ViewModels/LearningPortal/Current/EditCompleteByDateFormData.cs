@@ -2,22 +2,27 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class EditLearningLogItemCompleteByDateFormData : IValidatableObject
+    public class EditCompleteByDateFormData : IValidatableObject
     {
-        public EditLearningLogItemCompleteByDateFormData() { }
+        public EditCompleteByDateFormData() { }
 
-        protected EditLearningLogItemCompleteByDateFormData(EditLearningLogItemCompleteByDateFormData formData)
+        protected EditCompleteByDateFormData(EditCompleteByDateFormData formData)
         {
+            Name = formData.Name;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
+            Type = formData.Type;
         }
 
+        public string Name { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
+        public LearningItemType Type { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
