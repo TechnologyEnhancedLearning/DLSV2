@@ -1233,7 +1233,8 @@ WHERE (FrameworkID = @frameworkId)", new { frameworkId, assessmentQuestionId }
              CompetencyGroups AS CG ON FCG.CompetencyGroupID = CG.ID INNER JOIN
              CompetencyAssessmentQuestions AS CAQ ON C.ID = CAQ.CompetencyID INNER JOIN
              AssessmentQuestions AS AQ ON CAQ.AssessmentQuestionID = AQ.ID
-             WHERE (FC.ID = @frameworkCompetencyId)",
+             WHERE (FC.ID = @frameworkCompetencyId)
+             ORDER BY CAQ.Ordering",
                 (competency, assessmentQuestion) =>
                 {
                     if (competencyResult == null)
