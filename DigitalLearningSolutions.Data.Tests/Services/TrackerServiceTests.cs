@@ -113,11 +113,16 @@
         [TestCase("1", true)]
         [TestCase("mu", null)]
         [TestCase(null, null)]
-        public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params_and_parses_IsPostLearning(string? isPostLearningValue, bool? expectedBool)
+        public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params_and_parses_IsPostLearning(
+            string? isPostLearningValue,
+            bool? expectedBool
+        )
         {
             // Given
             var query = new TrackerEndpointQueryParams
-                { Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue };
+            {
+                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue,
+            };
 
             // When
             trackerService.ProcessQuery(query);
