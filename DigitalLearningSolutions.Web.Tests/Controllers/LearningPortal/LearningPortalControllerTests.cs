@@ -3,7 +3,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
     using System.Security.Claims;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using FakeItEasy;
@@ -27,7 +26,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private ICourseDataService courseDataService = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private IFrameworkNotificationService frameworkNotificationService = null!;
-        private LearningLogItemsTestHelper learningLogItemsTestHelper = null!;
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private ISupervisorService supervisorService = null!;
@@ -45,9 +43,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
-
-            var connection = ServiceTestHelper.GetDatabaseConnection();
-            learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
