@@ -34,7 +34,10 @@
          aria-describedby="@Model.Id-name-lhr">
         Mark as complete
       </a>
-      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name-lhr">
+      <a class="nhsuk-button delete-button small-edit-button"
+         aria-describedby="@Model.Id-name-lhr"
+         asp-action="RemoveResourceFromActionPlan"
+         asp-route-learningLogItemId="@Model.Id">
         Remove learning resource
       </a>
 

@@ -4,7 +4,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
@@ -26,7 +29,7 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -46,7 +49,7 @@
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -150,6 +153,7 @@
             return View("Current/UnlockCurrentCourse");
         }
 
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
         public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
         {
@@ -164,6 +168,26 @@
 
             // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
             return Redirect(learningResourceLink);
+        }
+
+        [HttpGet]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
+        public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
+        {
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+            var model = new RemoveActionPlanResourceViewModel(actionPlanResource!.Id, actionPlanResource.Name);
+            return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
+        }
+
+        [HttpPost]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
+        public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
+        {
+            actionPlanService.RemoveActionPlanResource(learningLogItemId, User.GetCandidateIdKnownNotNull());
+            return RedirectToAction("Current");
         }
     }
 }
