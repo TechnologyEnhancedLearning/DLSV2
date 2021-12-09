@@ -228,9 +228,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId,
-                    GenericActivityName,
-                    GenericResourceLink
+                    GenericCompetencyLearningResourceId
                 );
 
                 // When
@@ -264,9 +262,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId,
-                    GenericActivityName,
-                    GenericResourceLink
+                    GenericCompetencyLearningResourceId
                 );
 
                 // When
@@ -294,9 +290,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId,
-                    GenericActivityName,
-                    GenericResourceLink
+                    GenericCompetencyLearningResourceId
                 );
 
                 // When
@@ -348,9 +342,7 @@
         private int InsertLearningLogItem(
             int delegateId,
             DateTime addedDate,
-            int competencyLearningResourceId,
-            string activityName,
-            string resourceLink
+            int competencyLearningResourceId
         )
         {
             competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
@@ -362,8 +354,8 @@
             return service.InsertLearningLogItem(
                 delegateId,
                 addedDate,
-                activityName,
-                resourceLink,
+                GenericActivityName,
+                GenericResourceLink,
                 competencyLearningResourceId
             );
         }
