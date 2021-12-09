@@ -1,0 +1,48 @@
+﻿@using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
+@model ResourceMetadata
+
+@{
+    var catalogues = Model.References.Select(r => r.Catalogue);
+    string DisplayText(string input)
+    {
+      return System.Text.RegularExpressions.Regex.Replace(input ?? String.Empty, "<.*?>", String.Empty);
+    };
+}
+<details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      @DisplayText(Model.ResourceType)
+    </span>
+  </summary>
+  <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0 nhsuk-u-margin-1">
+    <div class="nhsuk-grid-row nhsuk-u-margin-left-1 nhsuk-u-clear">
+      <strong class="nhsuk-tag">Article</strong>
+    </div>
+    <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
+      @DisplayText(Model.Description)
+    </div>
+    @if (catalogues.Count() > 0)
+    {
+      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-1 nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2">
+        Catalogues
+      </div>
+      @foreach (var catalogue in catalogues)
+      {
+        <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
+          <dl class="nhsuk-summary-list">
+            <div class="nhsuk-summary-list__row">
+              <dt class="nhsuk-summary-list__key">
+                @catalogue?.Name
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                <button class="nhsuk-button nhsuk-button--secondary small-edit-button">Preview</button>
+                <button class="nhsuk-button small-edit-button">Select</button>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      }
+    }
+  </div>
+</details>
+
