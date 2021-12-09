@@ -153,7 +153,7 @@
             return View("Current/UnlockCurrentCourse");
         }
 
-        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
         public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
         {
@@ -172,7 +172,7 @@
 
         [HttpGet]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
-        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
@@ -182,7 +182,7 @@
         }
 
         [HttpPost]
-        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanItem))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
         {

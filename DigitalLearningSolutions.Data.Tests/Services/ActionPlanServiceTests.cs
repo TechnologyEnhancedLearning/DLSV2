@@ -284,13 +284,13 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanItem_returns_null_if_signposting_is_deactivated()
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_signposting_is_deactivated()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );
@@ -305,14 +305,14 @@
 
         [Test]
         public void
-            VerifyDelegateCanAccessActionPlanItem_returns_null_if_LearningLogItem_with_given_id_does_not_exists()
+            VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_with_given_id_does_not_exist()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId)).Returns(null);
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );
@@ -327,7 +327,7 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanItem_returns_null_if_LearningLogItem_is_removed()
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_is_removed()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -339,7 +339,7 @@
                 .Returns(learningLogItem);
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );
@@ -354,7 +354,7 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanItem_returns_null_if_LearningLogItem_has_no_linked_resource()
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_has_no_linked_resource()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -366,7 +366,7 @@
                 .Returns(learningLogItem);
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );
@@ -381,7 +381,7 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanItem_returns_false_if_LearningLogItem_is_for_different_delegate()
+        public void VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -393,7 +393,7 @@
                 .Returns(learningLogItem);
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );
@@ -408,7 +408,7 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanItem_returns_true_if_all_conditions_met()
+        public void VerifyDelegateCanAccessActionPlanResource_returns_true_if_all_conditions_met()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -420,7 +420,7 @@
                 .Returns(learningLogItem);
 
             // When
-            var result = actionPlanService.VerifyDelegateCanAccessActionPlanItem(
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
                 GenericLearningLogItemId,
                 GenericDelegateId
             );

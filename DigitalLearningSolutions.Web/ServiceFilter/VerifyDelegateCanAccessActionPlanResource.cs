@@ -5,11 +5,11 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
-    public class VerifyDelegateCanAccessActionPlanItem : IActionFilter
+    public class VerifyDelegateCanAccessActionPlanResource : IActionFilter
     {
         private readonly IActionPlanService actionPlanService;
 
-        public VerifyDelegateCanAccessActionPlanItem(
+        public VerifyDelegateCanAccessActionPlanResource(
             IActionPlanService actionPlanService
         )
         {
@@ -31,7 +31,7 @@
             var learningLogItemId = int.Parse(context.RouteData.Values["learningLogItemId"].ToString()!);
 
             var validationResult =
-                actionPlanService.VerifyDelegateCanAccessActionPlanItem(learningLogItemId, delegateId);
+                actionPlanService.VerifyDelegateCanAccessActionPlanResource(learningLogItemId, delegateId);
 
             if (!validationResult.HasValue)
             {

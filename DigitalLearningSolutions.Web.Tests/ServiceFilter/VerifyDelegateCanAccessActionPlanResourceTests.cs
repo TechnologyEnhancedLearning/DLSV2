@@ -15,7 +15,7 @@
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
-    public class VerifyDelegateCanAccessActionPlanItemTests
+    public class VerifyDelegateCanAccessActionPlanResourceTests
     {
         private const int LearningLogItemId = 1;
         private const int DelegateId = 2;
@@ -45,11 +45,11 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanItem(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
                 .Returns(null);
 
             // When
-            new VerifyDelegateCanAccessActionPlanItem(actionPlanService).OnActionExecuting(context);
+            new VerifyDelegateCanAccessActionPlanResource(actionPlanService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -60,11 +60,11 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanItem(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
                 .Returns(false);
 
             // When
-            new VerifyDelegateCanAccessActionPlanItem(actionPlanService).OnActionExecuting(context);
+            new VerifyDelegateCanAccessActionPlanResource(actionPlanService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeRedirectToActionResult().WithControllerName("LearningSolutions")
@@ -76,11 +76,11 @@
         {
             // Given
             context.RouteData.Values["learningLogItemId"] = LearningLogItemId;
-            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanItem(LearningLogItemId, DelegateId))
+            A.CallTo(() => actionPlanService.VerifyDelegateCanAccessActionPlanResource(LearningLogItemId, DelegateId))
                 .Returns(true);
 
             // When
-            new VerifyDelegateCanAccessActionPlanItem(actionPlanService).OnActionExecuting(context);
+            new VerifyDelegateCanAccessActionPlanResource(actionPlanService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();

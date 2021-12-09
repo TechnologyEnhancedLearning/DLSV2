@@ -23,7 +23,7 @@
 
         void RemoveActionPlanItem(int learningLogItemId, int delegateId);
 
-        bool? VerifyDelegateCanAccessActionPlanItem(int learningLogItemId, int delegateId);
+        bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -157,7 +157,7 @@
             learningLogItemsDataService.RemoveLearningLogItem(learningLogItemId, delegateId, removalDate);
         }
 
-        public bool? VerifyDelegateCanAccessActionPlanItem(int learningLogItemId, int delegateId)
+        public bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId)
         {
             if (!config.IsSignpostingUsed())
             {
