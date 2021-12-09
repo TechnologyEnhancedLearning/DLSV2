@@ -2,13 +2,16 @@
 {
     public class EditCompleteByDateViewModel : EditCompleteByDateFormData
     {
+        public EditCompleteByDateViewModel() { }
+
         public EditCompleteByDateViewModel(
             int id,
             string name,
             string type,
             int? day = null,
             int? month = null,
-            int? year = null
+            int? year = null,
+            int? progressId = null
         )
         {
             Id = id;
@@ -17,6 +20,7 @@
             Day = day;
             Month = month;
             Year = year;
+            ProgressId = progressId;
         }
 
         public EditCompleteByDateViewModel(
@@ -28,5 +32,6 @@
         }
 
         public int Id { get; set; }
+        public int? ProgressId { get; set; }
     }
 }

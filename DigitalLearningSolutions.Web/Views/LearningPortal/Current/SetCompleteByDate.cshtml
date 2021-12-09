@@ -14,7 +14,7 @@
   var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
-  var hintTextLines = new List<string> {standardHintText, courseHintText};
+  var hintTextLines = new List<string> { standardHintText, courseHintText };
   var action = "";
   if (Model.Type.Equals(LearningItemType.Course)) {
     action += "SetCurrentCourseCompleteByDate";
@@ -44,6 +44,9 @@
       <input type="hidden" asp-for="Id" />
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
+      @if (Equals(Model.Type, LearningItemType.Course)) {
+        <input name="progressId" type="hidden" value="@Model.ProgressId" />
+      }
       <vc:date-input id="completion-date"
                      label=""
                      day-id="Day"

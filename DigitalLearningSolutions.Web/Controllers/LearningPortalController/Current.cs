@@ -66,7 +66,12 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (formData.Day == 0 && formData.Month == 0 && formData.Year == 0)
+            if (progressId == 0)
+            {
+                return new StatusCodeResult(500);
+            }
+
+            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
             {
                 courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
@@ -106,7 +111,12 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var editCompleteByDateViewModel = new EditCompleteByDateViewModel(id, course.Name, LearningItemType.Course);
+            var editCompleteByDateViewModel = new EditCompleteByDateViewModel(
+                id,
+                course.Name,
+                LearningItemType.Course,
+                progressId: courseModel.ProgressId
+            );
             return View("Current/SetCompleteByDate", editCompleteByDateViewModel);
         }
 
@@ -194,7 +204,7 @@
             MarkActionPlanResourceAsCompleteFormData formData
         )
         {
-            if (IsZeroOrNull(formData.Day) && IsZeroOrNull(formData.Month) && IsZeroOrNull(formData.Year))
+            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
             {
                 actionPlanService.SetCompletionDate(learningLogItemId, null);
                 return RedirectToAction("Current");
@@ -240,7 +250,7 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (IsZeroOrNull(formData.Day) && IsZeroOrNull(formData.Month) && IsZeroOrNull(formData.Year))
+            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
             {
                 actionPlanService.SetCompleteByDate(learningLogItemId, null);
                 return RedirectToAction("Current");
@@ -287,11 +297,9 @@
                 : new List<ActionPlanResource>();
         }
 
-        public bool IsZeroOrNull(
-            int? number
-        )
+        public bool IsDateBlank(int? day, int? month, int? year)
         {
-            return number == 0 || number == null;
+            return (day ?? 0) == 0 && (month ?? 0) == 0 && (year ?? 0) == 0;
         }
 
         public (int?, int?, int?) GetDayMonthAndYear(

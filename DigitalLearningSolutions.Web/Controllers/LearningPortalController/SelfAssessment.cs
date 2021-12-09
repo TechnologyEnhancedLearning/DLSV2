@@ -8,8 +8,8 @@
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -180,14 +180,13 @@
             foreach (var competency in competencies)
             {
                 competency.QuestionLabel = assessment.QuestionLabel;
-                foreach (var assessmentQuestion in competency.AssessmentQuestions.Where(assessmentQuestion => assessmentQuestion.AssessmentQuestionInputTypeID != 2))
-                    assessmentQuestion.LevelDescriptors = selfAssessmentService
-                        .GetLevelDescriptorsForAssessmentQuestion(
-                            assessmentQuestion.Id,
-                            assessmentQuestion.MinValue,
-                            assessmentQuestion.MaxValue,
-                            assessmentQuestion.MinValue == 0
-                        ).ToList();
+                foreach (var assessmentQuestion in competency.AssessmentQuestions)
+                {
+                    if (assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                    {
+                        assessmentQuestion.LevelDescriptors = selfAssessmentService.GetLevelDescriptorsForAssessmentQuestion(assessmentQuestion.Id, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.MinValue == 0).ToList();
+                    }
+                }
             }
             var model = new SelfAssessmentOverviewViewModel()
             {
@@ -195,7 +194,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
-                SupervisorSignOffs = supervisorSignOffs,
+                SupervisorSignOffs = supervisorSignOffs
             };
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
@@ -205,15 +204,20 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, EditCompleteByDateFormData formData)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
+                User.GetCandidateIdKnownNotNull(),
+                selfAssessmentId
+            );
 
             if (assessment is { Id: 0 })
             {
-                logger.LogWarning($"Attempt to set complete by date for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                logger.LogWarning(
+                    $"Attempt to set complete by date for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (formData.Day == 0 && formData.Month == 0 && formData.Year == 0)
+            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
             {
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
@@ -226,21 +230,34 @@
             }
 
             var completeByDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
-            selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), completeByDate);
+            selfAssessmentService.SetCompleteByDate(
+                selfAssessmentId,
+                User.GetCandidateIdKnownNotNull(),
+                completeByDate
+            );
             return RedirectToAction("Current");
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId)
         {
-            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(
+                User.GetCandidateIdKnownNotNull(),
+                selfAssessmentId
+            );
             if (assessment == null)
             {
-                logger.LogWarning($"Attempt to view self assessment complete by date edit page for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment");
+                logger.LogWarning(
+                    $"Attempt to view self assessment complete by date edit page for candidate {User.GetCandidateIdKnownNotNull()} with no self assessment"
+                );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var model = new EditCompleteByDateViewModel(selfAssessmentId, assessment.Name, type: LearningItemType.SelfAssessment);
+            var model = new EditCompleteByDateViewModel(
+                selfAssessmentId,
+                assessment.Name,
+                LearningItemType.SelfAssessment
+            );
 
             return View("Current/SetCompleteByDate", model);
         }
@@ -329,7 +346,6 @@
             TempData.Set(sessionAddSupervisor);
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
-
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult AddNewSupervisor(int selfAssessmentId)
         {
@@ -342,7 +358,7 @@
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
                 SupervisorAdminID = sessionAddSupervisor.SupervisorAdminId,
-                Supervisors = supervisors,
+                Supervisors = supervisors
             };
             return View("SelfAssessments/AddSupervisor", model);
         }
@@ -424,7 +440,8 @@
         {
             if (!ModelState.IsValid)
             {
-                model.SelfAssessmentSupervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
+                model.SelfAssessmentSupervisorRoles =
+                    supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
                 return View("SelfAssessments/SetSupervisorRole", model);
             }
             if (model.SupervisorDelegateId == null)
@@ -458,7 +475,6 @@
             };
             return View("SelfAssessments/AddSupervisorSummary", summaryModel);
         }
-
         [HttpPost]
         public IActionResult SubmitSummary()
         {
@@ -672,7 +688,6 @@
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = sessionRequestVerification.SelfAssessmentID, vocabulary = sessionRequestVerification.Vocabulary });
         }
-
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
@@ -717,7 +732,6 @@
             };
             return View("SelfAssessments/RequestSignOff", model);
         }
-
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
