@@ -46,11 +46,7 @@
 
             if (!configuration.IsSignpostingUsed())
             {
-                var filteredToken = await GetFilteredToken();
-                var profile = selfAssessmentService.GetFilteredProfileForCandidateById(selfAssessmentId, candidateId);
-                var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(selfAssessmentId, candidateId)
-                    .ToList();
-                var response = await filteredApiHelperService.UpdateProfileAndGoals(filteredToken, profile, goals);
+                await UpdateFilteredProfileAndGoalsForDelegate(selfAssessmentId, candidateId);
             }
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
@@ -175,6 +171,15 @@
             }
 
             return filteredToken;
+        }
+
+        private async Task UpdateFilteredProfileAndGoalsForDelegate(int selfAssessmentId, int candidateId)
+        {
+            var filteredToken = await GetFilteredToken();
+            var profile = selfAssessmentService.GetFilteredProfileForCandidateById(selfAssessmentId, candidateId);
+            var goals = selfAssessmentService.GetFilteredGoalsForCandidateId(selfAssessmentId, candidateId)
+                .ToList();
+            var response = await filteredApiHelperService.UpdateProfileAndGoals(filteredToken, profile, goals);
         }
 
         private async Task<IActionResult> ReturnFilteredResultsView(int selfAssessmentId, int candidateId)
