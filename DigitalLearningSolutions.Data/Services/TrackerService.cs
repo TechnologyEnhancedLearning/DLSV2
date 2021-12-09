@@ -6,7 +6,6 @@
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Serialization;
-    using static System.Boolean;
 
     public interface ITrackerService
     {
@@ -66,7 +65,7 @@
 
         private bool? ConvertToNullableBoolean(string? value)
         {
-            if (TryParse(value, out var result))
+            if (Boolean.TryParse(value, out var result))
             {
                 return result;
             }
