@@ -34,7 +34,6 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
-    using ConfigHelper = Web.Helpers.ConfigHelper;
 
     public class Startup
     {
@@ -317,11 +316,10 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            // TODO HEEDLS-609 update this
-            var applicationPath = new Uri(ConfigHelper.GetAppRootPath(config)).AbsolutePath.TrimEnd('/');
+            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
-            context.HttpContext.Response.Redirect(ConfigHelper.GetAppRootPath(config) + $"/Login?returnUrl={url}{queryString}");
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 
