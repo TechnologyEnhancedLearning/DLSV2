@@ -20,7 +20,7 @@
                 )
                 .OnTable("CompetencyResourceAssessmentQuestionParameters");
             Delete.Column("RelevanceAssessmentQuestionID").FromTable("CompetencyResourceAssessmentQuestionParameters");
-            Delete.Column("CompareToRoleRequirements ").FromTable("CompetencyResourceAssessmentQuestionParameters");
+            Delete.Column("CompareToRoleRequirements").FromTable("CompetencyResourceAssessmentQuestionParameters");
         }
     }
 }
