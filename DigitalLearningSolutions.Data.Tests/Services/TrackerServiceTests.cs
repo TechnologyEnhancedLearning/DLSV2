@@ -117,13 +117,13 @@
         {
             // Given
             var query = new TrackerEndpointQueryParams
-                { Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = "true" };
+                { Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue };
 
             // When
             trackerService.ProcessQuery(query);
 
             // Then
-            A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, true))
+            A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, expectedBool))
                 .MustHaveHappenedOnceExactly();
         }
     }
