@@ -54,7 +54,7 @@
       }
     }
   </div>
-  <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-rout-competencyGroupId="@Model.Competency.CompetencyGroupID">
+  <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
     @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
     {
       if (question.value.AssessmentQuestionInputTypeID == 2)

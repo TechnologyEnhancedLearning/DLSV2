@@ -202,9 +202,10 @@
         )
         {
             var centreId = User.GetCentreId();
-            var customisationNameSuffix =
-                formData.CustomisationNameSuffix == null ? "" : " - " + formData.CustomisationNameSuffix;
-            var customisationName = formData.CustomisationName + customisationNameSuffix;
+            var customisationName =
+                formData.CustomisationName == null || string.IsNullOrWhiteSpace(formData.CustomisationName)
+                    ? string.Empty
+                    : formData.CustomisationName;
 
             ValidateCustomisationName(customisationId, customisationName, centreId, formData);
             ValidatePassword(formData);
@@ -303,10 +304,22 @@
             EditCourseDetailsFormData formData
         )
         {
-            if (customisationName.Length > 250)
+            if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                formData.ApplicationId
+            ))
             {
                 ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "A course with no add on already exists"
+                );
+            }
+            else if (customisationName.Length > 250)
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
                     "Course name must be 250 characters or fewer, including any additions"
                 );
             }
@@ -317,13 +330,9 @@
                 formData.ApplicationId
             ))
             {
-                var uniqueNameErrorMessage = string.IsNullOrWhiteSpace(formData.CustomisationNameSuffix)
-                    ? "A course with this name already exists, add on to the course name to make it unique"
-                    : "Course name must be unique, including any additions";
-
                 ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationNameSuffix),
-                    uniqueNameErrorMessage
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "Course name must be unique, including any additions"
                 );
             }
         }

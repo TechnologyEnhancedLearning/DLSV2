@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -84,12 +85,58 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+        }
+
+        [HttpGet]
+        [Route("EditCompleteByDate")]
+        public IActionResult EditCompleteByDate(int progressId, DelegateProgressAccessRoute accessedVia)
+        {
+            var centreId = User.GetCentreId();
+            var delegateCourseProgress =
+                courseService.GetDelegateCourseProgress(progressId, centreId);
+
+            var model = new EditCompleteByDateViewModel(
+                progressId,
+                accessedVia,
+                delegateCourseProgress!.DelegateCourseInfo
+            );
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditCompleteByDate")]
+        public IActionResult EditCompleteByDate(
+            EditCompleteByDateFormData formData,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompleteByDateViewModel(formData, progressId, accessedVia);
+                return View(model);
+            }
+
+            var completeByDate = formData.Year != null ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value) : (DateTime?)null;
+            
+            progressService.UpdateCompleteByDate(progressId, completeByDate);
+
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+        }
+
+        private IActionResult RedirectToPreviousPage(
+            int delegateId,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {
                 return RedirectToAction("Index", new { progressId, accessedVia });
             }
 
-            return RedirectToAction("Index", "ViewDelegate", new { formData.DelegateId });
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
     }
 }

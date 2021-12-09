@@ -12,8 +12,8 @@
         protected EditCourseDetailsFormData(EditCourseDetailsFormData formData)
         {
             ApplicationId = formData.ApplicationId;
+            ApplicationName = formData.ApplicationName;
             CustomisationName = formData.CustomisationName;
-            CustomisationNameSuffix = formData.CustomisationNameSuffix;
             PasswordProtected = formData.PasswordProtected;
             Password = formData.Password;
             ReceiveNotificationEmails = formData.ReceiveNotificationEmails;
@@ -28,8 +28,8 @@
         protected EditCourseDetailsFormData(CourseDetails courseDetails)
         {
             ApplicationId = courseDetails.ApplicationId;
-            CustomisationName = GetPartOfCustomisationName(courseDetails.CustomisationName, 0)!;
-            CustomisationNameSuffix = GetPartOfCustomisationName(courseDetails.CustomisationName, 1);
+            ApplicationName = courseDetails.ApplicationName;
+            CustomisationName = courseDetails.CustomisationName;
             PasswordProtected = !string.IsNullOrEmpty(courseDetails.Password);
             Password = courseDetails.Password;
             ReceiveNotificationEmails = !string.IsNullOrEmpty(courseDetails.NotificationEmails);
@@ -43,9 +43,9 @@
 
         public int ApplicationId { get; set; }
 
-        public string CustomisationName { get; set; }
+        public string ApplicationName { get; set; }
 
-        public string? CustomisationNameSuffix { get; set; }
+        public string? CustomisationName { get; set; }
 
         public bool PasswordProtected { get; set; }
 
@@ -72,15 +72,5 @@
 
         [WholeNumberWithinInclusiveRange(0, 100, "Enter a whole number from 0 to 100")]
         public string? DiagCompletionThreshold { get; set; }
-
-        private static string? GetPartOfCustomisationName(string customisationName, int index)
-        {
-            if (customisationName.Contains(" - "))
-            {
-                return customisationName.Split(" - ")[index];
-            }
-
-            return index == 0 ? customisationName : null;
-        }
     }
 }
