@@ -10,6 +10,8 @@
         void UpdateSupervisor(int progressId, int? newSupervisorId);
 
         void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
+
+        void UpdateCompletionDate(int progressId, DateTime? completionDate);
     }
 
     public class ProgressService : IProgressService
@@ -62,6 +64,18 @@
             }
 
             courseDataService.SetCompleteByDate(progressId, courseInfo.DelegateId, completeByDate);
+        }
+
+        public void UpdateCompletionDate(int progressId, DateTime? date)
+        {
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (courseInfo == null)
+            {
+                throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
+            }
+
+            progressDataService.SetCompletionDate(progressId, date);
         }
     }
 }
