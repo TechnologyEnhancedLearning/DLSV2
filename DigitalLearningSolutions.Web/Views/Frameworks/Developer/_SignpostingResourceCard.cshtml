@@ -1,17 +1,18 @@
-﻿@using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
+﻿@*@using DigitalLearningSolutions.Data.Models.LearningHubApiClient;*@
+@using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 @model ResourceMetadata
 
 @{
-    string DisplayText(string input)
-    {
-      return System.Text.RegularExpressions.Regex.Replace(input ?? String.Empty, "<.*?>", String.Empty);
-    };
-    string DisplayTagColour(string resourceType)
-    {
-      var colours = new string[] { "white", "grey", "green", "aqua-green", "blue", "purple", "red", "orange", "yellow" };
-      int hash = resourceType.ToCharArray().Sum(c => c) % colours.Length;
-      return colours[hash];
-    }
+  string DisplayText(string input)
+  {
+    return System.Text.RegularExpressions.Regex.Replace(input ?? String.Empty, "<.*?>", String.Empty);
+  };
+  string DisplayTagColour(string resourceType)
+  {
+    var colours = new string[] { "white", "grey", "green", "aqua-green", "blue", "purple", "red", "orange", "yellow" };
+    int hash = resourceType.ToCharArray().Sum(c => c) % colours.Length;
+    return colours[hash];
+  }
 }
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
@@ -38,19 +39,19 @@
           <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
             <dl class="nhsuk-summary-list">
               <div class="nhsuk-summary-list__row">
-                <dt class="nhsuk-summary-list__key">
-                  @reference.Catalogue.Name
-                </dt>
-                <dd class="nhsuk-summary-list__value">
-                  <button class="nhsuk-button nhsuk-button--secondary small-edit-button">Preview</button>
-                  <button class="nhsuk-button small-edit-button" asp-route-referenceId="@reference.RefId">Select</button>
-                </dd>
-              </div>
-            </dl>
+              <dt class="nhsuk-summary-list__key">
+                @reference.Catalogue.Name
+              </dt>
+              <dd class="nhsuk-summary-list__value">
+                <button class="nhsuk-button nhsuk-button--secondary small-edit-button">Preview</button>
+                <button class="nhsuk-button small-edit-button" asp-route-referenceId="@reference.RefId">Select</button>
+              </dd>
           </div>
-        }
+          </dl>
+        </div>
       }
     }
-  </div>
-</details>
+    }
+    </div>
+  </details>
 
