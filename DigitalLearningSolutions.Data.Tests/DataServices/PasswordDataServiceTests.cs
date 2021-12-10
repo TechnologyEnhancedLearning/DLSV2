@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
+namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Threading.Tasks;
     using System.Transactions;
@@ -123,6 +123,8 @@
 
             // Then
             userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
+                .Be(PasswordHashNotYetInDb);
+            userDataService.GetDelegateUserById(newDelegate.Id)?.Password.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 
