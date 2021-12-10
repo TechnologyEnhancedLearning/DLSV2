@@ -35,7 +35,8 @@
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).Returns(actionPlanResources);
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+                .Returns(actionPlanResources);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -336,7 +337,7 @@
         }
 
         [Test]
-        public void MarkAsComplete_calls_correct_service_method()
+        public void MarkActionPlanResourceAsComplete_calls_correct_service_method()
         {
             // Given
             const int learningLogItemId = 4;
@@ -345,7 +346,7 @@
             const int year = 2021;
             var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
             var completedDate = new DateTime(year, month, day);
-            A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
 
             // When
             var result = controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
@@ -357,7 +358,7 @@
         }
 
         [Test]
-        public void MarkAsComplete_does_not_call_service_with_invalid_model()
+        public void MarkActionPlanResourceAsComplete_does_not_call_service_with_invalid_model()
         {
             // Given
             const int learningLogItemId = 4;
@@ -365,14 +366,15 @@
             const int month = 1;
             const int year = 4000;
             var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
             controller.ModelState.AddModelError("year", "message");
-            A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
 
             // When
             controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
 
             // Then
-            A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._))
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
                 .MustNotHaveHappened();
         }
     }
