@@ -9,17 +9,19 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-
     [Route("Signposting/[Controller]")]
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LinkLearningHubSsoController : Controller
     {
-        private readonly ILearningHubSsoService learningHubSsoService;
+        private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
         private readonly IUserService userService;
 
-        public LinkLearningHubSsoController(ILearningHubSsoService learningHubSsoService, IUserService userService)
+        public LinkLearningHubSsoController(
+            ILearningHubSsoSecurityService learningHubSsoSecurityService,
+            IUserService userService
+        )
         {
-            this.learningHubSsoService = learningHubSsoService;
+            this.learningHubSsoSecurityService = learningHubSsoSecurityService;
             this.userService = userService;
         }
 
@@ -30,10 +32,14 @@
                 throw new LearningHubLinkingRequestException("Invalid Learning Hub request.");
             }
 
-            linkLearningHubRequest.SessionIdentifier = (Guid?)TempData[LinkLearningHubRequest.SessionIdentifierKey];
-            var learningHubResourcedId = learningHubSsoService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
+            linkLearningHubRequest.SessionIdentifier = (Guid?)TempData.Peek(LinkLearningHubRequest.SessionIdentifierKey);
+            var learningHubResourcedId =
+                learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
 
-            userService.SetDelegateUserLearningHubAuthId(User.GetCandidateIdKnownNotNull(), linkLearningHubRequest.UserId);
+            userService.SetDelegateUserLearningHubAuthId(
+                User.GetCandidateIdKnownNotNull(),
+                linkLearningHubRequest.UserId
+            );
 
             var model = new LinkLearningHubViewModel(learningHubResourcedId);
             return View("Index", model);

@@ -186,7 +186,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
             services.AddScoped<ILearningHubApiService, LearningHubApiService>();
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
-            services.AddScoped<ILearningHubSsoService, LearningHubSsoService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();

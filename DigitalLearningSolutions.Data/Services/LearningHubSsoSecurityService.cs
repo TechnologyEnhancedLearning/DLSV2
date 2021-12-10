@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Signposting.LinkLearningHubSso;
     using Microsoft.Extensions.Configuration;
 
     public interface ILearningHubSsoSecurityService
@@ -11,6 +14,8 @@
         string GenerateHash(string state);
 
         bool VerifyHash(string state, string hash);
+
+        int? ParseSsoAccountLinkingRequest(LinkLearningHubRequest linkLearningHubRequest);
     }
 
     public class LearningHubSsoSecurityService : ILearningHubSsoSecurityService
@@ -54,6 +59,60 @@
             }
 
             return false;
+        }
+
+        public int? ParseSsoAccountLinkingRequest(LinkLearningHubRequest linkLearningHubRequest)
+        {
+            ValidateUserIdFromHash(linkLearningHubRequest);
+
+            var parsedState = ParseState(linkLearningHubRequest);
+
+            ValidateUserState(parsedState.sessionIdentifier, linkLearningHubRequest.SessionIdentifier);
+
+            return parsedState.resourcesId;
+        }
+
+        private void ValidateUserIdFromHash(LinkLearningHubRequest linkLearningHubRequest)
+        {
+            var isVerified = VerifyHash(
+                linkLearningHubRequest.UserId.ToString(),
+                linkLearningHubRequest.Hash
+            );
+
+            if (!isVerified)
+            {
+                throw new LearningHubLinkingRequestException("Invalid Learning Hub UserId.");
+            }
+        }
+
+        private void ValidateUserState(Guid receivedSessionIdentifier, Guid? storedSessionIdentifier)
+        {
+            if (!storedSessionIdentifier.HasValue || receivedSessionIdentifier != storedSessionIdentifier.Value)
+            {
+                throw new LearningHubLinkingRequestException("Invalid Learning Hub linking session.");
+            }
+        }
+
+        private (Guid sessionIdentifier, int? resourcesId) ParseState(LinkLearningHubRequest linkLearningHubRequest)
+        {
+            var stateItems = linkLearningHubRequest.State.Split("_refId:");
+
+            if (stateItems.Length != 2)
+            {
+                throw new LearningHubLinkingRequestException("Invalid Learning Hub linking state.");
+            }
+
+            if (!Guid.TryParse(stateItems.ElementAt(0), out var validSessionIdentifier))
+            {
+                throw new LearningHubLinkingRequestException("Invalid Learning Hub linking session.");
+            }
+
+            if (!int.TryParse(stateItems.ElementAt(1), out var validReferenceId))
+            {
+                return (validSessionIdentifier, null);
+            }
+
+            return (validSessionIdentifier, validReferenceId);
         }
 
         private string GetHash(byte[] input, byte[] salt)
