@@ -1,0 +1,60 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@model LearningResourceCardViewModel
+
+<div class="searchable-element nhsuk-panel @Model.DateStyle()" id="@Model.Id-lhr-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+      <span class="nhsuk-u-visually-hidden">@Model.DueByDescription()</span>
+      <span class="nhsuk-details__summary-text searchable-element-title"
+            id="@Model.Id-name-lhr"
+            name="name"
+            data-name-for-sorting="name"
+            role="heading"
+            aria-level="2">
+        @Model.Name
+      </span>
+    </summary>
+    <div class="nhsuk-details__text nhsuk-u-padding-left-0">
+      <div class="nhsuk-u-padding-left-3">
+        <div class="nhsuk-grid-row">
+          <partial name="Shared/_TagRow" model="@Model" />
+        </div>
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-3">
+            @Html.Raw(Model.ResourceDescription)
+          </div>
+        </div>
+
+        <div class="nhsuk-grid-row">
+          <partial name="Shared/_Dates" model="@Model" />
+        </div>
+      </div>
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-bottom-4"
+         aria-describedby="@Model.Id-name-lhr"
+         role="button">
+        Mark as complete
+      </a>
+      <a class="nhsuk-button delete-button small-edit-button"
+         aria-describedby="@Model.Id-name-lhr"
+         asp-action="RemoveResourceFromActionPlan"
+         asp-route-learningLogItemId="@Model.Id"
+         role="button">
+        Remove learning resource
+      </a>
+
+    </div>
+  </details>
+
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
+         aria-describedby="@Model.Id-name-lhr"
+         asp-action="LaunchLearningResource"
+         asp-route-learningLogItemId="@Model.Id"
+         role="button">
+        Launch learning resource
+      </a>
+    </div>
+  </div>
+</div>

@@ -11,12 +11,21 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
   <li class="nhsuk-breadcrumb__item">@Model.VocabPlural()</li>
 }
+@section mobilebacklink
+{
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+      Back to @Model.SelfAssessment.Name
+    </a>
+  </p>
+}
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 @if (Model.NumberOfOptionalCompetencies > 0)
 {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
-    Manage @Model.NumberOfOptionalCompetencies optional @Model.VocabPlural().ToLower()
+    Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
 @if (Model.SelfAssessment.IsSupervised)
@@ -44,7 +53,10 @@
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
           }
 
-          <partial name="SelfAssessments/_OverviewTable" view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation } })" model="competencyGroup" />
+          <partial name="SelfAssessments/_OverviewTable" view-data="@(
+            new ViewDataDictionary(ViewData) {
+              { "linearNavigation", Model.SelfAssessment.LinearNavigation },
+              { "selfAssessment", Model.SelfAssessment } })" model="competencyGroup" />
 
         </div>
       </details>
@@ -60,7 +72,7 @@
 }
 
 
-@if (Model.SelfAssessment.UseFilteredApi)
+@if (Model.SelfAssessment.IncludesSignposting)
 {
   <p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to retrieve a list of recommended learning resources.</p>
   <a class="nhsuk-button finish-review-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentFilteredResults" : "FilteredRecommendations")>
@@ -69,102 +81,23 @@
 }
 @if (Model.SelfAssessment.IsSupervised)
 {
-<div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-  <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-  @if (Model.SupervisorSignOffs.Any())
-  {
-<dl class="nhsuk-summary-list">
-  <div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    @Model.SelfAssessment.SignOffRoleName
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @Model.SupervisorSignOffs.FirstOrDefault().SupervisorName (@Model.SupervisorSignOffs.FirstOrDefault().SupervisorEmail)
-  </dd>
-  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
-  {
-    <dd class="nhsuk-summary-list__actions">
-
-    </dd>
-  }
-</div>
-
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Status
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
-        {
-          <span class="nhsuk-tag">Requested @Model.SupervisorSignOffs.FirstOrDefault().Requested.Value.ToShortDateString()</span>
-        }
-        else if (Model.SupervisorSignOffs.FirstOrDefault().SignedOff && Model.SupervisorSignOffs.FirstOrDefault().Verified != null)
-        {
-          <span class="nhsuk-tag nhsuk-tag--green">Signed off @Model.SupervisorSignOffs.FirstOrDefault().Verified.Value.ToShortDateString()</span>
-        }
-        else
-        {
-          <span class="nhsuk-tag nhsuk-tag--red">Rejected @Model.SupervisorSignOffs.FirstOrDefault().Verified.Value.ToShortDateString()</span>
-        }
-      </dd>
-      @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
-          {
-    <dd class="nhsuk-summary-list__actions">
-      @if ((Model.SupervisorSignOffs.FirstOrDefault().EmailSent == null && Model.SupervisorSignOffs.FirstOrDefault().Verified == null || (Model.SupervisorSignOffs.FirstOrDefault().Verified == null) && Model.SupervisorSignOffs.FirstOrDefault().EmailSent.Value.ToShortDateString() != DateTime.UtcNow.ToShortDateString()))
-      {
-        <a asp-action="SendRequestSignOffReminder" asp-route-candidateAssessmentSupervisorVerificationId="@Model.SupervisorSignOffs.FirstOrDefault().ID" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-candidateAssessmentSupervisorId="@Model.SupervisorSignOffs.FirstOrDefault().CandidateAssessmentSupervisorID" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Send reminder</a>
-      }
-    </dd>
-          }
-      
-    </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Comments
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.SupervisorSignOffs.FirstOrDefault().Comments
-      </dd>
-      @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null && (Model.SupervisorSignOffs.Count() - 1) > 0)
-      {
-        <dd class="nhsuk-summary-list__actions">
-
-        </dd>
-      }
-      </div>
-    @if ((Model.SupervisorSignOffs.Count() - 1) > 0)
-    {
-<div class="nhsuk-summary-list__row">
-  <dt class="nhsuk-summary-list__key">
-    Previous sign off requests
-  </dt>
-  <dd class="nhsuk-summary-list__value">
-    @(Model.SupervisorSignOffs.Count() - 1)
-  </dd>
-  @if (Model.SupervisorSignOffs.FirstOrDefault().Verified == null)
-  {
-    <dd class="nhsuk-summary-list__actions">
-      <a asp-action="SignOffHistory" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">View</a>
-    </dd>
-  }
-  </div>
-    }
-      </dl>
-    }
-    @if (Model.AllQuestionsVerified())
+  <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
+    <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
+    <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
+    @if (Model.AllQuestionsVerifiedOrNotRequired())
     {
       @if (!Model.SupervisorSignOffs.Any())
       {
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
 
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route="@Model.SelfAssessment.Id" >Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
     }
     else
     {
-      <p class="nhsuk-body-l">All @Model.VocabPlural().ToLower() must be self-assessed and verified by your @Model.SelfAssessment.VerificationRoleName, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
+      <p class="nhsuk-body-l">All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
     }
 
-    </div>
-  }
+  </div>
+}
 

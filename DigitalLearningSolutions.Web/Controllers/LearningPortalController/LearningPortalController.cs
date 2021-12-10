@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public partial class LearningPortalController : Controller
     {
+        private readonly IActionPlanService actionPlanService;
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly ICourseDataService courseDataService;
@@ -33,7 +34,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
-            IFilteredApiHelperService filteredApiHelperService
+            IFilteredApiHelperService filteredApiHelperService,
+            IActionPlanService actionPlanService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,6 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.logger = logger;
             this.config = config;
             this.filteredApiHelperService = filteredApiHelperService;
+            this.actionPlanService = actionPlanService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

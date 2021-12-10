@@ -15,7 +15,7 @@ else if (Model.CompletedDate != null)
 }
 else if (Model.SignOffRequested > 0)
 {
-  <strong class="nhsuk-tag nhsuk-tag--red status-tag">
+  <strong class="nhsuk-tag nhsuk-tag--pink status-tag">
     Sign-off requested
   </strong>
 }
@@ -25,11 +25,21 @@ else if (Model.ResultsVerificationRequests > 0)
     Results to verify
   </strong>
 }
-else if (Model.SignedOff != null)
+else if (Model.SignedOffDate != null)
 {
-  <strong class="nhsuk-tag nhsuk-tag--green status-tag">
-    Signed off
-  </strong>
+  if (Model.SignedOff)
+  {
+    <strong class="nhsuk-tag nhsuk-tag--green status-tag">
+      Signed off
+    </strong>
+  }
+  else
+  {
+    <strong class="nhsuk-tag nhsuk-tag--red status-tag">
+      Sign off declined
+    </strong>
+  }
+
 }
 else
 {

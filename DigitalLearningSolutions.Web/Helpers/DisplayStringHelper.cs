@@ -14,10 +14,10 @@
 
         public static string FormatBytesWithLimit(long number, long limit)
         {
-            return GenerateBytesDisplayString(number) + Divider + GenerateBytesDisplayString(limit);
+            return GenerateSizeDisplayString(number) + Divider + GenerateSizeDisplayString(limit);
         }
 
-        private static string GenerateBytesDisplayString(long byteCount)
+        public static string GenerateSizeDisplayString(long byteCount)
         {
             if (byteCount < 0)
             {

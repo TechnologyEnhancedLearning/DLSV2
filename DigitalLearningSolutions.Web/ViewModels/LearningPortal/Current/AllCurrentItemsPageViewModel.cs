@@ -4,23 +4,29 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
 
     public class AllCurrentItemsPageViewModel
     {
-        public readonly IEnumerable<CurrentLearningItemViewModel> CurrentCourses;
-        public readonly IEnumerable<SelfAssessmentCardViewModel> SelfAssessments;
+        public readonly IEnumerable<CurrentLearningItemViewModel> CurrentItems;
 
         public AllCurrentItemsPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
-            IEnumerable<SelfAssessment> selfAssessments
+            IEnumerable<SelfAssessment> selfAssessments,
+            IEnumerable<ActionPlanResource> actionPlanResources
         )
         {
-            CurrentCourses = currentCourses.Select(course => new CurrentCourseViewModel(course));
+            CurrentItems = currentCourses.Select(course => new CurrentCourseViewModel(course));
             foreach (SelfAssessment selfAssessment in selfAssessments)
             {
-                CurrentCourses = CurrentCourses.Append(new SelfAssessmentCardViewModel(selfAssessment));
-            };
+                CurrentItems = CurrentItems.Append(new SelfAssessmentCardViewModel(selfAssessment));
+            }
+
+            foreach (var actionPlanResource in actionPlanResources)
+            {
+                CurrentItems = CurrentItems.Append(new LearningResourceCardViewModel(actionPlanResource));
+            }
         }
     }
 }

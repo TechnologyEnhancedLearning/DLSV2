@@ -69,7 +69,7 @@
             // Given
             var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
             var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._, A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
             controller.TempData.Set(samplePrompt1);
 
@@ -197,7 +197,7 @@
 
             controller.TempData.Set(initialTempData);
 
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
@@ -249,7 +249,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     "Test"
                 )
@@ -274,7 +273,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     null
                 )
@@ -299,7 +297,6 @@
             A.CallTo(
                 () => courseAdminFieldsService.AddCustomPromptToCourse(
                     100,
-                    101,
                     1,
                     "Test"
                 )

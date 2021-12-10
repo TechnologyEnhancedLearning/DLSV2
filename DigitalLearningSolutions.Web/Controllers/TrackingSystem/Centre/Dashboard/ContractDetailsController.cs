@@ -38,7 +38,7 @@
             var centreId = User.GetCentreId();
             var centreDetails = centresDataService.GetCentreDetailsById(centreId)!;
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
-            var numberOfCourses = courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(centreId, 0);
+            var numberOfCourses = courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(centreId, null);
 
             var model = new ContractDetailsViewModel(adminUsersAtCentre, centreDetails, numberOfCourses);
 

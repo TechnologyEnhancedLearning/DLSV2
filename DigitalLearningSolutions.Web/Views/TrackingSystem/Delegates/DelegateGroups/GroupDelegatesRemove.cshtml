@@ -17,7 +17,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ConfirmRemovalFromGroup) }" />
     }
 
-    <h1 class="nhsuk-heading-xl">Are you sure you would like to remove @Model.DelegateName from this group?</h1>
+    <h1 class="nhsuk-heading-xl word-break">Are you sure you would like to remove @Model.DelegateName from this group?</h1>
   </div>
 </div>
 
@@ -50,7 +50,7 @@
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" asp-for="ConfirmRemovalFromGroup" />
-              <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ConfirmRemovalFromGroup">
+              <label class="nhsuk-label nhsuk-checkboxes__label word-break" asp-for="ConfirmRemovalFromGroup">
                 I am sure that I wish to remove @Model.DelegateName from this group.
               </label>
             </div>
