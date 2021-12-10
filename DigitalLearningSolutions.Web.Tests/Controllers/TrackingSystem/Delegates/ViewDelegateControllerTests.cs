@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -64,12 +63,42 @@
                 .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
             A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
                 .Returns(new CourseNameInfo());
+            A.CallTo(
+                    () => courseService.DelegateHasCurrentProgress(
+                        1,
+                        1
+                    )
+                )
+                .Returns(true);
 
             // when
             var result = viewDelegateController.ConfirmRemoveFromCourse(1, 1);
 
             // then
             result.Should().BeViewResult();
+        }
+
+        [Test]
+        public void Removal_confirmation_page_returns_not_found_result_for_delegate_with_no_active_progress()
+        {
+            // given
+            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+                .Returns(new DelegateUserCard { CentreId = 2, Id = 1 });
+            A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
+                .Returns(new CourseNameInfo());
+            A.CallTo(
+                    () => courseService.DelegateHasCurrentProgress(
+                        1,
+                        1
+                    )
+                )
+                .Returns(false);
+
+            // when
+            var result = viewDelegateController.ConfirmRemoveFromCourse(1, 1);
+
+            // then
+            result.Should().BeNotFoundResult();
         }
 
         [Test]
@@ -81,10 +110,9 @@
             A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
                 .Returns(new CourseNameInfo());
             A.CallTo(
-                    () => courseService.RemoveDelegateFromCourse(
+                    () => courseService.DelegateHasCurrentProgress(
                         1,
-                        1,
-                        RemovalMethod.RemovedByAdmin
+                        1
                     )
                 )
                 .Returns(false);
@@ -106,10 +134,9 @@
             A.CallTo(() => courseDataService.GetCourseNameAndApplication(1))
                 .Returns(new CourseNameInfo());
             A.CallTo(
-                    () => courseService.RemoveDelegateFromCourse(
+                    () => courseService.DelegateHasCurrentProgress(
                         1,
-                        1,
-                        RemovalMethod.RemovedByAdmin
+                        1
                     )
                 )
                 .Returns(true);
