@@ -182,11 +182,12 @@
         }
 
         [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
         public IActionResult MarkActionPlanResourceAsComplete(
             int learningLogItemId,
-            SetLearningLogItemCompletionDateFormData formData
+            MarkActionPlanResourceAsCompleteFormData formData
         )
         {
             if (!ModelState.IsValid)

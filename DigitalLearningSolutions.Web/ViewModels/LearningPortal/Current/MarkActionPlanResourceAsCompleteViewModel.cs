@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
-    public class MarkActionPlanResourceAsCompleteViewModel : SetLearningLogItemCompletionDateFormData
+    public class MarkActionPlanResourceAsCompleteViewModel : MarkActionPlanResourceAsCompleteFormData
     {
         public MarkActionPlanResourceAsCompleteViewModel(
             int learningLogItemId,
@@ -12,7 +12,7 @@
         }
 
         public MarkActionPlanResourceAsCompleteViewModel(
-            SetLearningLogItemCompletionDateFormData formData,
+            MarkActionPlanResourceAsCompleteFormData formData,
             int learningLogItemId
         ) : base(formData)
         {

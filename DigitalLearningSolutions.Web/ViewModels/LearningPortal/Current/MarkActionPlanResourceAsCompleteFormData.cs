@@ -4,11 +4,11 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class SetLearningLogItemCompletionDateFormData : IValidatableObject
+    public class MarkActionPlanResourceAsCompleteFormData : IValidatableObject
     {
-        public SetLearningLogItemCompletionDateFormData() { }
+        public MarkActionPlanResourceAsCompleteFormData() { }
 
-        protected SetLearningLogItemCompletionDateFormData(SetLearningLogItemCompletionDateFormData formData)
+        protected MarkActionPlanResourceAsCompleteFormData(MarkActionPlanResourceAsCompleteFormData formData)
         {
             ResourceName = formData.ResourceName;
             Day = formData.Day;

@@ -343,7 +343,7 @@
             const int day = 1;
             const int month = 1;
             const int year = 2021;
-            var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
             var completedDate = new DateTime(year, month, day);
             A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
@@ -364,7 +364,7 @@
             const int day = 1;
             const int month = 1;
             const int year = 4000;
-            var formData = new SetLearningLogItemCompletionDateFormData { Day = day, Month = month, Year = year };
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
             controller.ModelState.AddModelError("year", "message");
             A.CallTo(() => actionPlanService.SetCompletionDate(A<int>._, A<DateTime>._)).DoesNothing();
 
