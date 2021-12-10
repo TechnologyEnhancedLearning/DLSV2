@@ -173,6 +173,38 @@
         [HttpGet]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
+        public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
+        {
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+            var model = new MarkActionPlanResourceAsCompleteViewModel(learningLogItemId, actionPlanResource!.Name);
+            return View("Current/MarkActionPlanResourceAsComplete", model);
+        }
+
+        [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
+        public IActionResult MarkActionPlanResourceAsComplete(
+            int learningLogItemId,
+            MarkActionPlanResourceAsCompleteFormData formData
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new MarkActionPlanResourceAsCompleteViewModel(formData, learningLogItemId);
+                return View("Current/MarkActionPlanResourceAsComplete", model);
+            }
+
+            var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
+
+            actionPlanService.SetCompletionDate(learningLogItemId, completionDate);
+            return RedirectToAction("Current");
+        }
+
+        [HttpGet]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
