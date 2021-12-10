@@ -47,6 +47,7 @@
             if (!configuration.IsSignpostingUsed())
             {
                 await UpdateFilteredProfileAndGoalsForDelegate(selfAssessmentId, candidateId);
+                return RedirectToAction("FilteredDashboard", new { selfAssessmentId });
             }
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
@@ -63,6 +64,22 @@
             return configuration.IsSignpostingUsed()
                 ? ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId)
                 : await ReturnFilteredResultsView(selfAssessmentId, candidateId);
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]
+        public async Task<IActionResult> FilteredDashboard(int selfAssessmentId)
+        {
+            if (configuration.IsSignpostingUsed())
+            {
+                return RedirectToActionPermanent("RecommendedLearning", new { selfAssessmentId });
+            }
+
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
+            selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
+
+            return await ReturnFilteredResultsView(selfAssessmentId, candidateId);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/PlayList/{playListId}")]
