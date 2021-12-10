@@ -102,11 +102,6 @@
 
         public async Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId)
         {
-            if (!config.IsSignpostingUsed())
-            {
-                return new List<ActionPlanResource>();
-            }
-
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
                     i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
@@ -171,7 +166,8 @@
 
             var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
 
-            if (!(actionPlanResource is { ArchivedDate: null }) || actionPlanResource.LearningHubResourceReferenceId == null)
+            if (!(actionPlanResource is { ArchivedDate: null }) ||
+                actionPlanResource.LearningHubResourceReferenceId == null)
             {
                 return null;
             }

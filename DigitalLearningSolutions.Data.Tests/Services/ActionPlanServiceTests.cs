@@ -145,25 +145,8 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanResources_returns_empty_list_if_signposting_is_disabled()
-        {
-            // Given
-            const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
-
-            // When
-            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
-
-            // Then
-            result.Should().BeEmpty();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(A<int>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public async Task GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
+        public async Task
+            GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
@@ -399,7 +382,8 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
+        public void
+            VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
