@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     .Build());
                 var apiClient = new LearningHubApiClient(httpClient, configuration);
                 var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                model.SearchResult = await apiClient.SearchResource(model.SearchText ?? String.Empty, offset, 500);
+                model.SearchResult = await apiClient.SearchResource(model.SearchText ?? String.Empty, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
                 model.LearningHubApiError = model.SearchResult == null;
                 SignpostingConfiguration = configuration;
             }
