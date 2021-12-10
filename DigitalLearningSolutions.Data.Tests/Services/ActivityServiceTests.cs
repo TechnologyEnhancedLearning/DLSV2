@@ -327,10 +327,10 @@
                 new Category { CourseCategoryID = 1, CategoryName = "Category 1" },
                 new Category { CourseCategoryID = 2, CategoryName = "Category 2" },
             };
-            var availableCourses = new List<Course>
+            var availableCourses = new List<CourseAssessmentDetails>
             {
-                new Course { CustomisationId = 1, ApplicationName = "C Course", Active = true },
-                new Course { CustomisationId = 2, ApplicationName = "B Course", Active = true },
+                new CourseAssessmentDetails { CustomisationId = 1, ApplicationName = "C Course", Active = true },
+                new CourseAssessmentDetails { CustomisationId = 2, ApplicationName = "B Course", Active = true },
             };
             var historicalCourses = new List<Course>
             {
@@ -466,6 +466,21 @@
             // then
             dateRange!.Value.startDate.Should().Be(DateTime.Parse(startDateString));
             dateRange!.Value.endDate.Should().Be(DateTime.Parse(endDateString));
+        }
+
+        [Test]
+        public void GetActivityStartDateForCentre_strips_time_from_database_value()
+        {
+            // given
+            var dateWithTime = DateTime.Parse("2020/12/12 12:40:40");
+            A.CallTo(() => activityDataService.GetStartOfActivityForCentre(A<int>._))
+                .Returns(dateWithTime);
+
+            // when
+            var result = activityService.GetActivityStartDateForCentre(1);
+
+            // then
+            result.Should().Be(dateWithTime.Date);
         }
 
         private void GivenActivityDataServiceReturnsDataInExampleSheet()

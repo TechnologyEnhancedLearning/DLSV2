@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -26,7 +25,7 @@
 
             viewComponentContext = new ViewComponentContext
             {
-                ViewContext = viewContext
+                ViewContext = viewContext,
             };
         }
 
@@ -42,7 +41,7 @@
                 new List<AdminUser>(),
                 categories,
                 searchString,
-                $"CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
+                "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
                 1
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
@@ -52,10 +51,14 @@
                     "Role",
                     AdminRoleFilterOptions.CentreAdministrator.FilterValue
                 ),
-                new AppliedFilterViewModel("Word", "Category", "CategoryName|CategoryName|Word")
+                new AppliedFilterViewModel("Word", "Category", "CategoryName|CategoryName|Word"),
             };
 
-            var expectedFilterViewModel = new CurrentFiltersViewModel(expectedAppliedFilters, searchString);
+            var expectedFilterViewModel = new CurrentFiltersViewModel(
+                expectedAppliedFilters,
+                searchString,
+                new Dictionary<string, string>()
+            );
 
             // When
             var model = viewComponent.Invoke(inputViewModel).As<ViewViewComponentResult>().ViewData.Model

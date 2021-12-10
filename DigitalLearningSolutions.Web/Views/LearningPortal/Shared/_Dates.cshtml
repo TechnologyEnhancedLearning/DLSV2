@@ -48,6 +48,16 @@
       </a>
     </div>
   }
+  else if (currentLearningItemViewModel is LearningResourceCardViewModel)
+  {
+    <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+         aria-describedby="@Model.Id-name"
+         aria-label="Edit complete by date">
+        Edit
+      </a>
+    </div>
+  }
 </div>
 }
 @if (Model is CompletedCourseViewModel completedCourseViewModel)

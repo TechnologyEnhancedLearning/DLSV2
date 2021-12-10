@@ -28,7 +28,7 @@
             {
                 Active = true,
                 CandidateNumber = "PC97",
-                CompleteBy = null,
+                CompleteByDate = null,
                 DelegateId = 32926,
                 EmailAddress = "erpock.hs@5bntu",
                 Enrolled = new DateTime(2012, 07, 02, 13, 30, 37, 807),

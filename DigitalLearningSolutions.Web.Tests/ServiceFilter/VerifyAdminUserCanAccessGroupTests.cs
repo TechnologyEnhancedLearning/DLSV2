@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
-    using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -9,23 +7,19 @@
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Abstractions;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.AspNetCore.Routing;
     using NUnit.Framework;
 
     public class VerifyAdminUserCanAccessGroupTests
     {
-        private IGroupsDataService groupsDataService = null!;
         private readonly int GroupId = 1;
         private readonly int UserCentreId = 101;
+        private IGroupsService groupsService = null!;
 
         [SetUp]
         public void SetUp()
         {
-            groupsDataService = A.Fake<IGroupsDataService>();
+            groupsService = A.Fake<IGroupsService>();
         }
 
         [Test]
@@ -33,10 +27,10 @@
         {
             // Given
             var context = GetDefaultContext();
-            A.CallTo(() => groupsDataService.GetGroupCentreId(A<int>._)).Returns(UserCentreId + 1);
+            A.CallTo(() => groupsService.GetGroupCentreId(A<int>._)).Returns(UserCentreId + 1);
 
             // When
-            new VerifyAdminUserCanAccessGroup(groupsDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessGroup(groupsService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNotFoundResult();
@@ -47,10 +41,10 @@
         {
             // Given
             var context = GetDefaultContext();
-            A.CallTo(() => groupsDataService.GetGroupCentreId(A<int>._)).Returns(UserCentreId);
+            A.CallTo(() => groupsService.GetGroupCentreId(A<int>._)).Returns(UserCentreId);
 
             // When
-            new VerifyAdminUserCanAccessGroup(groupsDataService).OnActionExecuting(context);
+            new VerifyAdminUserCanAccessGroup(groupsService).OnActionExecuting(context);
 
             // Then
             context.Result.Should().BeNull();
@@ -59,10 +53,10 @@
         private ActionExecutingContext GetDefaultContext()
         {
             var delegateGroupsController = new DelegateGroupsController(
-                A.Fake<IGroupsDataService>(),
                 A.Fake<ICentreCustomPromptsService>(),
-                A.Fake<IClockService>(),
-                A.Fake<IGroupsService>()
+                A.Fake<IGroupsService>(),
+                A.Fake<IUserService>(),
+                A.Fake<ICourseService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;

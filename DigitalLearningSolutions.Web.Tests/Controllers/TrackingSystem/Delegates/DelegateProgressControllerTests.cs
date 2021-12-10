@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -17,15 +18,15 @@
         private IProgressService progressService = null!;
         private IUserService userService = null!;
 
-        private static IEnumerable<TestCaseData> EditSupervisorPostTestData
+        private static IEnumerable<TestCaseData> EditEndpointRedirectTestData
         {
             get
             {
                 yield return new TestCaseData(DelegateProgressAccessRoute.CourseDelegates, null, "Index")
-                    .SetName("EditSupervisorPost_redirects_to_course_delegates_progress");
+                    .SetName("EditPost_redirects_to_course_delegates_progress");
                 yield return
                     new TestCaseData(DelegateProgressAccessRoute.ViewDelegate, "ViewDelegate", "Index").SetName(
-                        "EditSupervisorPost_redirects_to_view_delegate"
+                        "EditPost_redirects_to_view_delegate"
                     );
             }
         }
@@ -44,7 +45,7 @@
         [Test]
         [TestCaseSource(
             typeof(DelegateProgressControllerTests),
-            nameof(EditSupervisorPostTestData)
+            nameof(EditEndpointRedirectTestData)
         )]
         public void EditSupervisorPost_redirects_to_correct_action(
             DelegateProgressAccessRoute accessedVia,
@@ -60,6 +61,30 @@
 
             // When
             var result = delegateProgressController.EditSupervisor(formData, progressId, accessedVia);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
+                .WithActionName(expectedAction);
+        }
+
+        [Test]
+        [TestCaseSource(
+            typeof(DelegateProgressControllerTests),
+            nameof(EditEndpointRedirectTestData)
+        )]
+        public void EditCompleteByDatePost_redirects_to_correct_action(
+            DelegateProgressAccessRoute accessedVia,
+            string expectedController,
+            string expectedAction
+        )
+        {
+            // Given
+            const int progressId = 1;
+            var formData = new EditCompleteByDateFormData { Day = 1, Month = 1, Year = 2021 };
+            A.CallTo(() => progressService.UpdateCompleteByDate(progressId, A<DateTime?>._)).DoesNothing();
+
+            // When
+            var result = delegateProgressController.EditCompleteByDate(formData, progressId, accessedVia);
 
             // Then
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)

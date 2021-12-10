@@ -18,24 +18,24 @@
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
         }
-        public bool AllQuestionsVerified()
+        public bool AllQuestionsVerifiedOrNotRequired()
         {
-            bool allVerified = true;
+            bool allVerifiedOrNotRequired = true;
             foreach (var competencyGroup in CompetencyGroups)
             {
                 foreach (var competency in competencyGroup)
                 {
                     foreach (var assessmentQuestion in competency.AssessmentQuestions)
                     {
-                        if (assessmentQuestion.Result == null || assessmentQuestion.Verified == null )
+                        if ((assessmentQuestion.Result == null || assessmentQuestion.Verified == null) && assessmentQuestion.Required)
                         {
-                            allVerified = false;
+                            allVerifiedOrNotRequired = false;
                             break;
                         }
-            }
+                    }
                 }
             }
-            return allVerified;
+            return allVerifiedOrNotRequired;
         }
     }
 }

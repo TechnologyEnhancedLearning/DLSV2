@@ -18,82 +18,107 @@
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
              asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
-          </li>
-        </ol>
-      </div>
-    </nav>
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+            @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+        </li>
+      </ol>
+    </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+         asp-action="DelegateProfileAssessments"
+         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+        Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </a>
+    </p>
+  </nav>
 }
-<details class="nhsuk-details nhsuk-expander">
-  <summary class="nhsuk-details__summary">
-    <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
-      @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-    </h1>
-  </summary>
-  <div class="nhsuk-details__text">
-    <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </h1>
+    </summary>
+    <div class="nhsuk-details__text">
+      <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
+    </div>
+  </details>
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+      <h2>@Model.DelegateSelfAssessment.RoleName</h2>
+    </div>
+    <div class="nhsuk-grid-column-one-third">
+      @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
+      {
+        <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
+      }
+      @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
+      {
+        <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Verify multiple results</a>
+      }
+    </div>
   </div>
-</details>
-<div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-two-thirds">
-    <h2>@Model.DelegateSelfAssessment.RoleName</h2>
-  </div>
-  <div class="nhsuk-grid-column-one-third">
-    @if (Model.DelegateSelfAssessment.SignOffRequested > 0)
-    {
-      <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off profile assessment</a>
-    }
-    @if (Model.DelegateSelfAssessment.ResultsVerificationRequests > 1)
-    {
-      <a role="button" asp-action="VerifyMultipleResults" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Verify multiple results</a>
-    }
-  </div>
-</div>
-@if (Model.CompetencyGroups.Any())
-{
-  foreach (var competencyGroup in Model.CompetencyGroups)
+
+  @if (Model.CompetencyGroups.Any())
   {
-    <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-      <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            @competencyGroup.First().Vocabulary
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Question
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Learner<br/>Response
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Status
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Actions
-          </th>
-        </tr>
-      </thead>
-      <tbody class="nhsuk-table__body">
-        @foreach (var competency in competencyGroup)
-        {
-          <tr role="row" class="nhsuk-table__row first-row">
-            <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
-              <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
-            </td>
-            <partial name="Shared/_AssessmentQuestionReviewCells" model="competency.AssessmentQuestions.First()" />
+    foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+      <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
+        <caption class="nhsuk-table__caption"><h3>@competencyGroup.Key</h3></caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              @competencyGroup.First().Vocabulary
+            </th>
+            <th role="columnheader" class="" scope="col">
+              @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
+                        Model.DelegateSelfAssessment.QuestionLabel)
+            </th>
+            <th role="columnheader" class="" scope="col">
+              Self-assessment
+            </th>
+            @if (Model.IsSupervisorResultsReviewed)
+            {
+              <th role="columnheader" class="" scope="col">
+                Verification status
+              </th>
+            }
+            <th role="columnheader" class="" scope="col">
+              Actions
+            </th>
           </tr>
-          @foreach (var question in competency.AssessmentQuestions.Skip(1))
+        </thead>
+        <tbody class="nhsuk-table__body">
+          @foreach (var competency in competencyGroup)
           {
-            <tr role="row" class="nhsuk-table__row">
-              <partial name="Shared/_AssessmentQuestionReviewCells" model="question" />
+            <tr role="row" class="nhsuk-table__row first-row">
+              <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+              </td>
+              <partial name="Shared/_AssessmentQuestionReviewCells"
+                       model="competency.AssessmentQuestions.First()"
+                       view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})" />
             </tr>
+            @foreach (var question in competency.AssessmentQuestions.Skip(1))
+            {
+              <tr role="row" class="nhsuk-table__row">
+                <partial name="Shared/_AssessmentQuestionReviewCells"
+                         model="question"
+                         view-data="@(new ViewDataDictionary(ViewData) {{ "isSupervisorResultsReviewed", Model.IsSupervisorResultsReviewed }})" />
+              </tr>
+            }
           }
-        }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    }
   }
-}
+  @if (Model.SupervisorSignOffs.Any())
+  {
+    <div class="nhsuk-u-margin-top-4">
+      <h3>Self Assessment Sign-off Status</h3>
+      <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
+    </div>
+  }

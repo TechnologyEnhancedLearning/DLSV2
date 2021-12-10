@@ -40,15 +40,11 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var centreId = User.GetCentreId();
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(
-                customisationId,
-                centreId
-            );
+            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
 
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
@@ -63,13 +59,11 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var centreId = User.GetCentreId();
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
-                    customisationId,
-                    centreId
+                    customisationId
                 ).AdminFields
                 .Single(cp => cp.CustomPromptNumber == promptNumber);
 
@@ -82,7 +76,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult EditAdminField(
             int customisationId,
             EditAdminFieldViewModel model,
@@ -105,7 +99,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldAnswersBulk(int customisationId, int promptNumber)
         {
@@ -120,7 +114,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Edit/Bulk")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<EditAdminFieldData>))]
         public IActionResult EditAdminFieldAnswersBulk(
             int customisationId,
@@ -158,7 +152,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId)
         {
@@ -173,7 +167,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
@@ -195,7 +189,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(int customisationId)
         {
@@ -209,7 +203,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/Add/Bulk")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminFieldAnswersBulk(
             int customisationId,
@@ -235,7 +229,7 @@
 
         [HttpGet]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber)
         {
             var answerCount =
@@ -256,7 +250,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/AdminFields/{promptNumber:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult RemoveAdminField(int customisationId, int promptNumber, RemoveAdminFieldViewModel model)
         {
             if (!model.Confirm)
@@ -310,11 +304,8 @@
                 return View(model);
             }
 
-            var centreId = User.GetCentreId();
-
             if (courseAdminFieldsService.AddCustomPromptToCourse(
                 customisationId,
-                centreId,
                 model.AdminFieldId!.Value,
                 model.OptionsString
             ))

@@ -121,5 +121,48 @@
             // then
             result.Should().BeRedirectToActionResult();
         }
+
+        [Test]
+        public void Reactivating_delegate_redirects_to_index_page()
+        {
+            // Given
+            A.CallTo(() => userDataService.GetDelegateUserCardById(1))
+                .Returns(new DelegateUserCard { CentreId = 2, Id = 1, Active = false });
+
+            A.CallTo(() => userDataService.ActivateDelegateUser(1)).DoesNothing();
+
+            // When
+            var result = viewDelegateController.ReactivateDelegate(1);
+
+            // Then
+            A.CallTo(() => userDataService.ActivateDelegateUser(1)).MustHaveHappened();
+            result.Should().BeRedirectToActionResult();
+        }
+
+        [Test]
+        public void ReactivateDelegate_nonexistent_delegate_returns_not_found_result()
+        {
+            //Given
+            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(null);
+            
+            // When
+            var result = viewDelegateController.ReactivateDelegate(10);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void ReactivateDelegate_delegate_on_wrong_centre_returns_not_found_result()
+        {
+            //Given
+            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(new DelegateUserCard() { CentreId = 1});
+
+            // When
+            var result = viewDelegateController.ReactivateDelegate(2);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
     }
 }

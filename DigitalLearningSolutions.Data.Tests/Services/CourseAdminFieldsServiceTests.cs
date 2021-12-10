@@ -35,11 +35,11 @@
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Priority Access");
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
             var expectedCourseAdminFields = CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts);
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.GetCustomPromptsForCourse(100, 101);
+            var result = courseAdminFieldsService.GetCustomPromptsForCourse(100);
 
             // Then
             result.Should().BeEquivalentTo(expectedCourseAdminFields);
@@ -63,12 +63,12 @@
                 answer: answer2
             );
             var expected = new List<CustomPromptWithAnswer> { expected1, expected2 };
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
             // When
-            var result = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 100, 101);
+            var result = courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(delegateCourseInfo, 100);
 
             // Then
             result.Should().BeEquivalentTo(expected);
@@ -112,11 +112,11 @@
             (
                 () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 101, 3, null);
+            var result = courseAdminFieldsService.AddCustomPromptToCourse(100, 3, null);
 
             // Then
             A.CallTo
@@ -134,7 +134,7 @@
             (
                 () => courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
-            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100, 101, false))
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(
                     CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                         "System Access Granted",
@@ -148,7 +148,6 @@
             // When
             var result = courseAdminFieldsService.AddCustomPromptToCourse(
                 100,
-                101,
                 3,
                 "Adding a fourth prompt"
             );

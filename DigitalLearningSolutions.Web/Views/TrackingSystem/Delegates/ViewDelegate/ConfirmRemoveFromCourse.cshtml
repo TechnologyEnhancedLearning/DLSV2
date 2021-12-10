@@ -14,8 +14,8 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">Remove delegate enrolment from @Model.CourseName</h1>
-    <h2 class="nhsuk-heading-l">Delegate: @Model.Name</h2>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">Remove delegate enrolment from @Model.CourseName</h1>
+    <h2 class="nhsuk-heading-l word-break">Delegate: @Model.Name</h2>
     <div class="nhsuk-form-group">
       <form asp-action="ExecuteRemoveFromCourse" asp-route-delegateId="@Model.DelegateId" asp-route-customisationId="@Model.CustomisationId">
         <fieldset class="nhsuk-fieldset" aria-describedby="example-hint">

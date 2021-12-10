@@ -6,6 +6,7 @@
     {
         public CourseDetailsViewModel(CourseDetails courseDetails)
         {
+            CustomisationId = courseDetails.CustomisationId;
             Password = courseDetails.Password;
             NotificationEmails = courseDetails.NotificationEmails;
             PostLearningAssessment = courseDetails.PostLearningAssessment;
@@ -15,6 +16,7 @@
             DiagCompletionThreshold = courseDetails.DiagCompletionThreshold;
         }
 
+        public int CustomisationId { get; }
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
         public bool PostLearningAssessment { get; set; }

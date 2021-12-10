@@ -8,5 +8,8 @@
         public bool HasDelegateNominatedRoles { get; set; }
         public bool UseDescriptionExpanders { get; set; }
         public string? ManageOptionalCompetenciesPrompt { get; set; }
+        public string? QuestionLabel { get; set; }
+        public string? DescriptionLabel { get; set; }
+
     }
 }

@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IActivityService
@@ -20,7 +21,7 @@
 
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
 
-        DateTime GetStartOfActivityForCentre(int centreId);
+        DateTime GetActivityStartDateForCentre(int centreId);
 
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
 
@@ -107,7 +108,7 @@
             var historicalCourses = courseDataService
                 .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId);
 
-            var courses = availableCourses.Union(historicalCourses)
+            var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
                 .OrderByDescending(c => c.Active)
                 .ThenBy(c => c.CourseName)
                 .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
@@ -115,9 +116,9 @@
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
 
-        public DateTime GetStartOfActivityForCentre(int centreId)
+        public DateTime GetActivityStartDateForCentre(int centreId)
         {
-            return activityDataService.GetStartOfActivityForCentre(centreId);
+            return activityDataService.GetStartOfActivityForCentre(centreId).Date;
         }
 
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
@@ -193,7 +194,7 @@
         )
         {
             var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
-            if (startDateInvalid || startDate < GetStartOfActivityForCentre(centreId))
+            if (startDateInvalid || startDate < GetActivityStartDateForCentre(centreId))
             {
                 return null;
             }
@@ -286,6 +287,19 @@
             public int Registrations { get; }
             public int Completions { get; }
             public int Evaluations { get; }
+        }
+
+        private class CourseEqualityComparer : IEqualityComparer<Course>
+        {
+            public bool Equals(Course? x, Course? y)
+            {
+                return x?.CustomisationId == y?.CustomisationId;
+            }
+
+            public int GetHashCode(Course obj)
+            {
+                return obj.CustomisationId;
+            }
         }
     }
 }

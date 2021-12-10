@@ -15,7 +15,7 @@
             DateTime? startedDate = null,
             DateTime? lastAccessed = null,
             DateTime? completeByDate = null,
-            bool useFilteredApi = false,
+            bool includesSignposting = false,
             bool unprocessedUpdates = false,
             bool linearNavigation = true,
             bool useDescriptionExpanders = true,
@@ -24,7 +24,7 @@
             string signOffRoleName = "Supervisor"
         )
         {
-            return new CurrentSelfAssessment()
+            return new CurrentSelfAssessment
             {
                 Id = id,
                 Description = description,
@@ -33,13 +33,13 @@
                 StartedDate = startedDate ?? DateTime.UtcNow,
                 LastAccessed = lastAccessed,
                 CompleteByDate = completeByDate,
-                UseFilteredApi = useFilteredApi,
+                IncludesSignposting = includesSignposting,
                 UnprocessedUpdates = unprocessedUpdates,
                 LinearNavigation = linearNavigation,
                 UseDescriptionExpanders = useDescriptionExpanders,
                 Vocabulary = vocabulary,
                 VerificationRoleName = verificationRoleName,
-                SignOffRoleName = signOffRoleName
+                SignOffRoleName = signOffRoleName,
             };
         }
 
@@ -59,7 +59,7 @@
             List<AssessmentQuestion> assessmentQuestions = null
         )
         {
-            return new Competency()
+            return new Competency
             {
                 Id = id,
                 RowNo = rowNo,
@@ -68,7 +68,7 @@
                 CompetencyGroupID = competencyGroupId,
                 CompetencyGroup = competencyGroup,
                 Vocabulary = vocabulary,
-                AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>()
+                AssessmentQuestions = assessmentQuestions ?? new List<AssessmentQuestion>(),
             };
         }
 
@@ -81,9 +81,11 @@
             int minValue = 0,
             int maxValue = 10,
             int assessmentQuestionInputTypeID = 2,
-            bool includeComments = true)
+            bool includeComments = true,
+            bool required = true
+        )
         {
-            return new AssessmentQuestion()
+            return new AssessmentQuestion
             {
                 Id = id,
                 Question = question,
@@ -93,11 +95,16 @@
                 MinValue = minValue,
                 MaxValue = maxValue,
                 AssessmentQuestionInputTypeID = assessmentQuestionInputTypeID,
-                IncludeComments = true
+                IncludeComments = includeComments,
+                Required = required
             };
         }
 
-        public static int? GetQuestionResult(IEnumerable<Competency> results, int competencyId, int assessmentQuestionId)
+        public static int? GetQuestionResult(
+            IEnumerable<Competency> results,
+            int competencyId,
+            int assessmentQuestionId
+        )
         {
             return results.First(competency => competency.Id == competencyId).AssessmentQuestions
                 .First(question => question.Id == assessmentQuestionId).Result;

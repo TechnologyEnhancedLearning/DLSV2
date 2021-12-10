@@ -1,12 +1,15 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
-@model AssessmentQuestion 
+@model AssessmentQuestion
 
 
 <partial name="Shared/_AssessmentQuestionCells" model="Model" />
-<td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Questions </span>
-  <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
-</td>
+@if ((bool)(ViewData["isSupervisorResultsReviewed"] ?? true))
+{
+  <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+    <span class="nhsuk-table-responsive__heading">Questions </span>
+    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
+  </td>
+}
 <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
   @if (Model.ResultId != null)
   {
