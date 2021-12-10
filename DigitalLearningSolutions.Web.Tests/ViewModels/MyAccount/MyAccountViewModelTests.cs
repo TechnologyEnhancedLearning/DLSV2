@@ -138,14 +138,10 @@
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(
                 hasBeenPromptedForPrn: false,
-                professionalRegistrationNumber: "123456"
+                professionalRegistrationNumber: null
             );
             var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
-                {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
-                }
+                new List<CustomPromptWithAnswer>{}
             );
 
             // When
