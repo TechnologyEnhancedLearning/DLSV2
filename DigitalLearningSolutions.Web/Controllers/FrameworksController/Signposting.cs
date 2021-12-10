@@ -1,13 +1,19 @@
 ﻿using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
 using System;
+using DigitalLearningSolutions.Data.ApiClients;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
+        private static IConfiguration SignpostingConfiguration { get; set; }
+
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
@@ -23,27 +29,35 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [HttpPost]
-        public IActionResult SearchLearningResources(CompetencyResourceSignpostingViewModel model)
+        public async Task<IActionResult> SearchLearningResourcesAsync(CompetencyResourceSignpostingViewModel model)
         {
-            return GoToPage(1, model);
+            if(model.SearchText?.Trim().Length > 1)
+            {
+                return await GoToPage(1, model);
+            }
+            else
+            {
+                model.Empty();
+                return View("Developer/AddCompetencyLearningResources", model);
+            }
         }
 
         [HttpPost]
-        public IActionResult GoToNextPage(CompetencyResourceSignpostingViewModel model)
+        public async Task<IActionResult> GoToNextPage(CompetencyResourceSignpostingViewModel model)
         {
-            return GoToPage(model.Page + 1, model);
+            return await GoToPage(model.Page + 1, model);
         }
 
         [HttpPost]
-        public IActionResult GoToPreviousPage(CompetencyResourceSignpostingViewModel model)
+        public async Task<IActionResult> GoToPreviousPage(CompetencyResourceSignpostingViewModel model)
         {
-            return GoToPage(model.Page - 1, model);
+            return await GoToPage(model.Page - 1, model);
         }
 
-        private IActionResult GoToPage(int page, CompetencyResourceSignpostingViewModel model)
+        private async Task<IActionResult> GoToPage(int page, CompetencyResourceSignpostingViewModel model)
         {
             model.Page = page;
-            GetResourcesFromApi(page, model);
+            await GetResourcesFromApiAsync(page, model);
             return View("Developer/AddCompetencyLearningResources", model);
         }
 
@@ -75,63 +89,29 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return model;
         }
 
-        private void GetResourcesFromApi(int page, CompetencyResourceSignpostingViewModel model)
+        private async Task GetResourcesFromApiAsync(int page, CompetencyResourceSignpostingViewModel model)
         {
-            var resourceTypes = new string[] { "Cloud storage", "A guide to online storage", "Towards a paperless HR Department" };
-            var descriptions = new string[]
+            try
             {
-                "There are a lot of online storage services but here are a few of the top free online options.<br />",
-                "<p>Businesses, firms, and individuals are increasingly adopting cloud data storage because they require more flexibility, versatility<p>",
-                "<b>It's estimated that we use over 10000 sheets of paper, per employee, per year</b>. Learn how to cut back in your business with paperless HR"
-            };
-            var catalogues = new string[]
+                var httpClient = new HttpClient();
+                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                var configuration = SignpostingConfiguration ?? (new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.Development.json")
+                    .AddUserSecrets(typeof(Program).Assembly, true)
+                    .AddEnvironmentVariables(environmentName)
+                    .Build());
+                var apiClient = new LearningHubApiClient(httpClient, configuration);
+                var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                model.SearchResult = await apiClient.SearchResource(model.SearchText ?? String.Empty, offset, 500);
+                model.LearningHubApiError = model.SearchResult == null;
+                SignpostingConfiguration = configuration;
+            }
+            catch (Exception)
             {
-                "Digital Unite", "Community contributions"
-            };
-            var response = new ResourceSearchResult()
-            {
-                Results = new List<ResourceMetadata>(),
-                TotalNumResources = 24, /* alleged search results */
-                Offset = (page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage
-            };
-            int lastItemOfPage = Math.Min(response.Offset + CompetencyResourceSignpostingViewModel.ItemsPerPage, response.TotalNumResources - 1);
 
-            if (String.IsNullOrEmpty(model.SearchText?.Trim())) return;
-
-            for (int i = response.Offset  ; i <= lastItemOfPage; i++)
-            {
-                response.Results.Add(new ResourceMetadata()
-                {
-                    ResourceId = i,
-                    Title = "title" + i.ToString(),
-                    Description = descriptions[i % descriptions.Length],
-                    ResourceType = resourceTypes[i % resourceTypes.Length],
-                    References = new List<ResourceReference>()
-                    {
-                        new ResourceReference()
-                        {
-                            RefId = i * 100,
-                            Catalogue = new Catalogue()
-                            {
-                                Id = i * 1000,
-                                Name = catalogues[i % catalogues.Length]
-                            },
-                            Link = $"https://learninghub.nhs.uk/Resource/${ i * 100}"
-                        },
-                        new ResourceReference()
-                        {
-                            RefId = i * 100 + 1,
-                            Catalogue = new Catalogue()
-                            {
-                                Id = i * 1000 + 1,
-                                Name = catalogues[(i + 1) % catalogues.Length]
-                            },
-                            Link = $"https://learninghub.nhs.uk/Resource/${ (i + 1) * 100 }"
-                        }
-                    }
-                });
-            };
-            model.SearchResult = response;
+                model.LearningHubApiError = true;
+            }
         }
     }
 }

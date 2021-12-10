@@ -46,7 +46,11 @@
   <input id="SearchText" name="SearchText" type="hidden" value="@Model.SearchText" />
   <input id="Page" name="Page" type="hidden" value="@Model.Page" />
 </form>
-@if (!String.IsNullOrEmpty(Model.SearchText))
+@if (Model.LearningHubApiError)
+{
+  <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
+}
+else if (Model.SearchResult?.Results != null)
 {
   <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
   @foreach (var result in Model.SearchResult.Results)

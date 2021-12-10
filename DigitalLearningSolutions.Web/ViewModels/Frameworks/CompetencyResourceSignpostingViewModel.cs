@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public IEnumerable<SearchableCompetencyViewModel> Delegates { get; set; }
         public string SearchText { get; set; }
         public int Page { get; set; }
+        public bool LearningHubApiError { get; set; }
         public int TotalPages
         {
             get
@@ -45,6 +46,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public CompetencyResourceSignpostingViewModel()
         {
 
+        }
+        
+        public void Empty()
+        {
+            SearchResult = new ResourceSearchResult()
+            {
+                Results = new List<ResourceMetadata>() { }
+            };
+            this.Page = 1;
         }
     }
 }
