@@ -56,14 +56,17 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/RecommendedLearning")]
         public async Task<IActionResult> RecommendedLearning(int selfAssessmentId)
         {
+            if (!configuration.IsSignpostingUsed())
+            {
+                return RedirectToAction("FilteredDashboard", new { selfAssessmentId });
+            }
+
             var candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
-            return configuration.IsSignpostingUsed()
-                ? ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId)
-                : await ReturnFilteredResultsView(selfAssessmentId, candidateId);
+            return ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]
