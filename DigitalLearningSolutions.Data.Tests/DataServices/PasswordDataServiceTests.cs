@@ -1,8 +1,7 @@
-namespace DigitalLearningSolutions.Data.Tests.DataServices
+﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System.Threading.Tasks;
     using System.Transactions;
-    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.User;
@@ -111,7 +110,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 .With(d => d.EmailAddress = existingDelegate.EmailAddress)
                 .With(d => d.CentreId = existingDelegate.CentreId)
                 .Build();
-            GivenDelegateUserIsInDatabase(newDelegate);
+            UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection!);
 
             var newPasswordHash = PasswordHashNotYetInDb;
 
@@ -188,30 +187,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 .Be(newPasswordHash);
             userDataService.GetAdminUserById(UserTestHelper.GetDefaultAdminUser().Id)?.Password.Should()
                 .NotBe(newPasswordHash);
-        }
-
-        private void GivenDelegateUserIsInDatabase(DelegateUser user)
-        {
-            connection.Execute(
-                @"insert into Candidates (Active, CentreId, LastName, DateRegistered, CandidateNumber, JobGroupID,
-                    Approved, ExternalReg, SelfReg, SkipPW, PublicSkypeLink)
-                  values (@Active, @CentreId, @LastName, @DateRegistered, @CandidateNumber, @JobGroupID,
-                    @Approved, @ExternalReg, @SelfReg, @SkipPW, @PublicSkypeLink);",
-                new
-                {
-                    user.Active,
-                    user.CentreId,
-                    user.LastName,
-                    user.DateRegistered,
-                    user.CandidateNumber,
-                    user.JobGroupId,
-                    user.Approved,
-                    ExternalReg = false,
-                    SelfReg = false,
-                    SkipPW = false,
-                    PublicSkypeLink = false,
-                }
-            );
         }
     }
 }

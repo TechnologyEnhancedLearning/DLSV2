@@ -6,6 +6,7 @@
     using System.Threading.Tasks;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.User;
+    using Microsoft.Data.SqlClient;
 
     public static class UserTestHelper
     {
@@ -203,6 +204,30 @@
         )
         {
             return new CentreAnswersData(centreId, jobGroupId, answer1, answer2, answer3, answer4, answer5, answer6);
+        }
+
+        public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)
+        {
+            sqlConnection.Execute(
+                @"insert into Candidates (Active, CentreId, LastName, DateRegistered, CandidateNumber, JobGroupID,
+                    Approved, ExternalReg, SelfReg, SkipPW, PublicSkypeLink)
+                  values (@Active, @CentreId, @LastName, @DateRegistered, @CandidateNumber, @JobGroupID,
+                    @Approved, @ExternalReg, @SelfReg, @SkipPW, @PublicSkypeLink);",
+                new
+                {
+                    user.Active,
+                    user.CentreId,
+                    user.LastName,
+                    user.DateRegistered,
+                    user.CandidateNumber,
+                    user.JobGroupId,
+                    user.Approved,
+                    ExternalReg = false,
+                    SelfReg = false,
+                    SkipPW = false,
+                    PublicSkypeLink = false,
+                }
+            );
         }
     }
 }
