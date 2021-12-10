@@ -23,7 +23,7 @@
         <a href="@Model.SupportSideNavViewModel.HelpUrl" target="_blank">Check the online Help documentation</a>. It is searchable and comprehensive.
       </li>
       <li>
-        @Html.ActionLink("Search our Frequently Asked Questions (FAQs)", "Index", "Faqs", new { dlsSubApplication = Model.DlsSubApplication.UrlSegment }, null).
+        <a asp-action="Index" asp-controller="Faqs" asp-route-dlsSubApplication="@Model.DlsSubApplication">Search our Frequently Asked Questions (FAQs)</a>.
         If you've got a question about the platform, the chances are somebody has asked it before.
         Find answers to the most common questions.
       </li>
@@ -34,11 +34,11 @@
       </li>
       <li>
         If you are still experiencing issues having gone through 1-3 above,
-        then please <a href="@Model.SupportSideNavViewModel.SupportTicketsUrl">raise a support ticket</a> and we will assist you further.
+        then please <a asp-action="Index" asp-controller="SupportTickets" asp-route-dlsSubApplication="@Model.DlsSubApplication">raise a support ticket</a> and we will assist you further.
       </li>
       <li>
         If you have suggestions that you believe would help improve the platform,
-        please also <a href="@Model.SupportSideNavViewModel.SupportTicketsUrl">raise a support ticket</a>.
+        please also <a asp-action="Index" asp-controller="SupportTickets" asp-route-dlsSubApplication="@Model.DlsSubApplication">raise a support ticket</a>.
         You can then <a href="@Model.SupportSideNavViewModel.ChangeRequestsUrl" target="_blank" rel="noreferrer">track these on our GitHub Change requests page</a>.
       </li>
     </ol>

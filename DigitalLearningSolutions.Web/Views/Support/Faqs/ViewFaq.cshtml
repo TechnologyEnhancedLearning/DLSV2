@@ -4,7 +4,7 @@
 @model SearchableFaqViewModel
 
 @{
-  ViewData["Title"] = $"FAQ - {Model.Faq.Qtext}";
+  ViewData["Title"] = $"FAQ - {Model.Faq.QText}";
   var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
 }
 
@@ -22,9 +22,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@Model.Faq.Qtext</h1>
+    <h1 class="nhsuk-heading-xl">@Model.Faq.QText</h1>
     <div>
-      @Html.Raw(Model.Faq.Ahtml)
+      @Html.Raw(Model.Faq.AHtml)
     </div>
   </div>
 </div>

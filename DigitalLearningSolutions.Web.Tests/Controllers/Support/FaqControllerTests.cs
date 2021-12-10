@@ -20,6 +20,9 @@
 
     public class FaqControllerTests
     {
+        // TODO HEEDLS-608 Review below tests to determine if any in here are excess to requirements,
+        // i.e. if the test is covered under HEEDLS-608 tests
+
         private readonly IEnumerable<Faq> Faqs = new List<Faq>
         {
             FaqTestHelper.GetDefaultFaq(),

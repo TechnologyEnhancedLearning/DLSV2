@@ -41,7 +41,6 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().NotBeNull();
                 result.Should().BeEquivalentTo(expectedFaq);
 
                 A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(expectedFaqId, expectedTargetGroup))

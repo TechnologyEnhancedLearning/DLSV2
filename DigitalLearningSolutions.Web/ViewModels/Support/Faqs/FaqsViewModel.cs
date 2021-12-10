@@ -9,16 +9,17 @@
 
     public class FaqsViewModel : BaseSearchablePageViewModel, ISupportViewModel
     {
+        private const int MatchCutOffScore = 65;
+        private const string FaqSortBy = "Weighting,FaqId";
+
         public FaqsViewModel(
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
             IEnumerable<FaqViewModel> faqs,
             int page,
-            string? searchString,
-            string sortBy,
-            string sortDirection
-        ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search faqs")
+            string? searchString
+        ) : base(searchString, page, false, FaqSortBy, Descending, searchLabel: "Search faqs")
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
@@ -26,12 +27,12 @@
 
             var sortedItems = GenericSortingHelper.SortAllItems(
                 faqs.AsQueryable(),
-                sortBy,
-                sortDirection
+                SortBy,
+                SortDirection
             );
 
-            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(sortedItems, SearchString, 65).ToList();
-            MatchingSearchResults = searchedItems.Count();
+            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(sortedItems, SearchString, MatchCutOffScore).ToList();
+            MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(searchedItems);
 

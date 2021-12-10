@@ -36,9 +36,7 @@
         public async Task<IActionResult> Index(
             DlsSubApplication dlsSubApplication,
             int page = 1,
-            string? searchString = null,
-            string sortBy = "Weighting,FaqId",
-            string sortDirection = BaseSearchablePageViewModel.Descending
+            string? searchString = null
         )
         {
             if (!DlsSubApplication.TrackingSystem.Equals(dlsSubApplication) &&
@@ -70,9 +68,7 @@
                 configuration.GetCurrentSystemBaseUrl(),
                 faqs,
                 page,
-                searchString,
-                sortBy,
-                sortDirection
+                searchString
             );
             return View("Faqs", model);
         }

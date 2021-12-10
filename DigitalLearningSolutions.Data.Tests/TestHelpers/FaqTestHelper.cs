@@ -20,11 +20,11 @@
             return new Faq
             {
                 FaqId = faqId,
-                Ahtml = aHtml,
+                AHtml = aHtml,
                 CreatedDate = createdDate ?? new DateTime(2021, 11, 25, 9, 0, 0),
                 Published = published,
-                Qanchor = qAnchor,
-                Qtext = qText,
+                QAnchor = qAnchor,
+                QText = qText,
                 TargetGroup = targetGroup,
                 Weighting = weighting,
             };

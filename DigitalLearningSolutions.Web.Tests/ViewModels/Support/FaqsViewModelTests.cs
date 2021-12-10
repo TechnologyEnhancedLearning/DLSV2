@@ -11,7 +11,7 @@
 
     public class FaqsViewModelTests
     {
-        private readonly IEnumerable<Faq> AllFaqs = new List<Faq>
+        private readonly IEnumerable<Faq> allFaqs = new List<Faq>
         {
             FaqTestHelper.GetDefaultFaq(aHtml: "helpful documents"),
             FaqTestHelper.GetDefaultFaq(2, weighting: 65, aHtml: "word documents", qText: "doc help"),
@@ -55,7 +55,7 @@
         public void FaqsViewModel_search_for_document_page_one_returns_expected_first_ten_faqs()
         {
             // Given
-            var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f));
+            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f));
 
             // When
             var result = new FaqsViewModel(
@@ -64,9 +64,7 @@
                 "currentSystemBaseUrl",
                 faqViewModels,
                 1,
-                "document",
-                "Weighting",
-                "Descending"
+                "document"
             );
 
             // Then
@@ -78,7 +76,7 @@
         public void FaqsViewModel_search_for_document_page_two_returns_expected_one_faq()
         {
             // Given
-            var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
             var expectedFaq = new SearchableFaqViewModel(DlsSubApplication.TrackingSystem, faqViewModels.ElementAt(8));
 
             // When
@@ -88,9 +86,7 @@
                 "currentSystemBaseUrl",
                 faqViewModels,
                 2,
-                "document",
-                "Weighting",
-                "Descending"
+                "document"
             );
 
             // Then
@@ -103,7 +99,7 @@
         public void FaqsViewModel_search_for_help_returns_expected_six_faqs()
         {
             // Given
-            var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
             var expectedFaqIds = new List<int> { 1, 2, 5, 7, 9, 10 };
 
             // When
@@ -113,9 +109,7 @@
                 "currentSystemBaseUrl",
                 faqViewModels,
                 1,
-                "help",
-                "Weighting",
-                "Descending"
+                "help"
             );
 
             // Then
@@ -129,7 +123,7 @@
         public void FaqsViewModel_search_for_word_returns_expected_two_faqs_in_weight_order_descending()
         {
             // Given
-            var faqViewModels = AllFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
             var expectedFirstFaq = new SearchableFaqViewModel(
                 DlsSubApplication.TrackingSystem,
                 faqViewModels.ElementAt(4)
@@ -146,9 +140,7 @@
                 "currentSystemBaseUrl",
                 faqViewModels,
                 1,
-                "word",
-                "Weighting",
-                "Descending"
+                "word"
             );
 
             // Then

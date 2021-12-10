@@ -12,28 +12,28 @@
         public FaqViewModel(Faq model)
         {
             FaqId = model.FaqId;
-            Ahtml = model.Ahtml;
+            AHtml = model.AHtml;
             CreatedDate = model.CreatedDate;
             Published = model.Published;
-            Qanchor = model.Qanchor;
-            Qtext = model.Qtext;
+            QAnchor = model.QAnchor;
+            QText = model.QText;
             TargetGroup = model.TargetGroup;
             Weighting = model.Weighting;
         }
 
         public int FaqId { get; set; }
-        public string Ahtml { get; set; }
+        public string AHtml { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool Published { get; set; }
-        public string Qanchor { get; set; }
-        public string Qtext { get; set; }
+        public string QAnchor { get; set; }
+        public string QText { get; set; }
         public int TargetGroup { get; set; }
         public int Weighting { get; set; }
 
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ??
-                   $"{Qtext} {StringHelper.ReplaceNoneAlphaNumericSpaceChars(Ahtml, " ")}";
+                   $"{QText} {DisplayStringHelper.ReplaceNoneAlphaNumericSpaceChars(AHtml, " ")}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System;
+    using System.Text.RegularExpressions;
 
     public static class DisplayStringHelper
     {
@@ -49,6 +50,16 @@
         public static string GetPluralitySuffix(int number)
         {
             return number == 1 ? string.Empty : "s";
+        }
+
+        public static string? ReplaceNoneAlphaNumericSpaceChars(string? input, string replacement)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return input;
+            }
+
+            return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
         }
     }
 }

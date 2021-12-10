@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FizzWare.NBuilder;
     using FluentAssertions;
-    using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
@@ -24,20 +26,22 @@
         public void GetPublishedFaqByIdForTargetGroup_returns_published_faq_with_correct_target_group()
         {
             // Given
-            const int expectedFaqId = 81;
-            const int expectedTargetGroup = 0;
+            const int faqId = 112;
+            const int targetGroup = 0;
+            var expectedFaq = Builder<Faq>.CreateNew().With(f => f.FaqId = 112).And(f => f.TargetGroup = 0)
+                .And(f => f.Published = true)
+                .And(
+                    f => f.AHtml =
+                        "No, existing learners will access the Learning Portal using their existing <strong>Delegate ID</strong>.&nbsp;"
+                ).And(f => f.QText = "Do our existing learners need to register to use the Learning Portal? ")
+                .And(f => f.QAnchor = "LearningPortalRegister").And(f => f.Weighting = 20)
+                .And(f => f.CreatedDate = new DateTime(2017, 5, 9)).Build();
 
             // When
-            var result = faqsDataService.GetPublishedFaqByIdForTargetGroup(expectedFaqId, expectedTargetGroup);
+            var result = faqsDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
 
             // Then
-            using (new AssertionScope())
-            {
-                result.Should().NotBeNull();
-                result.FaqId.Should().Be(expectedFaqId);
-                result.TargetGroup.Should().Be(expectedTargetGroup);
-                result.Published.Should().BeTrue();
-            }
+            result.Should().BeEquivalentTo(expectedFaq);
         }
 
         [Test]
@@ -88,6 +92,7 @@
             // Given
             const int targetGroup = 2;
             const int expectedGroupTwoFaqId = 33;
+
             // When
             var result = faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup).ToList();
 
