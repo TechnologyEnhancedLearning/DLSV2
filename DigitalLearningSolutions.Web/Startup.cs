@@ -11,7 +11,6 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
@@ -35,7 +34,6 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Serilog;
-    using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
 
     public class Startup
     {
@@ -187,6 +185,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
             services.AddScoped<ILearningHubApiService, LearningHubApiService>();
+            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILearningHubSsoService, LearningHubSsoService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -251,7 +250,6 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<CentreCustomPromptHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
-            services.AddScoped<ILearningHubSsoSecurityHelper, LearningHubSsoSecurityHelper>();
         }
 
         private static void RegisterHttpClients(IServiceCollection services)
@@ -319,11 +317,10 @@ namespace DigitalLearningSolutions.Web
 
         private Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
         {
-            // TODO HEEDLS-609 update this
-            var applicationPath = new Uri(ConfigHelper.GetAppRootPath(config)).AbsolutePath.TrimEnd('/');
+            var applicationPath = new Uri(config.GetAppRootPath()).AbsolutePath.TrimEnd('/');
             var url = HttpUtility.UrlEncode(applicationPath + context.Request.Path);
             var queryString = HttpUtility.UrlEncode(context.Request.QueryString.Value);
-            context.HttpContext.Response.Redirect(ConfigHelper.GetAppRootPath(config) + $"/Login?returnUrl={url}{queryString}");
+            context.HttpContext.Response.Redirect(config.GetAppRootPath() + $"/Login?returnUrl={url}{queryString}");
             return Task.CompletedTask;
         }
 

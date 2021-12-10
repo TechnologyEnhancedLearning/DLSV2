@@ -1,26 +1,26 @@
-﻿namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
     using System.Security.Cryptography;
     using System.Text;
-    using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public interface ILearningHubSsoSecurityHelper
+    public interface ILearningHubSsoSecurityService
     {
         string GenerateHash(string state);
 
         bool VerifyHash(string state, string hash);
     }
 
-    public class LearningHubSsoSecurityHelper : ILearningHubSsoSecurityHelper
+    public class LearningHubSsoSecurityService : ILearningHubSsoSecurityService
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         private readonly IClockService clockService;
         private readonly IConfiguration config;
 
-        public LearningHubSsoSecurityHelper(IClockService clockService, IConfiguration config)
+        public LearningHubSsoSecurityService(IClockService clockService, IConfiguration config)
         {
             this.clockService = clockService;
             this.config = config;
