@@ -5,7 +5,8 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set complete by date" : $"Learning Portal - {Model.Name} - Set complete by date";
+  ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set completion date" : $"Learning Portal - {Model.Name} - Set completion date";
+  ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set completion date" : $"Learning Portal - {Model.Name} - Set completion date";
   var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
@@ -26,7 +27,7 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Day), nameof(Model.Month), nameof(Model.Year) })" />
     }
 
-    <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
+    <h1 class="nhsuk-heading-xl word-break">Enter a completion date for @Model.Name</h1>
 
     <form asp-action="@action"
           class="nhsuk-u-margin-bottom-3"
