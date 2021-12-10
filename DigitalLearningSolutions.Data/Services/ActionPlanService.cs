@@ -24,6 +24,8 @@
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
 
+        public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate);
+
         void RemoveActionPlanResource(int learningLogItemId, int delegateId);
 
         bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);

@@ -6,8 +6,10 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.SessionData.SelfAssessments;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using Microsoft.AspNetCore.Http;
@@ -201,6 +203,7 @@
         }
 
         [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId, EditCompleteByDateFormData formData)
         {
@@ -238,6 +241,7 @@
             return RedirectToAction("Current");
         }
 
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/CompleteBy")]
         public IActionResult SetSelfAssessmentCompleteByDate(int selfAssessmentId)
         {
@@ -253,10 +257,15 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
+            var (day, month, year) = GetDayMonthAndYear(assessment.CompleteByDate);
+
             var model = new EditCompleteByDateViewModel(
                 selfAssessmentId,
                 assessment.Name,
-                LearningItemType.SelfAssessment
+                LearningItemType.SelfAssessment,
+                day,
+                month,
+                year
             );
 
             return View("Current/SetCompleteByDate", model);

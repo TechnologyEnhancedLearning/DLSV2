@@ -25,13 +25,14 @@
 
         public EditCompleteByDateViewModel(
             EditCompleteByDateFormData formData,
-            int id
+            int id,
+            int? progressId = null
         ) : base(formData)
         {
             Id = id;
+            ProgressId = progressId;
         }
 
         public int Id { get; set; }
-        public int? ProgressId { get; set; }
     }
 }

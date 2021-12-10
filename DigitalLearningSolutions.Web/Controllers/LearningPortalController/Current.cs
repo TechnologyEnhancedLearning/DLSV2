@@ -59,6 +59,7 @@
         }
 
         [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCurrentCourseCompleteByDate(
             int id,
@@ -79,7 +80,7 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new EditCompleteByDateViewModel(formData, id);
+                var model = new EditCompleteByDateViewModel(formData, id, progressId);
                 return View("Current/SetCompleteByDate", model);
             }
 
@@ -88,6 +89,7 @@
             return RedirectToAction("Current");
         }
 
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
         public IActionResult SetCurrentCourseCompleteByDate(int id)
         {
@@ -111,11 +113,16 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
+            var (day, month, year) = GetDayMonthAndYear(courseModel.CompleteByDate);
+
             var editCompleteByDateViewModel = new EditCompleteByDateViewModel(
                 id,
                 course.Name,
                 LearningItemType.Course,
-                progressId: courseModel.ProgressId
+                day,
+                month,
+                year,
+                courseModel.ProgressId
             );
             return View("Current/SetCompleteByDate", editCompleteByDateViewModel);
         }
@@ -204,12 +211,6 @@
             MarkActionPlanResourceAsCompleteFormData formData
         )
         {
-            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
-            {
-                actionPlanService.SetCompletionDate(learningLogItemId, null);
-                return RedirectToAction("Current");
-            }
-
             if (!ModelState.IsValid)
             {
                 var model = new MarkActionPlanResourceAsCompleteViewModel(formData, learningLogItemId);
@@ -223,17 +224,18 @@
         }
 
         [HttpGet]
-        [Route("/LearningPortal/Current/Resource/CompleteBy/{learningLogItemId:int}")]
-        public IActionResult SetCurrentActionPlanItemCompleteByDate(int learningLogItemId)
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
+        public async Task<IActionResult> SetCurrentActionPlanItemCompleteByDate(int learningLogItemId)
         {
-            var learningLogItem =
-                actionPlanService.SelectLearningLogItemById(learningLogItemId)!;
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
 
-            var (day, month, year) = GetDayMonthAndYear(learningLogItem.DueDate);
+            var (day, month, year) = GetDayMonthAndYear(actionPlanResource!.CompleteByDate);
 
             var model = new EditCompleteByDateViewModel(
                 learningLogItemId,
-                learningLogItem.Activity!,
+                actionPlanResource.Name,
                 LearningItemType.Resource,
                 day,
                 month,
@@ -244,7 +246,9 @@
         }
 
         [HttpPost]
-        [Route("/LearningPortal/Current/Resource/CompleteBy/{learningLogItemId:int}")]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
         public IActionResult SetCurrentActionPlanItemCompleteByDate(
             int learningLogItemId,
             EditCompleteByDateFormData formData

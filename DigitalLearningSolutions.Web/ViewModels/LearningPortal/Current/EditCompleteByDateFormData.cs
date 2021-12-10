@@ -9,13 +9,14 @@
     {
         public EditCompleteByDateFormData() { }
 
-        protected EditCompleteByDateFormData(EditCompleteByDateFormData formData)
+        protected EditCompleteByDateFormData(EditCompleteByDateFormData formData, int? progressId = null)
         {
             Name = formData.Name;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
             Type = formData.Type;
+            ProgressId = progressId;
         }
 
         public string Name { get; set; }
@@ -23,6 +24,7 @@
         public int? Month { get; set; }
         public int? Year { get; set; }
         public LearningItemType Type { get; set; }
+        public int? ProgressId { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
