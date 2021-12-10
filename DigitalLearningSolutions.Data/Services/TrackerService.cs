@@ -75,7 +75,7 @@
             {
                 case "1":
                     return true;
-                case "2":
+                case "0":
                     return false;
                 default:
                     return null;

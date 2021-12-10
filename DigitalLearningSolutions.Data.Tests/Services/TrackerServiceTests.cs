@@ -111,6 +111,7 @@
         [TestCase("True", true)]
         [TestCase("false", false)]
         [TestCase("1", true)]
+        [TestCase("0", false)]
         [TestCase("mu", null)]
         [TestCase(null, null)]
         public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params_and_parses_IsPostLearning(
