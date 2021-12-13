@@ -6,8 +6,10 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningLogItemsDataServiceTests
@@ -24,7 +26,9 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new LearningLogItemsDataService(connection);
+            var logger = A.Fake<ILogger<LearningLogItemsDataService>>();
+
+            service = new LearningLogItemsDataService(connection, logger);
 
             learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
             competencyLearningResourcesTestHelper = new CompetencyLearningResourcesTestHelper(connection);
@@ -279,6 +283,33 @@
         }
 
         [Test]
+        public void Set_completed_date_should_update_db()
+        {
+            // Given
+            var addedDate = new DateTime(2021, 11, 1);
+            var newCompletedDate = new DateTime(2020, 7, 29);
+
+            using (new TransactionScope())
+            {
+                var itemId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericCompetencyLearningResourceId
+                );
+
+                // When
+                service.SetCompletionDate(itemId, newCompletedDate);
+                var modifiedItem = service.GetLearningLogItem(itemId);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    modifiedItem!.CompletedDate.Should().Be(newCompletedDate);
+                }
+            }
+        }
+
+        [Test]
         public void RemoveLearningLogItem_correctly_sets_removed_date_and_removed_by_id()
         {
             // Given
@@ -305,6 +336,27 @@
                     result.ArchivedById.Should().Be(GenericDelegateId);
                 }
             }
+        }
+
+        private int InsertLearningLogItem(
+            int delegateId,
+            DateTime addedDate,
+            int competencyLearningResourceId
+        )
+        {
+            competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
+                1,
+                competencyLearningResourceId,
+                1,
+                7
+            );
+            return service.InsertLearningLogItem(
+                delegateId,
+                addedDate,
+                GenericActivityName,
+                GenericResourceLink,
+                competencyLearningResourceId
+            );
         }
 
         private void AssertLearningLogItemHasCorrectValuesForLearningHubResource(
@@ -337,27 +389,6 @@
             item.LoggedByAdminId.Should().BeNull();
             item.SeqInt.Should().BeNull();
             item.LastAccessedDate.Should().BeNull();
-        }
-
-        private int InsertLearningLogItem(
-            int delegateId,
-            DateTime addedDate,
-            int competencyLearningResourceId
-        )
-        {
-            competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
-                1,
-                competencyLearningResourceId,
-                1,
-                7
-            );
-            return service.InsertLearningLogItem(
-                delegateId,
-                addedDate,
-                GenericActivityName,
-                GenericResourceLink,
-                competencyLearningResourceId
-            );
         }
     }
 }

@@ -398,6 +398,48 @@
                 .MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public void MarkActionPlanResourceAsComplete_calls_correct_service_method()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 2021;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void MarkActionPlanResourceAsComplete_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 4000;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            controller.ModelState.AddModelError("year", "message");
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustNotHaveHappened();
+        }
+
         private void GivenCurrentActivitesAreEmptyLists()
         {
             A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
