@@ -150,7 +150,6 @@
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -175,7 +174,6 @@
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
