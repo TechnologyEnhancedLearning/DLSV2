@@ -237,7 +237,16 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
         {
-            var numberOfAffectedRows = connection.Execute(
+            int enrolmentExists = (int)connection.ExecuteScalar(
+               @"SELECT COALESCE
+                 ((SELECT ID
+                  FROM    CandidateAssessments
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+               new { selfAssessmentId, candidateId });
+
+            if (enrolmentExists > 0)
+            {
+                enrolmentExists = connection.Execute(
                 @"INSERT INTO [dbo].[CandidateAssessments]
                            ([CandidateID]
                            ,[SelfAssessmentID])
@@ -246,8 +255,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
-
-            if (numberOfAffectedRows < 1)
+            }
+            if (enrolmentExists < 1)
             {
                 logger.LogWarning(
                     "Not enrolled delegate on self assessment as db insert failed. " +
@@ -268,7 +277,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId)
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId
+        )
         {
             return connection.Query<CourseStatistics>(
                 @$"SELECT
@@ -634,7 +646,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",

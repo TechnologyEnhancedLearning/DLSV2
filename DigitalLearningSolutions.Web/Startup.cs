@@ -207,6 +207,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
+            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -279,6 +280,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
+            services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
         }
