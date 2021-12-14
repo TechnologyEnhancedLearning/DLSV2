@@ -16,7 +16,7 @@
         private const string PasswordHashNotYetInDb = "I haven't used this password before!";
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
-        private SqlConnection? connection;
+        private SqlConnection connection = null!;
 
         [SetUp]
         public void Setup()
@@ -110,7 +110,7 @@
                 .With(d => d.EmailAddress = existingDelegate.EmailAddress)
                 .With(d => d.CentreId = existingDelegate.CentreId)
                 .Build();
-            UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection!);
+            UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection);
 
             var newPasswordHash = PasswordHashNotYetInDb;
 
