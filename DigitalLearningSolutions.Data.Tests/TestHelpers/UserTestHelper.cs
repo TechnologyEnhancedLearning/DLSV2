@@ -209,9 +209,9 @@
         public static void GivenDelegateUserIsInDatabase(DelegateUser user, SqlConnection sqlConnection)
         {
             sqlConnection.Execute(
-                @"insert into Candidates (Active, CentreId, LastName, DateRegistered, CandidateNumber, JobGroupID,
+                @"INSERT INTO Candidates (Active, CentreId, LastName, DateRegistered, CandidateNumber, JobGroupID,
                     Approved, ExternalReg, SelfReg, SkipPW, PublicSkypeLink)
-                  values (@Active, @CentreId, @LastName, @DateRegistered, @CandidateNumber, @JobGroupID,
+                  VALUES (@Active, @CentreId, @LastName, @DateRegistered, @CandidateNumber, @JobGroupID,
                     @Approved, @ExternalReg, @SelfReg, @SkipPW, @PublicSkypeLink);",
                 new
                 {
