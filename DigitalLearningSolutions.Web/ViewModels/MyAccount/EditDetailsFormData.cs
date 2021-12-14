@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                 ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber!;
                 if (delegateUser!.HasBeenPromptedForPrn)
                 {
-                    ProfessionalRegNumberSelectionAnswer = !string.IsNullOrEmpty(ProfessionalRegistrationNumber)
+                    HasProfessionalRegistrationNumber = !string.IsNullOrEmpty(ProfessionalRegistrationNumber)
                         ? YesNoSelectionEnum.Yes
                         : YesNoSelectionEnum.No;
                 }
@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer4 = formData.Answer4;
             Answer5 = formData.Answer5;
             Answer6 = formData.Answer6;
-            ProfessionalRegNumberSelectionAnswer = formData.ProfessionalRegNumberSelectionAnswer;
+            HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
             ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
         }
 
@@ -108,25 +108,25 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public string? ProfessionalRegistrationNumber { get; set; }
 
-        public YesNoSelectionEnum ProfessionalRegNumberSelectionAnswer { get; set; }
+        public YesNoSelectionEnum HasProfessionalRegistrationNumber { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var validationResults = new List<ValidationResult>();
 
             if (!IsDelegateUser ||
-                ProfessionalRegNumberSelectionAnswer == YesNoSelectionEnum.No)
+                HasProfessionalRegistrationNumber == YesNoSelectionEnum.No)
             {
                 ProfessionalRegistrationNumber = null;
                 return validationResults;
             }
 
-            if (ProfessionalRegNumberSelectionAnswer == YesNoSelectionEnum.None)
+            if (HasProfessionalRegistrationNumber == YesNoSelectionEnum.None)
             {
                 validationResults.Add(
                     new ValidationResult(
                         "Select an option",
-                        new[] { nameof(ProfessionalRegNumberSelectionAnswer) }
+                        new[] { nameof(HasProfessionalRegistrationNumber) }
                     )
                 );
 
