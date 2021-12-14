@@ -32,6 +32,7 @@
         private ILearningHubApiClient learningHubApiClient = null!;
         private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
+        private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
@@ -44,6 +45,7 @@
             learningHubApiService = A.Fake<ILearningHubApiService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
             config = A.Fake<IConfiguration>();
 
             actionPlanService = new ActionPlanService(
@@ -53,7 +55,8 @@
                 learningHubApiService,
                 learningHubApiClient,
                 selfAssessmentDataService,
-                config
+                config,
+                learningResourceReferenceDataService
             );
         }
 
@@ -61,7 +64,7 @@
         public void AddResourceToActionPlan_calls_expected_insert_data_service_methods()
         {
             // Given
-            const int competencyLearningResourceId = 1;
+            const int learningResourceReferenceId = 1;
             const int delegateId = 2;
             const int selfAssessmentId = 3;
             const string resourceName = "Activity";
@@ -72,23 +75,19 @@
             var addedDate = new DateTime(2021, 11, 1);
             A.CallTo(() => clockService.UtcNow).Returns(addedDate);
 
-            var competencyLearningResource = new CompetencyLearningResource
-            {
-                LearningHubResourceReferenceId = learningHubResourceId,
-            };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourceById(
-                    competencyLearningResourceId
+                () => learningResourceReferenceDataService.GetLearningHubResourceReferenceById(
+                    learningResourceReferenceId
                 )
-            ).Returns(competencyLearningResource);
+            ).Returns(learningHubResourceId);
 
             A.CallTo(() => learningHubApiService.GetResourceNameAndLink(learningHubResourceId))
                 .Returns((resourceName, resourceLink));
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    learningHubResourceId
+                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                    learningResourceReferenceId
                 )
             ).Returns(resourceCompetencies);
 
@@ -109,7 +108,7 @@
             var expectedMatchingCompetencies = new[] { 2, 3, 5, 6, 8 };
 
             // When
-            actionPlanService.AddResourceToActionPlan(competencyLearningResourceId, delegateId, selfAssessmentId);
+            actionPlanService.AddResourceToActionPlan(learningResourceReferenceId, delegateId, selfAssessmentId);
 
             // Then
             A.CallTo(
@@ -118,7 +117,7 @@
                     addedDate,
                     resourceName,
                     resourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 )
             ).MustHaveHappenedOnceExactly();
             A.CallTo(

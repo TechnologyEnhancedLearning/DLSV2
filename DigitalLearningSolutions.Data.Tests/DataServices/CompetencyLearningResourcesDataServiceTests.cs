@@ -2,7 +2,6 @@
 {
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -22,34 +21,6 @@
         }
 
         [Test]
-        public void GetCompetencyLearningResourceById_returns_expected_resource()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var expectedResource = new CompetencyLearningResource
-                {
-                    Id = 1,
-                    CompetencyId = 1,
-                    LearningHubResourceReferenceId = 2,
-                    AdminId = 7,
-                };
-                InsertCompetencyLearningResources();
-
-                // When
-                var result = service.GetCompetencyLearningResourceById(1);
-
-                // Then
-                result.Should().BeEquivalentTo(expectedResource);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void GetCompetencyIdsByLearningHubResourceReference_returns_expected_ids()
         {
             using var transaction = new TransactionScope();
@@ -60,7 +31,7 @@
                 InsertCompetencyLearningResources();
 
                 // When
-                var result = service.GetCompetencyIdsByLearningHubResourceReference(2);
+                var result = service.GetCompetencyIdsByLearningResourceReferenceId(2);
 
                 // Then
                 result.Should().BeEquivalentTo(expectedIds);
@@ -74,6 +45,10 @@
         private void InsertCompetencyLearningResources()
         {
             var adminId = UserTestHelper.GetDefaultAdminUser().Id;
+
+            testHelper.InsertLearningResourceReference(2,2,adminId, "Resource 2");
+            testHelper.InsertLearningResourceReference(3, 3, adminId, "Resource 3");
+
             testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
             testHelper.InsertCompetencyLearningResource(2, 2, 2, adminId);
             testHelper.InsertCompetencyLearningResource(3, 3, 2, adminId);
