@@ -6,7 +6,11 @@
 
     public interface ICompetencyLearningResourcesDataService
     {
-        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int lhResourceReferenceId);
+        IEnumerable<int> GetLearningHubResourceReferenceIdsByCompetencyId(int competencyId);
+
+        IEnumerable<int> GetCompetencyLearningResourceIdsByLearningHubResourceReference(int lhResourceReferenceId);
+
+        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -26,6 +30,28 @@
                     FROM CompetencyLearningResources
                     WHERE LearningResourceReferenceID = @learningResourceReferenceId",
                 new { learningResourceReferenceId }
+            );
+        }
+
+        public IEnumerable<int> GetLearningHubResourceReferenceIdsByCompetencyId(int competencyId)
+        {
+            return connection.Query<int>(
+                @"SELECT
+                        LHResourceReferenceID
+                    FROM CompetencyLearningResources
+                    WHERE CompetencyID = @competencyId",
+                new { competencyId }
+            );
+        }
+
+        public IEnumerable<int> GetCompetencyLearningResourceIdsByLearningHubResourceReference(int lhResourceReferenceId)
+        {
+            return connection.Query<int>(
+                @"SELECT
+                        ID
+                    FROM CompetencyLearningResources
+                    WHERE LHResourceReferenceID = @lhResourceReferenceId",
+                new { lhResourceReferenceId }
             );
         }
     }

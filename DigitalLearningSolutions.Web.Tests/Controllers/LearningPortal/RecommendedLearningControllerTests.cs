@@ -22,6 +22,7 @@
         private RecommendedLearningController controller = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
+        private IRecommendedLearningService recommendedLearningService = null!;
 
         [SetUp]
         public void Setup()
@@ -29,11 +30,13 @@
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
             configuration = A.Fake<IConfiguration>();
+            recommendedLearningService = A.Fake<IRecommendedLearningService>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
                     selfAssessmentService,
-                    configuration
+                    configuration,
+                    recommendedLearningService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);

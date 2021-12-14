@@ -24,16 +24,19 @@
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly IRecommendedLearningService recommendedLearningService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
             ISelfAssessmentService selfAssessmentService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IRecommendedLearningService recommendedLearningService
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
             this.selfAssessmentService = selfAssessmentService;
             this.configuration = configuration;
+            this.recommendedLearningService = recommendedLearningService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
@@ -66,7 +69,7 @@
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
-            return ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
+            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]
@@ -79,7 +82,7 @@
 
             var candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
-            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
             return await ReturnFilteredResultsView(selfAssessmentId, candidateId);
@@ -226,10 +229,12 @@
             return View("../LearningPortal/SelfAssessments/FilteredMgp/FilteredResults", model);
         }
 
-        private IActionResult ReturnSignpostingRecommendedLearningView(int selfAssessmentId, int candidateId)
+        private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(int selfAssessmentId, int candidateId)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var model = new RecommendedLearningViewModel(assessment);
+            var recommendedResources = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
+
+            var model = new RecommendedLearningViewModel(assessment, recommendedResources);
             return View("RecommendedLearning", model);
         }
     }

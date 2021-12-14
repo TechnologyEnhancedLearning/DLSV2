@@ -192,6 +192,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<IProgressService, ProgressService>();
+            services.AddScoped<IRecommendedLearningService, RecommendedLearningService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
