@@ -23,7 +23,7 @@
         // TODO HEEDLS-608 Review below tests to determine if any in here are excess to requirements,
         // i.e. if the test is covered under HEEDLS-608 tests
 
-        private readonly IEnumerable<Faq> Faqs = new List<Faq>
+        private readonly IEnumerable<Faq> faqs = new List<Faq>
         {
             FaqTestHelper.GetDefaultFaq(),
             FaqTestHelper.GetDefaultFaq(2, weighting: 95, aHtml: "word documents", qText: "doc help"),
@@ -41,9 +41,9 @@
             configuration = A.Fake<IConfiguration>();
             faqsService = A.Fake<IFaqsService>();
             A.CallTo(() => faqsService.GetPublishedFaqsForTargetGroup(0))
-                .Returns(Faqs);
+                .Returns(faqs);
             A.CallTo(() => faqsService.GetPublishedFaqByIdForTargetGroup(2, 0))
-                .Returns(Faqs.ElementAt(1));
+                .Returns(faqs.ElementAt(1));
             A.CallTo(() => faqsService.GetPublishedFaqByIdForTargetGroup(5, 0))
                 .Returns(null);
             A.CallTo(() => featureManager.IsEnabledAsync(FeatureFlags.RefactoredTrackingSystem))

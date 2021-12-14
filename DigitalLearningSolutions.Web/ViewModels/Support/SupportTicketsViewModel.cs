@@ -13,9 +13,10 @@
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
             SupportSideNavViewModel = new SupportSideNavViewModel(currentSystemBaseUrl);
+            SupportTicketsIframeUrl = $"{currentSystemBaseUrl}/tracking/tickets?nonav=true";
         }
 
-        public string IframeUrl => $"{SupportSideNavViewModel.SupportTicketsUrl}?nonav=true";
+        public string SupportTicketsIframeUrl { get; set; }
 
         public SupportPage CurrentPage { get; set; }
 

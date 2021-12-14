@@ -21,7 +21,7 @@
             );
 
             // Then
-            model.IframeUrl.Should().Be(expectedIframeUrl);
+            model.SupportTicketsIframeUrl.Should().Be(expectedIframeUrl);
         }
     }
 }
