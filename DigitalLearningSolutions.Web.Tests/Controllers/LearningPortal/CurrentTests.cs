@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
@@ -38,6 +42,7 @@
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
                 .Returns(actionPlanResources);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             var result = await controller.Current();
@@ -55,6 +60,62 @@
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public async Task Current_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.Current();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Current_action_should_fetch_ActionPlanResources_if_signposting_enabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.Current();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task AllCurrentItems_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.AllCurrentItems();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task AllCurrentItems_action_should_fetch_ActionPlanResources_if_signposting_enabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.AllCurrentItems();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -293,6 +354,7 @@
             // Given
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             var currentViewModel = await CurrentCourseHelper.CurrentPageViewModelFromController(controller);
@@ -376,6 +438,16 @@
             // Then
             A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
                 .MustNotHaveHappened();
+        }
+
+        private void GivenCurrentActivitesAreEmptyLists()
+        {
+            A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))
+                .Returns(new List<CurrentSelfAssessment>());
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(A<int>._))
+                .Returns(new List<ActionPlanResource>());
+            A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }
 }

@@ -174,7 +174,8 @@
 
             var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
 
-            if (!(actionPlanResource is { ArchivedDate: null }) || actionPlanResource.LearningHubResourceReferenceId == null)
+            if (!(actionPlanResource is { ArchivedDate: null }) ||
+                actionPlanResource.LearningHubResourceReferenceId == null)
             {
                 return null;
             }

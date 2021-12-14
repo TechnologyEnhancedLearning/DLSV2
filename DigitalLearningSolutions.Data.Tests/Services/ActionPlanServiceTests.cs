@@ -145,11 +145,11 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
+        public async Task
+            GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -174,7 +174,6 @@
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
@@ -396,7 +395,8 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
+        public void
+            VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
