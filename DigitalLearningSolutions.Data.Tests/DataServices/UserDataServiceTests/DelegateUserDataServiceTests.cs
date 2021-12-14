@@ -3,7 +3,6 @@
     using System;
     using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;

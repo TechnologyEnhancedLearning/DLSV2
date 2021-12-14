@@ -3,27 +3,28 @@
 @model EditDetailsViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid && @Model.ProfessionalRegNumberSelectionAnswer == YesNoSelectionEnum.None;
-  var optionYesSelected = @Model.ProfessionalRegNumberSelectionAnswer == YesNoSelectionEnum.Yes;
-  var optionNoSelected = @Model.ProfessionalRegNumberSelectionAnswer == YesNoSelectionEnum.No;
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var optionNoneSelected =  @Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.None;
+  var optionYesSelected = @Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.Yes;
+  var optionNoSelected = @Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.No;
   var professionalRegConditionalId = "professional-reg-conditional-Id";
 }
 
-<div class="nhsuk-form-group @(errorHasOccurred? "nhsuk-form-group--error": "")">
+<div class="nhsuk-form-group @(optionNoneSelected? "nhsuk-form-group--error": "")">
   <fieldset class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
     <div class="nhsuk-hint" id="professional-registration-hint">
       Do you have a Professional Registration Number?
     </div>
 
-  @if (errorHasOccurred) {
+  @if (errorHasOccurred && optionNoneSelected) {
     <span class="nhsuk-error-message" id="no-selection-error">
-      <span class="nhsuk-u-visually-hidden">Error:</span> @(!optionYesSelected? "Select an option":"")
+       @(!optionYesSelected? "Select an option":"")
     </span>
   }
 
     <div class="nhsuk-radios nhsuk-radios--conditional">
       <div class="nhsuk-radios__item">
-        <input name="@nameof(Model.ProfessionalRegNumberSelectionAnswer)"
+        <input name="@nameof(Model.HasProfessionalRegistrationNumber)"
                class="nhsuk-radios__input"
                id="optionNo"
                type="radio"
@@ -35,7 +36,7 @@
       </div>
 
       <div class="nhsuk-radios__item">
-        <input name="@nameof(Model.ProfessionalRegNumberSelectionAnswer)"
+        <input name="@nameof(Model.HasProfessionalRegistrationNumber)"
                class="nhsuk-radios__input"
                id="optionYes"
                type="radio"
@@ -57,7 +58,6 @@
                        autocomplete="off"
                        css-class="nhsuk-u-width-one-half" />
       </div>
-      <input type="hidden" asp-for="ProfessionalRegistrationNumber" />
     </div>
   </fieldset>
 </div>
