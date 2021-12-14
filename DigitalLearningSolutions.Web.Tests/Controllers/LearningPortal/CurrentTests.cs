@@ -446,7 +446,7 @@
         }
 
         [Test]
-        public void SetCompleteByDate_for_action_plan_item_calls_correct_service_method()
+        public void SetCompleteByDate_for_action_plan_resource_calls_correct_service_method()
         {
             // Given
             const int learningLogItemId = 4;
@@ -467,7 +467,7 @@
         }
 
         [Test]
-        public void SetCompleteByDate_for_action_plan_item_does_not_call_service_with_invalid_model()
+        public void SetCompleteByDate_for_action_plan_resource_does_not_call_service_with_invalid_model()
         {
             // Given
             const int learningLogItemId = 4;
