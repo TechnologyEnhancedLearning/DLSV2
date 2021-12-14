@@ -45,19 +45,20 @@
   <input id="NameOfCompetency" name="NameOfCompetency" type="hidden" value="@Model.NameOfCompetency" />
   <input id="SearchText" name="SearchText" type="hidden" value="@Model.SearchText" />
   <input id="Page" name="Page" type="hidden" value="@Model.Page" />
-</form>
-@if (Model.LearningHubApiError)
-{
-  <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
-}
-else if (Model.SearchResult?.Results != null)
-{
-  <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
-  @foreach (var result in Model.SearchResult.Results)
+  @if (Model.LearningHubApiError)
   {
-    <partial name="Developer/_SignPostingResourceCard" model="result" />
+    <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
   }
-}
+  else if (Model.SearchResult?.Results != null)
+  {
+    <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
+    @foreach (var result in Model.SearchResult.Results)
+    {
+      <partial name="Developer/_SignPostingResourceCard" model="result" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
+    }
+  }
+  @Html.HiddenFor(m => m.Title)
+</form>
 @if (Model.TotalPages > 1)
 {
   <div class="nhsuk-u-margin-bottom-0">

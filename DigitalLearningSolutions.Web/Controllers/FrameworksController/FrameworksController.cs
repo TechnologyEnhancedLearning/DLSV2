@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,7 @@
         private readonly ILogger<FrameworksController> logger;
         private readonly IConfiguration config;
         private readonly IImportCompetenciesFromFileService importCompetenciesFromFileService;
+        private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
 
         public FrameworksController(
             IFrameworkService frameworkService,
@@ -25,7 +27,8 @@
             IConfigService configService,
             ILogger<FrameworksController> logger,
             IConfiguration config,
-            IImportCompetenciesFromFileService importCompetenciesFromFileService
+            IImportCompetenciesFromFileService importCompetenciesFromFileService,
+            ICompetencyLearningResourcesDataService competencyLearningResourcesDataService
         )
         {
             this.frameworkService = frameworkService;
@@ -35,6 +38,7 @@
             this.logger = logger;
             this.config = config;
             this.importCompetenciesFromFileService = importCompetenciesFromFileService;
+            this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
         }
 
         private int? GetCentreId()

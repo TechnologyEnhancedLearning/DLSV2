@@ -1,12 +1,13 @@
 ﻿using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DigitalLearningSolutions.Data.ApiClients;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -15,17 +16,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private static IConfiguration SignpostingConfiguration { get; set; }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
-        public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
+        public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null, string title = "")
         {
             var model = PopulatedModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
+            model.Title = title;
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources")]
-        public IActionResult AddCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
+        public IActionResult AddCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null, string Title = "")
         {
             var model = PopulatedModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
+            model.Title = Title;
             return View("Developer/AddCompetencyLearningResources", model);
+        }
+
+        [HttpPost]
+        public IActionResult AddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
+        {
+            return View("Developer/AddCompetencyLearningResourceSummary", model);
         }
 
         [HttpPost]
@@ -54,10 +63,17 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return await GoToPage(model.Page - 1, model);
         }
 
+        [HttpPost]
+        public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
+        {
+            this.competencyLearningResourcesDataService.AddCompetencyLearningResource(model.FrameworkCompetencyId.Value, model.ReferenceId, GetAdminID());
+            return RedirectToAction("AddCompetencyLearningResources", model);
+        }
+
         private async Task<IActionResult> GoToPage(int page, CompetencyResourceSignpostingViewModel model)
         {
             model.Page = page;
-            await GetResourcesFromApiAsync(page, model);
+            await GetResourcesFromLearningHubApiAsync(model);
             return View("Developer/AddCompetencyLearningResources", model);
         }
 
@@ -89,7 +105,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return model;
         }
 
-        private async Task GetResourcesFromApiAsync(int page, CompetencyResourceSignpostingViewModel model)
+        private async Task GetResourcesFromLearningHubApiAsync(CompetencyResourceSignpostingViewModel model)
         {
             try
             {
@@ -109,7 +125,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             catch (Exception)
             {
-
                 model.LearningHubApiError = true;
             }
         }

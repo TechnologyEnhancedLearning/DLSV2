@@ -37,7 +37,8 @@
        asp-action="AddCompetencyLearningResources"
        asp-route-frameworkId="@Model.FrameworkId"
        asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Add resource</a>
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+       asp-route-title="@Model.Title">Add resource</a>
   </div>
   <div class="nhsuk-back-link nhsuk-u-margin-left-1">
     <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">

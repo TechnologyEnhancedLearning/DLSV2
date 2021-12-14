@@ -26,9 +26,10 @@
         </a>
         <br />
         <a asp-controller="Frameworks" asp-action="EditCompetencyLearningResources"
-           asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])"
-           asp-route-frameworkCompetencyGroupId="@(Model.FrameworkCompetencyGroupId)"
-           asp-route-frameworkCompetencyId="@(Model.FrameworkCompetency.CompetencyID)" >
+           asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+           asp-route-frameworkCompetencyId="@Model.FrameworkCompetency.CompetencyID"
+           asp-route-title="@Model.FrameworkCompetency.Name">
           Manage resource signposting (@(Model.FrameworkCompetency.CompetencyLearningResourcesCount == 0 ? "No" : Model.FrameworkCompetency.CompetencyLearningResourcesCount.ToString()) resources)
         </a>
       }

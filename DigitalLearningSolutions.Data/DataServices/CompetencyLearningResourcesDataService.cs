@@ -11,6 +11,7 @@
         CompetencyLearningResource GetCompetencyLearningResourceById(int competencyLearningResourceId);
 
         IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReferenceId);
+        void AddCompetencyLearningResource(int competencyID, int lhResourceReferenceId, int adminId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -44,6 +45,15 @@
                     FROM CompetencyLearningResources
                     WHERE LHResourceReferenceID = @lhResourceReferenceId",
                 new { lhResourceReferenceId }
+            );
+        }
+
+        public void AddCompetencyLearningResource(int competencyID, int lhResourceReferenceId, int adminId)
+        {
+            connection.Execute(
+                @$"INSERT INTO CompetencyLearningResources(CompetencyID, LHResourceReferenceID, AdminID)
+                    VALUES (@competencyID, @lhResourceReferenceID, @adminID)",
+                new { competencyID, lhResourceReferenceId, adminId }
             );
         }
     }

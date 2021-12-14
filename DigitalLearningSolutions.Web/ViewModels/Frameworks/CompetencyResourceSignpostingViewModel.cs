@@ -8,6 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
     {
         public const int ItemsPerPage = 10;
         public string NameOfCompetency { get; set; }
+        public string Title { get; set; }
         public int FrameworkId { get; set; }
         public int? FrameworkCompetencyId { get; set; }
         public int? FrameworkCompetencyGroupId { get; set; }
