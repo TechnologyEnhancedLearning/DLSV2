@@ -165,7 +165,7 @@
         }
 
         [Test]
-        public void Setting_a_valid_complete_by_date_should_call_the_course_service()
+        public void Setting_a_valid_complete_by_date_for_course_should_call_the_course_service()
         {
             // Given
             const int id = 1;
@@ -185,7 +185,7 @@
         }
 
         [Test]
-        public void Setting_an_empty_complete_by_date_should_call_the_course_service_with_null()
+        public void Setting_an_empty_complete_by_date_for_course_should_call_the_course_service_with_null()
         {
             // Given
             const int id = 1;
@@ -221,7 +221,7 @@
         }
 
         [Test]
-        public void Setting_an_invalid_complete_by_date_should_not_call_the_course_service()
+        public void Setting_an_invalid_complete_by_date_for_course_should_not_call_the_course_service()
         {
             // Given
             const int id = 1;
@@ -446,7 +446,7 @@
         }
 
         [Test]
-        public void SetCompleteByDate_calls_correct_service_method()
+        public void SetCompleteByDate_for_action_plan_item_calls_correct_service_method()
         {
             // Given
             const int learningLogItemId = 4;
@@ -458,7 +458,7 @@
             A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
-            var result = controller.SetCurrentActionPlanItemCompleteByDate(learningLogItemId, formData);
+            var result = controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
 
             // Then
             A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate))
@@ -467,7 +467,7 @@
         }
 
         [Test]
-        public void SetCompleteByDate_does_not_call_service_with_invalid_model()
+        public void SetCompleteByDate_for_action_plan_item_does_not_call_service_with_invalid_model()
         {
             // Given
             const int learningLogItemId = 4;
@@ -479,7 +479,7 @@
             A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
-            controller.SetCurrentActionPlanItemCompleteByDate(learningLogItemId, formData);
+            controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
 
             // Then
             A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._))

@@ -220,7 +220,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (IsDateBlank(formData.Day, formData.Month, formData.Year))
+            if (DateValidator.IsDateBlank(formData.Day, formData.Month, formData.Year))
             {
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
@@ -257,19 +257,16 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            var (day, month, year) = GetDayMonthAndYear(assessment.CompleteByDate);
-
             var model = new EditCompleteByDateViewModel(
                 selfAssessmentId,
                 assessment.Name,
                 LearningItemType.SelfAssessment,
-                day,
-                month,
-                year
+                assessment.CompleteByDate
             );
 
             return View("Current/SetCompleteByDate", model);
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors")]
         public IActionResult ManageSupervisors(int selfAssessmentId)
         {
@@ -355,6 +352,7 @@
             TempData.Set(sessionAddSupervisor);
             return RedirectToAction("AddNewSupervisor", new { selfAssessmentId });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add")]
         public IActionResult AddNewSupervisor(int selfAssessmentId)
         {
@@ -506,28 +504,33 @@
             frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, sessionAddSupervisor.SelfAssessmentID, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
+
         public IActionResult RemoveSupervisor(int selfAssessmentId, int candidateAssessmentSupervisorId)
         {
             supervisorService.RemoveCandidateAssessmentSupervisor(candidateAssessmentSupervisorId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+
         public IActionResult SendSupervisorReminder(int selfAssessmentId, int supervisorDelegateId)
         {
             frameworkNotificationService.SendDelegateSupervisorNominated(supervisorDelegateId, selfAssessmentId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+
         public IActionResult ConfirmSupervisor(int supervisorDelegateId, int selfAssessmentId)
         {
             supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
             frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, 0, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+
         public IActionResult RejectSupervisor(int supervisorDelegateId, int selfAssessmentId)
         {
             supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, GetCandidateId(), 0);
             frameworkNotificationService.SendSupervisorDelegateRejected(supervisorDelegateId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
+
         public IActionResult StartRequestVerification(int selfAssessmentId)
         {
             TempData.Clear();
@@ -576,6 +579,7 @@
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationPickSupervisor", new { selfAssessmentId });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
         public IActionResult VerificationPickSupervisor(int selfAssessmentId)
         {
@@ -593,6 +597,7 @@
             ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/VerificationPickSupervisor", model);
         }
+
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Supervisor")]
         public IActionResult VerificationPickSupervisor(VerificationPickSupervisorViewModel model)
@@ -608,10 +613,12 @@
                 ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickSupervisor", model);
             }
+
             sessionRequestVerification.CandidateAssessmentSupervisorId = model.CandidateAssessmentSupervisorId;
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationPickResults", new { sessionRequestVerification.SelfAssessmentID });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
         public IActionResult VerificationPickResults(int selfAssessmentId)
         {
@@ -630,6 +637,7 @@
             ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/VerificationPickResults", model);
         }
+
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Results")]
         public IActionResult VerificationPickResults(VerificationPickResultsViewModel model, int selfAssessmentId)
@@ -644,10 +652,12 @@
                 ViewBag.SupervisorSelfAssessmentReview = sessionRequestVerification.SupervisorSelfAssessmentReview;
                 return View("SelfAssessments/VerificationPickResults", model);
             }
+
             sessionRequestVerification.ResultIds = model.ResultIds;
             TempData.Set(sessionRequestVerification);
             return RedirectToAction("VerificationSummary", new { sessionRequestVerification.SelfAssessmentID });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Verification/Summary")]
         public IActionResult VerificationSummary(int selfAssessmentId)
         {
@@ -667,6 +677,7 @@
             };
             return View("SelfAssessments/VerificationSummary", model);
         }
+
         [HttpPost]
         public IActionResult SubmitVerification()
         {
@@ -697,6 +708,7 @@
 
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId = sessionRequestVerification.SelfAssessmentID, vocabulary = sessionRequestVerification.Vocabulary });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId)
         {
@@ -712,6 +724,7 @@
             };
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
+
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary, ManageOptionalCompetenciesViewModel model)
@@ -741,6 +754,7 @@
             };
             return View("SelfAssessments/RequestSignOff", model);
         }
+
         [HttpPost]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
@@ -766,6 +780,7 @@
             selfAssessmentService.UpdateCandidateAssessmentSupervisorVerificationEmailSent(candidateAssessmentSupervisorVerificationId);
             return RedirectToAction("SelfAssessmentOverview", new { selfAssessmentId, vocabulary });
         }
+
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory")]
         public IActionResult SignOffHistory(int selfAssessmentId, string vocabulary)
         {

@@ -1,5 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 {
+    using System;
+    using DigitalLearningSolutions.Data.Enums;
+
     public class EditCompleteByDateViewModel : EditCompleteByDateFormData
     {
         public EditCompleteByDateViewModel() { }
@@ -7,19 +10,17 @@
         public EditCompleteByDateViewModel(
             int id,
             string name,
-            string type,
-            int? day = null,
-            int? month = null,
-            int? year = null,
+            LearningItemType type,
+            DateTime? completeByDate,
             int? progressId = null
         )
         {
             Id = id;
             Name = name;
             Type = type;
-            Day = day;
-            Month = month;
-            Year = year;
+            Day = completeByDate?.Day;
+            Month = completeByDate?.Month;
+            Year = completeByDate?.Year;
             ProgressId = progressId;
         }
 

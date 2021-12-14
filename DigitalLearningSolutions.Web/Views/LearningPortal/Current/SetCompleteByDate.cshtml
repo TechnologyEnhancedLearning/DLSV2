@@ -6,18 +6,17 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set completion date" : $"Learning Portal - {Model.Name} - Set completion date";
-  ViewData["Title"] = errorHasOccurred ? $"Error: Learning Portal - {Model.Name} - Set completion date" : $"Learning Portal - {Model.Name} - Set completion date";
   var exampleDate = DateTime.Today + TimeSpan.FromDays(7);
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
   var hintTextLines = new List<string> { standardHintText, courseHintText };
   var action = "";
   if (Model.Type.Equals(LearningItemType.Course)) {
-    action += "SetCurrentCourseCompleteByDate";
+    action = "SetCurrentCourseCompleteByDate";
   } else if (Model.Type.Equals(LearningItemType.SelfAssessment)) {
-    action += "SetSelfAssessmentCompleteByDate";
+    action = "SetSelfAssessmentCompleteByDate";
   } else {
-    action += "SetCurrentActionPlanItemCompleteByDate";
+    action = "SetCurrentActionPlanResourceCompleteByDate";
   }
 }
 
@@ -46,7 +45,7 @@
                      css-class=""
                      hint-text-lines="@hintTextLines" />
 
-      <button class="nhsuk-button" type="submit">Save changes</button>
+      <button class="nhsuk-button" type="submit" role="button">Save changes</button>
     </form>
 
     <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
