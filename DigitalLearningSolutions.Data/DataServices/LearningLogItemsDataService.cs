@@ -5,10 +5,13 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using Microsoft.Extensions.Logging;
 
     public interface ILearningLogItemsDataService
     {
         IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId);
+
+        LearningLogItem? GetLearningLogItem(int learningLogItemId);
 
         int InsertLearningLogItem(
             int delegateId,
@@ -23,23 +26,18 @@
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
 
         void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
+
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate);
+
+        void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
     }
 
     public class LearningLogItemsDataService : ILearningLogItemsDataService
     {
         private const string LearningHubResourceActivityLabel = "Learning Hub Resource";
-        private readonly IDbConnection connection;
 
-        public LearningLogItemsDataService(IDbConnection connection)
-        {
-            this.connection = connection;
-        }
-
-        public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
-        {
-            return connection.Query<LearningLogItem>(
-                $@"SELECT
-                        LearningLogItemID,
+        private const string LearningLogItemColumns =
+            @"          LearningLogItemID,
                         LoggedDate,
                         LoggedByID,
                         DueDate,
@@ -59,13 +57,43 @@
                         SeqInt,
                         LastAccessedDate,
                         LinkedCompetencyLearningResourceID,
-                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID
+                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID";
+
+        private readonly IDbConnection connection;
+
+        private readonly ILogger<LearningLogItemsDataService> logger;
+
+        public LearningLogItemsDataService(IDbConnection connection, ILogger<LearningLogItemsDataService> logger)
+        {
+            this.connection = connection;
+            this.logger = logger;
+        }
+
+        public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
+        {
+            return connection.Query<LearningLogItem>(
+                $@"SELECT
+                        {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
                     WHERE LoggedById = @delegateId
                     AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
                 new { delegateId }
+            );
+        }
+
+        public LearningLogItem? GetLearningLogItem(int learningLogItemId)
+        {
+            return connection.QuerySingleOrDefault<LearningLogItem>(
+                $@"SELECT
+                        {LearningLogItemColumns}
+                    FROM LearningLogItems l
+                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
+                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    WHERE a.TypeLabel = '{LearningHubResourceActivityLabel}'
+                    AND LearningLogItemID = @learningLogItemId",
+                new { learningLogItemId }
             );
         }
 
@@ -152,6 +180,35 @@
                         SET LastAccessedDate = @lastAccessedDate
                     WHERE LearningLogItemID = @id",
                 new { id, lastAccessedDate }
+            );
+        }
+
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET CompletedDate = @completedDate
+                        WHERE LearningLogItemID = @learningLogItemId",
+                new { learningLogItemId, completedDate }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting current learning log completed date as db update failed. " +
+                    $"Learning log item id: {learningLogItemId}, completed date: {completedDate}"
+                );
+            }
+        }
+
+        public void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate)
+        {
+            connection.Execute(
+                @"UPDATE LearningLogItems SET
+                        ArchivedDate = @removedDate,
+                        ArchivedById = @removedById
+                    WHERE LearningLogItemId = @learningLogId",
+                new { learningLogId, removedById, removedDate }
             );
         }
     }

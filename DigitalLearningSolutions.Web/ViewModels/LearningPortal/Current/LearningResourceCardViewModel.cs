@@ -4,12 +4,12 @@
 
     public class LearningResourceCardViewModel : CurrentLearningItemViewModel
     {
-        public LearningResourceCardViewModel(ActionPlanItem item) : base(item)
+        public LearningResourceCardViewModel(ActionPlanResource resource) : base(resource)
         {
-            LaunchResourceLink = item.ResourceLink;
-            ResourceDescription = item.ResourceDescription;
-            CatalogueName = item.CatalogueName;
-            ResourceType = item.ResourceType;
+            LaunchResourceLink = resource.ResourceLink;
+            ResourceDescription = resource.ResourceDescription;
+            CatalogueName = resource.CatalogueName;
+            ResourceType = resource.ResourceType;
         }
 
         public string LaunchResourceLink { get; set; }

@@ -30,12 +30,13 @@
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
-            var actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+            var actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanItems(CandidateId)).Returns(actionPlanItems);
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+                .Returns(actionPlanResources);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -48,7 +49,7 @@
                 "LastAccessed",
                 "Descending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 bannerText,
                 1
             );
@@ -333,6 +334,48 @@
             result.Should().BeRedirectResult().WithUrl(resourceLink);
             A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void MarkActionPlanResourceAsComplete_calls_correct_service_method()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 2021;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void MarkActionPlanResourceAsComplete_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 4000;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            controller.ModelState.AddModelError("year", "message");
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustNotHaveHappened();
         }
     }
 }

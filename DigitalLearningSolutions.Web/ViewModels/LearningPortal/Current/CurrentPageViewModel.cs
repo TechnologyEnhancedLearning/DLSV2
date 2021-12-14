@@ -20,7 +20,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortBy,
             string sortDirection,
             IEnumerable<SelfAssessment> selfAssessments,
-            IEnumerable<ActionPlanItem> actionPlanItems,
+            IEnumerable<ActionPlanResource> actionPlanResources,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
@@ -28,7 +28,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
-            allItems.AddRange(actionPlanItems);
+            allItems.AddRange(actionPlanResources);
 
             var sortedItems = GenericSortingHelper.SortAllItems(
                 allItems.AsQueryable(),
@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                     {
                         CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse),
                         SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment),
-                        _ => new LearningResourceCardViewModel((ActionPlanItem)activity)
+                        _ => new LearningResourceCardViewModel((ActionPlanResource)activity)
                     };
                 }
             );
