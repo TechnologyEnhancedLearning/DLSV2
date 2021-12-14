@@ -17,13 +17,14 @@
             if (loggedInAdminUser.IsUserAdmin)
             {
                 CanShowDeactivateAdminButton = adminUser.Id != loggedInAdminUser.Id;
-            }else if (loggedInAdminUser.IsCentreManager)
+            }
+            else if (loggedInAdminUser.IsCentreManager)
             {
                 CanShowDeactivateAdminButton = !adminUser.IsUserAdmin
                                                && !adminUser.IsCentreManager
                                                && adminUser.Id != loggedInAdminUser.Id;
             }
-            
+
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
 
