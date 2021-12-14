@@ -12,11 +12,10 @@
 
         public AllAdminsViewModel(IEnumerable<AdminUser> adminUsers,
             IEnumerable<string> categories,
-            bool hasSuperAdminAccess,
-            int currentAdminUserId)
+            AdminUser loggedInAdminUser)
         
         {
-            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, hasSuperAdminAccess, currentAdminUserId));
+            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser));
 
             Filters = new[]
             {

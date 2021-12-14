@@ -6,15 +6,24 @@
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {
-        public SearchableAdminViewModel(AdminUser adminUser, bool hasSuperAdminAccess, int currentAdminUserId)
+        public SearchableAdminViewModel(AdminUser adminUser, AdminUser loggedInAdminUser)
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
             CategoryName = adminUser.CategoryName ?? "All";
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
-            CanShowDeactivateAdminButton = hasSuperAdminAccess
-                                           && currentAdminUserId != adminUser.Id;
+
+            if (loggedInAdminUser.IsUserAdmin)
+            {
+                CanShowDeactivateAdminButton = adminUser.Id != loggedInAdminUser.Id;
+            }else if (loggedInAdminUser.IsCentreManager)
+            {
+                CanShowDeactivateAdminButton = !adminUser.IsUserAdmin
+                                               && !adminUser.IsCentreManager
+                                               && adminUser.Id != loggedInAdminUser.Id;
+            }
+            
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
 

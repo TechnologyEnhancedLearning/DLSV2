@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -43,8 +44,7 @@
                 searchString,
                 "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
                 1,
-                false,
-                1
+                UserTestHelper.GetDefaultAdminUser()
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {

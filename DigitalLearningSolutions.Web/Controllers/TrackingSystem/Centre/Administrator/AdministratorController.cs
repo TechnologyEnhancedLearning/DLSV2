@@ -62,7 +62,8 @@
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
             var hasSuperAdminAccess = User.HasSuperAdminPermissions();
-            var currentAdminUserId = User.GetAdminId();
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 
 
             var model = new CentreAdministratorsViewModel(
@@ -72,8 +73,7 @@
                 searchString,
                 filterBy,
                 page,
-                hasSuperAdminAccess,
-                currentAdminUserId.GetValueOrDefault()
+                loggedInAdminUser!
             );
 
             Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
@@ -85,16 +85,16 @@
         public IActionResult AllAdmins()
         {
             var centreId = User.GetCentreId();
-            var hasSuperAdminAccess = User.HasSuperAdminPermissions();
-            var currentAdminUserId = User.GetAdminId();
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
 
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
             var model = new AllAdminsViewModel(
                 adminUsersAtCentre,
                 categories,
-                hasSuperAdminAccess,
-                currentAdminUserId.GetValueOrDefault()
+                loggedInAdminUser!
             );
             return View("AllAdmins", model);
         }

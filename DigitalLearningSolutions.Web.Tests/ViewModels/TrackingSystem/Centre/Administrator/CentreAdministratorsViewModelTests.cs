@@ -41,8 +41,7 @@
                 null,
                 null,
                 1,
-                false,
-                1
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             model.Admins.Count().Should().Be(10);
@@ -59,8 +58,7 @@
                 null,
                 null,
                 2,
-                false,
-                1
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             model.Admins.Count().Should().Be(5);
@@ -100,8 +98,7 @@
                 null,
                 null,
                 2,
-                false,
-                1
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             // Then
