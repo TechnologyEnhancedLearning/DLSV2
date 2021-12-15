@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
     using System.Threading.Tasks;
@@ -35,6 +36,7 @@
             int groupCustomisationId = 1,
             int groupId = 8,
             int customisationId = 25918,
+            int courseCategoryId = 1,
             string applicationName = "Practice Nurse Clinical Supervision",
             string? customisationName = "Demo",
             bool isMandatory = false,
@@ -53,6 +55,7 @@
                 GroupCustomisationId = groupCustomisationId,
                 GroupId = groupId,
                 CustomisationId = customisationId,
+                CourseCategoryId = courseCategoryId,
                 ApplicationName = applicationName,
                 CustomisationName = customisationName,
                 IsMandatory = isMandatory,
@@ -115,6 +118,26 @@
                 ChangesToRegistrationDetailsShouldChangeGroupMembership =
                     changesToRegistrationDetailsShouldChangeGroupMembership
             };
+        }
+
+        public static async Task<IEnumerable<int>> GetCandidatesForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT DelegateID
+                    FROM GroupDelegates
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
+        }
+
+        public static async Task<IEnumerable<int>> GetCustomisationsForGroup(this DbConnection connection, int groupId)
+        {
+            return await connection.QueryAsync<int>(
+                @"SELECT GroupCustomisationID
+                    FROM GroupCustomisations
+                    WHERE GroupID = @groupId",
+                new { groupId }
+            );
         }
     }
 }

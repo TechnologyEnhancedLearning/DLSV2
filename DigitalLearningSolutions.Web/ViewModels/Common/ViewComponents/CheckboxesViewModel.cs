@@ -7,7 +7,7 @@
         public CheckboxesViewModel(
             string label,
             string? hintText,
-            IEnumerable<CheckboxesItemViewModel> checkboxes
+            IEnumerable<CheckboxItemViewModel> checkboxes
         )
         {
             Label = label;
@@ -19,6 +19,6 @@
 
         public string? HintText { get; set; }
 
-        public IEnumerable<CheckboxesItemViewModel> Checkboxes { get; set; }
+        public IEnumerable<CheckboxItemViewModel> Checkboxes { get; set; }
     }
 }

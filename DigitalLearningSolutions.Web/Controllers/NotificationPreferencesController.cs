@@ -7,26 +7,23 @@ namespace DigitalLearningSolutions.Web.Controllers
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
 
-    [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
+    [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     public class NotificationPreferencesController : Controller
     {
-        private readonly ILogger<NotificationPreferencesController> logger;
         private readonly INotificationPreferencesService notificationPreferencesService;
 
         public NotificationPreferencesController(
-            INotificationPreferencesService notificationPreferencesService,
-            ILogger<NotificationPreferencesController> logger
+            INotificationPreferencesService notificationPreferencesService
         )
         {
             this.notificationPreferencesService = notificationPreferencesService;
-            this.logger = logger;
         }
 
         [Route("/{dlsSubApplication}/NotificationPreferences")]
@@ -59,7 +56,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             var notifications =
@@ -86,7 +83,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             var userReference = GetUserReference(userType);
             if (userReference == null)
             {
-                return NotFound();
+                return RedirectToAction("AccessDenied", "LearningSolutions");
             }
 
             notificationPreferencesService.SetNotificationPreferencesForUser(
@@ -98,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Controllers
             return RedirectToAction(
                 "Index",
                 "NotificationPreferences",
-                new { application = dlsSubApplication.UrlSegment }
+                new { dlsSubApplication = dlsSubApplication.UrlSegment }
             );
         }
 

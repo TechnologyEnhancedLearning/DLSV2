@@ -1,0 +1,58 @@
+﻿@inject IConfiguration Configuration;
+@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model ConfirmDeleteGroupViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = "Groups - Delete group";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteEnrolments) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Delete delegate group</h1>
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l nhsuk-u-font-weight-bold">
+    Group name:
+  </div>
+  <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal word-break">
+    @Model.GroupLabel
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmDeleteGroup">
+      <input type="hidden" asp-for="GroupLabel" />
+      <input type="hidden" asp-for="DelegateCount" />
+      <input type="hidden" asp-for="CourseCount" />
+
+      <p>
+        This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))
+        and @Model.CourseCount course@(DisplayStringHelper.GetPluralitySuffix(Model.CourseCount)). Deleting this
+        group will permanently remove all the delegates and courses from this group.
+      </p>
+
+      <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                          label="I am sure that I wish to delete this group and remove all delegates and courses from it."
+                          hint-text="" />
+
+      <vc:single-checkbox asp-for="@nameof(Model.DeleteEnrolments)"
+                          label="Remove all related enrolments where course has been started but is not yet complete"
+                          hint-text="Optionally all enrolments on courses that have been started but are incomplete and are associated with the group membership can also be removed." />
+
+      <button class="nhsuk-button delete-button" type="submit">Delete group</button>
+    </form>
+
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+  </div>
+</div>

@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     // Note that all tests in this file test the internal methods of DelegateUploadFileService
@@ -27,13 +28,15 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     {
         private const int CentreId = 101;
         public const string TestDelegateUploadRelativeFilePath = "\\TestData\\DelegateUploadTest.xlsx";
-
+        
         private DelegateUploadFileService delegateUploadFileService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
+        private IPasswordResetService passwordResetService = null!;
         private IRegistrationDataService registrationDataService = null!;
         private ISupervisorDelegateService supervisorDelegateService = null!;
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
+        private IConfiguration configuration = null!;
 
         [SetUp]
         public void SetUp()
@@ -47,17 +50,20 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             userService = A.Fake<IUserService>(x => x.Strict());
             registrationDataService = A.Fake<IRegistrationDataService>(x => x.Strict());
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
+            passwordResetService = A.Fake<IPasswordResetService>();
+            configuration = A.Fake<IConfiguration>();
 
             A.CallTo(() => userDataService.GetDelegateUserByCandidateNumber(A<string>._, A<int>._))
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
-
 
             delegateUploadFileService = new DelegateUploadFileService(
                 jobGroupsDataService,
                 userDataService,
                 registrationDataService,
                 supervisorDelegateService,
-                userService
+                userService,
+                passwordResetService,
+                configuration
             );
         }
 
@@ -584,7 +590,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
-        public void ProcessDelegateTable_calls_register_with_expected_values_when_welcomeEmailDate_is_populates()
+        public void ProcessDelegateTable_calls_register_with_expected_values_when_welcomeEmailDate_is_populated()
         {
             // Given
             var welcomeEmailDate = new DateTime(3000, 01, 01);
@@ -627,6 +633,89 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         }
 
         [Test]
+        public void ProcessDelegateTable_makes_call_to_generate_welcome_email_when_welcomeEmailDate_is_populated()
+        {
+            // Given
+            var welcomeEmailDate = new DateTime(3000, 01, 01);
+            const string delegateId = "DELEGATE";
+            const string aliasId = "ALIAS";
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var table = CreateTableFromData(new[] { row });
+
+            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .Returns(delegateId);
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId, welcomeEmailDate);
+
+            // Then
+            A.CallTo(
+                    () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                        row.EmailAddress,
+                        A<string>._,
+                        A<string>._,
+                        welcomeEmailDate,
+                        A<string>._
+                    )
+                )
+                .MustHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.RegisteredCount.Should().Be(1);
+        }
+
+        [Test]
+        public void ProcessDelegateTable_does_not_call_generate_welcome_email_when_welcomeEmailDate_is_not_populated()
+        {
+            // Given
+            const string delegateId = "DELEGATE";
+            const string aliasId = "ALIAS";
+            var row = GetSampleDelegateDataRow(candidateNumber: string.Empty, aliasId: aliasId);
+            var table = CreateTableFromData(new[] { row });
+
+            A.CallTo(() => userDataService.GetDelegateUserByAliasId(aliasId, CentreId)).Returns(null);
+            A.CallTo(() => userService.IsDelegateEmailValidForCentre("email@test.com", CentreId)).Returns(true);
+            A.CallTo(() => registrationDataService.RegisterDelegate(A<DelegateRegistrationModel>._))
+                .Returns(delegateId);
+            A.CallTo(
+                () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<DateTime>._,
+                    A<string>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateUploadFileService.ProcessDelegatesTable(table, CentreId);
+
+            // Then
+            A.CallTo(
+                    () => passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                        A<string>._,
+                        A<string>._,
+                        A<string>._,
+                        A<DateTime>._,
+                        A<string>._
+                    )
+                )
+                .MustNotHaveHappened();
+            result.ProcessedCount.Should().Be(1);
+            result.RegisteredCount.Should().Be(1);
+        }
+
+        [Test]
         [TestCase("-4")]
         [TestCase("-3")]
         [TestCase("-2")]
@@ -653,7 +742,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             catch (ArgumentOutOfRangeException ex)
             {
                 // Then
-                ex.Message.Should().Be($"Unknown return value when creating delegate record. (Parameter 'errorCodeOrCandidateNumber')\r\nActual value was {failureStatusCode}.");
+                ex.Message.Should().Be(
+                    $"Unknown return value when creating delegate record. (Parameter 'errorCodeOrCandidateNumber')\r\nActual value was {failureStatusCode}."
+                );
                 ex.ActualValue.Should().Be(failureStatusCode);
             }
             finally
@@ -712,9 +803,9 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened();
             A.CallTo(
                 () => supervisorDelegateService.GetPendingSupervisorDelegateRecordsByEmailAndCentre(
-                        CentreId,
-                        "email@test.com"
-                    )
+                    CentreId,
+                    "email@test.com"
+                )
             ).MustHaveHappened();
             A.CallTo(
                 () => supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(

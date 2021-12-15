@@ -7,14 +7,15 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("/{dlsSubApplication}/ChangePassword", Order = 1)]
     [Route("/ChangePassword", Order = 2)]
-    [ValidateAllowedDlsSubApplication]
-    [SetDlsSubApplication(determiningRouteParameter: "dlsSubApplication")]
+    [TypeFilter(typeof(ValidateAllowedDlsSubApplication))]
+    [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
     [Authorize]
     public class ChangePasswordController : Controller

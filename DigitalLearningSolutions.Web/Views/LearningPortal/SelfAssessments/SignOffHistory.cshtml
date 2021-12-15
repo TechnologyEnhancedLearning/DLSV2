@@ -10,62 +10,24 @@
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
   <li class="nhsuk-breadcrumb__item">Sign-off History</li>
 }
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
-@if (Model.SupervisorSignOffs.Any())
+@section mobilebacklink
 {
-  <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
-    <caption class="nhsuk-table__caption"><h1>@Model.SelfAssessment.SignOffRoleName Sign-off History</h1></caption>
-    <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" class="" scope="col">
-          @Model.SelfAssessment.SignOffRoleName
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Status
-        </th>
-        <th role="columnheader" class="" scope="col">
-          Comments
-        </th>
-      </tr>
-    </thead>
-    <tbody class="nhsuk-table__body">
-      @foreach (var supervisorSignOff in Model.SupervisorSignOffs)
-      {
-        <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">@Model.SelfAssessment.SignOffRoleName </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
-          </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Status </span>
-            @if (supervisorSignOff.Verified == null)
-            {
-              <span class="nhsuk-tag">Requested @supervisorSignOff.Requested.Value.ToShortDateString()</span> }
-            else if (supervisorSignOff.SignedOff && supervisorSignOff.Verified != null)
-            {
-              <span class="nhsuk-tag nhsuk-tag--green">Signed off @supervisorSignOff.Verified.Value.ToShortDateString()</span> }
-            else
-            {
-              <span class="nhsuk-tag nhsuk-tag--red">Rejected @supervisorSignOff.Verified.Value.ToShortDateString()</span>}
-          </td>
-          <td role="cell" class="nhsuk-table__cell">
-            <span class="nhsuk-table-responsive__heading">Comments </span>@supervisorSignOff.Comments
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  <p class="nhsuk-breadcrumb__back">
+    <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+       asp-route-vocabulary="@Model.VocabPlural()"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+      Back to @Model.VocabPlural()
+    </a>
+  </p>
 }
-else
-{
-  <h1>@Model.SelfAssessment.SignOffRoleName Sign-off History</h1>
-  <p class="nhsuk-body-l">There are no sign-off requests for this self assessment.</p>
-}
-<div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-    </svg>
-    Cancel
-  </a>
-</div>
+  <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+  <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
+  <partial name="../../Supervisor/Shared/_SignOffHistory.cshtml" model="@Model.SupervisorSignOffs" />
+  <div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
+      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+      </svg>
+      Cancel
+    </a>
+  </div>

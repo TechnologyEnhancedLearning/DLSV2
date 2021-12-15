@@ -4,8 +4,11 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FizzWare.NBuilder;
     using FluentAssertions;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class PasswordDataServiceTests
@@ -13,11 +16,12 @@
         private const string PasswordHashNotYetInDb = "I haven't used this password before!";
         private PasswordDataService passwordDataService = null!;
         private UserDataService userDataService = null!;
+        private SqlConnection connection = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             passwordDataService = new PasswordDataService(connection);
             userDataService = new UserDataService(connection);
         }
@@ -79,7 +83,7 @@
         }
 
         [Test]
-        public async Task Setting_password_by_email_sets_password_for_matching_candidates()
+        public async Task Setting_password_by_email_sets_password_for_matching_candidate()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -92,6 +96,34 @@
 
             // Then
             userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
+                .Be(PasswordHashNotYetInDb);
+        }
+
+        [Test]
+        public async Task SetPasswordForUsers_can_set_password_for_multiple_delegates()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var existingDelegate = UserTestHelper.GetDefaultDelegateUser();
+            var newDelegate = Builder<DelegateUser>.CreateNew()
+                .With(d => d.EmailAddress = existingDelegate.EmailAddress)
+                .With(d => d.CentreId = existingDelegate.CentreId)
+                .Build();
+            UserTestHelper.GivenDelegateUserIsInDatabase(newDelegate, connection);
+
+            var newPasswordHash = PasswordHashNotYetInDb;
+
+            // When
+            await passwordDataService.SetPasswordForUsersAsync(
+                new[] { existingDelegate.ToUserReference(), newDelegate.ToUserReference() },
+                newPasswordHash
+            );
+
+            // Then
+            userDataService.GetDelegateUserById(existingDelegate.Id)?.Password.Should()
+                .Be(PasswordHashNotYetInDb);
+            userDataService.GetDelegateUserById(newDelegate.Id)?.Password.Should()
                 .Be(PasswordHashNotYetInDb);
         }
 

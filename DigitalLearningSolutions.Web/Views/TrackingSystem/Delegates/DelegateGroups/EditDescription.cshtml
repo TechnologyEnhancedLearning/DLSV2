@@ -1,0 +1,35 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model EditDelegateGroupDescriptionViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = $"{(errorHasOccurred ? "Error" : "")} Edit description for {Model.GroupName} group (optional)";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Description) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl word-break">Edit description for @Model.GroupName group (optional)</h1>
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditDescription">
+
+      <vc:text-area asp-for="@nameof(Model.Description)"
+                    label="Description"
+                    populate-with-current-value="true"
+                    rows="8"
+                    spell-check="true"
+                    hint-text=""
+                    css-class=""
+                    character-count="1000" />
+
+      <button class="nhsuk-button" type="submit" value="save">Save</button>
+      <input type="hidden" asp-for="GroupName" />
+    </form>
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+  </div>
+</div>

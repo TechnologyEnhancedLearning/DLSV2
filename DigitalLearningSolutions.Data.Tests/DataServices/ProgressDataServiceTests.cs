@@ -5,23 +5,28 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class ProgressDataServiceTests
     {
         private SqlConnection connection = null!;
         private ProgressDataService progressDataService = null!;
+        private ProgressTestHelper progressTestHelper = null!;
         private TutorialContentTestHelper tutorialContentTestHelper = null!;
 
         [SetUp]
         public void SetUp()
         {
             connection = ServiceTestHelper.GetDatabaseConnection();
-            progressDataService = new ProgressDataService(connection);
+            var logger = A.Fake<ILogger<ProgressDataService>>();
+            progressDataService = new ProgressDataService(connection, logger);
             tutorialContentTestHelper = new TutorialContentTestHelper(connection);
+            progressTestHelper = new ProgressTestHelper(connection);
         }
 
         [Test]
@@ -220,6 +225,55 @@
             {
                 transaction.Dispose();
             }
+        }
+
+        [Test]
+        public void ClearAspProgressVerificationRequest_updates_aspProgress_records()
+        {
+            // Given
+            const int progressId = 285046;
+            const int aspProgressId = 8509834;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.ClearAspProgressVerificationRequest(progressId);
+                var result = progressTestHelper.GetSupervisorVerificationRequestedByAspProgressId(aspProgressId);
+
+                // Then
+                result.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void Set_completion_date_should_update_db()
+        {
+            // Given
+            const int progressId = 1;
+            const int candidateIdForProgressRecord = 1;
+            const int customisationIdForProgressRecord = 100;
+            var completionDate = new DateTime(2020, 12, 25);
+
+            using var transaction = new TransactionScope();
+
+            // When
+            progressDataService.SetCompletionDate(
+                progressId,
+                completionDate
+            );
+            var progressRecords = progressDataService.GetDelegateProgressForCourse(
+                candidateIdForProgressRecord,
+                customisationIdForProgressRecord
+            );
+
+            // Then
+            var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
+            updatedProgressRecord.Completed.Should().Be(completionDate);
         }
     }
 }

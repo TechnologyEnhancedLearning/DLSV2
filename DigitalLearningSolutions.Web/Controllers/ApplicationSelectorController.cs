@@ -26,6 +26,7 @@
                 User.GetCustomClaimAsBool(CustomClaimTypes.IsFrameworkContributor) |
                 User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceManager) |
                 User.GetCustomClaimAsBool(CustomClaimTypes.IsWorkforceContributor) ?? false;
+            var superAdminAccess = User.HasSuperAdminPermissions();
 
             var model = new ApplicationSelectorViewModel(
                 learningPortalAccess,
@@ -33,7 +34,8 @@
                 contentManagementSystemAccess,
                 superviseAccess,
                 contentCreatorAccess,
-                frameworksAccess
+                frameworksAccess,
+                superAdminAccess
             );
 
             return View(model);

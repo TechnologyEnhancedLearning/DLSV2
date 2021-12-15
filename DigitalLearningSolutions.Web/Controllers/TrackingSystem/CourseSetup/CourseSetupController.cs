@@ -2,9 +2,12 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using Microsoft.AspNetCore.Authorization;
@@ -13,6 +16,8 @@
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup")]
     public class CourseSetupController : Controller
     {
@@ -42,21 +47,19 @@
             int page = 1
         )
         {
-            if (filterBy == null && filterValue == null)
-            {
-                filterBy = Request.Cookies[CourseFilterCookieName] ?? CourseStatusFilterOptions.IsActive.FilterValue;
-            }
-            else if (filterBy?.ToUpper() == FilteringHelper.ClearString)
-            {
-                filterBy = null;
-            }
-
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.AddNewFilterToFilterBy(filterBy, filterValue);
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                CourseFilterCookieName,
+                CourseStatusFilterOptions.IsActive.FilterValue
+            );
 
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreCourses =
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
@@ -81,8 +84,9 @@
         public IActionResult AllCourseStatistics()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
-            var centreCourses = courseService.GetCentreSpecificCourseStatistics(centreId, categoryId.Value);
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var centreCourses =
+                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);

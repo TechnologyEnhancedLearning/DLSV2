@@ -31,15 +31,22 @@
         <partial name="_SummaryBooleanField" model="Model.HideInLearningPortal" />
       </div>
 
-      <div class="nhsuk-summary-list__row details-list-with-button__row">
-        <dt class="nhsuk-summary-list__key">
-          Allow diagnostic objective selection
-        </dt>
-        <partial name="_SummaryBooleanField" model="Model.DiagnosticObjectiveSelection" />
-      </div>
+      @if (Model.ShowDiagnosticObjectiveSelection) {
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Allow diagnostic objective selection
+          </dt>
+          <partial name="_SummaryBooleanField" model="Model.DiagnosticObjectiveSelection" />
+        </div>
+      }
     </dl>
 
-    <a class="nhsuk-button nhsuk-u-margin-right-2" role="button" href="">
+    <a class="nhsuk-button nhsuk-u-margin-right-2"
+       role="button"
+       aria-label="Edit course options"
+       asp-controller="ManageCourse"
+       asp-action="EditCourseOptions"
+       asp-route-customisationId="@Model.CustomisationId">
       Edit
     </a>
 

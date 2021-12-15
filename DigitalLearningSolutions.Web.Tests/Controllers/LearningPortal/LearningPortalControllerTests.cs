@@ -14,24 +14,26 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 
     public partial class LearningPortalControllerTests
     {
-        private LearningPortalController controller = null!;
-        private ICentresDataService centresDataService = null!;
-        private ICourseDataService courseDataService = null!;
-        private ISelfAssessmentService selfAssessmentService = null!;
-        private ISupervisorService supervisorService = null!;
-        private INotificationService notificationService = null!;
-        private IFrameworkNotificationService frameworkNotificationService = null!;
-        private IConfiguration config = null!;
-        private IFilteredApiHelperService filteredApiHelperService = null!;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CandidateId = 11;
         private const int SelfAssessmentId = 1;
         private const string Vocabulary = "Capabilities";
         private const int CentreId = 2;
+        private IActionPlanService actionPlanService = null!;
+        private ICentresDataService centresDataService = null!;
+        private IConfiguration config = null!;
+        private LearningPortalController controller = null!;
+        private ICourseDataService courseDataService = null!;
+        private IFilteredApiHelperService filteredApiHelperService = null!;
+        private IFrameworkNotificationService frameworkNotificationService = null!;
+        private INotificationService notificationService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
+        private ISupervisorService supervisorService = null!;
 
         [SetUp]
         public void SetUp()
         {
+            actionPlanService = A.Fake<IActionPlanService>();
             centresDataService = A.Fake<ICentresDataService>();
             courseDataService = A.Fake<ICourseDataService>();
             selfAssessmentService = A.Fake<ISelfAssessmentService>();
@@ -44,11 +46,16 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim("learnCandidateID", CandidateId.ToString()),
-                new Claim("UserCentreID", CentreId.ToString())
-            }, "mock"));
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim("learnCandidateID", CandidateId.ToString()),
+                        new Claim("UserCentreID", CentreId.ToString()),
+                    },
+                    "mock"
+                )
+            );
             controller = new LearningPortalController(
                 centresDataService,
                 courseDataService,
@@ -58,10 +65,11 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 frameworkNotificationService,
                 logger,
                 config,
-                filteredApiHelperService
+                filteredApiHelperService,
+                actionPlanService
             )
             {
-                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },
             };
         }
     }

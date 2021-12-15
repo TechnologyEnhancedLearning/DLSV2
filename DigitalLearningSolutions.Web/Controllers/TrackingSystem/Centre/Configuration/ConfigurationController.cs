@@ -1,10 +1,13 @@
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration
 {
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -13,6 +16,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
+    [SetSelectedTab(nameof(NavMenuTab.Centre))]
     [Route("/TrackingSystem/Centre/Configuration")]
     public class ConfigurationController : Controller
     {

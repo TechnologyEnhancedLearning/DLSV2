@@ -1,10 +1,11 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
 
     public interface ITutorialContentDataService
@@ -17,10 +18,27 @@
         );
 
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
+
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
+
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
-        void UpdateOrInsertCustomisationTutorialStatuses(int tutorialId, int customisationId, bool diagnosticEnabled, bool learningEnabled);
+
+        void UpdateOrInsertCustomisationTutorialStatuses(
+            int tutorialId,
+            int customisationId,
+            bool diagnosticEnabled,
+            bool learningEnabled
+        );
+
+        IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
+
+        IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        );
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -336,6 +354,54 @@
                         VALUES (@customisationId, @tutorialId, @learningEnabled, @diagnosticEnabled)
                     END",
                 new { customisationId, tutorialId, learningEnabled, diagnosticEnabled }
+            );
+        }
+
+        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId
+        )
+        {
+            return connection.Query<Objective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.CMIInteractionIDs AS Interactions,
+                        tu.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    LEFT JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL",
+                new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        )
+        {
+            return connection.Query<CcObjective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.TutorialName,
+                        tu.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    INNER JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL
+                    AND (@isPostLearning = 1 OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
+                new { sectionId, customisationId, isPostLearning }
             );
         }
     }

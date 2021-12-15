@@ -6,24 +6,24 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Remove delegate from group" : "Remove delegate from group";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
   var confirmError = ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)]?.Errors?.Count > 0;
   var confirmFormErrorClass = confirmError ? "nhsuk-form-group--error" : "";
 }
 
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-}
-
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred) {
+    @if (errorHasOccurred)
+    {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ConfirmRemovalFromGroup) }" />
     }
 
-    <h1 class="nhsuk-heading-xl">Are you sure you would like to remove @Model.DelegateName from this group?</h1>
+    <h1 class="nhsuk-heading-xl word-break">Are you sure you would like to remove @Model.DelegateName from this group?</h1>
+  </div>
+</div>
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full nhsuk-lede-text">
+    All enrolments on courses that have not yet been started and are associated with the delegate’s membership of this group will be removed.
   </div>
 </div>
 
@@ -41,7 +41,8 @@
     <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="GroupDelegatesRemove">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.ConfirmRemovalFromGroup))-error">
-          @if (confirmError) {
+          @if (confirmError)
+          {
             <span class="nhsuk-error-message" id="@(nameof(Model.ConfirmRemovalFromGroup))-error">
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)].Errors[0].ErrorMessage
             </span>
@@ -49,7 +50,7 @@
           <div class="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" asp-for="ConfirmRemovalFromGroup" />
-              <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="ConfirmRemovalFromGroup">
+              <label class="nhsuk-label nhsuk-checkboxes__label word-break" asp-for="ConfirmRemovalFromGroup">
                 I am sure that I wish to remove @Model.DelegateName from this group.
               </label>
             </div>
@@ -57,18 +58,18 @@
         </fieldset>
       </div>
 
-      @if (Model.RemoveProgressEnabled) {
+      @if (Model.RemoveStartedEnrolmentsEnabled)
+      {
         <div class="nhsuk-form-group">
-          <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveProgress))-error">
+          <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-error">
             <div class="nhsuk-checkboxes">
               <div class="nhsuk-checkboxes__item">
-                <input class="nhsuk-checkboxes__input" asp-for="RemoveProgress" aria-describedby="@(nameof(Model.RemoveProgress))-item-hint" />
-                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveProgress">
-                  Remove delegate from all the related enrolments where course is not yet complete.
+                <input class="nhsuk-checkboxes__input" asp-for="RemoveStartedEnrolments" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-item-hint" />
+                <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveStartedEnrolments">
+                  Remove delegate from all the related enrolments where course has been started but is not yet complete
                 </label>
-                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveProgress))-item-hint">
-                  Optionally all enrolments on courses that are incomplete and are associated with the delegate's membership of this group can also be removed.
-                  This facility should not be used if the delegate may have been enrolled on the same course(s) because of membership of another group.
+                <div class="nhsuk-hint nhsuk-checkboxes__hint" id="@(nameof(Model.RemoveStartedEnrolments))-item-hint">
+                  Optionally all enrolments on courses that have been started, but are incomplete and are associated with the delegate’s membership of this group can also be removed.
                 </div>
               </div>
             </div>
@@ -78,6 +79,7 @@
 
       <input type="hidden" asp-for="GroupName" />
       <input type="hidden" asp-for="DelegateName" />
+      <input type="hidden" asp-for="RemoveStartedEnrolmentsEnabled" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Remove delegate</button>
     </form>
 

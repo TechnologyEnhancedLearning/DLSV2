@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
 
     public interface IActivityService
@@ -20,7 +21,7 @@
 
         ReportsFilterOptions GetFilterOptions(int centreId, int? courseCategoryId);
 
-        DateTime GetStartOfActivityForCentre(int centreId);
+        DateTime GetActivityStartDateForCentre(int centreId);
 
         byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData);
 
@@ -79,7 +80,7 @@
                 {
                     var dateInformation = new DateInformation(slot, filterData.ReportInterval);
                     var periodData = dataByPeriod.SingleOrDefault(
-                        data => data.DateInformation.Date == slot.Date
+                        data => data.DateInformation.StartDate == slot.Date
                     );
                     return new PeriodOfActivity(dateInformation, periodData);
                 }
@@ -101,29 +102,83 @@
             var courseCategories = courseCategoriesDataService
                 .GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(cc => (cc.CourseCategoryID, cc.CategoryName));
-            var courses = courseDataService
-                .GetCentrallyManagedAndCentreCourses(centreId, courseCategoryId)
-                .OrderBy(c => c.CourseName)
-                .Select(c => (c.CustomisationId, c.CourseName));
+
+            var availableCourses = courseDataService
+                .GetCoursesAvailableToCentreByCategory(centreId, courseCategoryId);
+            var historicalCourses = courseDataService
+                .GetCoursesEverUsedAtCentreByCategory(centreId, courseCategoryId);
+
+            var courses = availableCourses.Union(historicalCourses, new CourseEqualityComparer())
+                .OrderByDescending(c => c.Active)
+                .ThenBy(c => c.CourseName)
+                .Select(c => (c.CustomisationId, c.CourseNameWithInactiveFlag));
 
             return new ReportsFilterOptions(jobGroups, courseCategories, courses);
         }
 
-        public DateTime GetStartOfActivityForCentre(int centreId)
+        public DateTime GetActivityStartDateForCentre(int centreId)
         {
-            return activityDataService.GetStartOfActivityForCentre(centreId);
+            return activityDataService.GetStartOfActivityForCentre(centreId).Date;
         }
 
         public byte[] GetActivityDataFileForCentre(int centreId, ActivityFilterData filterData)
         {
             using var workbook = new XLWorkbook();
 
-            var activityData = GetFilteredActivity(centreId, filterData).Select(
-                p => new { Period = p.DateInformation.Date, p.Registrations, p.Completions, p.Evaluations }
-            );
+            var activityData = GetFilteredActivity(centreId, filterData).ToList();
+
+            IEnumerable<WorkbookRow> workbookData;
+
+            if (activityData.Count() <= 1)
+            {
+                workbookData = activityData.Select(
+                    p => new WorkbookRow(
+                        DateInformation.GetDateRangeLabel(
+                            DateHelper.StandardDateFormat,
+                            filterData.StartDate,
+                            filterData.EndDate ?? DateTime.Now
+                        ),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+            }
+            else
+            {
+                var first = activityData.First();
+                var firstRow = new WorkbookRow(
+                    first.DateInformation.GetDateRangeLabel(DateHelper.StandardDateFormat, filterData.StartDate, true),
+                    first.Registrations,
+                    first.Completions,
+                    first.Evaluations
+                );
+
+                var last = activityData.Last();
+                var lastRow = new WorkbookRow(
+                    last.DateInformation.GetDateRangeLabel(
+                        DateHelper.StandardDateFormat,
+                        filterData.EndDate ?? DateTime.Now,
+                        true
+                    ),
+                    last.Registrations,
+                    last.Completions,
+                    last.Evaluations
+                );
+
+                var middleRows = activityData.Skip(1).SkipLast(1).Select(
+                    p => new WorkbookRow(
+                        p.DateInformation.GetDateLabel(DateHelper.StandardDateFormat),
+                        p.Registrations,
+                        p.Completions,
+                        p.Evaluations
+                    )
+                );
+                workbookData = middleRows.Prepend(firstRow).Append(lastRow);
+            }
 
             var sheet = workbook.Worksheets.Add(SheetName);
-            var table = sheet.Cell(1, 1).InsertTable(activityData);
+            var table = sheet.Cell(1, 1).InsertTable(workbookData);
             table.Theme = TableTheme;
             sheet.Columns().AdjustToContents();
 
@@ -139,7 +194,7 @@
         )
         {
             var startDateInvalid = !DateTime.TryParse(startDateString, out var startDate);
-            if (startDateInvalid || startDate < GetStartOfActivityForCentre(centreId))
+            if (startDateInvalid || startDate < GetActivityStartDateForCentre(centreId))
             {
                 return null;
             }
@@ -197,7 +252,7 @@
                 ReportInterval.Quarters => activityData.GroupBy(
                     x => new DateTime(x.LogYear, GetFirstMonthOfQuarter(x.LogQuarter), 1).Ticks
                 ),
-                _ => activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks)
+                _ => activityData.GroupBy(x => new DateTime(x.LogYear, 1, 1).Ticks),
             };
 
             return groupedActivityLogs.Select(
@@ -216,6 +271,35 @@
         private static int GetFirstMonthOfQuarter(int quarter)
         {
             return quarter * 3 - 2;
+        }
+
+        private class WorkbookRow
+        {
+            public WorkbookRow(string period, int registrations, int completions, int evaluations)
+            {
+                Period = period;
+                Registrations = registrations;
+                Completions = completions;
+                Evaluations = evaluations;
+            }
+
+            public string Period { get; }
+            public int Registrations { get; }
+            public int Completions { get; }
+            public int Evaluations { get; }
+        }
+
+        private class CourseEqualityComparer : IEqualityComparer<Course>
+        {
+            public bool Equals(Course? x, Course? y)
+            {
+                return x?.CustomisationId == y?.CustomisationId;
+            }
+
+            public int GetHashCode(Course obj)
+            {
+                return obj.CustomisationId;
+            }
         }
     }
 }

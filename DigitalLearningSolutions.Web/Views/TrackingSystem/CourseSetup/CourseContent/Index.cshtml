@@ -7,13 +7,6 @@
 
 @{
   ViewData["Title"] = "Course content";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-}
-
-@section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -30,7 +23,7 @@
         <p class="nhsuk-lede-text">Course:</p>
       </div>
       <div class="nhsuk-grid-column-three-quarters">
-        <p class="nhsuk-lede-text nhsuk-u-font-weight-bold">@Model.CourseName</p>
+        <p class="nhsuk-lede-text nhsuk-u-font-weight-bold word-break">@Model.CourseName</p>
       </div>
     </div>
 

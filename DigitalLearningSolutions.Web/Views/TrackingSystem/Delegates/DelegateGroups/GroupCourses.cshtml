@@ -5,16 +5,9 @@
 
 @{
   ViewData["Title"] = "Group courses";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/groupDelegates.css")" asp-append-version="true">
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
-}
 
 @section NavBreadcrumbs {
   <partial name="_DelegateGroupBreadcrumbs" />
@@ -34,7 +27,11 @@
         <h1 id="page-heading" class="nhsuk-heading-xl">Group courses</h1>
       </div>
       <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button heading-button" role="button">
+        <a class="nhsuk-button heading-button"
+           role="button"
+           asp-controller="DelegateGroups"
+           asp-action="AddCourseToGroupSelectCourse"
+           asp-route-groupId="@Model.GroupId">
           Add
         </a>
       </div>
