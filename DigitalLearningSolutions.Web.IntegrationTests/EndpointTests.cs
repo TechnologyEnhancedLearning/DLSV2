@@ -5,11 +5,11 @@ namespace DigitalLearningSolutions.Web.IntegrationTests
     using Microsoft.AspNetCore.Mvc.Testing;
     using Xunit;
 
-    public class EndpointTests: IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class EndpointTests: IClassFixture<DefaultWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly DefaultWebApplicationFactory<Startup> _factory;
 
-        public EndpointTests(CustomWebApplicationFactory<Startup> factory)
+        public EndpointTests(DefaultWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }

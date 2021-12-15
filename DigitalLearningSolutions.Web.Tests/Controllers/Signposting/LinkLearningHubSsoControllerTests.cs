@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Signposting
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting.LinkLearningHubSso;
     using DigitalLearningSolutions.Data.Services;
@@ -14,23 +15,27 @@
 
     public class LinkLearningHubSsoControllerTests
     {
-        private ILearningHubSsoService learningHubSsoService = null!;
+        private LinkLearningHubSsoController controller = null!;
+        private ILearningHubSsoSecurityService learningHubSsoSecurityService = null!;
         private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
-            learningHubSsoService = A.Fake<ILearningHubSsoService>();
+            learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
             userService = A.Fake<IUserService>();
+
+            controller = new LinkLearningHubSsoController(learningHubSsoSecurityService, userService)
+                .WithDefaultContext()
+                .WithMockUser(true);
+
+            A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).Returns(false);
         }
 
         [Test]
         public void LinkLearningHubSso_Index_invalid_state_throws_exception()
         {
             // Given
-            var controller = new LinkLearningHubSsoController(learningHubSsoService, userService)
-                .WithDefaultContext()
-                .WithMockUser(true);
             controller.ModelState.AddModelError("Hash", "Required.");
 
             // When
@@ -40,7 +45,7 @@
             using (new AssertionScope())
             {
                 a.Should().Throw<LearningHubLinkingRequestException>();
-                A.CallTo(() => learningHubSsoService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
                     .MustNotHaveHappened();
                 A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._)).MustNotHaveHappened();
             }
@@ -50,21 +55,23 @@
         public void LinkLearningHubSso_Index_invalid_request_throws_exception_in_service()
         {
             // Given
-            var controller = new LinkLearningHubSsoController(learningHubSsoService, userService)
-                .WithDefaultContext()
-                .WithMockTempData()
-                .WithMockUser(true);
-            A.CallTo(() => learningHubSsoService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+            var sessionData = new Dictionary<string, string>
+            {
+                { LinkLearningHubRequest.SessionIdentifierKey, Guid.NewGuid().ToString() },
+            };
+            var testController = controller.WithMockSessionData(sessionData);
+
+            A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
                 .Throws(() => new LearningHubLinkingRequestException("Error"));
 
             // When
-            Action a = () => controller.Index(new LinkLearningHubRequest());
+            Action a = () => testController.Index(new LinkLearningHubRequest());
 
             // Then
             using (new AssertionScope())
             {
                 a.Should().Throw<LearningHubLinkingRequestException>();
-                A.CallTo(() => learningHubSsoService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._)).MustNotHaveHappened();
             }
@@ -74,23 +81,54 @@
         public void LinkLearningHubSso_Index_valid_request_returns_view()
         {
             // Given
-            var controller = new LinkLearningHubSsoController(learningHubSsoService, userService)
-                .WithDefaultContext()
-                .WithMockTempData()
-                .WithMockUser(true);
-            A.CallTo(() => learningHubSsoService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._)).Returns(1);
+            var sessionData = new Dictionary<string, string>
+            {
+                { LinkLearningHubRequest.SessionIdentifierKey, Guid.NewGuid().ToString() },
+            };
+            var testController = controller.WithMockSessionData(sessionData);
+
+            A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                .Returns(1);
 
             // When
-            var result = controller.Index(new LinkLearningHubRequest());
+            var result = testController.Index(new LinkLearningHubRequest());
 
             // Then
             using (new AssertionScope())
             {
                 result.Should().BeViewResult().WithViewName("Index");
-                A.CallTo(() => learningHubSsoService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
                     .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void LinkLearningHubSso_Index_account_already_linked_returns_view()
+        {
+            // Given
+            var sessionData = new Dictionary<string, string>
+            {
+                { LinkLearningHubRequest.SessionIdentifierKey, Guid.NewGuid().ToString() },
+            };
+            var testController = controller.WithMockSessionData(sessionData);
+
+            A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                .Returns(1);
+            A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).Returns(true);
+
+            // When
+            var result = testController.Index(new LinkLearningHubRequest());
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().WithViewName("Index");
+                A.CallTo(() => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(A<LinkLearningHubRequest>._))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
+                    .MustNotHaveHappened();
             }
         }
     }

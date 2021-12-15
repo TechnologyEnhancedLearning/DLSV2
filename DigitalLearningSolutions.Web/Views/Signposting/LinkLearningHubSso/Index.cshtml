@@ -11,9 +11,18 @@
 
     <h1 class="nhsuk-heading-xl">Account linked</h1>
 
-    <p>Your account has been linked with Learning Hub.</p>
+    @if (Model.ShowIsAlreadyLinkedWarning)
+    {
+      <p>Your account has already been linked with the Learning Hub in a previous link request.</p>
+      <p>Therefore no changes have been made to your account regarding this link request.</p>
+    }
+    else
+    {
+      <p>Your account has been linked with the Learning Hub.</p>
+    }
     <p>You will now be able to view the resources directly.</p>
-    @if (Model.ShowResourceLink) {
+    @if (Model.ShowResourceLink)
+    {
       <p><vc:action-link asp-controller="Signposting" asp-action="ViewResource" asp-all-route-data="@actionLinkRouteData" link-text="Continue to resource" /></p>
     }
   </div>

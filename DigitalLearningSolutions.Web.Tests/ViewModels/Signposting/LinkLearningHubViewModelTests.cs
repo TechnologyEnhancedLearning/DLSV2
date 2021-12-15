@@ -7,16 +7,18 @@
     public class LinkLearningHubViewModelTests
     {
         [Test]
-        [TestCase(null, false)]
-        [TestCase(1, true)]
-        public void LinkLearningHubViewModel_constructor_should_set_properties_correctly(int? resourceId, bool showLink)
+        [TestCase(null, false, false)]
+        [TestCase(1, true, false)]
+        [TestCase(2, true, true)]
+        public void LinkLearningHubViewModel_constructor_should_set_properties_correctly(int? resourceId, bool showLink, bool showAlreadyLinkedWarning)
         {
             // When
-            var model = new LinkLearningHubViewModel(resourceId);
+            var model = new LinkLearningHubViewModel(showAlreadyLinkedWarning, resourceId);
 
             // Then
             model.ResourceLinkId.Should().Be(resourceId);
             model.ShowResourceLink.Should().Be(showLink);
+            model.ShowIsAlreadyLinkedWarning.Should().Be(showAlreadyLinkedWarning);
         }
     }
 }

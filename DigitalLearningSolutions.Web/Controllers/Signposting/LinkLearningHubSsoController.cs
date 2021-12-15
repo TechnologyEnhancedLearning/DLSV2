@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
     [Route("Signposting/[Controller]")]
@@ -32,16 +33,23 @@
                 throw new LearningHubLinkingRequestException("Invalid Learning Hub request.");
             }
 
-            linkLearningHubRequest.SessionIdentifier = (Guid?)TempData.Peek(LinkLearningHubRequest.SessionIdentifierKey);
+            linkLearningHubRequest.SessionIdentifier = Guid.Parse(
+                HttpContext.Session.GetString(LinkLearningHubRequest.SessionIdentifierKey)
+            );
             var learningHubResourcedId =
                 learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
 
-            userService.SetDelegateUserLearningHubAuthId(
-                User.GetCandidateIdKnownNotNull(),
-                linkLearningHubRequest.UserId
-            );
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var isAccountAlreadyLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
+            if (!isAccountAlreadyLinked)
+            {
+                userService.SetDelegateUserLearningHubAuthId(
+                    delegateId,
+                    linkLearningHubRequest.UserId
+                );
+            }
 
-            var model = new LinkLearningHubViewModel(learningHubResourcedId);
+            var model = new LinkLearningHubViewModel(isAccountAlreadyLinked, learningHubResourcedId);
             return View("Index", model);
         }
     }
