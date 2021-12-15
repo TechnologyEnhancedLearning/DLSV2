@@ -366,8 +366,8 @@
             );
             competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                 1,
-                learningResourceReferenceId,
                 1,
+                learningResourceReferenceId,
                 7
             );
             return service.InsertLearningLogItem(
