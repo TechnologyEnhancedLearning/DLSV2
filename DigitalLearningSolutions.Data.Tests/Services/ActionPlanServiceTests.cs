@@ -30,7 +30,6 @@
         private IConfiguration config = null!;
         private Catalogue genericCatalogue = null!;
         private ILearningHubApiClient learningHubApiClient = null!;
-        private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
@@ -42,7 +41,6 @@
             clockService = A.Fake<IClockService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
-            learningHubApiService = A.Fake<ILearningHubApiService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
             learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
@@ -52,7 +50,6 @@
                 competencyLearningResourcesDataService,
                 learningLogItemsDataService,
                 clockService,
-                learningHubApiService,
                 learningHubApiClient,
                 selfAssessmentDataService,
                 config,
@@ -81,8 +78,8 @@
                 )
             ).Returns(learningHubResourceId);
 
-            A.CallTo(() => learningHubApiService.GetResourceNameAndLink(learningHubResourceId))
-                .Returns((resourceName, resourceLink));
+            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(learningHubResourceId))
+                .Returns(new ResourceReferenceWithResourceDetails { Title = resourceName, Link = resourceLink });
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(

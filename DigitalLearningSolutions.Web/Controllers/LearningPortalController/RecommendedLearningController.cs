@@ -25,25 +25,28 @@
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IRecommendedLearningService recommendedLearningService;
+        private readonly IActionPlanService actionPlanService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
             ISelfAssessmentService selfAssessmentService,
             IConfiguration configuration,
-            IRecommendedLearningService recommendedLearningService
+            IRecommendedLearningService recommendedLearningService,
+            IActionPlanService actionPlanService
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
             this.selfAssessmentService = selfAssessmentService;
             this.configuration = configuration;
             this.recommendedLearningService = recommendedLearningService;
+            this.actionPlanService = actionPlanService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
         public async Task<IActionResult> SelfAssessmentResults(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            
+
             selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, candidateId);
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, false);
 
@@ -70,6 +73,14 @@
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
             return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
+        }
+
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}")]
+        public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
+        {
+            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+
+            return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]

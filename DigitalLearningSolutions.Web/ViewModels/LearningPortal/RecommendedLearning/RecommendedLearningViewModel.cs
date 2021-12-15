@@ -17,7 +17,8 @@
             // TODO HEEDLS-650 Search/Pagination
             var resourcesToDisplay = recommendedResources.Take(10);
 
-            RecommendedResources = resourcesToDisplay.Select(r => new SearchableRecommendedResourceViewModel(r));
+            RecommendedResources =
+                resourcesToDisplay.Select(r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id));
         }
 
         public SelfAssessment SelfAssessment { get; set; }

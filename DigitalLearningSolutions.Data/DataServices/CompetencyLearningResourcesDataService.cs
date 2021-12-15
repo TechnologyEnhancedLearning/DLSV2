@@ -3,14 +3,13 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ICompetencyLearningResourcesDataService
     {
-        IEnumerable<int> GetLearningHubResourceReferenceIdsByCompetencyId(int competencyId);
-
-        IEnumerable<int> GetCompetencyLearningResourceIdsByLearningHubResourceReference(int lhResourceReferenceId);
-
         IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
+
+        IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -33,25 +32,19 @@
             );
         }
 
-        public IEnumerable<int> GetLearningHubResourceReferenceIdsByCompetencyId(int competencyId)
+        public IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId)
         {
-            return connection.Query<int>(
+            return connection.Query<CompetencyLearningResource>(
                 @"SELECT
-                        LHResourceReferenceID
-                    FROM CompetencyLearningResources
+                        clr.ID,
+                        clr.CompetencyID,
+                        clr.LearningResourceReferenceID,
+                        clr.AdminID,
+                        lrr.ResourceRefID AS LearningHubResourceReferenceId
+                    FROM CompetencyLearningResources AS clr
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = clr.LearningResourceReferenceID
                     WHERE CompetencyID = @competencyId",
                 new { competencyId }
-            );
-        }
-
-        public IEnumerable<int> GetCompetencyLearningResourceIdsByLearningHubResourceReference(int lhResourceReferenceId)
-        {
-            return connection.Query<int>(
-                @"SELECT
-                        ID
-                    FROM CompetencyLearningResources
-                    WHERE LHResourceReferenceID = @lhResourceReferenceId",
-                new { lhResourceReferenceId }
             );
         }
     }

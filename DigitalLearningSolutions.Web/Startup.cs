@@ -183,7 +183,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
-            services.AddScoped<ILearningHubApiService, LearningHubApiService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
