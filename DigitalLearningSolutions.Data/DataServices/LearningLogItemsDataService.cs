@@ -18,7 +18,7 @@
             DateTime addedDate,
             string activityName,
             string resourceLink,
-            int competencyLearningResourceId
+            int learningResourceReferenceId
         );
 
         void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId);
@@ -56,8 +56,8 @@
                         ExternalUri,
                         SeqInt,
                         LastAccessedDate,
-                        LinkedCompetencyLearningResourceID,
-                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID";
+                        LearningResourceReferenceID,
+                        lrr.ResourceRefID AS LearningHubResourceReferenceID";
 
         private readonly IDbConnection connection;
 
@@ -76,7 +76,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
                     WHERE LoggedById = @delegateId
                     AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
                 new { delegateId }
@@ -90,7 +90,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
                     WHERE a.TypeLabel = '{LearningHubResourceActivityLabel}'
                     AND LearningLogItemID = @learningLogItemId",
                 new { learningLogItemId }
@@ -102,7 +102,7 @@
             DateTime addedDate,
             string activityName,
             string resourceLink,
-            int competencyLearningResourceId
+            int learningResourceReferenceId
         )
         {
             var learningLogItemId = connection.QuerySingle<int>(
@@ -111,7 +111,7 @@
                         LoggedByID,
                         Activity,
                         ExternalUri,
-                        LinkedCompetencyLearningResourceID,
+                        LearningResourceReferenceID,
                         ActivityTypeID,
                         DueDate,
                         CompletedDate,
@@ -132,7 +132,7 @@
                         @delegateId,
                         @activityName,
                         @resourceLink,
-                        @competencyLearningResourceId,
+                        @learningResourceReferenceId,
                         (SELECT TOP 1 ID FROM ActivityTypes WHERE TypeLabel = 'Learning Hub Resource'),
                         NULL,
                         NULL,
@@ -146,7 +146,7 @@
                         NULL,
                         NULL,
                         NULL)",
-                new { addedDate, delegateId, activityName, resourceLink, competencyLearningResourceId }
+                new { addedDate, delegateId, activityName, resourceLink, learningResourceReferenceId }
             );
 
             return learningLogItemId;
