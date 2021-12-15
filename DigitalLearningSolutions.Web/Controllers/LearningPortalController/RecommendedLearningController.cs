@@ -74,7 +74,7 @@
         {
             if (configuration.IsSignpostingUsed())
             {
-                return RedirectToActionPermanent("RecommendedLearning", new { selfAssessmentId });
+                return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
