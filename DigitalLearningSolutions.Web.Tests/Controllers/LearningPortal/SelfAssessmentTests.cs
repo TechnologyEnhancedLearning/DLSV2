@@ -418,9 +418,9 @@
         {
             // Given
             const int selfAssessmentId = 1;
-            const int day = 0;
-            const int month = 0;
-            const int year = 0;
+            int? day = null;
+            int? month = null;
+            int? year = null;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
             var selfAssessment = SelfAssessmentHelper.CreateDefaultSelfAssessment();
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))

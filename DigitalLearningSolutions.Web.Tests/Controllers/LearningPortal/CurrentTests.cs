@@ -190,9 +190,9 @@
             // Given
             const int id = 1;
             const int progressId = 1;
-            const int day = 0;
-            const int month = 0;
-            const int year = 0;
+            int? day = null;
+            int? month = null;
+            int? year = null;
             var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
 
             // When
@@ -462,6 +462,27 @@
 
             // Then
             A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void Setting_an_empty_complete_by_date_for_resource_calls_service_with_null()
+        {
+            // Given
+            // Given
+            const int learningLogItemId = 4;
+            int? day = null;
+            int? month = null;
+            int? year = null;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, null))
                 .MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Current");
         }

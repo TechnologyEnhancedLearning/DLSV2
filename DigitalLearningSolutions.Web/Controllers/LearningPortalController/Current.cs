@@ -67,7 +67,7 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (DateValidator.IsDateBlank(formData.Day, formData.Month, formData.Year))
+            if (formData.Day == null && formData.Month == null && formData.Year == null)
             {
                 courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
@@ -241,7 +241,7 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (DateValidator.IsDateBlank(formData.Day, formData.Month, formData.Year))
+            if (formData.Day == null && formData.Month == null && formData.Year == null)
             {
                 actionPlanService.SetCompleteByDate(learningLogItemId, null);
                 return RedirectToAction("Current");

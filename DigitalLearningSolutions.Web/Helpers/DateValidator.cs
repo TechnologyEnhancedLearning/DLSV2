@@ -139,11 +139,6 @@
             return "aeiouAEIOU".Contains(str[0]);
         }
 
-        public static bool IsDateBlank(int? day, int? month, int? year)
-        {
-            return (day ?? 0) == 0 && (month ?? 0) == 0 && (year ?? 0) == 0;
-        }
-
         public class DateValidationResult
         {
             public readonly string? ErrorMessage;

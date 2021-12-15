@@ -220,7 +220,7 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (DateValidator.IsDateBlank(formData.Day, formData.Month, formData.Year))
+            if (formData.Day == null && formData.Month == null && formData.Year == null)
             {
                 selfAssessmentService.SetCompleteByDate(selfAssessmentId, User.GetCandidateIdKnownNotNull(), null);
                 return RedirectToAction("Current");
