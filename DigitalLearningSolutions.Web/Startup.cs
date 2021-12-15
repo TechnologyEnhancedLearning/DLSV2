@@ -227,6 +227,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
+            services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();

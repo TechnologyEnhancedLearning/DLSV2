@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -29,7 +32,7 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -49,7 +52,7 @@
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -220,6 +223,15 @@
         {
             actionPlanService.RemoveActionPlanResource(learningLogItemId, User.GetCandidateIdKnownNotNull());
             return RedirectToAction("Current");
+        }
+
+        private async Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResourcesIfSignpostingEnabled(
+            int delegateId
+        )
+        {
+            return config.IsSignpostingUsed()
+                ? await actionPlanService.GetIncompleteActionPlanResources(delegateId)
+                : new List<ActionPlanResource>();
         }
     }
 }

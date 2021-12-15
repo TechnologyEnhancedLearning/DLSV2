@@ -14,7 +14,7 @@
 
     public interface IActionPlanService
     {
-        void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId);
+        void AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId);
 
         Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId);
 
@@ -37,6 +37,7 @@
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ILearningHubApiService learningHubApiService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
+        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         public ActionPlanService(
@@ -46,7 +47,8 @@
             ILearningHubApiService learningHubApiService,
             ILearningHubApiClient learningHubApiClient,
             ISelfAssessmentDataService selfAssessmentDataService,
-            IConfiguration config
+            IConfiguration config,
+            ILearningResourceReferenceDataService learningResourceReferenceDataService
         )
         {
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
@@ -56,26 +58,27 @@
             this.learningHubApiClient = learningHubApiClient;
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.config = config;
+            this.learningResourceReferenceDataService = learningResourceReferenceDataService;
         }
 
-        public void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId)
+        public void AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId)
         {
-            var competencyLearningResource =
-                competencyLearningResourcesDataService.GetCompetencyLearningResourceById(competencyLearningResourceId);
+            var learningHubResourceReferenceId =
+                learningResourceReferenceDataService.GetLearningHubResourceReferenceById(learningResourceReferenceId);
 
             var (resourceName, resourceLink) =
-                learningHubApiService.GetResourceNameAndLink(competencyLearningResource.LearningHubResourceReferenceId);
+                learningHubApiService.GetResourceNameAndLink(learningHubResourceReferenceId);
 
-            var otherCompetenciesForResource =
-                competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    competencyLearningResource.LearningHubResourceReferenceId
+            var competenciesForResource =
+                competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                    learningResourceReferenceId
                 );
 
             var selfAssessmentCompetencies =
                 selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
 
             var learningLogCompetenciesToAdd =
-                otherCompetenciesForResource.Where(id => selfAssessmentCompetencies.Contains(id));
+                competenciesForResource.Where(id => selfAssessmentCompetencies.Contains(id));
 
             var addedDate = clockService.UtcNow;
 
@@ -86,7 +89,7 @@
                 addedDate,
                 resourceName,
                 resourceLink,
-                competencyLearningResourceId
+                learningResourceReferenceId
             );
 
             learningLogItemsDataService.InsertCandidateAssessmentLearningLogItem(selfAssessmentId, learningLogItemId);
@@ -174,7 +177,8 @@
 
             var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
 
-            if (!(actionPlanResource is { ArchivedDate: null }) || actionPlanResource.LearningHubResourceReferenceId == null)
+            if (!(actionPlanResource is { ArchivedDate: null }) ||
+                actionPlanResource.LearningHubResourceReferenceId == null)
             {
                 return null;
             }
