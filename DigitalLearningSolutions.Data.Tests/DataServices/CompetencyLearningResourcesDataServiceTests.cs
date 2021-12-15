@@ -46,7 +46,7 @@
         {
             var adminId = UserTestHelper.GetDefaultAdminUser().Id;
 
-            testHelper.InsertLearningResourceReference(2,2,adminId, "Resource 2");
+            testHelper.InsertLearningResourceReference(2, 2, adminId, "Resource 2");
             testHelper.InsertLearningResourceReference(3, 3, adminId, "Resource 3");
 
             testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);

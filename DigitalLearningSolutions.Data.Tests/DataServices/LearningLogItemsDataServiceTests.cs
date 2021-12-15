@@ -42,20 +42,21 @@
             {
                 // Given
                 const int learningResourceReferenceId = 1;
+                const int learningHubResourceReferenceId = 2;
                 const int delegateId = 2;
                 const string resourceName = "Activity";
                 const string resourceLink = "www.test.com";
                 var addedDate = new DateTime(2021, 11, 1);
                 competencyLearningResourcesTestHelper.InsertLearningResourceReference(
                     learningResourceReferenceId,
-                    learningResourceReferenceId,
+                    learningHubResourceReferenceId,
                     7,
                     "Resource"
                 );
                 competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                     1,
-                    learningResourceReferenceId,
                     1,
+                    learningResourceReferenceId,
                     7
                 );
 
@@ -152,6 +153,7 @@
         {
             // Given
             const int learningResourceReferenceId = 1;
+            const int learningHubResourceReferenceId = 2;
             const int delegateId = 2;
             const int differentDelegateId = 3;
             const string firstActivityName = "activity 1";
@@ -164,14 +166,14 @@
             {
                 competencyLearningResourcesTestHelper.InsertLearningResourceReference(
                     learningResourceReferenceId,
-                    learningResourceReferenceId,
+                    learningHubResourceReferenceId,
                     7,
                     "Resource"
                 );
                 competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                     1,
-                    learningResourceReferenceId,
                     1,
+                    learningResourceReferenceId,
                     7
                 );
                 service.InsertLearningLogItem(
@@ -358,7 +360,7 @@
         {
             competencyLearningResourcesTestHelper.InsertLearningResourceReference(
                 learningResourceReferenceId,
-                learningResourceReferenceId,
+                1,
                 7,
                 "Resource"
             );
