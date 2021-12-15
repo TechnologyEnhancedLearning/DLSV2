@@ -1,8 +1,13 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso
 @model LinkLearningHubViewModel
 
 @{
-    ViewData["Title"] = "Recommended learning resource - Account linked";
+    ViewData[LayoutViewDataKeys.Title] = "Recommended Learning Resources - Account linked";
+    ViewData[LayoutViewDataKeys.Application] = "Recommended Learning Resources";
+    ViewData[LayoutViewDataKeys.HeaderPrefix] = "";
+    ViewData[LayoutViewDataKeys.TransactionalHeader] = true;
+    ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] = true;
     var actionLinkRouteData = new Dictionary<string, string> { { "resourceId", Model.ResourceLinkId?.ToString() } };
 }
 
