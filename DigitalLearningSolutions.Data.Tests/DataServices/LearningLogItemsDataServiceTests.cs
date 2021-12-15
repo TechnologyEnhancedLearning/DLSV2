@@ -335,7 +335,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId
+                    GenericLearningResourceReferenceId
                 );
 
                 // When

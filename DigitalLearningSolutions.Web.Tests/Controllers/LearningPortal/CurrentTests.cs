@@ -66,7 +66,7 @@
         public async Task Current_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -80,7 +80,7 @@
         public async Task Current_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -94,7 +94,7 @@
         public async Task AllCurrentItems_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -108,7 +108,7 @@
         public async Task AllCurrentItems_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
