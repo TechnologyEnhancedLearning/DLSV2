@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Tracker
 {
-    public class ObjectiveBase
+    public abstract class ObjectiveBase
     {
+        public ObjectiveBase() { }
+
         public ObjectiveBase(int tutorialId, int possible)
         {
             TutorialId = tutorialId;

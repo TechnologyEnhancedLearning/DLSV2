@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using Microsoft.Extensions.Logging;
 
     public interface ILearningLogItemsDataService
     {
@@ -17,7 +18,7 @@
             DateTime addedDate,
             string activityName,
             string resourceLink,
-            int competencyLearningResourceId
+            int learningResourceReferenceId
         );
 
         void InsertCandidateAssessmentLearningLogItem(int assessmentId, int learningLogId);
@@ -25,6 +26,8 @@
         void InsertLearningLogItemCompetencies(int learningLogId, int competencyId, DateTime associatedDate);
 
         void UpdateLearningLogItemLastAccessedDate(int id, DateTime lastAccessedDate);
+
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate);
 
         void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate);
     }
@@ -53,14 +56,17 @@
                         ExternalUri,
                         SeqInt,
                         LastAccessedDate,
-                        LinkedCompetencyLearningResourceID,
-                        clr.LHResourceReferenceID AS LearningHubResourceReferenceID";
+                        LearningResourceReferenceID,
+                        lrr.ResourceRefID AS LearningHubResourceReferenceID";
 
         private readonly IDbConnection connection;
 
-        public LearningLogItemsDataService(IDbConnection connection)
+        private readonly ILogger<LearningLogItemsDataService> logger;
+
+        public LearningLogItemsDataService(IDbConnection connection, ILogger<LearningLogItemsDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public IEnumerable<LearningLogItem> GetLearningLogItems(int delegateId)
@@ -70,7 +76,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
                     WHERE LoggedById = @delegateId
                     AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
                 new { delegateId }
@@ -84,7 +90,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-                    INNER JOIN CompetencyLearningResources AS clr ON clr.ID = l.LinkedCompetencyLearningResourceID
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
                     WHERE a.TypeLabel = '{LearningHubResourceActivityLabel}'
                     AND LearningLogItemID = @learningLogItemId",
                 new { learningLogItemId }
@@ -96,7 +102,7 @@
             DateTime addedDate,
             string activityName,
             string resourceLink,
-            int competencyLearningResourceId
+            int learningResourceReferenceId
         )
         {
             var learningLogItemId = connection.QuerySingle<int>(
@@ -105,7 +111,7 @@
                         LoggedByID,
                         Activity,
                         ExternalUri,
-                        LinkedCompetencyLearningResourceID,
+                        LearningResourceReferenceID,
                         ActivityTypeID,
                         DueDate,
                         CompletedDate,
@@ -126,7 +132,7 @@
                         @delegateId,
                         @activityName,
                         @resourceLink,
-                        @competencyLearningResourceId,
+                        @learningResourceReferenceId,
                         (SELECT TOP 1 ID FROM ActivityTypes WHERE TypeLabel = 'Learning Hub Resource'),
                         NULL,
                         NULL,
@@ -140,7 +146,7 @@
                         NULL,
                         NULL,
                         NULL)",
-                new { addedDate, delegateId, activityName, resourceLink, competencyLearningResourceId }
+                new { addedDate, delegateId, activityName, resourceLink, learningResourceReferenceId }
             );
 
             return learningLogItemId;
@@ -175,6 +181,24 @@
                     WHERE LearningLogItemID = @id",
                 new { id, lastAccessedDate }
             );
+        }
+
+        public void SetCompletionDate(int learningLogItemId, DateTime? completedDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE LearningLogItems
+                        SET CompletedDate = @completedDate
+                        WHERE LearningLogItemID = @learningLogItemId",
+                new { learningLogItemId, completedDate }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting current learning log completed date as db update failed. " +
+                    $"Learning log item id: {learningLogItemId}, completed date: {completedDate}"
+                );
+            }
         }
 
         public void RemoveLearningLogItem(int learningLogId, int removedById, DateTime removedDate)

@@ -1,10 +1,9 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
@@ -49,7 +48,6 @@
         public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
-            SqlMapper.AddTypeHandler(new EnumerableIntHandler());
         }
 
         public TutorialInformation? GetTutorialInformation(
