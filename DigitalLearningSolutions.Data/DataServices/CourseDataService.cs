@@ -241,10 +241,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @delegateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
                new { selfAssessmentId, candidateId });
 
-            if (enrolmentExists > 0)
+            if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
                 @"INSERT INTO [dbo].[CandidateAssessments]
