@@ -31,10 +31,15 @@
         </div>
       </div>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-bottom-4"
-         aria-describedby="@Model.Id-name-lhr">
+         aria-describedby="@Model.Id-name-lhr"
+         role="button">
         Mark as complete
       </a>
-      <a class="nhsuk-button delete-button small-edit-button" aria-describedby="@Model.Id-name-lhr">
+      <a class="nhsuk-button delete-button small-edit-button"
+         aria-describedby="@Model.Id-name-lhr"
+         asp-action="RemoveResourceFromActionPlan"
+         asp-route-learningLogItemId="@Model.Id"
+         role="button">
         Remove learning resource
       </a>
 
@@ -46,7 +51,8 @@
       <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
          aria-describedby="@Model.Id-name-lhr"
          asp-action="LaunchLearningResource"
-         asp-route-learningLogItemId="@Model.Id">
+         asp-route-learningLogItemId="@Model.Id"
+         role="button">
         Launch learning resource
       </a>
     </div>

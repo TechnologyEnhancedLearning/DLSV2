@@ -55,7 +55,11 @@
             try
             {
                 courseDelegatesData =
-                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(centreId, adminCategoryId, customisationId);
+                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                        centreId,
+                        adminCategoryId,
+                        customisationId
+                    );
             }
             catch (CourseNotFoundException)
             {
