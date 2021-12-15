@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -421,7 +422,11 @@
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress> { new Progress { ProgressId = 1, Completed = null, RemovedDate = null } }
+                new List<Progress> {
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
+                }
             );
 
             // When
@@ -437,6 +442,25 @@
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
                 new List<Progress>()
+            );
+
+            // When
+            var result = courseService.DelegateHasCurrentProgress(1, 1);
+
+            // then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DelegateHasCurrentProgress_returns_false_if_delegate_has_only_completed_or_removed_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>
+                {
+                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
+                }
             );
 
             // When
