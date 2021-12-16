@@ -29,16 +29,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         //public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var response = new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
+            if (model.FrameworkCompetencyGroupId.HasValue)
+            {
+                var competency = frameworkService.GetCompetencyGroupBaseById(model.FrameworkCompetencyGroupId.Value);
+                response.NameOfCompetency = competency?.Name ?? "";
+            }
             if (model.SearchText?.Trim().Length > 1)
             {
-                response.Page = model.Page; 
+                response.Page = model.Page;
                 response.SearchText = model.SearchText;
                 await GetResourcesFromLearningHubApiAsync(response);
-                if (model.FrameworkCompetencyGroupId.HasValue)
-                {
-                    var competency = frameworkService.GetCompetencyGroupBaseById(model.FrameworkCompetencyGroupId.Value);
-                    response.NameOfCompetency = competency?.Name ?? "";
-                }
             }
             return View("Developer/AddCompetencyLearningResources", response);
         }
