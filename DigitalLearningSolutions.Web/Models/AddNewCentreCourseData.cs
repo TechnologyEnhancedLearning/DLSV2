@@ -35,8 +35,8 @@
         public void SetCourseDetails(EditCourseDetailsFormData formData)
         {
             SetCourseDetailsViewModel.ApplicationId = formData.ApplicationId;
+            SetCourseDetailsViewModel.ApplicationName = formData.ApplicationName;
             SetCourseDetailsViewModel.CustomisationName = formData.CustomisationName;
-            SetCourseDetailsViewModel.CustomisationNameSuffix = formData.CustomisationNameSuffix;
             SetCourseDetailsViewModel.PasswordProtected = formData.PasswordProtected;
             SetCourseDetailsViewModel.Password = formData.Password;
             SetCourseDetailsViewModel.ReceiveNotificationEmails = formData.ReceiveNotificationEmails;
