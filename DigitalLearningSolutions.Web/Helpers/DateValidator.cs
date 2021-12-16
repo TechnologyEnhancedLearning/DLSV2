@@ -18,7 +18,9 @@
         {
             if (!day.HasValue && !month.HasValue && !year.HasValue)
             {
-                return required ? new DateValidationResult(name + " is required") : new DateValidationResult();
+                return required
+                    ? new DateValidationResult("Enter " + NameWithIndefiniteArticle(name))
+                    : new DateValidationResult();
             }
 
             if (day.HasValue && month.HasValue && year.HasValue)
@@ -30,7 +32,14 @@
             return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
-        private static DateValidationResult ValidateDate(int day, int month, int year, string name, bool dateMustNotBeInPast, bool dateMustNotBeInFuture)
+        private static DateValidationResult ValidateDate(
+            int day,
+            int month,
+            int year,
+            string name,
+            bool dateMustNotBeInPast,
+            bool dateMustNotBeInFuture
+        )
         {
             // note: the minimum year the DB can store is 1753
             var invalidDay = day < 1 || day > 31;
@@ -48,17 +57,17 @@
                 var date = new DateTime(year, month, day);
                 if (dateMustNotBeInPast && date < DateTime.Today)
                 {
-                    return new DateValidationResult(name + " must not be in the past");
+                    return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the past");
                 }
 
                 if (dateMustNotBeInFuture && date > DateTime.Today)
                 {
-                    return new DateValidationResult(name + " must not be in the future");
+                    return new DateValidationResult("Enter " + NameWithIndefiniteArticle(name) + " not in the future");
                 }
             }
             catch (ArgumentOutOfRangeException)
             {
-                return new DateValidationResult(name + " must be a real date");
+                return new DateValidationResult("Enter a real date for " + name);
             }
 
             return new DateValidationResult();
@@ -83,7 +92,8 @@
                 missingValues.Add("year");
             }
 
-            return name + " must include a " + string.Join(" and a ", missingValues);
+            return "Enter " + NameWithIndefiniteArticle(name) + " containing a " +
+                   string.Join(" and a ", missingValues);
         }
 
         private static string GetInvalidValuesErrorMessage(
@@ -112,10 +122,21 @@
 
             if (invalidValues.Count == 3)
             {
-                return name + " must be a real date";
+                return "Enter a real date for " + name;
             }
 
-            return name + " must include a real " + string.Join(" and ", invalidValues);
+            return "Enter " + NameWithIndefiniteArticle(name) + " containing a real " +
+                   string.Join(" and ", invalidValues);
+        }
+
+        private static string NameWithIndefiniteArticle(string name)
+        {
+            return (StartsWithVowel(name) ? "an " : "a ") + name;
+        }
+
+        private static bool StartsWithVowel(string str)
+        {
+            return "aeiouAEIOU".Contains(str[0]);
         }
 
         public class DateValidationResult

@@ -1,19 +1,11 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword
 @using Microsoft.Extensions.Configuration
 @model SetDelegatePasswordViewModel
 
 @{
-    ViewData["Title"] = "Set delegate user password";
-    ViewData["Application"] = DlsSubApplication.TrackingSystem.HeaderExtension;
-    ViewData["HeaderPath"] = DlsSubApplication.TrackingSystem.HeaderPath;
-    ViewData["HeaderPathName"] = DlsSubApplication.TrackingSystem.HeaderPathName;
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
-}
-
-@section NavMenuItems {
-  <partial name="_AutoNavMenuItems" model="DlsSubApplication.TrackingSystem" />
+  ViewData["Title"] = "Set delegate user password";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 
 <div class="nhsuk-grid-row">
@@ -36,7 +28,7 @@
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="Index">
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="DelegateId" />
-      <input type="hidden" asp-for="IsFromViewDelegatePage"/>
+      <input type="hidden" asp-for="IsFromViewDelegatePage" />
       <vc:text-input asp-for="@nameof(Model.Password)"
                      label="Password"
                      populate-with-current-value="false"

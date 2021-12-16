@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@model RemoveActionPlanResourceViewModel
+
+@{
+  ViewData["Title"] = $"Learning Portal - {Model.Name} - Remove - Confirmation";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l word-break">
+      Are you sure you want to remove @Model.Name?
+    </h1>
+    <p>
+      Are you sure that you wish to remove this resource from your action plan?
+    </p>
+
+    <div class="nhsuk-form-group" id="form-group">
+      <form asp-action="RemoveResourceFromActionPlanPost" asp-route-learningLogItemId="@Model.LearningLogItemId">
+        <button class="nhsuk-button delete-button" type="submit">
+          Remove resource
+        </button>
+      </form>
+    </div>
+
+    <vc:cancel-link asp-controller="LearningPortal" asp-action="Current" />
+  </div>
+</div>

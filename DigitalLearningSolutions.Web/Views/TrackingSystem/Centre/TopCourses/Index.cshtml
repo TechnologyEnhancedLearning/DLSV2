@@ -5,13 +5,6 @@
 
 @{
   ViewData["Title"] = "Top courses";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
-}
-
-@section NavMenuItems {
-  <partial name="~/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {
@@ -48,7 +41,7 @@
       <tbody class="nhsuk-table__body">
       @foreach (var course in Model.TopCourses) {
         <tr role="row" class="nhsuk-table__row">
-          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding word-break">
             <span class="nhsuk-table-responsive__heading">Course </span>@course.CourseName
           </td>
           <td role="cell" class="nhsuk-table__cell nhsuk-u-padding-left-2 cell-right-padding">

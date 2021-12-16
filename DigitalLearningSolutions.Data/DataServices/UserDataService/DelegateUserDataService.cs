@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
     using System.Collections.Generic;
-    using System.Data;
     using System.Linq;
     using System.Transactions;
     using Dapper;
@@ -142,7 +141,8 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
-                        jg.JobGroupName
+                        jg.JobGroupName,
+                        cd.ResetPasswordID
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
@@ -204,6 +204,19 @@
             );
         }
 
+        public void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                        SET
+                            FirstName = @firstName,
+                            LastName = @surname,
+                            EmailAddress = @email
+                        WHERE CandidateID in @ids",
+                new { firstName, surname, email, ids }
+            );
+        }
+
         public void ApproveDelegateUsers(params int[] ids)
         {
             connection.Execute(
@@ -237,32 +250,6 @@
             return (int)connection.ExecuteScalar(
                 @"SELECT COUNT(*) FROM Candidates WHERE Active = 1 AND Approved = 1 AND CentreID = @centreId",
                 new { centreId }
-            );
-        }
-
-        public int UpdateDelegateRecord(DelegateRecord record)
-        {
-            return connection.QuerySingle<int>(
-                "uspUpdateCandidate_V7",
-                new
-                {
-                    record.CentreId,
-                    DelegateID = record.CandidateNumber,
-                    record.FirstName,
-                    record.LastName,
-                    record.JobGroupId,
-                    record.Active,
-                    record.Answer1,
-                    record.Answer2,
-                    record.Answer3,
-                    record.Answer4,
-                    record.Answer5,
-                    record.Answer6,
-                    record.AliasId,
-                    record.Approved,
-                    record.Email,
-                },
-                commandType: CommandType.StoredProcedure
             );
         }
 
@@ -396,6 +383,50 @@
                     SET Active = 0
                     WHERE CandidateID = @delegateId",
                 new { delegateId }
+            );
+        }
+
+        public void ActivateDelegateUser(int delegateId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET Active = 1
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            );
+        }
+
+        public IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId)
+        {
+            return connection.Query<DelegateUser>(
+                @"SELECT
+                        cd.CandidateID AS Id,
+                        cd.AliasID,
+                        cd.CandidateNumber,
+                        ct.CentreName,
+                        cd.CentreID,
+                        cd.DateRegistered,
+                        ct.Active AS CentreActive,
+                        cd.EmailAddress,
+                        cd.FirstName,
+                        cd.LastName,
+                        cd.Password,
+                        cd.Active,
+                        cd.Approved,
+                        cd.ProfileImage,
+                        cd.Answer1,
+                        cd.Answer2,
+                        cd.Answer3,
+                        cd.Answer4,
+                        cd.Answer5,
+                        cd.Answer6,
+                        cd.JobGroupID,
+                        jg.JobGroupName
+                    FROM Candidates AS cd
+                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
+                    WHERE cd.AliasID = @aliasId",
+                new { aliasId }
             );
         }
     }

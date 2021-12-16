@@ -6,7 +6,9 @@ namespace DigitalLearningSolutions.Web
     using System.IO;
     using System.Threading.Tasks;
     using System.Web;
+    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Mappers;
@@ -58,7 +60,7 @@ namespace DigitalLearningSolutions.Web
                         options.Cookie.Name = ".AspNet.SharedCookie";
                         options.Cookie.Path = "/";
                         options.Events.OnRedirectToLogin = RedirectToLogin;
-                        options.Events.OnRedirectToAccessDenied = RedirectToHome;
+                        options.Events.OnRedirectToAccessDenied = RedirectToAccessDenied;
                     }
                 );
 
@@ -89,6 +91,10 @@ namespace DigitalLearningSolutions.Web
                         CustomPolicies.UserCentreAdminOrFrameworksAdmin,
                         policy => CustomPolicies.ConfigurePolicyUserCentreAdminOrFrameworksAdmin(policy)
                     );
+                    options.AddPolicy(
+                        CustomPolicies.UserSuperAdmin,
+                        policy => CustomPolicies.ConfigurePolicyUserSuperAdmin(policy)
+                    );
                 }
             );
 
@@ -116,6 +122,9 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/Configuration/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -145,11 +154,13 @@ namespace DigitalLearningSolutions.Web
             RegisterServices(services);
             RegisterDataServices(services);
             RegisterHelpers(services);
+            RegisterHttpClients(services);
             RegisterWebServiceFilters(services);
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddScoped<IActionPlanService, ActionPlanService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
@@ -172,6 +183,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
+            services.AddScoped<ILearningHubApiService, LearningHubApiService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
@@ -179,7 +191,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordResetService, PasswordResetService>();
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
+            services.AddScoped<IProgressService, ProgressService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
             services.AddScoped<ISectionService, SectionService>();
             services.AddScoped<ISelfAssessmentService, SelfAssessmentService>();
@@ -187,10 +201,13 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
             services.AddScoped<ITrackerService, TrackerService>();
+            services.AddScoped<ITrackerActionService, TrackerActionService>();
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
             services.AddScoped<IGroupsService, GroupsService>();
+            services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
+            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -198,6 +215,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityDataService, ActivityDataService>();
             services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
+            services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
             services.AddScoped<ICourseCategoriesDataService, CourseCategoriesDataService>();
             services.AddScoped<ICourseDataService, CourseDataService>();
@@ -208,6 +226,8 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
+            services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
+            services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -216,7 +236,9 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IProgressDataService, ProgressDataService>();
             services.AddScoped<IRegionDataService, RegionDataService>();
             services.AddScoped<IRegistrationDataService, RegistrationDataService>();
+            services.AddScoped<IResourceDataService, ResourceDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
+            services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
             services.AddScoped<ISupportTicketDataService, SupportTicketDataService>();
@@ -227,10 +249,15 @@ namespace DigitalLearningSolutions.Web
 
         private static void RegisterHelpers(IServiceCollection services)
         {
-            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
             services.AddScoped<CentreCustomPromptHelper>();
-            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
+        }
+
+        private static void RegisterHttpClients(IServiceCollection services)
+        {
+            services.AddHttpClient<IMapsApiHelper, MapsApiHelper>();
+            services.AddHttpClient<ILearningHubApiClient, LearningHubApiClient>();
+            services.AddScoped<IFilteredApiHelperService, FilteredApiHelper>();
         }
 
         private static void RegisterWebServiceFilters(IServiceCollection services)
@@ -247,7 +274,16 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<EditAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
-            services.AddScoped<VerifyAdminUserCanAccessCourse>();
+            services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
+            services.AddScoped<VerifyAdminUserCanManageCourse>();
+            services.AddScoped<VerifyAdminUserCanViewCourse>();
+            services.AddScoped<VerifyAdminUserCanAccessGroup>();
+            services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
+            services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
+            services.AddScoped<VerifyAdminUserCanAccessProgress>();
+            services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
+            services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
+            services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)
@@ -255,7 +291,7 @@ namespace DigitalLearningSolutions.Web
             app.UseForwardedHeaders(
                 new ForwardedHeadersOptions
                 {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
                 }
             );
 
@@ -292,9 +328,9 @@ namespace DigitalLearningSolutions.Web
             return Task.CompletedTask;
         }
 
-        private Task RedirectToHome(RedirectContext<CookieAuthenticationOptions> context)
+        private Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
         {
-            context.HttpContext.Response.Redirect("/Home");
+            context.HttpContext.Response.Redirect("/AccessDenied");
             return Task.CompletedTask;
         }
     }

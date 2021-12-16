@@ -1,4 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Enums
 {
-    public enum TrackerEndpointAction { }
+    public enum TrackerEndpointAction
+    {
+        GetObjectiveArray,
+        GetObjectiveArrayCc,
+    }
 }

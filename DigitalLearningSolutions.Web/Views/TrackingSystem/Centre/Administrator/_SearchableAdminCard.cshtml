@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 @model SearchableAdminViewModel
 
-<div class="searchable-element nhsuk-panel" id="@Model.Id-card">
+<div class="searchable-element nhsuk-panel word-break" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.Id-name" name="name">
@@ -53,9 +53,16 @@
           Manage roles
         </a>
       }
-      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1" role="button">
-        Deactivate admin account
-      </a>
+      @if (!Model.IsCentreManager) { 
+        <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+           role="button"
+           aria-label="Deactivate admin account"
+           asp-controller="Administrator"
+           asp-action="DeactivateAdmin"
+           asp-route-adminId="@Model.Id">
+          Deactivate admin account
+        </a>
+      }
     </div>
   </details>
 </div>

@@ -21,12 +21,13 @@
             TimeSpan expiryTime
         );
 
-        void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
+        Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl);
         Task InvalidateResetPasswordForEmailAsync(string email);
-        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl);
+        void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl);
 
         void GenerateAndScheduleDelegateWelcomeEmail(
             string recipientEmailAddress,
+            string candidateNumber,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
@@ -59,13 +60,15 @@
             this.clockService = clockService;
         }
 
-        public void GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
+        public async Task GenerateAndSendPasswordResetLink(string emailAddress, string baseUrl)
         {
             (User? user, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
             user ??= delegateUsers.FirstOrDefault() ??
                      throw new UserAccountNotFoundException(
                          "No user account could be found with the specified email address"
                      );
+
+            await InvalidateResetPasswordForEmailAsync(emailAddress);
             string resetPasswordHash = GenerateResetPasswordHash(user);
             var resetPasswordEmail = GeneratePasswordResetEmail(
                 emailAddress,
@@ -86,12 +89,12 @@
             }
         }
 
-        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string baseUrl)
+        public void GenerateAndSendDelegateWelcomeEmail(string emailAddress, string candidateNumber, string baseUrl)
         {
-            (_, List<DelegateUser> delegateUsers) = userService.GetUsersByEmailAddress(emailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault() ??
+            var delegateUsers = userService.GetDelegateUsersByEmailAddress(emailAddress);
+            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
@@ -106,15 +109,16 @@
 
         public void GenerateAndScheduleDelegateWelcomeEmail(
             string recipientEmailAddress,
+            string candidateNumber,
             string baseUrl,
             DateTime deliveryDate,
             string addedByProcess
         )
         {
             var delegateUsers = userService.GetDelegateUsersByEmailAddress(recipientEmailAddress);
-            var delegateUser = delegateUsers.FirstOrDefault() ??
+            var delegateUser = delegateUsers.FirstOrDefault(d => d.CandidateNumber == candidateNumber) ??
                                throw new UserAccountNotFoundException(
-                                   "No user account could be found with the specified email address"
+                                   "No user account could be found with the specified email address and candidate number"
                                );
 
             string setPasswordHash = GenerateResetPasswordHash(delegateUser);
@@ -214,7 +218,7 @@
                                     <p>To reset your password please follow this link: <a href=""{resetPasswordUrl.Uri}"">{resetPasswordUrl.Uri}</a></p>
                                     <p>Note that this link can only be used once and it will expire in two hours.</p>
                                     <p>Please don’t reply to this email as it has been automatically generated.</p>
-                                </body>"
+                                </body>",
             };
 
             return new Email(emailSubject, body, emailAddress);
@@ -253,7 +257,7 @@
                                 <p><a href=""{setPasswordUrl.Uri}"">Click here to complete your registration and access your Digital Learning Solutions content</a></p>
                                 <p>Note that this link can only be used once and it will expire in three days.</p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
-                            </body>"
+                            </body>",
             };
 
             return new Email(emailSubject, body, emailAddress);

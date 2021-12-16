@@ -11,10 +11,12 @@ namespace DigitalLearningSolutions.Data.Services
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.Register;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
 
     public interface IDelegateUploadFileService
     {
@@ -28,13 +30,17 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration configuration;
 
         public DelegateUploadFileService(
             IJobGroupsDataService jobGroupsDataService,
             IUserDataService userDataService,
             IRegistrationDataService registrationDataService,
             ISupervisorDelegateService supervisorDelegateService,
-            IUserService userService
+            IUserService userService,
+            IPasswordResetService passwordResetService,
+            IConfiguration configuration
         )
         {
             this.userDataService = userDataService;
@@ -42,6 +48,8 @@ namespace DigitalLearningSolutions.Data.Services
             this.supervisorDelegateService = supervisorDelegateService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
+            this.passwordResetService = passwordResetService;
+            this.configuration = configuration;
         }
 
         public BulkUploadResult ProcessDelegatesFile(IFormFile file, int centreId, DateTime? welcomeEmailDate)
@@ -204,6 +212,16 @@ namespace DigitalLearningSolutions.Data.Services
                 default:
                     var newDelegateRecord = userDataService.GetDelegateUserByCandidateNumber(errorCodeOrCandidateNumber, centreId)!;
                     SetUpSupervisorDelegateRelations(delegateRow.Email!, centreId, newDelegateRecord.Id);
+                    if (welcomeEmailDate.HasValue)
+                    {
+                        passwordResetService.GenerateAndScheduleDelegateWelcomeEmail(
+                            delegateRow.Email!,
+                            newDelegateRecord.CandidateNumber,
+                            configuration.GetAppRootPath(),
+                            welcomeEmailDate.Value,
+                            "DelegateBulkUpload_Refactor"
+                        );
+                    }
                     delegateRow.RowStatus = RowStatus.Registered;
                     break;
             }

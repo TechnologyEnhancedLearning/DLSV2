@@ -36,7 +36,7 @@
             A.CallTo(() => centresDataService.GetCentreDetailsById(A<int>._))
                 .Returns(CentreTestHelper.GetDefaultCentre());
             A.CallTo(() => userDataService.GetNumberOfApprovedDelegatesAtCentre(A<int>._)).Returns(1);
-            A.CallTo(() => courseDataService.GetNumberOfActiveCoursesAtCentreForCategory(A<int>._, A<int>._))
+            A.CallTo(() => courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(A<int>._, A<int>._))
                 .Returns(1);
             A.CallTo(() => userDataService.GetNumberOfActiveAdminsAtCentre(A<int>._)).Returns(1);
             A.CallTo(() => ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(A<int>._)).Returns(1);

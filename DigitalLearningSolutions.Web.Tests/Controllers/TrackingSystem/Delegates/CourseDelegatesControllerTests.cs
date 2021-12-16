@@ -1,176 +1,73 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class CourseDelegatesControllerTests
     {
+        private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
-        private ICourseService courseService = null!;
 
         [SetUp]
         public void SetUp()
         {
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
-            courseService = A.Fake<ICourseService>();
-            controller = new CourseDelegatesController(courseDelegatesService, courseService)
-                .WithDefaultContext()
-                .WithMockUser(true);
+
+            controller = new CourseDelegatesController(courseDelegatesService).WithDefaultContext()
+                .WithMockUser(true, UserCentreId);
         }
 
         [Test]
-        public void DelegateProgress_returns_NotFound_when_requested_record_does_not_exist()
+        public void Index_shows_index_page_when_no_customisationId_supplied()
         {
             // Given
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._)).Returns(null);
+            var course = new Course { CustomisationId = 1, Active = true };
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, null))
+                .Returns(new CourseDelegatesData(1, new List<Course> { course }, new List<CourseDelegate>()));
 
             // When
-            var result = controller.DelegateProgress(1);
+            var result = controller.Index();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void Index_returns_Not_Found_when_service_returns_null()
+        {
+            // Given
+            A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, 2))
+                .Throws<CourseNotFoundException>();
+
+            // When
+            var result = controller.Index(2);
 
             // Then
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void DelegateProgress_returns_NotFound_when_requested_record_delegate_is_at_different_centre()
+        public void AllCourseDelegates_gets_courses_for_user_details_only()
         {
             // Given
-            var delegateCourseInfo = new DelegateCourseInfo
-            {
-                DelegateCentreId = 1
-            };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
-                        new AttemptStats(0, 0)
-                    )
-                );
+            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
+                .Returns(new List<CourseDelegate>());
 
             // When
-            var result = controller.DelegateProgress(1);
+            controller.AllCourseDelegates(2);
 
             // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void
-            DelegateProgress_returns_NotFound_when_requested_record_course_is_at_different_centre_and_not_an_all_centre_course()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo
-            {
-                DelegateCentreId = 2,
-                CustomisationCentreId = 1,
-                AllCentresCourse = false
-            };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
-                        new AttemptStats(0, 0)
-                    )
-                );
-
-            // When
-            var result = controller.DelegateProgress(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void DelegateProgress_returns_NotFound_when_requested_record_course_category_does_not_match()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo
-            {
-                DelegateCentreId = 2,
-                CustomisationCentreId = 2,
-                AllCentresCourse = false,
-                CourseCategoryId = 3
-            };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
-                        new AttemptStats(0, 0)
-                    )
-                );
-
-            // When
-            var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void DelegateProgress_returns_DelegateProgress_page_when_requested_record_is_valid_at_centre()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo
-            {
-                DelegateCentreId = 2,
-                CustomisationCentreId = 2,
-                AllCentresCourse = false,
-                CourseCategoryId = 1
-            };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
-                        new AttemptStats(0, 0)
-                    )
-                );
-
-            // When
-            var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DelegateProgressViewModel>();
-        }
-
-        [Test]
-        public void
-            DelegateProgress_returns_DelegateProgress_page_when_requested_record_is_valid_and_course_is_all_centre_course()
-        {
-            // Given
-            var delegateCourseInfo = new DelegateCourseInfo
-            {
-                DelegateCentreId = 2,
-                CustomisationCentreId = 3,
-                AllCentresCourse = true,
-                CourseCategoryId = 1
-            };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(A<int>._, A<int>._))
-                .Returns(
-                    new DelegateCourseDetails(
-                        delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
-                        new AttemptStats(0, 0)
-                    )
-                );
-
-            // When
-            var result = controller.WithMockUser(true, adminCategoryId: 1).DelegateProgress(1);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DelegateProgressViewModel>();
+            A.CallTo(() => courseDelegatesService.GetCourseDelegatesForCentre(2, UserCentreId))
+                .MustHaveHappened();
         }
     }
 }

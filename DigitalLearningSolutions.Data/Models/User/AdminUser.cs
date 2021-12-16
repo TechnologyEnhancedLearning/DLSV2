@@ -22,6 +22,8 @@
 
         public int CategoryId { get; set; }
 
+        public int? CategoryIdFilter => CategoryId == 0 ? (int?)null : CategoryId;
+
         public string? CategoryName { get; set; }
 
         public bool IsSupervisor { get; set; }

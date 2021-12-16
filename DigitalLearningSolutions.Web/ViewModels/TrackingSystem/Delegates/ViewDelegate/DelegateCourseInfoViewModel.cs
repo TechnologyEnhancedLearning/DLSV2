@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public DelegateCourseInfoViewModel(DelegateCourseDetails details)
         {
             var info = details.DelegateCourseInfo;
+            ProgressId = info.ProgressId;
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
@@ -26,12 +27,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
                 2 => "Administrator",
                 3 => "Group",
                 4 => "System",
-                _ => ""
+                _ => "",
             };
             LoginCount = info.LoginCount;
             LearningTime = info.LearningTime + " mins";
             DiagnosticScore = info.DiagnosticScore;
             IsAssessed = info.IsAssessed;
+
+            DelegateId = details.DelegateCourseInfo.DelegateId;
 
             CourseCustomPromptsWithAnswers = details.CustomPrompts;
             TotalAttempts = details.AttemptStats.TotalAttempts;
@@ -39,7 +42,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             PassRate = details.AttemptStats.PassRate;
         }
 
+        public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
+        public int DelegateId { get; set; }
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? SupervisorForename { get; set; }

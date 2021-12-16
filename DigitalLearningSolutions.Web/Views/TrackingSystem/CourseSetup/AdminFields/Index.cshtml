@@ -10,15 +10,8 @@
 
 @{
   ViewData["Title"] = "Manage course admin fields";
-  ViewData["Application"] = "Tracking System";
-  ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/TrackingSystem/Centre/Dashboard";
-  ViewData["HeaderPathName"] = "Tracking System";
   var canAddNewField = Model.CustomFields.Count < 3;
   var backLinkData = Html.GetRouteValues();
-}
-
-@section NavMenuItems {
-  <partial name="/Views/TrackingSystem/Shared/_NavMenuItems.cshtml" />
 }
 
 @section NavBreadcrumbs {

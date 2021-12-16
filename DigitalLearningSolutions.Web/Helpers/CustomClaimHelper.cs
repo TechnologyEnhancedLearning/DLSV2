@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public static class CustomClaimHelper
     {
@@ -25,15 +26,21 @@
             return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserCentreId);
         }
 
-        public static int? GetAdminCategoryId(this ClaimsPrincipal user)
+        /// <summary>
+        ///     Returns the Admin Category ID or null if the ID is non-existent
+        ///     Also returns null if ID is zero to match the data service convention of not filtering on NULL category filter
+        /// </summary>
+        public static int? GetAdminCourseCategoryFilter(this ClaimsPrincipal user)
         {
-            return user.GetCustomClaimAsInt(CustomClaimTypes.AdminCategoryId);
+            var categoryId = user.GetCustomClaimAsInt(CustomClaimTypes.AdminCategoryId);
+            return categoryId == 0 ? null : categoryId;
         }
 
         public static string? GetCustomClaim(this ClaimsPrincipal user, string customClaimType)
         {
             return user.FindFirst(customClaimType)?.Value;
         }
+
         public static string? GetUserEmail(this ClaimsPrincipal user)
         {
             return user.FindFirst(ClaimTypes.Email).Value;
@@ -42,7 +49,11 @@
         public static int? GetCustomClaimAsInt(this ClaimsPrincipal user, string customClaimType)
         {
             var customClaimString = user.GetCustomClaim(customClaimType);
-            if (customClaimString == null) return null;
+            if (customClaimString == null)
+            {
+                return null;
+            }
+
             try
             {
                 return int.Parse(customClaimString);
@@ -56,7 +67,11 @@
         public static bool? GetCustomClaimAsBool(this ClaimsPrincipal user, string customClaimType)
         {
             var customClaimString = user.GetCustomClaim(customClaimType);
-            if (customClaimString == null) return null;
+            if (customClaimString == null)
+            {
+                return null;
+            }
+
             try
             {
                 return bool.Parse(customClaimString);
@@ -113,6 +128,11 @@
         public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
+        }
+
+        public static string GetCandidateNumberKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber)!;
         }
     }
 }

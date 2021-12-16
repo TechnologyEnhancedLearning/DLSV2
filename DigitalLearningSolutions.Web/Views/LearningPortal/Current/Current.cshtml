@@ -20,9 +20,8 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">My Current Activities</h1>
-    @if (Model.BannerText != null)
-    {
-      <h2 class="page-subheading">@Model.BannerText</h2>
+    @if (Model.BannerText != null) {
+      <h2 class="page-subheading word-break">@Model.BannerText</h2>
       }
 
     @if (Model.NoDataFound) {
@@ -36,9 +35,11 @@
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var currentLearningItem in Model.CurrentCourses) {
+        @foreach (var currentLearningItem in Model.CurrentActivities) {
           if (currentLearningItem is SelfAssessmentCardViewModel) {
             <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
+          } else if (currentLearningItem is LearningResourceCardViewModel) {
+            <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
           } else {
             <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
           }

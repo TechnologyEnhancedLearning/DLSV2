@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.LearningSolutions;
+    using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningSolutions;
     using FakeItEasy;
     using FluentAssertions;
@@ -13,13 +14,13 @@
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    class LearningSolutionsControllerTests
+    internal class LearningSolutionsControllerTests
     {
-        private LearningSolutionsController controller;
-        private ICentresDataService centresDataService;
-        private IConfigService configService;
         private const int CandidateId = 11;
         private const int CentreId = 2;
+        private ICentresDataService centresDataService = null!;
+        private IConfigService configService = null!;
+        private LearningSolutionsController controller = null!;
 
         [SetUp]
         public void SetUp()
@@ -28,18 +29,24 @@
             configService = A.Fake<IConfigService>();
             var logger = A.Fake<ILogger<LearningSolutionsController>>();
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
-            {
-                new Claim("learnCandidateID", CandidateId.ToString()),
-                new Claim("UserCentreID", CentreId.ToString())
-            }, "mock"));
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    new[]
+                    {
+                        new Claim("learnCandidateID", CandidateId.ToString()),
+                        new Claim("UserCentreID", CentreId.ToString()),
+                    },
+                    "mock"
+                )
+            );
             controller = new LearningSolutionsController(
                 configService,
                 logger,
                 centresDataService
             )
             {
-                ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
+                ControllerContext = new ControllerContext
+                    { HttpContext = new DefaultHttpContext { User = user } },
             };
         }
 
@@ -149,6 +156,33 @@
             var expectedModel = new ErrorViewModel(bannerText);
             result.Should().BeViewResult()
                 .ModelAs<ErrorViewModel>().HelpText().Should().Be(expectedModel.HelpText());
+        }
+
+        [Test]
+        public void AccessDenied_returns_AccessDenied_view()
+        {
+            // Given
+            controller.WithMockUser(true, delegateId: null);
+
+            // When
+            var result = controller.AccessDenied();
+
+            // Then
+            result.Should().BeViewResult().WithViewName("Error/AccessDenied");
+        }
+
+        [Test]
+        public void AccessDenied_redirects_to_Learning_Portal_when_user_is_delegate_only()
+        {
+            // Given
+            controller.WithMockUser(true, adminId: null);
+
+            // When
+            var result = controller.AccessDenied();
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName("LearningPortal")
+                .WithActionName("AccessDenied");
         }
     }
 }

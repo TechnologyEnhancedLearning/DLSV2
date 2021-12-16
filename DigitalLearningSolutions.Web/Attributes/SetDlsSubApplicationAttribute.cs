@@ -1,41 +1,26 @@
 ﻿namespace DigitalLearningSolutions.Web.Attributes
 {
     using System;
+    using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
 
+    /// <summary>
+    /// Sets a controller/action to be within the specified DlsSubApplication
+    /// or, if no DlsSubApplication is specified, attempts to read it from the action parameters
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class SetDlsSubApplicationAttribute : Attribute, IActionFilter
     {
-        private readonly string? determiningRouteParameter;
         private readonly string? dlsSubApplicationName;
 
         public SetDlsSubApplicationAttribute(
-            string? dlsSubApplicationName = null,
-            string? determiningRouteParameter = null
+            string? dlsSubApplicationName = null
         )
         {
             this.dlsSubApplicationName = dlsSubApplicationName;
-            this.determiningRouteParameter = determiningRouteParameter;
-            if (dlsSubApplicationName != null && determiningRouteParameter != null)
-            {
-                throw new Exception(
-                    "Only one argument may be passed to SetDlsSubApplicationAttribute. " +
-                    "Define dlsSubApplicationName if the controller is only used in one application, " +
-                    "or define determiningRouteParameter if the controller is used across multiple applications."
-                );
-            }
-
-            if (dlsSubApplicationName == null && determiningRouteParameter == null)
-            {
-                throw new Exception(
-                    "One argument must be passed to SetDlsSubApplicationAttribute. " +
-                    "Define dlsSubApplicationName if the controller is only used in one application, " +
-                    "or define determiningRouteParameter if the controller is used across multiple applications."
-                );
-            }
         }
 
         public void OnActionExecuted(ActionExecutedContext context) { }
@@ -53,8 +38,10 @@
             }
             else
             {
+                var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters
+                    .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
                 controller.ViewData[LayoutViewDataKeys.DlsSubApplication] =
-                    context.ActionArguments[determiningRouteParameter!];
+                    context.ActionArguments[dlsSubApplicationParameterName!];
             }
         }
     }

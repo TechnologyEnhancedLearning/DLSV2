@@ -11,10 +11,12 @@
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
 
         /// <summary>
-        /// Gets a single admin or null by Login or Email Address
+        ///     Gets a single admin or null by Login or Email Address
         /// </summary>
-        /// <exception cref="InvalidOperationException">Thrown in the case where 2 admins are found in the database.
-        /// This should not occur as Login is not an editable column.</exception>
+        /// <exception cref="InvalidOperationException">
+        ///     Thrown in the case where 2 admins are found in the database.
+        ///     This should not occur as Login is not an editable column.
+        /// </exception>
         AdminUser? GetAdminUserByUsername(string username);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
         int GetNumberOfActiveAdminsAtCentre(int centreId);
@@ -66,10 +68,11 @@
         void ApproveDelegateUsers(params int[] ids);
         void RemoveDelegateUser(int delegateId);
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
-        int UpdateDelegateRecord(DelegateRecord record);
         DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
         void DeactivateDelegateUser(int delegateId);
+        IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId);
+        void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
@@ -87,6 +90,8 @@
 
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
         void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
+        void DeactivateAdmin(int adminId);
+        void ActivateDelegateUser(int delegateId);
     }
 
     public partial class UserDataService : IUserDataService
