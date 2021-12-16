@@ -77,8 +77,6 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
 
-        public (int? centreId, int? courseCategoryId) GetCourseValidationDetails(int customisationId);
-
         void CreateNewCentreCourse(
             int centreId,
             int applicationId,

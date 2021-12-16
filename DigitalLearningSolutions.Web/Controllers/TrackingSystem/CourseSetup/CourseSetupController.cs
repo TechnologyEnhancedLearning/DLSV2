@@ -125,7 +125,7 @@
         public IActionResult SelectCourse()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCategoryId()!;
+            var categoryId = User.GetAdminCourseCategoryFilter()!;
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             var model = new SelectCourseViewModel();
