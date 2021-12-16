@@ -190,10 +190,7 @@
             // Given
             const int id = 1;
             const int progressId = 1;
-            int? day = null;
-            int? month = null;
-            int? year = null;
-            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
 
             // When
             controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
@@ -470,12 +467,8 @@
         public void Setting_an_empty_complete_by_date_for_resource_calls_service_with_null()
         {
             // Given
-            // Given
             const int learningLogItemId = 4;
-            int? day = null;
-            int? month = null;
-            int? year = null;
-            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
             A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
 
             // When
