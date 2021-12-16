@@ -23,6 +23,7 @@
         private const int GenericLearningLogItemId = 1;
         private const int GenericDelegateId = 2;
         private const int GenericLearningHubResourceReferenceId = 3;
+        private const int GenericLearningResourceReferenceId = 33;
 
         private IActionPlanService actionPlanService = null!;
         private IClockService clockService = null!;
@@ -443,6 +444,65 @@
                 A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_true_with_no_learning_log_records()
+        {
+            // Given
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(new List<LearningLogItem>());
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(1, GenericDelegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_true_with_no_incomplete_learning_log_records()
+        {
+            // Given
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5)
+                .All()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = DateTime.UtcNow).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(learningLogItems);
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_false_with_an_incomplete_learning_log_record()
+        {
+            // Given
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5)
+                .TheFirst(1)
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = null)
+                .TheRest()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = DateTime.UtcNow).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(learningLogItems);
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

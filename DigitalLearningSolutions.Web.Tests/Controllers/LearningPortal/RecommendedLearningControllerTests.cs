@@ -18,12 +18,12 @@
     {
         private const int DelegateId = 2;
         private const int SelfAssessmentId = 1;
+        private IActionPlanService actionPlanService = null!;
         private IConfiguration configuration = null!;
         private RecommendedLearningController controller = null!;
         private IFilteredApiHelperService filteredApiHelperService = null!;
-        private ISelfAssessmentService selfAssessmentService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
-        private IActionPlanService actionPlanService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
 
         [SetUp]
         public void Setup()
@@ -85,8 +85,47 @@
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(() => filteredApiHelperService.GetUserAccessToken<AccessToken>(A<string>._))
                     .MustNotHaveHappened();
+                A.CallTo(
+                    () => recommendedLearningService.GetRecommendedLearningForSelfAssessment(
+                        SelfAssessmentId,
+                        DelegateId
+                    )
+                ).MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().WithViewName("RecommendedLearning");
             }
+        }
+
+        [Test]
+        public async Task AddResourceToActionPlan_returns_not_found_when_resource_already_in_action_plan()
+        {
+            // Given
+            const int resourceReferenceId = 1;
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+                .Returns(false);
+
+            // When
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public async Task AddResourceToActionPlan_adds_resource_and_returns_redirect_when_resource_not_in_action_plan()
+        {
+            // Given
+            const int resourceReferenceId = 1;
+            A.CallTo(() => actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, DelegateId))
+                .Returns(true);
+
+            // When
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId);
+
+            // Then
+            A.CallTo(() => actionPlanService.AddResourceToActionPlan(resourceReferenceId, DelegateId, SelfAssessmentId))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeRedirectToActionResult().WithActionName("RecommendedLearning")
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
         }
     }
 }

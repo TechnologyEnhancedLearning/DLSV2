@@ -21,11 +21,11 @@
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
     public class RecommendedLearningController : Controller
     {
+        private readonly IActionPlanService actionPlanService;
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
-        private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IRecommendedLearningService recommendedLearningService;
-        private readonly IActionPlanService actionPlanService;
+        private readonly ISelfAssessmentService selfAssessmentService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
@@ -75,7 +75,9 @@
             return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}")]
+        [Route(
+            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
+        )]
         public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -246,10 +248,14 @@
             return View("../LearningPortal/SelfAssessments/FilteredMgp/FilteredResults", model);
         }
 
-        private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(int selfAssessmentId, int candidateId)
+        private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(
+            int selfAssessmentId,
+            int candidateId
+        )
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var recommendedResources = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
+            var recommendedResources =
+                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
             var model = new RecommendedLearningViewModel(assessment, recommendedResources);
             return View("RecommendedLearning", model);
