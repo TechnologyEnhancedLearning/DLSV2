@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DigitalLearningSolutions.Data.ApiClients;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -22,37 +23,45 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
-        //[Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources/Search/Page/{page}")]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource")]
         public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int page, string searchText)
         {
             var response = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            if (frameworkCompetencyGroupId.HasValue)
+            {
+                var competency = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId.Value);
+                response.NameOfCompetency = competency?.Name ?? "";
+            }
             if (searchText?.Trim().Length > 1)
             {
                 response.Page = page; 
                 response.SearchText = searchText;
                 await GetResourcesFromLearningHubApiAsync(response);
-                if (frameworkCompetencyGroupId.HasValue)
-                {
-                    var competency = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId.Value);
-                    response.NameOfCompetency = competency?.Name ?? "";
-                }
             }
             return View("Developer/AddCompetencyLearningResources", response);
+        }
+
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/Summary")]
+        public IActionResult AddCompetencyLearningResourceSummary(int frameframeworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        {
+            var model = TempData["CompetencyResourceSummaryViewModel"] == null ?
+                new CompetencyResourceSummaryViewModel(frameframeworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
+                : JsonConvert.DeserializeObject<CompetencyResourceSummaryViewModel>((string)TempData["CompetencyResourceSummaryViewModel"]);
+            return View("Developer/AddCompetencyLearningResourceSummary", model);
         }
 
         [HttpPost]
         public IActionResult AddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
-            return RedirectToAction("SearchLearningResourcesAsync", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId
-        });
-    }
+            TempData["CompetencyResourceSummaryViewModel"] = JsonConvert.SerializeObject(model);
+            return RedirectToAction("AddCompetencyLearningResourceSummary", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId});
+        }
 
         [HttpPost]
         public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
             competencyLearningResourcesDataService.AddCompetencyLearningResource(model.FrameworkCompetencyId.Value, model.ReferenceId, GetAdminID());
-            return Redirect($"~/Frameworks/{model.FrameworkId}/Competency/{model.FrameworkCompetencyId}/CompetencyGroup/{model.FrameworkCompetencyGroupId}/AddResources?SearchText={model.SearchText}");
+            return Redirect($"~/Frameworks/{model.FrameworkId}/Competency/{model.FrameworkCompetencyId}/CompetencyGroup/{model.FrameworkCompetencyGroupId}/Signposting/AddResource?searchText={model.SearchText}&page=1");
         }
 
         private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)

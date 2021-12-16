@@ -31,5 +31,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         {
             Resource = resource;
         }
+
+        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        {
+            FrameworkId = frameworkId;
+            FrameworkCompetencyId = frameworkCompetencyId;
+            FrameworkCompetencyGroupId = frameworkCompetencyGroupId;
+        }
     }
 }
