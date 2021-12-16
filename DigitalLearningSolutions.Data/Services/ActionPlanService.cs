@@ -27,6 +27,8 @@
         void RemoveActionPlanResource(int learningLogItemId, int delegateId);
 
         bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
+
+        bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -180,6 +182,16 @@
             }
 
             return actionPlanResource.LoggedById == delegateId;
+        }
+
+        public bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId)
+        {
+            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+                .Where(
+                    i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
+                ).ToList();
+
+            return incompleteLearningLogItems.All(i => i.LearningResourceReferenceId != resourceReferenceId);
         }
     }
 }

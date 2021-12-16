@@ -78,7 +78,13 @@
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}")]
         public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
         {
-            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, User.GetCandidateIdKnownNotNull(), selfAssessmentId);
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
+            {
+                return NotFound();
+            }
+
+            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
