@@ -32,13 +32,9 @@
   }
 
   <div class="nhsuk-u-margin-top-5">
-    <a class="nhsuk-button nhsuk-u-margin-bottom-4"
-       asp-controller="Frameworks"
-       asp-action="AddCompetencyLearningResources"
-       asp-route-frameworkId="@Model.FrameworkId"
-       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
-       asp-route-title="@Model.Title">Add resource</a>
+    <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/AddResources")">
+       Add resource
+    </a>
   </div>
   <div class="nhsuk-back-link nhsuk-u-margin-left-1">
     <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">

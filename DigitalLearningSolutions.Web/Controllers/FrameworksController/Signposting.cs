@@ -16,65 +16,45 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private static IConfiguration SignpostingConfiguration { get; set; }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
-        public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null, string title = "")
+        public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
             var model = PopulatedModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
-            model.Title = title;
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
+        //[Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources/Search/Page/{page}")]
+
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources")]
-        public IActionResult AddCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null, string Title = "")
+        public async Task<IActionResult> SearchLearningResourcesAsync(CompetencyResourceSignpostingViewModel model)
+        //public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var model = PopulatedModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
-            model.Title = Title;
-            return View("Developer/AddCompetencyLearningResources", model);
+            var response = new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
+            if (model.SearchText?.Trim().Length > 1)
+            {
+                response.Page = model.Page; 
+                response.SearchText = model.SearchText;
+                await GetResourcesFromLearningHubApiAsync(response);
+                if (model.FrameworkCompetencyGroupId.HasValue)
+                {
+                    var competency = frameworkService.GetCompetencyGroupBaseById(model.FrameworkCompetencyGroupId.Value);
+                    response.NameOfCompetency = competency?.Name ?? "";
+                }
+            }
+            return View("Developer/AddCompetencyLearningResources", response);
         }
 
         [HttpPost]
         public IActionResult AddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
             return View("Developer/AddCompetencyLearningResourceSummary", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SearchLearningResourcesAsync(CompetencyResourceSignpostingViewModel model)
-        {
-            if(model.SearchText?.Trim().Length > 1)
-            {
-                return await GoToPage(1, model);
-            }
-            else
-            {
-                model.Empty();
-                return View("Developer/AddCompetencyLearningResources", model);
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GoToNextPage(CompetencyResourceSignpostingViewModel model)
-        {
-            return await GoToPage(model.Page + 1, model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> GoToPreviousPage(CompetencyResourceSignpostingViewModel model)
-        {
-            return await GoToPage(model.Page - 1, model);
+            //return RedirectToAction("SearchLearningResourcesAsync", new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId));
         }
 
         [HttpPost]
         public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
-            this.competencyLearningResourcesDataService.AddCompetencyLearningResource(model.FrameworkCompetencyId.Value, model.ReferenceId, GetAdminID());
-            return RedirectToAction("AddCompetencyLearningResources", model);
-        }
-
-        private async Task<IActionResult> GoToPage(int page, CompetencyResourceSignpostingViewModel model)
-        {
-            model.Page = page;
-            await GetResourcesFromLearningHubApiAsync(model);
-            return View("Developer/AddCompetencyLearningResources", model);
+            competencyLearningResourcesDataService.AddCompetencyLearningResource(model.FrameworkCompetencyId.Value, model.ReferenceId, GetAdminID());
+            return Redirect($"~/Frameworks/{model.FrameworkId}/Competency/{model.FrameworkCompetencyId}/CompetencyGroup/{model.FrameworkCompetencyGroupId}/AddResources?SearchText={model.SearchText}");
         }
 
         private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)

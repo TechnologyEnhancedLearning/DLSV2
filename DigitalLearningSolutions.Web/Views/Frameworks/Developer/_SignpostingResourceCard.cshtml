@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @using DigitalLearningSolutions.Web.Helpers;
 @using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-@model ResourceMetadata
+@model CompetencyResourceSummaryViewModel
 
 @{
   var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
@@ -9,56 +9,57 @@
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-      @SignpostingHelper.DisplayText(Model.Title)
+      @SignpostingHelper.DisplayText(Model.Resource.Title)
     </span>
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0 nhsuk-u-margin-1">
-    @if (!String.IsNullOrEmpty(Model.ResourceType))
+    @if (!String.IsNullOrEmpty(Model.Resource.ResourceType))
     {
       <div class="nhsuk-grid-row nhsuk-u-margin-left-1 nhsuk-u-clear">
-        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.ResourceType))">@Model.ResourceType</strong>
+        <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.Resource.ResourceType))">@Model.Resource.ResourceType</strong>
       </div>
     }
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
-      @SignpostingHelper.DisplayText(Model.Description)
+      @SignpostingHelper.DisplayText(Model.Resource.Description)
     </div>
-    @if (Model.References.Count() > 0)
+    @if (Model.Resource.References.Count() > 0)
     {
       <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-1 nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2">
         Catalogues
       </div>
-      @foreach (var reference in Model.References)
+      @foreach (var reference in Model.Resource.References)
       {
         if (reference.Catalogue != null)
         {
-          <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
-            <dl class="nhsuk-summary-list">
-              <div class="nhsuk-summary-list__row">
-                <dt class="nhsuk-summary-list__key">
-                  @reference.Catalogue.Name
-                </dt>
-                <dd class="nhsuk-summary-list__value">
-                  <button class="nhsuk-button nhsuk-button--secondary small-edit-button">
-                    Preview
-                  </button>
-                  <button class="nhsuk-button small-edit-button"
-                          asp-action="AddCompetencyLearningResourceSummary"
-                          asp-route-referenceId="@reference.RefId"
-                          asp-route-frameworkId="@parent.FrameworkId"
-                          asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
-                          asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-                          asp-route-resourceName="@parent.Title"
-                          asp-route-resourceType="@Model.ResourceType"
-                          asp-route-catalogue="@reference.Catalogue.Name"
-                          asp-route-description="@Model.Description"
-                          asp-route-nameOfCompetency="@parent.NameOfCompetency"
-                          asp-route-searchText="@parent.SearchText">
-                    Select
-                  </button>
-                </dd>
-              </div>
-            </dl>
-          </div>
+          <form method="post" role="search" asp-controller="Frameworks">
+            <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
+              <dl class="nhsuk-summary-list">
+                <div class="nhsuk-summary-list__row">
+                  <dt class="nhsuk-summary-list__key">
+                    @reference.Catalogue.Name
+                  </dt>
+                  <dd class="nhsuk-summary-list__value">
+                    <button class="nhsuk-button nhsuk-button--secondary small-edit-button">
+                      Preview
+                    </button>
+                    <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary">
+                      Select
+                    </button>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+            @Html.HiddenFor(m => m.FrameworkId)
+            @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
+            @Html.HiddenFor(m => m.FrameworkCompetencyId)
+            @Html.Hidden("ReferenceId", reference.RefId)
+            @Html.HiddenFor(m => m.Resource.Title)
+            @Html.HiddenFor(m => m.Resource.ResourceType)
+            @Html.Hidden("Catalogue", reference.Catalogue.Name)
+            @Html.HiddenFor(m => m.Resource.Description)
+            @Html.Hidden("NameOfCompetency", parent.NameOfCompetency)
+            @Html.Hidden("SearchText", parent.SearchText)
+          </form>
         }
       }
     }

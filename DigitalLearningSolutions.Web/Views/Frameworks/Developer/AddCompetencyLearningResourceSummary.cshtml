@@ -47,21 +47,21 @@
     <dd class="nhsuk-summary-list__value">@SignpostingHelper.DisplayText(Model.Description)</dd>
     </div>
     <div class="nhsuk-summary-list__row">
-    <dd class="nhsuk-summary-list__key">
-      <div class="nhsuk-u-margin-top-3">
-        <button class="nhsuk-button small-edit-button nhsuk-u-margin-right-2" asp-action="ConfirmAddCompetencyLearningResourceSummary">
-          Confirm
-        </button>
-        <button class="nhsuk-button nhsuk-button--secondary small-edit-button"
-                asp-action="AddCompetencyLearningResources"
-                asp-route-frameworkId="@Model.FrameworkId"
-                asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-          Restart search
-        </button>
-      </div>
-    </dd>
-    <dd class="nhsuk-summary-list__value"></dd>
+      <dd class="nhsuk-summary-list__key">
+        <div class="nhsuk-u-margin-top-3">
+          <button asp-action="ConfirmAddCompetencyLearningResourceSummary" class="nhsuk-button small-edit-button nhsuk-u-margin-right-2">
+            Confirm
+          </button>
+          <button class="nhsuk-button nhsuk-button--secondary small-edit-button"
+                  asp-action="AddCompetencyLearningResources"
+                  asp-route-frameworkId="@Model.FrameworkId"
+                  asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+                  asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+            Restart search
+          </button>
+        </div>
+      </dd>
+      <dd class="nhsuk-summary-list__value"></dd>
     </div>
   </dl>
   @Html.HiddenFor(m => m.FrameworkId)

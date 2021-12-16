@@ -26,7 +26,7 @@
     @Model.NameOfCompetency
   </p>
 </div>
-<form method="post" role="search" asp-controller="Frameworks" asp-action="SearchLearningResources">
+<form method="get" role="search" asp-route="~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/AddResources">
   <h2>Search the Learning Hub</h2>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-three-quarters">
@@ -39,26 +39,20 @@
       </div>
     </div>
   </div>
-  <input id="FrameworkId" name="FrameworkId" type="hidden" value="@Model.FrameworkId" />
-  <input id="FrameworkCompetencyGroupId" name="FrameworkCompetencyGroupId" type="hidden" value="@Model.FrameworkCompetencyGroupId" />
-  <input id="FrameworkCompetencyId" name="FrameworkCompetencyId" type="hidden" value="@Model.FrameworkCompetencyId" />
-  <input id="NameOfCompetency" name="NameOfCompetency" type="hidden" value="@Model.NameOfCompetency" />
-  <input id="SearchText" name="SearchText" type="hidden" value="@Model.SearchText" />
   <input id="Page" name="Page" type="hidden" value="@Model.Page" />
-  @if (Model.LearningHubApiError)
-  {
-    <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
-  }
-  else if (Model.SearchResult?.Results != null)
-  {
-    <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
-    @foreach (var result in Model.SearchResult.Results)
-    {
-      <partial name="Developer/_SignPostingResourceCard" model="result" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
-    }
-  }
-  @Html.HiddenFor(m => m.Title)
 </form>
+@if (Model.LearningHubApiError)
+{
+  <span class="nhsuk-u-margin-1 nhsuk-u-clear">This service is unavailable. Please try again later.</span>
+}
+else if (Model.SearchResult?.Results != null)
+{
+  <span class="nhsuk-u-margin-1 nhsuk-u-clear">@Model.TotalNumResources matches for "@Model.SearchText"</span>
+  @foreach (var result in Model.SearchResult.Results)
+  {
+    <partial name="Developer/_SignpostingResourceCard" model="new CompetencyResourceSummaryViewModel(result)" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })" />
+  }
+}
 @if (Model.TotalPages > 1)
 {
   <div class="nhsuk-u-margin-bottom-0">

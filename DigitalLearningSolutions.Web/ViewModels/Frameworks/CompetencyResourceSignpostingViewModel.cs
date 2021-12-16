@@ -33,6 +33,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         }
         public ResourceSearchResult SearchResult { get; set; }
 
+        public static explicit operator CompetencyResourceSignpostingViewModel(CompetencyResourceSummaryViewModel model)
+        {
+            return new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
+        }
+
         public CompetencyResourceSignpostingViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId)
         {
             FrameworkId = frameworkId;
@@ -44,15 +49,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public CompetencyResourceSignpostingViewModel()
         {
 
-        }
-        
-        public void Empty()
-        {
-            SearchResult = new ResourceSearchResult()
-            {
-                Results = new List<ResourceMetadata>() { }
-            };
-            this.Page = 1;
         }
     }
 }
