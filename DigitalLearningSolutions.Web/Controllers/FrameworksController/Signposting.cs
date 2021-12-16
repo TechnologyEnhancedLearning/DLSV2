@@ -23,20 +23,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         //[Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources/Search/Page/{page}")]
-
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/AddResources")]
-        public async Task<IActionResult> SearchLearningResourcesAsync(CompetencyResourceSignpostingViewModel model)
-        //public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource")]
+        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int page, string searchText)
         {
-            var response = new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
-            if (model.SearchText?.Trim().Length > 1)
+            var response = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            if (searchText?.Trim().Length > 1)
             {
-                response.Page = model.Page; 
-                response.SearchText = model.SearchText;
+                response.Page = page; 
+                response.SearchText = searchText;
                 await GetResourcesFromLearningHubApiAsync(response);
-                if (model.FrameworkCompetencyGroupId.HasValue)
+                if (frameworkCompetencyGroupId.HasValue)
                 {
-                    var competency = frameworkService.GetCompetencyGroupBaseById(model.FrameworkCompetencyGroupId.Value);
+                    var competency = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId.Value);
                     response.NameOfCompetency = competency?.Name ?? "";
                 }
             }
@@ -46,9 +44,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult AddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
-            return View("Developer/AddCompetencyLearningResourceSummary", model);
-            //return RedirectToAction("SearchLearningResourcesAsync", new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId));
-        }
+            return RedirectToAction("SearchLearningResourcesAsync", "Frameworks", new { model.FrameworkId , model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId
+        });
+    }
 
         [HttpPost]
         public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
