@@ -66,7 +66,7 @@
         public async Task Current_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -80,21 +80,21 @@
         public async Task Current_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            GivenCurrentActivitiesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public async Task AllCurrentItems_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -108,14 +108,14 @@
         public async Task AllCurrentItems_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            GivenCurrentActivitiesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -440,7 +440,7 @@
                 .MustNotHaveHappened();
         }
 
-        private void GivenCurrentActivitesAreEmptyLists()
+        private void GivenCurrentActivitiesAreEmptyLists()
         {
             A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))

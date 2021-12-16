@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
     using DigitalLearningSolutions.Data.Models.LearningResources;
 
-    public class LearningResourceCardViewModel : CurrentLearningItemViewModel
+    public class CompletedLearningResourceViewModel : CompletedLearningItemViewModel, ILearningResourceCardViewModel
     {
-        public LearningResourceCardViewModel(ActionPlanResource resource) : base(resource)
+        public CompletedLearningResourceViewModel(CompletedActionPlanResource resource) : base(resource)
         {
             LaunchResourceLink = resource.ResourceLink;
             ResourceDescription = resource.ResourceDescription;

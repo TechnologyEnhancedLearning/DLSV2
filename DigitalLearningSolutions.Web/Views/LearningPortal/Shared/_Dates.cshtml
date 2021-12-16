@@ -18,8 +18,7 @@
     @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
   </p>
 </div>
-@if (Model is CurrentLearningItemViewModel currentLearningItemViewModel)
-{
+@if (Model is CurrentLearningItemViewModel currentLearningItemViewModel) {
 <div class="nhsuk-grid-row nhsuk-grid-column-one-half">
   <div class="nhsuk-grid-column-three-quarters">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-complete-by-title" aria-describedby="@Model.Id-name">Complete by</span>
@@ -32,8 +31,7 @@
           Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
     </p>
   </div>
-  @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
-  {
+  @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled)) {
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
          aria-describedby="@Model.Id-name"
@@ -45,8 +43,7 @@
       </a>
     </div>
   }
-  else if (currentLearningItemViewModel is SelfAssessmentCardViewModel)
-  {
+  else if (currentLearningItemViewModel is SelfAssessmentCardViewModel) {
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
          aria-describedby="@Model.Id-name"
@@ -58,8 +55,7 @@
       </a>
     </div>
   }
-  else if (currentLearningItemViewModel is LearningResourceCardViewModel)
-  {
+  else if (currentLearningItemViewModel is CurrentLearningResourceViewModel) {
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
          aria-describedby="@Model.Id-name"
@@ -71,14 +67,15 @@
   }
 </div>
 }
-@if (Model is CompletedCourseViewModel completedCourseViewModel)
-{
+@if (Model is CompletedLearningItemViewModel completedLearningItem) {
   <div class="nhsuk-grid-column-one-quarter">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
-    <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
+    <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedLearningItem.CompletedDate.ToShortDateString()</p>
   </div>
+}
+@if (Model is CompletedCourseViewModel completedCourseViewModel) {
   <div class="nhsuk-grid-column-one-quarter">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-evaluated-title" aria-describedby="@Model.Id-name">Evaluated</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
@@ -89,3 +86,4 @@
         Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
   </div>
 }
+

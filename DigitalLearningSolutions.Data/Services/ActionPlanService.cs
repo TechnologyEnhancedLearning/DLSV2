@@ -18,6 +18,8 @@
 
         Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId);
 
+        Task<IEnumerable<ActionPlanResource>> GetCompletedActionPlanResources(int delegateId);
+
         Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
 
         Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
@@ -113,20 +115,17 @@
                     i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
                 ).ToList();
 
-            if (!incompleteLearningLogItems.Any())
-            {
-                return new List<ActionPlanResource>();
-            }
+            return await MapLearningLogItemsToActionPlanResources(incompleteLearningLogItems);
+        }
 
-            var incompleteResourceIds = incompleteLearningLogItems.Select(i => i.LearningHubResourceReferenceId!.Value);
-            var bulkResponse = await learningHubApiClient.GetBulkResourcesByReferenceIds(incompleteResourceIds);
-            var incompleteActionPlanResources = bulkResponse.ResourceReferences.Select(
-                resource => new ActionPlanResource(
-                    incompleteLearningLogItems.Single(i => i.LearningHubResourceReferenceId!.Value == resource.RefId),
-                    resource
-                )
-            );
-            return incompleteActionPlanResources;
+        public async Task<IEnumerable<ActionPlanResource>> GetCompletedActionPlanResources(int delegateId)
+        {
+            var completedLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+                .Where(
+                    i => i.CompletedDate != null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
+                ).ToList();
+
+            return await MapLearningLogItemsToActionPlanResources(completedLearningLogItems);
         }
 
         public async Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId)
@@ -184,6 +183,25 @@
             }
 
             return actionPlanResource.LoggedById == delegateId;
+        }
+
+        private async Task<IEnumerable<ActionPlanResource>> MapLearningLogItemsToActionPlanResources(
+            IList<LearningLogItem> learningLogItems
+        )
+        {
+            if (!learningLogItems.Any())
+            {
+                return new List<ActionPlanResource>();
+            }
+
+            var resourceIds = learningLogItems.Select(i => i.LearningHubResourceReferenceId!.Value);
+            var bulkResponse = await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceIds);
+            return bulkResponse.ResourceReferences.Select(
+                resource => new ActionPlanResource(
+                    learningLogItems.Single(i => i.LearningHubResourceReferenceId!.Value == resource.RefId),
+                    resource
+                )
+            );
         }
     }
 }
