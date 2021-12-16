@@ -33,6 +33,8 @@
         void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
 
         IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
+
+        string? GetGroupName(int groupId, int centreId);
     }
 
     public class GroupsService : IGroupsService
@@ -296,6 +298,11 @@
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);
+        }
+
+        public string? GetGroupName(int groupId, int centreId)
+        {
+            return groupsDataService.GetGroupName(groupId, centreId);
         }
     }
 }

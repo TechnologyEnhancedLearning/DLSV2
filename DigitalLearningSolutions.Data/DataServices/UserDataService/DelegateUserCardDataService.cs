@@ -7,7 +7,7 @@
 
     public partial class UserDataService
     {
-        private const string DelegateUserSelectQuery = @"cd.CandidateID AS Id,
+        private const string DelegateUserSelectQuery = @"SELECT cd.CandidateID AS Id,
                                                         cd.CandidateNumber,
                                                         ct.CentreName,
                                                         cd.CentreID,
@@ -30,24 +30,23 @@
                                                         cd.ExternalReg,
                                                         cd.Active,
                                                         (SELECT AdminID
-                                                        FROM AdminUsers au
-                                                            WHERE (au.Email = cd.EmailAddress
-                                                            OR au.Email = cd.AliasID)
-                                                        AND au.Password = cd.Password
-                                                            AND au.CentreID = cd.CentreID
-                                                            AND au.Email != ''
-                                                        ) AS AdminID,
-                                                            cd.AliasID ";
+                                                            FROM AdminUsers au
+                                                                WHERE (au.Email = cd.EmailAddress
+                                                                OR au.Email = cd.AliasID)
+                                                            AND au.Password = cd.Password
+                                                                AND au.CentreID = cd.CentreID
+                                                                AND au.Email != ''
+                                                          ) AS AdminID,
+                                                           cd.AliasID
+                                                           FROM Candidates AS cd
+                                                            INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                                                            INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID ";
 
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
-            
             var user = connection.Query<DelegateUserCard>(
-                @$"SELECT {DelegateUserSelectQuery} 
-                    FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
-                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
-                    WHERE cd.CandidateId = @id",
+                @$"{DelegateUserSelectQuery} 
+                        WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();
 
@@ -57,41 +56,23 @@
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"SELECT {DelegateUserSelectQuery} 
-                    FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
-                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
-                    WHERE cd.CentreId = @centreId AND cd.Approved = 1",
+                @$"{DelegateUserSelectQuery} 
+                        WHERE cd.CentreId = @centreId AND cd.Approved = 1",
                 new { centreId }
             ).ToList();
         }
 
-        
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"SELECT {DelegateUserSelectQuery} 
-                    FROM Candidates AS cd
-                    INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
-                    INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
-					LEFT JOIN GroupDelegates gd ON cd.CandidateID = gd.DelegateID AND gd.GroupID = groupId
-                    WHERE cd.CentreId = @centreId AND cd.Approved = 1 AND gd.DelegateID IS NULL",
+                @$"{DelegateUserSelectQuery} 
+					    LEFT JOIN GroupDelegates gd ON cd.CandidateID = gd.DelegateID AND gd.GroupID = @groupId
+                        WHERE cd.CentreId = @centreId AND cd.Approved = 1 AND gd.DelegateID IS NULL",
                 new
                 {
                     centreId, groupId,
                 }
             ).ToList();
-        }
-
-        public string? GetGroupNameById(int groupId)
-        {
-            return connection.Query<string>(
-                @"SELECT
-                        GroupLabel
-                    FROM Groups
-                    WHERE GroupID = @groupId",
-                new { groupId }
-            ).SingleOrDefault();
         }
     }
 }

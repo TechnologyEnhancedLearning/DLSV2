@@ -49,7 +49,7 @@
 
         [Route("{groupId:int}")]
         public IActionResult Index(
-            int groupId = 1,
+            int groupId,
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.Ascending,
@@ -71,7 +71,7 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
             var delegateUsers = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
-            var groupName = userDataService.GetGroupNameById(groupId);
+            var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var model = new AddDelegateToGroupViewModel(
                 delegateUsers,
@@ -99,8 +99,9 @@
                 return NotFound();
             }
 
+            var centreId = User.GetCentreId();
             var adminId = User.GetAdminId();
-            var groupName = userDataService.GetGroupNameById(groupId);
+            var groupName = groupsService.GetGroupName(groupId, centreId);
 
             var newDetails = new MyAccountDetailsData(
                 adminId,

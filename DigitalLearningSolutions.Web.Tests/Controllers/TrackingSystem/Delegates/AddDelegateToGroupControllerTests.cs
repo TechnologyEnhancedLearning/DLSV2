@@ -58,10 +58,10 @@
         };
 
         private AddDelegateToGroupController addDelegateToGroupsController = null!;
-        private CentreCustomPromptHelper centreCustomPromptHelper;
-        private IClockService clockService;
-        private IGroupsDataService groupsDataService;
-        private IGroupsService groupsService;
+        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+        private IClockService clockService = null!;
+        private IGroupsDataService groupsDataService = null!;
+        private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService;
@@ -89,7 +89,7 @@
             A.CallTo(() => userDataService.GetDelegatesNotRegisteredForGroupByGroupId(A<int>._, A<int>._))
                 .Returns(delegateUserCards);
 
-            A.CallTo(() => userDataService.GetGroupNameById(A<int>._))
+            A.CallTo(() => groupsService.GetGroupName(A<int>._, A<int>._))
                 .Returns("Group name");
 
             addDelegateToGroupsController = new AddDelegateToGroupController(
@@ -128,7 +128,7 @@
             var result = addDelegateToGroupsController.Index(filterBy: filterBy);
 
             // Then
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
                 .Be(filterBy);
         }
 
@@ -143,7 +143,7 @@
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("AddDelegateToGroupFilter")).MustHaveHappened();
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
                 .BeNull();
         }
 
@@ -160,7 +160,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("AddDelegateToGroupFilter", newFilterValue, A<CookieOptions>._))
                 .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
         }
 
@@ -177,7 +177,7 @@
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("AddDelegateToGroupFilter", newFilterValue, A<CookieOptions>._))
                 .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
         }
 
@@ -191,7 +191,7 @@
             var result = addDelegateToGroupsController.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<AllDelegatesViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
                 .Be("ActiveStatus|Active|true");
         }
 
@@ -203,7 +203,7 @@
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id))
                 .Returns(delegateUser);
 
-            A.CallTo(() => userDataService.GetGroupNameById(2))
+            A.CallTo(() => groupsService.GetGroupName(2, 1))
                 .Returns("Group name");
 
             A.CallTo(
