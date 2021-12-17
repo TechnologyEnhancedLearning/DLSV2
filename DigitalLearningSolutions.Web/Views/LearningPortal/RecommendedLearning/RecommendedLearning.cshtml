@@ -16,7 +16,7 @@
        asp-action="SelfAssessmentOverview"
        asp-route-vocabulary="Capabilities"
        asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
-      Self Assessment
+      @Model.SelfAssessment.Name
     </a>
   </li>
   <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
