@@ -183,7 +183,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
-            services.AddScoped<ILearningHubApiService, LearningHubApiService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
@@ -192,6 +191,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<IProgressService, ProgressService>();
+            services.AddScoped<IRecommendedLearningService, RecommendedLearningService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
