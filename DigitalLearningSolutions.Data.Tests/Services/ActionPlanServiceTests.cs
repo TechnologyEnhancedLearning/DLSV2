@@ -241,6 +241,55 @@
         }
 
         [Test]
+        public async Task GetCompleteActionPlanResources_returns_correctly_matched_action_plan_items_with_repeated_resource()
+        {
+            // Given
+            const int delegateId = 1;
+            var learningLogIds = new List<int> { 4, 5, 6 };
+            var learningResourceIds = new List<int> { 15, 26, 15};
+            var expectedLearningResourceIdsUsedInApiCall = new List<int> { 15, 26 };
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(3).All()
+                .With(i => i.CompletedDate = DateTime.UtcNow)
+                .And(i => i.ArchivedDate = null)
+                .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
+                .And((i, index) => i.LearningLogItemId = learningLogIds[index])
+                .Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+                .Returns(learningLogItems);
+            var matchedResources = Builder<ResourceReferenceWithResourceDetails>.CreateListOfSize(2).All()
+                .With((r, index) => r.RefId = learningResourceIds[index])
+                .And((r, index) => r.Title = $"Title {learningResourceIds[index]}")
+                .And(r => r.Catalogue = genericCatalogue).Build().ToList();
+            var unmatchedResourceReferences = new List<int>();
+            var bulkReturnedItems = new BulkResourceReferences
+            {
+                ResourceReferences = matchedResources,
+                UnmatchedResourceReferenceIds = unmatchedResourceReferences,
+            };
+            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
+                .Returns(bulkReturnedItems);
+
+            // When
+            var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
+
+            // Then
+            List<(int id, string title)> resultIdsAndTitles = result.Select(r => (r.Id, r.Name)).ToList();
+            using (new AssertionScope())
+            {
+                resultIdsAndTitles.Count.Should().Be(3);
+                resultIdsAndTitles[0].Should().Be((4, "Title 15"));
+                resultIdsAndTitles[1].Should().Be((5, "Title 26"));
+                resultIdsAndTitles[2].Should().Be((6, "Title 15"));
+                A.CallTo(
+                        () => learningHubApiClient.GetBulkResourcesByReferenceIds(
+                            A<IEnumerable<int>>.That.IsSameSequenceAs(expectedLearningResourceIdsUsedInApiCall)
+                        )
+                    )
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
         public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_updates_last_accessed_returns_resource_link()
         {
             // Given

@@ -112,7 +112,7 @@
         {
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
-                    i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
+                    i => i.CompletedDate == null && i.ArchivedDate == null
                 ).ToList();
 
             return await MapLearningLogItemsToActionPlanResources(incompleteLearningLogItems);
@@ -122,7 +122,7 @@
         {
             var completedLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
                 .Where(
-                    i => i.CompletedDate != null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
+                    i => i.CompletedDate != null && i.ArchivedDate == null
                 ).ToList();
 
             return await MapLearningLogItemsToActionPlanResources(completedLearningLogItems);
@@ -186,22 +186,34 @@
         }
 
         private async Task<IEnumerable<ActionPlanResource>> MapLearningLogItemsToActionPlanResources(
-            IList<LearningLogItem> learningLogItems
+            IEnumerable<LearningLogItem> learningLogItems
         )
         {
-            if (!learningLogItems.Any())
+            var learningLogItemsWithResourceReferencesIds =
+                learningLogItems.Where(i => i.LearningHubResourceReferenceId != null).ToList();
+
+            if (!learningLogItemsWithResourceReferencesIds.Any())
             {
                 return new List<ActionPlanResource>();
             }
 
-            var resourceIds = learningLogItems.Select(i => i.LearningHubResourceReferenceId!.Value);
+            var resourceIds = learningLogItemsWithResourceReferencesIds
+                .Select(i => i.LearningHubResourceReferenceId!.Value).Distinct();
             var bulkResponse = await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceIds);
-            return bulkResponse.ResourceReferences.Select(
-                resource => new ActionPlanResource(
-                    learningLogItems.Single(i => i.LearningHubResourceReferenceId!.Value == resource.RefId),
-                    resource
-                )
+            var matchingLearningLogItems = learningLogItemsWithResourceReferencesIds.Where(
+                i => !bulkResponse.UnmatchedResourceReferenceIds.Contains(i.LearningHubResourceReferenceId!.Value)
             );
+
+            var actionPlanResources = matchingLearningLogItems.Select(
+                learningLogItem =>
+                {
+                    var matchingResource = bulkResponse.ResourceReferences.Single(
+                        resource => resource.RefId == learningLogItem.LearningHubResourceReferenceId
+                    );
+                    return new ActionPlanResource(learningLogItem, matchingResource);
+                }
+            ).Where(r => r != null);
+            return actionPlanResources;
         }
     }
 }
