@@ -110,6 +110,7 @@
         [TestCase("true", true)]
         [TestCase("True", true)]
         [TestCase("false", false)]
+        [TestCase("False", false)]
         [TestCase("1", true)]
         [TestCase("0", false)]
         [TestCase("mu", null)]
