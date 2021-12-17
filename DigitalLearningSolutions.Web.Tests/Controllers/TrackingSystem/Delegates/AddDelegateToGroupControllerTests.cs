@@ -110,7 +110,7 @@
         public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
         {
             // When
-            var result = addDelegateToGroupsController.Index();
+            var result = addDelegateToGroupsController.Index(groupId: 1);
 
             // Then
             result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
@@ -125,7 +125,7 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
-            var result = addDelegateToGroupsController.Index(filterBy: filterBy);
+            var result = addDelegateToGroupsController.Index(groupId: 1, filterBy: filterBy);
 
             // Then
             result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
@@ -139,7 +139,7 @@
             const string filterBy = "CLEAR";
 
             // When
-            var result = addDelegateToGroupsController.Index(filterBy: filterBy);
+            var result = addDelegateToGroupsController.Index(groupId: 1, filterBy: filterBy);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Delete("AddDelegateToGroupFilter")).MustHaveHappened();
@@ -155,7 +155,7 @@
             const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
 
             // When
-            var result = addDelegateToGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = addDelegateToGroupsController.Index(groupId: 1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("AddDelegateToGroupFilter", newFilterValue, A<CookieOptions>._))
@@ -172,7 +172,7 @@
             const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
 
             // When
-            var result = addDelegateToGroupsController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = addDelegateToGroupsController.Index(groupId: 1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
             A.CallTo(() => httpResponse.Cookies.Append("AddDelegateToGroupFilter", newFilterValue, A<CookieOptions>._))
@@ -188,7 +188,7 @@
             A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
 
             // When
-            var result = addDelegateToGroupsController.Index();
+            var result = addDelegateToGroupsController.Index(groupId: 1);
 
             // Then
             result.As<ViewResult>().Model.As<AddDelegateToGroupViewModel>().FilterBy.Should()
