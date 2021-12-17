@@ -28,7 +28,8 @@
         <a class="nhsuk-button delete-button small-edit-button"
            aria-describedby="@Model.Id-name-course"
            asp-action="RemoveCurrentCourseConfirmation"
-           asp-route-id="@Model.Id">
+           asp-route-id="@Model.Id"
+           role="button">
           Remove course
         </a>
       }
@@ -42,7 +43,8 @@
         aria-describedby="@Model.Id-name-course"
         asp-controller="LearningMenu"
         asp-action="Index"
-        asp-route-customisationId="@Model.Id">
+        asp-route-customisationId="@Model.Id"
+        role="button">
         Launch course
       </a>
     </div>

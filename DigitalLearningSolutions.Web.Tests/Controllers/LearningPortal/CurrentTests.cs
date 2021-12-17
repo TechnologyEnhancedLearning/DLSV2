@@ -1,10 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FakeItEasy;
@@ -30,13 +34,15 @@
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
-            var actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+            var actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanItems(CandidateId)).Returns(actionPlanItems);
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+                .Returns(actionPlanResources);
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             var result = await controller.Current();
@@ -48,12 +54,68 @@
                 "LastAccessed",
                 "Descending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 bannerText,
                 1
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public async Task Current_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.Current();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task Current_action_should_fetch_ActionPlanResources_if_signposting_enabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.Current();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task AllCurrentItems_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.AllCurrentItems();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task AllCurrentItems_action_should_fetch_ActionPlanResources_if_signposting_enabled()
+        {
+            // Given
+            GivenCurrentActivitesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            await controller.AllCurrentItems();
+
+            // Then
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
         }
 
         [Test]
@@ -292,6 +354,7 @@
             // Given
             const string bannerText = "Banner text";
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             var currentViewModel = await CurrentCourseHelper.CurrentPageViewModelFromController(controller);
@@ -333,6 +396,58 @@
             result.Should().BeRedirectResult().WithUrl(resourceLink);
             A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void MarkActionPlanResourceAsComplete_calls_correct_service_method()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 2021;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            var result = controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Current");
+        }
+
+        [Test]
+        public void MarkActionPlanResourceAsComplete_does_not_call_service_with_invalid_model()
+        {
+            // Given
+            const int learningLogItemId = 4;
+            const int day = 1;
+            const int month = 1;
+            const int year = 4000;
+            var formData = new MarkActionPlanResourceAsCompleteFormData { Day = day, Month = month, Year = year };
+            var completedDate = new DateTime(year, month, day);
+            controller.ModelState.AddModelError("year", "message");
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, A<DateTime>._)).DoesNothing();
+
+            // When
+            controller.MarkActionPlanResourceAsComplete(learningLogItemId, formData);
+
+            // Then
+            A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustNotHaveHappened();
+        }
+
+        private void GivenCurrentActivitesAreEmptyLists()
+        {
+            A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))
+                .Returns(new List<CurrentSelfAssessment>());
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(A<int>._))
+                .Returns(new List<ActionPlanResource>());
+            A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }
 }

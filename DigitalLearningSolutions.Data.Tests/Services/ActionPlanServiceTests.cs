@@ -20,6 +20,10 @@
 
     public class ActionPlanServiceTests
     {
+        private const int GenericLearningLogItemId = 1;
+        private const int GenericDelegateId = 2;
+        private const int GenericLearningHubResourceReferenceId = 3;
+
         private IActionPlanService actionPlanService = null!;
         private IClockService clockService = null!;
         private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
@@ -28,6 +32,7 @@
         private ILearningHubApiClient learningHubApiClient = null!;
         private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
+        private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
@@ -40,6 +45,7 @@
             learningHubApiService = A.Fake<ILearningHubApiService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
             config = A.Fake<IConfiguration>();
 
             actionPlanService = new ActionPlanService(
@@ -49,7 +55,8 @@
                 learningHubApiService,
                 learningHubApiClient,
                 selfAssessmentDataService,
-                config
+                config,
+                learningResourceReferenceDataService
             );
         }
 
@@ -57,7 +64,7 @@
         public void AddResourceToActionPlan_calls_expected_insert_data_service_methods()
         {
             // Given
-            const int competencyLearningResourceId = 1;
+            const int learningResourceReferenceId = 1;
             const int delegateId = 2;
             const int selfAssessmentId = 3;
             const string resourceName = "Activity";
@@ -68,23 +75,19 @@
             var addedDate = new DateTime(2021, 11, 1);
             A.CallTo(() => clockService.UtcNow).Returns(addedDate);
 
-            var competencyLearningResource = new CompetencyLearningResource
-            {
-                LearningHubResourceReferenceId = learningHubResourceId,
-            };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourceById(
-                    competencyLearningResourceId
+                () => learningResourceReferenceDataService.GetLearningHubResourceReferenceById(
+                    learningResourceReferenceId
                 )
-            ).Returns(competencyLearningResource);
+            ).Returns(learningHubResourceId);
 
             A.CallTo(() => learningHubApiService.GetResourceNameAndLink(learningHubResourceId))
                 .Returns((resourceName, resourceLink));
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    learningHubResourceId
+                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                    learningResourceReferenceId
                 )
             ).Returns(resourceCompetencies);
 
@@ -105,7 +108,7 @@
             var expectedMatchingCompetencies = new[] { 2, 3, 5, 6, 8 };
 
             // When
-            actionPlanService.AddResourceToActionPlan(competencyLearningResourceId, delegateId, selfAssessmentId);
+            actionPlanService.AddResourceToActionPlan(learningResourceReferenceId, delegateId, selfAssessmentId);
 
             // Then
             A.CallTo(
@@ -114,7 +117,7 @@
                     addedDate,
                     resourceName,
                     resourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 )
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
@@ -141,29 +144,11 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanItems_returns_empty_list_if_signposting_is_disabled()
+        public async Task
+            GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
-
-            // When
-            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
-
-            // Then
-            result.Should().BeEmpty();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(A<int>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public async Task GetIncompleteActionPlanItems_returns_empty_list_if_no_incomplete_learning_log_items_found()
-        {
-            // Given
-            const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -175,7 +160,7 @@
                 .Returns(invalidLearningLogItems);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
             result.Should().BeEmpty();
@@ -184,11 +169,10 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanItems_returns_correctly_matched_action_plan_items()
+        public async Task GetIncompleteActionPlanResources_returns_correctly_matched_action_plan_items()
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
@@ -217,7 +201,7 @@
                 .Returns(bulkReturnedItems);
 
             // When
-            var result = await actionPlanService.GetIncompleteActionPlanItems(delegateId);
+            var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
             List<(int id, string title)> resultIdsAndTitles = result.Select(r => (r.Id, r.Name)).ToList();
@@ -237,75 +221,22 @@
         }
 
         [Test]
-        public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_returns_null_if_signposting_is_disabled()
-        {
-            // Given
-            const int learningLogItemId = 1;
-            const int delegateId = 2;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
-
-            // When
-            var result =
-                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
-
-            // Then
-            result.Should().BeNull();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(A<int>._))
-                .MustNotHaveHappened();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public async Task
-            GetLearningResourceLinkAndUpdateLastAccessedDate_returns_null_if_delegate_does_not_have_active_action_plan_item_with_matching_id()
-        {
-            // Given
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
-            const int learningLogItemId = 1;
-            const int delegateId = 2;
-            var learningLogIds = new List<int> { learningLogItemId, 5, 6, 7, learningLogItemId };
-            var learningResourceIds = new List<int?> { 15, 21, 33, 48, null };
-            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
-                .With(i => i.CompletedDate = null)
-                .And(i => i.ArchivedDate = null)
-                .And((i, index) => i.LearningHubResourceReferenceId = learningResourceIds[index])
-                .And((i, index) => i.LearningLogItemId = learningLogIds[index])
-                .TheFirst(1).With(i => i.ArchivedDate = DateTime.UtcNow)
-                .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
-                .Returns(learningLogItems);
-
-            // When
-            var result =
-                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
-
-            // Then
-            result.Should().BeNull();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
         public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_updates_last_accessed_returns_resource_link()
         {
             // Given
             var testDate = new DateTime(2021, 12, 2);
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             const int learningLogItemId = 1;
             const int delegateId = 2;
             const int resourceReferenceId = 3;
             const string resourceLink = "www.test.com";
-            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(1).All()
+            var learningLogItems = Builder<LearningLogItem>.CreateNew()
                 .With(i => i.CompletedDate = null)
                 .And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = resourceReferenceId)
                 .And(i => i.LearningLogItemId = learningLogItemId)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(learningLogItemId))
                 .Returns(learningLogItems);
             var matchedResource = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
                 .With(r => r.RefId = resourceReferenceId)
@@ -321,7 +252,7 @@
 
             // Then
             result.Should().Be(resourceLink);
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(learningLogItemId))
                 .MustHaveHappenedOnceExactly();
             A.CallTo(
                     () => learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, testDate)
@@ -329,6 +260,192 @@
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(resourceReferenceId))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SetCompletionDate_calls_data_service()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            var completedDate = new DateTime(2021, 09, 01);
+
+            // When
+            learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
+
+            // Then
+            A.CallTo(() => learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void RemoveActionPlanResource_removes_item()
+        {
+            // Given
+            var testDate = new DateTime(2021, 12, 6);
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
+            const int delegateId = 2;
+            const int actionPlanId = 3;
+            A.CallTo(() => learningLogItemsDataService.RemoveLearningLogItem(A<int>._, A<int>._, A<DateTime>._))
+                .DoesNothing();
+
+            // When
+            actionPlanService.RemoveActionPlanResource(actionPlanId, delegateId);
+
+            // Then
+            A.CallTo(() => learningLogItemsDataService.RemoveLearningLogItem(actionPlanId, delegateId, testDate))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_signposting_is_deactivated()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(A<int>._)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void
+            VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_with_given_id_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId)).Returns(null);
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_is_removed()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            var learningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.ArchivedDate = DateTime.UtcNow)
+                .And(i => i.LoggedById = GenericDelegateId).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                .Returns(learningLogItem);
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void VerifyDelegateCanAccessActionPlanResource_returns_null_if_LearningLogItem_has_no_linked_resource()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            var learningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = null)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.LoggedById = GenericDelegateId).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                .Returns(learningLogItem);
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void
+            VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            var learningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.LoggedById = GenericDelegateId + 1000).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                .Returns(learningLogItem);
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeFalse();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                    .MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void VerifyDelegateCanAccessActionPlanResource_returns_true_if_all_conditions_met()
+        {
+            // Given
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
+            var learningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.LoggedById = GenericDelegateId).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                .Returns(learningLogItem);
+
+            // When
+            var result = actionPlanService.VerifyDelegateCanAccessActionPlanResource(
+                GenericLearningLogItemId,
+                GenericDelegateId
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeTrue();
+                A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
+                    .MustHaveHappenedOnceExactly();
+            }
         }
     }
 }

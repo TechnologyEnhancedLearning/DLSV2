@@ -5,16 +5,22 @@
   ViewData["Title"] = "Learning Asset";
   ViewData["SelfAssessmentTitle"] = "Learning Resource";
 }
+
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a>
+  </li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a>
+  </li>
   <li class="nhsuk-breadcrumb__item">Learning Resource</li>
 }
+
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 
 <div class="nhsuk-back-link">
-  <a class="nhsuk-back-link__link trigger-loader" asp-action="FilteredRecommendations" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
-    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <a class="nhsuk-back-link__link trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
     </svg>
     Back to Recommendations
@@ -26,34 +32,43 @@
 </div>
 <h1 id="asset-title-@Model.Id">@Model.Title</h1>
 <div class="nhsuk-grid-row">
-  @if (Model.MainImage != "")
-  {
+  @if (Model.MainImage != "") {
     <div class="nhsuk-grid-column-one-half">
       <img src="@Model.MainImage" onerror="this.style.display='none'" alt="@Model.Title screenshot" class="img-screenshot" />
     </div>
   }
-    <div class="@(Model.MainImage == ""? "nhsuk-grid-column-full" : "nhsuk-grid-column-one-half")">
-        @Html.Raw(Model.Description)
-        <div class="nhsuk-action-link">
-          <a class="nhsuk-action-link__link" aria-describedby="asset-title-@Model.Id" target="_blank" href="@Model.DirectUrl">
-            <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M0 0h24v24H0z" fill="none"></path>
-              <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
-            </svg>
-            <span class="nhsuk-action-link__text">Launch</span>
-          </a>
-        </div>
-      </div>
+  <div class="@(Model.MainImage == "" ? "nhsuk-grid-column-full" : "nhsuk-grid-column-one-half")">
+    @Html.Raw(Model.Description)
+    <div class="nhsuk-action-link">
+      <a class="nhsuk-action-link__link" aria-describedby="asset-title-@Model.Id" target="_blank" href="@Model.DirectUrl">
+        <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+        </svg>
+        <span class="nhsuk-action-link__text">Launch</span>
+      </a>
     </div>
+  </div>
+</div>
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-4">
   <div class="nhsuk-grid-column-full">
-    <a class="@(Model.IsFavourite ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="SetFavouriteAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id" asp-route-status=@(Model.IsFavourite ? "False" : "True")>
+    <a class="@(Model.IsFavourite ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3"
+       aria-describedby="asset-title-@Model.Id"
+       asp-controller="RecommendedLearning"
+       asp-action="SetFavouriteAsset"
+       asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])"
+       asp-route-assetId="@Model.Id"
+       asp-route-status=@(Model.IsFavourite ? "False" : "True")>
       @(Model.IsFavourite ? "Unbookmark" : "Bookmark")
     </a>
-    <a class="@(Model.Completed ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3" aria-describedby="asset-title-@Model.Id" asp-action="CompleteLearningAssetView" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">
+    <a class="@(Model.Completed ? "nhsuk-button nhsuk-button--secondary" : "nhsuk-button")  small-edit-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0 nhsuk-u-margin-right-3"
+       aria-describedby="asset-title-@Model.Id"
+       asp-controller="RecommendedLearning"
+       asp-action="CompleteLearningAssetView"
+       asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])"
+       asp-route-assetId="@Model.Id">
       @(Model.Completed ? "Change Outcome" : "Mark Complete")
-      
+
     </a>
   </div>
 </div>
-
