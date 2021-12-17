@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.AspNetCore.Mvc.ModelBinding
+
 @model MyAccountEditDetailsViewModel
 
 @{
@@ -9,13 +10,12 @@
     errorHasOccurred = modelState.ValidationState != ModelValidationState.Valid;
   }
 
-  var optionNoneSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.None;
   var optionYesSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.Yes;
   var optionNoSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.No;
   var professionalRegConditionalId = "professional-reg-conditional-Id";
 }
 
-<div class="nhsuk-form-group @(errorHasOccurred && optionNoneSelected ? "nhsuk-form-group--error" : "")">
+<div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
   <fieldset class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
     <div class="nhsuk-hint" id="professional-registration-hint">
       Do you have a Professional Registration Number?
@@ -23,7 +23,7 @@
 
     @if (errorHasOccurred) {
       <span class="nhsuk-error-message" id="no-selection-error">
-        <span class="nhsuk-u-visually-hidden">Error:</span> @(optionNoneSelected ? ViewData.ModelState[nameof(Model.HasProfessionalRegistrationNumber)].Errors[0].ErrorMessage : "")
+        <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.HasProfessionalRegistrationNumber)].Errors[0].ErrorMessage
       </span>
     }
 
