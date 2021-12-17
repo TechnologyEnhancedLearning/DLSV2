@@ -1,9 +1,14 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
+@using Microsoft.AspNetCore.Mvc.ModelBinding
 @model EditDetailsViewModel
 
 @{
-  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var errorHasOccurred = false;
+  if (ViewData.ModelState.TryGetValue(nameof(Model.HasProfessionalRegistrationNumber), out var modelState)) {
+    errorHasOccurred = modelState.ValidationState != ModelValidationState.Valid;
+  }
+
   var optionNoneSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.None;
   var optionYesSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.Yes;
   var optionNoSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.No;
