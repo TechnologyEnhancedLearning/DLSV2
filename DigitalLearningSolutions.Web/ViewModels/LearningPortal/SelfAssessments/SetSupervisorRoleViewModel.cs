@@ -9,6 +9,7 @@
     public class SetSupervisorRoleViewModel
     {
         public int SelfAssessmentID { get; set; }
+        public int? SupervisorDelegateId { get; set; }
         public string SelfAssessmentName { get; set; }
         public Administrator? Supervisor { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Please choose a supervisor role")]

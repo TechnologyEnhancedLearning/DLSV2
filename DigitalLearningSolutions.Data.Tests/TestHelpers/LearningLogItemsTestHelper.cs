@@ -37,7 +37,7 @@
                         ExternalUri,
                         SeqInt,
                         LastAccessedDate,
-                        LinkedCompetencyLearningResourceID
+                        LearningResourceReferenceID
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     WHERE ExternalUri = @resourceLink",
