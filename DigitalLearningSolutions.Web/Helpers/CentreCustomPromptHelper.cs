@@ -1,13 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
+    using EditDetailsFormData = DigitalLearningSolutions.Web.ViewModels.Common.EditDetailsFormData;
 
     public class CentreCustomPromptHelper
     {
@@ -129,7 +132,21 @@
             );
         }
 
-        public void ValidateCustomPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
+        public void ValidateCustomPrompts(EditDelegateFormData formData, int centreId, ModelStateDictionary modelState)
+        {
+            ValidateCustomPrompts(
+                centreId,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6,
+                modelState
+            );
+        }
+
+        public void ValidateCustomPrompts(MyAccountEditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
         {
             ValidateCustomPrompts(
                 centreId,

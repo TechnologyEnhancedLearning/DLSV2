@@ -20,6 +20,8 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
+                formData.ProfessionalRegistrationNumber,
+                formData.HasProfessionalRegistrationNumber,
                 formData.ProfileImage
             );
 

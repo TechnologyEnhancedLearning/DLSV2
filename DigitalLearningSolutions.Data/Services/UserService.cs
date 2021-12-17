@@ -176,12 +176,12 @@ namespace DigitalLearningSolutions.Data.Services
             {
                 var delegateIds = verifiedDelegateUsers.Select(d => d.Id).ToArray();
                 userDataService.UpdateDelegateUsers(
-                    accountDetailsData.FirstName,
-                    accountDetailsData.Surname,
-                    accountDetailsData.Email,
-                    accountDetailsData.ProfileImage,
-                    accountDetailsData.ProfessionalRegNumber,
-                    accountDetailsData.HasBeenPromptedForPrn,
+                    myAccountDetailsData.FirstName,
+                    myAccountDetailsData.Surname,
+                    myAccountDetailsData.Email,
+                    myAccountDetailsData.ProfileImage,
+                    myAccountDetailsData.ProfessionRegistrationNumber,
+                    myAccountDetailsData.HasBeenPromptedForPrns,
                     delegateIds
                 );
 

@@ -1,8 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
@@ -11,12 +8,10 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using Microsoft.AspNetCore.Mvc.Rendering;
+    using System.Linq;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
@@ -137,16 +132,13 @@
 
             if (!ModelState.IsValid)
             {
-                var model = new EditDetailsViewModel(formData, dlsSubApplication);
-                model.ValidateManually(ModelState);
-                return View(model);
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
             }
 
             if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
+                    nameof(MyAccountEditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
@@ -174,6 +166,7 @@
             var customPrompts =
                 centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
+            model.ValidateManually(ModelState);
             return View(model);
         }
 

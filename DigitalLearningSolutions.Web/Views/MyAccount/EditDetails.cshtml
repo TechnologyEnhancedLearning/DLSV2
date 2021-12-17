@@ -103,17 +103,6 @@
               hint-text=""
               css-class="nhsuk-u-width-one-half" />
           }
-          else
-          {
-            <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
-                           label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
-                           populate-with-current-value="true"
-                           type="text"
-                           spell-check="false"
-                           autocomplete=""
-                           hint-text=""
-                           css-class="nhsuk-u-width-one-half" />
-          }
         }
       </div>
     </div>
