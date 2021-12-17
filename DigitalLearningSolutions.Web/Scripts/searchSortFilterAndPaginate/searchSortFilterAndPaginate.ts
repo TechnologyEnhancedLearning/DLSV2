@@ -4,7 +4,7 @@ import {
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
-import { ITEMS_PER_PAGE, paginateResults, setUpPagination } from './paginate';
+import { paginateResults, setUpPagination } from './paginate';
 import getPathForEndpoint from '../common';
 
 export interface ISearchableElement {
@@ -51,6 +51,7 @@ export class SearchSortFilterAndPaginate {
         setUpPagination(
           () => this.onNextPagePressed(searchableData),
           () => this.onPreviousPagePressed(searchableData),
+          () => this.onItemsPerPageUpdated(searchableData),
         );
       }
       this.searchSortAndPaginate(searchableData);
@@ -64,6 +65,11 @@ export class SearchSortFilterAndPaginate {
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
+    this.page = 1;
+    this.searchSortAndPaginate(searchableData);
+  }
+
+  private onItemsPerPageUpdated(searchableData: ISearchableData): void {
     this.page = 1;
     this.searchSortAndPaginate(searchableData);
   }
@@ -91,9 +97,8 @@ export class SearchSortFilterAndPaginate {
 
     SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
 
-    const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = this.paginationEnabled
-      ? paginateResults(sortedElements, this.page, totalPages)
+      ? paginateResults(sortedElements, this.page)
       : sortedElements;
     SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
