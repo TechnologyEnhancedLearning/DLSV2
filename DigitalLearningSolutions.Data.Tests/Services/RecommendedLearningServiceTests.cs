@@ -60,20 +60,7 @@
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
                 .Returns(new List<LearningLogItem>());
 
-            var expectedResource = new RecommendedResource
-            {
-                LearningResourceReferenceId = LearningResourceReferenceId,
-                LearningHubReferenceId = LearningHubResourceReferenceId,
-                ResourceName = ResourceName,
-                ResourceDescription = ResourceDescription,
-                ResourceType = ResourceType,
-                CatalogueName = ResourceCatalogue,
-                ResourceLink = ResourceLink,
-                IsInActionPlan = false,
-                IsCompleted = false,
-                LearningLogId = null,
-                RecommendationScore = 0,
-            };
+            var expectedResource = GetExpectedResource(false, false, null);
 
             // When
             var result =
@@ -98,20 +85,7 @@
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
                 .Returns(learningLogItems);
 
-            var expectedResource = new RecommendedResource
-            {
-                LearningResourceReferenceId = LearningResourceReferenceId,
-                LearningHubReferenceId = LearningHubResourceReferenceId,
-                ResourceName = ResourceName,
-                ResourceDescription = ResourceDescription,
-                ResourceType = ResourceType,
-                CatalogueName = ResourceCatalogue,
-                ResourceLink = ResourceLink,
-                IsInActionPlan = false,
-                IsCompleted = false,
-                LearningLogId = null,
-                RecommendationScore = 0,
-            };
+            var expectedResource = GetExpectedResource(false, false, null);
 
             // When
             var result =
@@ -138,20 +112,7 @@
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
 
-            var expectedResource = new RecommendedResource
-            {
-                LearningResourceReferenceId = LearningResourceReferenceId,
-                LearningHubReferenceId = LearningHubResourceReferenceId,
-                ResourceName = ResourceName,
-                ResourceDescription = ResourceDescription,
-                ResourceType = ResourceType,
-                CatalogueName = ResourceCatalogue,
-                ResourceLink = ResourceLink,
-                IsInActionPlan = false,
-                IsCompleted = true,
-                LearningLogId = null,
-                RecommendationScore = 0,
-            };
+            var expectedResource = GetExpectedResource(false, true, null);
 
             // When
             var result =
@@ -178,20 +139,7 @@
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
 
-            var expectedResource = new RecommendedResource
-            {
-                LearningResourceReferenceId = LearningResourceReferenceId,
-                LearningHubReferenceId = LearningHubResourceReferenceId,
-                ResourceName = ResourceName,
-                ResourceDescription = ResourceDescription,
-                ResourceType = ResourceType,
-                CatalogueName = ResourceCatalogue,
-                ResourceLink = ResourceLink,
-                IsInActionPlan = true,
-                IsCompleted = false,
-                LearningLogId = LearningLogId,
-                RecommendationScore = 0,
-            };
+            var expectedResource = GetExpectedResource(true, false, LearningLogId);
 
             // When
             var result =
@@ -290,6 +238,24 @@
 
             A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
                 .Returns(clientResponse);
+        }
+
+        private RecommendedResource GetExpectedResource(bool isInActionPlan, bool isCompleted, int? learningLogId)
+        {
+            return new RecommendedResource
+            {
+                LearningResourceReferenceId = LearningResourceReferenceId,
+                LearningHubReferenceId = LearningHubResourceReferenceId,
+                ResourceName = ResourceName,
+                ResourceDescription = ResourceDescription,
+                ResourceType = ResourceType,
+                CatalogueName = ResourceCatalogue,
+                ResourceLink = ResourceLink,
+                IsInActionPlan = isInActionPlan,
+                IsCompleted = isCompleted,
+                LearningLogId = learningLogId,
+                RecommendationScore = 0,
+            };
         }
     }
 }
