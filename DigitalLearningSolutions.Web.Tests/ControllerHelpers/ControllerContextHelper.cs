@@ -5,7 +5,7 @@
     using System.Security.Claims;
     using System.Text;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Http;
@@ -96,24 +96,15 @@
             int adminCategoryId = AdminCategoryId
         ) where T : Controller
         {
-            var authenticationType = isAuthenticated ? "mock" : string.Empty;
-
-            controller.HttpContext.User = new ClaimsPrincipal
-            (
-                new ClaimsIdentity(
-                    new[]
-                    {
-                        new Claim(CustomClaimTypes.UserCentreId, centreId.ToString()),
-                        new Claim(CustomClaimTypes.UserAdminId, adminId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.LearnCandidateId, delegateId?.ToString() ?? "False"),
-                        new Claim(CustomClaimTypes.LearnUserAuthenticated, delegateId != null ? "True" : "False"),
-                        new Claim(ClaimTypes.Email, emailAddress ?? string.Empty),
-                        new Claim(CustomClaimTypes.UserCentreAdmin, isCentreAdmin.ToString()),
-                        new Claim(CustomClaimTypes.IsFrameworkDeveloper, isFrameworkDeveloper.ToString()),
-                        new Claim(CustomClaimTypes.AdminCategoryId, adminCategoryId.ToString()),
-                    },
-                    authenticationType
-                )
+            controller.HttpContext.WithMockUser(
+                isAuthenticated,
+                centreId,
+                adminId,
+                delegateId,
+                emailAddress,
+                isCentreAdmin,
+                isFrameworkDeveloper,
+                adminCategoryId
             );
 
             return controller;

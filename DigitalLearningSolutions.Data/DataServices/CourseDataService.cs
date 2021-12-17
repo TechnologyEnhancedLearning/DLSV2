@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
+        IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
@@ -75,7 +75,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
-        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId);
+        public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
     }
 
     public class CourseDataService : ICourseDataService
@@ -237,7 +237,16 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
         {
-            var numberOfAffectedRows = connection.Execute(
+            int enrolmentExists = (int)connection.ExecuteScalar(
+               @"SELECT COALESCE
+                 ((SELECT ID
+                  FROM    CandidateAssessments
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
+               new { selfAssessmentId, candidateId });
+
+            if (enrolmentExists == 0)
+            {
+                enrolmentExists = connection.Execute(
                 @"INSERT INTO [dbo].[CandidateAssessments]
                            ([CandidateID]
                            ,[SelfAssessmentID])
@@ -246,8 +255,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @selfAssessmentId)",
                 new { selfAssessmentId, candidateId }
             );
-
-            if (numberOfAffectedRows < 1)
+            }
+            if (enrolmentExists < 1)
             {
                 logger.LogWarning(
                     "Not enrolled delegate on self assessment as db insert failed. " +
@@ -263,12 +272,15 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
+                        AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
                 new { centreId, adminCategoryId }
             );
         }
 
-        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(int centreId, int? categoryId)
+        public IEnumerable<CourseStatistics> GetCourseStatisticsAtCentreFilteredByCategory(
+            int centreId,
+            int? categoryId
+        )
         {
             return connection.Query<CourseStatistics>(
                 @$"SELECT
@@ -407,23 +419,43 @@ namespace DigitalLearningSolutions.Data.DataServices
             return names;
         }
 
-        public IEnumerable<Course> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
+        public IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId)
         {
-            return connection.Query<Course>(
-                @"SELECT
+            const string tutorialWithLearningCountQuery =
+                @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                WHERE ct.Status = 1 AND ct.CustomisationID = c.CustomisationID";
+
+            const string tutorialWithDiagnosticCountQuery =
+                @"SELECT COUNT(ct.TutorialID)
+                FROM CustomisationTutorials AS ct
+                INNER JOIN Tutorials AS t ON ct.TutorialID = t.TutorialID
+                INNER JOIN Customisations AS c ON c.CustomisationID = ct.CustomisationID
+                INNER JOIN Applications AS a ON a.ApplicationID = c.ApplicationID
+                WHERE ct.DiagStatus = 1 AND a.DiagAssess = 1 AND ct.CustomisationID = c.CustomisationID";
+
+            return connection.Query<CourseAssessmentDetails>(
+                $@"SELECT
                         c.CustomisationID,
                         c.CentreID,
                         c.ApplicationID,
                         ap.ApplicationName,
                         c.CustomisationName,
-                        c.Active
+                        c.Active,
+                        c.IsAssessed,
+                        cc.CategoryName,
+                        ct.CourseTopic,
+                        CASE WHEN ({tutorialWithLearningCountQuery}) > 0 THEN 1 ELSE 0 END  AS HasLearning,
+                        CASE WHEN ({tutorialWithDiagnosticCountQuery}) > 0 THEN 1 ELSE 0 END AS HasDiagnostic
                     FROM Customisations AS c
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = ap.ApplicationID
-                    WHERE (c.CentreID = @centreId OR c.AllCentres = 1)
-                    AND ca.CentreID = @centreID
-	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL",
+                    INNER JOIN Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
                 new { centreId, categoryId }
             );
         }
@@ -443,7 +475,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN Customisations AS c ON c.CustomisationID = p.CustomisationId
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
-	                AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                    AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                     AND ap.ArchivedDate IS NULL",
                 new { centreId, categoryId }
             );
@@ -487,14 +519,25 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public (int? centreId, int? courseCategoryId) GetCourseCentreAndCategory(int customisationId)
+        public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId)
         {
-            return connection.QueryFirstOrDefault<(int?, int?)>(
-                @"SELECT c.CentreId, a.CourseCategoryId
-                        FROM Customisations AS c
-                        INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE CustomisationID = @customisationId",
-                new { customisationId }
+            return connection.QueryFirstOrDefault<CourseValidationDetails>(
+                @"SELECT
+                        c.CentreId,
+                        a.CourseCategoryId,
+                        c.AllCentres,
+                        CASE WHEN EXISTS (
+                                SELECT CentreApplicationID
+                                FROM CentreApplications
+                                WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreId) AND (Active = 1)
+                            )
+                            THEN CAST(1 AS BIT)
+                            ELSE CAST(0 AS BIT)
+                        END AS CentreHasApplication
+                    FROM Customisations AS c
+                    INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
+                    WHERE CustomisationID = @customisationId",
+                new { customisationId, centreId }
             );
         }
 
@@ -603,7 +646,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     LEFT JOIN dbo.Customisations AS refreshToCu ON refreshToCu.CustomisationID = cu.RefreshToCustomisationId
                     LEFT JOIN dbo.Applications AS refreshToAp ON refreshToAp.ApplicationID = refreshToCu.ApplicationID
                     WHERE
-                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL) 
+                        (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
                         AND cu.CustomisationID = @customisationId",

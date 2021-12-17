@@ -20,7 +20,9 @@
         {
             var adminId = GetAdminID();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
-            var supervisorDashboardToDoItems = supervisorService.GetSupervisorDashboardToDoItems(adminId);
+            var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
+            var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
+            var supervisorDashboardToDoItems = Enumerable.Concat(signOffRequests, reviewRequests);
             var model = new SupervisorDashboardViewModel()
             {
                 DashboardData = dashboardData,
@@ -318,6 +320,22 @@
         public IActionResult EnrolSetRoleProfile(int supervisorDelegateId, int selfAssessmentID)
         {
             SessionEnrolOnRoleProfile sessionEnrolOnRoleProfile = TempData.Peek<SessionEnrolOnRoleProfile>();
+
+            if (selfAssessmentID < 1)
+            {
+                ModelState.AddModelError("selfAssessmentId", "You must select a self assessment");
+                TempData.Set(sessionEnrolOnRoleProfile);
+                var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
+                var roleProfiles = supervisorService.GetAvailableRoleProfilesForDelegate((int)supervisorDelegate.CandidateID, GetCentreId());
+                var model = new EnrolDelegateOnProfileAssessmentViewModel()
+                {
+                    SessionEnrolOnRoleProfile = sessionEnrolOnRoleProfile,
+                    SupervisorDelegateDetail = supervisorDelegate,
+                    RoleProfiles = roleProfiles
+                };
+                return View("EnrolDelegateOnProfileAssessment", model);
+            }
+            
             sessionEnrolOnRoleProfile.SelfAssessmentID = selfAssessmentID;
             TempData.Set(sessionEnrolOnRoleProfile);
             return RedirectToAction("EnrolDelegateCompleteBy", "Supervisor", new { supervisorDelegateId = supervisorDelegateId });

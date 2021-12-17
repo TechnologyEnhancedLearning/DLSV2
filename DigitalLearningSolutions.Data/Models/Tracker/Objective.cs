@@ -1,20 +1,28 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Tracker
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
-    public class Objective
+    public class Objective : ObjectiveBase
     {
-        public Objective(int tutorialId, IEnumerable<int> interactions, int possible)
+        public Objective(int tutorialId, IEnumerable<int> interactions, int possible) : base(tutorialId, possible)
         {
-            TutorialId = tutorialId;
-            Interactions = interactions;
-            Possible = possible;
-            MyScore = 0;
+            Interactions = interactions.ToList();
         }
 
-        public int TutorialId { get; set; }
-        public IEnumerable<int> Interactions { get; set; }
-        public int Possible { get; set; }
-        public int MyScore { get; set; }
+        /// <summary>
+        /// Constructor for Dapper with signature matching object returned from get-objectives query.
+        /// </summary>
+        /// <param name="tutorialId"></param>
+        /// <param name="interactions">A comma-separated list of interactions, as stored in the db.</param>
+        /// <param name="possible"></param>
+        public Objective(int tutorialId, string? interactions, int possible) : base(tutorialId, possible)
+        {
+            Interactions = interactions?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList() ??
+                           new List<int>();
+        }
+
+        public List<int> Interactions { get; set; }
     }
 }

@@ -125,6 +125,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/Signposting/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -226,6 +227,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
+            services.AddScoped<ILearningResourceReferenceDataService, LearningResourceReferenceDataService>();
             services.AddScoped<INotificationDataService, NotificationDataService>();
             services.AddScoped<INotificationPreferencesDataService, NotificationPreferencesDataService>();
             services.AddScoped<ICentreContractAdminUsageService, CentreContractAdminUsageService>();
@@ -273,12 +275,15 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
-            services.AddScoped<VerifyAdminUserCanAccessCourse>();
+            services.AddScoped<VerifyAdminUserCanManageCourse>();
+            services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();
+            services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
+            services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

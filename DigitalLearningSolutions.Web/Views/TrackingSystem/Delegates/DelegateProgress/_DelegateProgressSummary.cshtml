@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -36,7 +38,10 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.CompleteBy" />
     <dd class="nhsuk-summary-list__actions">
-      <a href="#">
+      <a asp-controller="DelegateProgress"
+         asp-action="EditCompleteByDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@Model.AccessedVia">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
@@ -58,8 +63,11 @@
     </dt>
     <partial name="_SummaryFieldValue" model="Model.Completed" />
     <dd class="nhsuk-summary-list__actions">
-      <a href="#">
-        Edit<span class="nhsuk-u-visually-hidden"> completion date</span>
+      <a asp-controller="DelegateProgress"
+         asp-action="EditCompletionDate"
+         asp-route-progressId="@Model.ProgressId"
+         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
+        Edit
       </a>
     </dd>
   </div>

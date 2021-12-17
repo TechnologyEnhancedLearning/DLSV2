@@ -1,10 +1,9 @@
-﻿namespace DigitalLearningSolutions.Data.DataServices
+namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
@@ -19,8 +18,11 @@
         );
 
         TutorialContent? GetTutorialContent(int customisationId, int sectionId, int tutorialId);
+
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
+
         IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
 
         void UpdateOrInsertCustomisationTutorialStatuses(
@@ -31,6 +33,12 @@
         );
 
         IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId);
+
+        IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        );
     }
 
     public class TutorialContentDataService : ITutorialContentDataService
@@ -40,7 +48,6 @@
         public TutorialContentDataService(IDbConnection connection)
         {
             this.connection = connection;
-            SqlMapper.AddTypeHandler(new EnumerableIntHandler());
         }
 
         public TutorialInformation? GetTutorialInformation(
@@ -350,7 +357,10 @@
             );
         }
 
-        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(int sectionId, int customisationId)
+        public IEnumerable<Objective> GetNonArchivedObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId
+        )
         {
             return connection.Query<Objective>(
                 @"SELECT 
@@ -367,6 +377,31 @@
                     AND ct.CustomisationID = @customisationId
                     AND tu.ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<CcObjective> GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+            int sectionId,
+            int customisationId,
+            bool isPostLearning
+        )
+        {
+            return connection.Query<CcObjective>(
+                @"SELECT 
+                        CASE
+                            WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
+                            ELSE tu.TutorialID
+                        END AS TutorialID,
+                        tu.TutorialName,
+                        tu.DiagAssessOutOf AS Possible
+                    FROM dbo.Tutorials AS tu
+                    INNER JOIN dbo.CustomisationTutorials AS ct
+                        ON ct.TutorialID = tu.TutorialID
+                    WHERE tu.SectionID = @sectionId
+                    AND ct.CustomisationID = @customisationId
+                    AND tu.ArchivedDate IS NULL
+                    AND (@isPostLearning = 1 OR (ct.DiagStatus = 1 AND tu.DiagAssessOutOf > 0))",
+                new { sectionId, customisationId, isPostLearning }
             );
         }
     }

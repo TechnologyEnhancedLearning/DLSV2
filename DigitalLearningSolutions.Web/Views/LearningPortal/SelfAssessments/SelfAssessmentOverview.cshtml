@@ -1,16 +1,22 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Data.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using Microsoft.Extensions.Configuration
 @model SelfAssessmentOverviewViewModel
 
 @{
   Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Self Assessment";
-  ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
+  ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
+
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a>
+  </li>
   <li class="nhsuk-breadcrumb__item">@Model.VocabPlural()</li>
 }
+
 @section mobilebacklink
 {
   <p class="nhsuk-breadcrumb__back">
@@ -20,84 +26,105 @@
     </a>
   </p>
 }
+
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
-@if (Model.NumberOfOptionalCompetencies > 0)
-{
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-action="ManageOptionalCompetencies">
+@if (Model.NumberOfOptionalCompetencies > 0) {
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+     asp-route-vocabulary="@Model.VocabPlural()"
+     asp-action="ManageOptionalCompetencies"
+     role="button">
     Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
-@if (Model.SelfAssessment.IsSupervised)
-{
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action="StartRequestVerification">
+@if (Model.SelfAssessment.IsSupervised) {
+  <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
+     asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+     asp-action="StartRequestVerification"
+     role="button">
     Request @Model.SelfAssessment.Vocabulary.ToLower() verification
   </a>
 }
-@if (Model.CompetencyGroups.Any())
-{
-  foreach (var competencyGroup in Model.CompetencyGroups)
-  {
-
+@if (Model.CompetencyGroups.Any()) {
+  foreach (var competencyGroup in Model.CompetencyGroups) {
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
-      <details class="nhsuk-details nhsuk-expander" @((int)Model.CompetencyGroups.Count() == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("competencyGroupId") ? (ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : "") : ""))>
+      @{
+        var expanderOpen = Model.CompetencyGroups.Count() == 1
+          ? "open"
+          : ViewContext.RouteData.Values.ContainsKey("competencyGroupId")
+            ? ViewContext.RouteData.Values["competencyGroupId"].Equals(competencyGroup.First().CompetencyGroupID.ToString()) ? "open" : ""
+            : "";
+      }
+      <details class="nhsuk-details nhsuk-expander" @(expanderOpen)>
         <summary class="nhsuk-details__summary">
           <span class="competency-group-title nhsuk-details__summary-text">
             @competencyGroup.Key
           </span>
         </summary>
         <div class="nhsuk-details__text">
-          @if (Model.SelfAssessment.LinearNavigation)
-          {
+          @if (Model.SelfAssessment.LinearNavigation) {
             <partial name="SelfAssessments/_MeanScores"
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
           }
 
-          <partial name="SelfAssessments/_OverviewTable" view-data="@(
-            new ViewDataDictionary(ViewData) {
-              { "linearNavigation", Model.SelfAssessment.LinearNavigation },
-              { "selfAssessment", Model.SelfAssessment } })" model="competencyGroup" />
+          <partial name="SelfAssessments/_OverviewTable"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "linearNavigation", Model.SelfAssessment.LinearNavigation }, { "selfAssessment", Model.SelfAssessment } })"
+                   model="competencyGroup" />
 
         </div>
       </details>
-      @if (Model.SelfAssessment.LinearNavigation)
-      {
+      @if (Model.SelfAssessment.LinearNavigation) {
         <div class="outer-score-container nhsuk-u-padding-bottom-4">
           <partial name="SelfAssessments/_MeanScores"
                    view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
-        </div>}
+        </div>
+      }
     </div>
-
   }
 }
 
-
-@if (Model.SelfAssessment.IncludesSignposting)
-{
+@if (Model.SelfAssessment.IncludesSignposting) {
   <p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to retrieve a list of recommended learning resources.</p>
-  <a class="nhsuk-button finish-review-button trigger-loader" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentFilteredResults" : "FilteredRecommendations")>
-    Submit self assessment
-  </a>
+
+  @if (Configuration.IsSignpostingUsed()) {
+    <a class="nhsuk-button finish-review-button trigger-loader"
+       asp-controller="RecommendedLearning"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+       asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentResults" : "RecommendedLearning")
+       role="button">
+      Submit results
+    </a>
+  } else {
+    <a class="nhsuk-button finish-review-button trigger-loader"
+       asp-controller="RecommendedLearning"
+       asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+       asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentResults" : "RecommendedLearning")
+       role="button">
+      Submit self assessment
+    </a>
+  }
 }
-@if (Model.SelfAssessment.IsSupervised)
-{
+@if (Model.SelfAssessment.IsSupervised) {
   <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
-    @if (Model.AllQuestionsVerifiedOrNotRequired())
-    {
-      @if (!Model.SupervisorSignOffs.Any())
-      {
+    @if (Model.AllQuestionsVerifiedOrNotRequired()) {
+      @if (!Model.SupervisorSignOffs.Any()) {
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
-
       }
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2" asp-action="RequestSignOff" asp-route-vocabulary="@Model.SelfAssessment.Vocabulary" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Request @Model.SelfAssessment.SignOffRoleName sign-off</a>
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+         asp-action="RequestSignOff"
+         asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
+         asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
+         role="button">
+        Request @Model.SelfAssessment.SignOffRoleName sign-off
+      </a>
+    } else {
+      <p class="nhsuk-body-l">
+        All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified,
+        before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
+      </p>
     }
-    else
-    {
-      <p class="nhsuk-body-l">All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified, before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.</p>
-    }
-
   </div>
 }
-

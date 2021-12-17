@@ -197,7 +197,7 @@
 
             controller.TempData.Set(initialTempData);
 
-            A.CallTo(() => courseService.VerifyAdminUserCanAccessCourse(A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => courseService.VerifyAdminUserCanManageCourse(A<int>._, A<int>._, A<int>._))
                 .Returns(true);
 
             // When
