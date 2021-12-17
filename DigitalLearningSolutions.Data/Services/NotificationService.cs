@@ -42,20 +42,13 @@
             }
 
             unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl) ??
+            var refactoredTrackingSystemEnabled = featureManager.IsEnabledAsync("RefactoredTrackingSystem").Result;
+            var baseUrlConfigOption = refactoredTrackingSystemEnabled ? ConfigService.AppBaseUrl : ConfigService.TrackingSystemBaseUrl;
+            var trackingSystemBaseUrl = configService.GetConfigValue(baseUrlConfigOption) ??
                                         throw new ConfigValueMissingException(
-                                            configService.GetConfigValueMissingExceptionMessage("TrackingSystemBaseUrl")
+                                            configService.GetConfigValueMissingExceptionMessage(baseUrlConfigOption)
                                         );
-
-            var v2AppBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                               throw new ConfigValueMissingException(
-                                   configService.GetConfigValueMissingExceptionMessage("AppBaseUrl")
-                               );
-
-            var trackingSystemSupportEnabled = featureManager.IsEnabledAsync("RefactoredTrackingSystem").Result;
-
-            var unlockUrl = trackingSystemSupportEnabled
-                ? new UriBuilder(trackingSystemBaseUrl): new UriBuilder(v2AppBaseUrl);
+            var unlockUrl = new UriBuilder(trackingSystemBaseUrl);
 
             unlockUrl.Path += "coursedelegates";
             unlockUrl.Query = $"CustomisationID={unlockData.CustomisationId}";
