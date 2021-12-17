@@ -1,7 +1,31 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.LearningResources
 {
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
+
     public class RecommendedResource
     {
+        public RecommendedResource() { }
+
+        public RecommendedResource(
+            int resourceReferenceId,
+            ResourceReferenceWithResourceDetails resourceReferenceDetails,
+            LearningLogItem? incompleteLearningLogItem,
+            bool isCompleted
+        )
+        {
+            LearningResourceReferenceId = resourceReferenceId;
+            LearningHubReferenceId = resourceReferenceDetails.RefId;
+            ResourceName = resourceReferenceDetails.Title;
+            ResourceDescription = resourceReferenceDetails.Description;
+            ResourceType = resourceReferenceDetails.ResourceType;
+            CatalogueName = resourceReferenceDetails.Catalogue.Name;
+            ResourceLink = resourceReferenceDetails.Link;
+            IsInActionPlan = incompleteLearningLogItem != null;
+            IsCompleted = isCompleted;
+            LearningLogId = incompleteLearningLogItem?.LearningLogItemId;
+            RecommendationScore = 0; // TODO HEEDLS-705 Calculate this score
+        }
+
         public int LearningResourceReferenceId { get; set; }
 
         public int LearningHubReferenceId { get; set; }

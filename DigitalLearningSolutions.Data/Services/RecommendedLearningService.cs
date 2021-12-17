@@ -70,21 +70,14 @@
                     var learningLogItemsForResource = delegateLearningLogItems.Where(
                         ll => ll.ArchivedDate == null && ll.LearningHubResourceReferenceId == rr.RefId
                     ).ToList();
-                    var incompleteLearningLogItem = learningLogItemsForResource.SingleOrDefault(ll => ll.CompletedDate == null);
-                    return new RecommendedResource
-                    {
-                        LearningResourceReferenceId = resourceReferences[rr.RefId],
-                        LearningHubReferenceId = rr.RefId,
-                        ResourceName = rr.Title,
-                        ResourceDescription = rr.Description,
-                        ResourceType = rr.ResourceType,
-                        CatalogueName = rr.Catalogue.Name,
-                        ResourceLink = rr.Link,
-                        IsInActionPlan = incompleteLearningLogItem != null,
-                        IsCompleted = incompleteLearningLogItem == null && learningLogItemsForResource.Any(ll => ll.CompletedDate != null),
-                        LearningLogId = incompleteLearningLogItem?.LearningLogItemId,
-                        RecommendationScore = 0, // TODO HEEDLS-705 Calculate this score
-                    };
+                    var incompleteLearningLogItem =
+                        learningLogItemsForResource.SingleOrDefault(ll => ll.CompletedDate == null);
+                    return new RecommendedResource(
+                        resourceReferences[rr.RefId],
+                        rr,
+                        incompleteLearningLogItem,
+                        learningLogItemsForResource.Any(ll => ll.CompletedDate != null)
+                    );
                 }
             );
 

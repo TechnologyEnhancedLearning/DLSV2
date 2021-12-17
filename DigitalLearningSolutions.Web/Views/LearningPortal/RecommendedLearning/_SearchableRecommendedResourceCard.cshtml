@@ -21,12 +21,12 @@
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
       </div>
-      @if (Model.IsInActionPlan && !Model.IsCompleted) {
+      @if (Model.IsInActionPlan) {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--blue">Already in action plan</strong>
         </div>
       }
-      @if (Model.IsCompleted && !Model.IsInActionPlan) {
+      @if (Model.IsCompleted) {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
         </div>

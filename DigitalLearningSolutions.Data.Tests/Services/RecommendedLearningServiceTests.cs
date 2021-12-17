@@ -152,6 +152,38 @@
         }
 
         [Test]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correctly_populated_resource_with_incomplete_and_complete_learning_log_item()
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+
+            var completeLearningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
+                .And(i => i.CompletedDate = DateTime.UtcNow)
+                .And(i => i.LearningLogItemId = LearningLogId)
+                .And(i => i.ArchivedDate = null).Build();
+            var incompleteLearningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
+                .And(i => i.CompletedDate = null)
+                .And(i => i.LearningLogItemId = LearningLogId)
+                .And(i => i.ArchivedDate = null).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+                .Returns(new List<LearningLogItem> { completeLearningLogItem, incompleteLearningLogItem });
+
+            var expectedResource = GetExpectedResource(true, true, LearningLogId);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+        }
+
+        [Test]
         public async Task GetRecommendedLearningForSelfAssessment_calls_learning_hub_api_with_distinct_ids()
         {
             // Given
@@ -187,9 +219,10 @@
                 .Returns(clientResponse);
 
             // When
-            var result =
-                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+            var _ = (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
+                SelfAssessmentId,
+                DelegateId
+            )).ToList();
 
             // Then
             A.CallTo(

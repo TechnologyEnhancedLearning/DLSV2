@@ -108,6 +108,8 @@
 
             // Then
             result.Should().BeNotFoundResult();
+            A.CallTo(() => actionPlanService.AddResourceToActionPlan(A<int>._, A<int>._, A<int>._))
+                .MustNotHaveHappened();
         }
 
         [Test]
