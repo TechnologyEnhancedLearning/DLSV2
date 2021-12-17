@@ -7,7 +7,7 @@
     public interface ICompetencyLearningResourcesDataService
     {
         IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int lhResourceReferenceId);
-        void AddCompetencyLearningResource(int competencyID, int learningResourceReferenceId, int adminId);
+        void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -30,12 +30,25 @@
             );
         }
 
-        public void AddCompetencyLearningResource(int competencyID, int learningResourceReferenceID, int adminId)
+        public void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId)
         {
             connection.Execute(
-                @$"INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
-                    VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
-                new { competencyID, learningResourceReferenceID, adminId }
+                @$" DECLARE @learningResourceReferenceID int
+                    IF NOT EXISTS(SELECT * FROM LearningResourceReferences WHERE @resourceRefID = resourceRefID)
+                        BEGIN
+	                        INSERT INTO LearningResourceReferences(ResourceRefID, OriginalResourceName, AdminID, Added)
+	                        VALUES(@resourceRefID, @originalResourceName, @adminID, GETDATE())
+	                        SELECT @learningResourceReferenceID = SCOPE_IDENTITY()
+                        END
+                    ELSE
+                        BEGIN
+	                        SELECT TOP 1 @learningResourceReferenceID = ID 
+	                        FROM LearningResourceReferences 
+	                        WHERE @resourceRefID = resourceRefID
+                        END
+                    INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
+                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
+                new { resourceRefID, originalResourceName, competencyID, adminId }
             );
         }
     }

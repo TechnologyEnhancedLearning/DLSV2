@@ -69,6 +69,9 @@
   @Html.HiddenFor(m => m.FrameworkCompetencyId)
   @Html.HiddenFor(m => m.ReferenceId)
   @Html.HiddenFor(m => m.SearchText)
+  @Html.HiddenFor(m => m.Resource.Title)
+  @Html.HiddenFor(m => m.Resource.ResourceType)
+  @Html.HiddenFor(m => m.Resource.Description)
 </form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
   <a class="nhsuk-back-link__link" asp-action="SearchLearningResources"

@@ -20,7 +20,7 @@
       </div>
     }
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
-      @SignpostingHelper.DisplayText(Model.Resource.Description)
+      @SignpostingHelper.DisplayText(Model.Description)
     </div>
     @if (Model.Resource.References.Count() > 0)
     {
@@ -53,8 +53,8 @@
             @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
             @Html.HiddenFor(m => m.FrameworkCompetencyId)
             @Html.Hidden("ReferenceId", reference.RefId)
-            @Html.HiddenFor(m => m.Resource.Title)
-            @Html.HiddenFor(m => m.Resource.ResourceType)
+            @Html.Hidden("Resource.Title", Model.Resource?.Title)
+            @Html.Hidden("Resource.ResourceType", Model.Resource?.ResourceType)
             @Html.Hidden("Catalogue", reference.Catalogue.Name)
             @Html.HiddenFor(m => m.Resource.Description)
             @Html.Hidden("NameOfCompetency", parent.NameOfCompetency)
