@@ -8,6 +8,8 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
+        private const string LearningHubAuthApiKey = "LearningHubAuthAPIKey";
+        private const string LearningHubAuthApiBaseUrl = "LearningHubAuthAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
 
         private const string LearningHubSsoSectionKey = "LearningHubSSO";
@@ -34,6 +36,16 @@
         public static string GetLearningHubOpenApiBaseUrl(this IConfiguration config)
         {
             return config[LearningHubOpenApiBaseUrl];
+        }
+
+        public static string GetLearningHubAuthApiKey(this IConfiguration config)
+        {
+            return config[LearningHubAuthApiKey];
+        }
+
+        public static string GetLearningHubAuthApiBaseUrl(this IConfiguration config)
+        {
+            return config[LearningHubAuthApiBaseUrl];
         }
 
         public static bool IsSignpostingUsed(this IConfiguration config)
