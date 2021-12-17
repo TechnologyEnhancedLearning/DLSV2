@@ -61,7 +61,6 @@
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
-            var hasSuperAdminAccess = User.HasSuperAdminPermissions();
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
 

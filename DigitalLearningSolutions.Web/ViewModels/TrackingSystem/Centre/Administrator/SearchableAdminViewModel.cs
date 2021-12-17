@@ -24,6 +24,10 @@
                                                && !adminUser.IsCentreManager
                                                && adminUser.Id != loggedInAdminUser.Id;
             }
+            else
+            {
+                CanShowDeactivateAdminButton = true;
+            }
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
@@ -42,6 +46,6 @@
 
         public bool IsLocked { get; set; }
 
-        public bool CanShowDeactivateAdminButton { get; set; }
+        public  bool CanShowDeactivateAdminButton { get; }
     }
 }

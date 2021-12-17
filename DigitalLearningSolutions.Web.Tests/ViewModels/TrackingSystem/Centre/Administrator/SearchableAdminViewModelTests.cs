@@ -12,8 +12,8 @@
         public void SearchableAdmin_centre_manager_should_not_be_able_to_deactivate_their_own_account()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
+            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreManager: true);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreManager: true);
 
             // When
             var model = new SearchableAdminViewModel(
@@ -29,7 +29,7 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isCentreAdmin: true);
 
             // When
             var model = new SearchableAdminViewModel(
@@ -45,8 +45,9 @@
         public void SearchableAdmin_centre_manager_should_not_be_able_to_deactivate_super_admin_account()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isUserAdmin: true);
+            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isUserAdmin: true);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isCentreManager: true, isUserAdmin: false);
+            
 
             // When
             var model = new SearchableAdminViewModel(
@@ -80,6 +81,23 @@
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isUserAdmin: true);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isUserAdmin: true);
+
+            // When
+            var model = new SearchableAdminViewModel(
+                adminUser,
+                loggedInAdminUser
+            );
+
+            // Then
+            model.CanShowDeactivateAdminButton.Should().BeTrue();
+        }
+
+        [Test]
+        public void SearchableAdmin_super_admin_should_be_able_to_deactivate_centre_manager()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreManager: true);
             var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isUserAdmin: true);
 
             // When
