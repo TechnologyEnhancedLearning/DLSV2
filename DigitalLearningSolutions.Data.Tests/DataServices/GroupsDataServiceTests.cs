@@ -86,8 +86,7 @@
         public void GetGroupCoursesForCentre_returns_expected_courses()
         {
             // Given
-            var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
-            var expectedFGroupCourseIds = new List<int>
+            var expectedGroupCourseIds = new List<int>
             {
                 1,
                 2,
@@ -107,7 +106,7 @@
             {
                 result.Should().HaveCount(8);
                 result.Should().OnlyHaveUniqueItems();
-                result.Should().OnlyContain(c => expectedFGroupCourseIds.Contains(c.GroupCustomisationId));
+                result.Should().OnlyContain(c => expectedGroupCourseIds.Contains(c.GroupCustomisationId));
             }
         }
 
