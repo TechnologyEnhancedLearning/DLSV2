@@ -219,10 +219,7 @@
                 .Returns(clientResponse);
 
             // When
-            var _ = (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
-                SelfAssessmentId,
-                DelegateId
-            )).ToList();
+            await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId);
 
             // Then
             A.CallTo(
