@@ -10,8 +10,8 @@
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
@@ -67,19 +67,16 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (formData.Day == null && formData.Month == null && formData.Year == null)
-            {
-                courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
-                return RedirectToAction("Current");
-            }
-
             if (!ModelState.IsValid)
             {
                 var model = new EditCompleteByDateViewModel(formData, id, progressId);
                 return View("Current/SetCompleteByDate", model);
             }
 
-            var completeByDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
+            var completeByDate = DateValidator.IsDateNull(formData.Day, formData.Month, formData.Year)
+                ? (DateTime?)null
+                : new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
+
             courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
             return RedirectToAction("Current");
         }
@@ -241,21 +238,17 @@
             EditCompleteByDateFormData formData
         )
         {
-            if (formData.Day == null && formData.Month == null && formData.Year == null)
-            {
-                actionPlanService.SetCompleteByDate(learningLogItemId, null);
-                return RedirectToAction("Current");
-            }
-
             if (!ModelState.IsValid)
             {
                 var model = new EditCompleteByDateViewModel(formData, learningLogItemId);
                 return View("Current/SetCompleteByDate", model);
             }
 
-            var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
+            var completeByDate = DateValidator.IsDateNull(formData.Day, formData.Month, formData.Year)
+                ? (DateTime?)null
+                : new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
-            actionPlanService.SetCompleteByDate(learningLogItemId, completionDate);
+            actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate);
             return RedirectToAction("Current");
         }
 

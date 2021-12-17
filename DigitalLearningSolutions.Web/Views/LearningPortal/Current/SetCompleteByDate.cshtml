@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Web.Controllers.LearningPortalController
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model EditCompleteByDateViewModel
@@ -10,14 +11,12 @@
   var standardHintText = $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.";
   var courseHintText = Model.Type.Equals(LearningItemType.Course) ? "Activities with a complete by date will remain on your 'Current courses' list until completed. Activities with no complete by date will be removed after 6 months of inactivity." : "";
   var hintTextLines = new List<string> { standardHintText, courseHintText };
-  var action = "";
-  if (Model.Type.Equals(LearningItemType.Course)) {
-    action = "SetCurrentCourseCompleteByDate";
-  } else if (Model.Type.Equals(LearningItemType.SelfAssessment)) {
-    action = "SetSelfAssessmentCompleteByDate";
-  } else {
-    action = "SetCurrentActionPlanResourceCompleteByDate";
-  }
+  var action = Model.Type switch
+  {
+    LearningItemType.Course => nameof(LearningPortalController.SetCurrentCourseCompleteByDate),
+    LearningItemType.SelfAssessment => nameof(LearningPortalController.SetSelfAssessmentCompleteByDate),
+    _ => nameof(LearningPortalController.SetCurrentActionPlanResourceCompleteByDate),
+    };
 }
 
 <div class="nhsuk-grid-row">
