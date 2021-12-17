@@ -269,7 +269,7 @@
                     record.Answer6,
                     record.AliasId,
                     record.Approved,
-                    record.Email
+                    record.Email,
                 },
                 commandType: CommandType.StoredProcedure
             );
@@ -393,7 +393,7 @@
                     answer5,
                     answer6,
                     aliasId,
-                    emailAddress
+                    emailAddress,
                 }
             );
         }

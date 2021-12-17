@@ -32,7 +32,9 @@
             string? answer5 = null,
             string? answer6 = null,
             string? aliasId = null,
-            bool active = true
+            bool active = true,
+            bool hasBeenPromptedForPrn = false,
+            string? professionalRegistrationNumber = null
         )
         {
             dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
@@ -59,7 +61,9 @@
                 Answer5 = answer5,
                 Answer6 = answer6,
                 AliasId = aliasId,
-                Active = active
+                Active = active,
+                HasBeenPromptedForPrn = hasBeenPromptedForPrn,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber
             };
         }
 
