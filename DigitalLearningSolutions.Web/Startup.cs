@@ -125,6 +125,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
