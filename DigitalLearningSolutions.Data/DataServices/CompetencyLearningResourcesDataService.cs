@@ -2,16 +2,12 @@
 {
     using System.Collections.Generic;
     using System.Data;
-    using System.Linq;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ICompetencyLearningResourcesDataService
     {
-        CompetencyLearningResource GetCompetencyLearningResourceById(int competencyLearningResourceId);
-
-        IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReferenceId);
-        void AddCompetencyLearningResource(int competencyID, int lhResourceReferenceId, int adminId);
+        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int lhResourceReferenceId);
+        void AddCompetencyLearningResource(int competencyID, int learningResourceReferenceId, int adminId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -23,37 +19,23 @@
             this.connection = connection;
         }
 
-        public CompetencyLearningResource GetCompetencyLearningResourceById(int competencyLearningResourceId)
-        {
-            return connection.Query<CompetencyLearningResource>(
-                @"SELECT
-                        ID,
-                        CompetencyID,
-                        LHResourceReferenceID AS LearningHubResourceReferenceId,
-                        AdminID
-                    FROM CompetencyLearningResources
-                    WHERE ID = @competencyLearningResourceId",
-                new { competencyLearningResourceId }
-            ).Single();
-        }
-
-        public IEnumerable<int> GetCompetencyIdsByLearningHubResourceReference(int lhResourceReferenceId)
+        public IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId)
         {
             return connection.Query<int>(
                 @"SELECT
                         CompetencyID
                     FROM CompetencyLearningResources
-                    WHERE LHResourceReferenceID = @lhResourceReferenceId",
-                new { lhResourceReferenceId }
+                    WHERE LearningResourceReferenceID = @learningResourceReferenceId",
+                new { learningResourceReferenceId }
             );
         }
 
-        public void AddCompetencyLearningResource(int competencyID, int lhResourceReferenceId, int adminId)
+        public void AddCompetencyLearningResource(int competencyID, int learningResourceReferenceID, int adminId)
         {
             connection.Execute(
-                @$"INSERT INTO CompetencyLearningResources(CompetencyID, LHResourceReferenceID, AdminID)
-                    VALUES (@competencyID, @lhResourceReferenceID, @adminID)",
-                new { competencyID, lhResourceReferenceId, adminId }
+                @$"INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
+                    VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
+                new { competencyID, learningResourceReferenceID, adminId }
             );
         }
     }

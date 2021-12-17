@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
         private CurrentPageViewModel model = null!;
         private CurrentCourse[] currentCourses = null!;
         private SelfAssessment[] selfAssessments = null!;
-        private ActionPlanItem[] actionPlanItems = null!;
+        private ActionPlanResource[] actionPlanResources = null!;
 
         [SetUp]
         public void SetUp()
@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                     Description = "Self Assessment 2 Description"
                 },
             };
-            actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+            actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             model = new CurrentPageViewModel(
                 currentCourses,
@@ -95,7 +95,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 null,
                 1
             );
@@ -210,7 +210,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 null,
                 1
             );
@@ -241,7 +241,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
                 SelfAssessmentHelper.CreateDefaultSelfAssessment(),
             };
-            actionPlanItems = Builder<ActionPlanItem>.CreateListOfSize(2).Build().ToArray();
+            actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             model = new CurrentPageViewModel(
                 courses,
@@ -249,7 +249,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 null,
                 2
             );
@@ -286,7 +286,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Name",
                 "Ascending",
                 selfAssessments,
-                actionPlanItems,
+                actionPlanResources,
                 null,
                 1
             );

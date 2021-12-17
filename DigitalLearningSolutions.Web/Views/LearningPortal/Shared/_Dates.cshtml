@@ -35,7 +35,12 @@
   @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
   {
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-      <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-action="SetCurrentCourseCompleteByDate" asp-route-id="@Model.Id">
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+         aria-describedby="@Model.Id-name"
+         aria-label="Edit complete by date"
+         asp-action="SetCurrentCourseCompleteByDate"
+         asp-route-id="@Model.Id"
+         role="button">
         Edit
       </a>
     </div>
@@ -43,7 +48,12 @@
   else if (currentLearningItemViewModel is SelfAssessmentCardViewModel)
   {
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
-      <a class="nhsuk-button nhsuk-button--secondary small-edit-button" aria-describedby="@Model.Id-name" aria-label="Edit complete by date" asp-route-selfAssessmentId="@Model.Id" asp-action="SetSelfAssessmentCompleteByDate">
+      <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
+         aria-describedby="@Model.Id-name"
+         aria-label="Edit complete by date"
+         asp-route-selfAssessmentId="@Model.Id"
+         asp-action="SetSelfAssessmentCompleteByDate"
+         role="button">
         Edit
       </a>
     </div>
@@ -53,7 +63,8 @@
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
          aria-describedby="@Model.Id-name"
-         aria-label="Edit complete by date">
+         aria-label="Edit complete by date"
+         role="button">
         Edit
       </a>
     </div>

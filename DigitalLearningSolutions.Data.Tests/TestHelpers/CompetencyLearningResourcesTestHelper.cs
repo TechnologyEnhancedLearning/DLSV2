@@ -12,21 +12,33 @@
             this.connection = connection;
         }
 
+        public void InsertLearningResourceReference(int id, int resourceRefId, int adminId, string resourceName)
+        {
+            connection.Execute(
+                @"SET IDENTITY_INSERT dbo.LearningResourceReferences ON
+                    INSERT INTO LearningResourceReferences
+                    (ID, ResourceRefID, OriginalResourceName, AdminId)
+                    VALUES (@id, @resourceRefId, @resourceName, @adminId)
+                    SET IDENTITY_INSERT dbo.LearningResourceReferences OFF",
+                new { id, resourceRefId, resourceName, adminId }
+            );
+        }
+
         public int InsertCompetencyLearningResource(
             int id,
             int competencyId,
-            int lhResourceId,
+            int learningResourceReferenceId,
             int adminId
         )
         {
             return connection.QuerySingle<int>(
                 @"SET IDENTITY_INSERT dbo.CompetencyLearningResources ON
                     INSERT INTO CompetencyLearningResources
-                    (ID, CompetencyId, LHResourceReferenceID, AdminId)
+                    (ID, CompetencyId, LearningResourceReferenceID, AdminId)
                     OUTPUT Inserted.ID
-                    VALUES (@id, @competencyId, @lhResourceId, @adminId)
+                    VALUES (@id, @competencyId, @learningResourceReferenceId, @adminId)
                     SET IDENTITY_INSERT dbo.CompetencyLearningResources OFF",
-                new { id, competencyId, lhResourceId, adminId }
+                new { id, competencyId, learningResourceReferenceId, adminId }
             );
         }
     }

@@ -3,11 +3,11 @@
     using System;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
-    public class ActionPlanItem : CurrentLearningItem
+    public class ActionPlanResource : CurrentLearningItem
     {
-        public ActionPlanItem() { }
+        public ActionPlanResource() { }
 
-        public ActionPlanItem(LearningLogItem learningLogItem, ResourceReferenceWithResourceDetails resource)
+        public ActionPlanResource(LearningLogItem learningLogItem, ResourceReferenceWithResourceDetails resource)
         {
             Name = resource.Title;
             Id = learningLogItem.LearningLogItemId;

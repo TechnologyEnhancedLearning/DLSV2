@@ -218,5 +218,20 @@
                 );
             }
         }
+
+        public IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateId, int selfAssessmentId)
+        {
+            return connection.Query<CandidateAssessment>(
+                @"SELECT
+                        CandidateId AS DelegateId,
+                        SelfAssessmentID,
+                        CompletedDate,
+                        RemovedDate
+                    FROM CandidateAssessments
+                    WHERE SelfAssessmentID = @selfAssessmentId
+                        AND CandidateId = @delegateId",
+                new { selfAssessmentId, delegateId }
+            );
+        }
     }
 }

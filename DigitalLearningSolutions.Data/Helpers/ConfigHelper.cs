@@ -10,6 +10,12 @@
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
 
+        private const string LearningHubSsoSectionKey = "LearningHubSSO";
+        private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
+        private const string LearningHubSsoIterationsKey = "HashIterations";
+        private const string LearningHubSsoByteLengthKey = "ByteLength";
+        private const string LearningHubSsoSecretKey = "SecretKey";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName];
@@ -33,6 +39,26 @@
         public static bool IsSignpostingUsed(this IConfiguration config)
         {
             return bool.Parse(config[UseSignposting]);
+        }
+
+        public static int GetLearningHubSsoHashTolerance(this IConfiguration config)
+        {
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoToleranceKey}"]);
+        }
+
+        public static int GetLearningHubSsoHashIterations(this IConfiguration config)
+        {
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoIterationsKey}"]);
+        }
+
+        public static int GetLearningHubSsoByteLength(this IConfiguration config)
+        {
+            return int.Parse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoByteLengthKey}"]);
+        }
+
+        public static string GetLearningHubSsoSecretKey(this IConfiguration config)
+        {
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"];
         }
     }
 }
