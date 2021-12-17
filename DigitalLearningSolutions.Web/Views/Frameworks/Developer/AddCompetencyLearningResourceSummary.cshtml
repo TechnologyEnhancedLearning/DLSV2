@@ -2,6 +2,8 @@
 @using DigitalLearningSolutions.Web.Helpers;
 @model CompetencyResourceSummaryViewModel
 @{
+  ViewData["Title"] = "Add Competency Learning Resource Summary";
+  ViewData["Application"] = "Framework Service";
   var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -47,21 +49,21 @@
     <dd class="nhsuk-summary-list__value">@SignpostingHelper.DisplayText(Model.Description)</dd>
     </div>
     <div class="nhsuk-summary-list__row">
-      <dd class="nhsuk-summary-list__key">
-        <div class="nhsuk-u-margin-top-3">
-          <button asp-action="ConfirmAddCompetencyLearningResourceSummary" class="nhsuk-button nhsuk-u-margin-right-2">
-            Confirm
-          </button>
-          <button class="nhsuk-button nhsuk-button--secondary"
-                  asp-action="SearchLearningResources"
-                  asp-route-frameworkId="@Model.FrameworkId"
-                  asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-                  asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-            Restart search
-          </button>
-        </div>
-      </dd>
-      <dd class="nhsuk-summary-list__value"></dd>
+    <dd class="nhsuk-summary-list__key">
+      <div class="nhsuk-u-margin-top-3">
+        <button asp-action="ConfirmAddCompetencyLearningResourceSummary" class="nhsuk-button nhsuk-u-margin-right-2">
+          Confirm
+        </button>
+        <button class="nhsuk-button nhsuk-button--secondary"
+                asp-action="SearchLearningResources"
+                asp-route-frameworkId="@Model.FrameworkId"
+                asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+                asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+          Restart search
+        </button>
+      </div>
+    </dd>
+    <dd class="nhsuk-summary-list__value"></dd>
     </div>
   </dl>
   @Html.HiddenFor(m => m.FrameworkId)
@@ -75,11 +77,11 @@
 </form>
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
   <a class="nhsuk-back-link__link" asp-action="SearchLearningResources"
-        asp-route-frameworkId="@Model.FrameworkId"
-        asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-        asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
-        asp-route-searchText="@Model.SearchText"
-        asp-route-page="1">
+     asp-route-frameworkId="@Model.FrameworkId"
+     asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+     asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+     asp-route-searchText="@Model.SearchText"
+     asp-route-page="1">
     <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
     </svg>

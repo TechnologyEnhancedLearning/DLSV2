@@ -1,5 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyResourceSignpostingViewModel
+@{
+    ViewData["Title"] = "Competency Resource Signposting";
+    ViewData["Application"] = "Framework Service";
+}
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
@@ -33,7 +37,7 @@
 
   <div class="nhsuk-u-margin-top-5">
     <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
-       Add resource
+      Add resource
     </a>
   </div>
   <div class="nhsuk-back-link nhsuk-u-margin-left-1">
