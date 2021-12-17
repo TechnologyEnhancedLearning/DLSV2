@@ -47,7 +47,7 @@
                         TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
                             query.SectionId,
-                            ConvertToNullableBoolean(query.IsPostLearning)
+                            ConvertParamToNullableBoolean(query.IsPostLearning)
                         ),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
@@ -64,7 +64,7 @@
             }
         }
 
-        private bool? ConvertToNullableBoolean(string? value)
+        private bool? ConvertParamToNullableBoolean(string? value)
         {
             if (bool.TryParse(value, out var result))
             {
