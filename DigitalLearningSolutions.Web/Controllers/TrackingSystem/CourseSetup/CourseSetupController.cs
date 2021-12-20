@@ -126,11 +126,10 @@
         public IActionResult SelectCourse()
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter()!;
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
-            var courseOptions = GetCourseOptionsSelectList();
-            var model = new SelectCourseViewModel(courseOptions);
+            var applicationOptions = GetApplicationOptionsSelectList();
+            var model = new SelectCourseViewModel(applicationOptions);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -144,12 +143,18 @@
 
             if (!ModelState.IsValid)
             {
-                var courseOptions = GetCourseOptionsSelectList();
-                var model = new SelectCourseViewModel(courseOptions);
+                var applicationOptions = GetApplicationOptionsSelectList();
+                var model = new SelectCourseViewModel(applicationOptions);
                 return View("AddNewCentreCourse/SelectCourse", model);
             }
 
-            data!.SetCourse(formData);
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCourseCategoryFilter();
+            var selectedApplication =
+                courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
+                    .Single(ap => ap.ApplicationId == formData.ApplicationId);
+
+            data!.SetCourse(selectedApplication);
             TempData.Set(data);
 
             return RedirectToAction("SetCourseDetails");
@@ -160,23 +165,38 @@
         [Route("AddCourse/SetCourseDetails")]
         public IActionResult SetCourseDetails()
         {
-            var model = new EditCourseDetailsFormData();
+            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var model = new SetCourseDetailsViewModel(data!.SelectCourseViewModel.Application);
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        public IActionResult SetCourseDetails(EditCourseDetailsViewModel model)
+        [Route("AddCourse/SetCourseDetails")]
+        public IActionResult SetCourseDetails(EditCourseDetailsFormData formData)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
+            var centreId = User.GetCentreId();
+            var customisationName =
+                formData.CustomisationName == null || string.IsNullOrWhiteSpace(formData.CustomisationName)
+                    ? string.Empty
+                    : formData.CustomisationName;
+
+            // TODO: Move this validation to the form data?
+            ValidateCustomisationName(0, customisationName, centreId, formData);
+            ValidatePassword(formData);
+            ValidateEmail(formData);
+            ValidateCompletionCriteria(formData);
+
             if (!ModelState.IsValid)
             {
+                var model = new SetCourseDetailsViewModel(data!.SelectCourseViewModel.Application);
                 return View("AddNewCentreCourse/SetCourseDetails", model);
             }
 
-            data.SetCourseDetails(model);
+            data!.SetCourseDetails(formData);
             TempData.Set(data);
 
             return RedirectToAction("SetCourseOptions");
@@ -194,6 +214,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
+        [Route("AddCourse/SetCourseOptions")]
         public IActionResult SetCourseDetails(EditCourseOptionsFormData model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
@@ -221,6 +242,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
+        [Route("AddCourse/SetCourseContent")]
         public IActionResult SetCourseContent(SetCourseContentViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
@@ -248,6 +270,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
+        [Route("AddCourse/EditSectionContent")]
         public IActionResult EditSectionContent(
             EditCourseSectionFormData formData,
             int customisationId,
@@ -285,6 +308,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
+        [Route("AddCourse/Summary")]
         public IActionResult Summary(SummaryViewModel model)
         {
             if (!ModelState.IsValid)
@@ -309,7 +333,7 @@
         }
 
         [HttpGet]
-        [Route("AddCourse/Summary")]
+        [Route("AddCourse/Confirmation")]
         public IActionResult Confirmation()
         {
             var customisationId = (int)TempData.Peek("customisationId");
@@ -321,16 +345,110 @@
             return View("AddNewCentreCourse/Confirmation", model);
         }
 
-        private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int? selectedId = null)
+        private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId = null)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter()!;
             var categoryIdFilter = categoryId == 0 ? null : categoryId;
 
-            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
+            var orderedApplications = courseService
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
                 .ToList();
+            var applicationOptions = orderedApplications.Select(a => (a.ApplicationId, a.ApplicationName));
 
-            return SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
+            return SelectListHelper.MapOptionsToSelectListItems(applicationOptions, selectedId);
+        }
+
+        private void ValidateCustomisationName(
+            int customisationId,
+            string customisationName,
+            int centreId,
+            EditCourseDetailsFormData formData
+        )
+        {
+            if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                formData.ApplicationId
+            ))
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "A course with no add on already exists"
+                );
+            }
+            else if (customisationName.Length > 250)
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "Course name must be 250 characters or fewer, including any additions"
+                );
+            }
+            // TODO: Refactor DoesCourseNameExistAtCentre to have customisationId optional
+            else if (courseService.DoesCourseNameExistAtCentre(
+                customisationId,
+                customisationName,
+                centreId,
+                formData.ApplicationId
+            ))
+            {
+                ModelState.AddModelError(
+                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    "Course name must be unique, including any additions"
+                );
+            }
+        }
+
+        private void ValidatePassword(EditCourseDetailsFormData formData)
+        {
+            if (formData.PasswordProtected)
+            {
+                return;
+            }
+
+            if (ModelState.HasError(nameof(formData.Password)))
+            {
+                ModelState.ClearErrorsOnField(nameof(formData.Password));
+            }
+
+            formData.Password = null;
+        }
+
+        private void ValidateEmail(EditCourseDetailsFormData formData)
+        {
+            if (formData.ReceiveNotificationEmails)
+            {
+                return;
+            }
+
+            if (ModelState.HasError(nameof(formData.NotificationEmails)))
+            {
+                ModelState.ClearErrorsOnField(nameof(formData.NotificationEmails));
+            }
+
+            formData.NotificationEmails = null;
+        }
+
+        private void ValidateCompletionCriteria(EditCourseDetailsFormData formData)
+        {
+            if (!formData.IsAssessed)
+            {
+                return;
+            }
+
+            if (ModelState.HasError(nameof(formData.TutCompletionThreshold)))
+            {
+                ModelState.ClearErrorsOnField(nameof(formData.TutCompletionThreshold));
+            }
+
+            if (ModelState.HasError(nameof(formData.DiagCompletionThreshold)))
+            {
+                ModelState.ClearErrorsOnField(nameof(formData.DiagCompletionThreshold));
+            }
+
+            formData.TutCompletionThreshold = "0";
+            formData.DiagCompletionThreshold = "0";
         }
     }
 }

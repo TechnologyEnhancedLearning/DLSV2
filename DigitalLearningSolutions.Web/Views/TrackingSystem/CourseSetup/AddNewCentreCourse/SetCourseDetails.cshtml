@@ -1,9 +1,9 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
-@model EditCourseDetailsFormData
+@model SetCourseDetailsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
@@ -25,8 +25,15 @@
     <h1 class="nhsuk-heading-xl">Set course details</h1>
 
     <form method="post" novalidate asp-action="SetCourseDetails">
-      <partial name="CourseSetup/Shared/_EditCourseDetailsFormInputs" model="Model" />
+
+      <input type="hidden" asp-for="ApplicationName" />
+      <input type="hidden" asp-for="PostLearningAssessment" />
+      <input type="hidden" asp-for="DiagAssess" />
+
+      <partial name="../Shared/_EditCourseDetailsFormInputs" model="Model" />
+
       <button class="nhsuk-button" type="submit">Next</button>
+
     </form>
 
     <vc:back-link asp-controller="CourseSetup" asp-action="SelectCourse" />

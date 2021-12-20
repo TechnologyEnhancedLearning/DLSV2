@@ -8,10 +8,10 @@
 
         protected SelectCourseFormData(SelectCourseFormData formData)
         {
-            CustomisationId = formData.CustomisationId;
+            ApplicationId = formData.ApplicationId;
         }
 
         [Required(ErrorMessage = "Select a course")]
-        public int? CustomisationId { get; set; }
+        public int? ApplicationId { get; set; }
     }
 }

@@ -39,6 +39,8 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
+        IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
+
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
         bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
@@ -471,6 +473,27 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND (c.CentreID = @centreId OR c.AllCentres = 1)
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
+                new { centreId, categoryId }
+            );
+        }
+
+        public IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<ApplicationDetails>(
+                $@"SELECT
+                        ap.ApplicationID,
+                        ap.ApplicationName,
+                        ap.PLAssess,
+                        ap.DiagAssess,
+                        ap.CourseTopicID,
+                        cc.CategoryName,
+                        ct.CourseTopic
+                    FROM Applications AS ap
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (CentreID = @centreID))",
                 new { centreId, categoryId }
             );
         }
