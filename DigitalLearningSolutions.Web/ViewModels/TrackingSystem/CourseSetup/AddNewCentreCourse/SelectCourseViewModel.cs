@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class SelectCourseViewModel : SelectCourseFormData
@@ -11,10 +12,10 @@
         public SelectCourseViewModel(
             SelectCourseFormData formData,
             IEnumerable<SelectListItem> courseOptions,
-            int customisationId
+            int applicationId
         ) : base(formData)
         {
-            CustomisationId = customisationId;
+            ApplicationId = applicationId;
             CourseOptions = courseOptions;
         }
 
@@ -26,5 +27,7 @@
         }
 
         public IEnumerable<SelectListItem> CourseOptions { get; set; }
+
+        public ApplicationDetails Application { get; set; }
     }
 }

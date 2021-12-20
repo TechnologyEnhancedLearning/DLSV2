@@ -15,16 +15,16 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(Model.CustomisationId) }" />
+      <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
     <h1 class="nhsuk-heading-xl">Add course admin field</h1>
 
     @* TODO: Add filtering *@
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-      <vc:select-list asp-for="@nameof(Model.CustomisationId)"
+      <vc:select-list asp-for="@nameof(Model.ApplicationId)"
                       label="Field name"
-                      value="@Model.CustomisationId.ToString()"
+                      value="@Model.ApplicationId.ToString()"
                       hint-text=""
                       deselectable="false"
                       css-class="nhsuk-u-width-one-half"

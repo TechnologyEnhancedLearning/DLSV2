@@ -50,6 +50,11 @@
             int? categoryId
         );
 
+        public IEnumerable<ApplicationDetails> GetApplicationOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId
+        );
+
         public bool DoesCourseNameExistAtCentre(
             int customisationId,
             string customisationName,
@@ -218,6 +223,15 @@
                 .Where(c => c.Active = true);
             var orderedCourses = activeCourses.OrderBy(c => c.ApplicationName);
             return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
+        }
+
+        public IEnumerable<ApplicationDetails> GetApplicationOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId
+        )
+        {
+            var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
+            return activeApplications.OrderBy(a => a.ApplicationName);
         }
 
         public bool DoesCourseNameExistAtCentre(
