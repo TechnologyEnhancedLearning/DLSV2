@@ -1,0 +1,39 @@
+﻿@inject IConfiguration configuration
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.Extensions.Configuration
+@model EditCourseSectionFormData
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Set section content";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Edit section content</h1>
+
+    <form method="post" novalidate asp-action="EditSectionContent">
+      <div class="hidden-submit">
+        <button name="action" class="nhsuk-button" value="@CourseSetupController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
+      </div>
+      <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="SectionName" />
+
+      @*@foreach (var checkbox in Model.Sections) {
+        <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
+          <partial name="Shared/_EditSectionDiagnostic" model="Model" />
+
+          <partial name="Shared/_EditSectionLearning" model="Model" />
+        </div>
+      }*@
+
+      <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Save</button>
+    </form>
+
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" />
+  </div>
+</div>
