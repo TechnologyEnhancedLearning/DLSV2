@@ -1,27 +1,30 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class SelectCourseViewModel : BaseJavaScriptFilterableViewModel
+    public class SelectCourseViewModel : SelectCourseFormData
     {
         // TODO: Set up javascript filtering
         public SelectCourseViewModel() { }
 
         public SelectCourseViewModel(
-            IEnumerable<string> topics,
-            int? topicId,
-            int? customisationId
-        )
+            SelectCourseFormData formData,
+            IEnumerable<SelectListItem> courseOptions,
+            int customisationId
+        ) : base(formData)
         {
-            TopicId = topicId;
             CustomisationId = customisationId;
+            CourseOptions = courseOptions;
         }
 
-        public int? TopicId { get; set; }
+        public SelectCourseViewModel(
+            IEnumerable<SelectListItem> courseOptions
+        )
+        {
+            CourseOptions = courseOptions;
+        }
 
-        [Required(ErrorMessage = "Select a course")]
-        public int? CustomisationId { get; set; }
+        public IEnumerable<SelectListItem> CourseOptions { get; set; }
     }
 }
