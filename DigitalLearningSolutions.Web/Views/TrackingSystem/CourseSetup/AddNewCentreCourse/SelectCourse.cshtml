@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model SelectCourseViewModel
 
@@ -15,13 +15,13 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@new []{ nameof(AddAdminFieldViewModel.AdminFieldId), nameof(AddAdminFieldViewModel.Answer) }" />
+      <vc:error-summary order-of-property-names="@new []{ nameof(Model.CustomisationId) }" />
     }
     <h1 class="nhsuk-heading-xl">Add course admin field</h1>
 
     @* TODO: Add filtering *@
 
-    <form method="post" novalidate asp-action="SelectCourse">
+    <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
       <vc:select-list asp-for="@nameof(Model.CustomisationId)"
                       label="Field name"
                       value="@Model.CustomisationId.ToString()"
@@ -29,11 +29,9 @@
                       deselectable="false"
                       css-class="nhsuk-u-width-one-half"
                       default-option="Course"
-                      select-list-options="@ViewBag.CourseOptions" />
+                      select-list-options="@Model.CourseOptions" />
 
-      <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@AdminFieldsController.AddPromptAction" aria-hidden="true" tabindex="-1">Add</button>
-      </div>
+      <button class="nhsuk-button" type="submit">Next</button>
     </form>
 
     <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />

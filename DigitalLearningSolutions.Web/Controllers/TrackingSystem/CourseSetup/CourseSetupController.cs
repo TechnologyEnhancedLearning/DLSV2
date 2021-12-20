@@ -1,11 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -16,11 +14,12 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -130,23 +129,27 @@
             var categoryId = User.GetAdminCourseCategoryFilter()!;
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
-            var model = new SelectCourseViewModel();
+            var courseOptions = GetCourseOptionsSelectList();
+            var model = new SelectCourseViewModel(courseOptions);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        public IActionResult SelectCourse(SelectCourseViewModel model)
+        [Route("AddCourse/SelectCourse")]
+        public IActionResult SelectCourse(SelectCourseFormData formData)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
             if (!ModelState.IsValid)
             {
+                var courseOptions = GetCourseOptionsSelectList();
+                var model = new SelectCourseViewModel(courseOptions);
                 return View("AddNewCentreCourse/SelectCourse", model);
             }
 
-            data.SetCourse(model);
+            data!.SetCourse(formData);
             TempData.Set(data);
 
             return RedirectToAction("SetCourseDetails");
@@ -157,7 +160,7 @@
         [Route("AddCourse/SetCourseDetails")]
         public IActionResult SetCourseDetails()
         {
-            var model = new EditCourseDetailsViewModel();
+            var model = new EditCourseDetailsFormData();
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
         }
@@ -245,9 +248,11 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        public IActionResult EditSectionContent(EditCourseSectionFormData formData,
+        public IActionResult EditSectionContent(
+            EditCourseSectionFormData formData,
             int customisationId,
-            string action)
+            string action
+        )
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
@@ -314,6 +319,18 @@
             var model = new ConfirmationViewModel(customisationId, customisationName);
 
             return View("AddNewCentreCourse/Confirmation", model);
+        }
+
+        private IEnumerable<SelectListItem> GetCourseOptionsSelectList(int? selectedId = null)
+        {
+            var centreId = User.GetCentreId();
+            var categoryId = User.GetAdminCourseCategoryFilter()!;
+            var categoryIdFilter = categoryId == 0 ? null : categoryId;
+
+            var centreCourses = courseService.GetCourseOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
+                .ToList();
+
+            return SelectListHelper.MapOptionsToSelectListItems(centreCourses, selectedId);
         }
     }
 }

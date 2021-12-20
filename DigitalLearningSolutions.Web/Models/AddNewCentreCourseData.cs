@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using System;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -27,7 +26,7 @@
         public EditCourseSectionFormData SetCourseSectionViewModel { get; set; }
         public SummaryViewModel SummaryViewModel { get; set; }
 
-        public void SetCourse(SelectCourseViewModel model)
+        public void SetCourse(SelectCourseFormData model)
         {
             SelectCourseViewModel.CustomisationId = model.CustomisationId;
         }
