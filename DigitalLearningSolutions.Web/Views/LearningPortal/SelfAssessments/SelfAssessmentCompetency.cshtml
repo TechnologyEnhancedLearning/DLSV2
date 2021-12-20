@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
   <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
   <div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
-    @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders && !Model.Competency.AlwaysShowDescription)
+    @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders)
     {
       <details class="nhsuk-details">
         <summary class="nhsuk-details__summary">

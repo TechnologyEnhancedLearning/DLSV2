@@ -21,32 +21,26 @@
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
     public class RecommendedLearningController : Controller
     {
-        private readonly IActionPlanService actionPlanService;
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
-        private readonly IRecommendedLearningService recommendedLearningService;
         private readonly ISelfAssessmentService selfAssessmentService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
             ISelfAssessmentService selfAssessmentService,
-            IConfiguration configuration,
-            IRecommendedLearningService recommendedLearningService,
-            IActionPlanService actionPlanService
+            IConfiguration configuration
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
             this.selfAssessmentService = selfAssessmentService;
             this.configuration = configuration;
-            this.recommendedLearningService = recommendedLearningService;
-            this.actionPlanService = actionPlanService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
         public async Task<IActionResult> SelfAssessmentResults(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-
+            
             selfAssessmentService.SetSubmittedDateNow(selfAssessmentId, candidateId);
             selfAssessmentService.SetUpdatedFlag(selfAssessmentId, candidateId, false);
 
@@ -72,23 +66,7 @@
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
-            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
-        }
-
-        [Route(
-            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
-        )]
-        public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
-        {
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
-            {
-                return NotFound();
-            }
-
-            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
-
-            return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
+            return ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]
@@ -101,7 +79,7 @@
 
             var candidateId = User.GetCandidateIdKnownNotNull();
             string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
-            selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
+            selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
             return await ReturnFilteredResultsView(selfAssessmentId, candidateId);
@@ -248,16 +226,10 @@
             return View("../LearningPortal/SelfAssessments/FilteredMgp/FilteredResults", model);
         }
 
-        private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(
-            int selfAssessmentId,
-            int candidateId
-        )
+        private IActionResult ReturnSignpostingRecommendedLearningView(int selfAssessmentId, int candidateId)
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var recommendedResources =
-                await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
-
-            var model = new RecommendedLearningViewModel(assessment, recommendedResources);
+            var model = new RecommendedLearningViewModel(assessment);
             return View("RecommendedLearning", model);
         }
     }

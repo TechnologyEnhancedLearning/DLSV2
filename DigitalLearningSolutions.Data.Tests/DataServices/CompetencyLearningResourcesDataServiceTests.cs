@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
-    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -42,30 +40,6 @@
             {
                 transaction.Dispose();
             }
-        }
-
-        [Test]
-        public void GetCompetencyLearningResourcesByCompetencyId_returns_expected_records()
-        {
-            using var transaction = new TransactionScope();
-
-            // Given
-            InsertCompetencyLearningResources();
-            var expectedItem = new CompetencyLearningResource
-            {
-                Id = 1,
-                CompetencyId = 1,
-                LearningResourceReferenceId = 2,
-                AdminId = 7,
-                LearningHubResourceReferenceId = 2
-            };
-
-            // When
-            var result = service.GetCompetencyLearningResourcesByCompetencyId(1).ToList();
-
-            // Then
-            result.Should().HaveCount(1);
-            result.Should().ContainEquivalentOf(expectedItem);
         }
 
         private void InsertCompetencyLearningResources()

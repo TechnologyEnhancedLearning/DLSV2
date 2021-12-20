@@ -47,8 +47,7 @@
                         TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
                             query.SectionId,
-                            ConvertParamToNullableBoolean(query.IsPostLearning)
-                        ),
+                            query.IsPostLearning),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
 
@@ -61,24 +60,6 @@
             {
                 logger.LogError(ex, $"Error processing {query.Action}");
                 return TrackerEndpointErrorResponse.UnexpectedException;
-            }
-        }
-
-        private bool? ConvertParamToNullableBoolean(string? value)
-        {
-            if (bool.TryParse(value, out var result))
-            {
-                return result;
-            }
-
-            switch (value)
-            {
-                case "1":
-                    return true;
-                case "0":
-                    return false;
-                default:
-                    return null;
             }
         }
 

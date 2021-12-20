@@ -107,30 +107,17 @@
         }
 
         [Test]
-        [TestCase("true", true)]
-        [TestCase("True", true)]
-        [TestCase("false", false)]
-        [TestCase("False", false)]
-        [TestCase("1", true)]
-        [TestCase("0", false)]
-        [TestCase("mu", null)]
-        [TestCase(null, null)]
-        public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params_and_parses_IsPostLearning(
-            string? isPostLearningValue,
-            bool? expectedBool
-        )
+        public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params()
         {
             // Given
             var query = new TrackerEndpointQueryParams
-            {
-                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue,
-            };
+                { Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = true };
 
             // When
             trackerService.ProcessQuery(query);
 
             // Then
-            A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, expectedBool))
+            A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, true))
                 .MustHaveHappenedOnceExactly();
         }
     }
