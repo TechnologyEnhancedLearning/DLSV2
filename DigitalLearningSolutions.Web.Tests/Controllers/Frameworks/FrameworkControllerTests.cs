@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
     using FakeItEasy;
@@ -19,6 +20,7 @@
         private IConfiguration config;
         private IFrameworkNotificationService frameworkNotificationService;
         private IImportCompetenciesFromFileService importCompetenciesFromFileService;
+        private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CentreId = 101;
         private const int AdminId = 1;
@@ -33,6 +35,7 @@
             var logger = A.Fake<ILogger<FrameworksController>>();
             config = A.Fake<IConfiguration>();
             importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
+            competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -49,7 +52,8 @@
                 configService,
                 logger,
                 config,
-                importCompetenciesFromFileService
+                importCompetenciesFromFileService,
+                competencyLearningResourcesDataService
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }
