@@ -370,9 +370,9 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "Name",
                     101,
+                    1,
                     1
                 )
             ).Returns(true);
@@ -406,9 +406,9 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "",
                     101,
+                    1,
                     1
                 )
             ).Returns(true);
@@ -446,9 +446,9 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "Name",
                     101,
+                    1,
                     1
                 )
             ).Returns(false);

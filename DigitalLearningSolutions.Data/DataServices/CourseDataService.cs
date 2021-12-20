@@ -43,13 +43,11 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
-        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
-
         bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         );
 
         void UpdateLearningPathwayDefaultsForCourse(
@@ -518,28 +516,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
-        {
-            return connection.ExecuteScalar<bool>(
-                @"SELECT CASE WHEN EXISTS (
-                        SELECT *
-                        FROM Customisations AS c
-                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE CustomisationID = @customisationId
-                        AND c.CentreID = @centreId
-                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    )
-                    THEN CAST(1 AS BIT)
-                    ELSE CAST(0 AS BIT) END",
-                new { customisationId, centreId, categoryId }
-            );
-        }
-
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         )
         {
             return connection.ExecuteScalar<bool>(
@@ -552,7 +533,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND [CustomisationID] != @customisationId)
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
-                new { customisationId, customisationName, centreId, applicationId }
+                new { customisationName, centreId, applicationId, customisationId }
             );
         }
 

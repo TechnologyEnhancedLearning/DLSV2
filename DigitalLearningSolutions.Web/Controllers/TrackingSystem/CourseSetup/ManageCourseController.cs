@@ -237,7 +237,7 @@
         }
 
         [HttpGet]
-        [Route("EditCourseOptions")]
+        [Route("CourseOptions")]
         public IActionResult EditCourseOptions(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -254,7 +254,7 @@
         }
 
         [HttpPost]
-        [Route("EditCourseOptions")]
+        [Route("CourseOptions")]
         public IActionResult EditCourseOptions(
             int customisationId,
             EditCourseOptionsViewModel editCourseOptionsViewModel
@@ -305,10 +305,10 @@
         )
         {
             if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
-                formData.ApplicationId
+                formData.ApplicationId,
+                customisationId
             ))
             {
                 ModelState.AddModelError(
@@ -324,10 +324,10 @@
                 );
             }
             else if (courseService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
-                formData.ApplicationId
+                formData.ApplicationId,
+                customisationId
             ))
             {
                 ModelState.AddModelError(

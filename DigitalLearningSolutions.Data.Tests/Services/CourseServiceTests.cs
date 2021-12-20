@@ -556,15 +556,15 @@
             const int applicationId = 1;
 
             // When
-            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+            courseService.DoesCourseNameExistAtCentre(customisationName, centreId, applicationId, customisationId);
 
             // Then
             A.CallTo(
                     () => courseDataService.DoesCourseNameExistAtCentre(
-                        customisationId,
                         customisationName,
                         centreId,
-                        applicationId
+                        applicationId,
+                        customisationId
                     )
                 )
                 .MustHaveHappened();

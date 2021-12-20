@@ -207,7 +207,10 @@
         [Route("AddCourse/SetCourseOptions")]
         public IActionResult SetCourseOptions()
         {
-            var model = new EditCourseOptionsFormData();
+            var data = TempData.Peek<AddNewCentreCourseData>()!;
+
+            var diagAssess = data!.SelectCourseViewModel.Application.DiagAssess;
+            var model = new SetCourseOptionsViewModel(diagAssess);
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }
@@ -215,16 +218,18 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/SetCourseOptions")]
-        public IActionResult SetCourseDetails(EditCourseOptionsFormData model)
+        public IActionResult SetCourseDetails(EditCourseOptionsFormData formData)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
             if (!ModelState.IsValid)
             {
+                var diagAssess = data!.SelectCourseViewModel.Application.DiagAssess;
+                var model = new SetCourseOptionsViewModel(diagAssess);
                 return View("AddNewCentreCourse/SetCourseOptions", model);
             }
 
-            data.SetCourseOptions(model);
+            data!.SetCourseOptions(formData);
             TempData.Set(data);
 
             return RedirectToAction("SetCourseContent");
@@ -367,7 +372,6 @@
         )
         {
             if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
                 formData.ApplicationId
@@ -387,7 +391,6 @@
             }
             // TODO: Refactor DoesCourseNameExistAtCentre to have customisationId optional
             else if (courseService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
                 formData.ApplicationId

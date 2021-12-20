@@ -1,6 +1,6 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
 @model EditCourseOptionsFormData
@@ -16,10 +16,15 @@
     <h1 class="nhsuk-heading-xl">Set course options</h1>
 
     <form method="post" novalidate asp-action="SetCourseOptions">
-      <partial name="CourseSetup/Shared/_EditCourseOptionsFormInputs" model="Model.Checkboxes" />
+
+      <vc:checkboxes label=""
+                     populate-with-current-values="false"
+                     checkboxes="@Model.Checkboxes"
+                     hint-text="" />
+
       <button class="nhsuk-button" type="submit" value="save">Next</button>
     </form>
 
-    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseDetails" />
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseDetails" link-text="Go back" />
   </div>
 </div>
