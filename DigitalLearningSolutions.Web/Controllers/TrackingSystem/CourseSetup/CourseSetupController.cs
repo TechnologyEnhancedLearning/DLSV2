@@ -30,6 +30,8 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class CourseSetupController : Controller
     {
+        public const string SaveAction = "save";
+
         private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
@@ -243,17 +245,23 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        public IActionResult EditSectionContent(EditCourseSectionViewModel model)
+        public IActionResult EditSectionContent(EditCourseSectionFormData formData,
+            int customisationId,
+            string action)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            if (!ModelState.IsValid)
+            /*if (!ModelState.IsValid)
             {
-                return View("AddNewCentreCourse/EditSectionContent", model);
+                return View("AddNewCentreCourse/SetSectionContent", model);
             }
 
-            data.SetSectionContent(model);
-            TempData.Set(data);
+            return action == SaveAction
+                ? EditSave(formData, customisationId)
+                : ProcessBulkSelect(formData, customisationId, action);*/
+
+            /*data.SetSectionContent(model);
+            TempData.Set(data);*/
 
             return RedirectToAction("Summary");
         }
