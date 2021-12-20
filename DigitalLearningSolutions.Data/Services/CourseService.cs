@@ -56,10 +56,10 @@
         );
 
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         );
 
         public void UpdateCourseDetails(
@@ -235,17 +235,17 @@
         }
 
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         )
         {
             return courseDataService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
-                applicationId
+                applicationId,
+                customisationId
             );
         }
 
