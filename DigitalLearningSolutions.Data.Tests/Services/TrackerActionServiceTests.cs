@@ -6,19 +6,24 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class TrackerActionServiceTests
     {
         private ITutorialContentDataService dataService = null!;
+        private ILogger<TrackerActionService> logger = null!;
+        private IProgressService progressService = null!;
         private ITrackerActionService trackerActionService = null!;
 
         [SetUp]
         public void Setup()
         {
             dataService = A.Fake<ITutorialContentDataService>();
+            progressService = A.Fake<IProgressService>();
+            logger = A.Fake<ILogger<TrackerActionService>>();
 
-            trackerActionService = new TrackerActionService(dataService);
+            trackerActionService = new TrackerActionService(dataService, progressService, logger);
         }
 
         [Test]

@@ -1,23 +1,39 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
+    using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     public interface ITrackerActionService
     {
         TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId);
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
+
+        public TrackerEndpointResponse? StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
     }
 
     public class TrackerActionService : ITrackerActionService
     {
+        private readonly ILogger<TrackerActionService> logger;
+        private readonly IProgressService progressService;
         private readonly ITutorialContentDataService tutorialContentDataService;
 
-        public TrackerActionService(ITutorialContentDataService tutorialContentDataService)
+        public TrackerActionService(
+            ITutorialContentDataService tutorialContentDataService,
+            IProgressService progressService,
+            ILogger<TrackerActionService> logger
+        )
         {
             this.tutorialContentDataService = tutorialContentDataService;
+            this.progressService = progressService;
+            this.logger = logger;
         }
 
         public TrackerObjectiveArray? GetObjectiveArray(int? customisationId, int? sectionId)
@@ -50,6 +66,35 @@
                 .ToList();
 
             return ccObjectives.Any() ? new TrackerObjectiveArrayCc(ccObjectives) : null;
+        }
+
+        public TrackerEndpointResponse? StoreDiagnosticJson(int? progressId, string? diagnosticOutcome)
+        {
+            if (progressId == null || diagnosticOutcome == null)
+            {
+                return TrackerEndpointResponse.StoreDiagnosticScoreException;
+            }
+
+            var json = JsonConvert.DeserializeObject<IEnumerable<JObject>>(diagnosticOutcome);
+
+            try
+            {
+                foreach (var obj in json)
+                {
+                    var tutorialId = (int)obj["tutorialId"];
+                    var myScore = (int)obj["myscore"];
+                    progressService.UpdateDiagnosticScore(progressId.Value, tutorialId, myScore);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogWarning(
+                    $"Updating diagnostic score failed. Error: {e}"
+                );
+                return TrackerEndpointResponse.StoreDiagnosticScoreException;
+            }
+
+            return TrackerEndpointResponse.Success;
         }
     }
 }

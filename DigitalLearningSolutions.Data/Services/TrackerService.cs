@@ -31,7 +31,7 @@
         {
             if (string.IsNullOrWhiteSpace(query.Action))
             {
-                return TrackerEndpointErrorResponse.NullAction;
+                return TrackerEndpointResponse.NullAction;
             }
 
             try
@@ -49,18 +49,22 @@
                             query.SectionId,
                             ConvertParamToNullableBoolean(query.IsPostLearning)
                         ),
+                        TrackerEndpointAction.StoreDiagnosticJson => trackerActionService.StoreDiagnosticJson(
+                            query.ProgressId,
+                            query.DiagnosticOutcome
+                        ),
                         _ => throw new ArgumentOutOfRangeException(),
                     };
 
                     return ConvertToJsonString(actionDataResult);
                 }
 
-                return TrackerEndpointErrorResponse.InvalidAction;
+                return TrackerEndpointResponse.InvalidAction;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error processing {query.Action}");
-                return TrackerEndpointErrorResponse.UnexpectedException;
+                return TrackerEndpointResponse.UnexpectedException;
             }
         }
 

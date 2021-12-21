@@ -10,6 +10,7 @@
     public interface IProgressDataService
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
+
         void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
         int CreateNewDelegateProgress(
@@ -24,9 +25,15 @@
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
+
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
+
         void ClearAspProgressVerificationRequest(int progressId);
+
         void SetCompletionDate(int progressId, DateTime? completeByDate);
+
+        void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
+
         void UnlockProgress(int progressId);
     }
 
@@ -181,6 +188,28 @@
                 logger.LogWarning(
                     "Not setting current course completion date as db update failed. " +
                     $"Progress id: {progressId}, completion date: {completionDate}"
+                );
+            }
+        }
+
+        public void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE aspProgress SET
+                                        DiagHigh = MAX(@myScore, DiagHigh),
+                                        DiagLow = MAX(@myScore, DiagLow),
+                                        DiagLast = MAX(@diagLast,
+                                        DiagAttempts = DiagAttempts + 1
+                                    WHERE ProgressID = @progressId
+                                    AND TutorialID = @tutorialId OR OriginalTutorialID = @tutorialId",
+                new { progressId, tutorialId, myScore }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating diagnostic score as db update failed. " +
+                    $"Progress id: {progressId}, tutorial Id: {tutorialId}, myScore: {myScore}"
                 );
             }
         }
