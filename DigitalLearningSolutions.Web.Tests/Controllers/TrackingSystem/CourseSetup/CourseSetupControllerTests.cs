@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
@@ -170,6 +171,146 @@
             // Then
             result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
                 .Be("Status|Active|true");
+        }
+
+        /*[Test]
+        public void
+            SaveCourseDetails_correctly_adds_model_error_if_customisation_name_is_not_unique()
+        {
+            // Given
+            var formData = GetEditCourseDetailsFormData();
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    "Name",
+                    101,
+                    1,
+                    1
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SetCourseDetails(1, formData);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("Course name must be unique, including any additions");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_correctly_adds_model_error_if_application_already_exists_with_blank_customisation_name()
+        {
+            // Given
+            var formData = GetEditCourseDetailsFormData(customisationName: "");
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    "",
+                    101,
+                    1,
+                    1
+                )
+            ).Returns(true);
+
+            // When
+            var result = controller.SetCourseDetails(1, formData);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    A<int>._,
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<bool>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
+            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("A course with no add on already exists");
+        }
+
+        [Test]
+        public void
+            SaveCourseDetails_clears_values_of_conditional_inputs_if_corresponding_checkboxes_or_radios_are_unchecked()
+        {
+            // Given
+            var formData = GetEditCourseDetailsFormData(
+                passwordProtected: false,
+                receiveNotificationEmails: false,
+                isAssessed: true
+            );
+
+            A.CallTo(
+                () => courseService.DoesCourseNameExistAtCentre(
+                    "Name",
+                    101,
+                    1,
+                    1
+                )
+            ).Returns(false);
+
+            // When
+            var result = controller.SetCourseDetails(1, formData);
+
+            // Then
+            A.CallTo(
+                () => courseService.UpdateCourseDetails(
+                    1,
+                    "Name",
+                    null!,
+                    null!,
+                    true,
+                    0,
+                    0
+                )
+            ).MustHaveHappened();
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }*/
+
+        private static EditCourseDetailsFormData GetEditCourseDetailsFormData(
+            int applicationId = 1,
+            string customisationName = "Name",
+            bool passwordProtected = true,
+            string password = "Password",
+            bool receiveNotificationEmails = true,
+            string notificationEmails = "hello@test.com",
+            bool postLearningAssessment = true,
+            bool isAssessed = false,
+            bool diagAssess = true,
+            string? tutCompletionThreshold = "90",
+            string? diagCompletionThreshold = "75"
+        )
+        {
+            return new EditCourseDetailsFormData
+            {
+                ApplicationId = applicationId,
+                CustomisationName = customisationName,
+                PasswordProtected = passwordProtected,
+                Password = password,
+                ReceiveNotificationEmails = receiveNotificationEmails,
+                NotificationEmails = notificationEmails,
+                PostLearningAssessment = postLearningAssessment,
+                IsAssessed = isAssessed,
+                DiagAssess = diagAssess,
+                TutCompletionThreshold = tutCompletionThreshold,
+                DiagCompletionThreshold = diagCompletionThreshold,
+            };
         }
     }
 }

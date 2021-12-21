@@ -202,15 +202,22 @@
         )
         {
             var centreId = User.GetCentreId();
-            var customisationName =
-                formData.CustomisationName == null || string.IsNullOrWhiteSpace(formData.CustomisationName)
-                    ? string.Empty
-                    : formData.CustomisationName;
 
-            ValidateCustomisationName(customisationId, customisationName, centreId, formData);
-            ValidatePassword(formData);
-            ValidateEmail(formData);
-            ValidateCompletionCriteria(formData);
+            if (string.IsNullOrWhiteSpace(formData.CustomisationName))
+            {
+                formData.CustomisationName = string.Empty;
+            }
+
+            CourseDetailsValidator.ValidateCustomisationName(
+                formData,
+                ModelState,
+                courseService,
+                centreId,
+                customisationId
+            );
+            CourseDetailsValidator.ValidatePassword(formData, ModelState);
+            CourseDetailsValidator.ValidateEmail(formData, ModelState);
+            CourseDetailsValidator.ValidateCompletionCriteria(formData, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -225,7 +232,7 @@
 
             courseService.UpdateCourseDetails(
                 customisationId,
-                customisationName,
+                formData.CustomisationName,
                 formData.Password!,
                 formData.NotificationEmails!,
                 formData.IsAssessed,
@@ -295,97 +302,6 @@
         private int GetIntegerFromStringOrConvertToZeroIfNull(string? input)
         {
             return input == null ? 0 : int.Parse(input);
-        }
-
-        private void ValidateCustomisationName(
-            int customisationId,
-            string customisationName,
-            int centreId,
-            EditCourseDetailsFormData formData
-        )
-        {
-            if (customisationName == string.Empty && courseService.DoesCourseNameExistAtCentre(
-                customisationName,
-                centreId,
-                formData.ApplicationId,
-                customisationId
-            ))
-            {
-                ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
-                    "A course with no add on already exists"
-                );
-            }
-            else if (customisationName.Length > 250)
-            {
-                ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
-                    "Course name must be 250 characters or fewer, including any additions"
-                );
-            }
-            else if (courseService.DoesCourseNameExistAtCentre(
-                customisationName,
-                centreId,
-                formData.ApplicationId,
-                customisationId
-            ))
-            {
-                ModelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
-                    "Course name must be unique, including any additions"
-                );
-            }
-        }
-
-        private void ValidatePassword(EditCourseDetailsFormData formData)
-        {
-            if (formData.PasswordProtected)
-            {
-                return;
-            }
-
-            if (ModelState.HasError(nameof(formData.Password)))
-            {
-                ModelState.ClearErrorsOnField(nameof(formData.Password));
-            }
-
-            formData.Password = null;
-        }
-
-        private void ValidateEmail(EditCourseDetailsFormData formData)
-        {
-            if (formData.ReceiveNotificationEmails)
-            {
-                return;
-            }
-
-            if (ModelState.HasError(nameof(formData.NotificationEmails)))
-            {
-                ModelState.ClearErrorsOnField(nameof(formData.NotificationEmails));
-            }
-
-            formData.NotificationEmails = null;
-        }
-
-        private void ValidateCompletionCriteria(EditCourseDetailsFormData formData)
-        {
-            if (!formData.IsAssessed)
-            {
-                return;
-            }
-
-            if (ModelState.HasError(nameof(formData.TutCompletionThreshold)))
-            {
-                ModelState.ClearErrorsOnField(nameof(formData.TutCompletionThreshold));
-            }
-
-            if (ModelState.HasError(nameof(formData.DiagCompletionThreshold)))
-            {
-                ModelState.ClearErrorsOnField(nameof(formData.DiagCompletionThreshold));
-            }
-
-            formData.TutCompletionThreshold = "0";
-            formData.DiagCompletionThreshold = "0";
         }
     }
 }
