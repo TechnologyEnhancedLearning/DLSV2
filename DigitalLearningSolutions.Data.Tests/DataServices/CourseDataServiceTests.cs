@@ -474,6 +474,32 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
+        public void GetApplicationsAvailableToCentreByCategory_returns_expected_values()
+        {
+            // Given
+            const int centreId = 101;
+            int? categoryId = null;
+
+            // When
+            var result = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            var expectedFirstApplication = new ApplicationDetails
+            {
+                ApplicationId = 1,
+                ApplicationName = "Entry Level - Win XP, Office 2003/07 OLD",
+                PLAssess = false,
+                DiagAssess = false,
+                CourseTopicId = 3,
+                CategoryName = "Office 2007",
+                CourseTopic = "Microsoft Office",
+            };
+
+            result.Should().HaveCount(423);
+            result.First().Should().BeEquivalentTo(expectedFirstApplication);
+        }
+
+        [Test]
         public void GetCoursesEverUsedAtCentreByCategory_returns_courses_no_longer_available_to_centre()
         {
             // Given
@@ -521,7 +547,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 101,
                 CourseCategoryId = 2,
                 AllCentres = false,
-                CentreHasApplication = true
+                CentreHasApplication = true,
             };
 
             // When
@@ -550,7 +576,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 549,
                 CourseCategoryId = 2,
                 AllCentres = true,
-                CentreHasApplication = true
+                CentreHasApplication = true,
             };
 
             // When
@@ -561,7 +587,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void DoesCourseNameExistAtCentre_returns_true_if_course_name_exists_at_centre_other_than_the_customisation_specified()
+        public void
+            DoesCourseNameExistAtCentre_returns_true_if_course_name_exists_at_centre_other_than_the_customisation_specified()
         {
             // When
             var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1, 1);
@@ -571,7 +598,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void DoesCourseNameExistAtCentre_with_no_customisationId_specified_returns_true_if_course_name_exists_at_centre()
+        public void
+            DoesCourseNameExistAtCentre_with_no_customisationId_specified_returns_true_if_course_name_exists_at_centre()
         {
             // When
             var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1);
@@ -581,7 +609,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void DoesCourseNameExistAtCentre_returns_false_if_course_name_exists_at_centre_other_than_the_customisation_specified()
+        public void
+            DoesCourseNameExistAtCentre_returns_false_if_course_name_exists_at_centre_other_than_the_customisation_specified()
         {
             // When
             var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1, 100);
@@ -833,6 +862,71 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
             // Then
             updatedCourseOptions.Should().BeNull();
+        }
+
+        [Test]
+        public void CreateNewCentreCourse_correctly_adds_new_course()
+        {
+            using var transaction = new TransactionScope();
+            try
+            {
+                // Given
+                const int centreId = 2;
+                const int applicationId = 1;
+                const string customisationName = "Name";
+                const string password = "Password";
+                const bool selfRegister = false;
+                const int tutCompletionThreshold = 0;
+                const bool isAssessed = true;
+                const int diagCompletionThreshold = 0;
+                const bool diagObjSelect = false;
+                const bool hideInLearnerPortal = false;
+                const string notificationEmails = "hello@test.com";
+                int? categoryId = null;
+
+                // When
+                var customisationId = courseDataService.CreateNewCentreCourse(
+                    centreId,
+                    applicationId,
+                    customisationName,
+                    password,
+                    selfRegister,
+                    tutCompletionThreshold,
+                    isAssessed,
+                    diagCompletionThreshold,
+                    diagObjSelect,
+                    hideInLearnerPortal,
+                    notificationEmails
+                );
+
+                var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
+                    customisationId,
+                    centreId,
+                    categoryId
+                );
+
+                // Then
+                using (new AssertionScope())
+                {
+                    courseDetails!.CurrentVersion.Should().Be(1);
+                    courseDetails.CentreId.Should().Be(centreId);
+                    courseDetails.ApplicationId.Should().Be(applicationId);
+                    courseDetails.Active.Should().BeTrue();
+                    courseDetails.CustomisationName.Should().Be(customisationName);
+                    courseDetails.Password.Should().Be(password);
+                    courseDetails.SelfRegister.Should().Be(selfRegister);
+                    courseDetails.TutCompletionThreshold.Should().Be(tutCompletionThreshold);
+                    courseDetails.IsAssessed.Should().Be(isAssessed);
+                    courseDetails.DiagCompletionThreshold.Should().Be(diagCompletionThreshold);
+                    courseDetails.DiagObjSelect.Should().Be(diagObjSelect);
+                    courseDetails.HideInLearnerPortal.Should().Be(hideInLearnerPortal);
+                    courseDetails.NotificationEmails.Should().Be(notificationEmails);
+                }
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
         }
     }
 }

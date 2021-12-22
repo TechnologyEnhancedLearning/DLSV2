@@ -547,6 +547,25 @@
         }
 
         [Test]
+        public void GetApplicationOptionsAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var applicationOptions = new List<ApplicationDetails>();
+            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(applicationOptions);
+
+            // When
+            var result = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeEquivalentTo(applicationOptions);
+        }
+
+        [Test]
         public void DoesCourseNameExistAtCentre_calls_data_service()
         {
             // Given
@@ -716,6 +735,75 @@
             // Then
             result.Should().HaveCount(4);
             result.Should().NotContain(c => c.CustomisationId == 2);
+        }
+
+        [Test]
+        public void CreateNewCentreCourse_calls_data_service()
+        {
+            // Given
+            const int centreId = 2;
+            const int applicationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const bool selfRegister = false;
+            const int tutCompletionThreshold = 0;
+            const bool isAssessed = true;
+            const int diagCompletionThreshold = 0;
+            const bool diagObjSelect = false;
+            const bool hideInLearnerPortal = false;
+            const string notificationEmails = "hello@test.com";
+
+            var courseDetails = new CourseDetails
+            {
+                CentreId = centreId,
+                ApplicationId = applicationId,
+                CustomisationName = customisationName,
+                Password = password,
+                SelfRegister = selfRegister,
+                TutCompletionThreshold = tutCompletionThreshold,
+                IsAssessed = isAssessed,
+                DiagCompletionThreshold = diagCompletionThreshold,
+                DiagObjSelect = diagObjSelect,
+                HideInLearnerPortal = hideInLearnerPortal,
+                NotificationEmails = notificationEmails,
+            };
+
+            A.CallTo(
+                () => courseDataService.CreateNewCentreCourse(
+                    centreId,
+                    applicationId,
+                    customisationName,
+                    password,
+                    selfRegister,
+                    tutCompletionThreshold,
+                    isAssessed,
+                    diagCompletionThreshold,
+                    diagObjSelect,
+                    hideInLearnerPortal,
+                    notificationEmails
+                )
+            ).Returns(123);
+
+            // When
+            var result = courseService.CreateNewCentreCourse(courseDetails);
+
+            // Then
+            result.Should().Be(123);
+            A.CallTo(
+                () => courseDataService.CreateNewCentreCourse(
+                    centreId,
+                    applicationId,
+                    customisationName,
+                    password,
+                    selfRegister,
+                    tutCompletionThreshold,
+                    isAssessed,
+                    diagCompletionThreshold,
+                    diagObjSelect,
+                    hideInLearnerPortal,
+                    notificationEmails
+                )
+            ).MustHaveHappenedOnceExactly();
         }
     }
 }
