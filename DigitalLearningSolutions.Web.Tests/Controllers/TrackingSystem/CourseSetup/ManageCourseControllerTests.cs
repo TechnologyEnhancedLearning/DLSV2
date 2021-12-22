@@ -402,7 +402,7 @@
             SaveCourseDetails_correctly_adds_model_error_if_application_already_exists_with_blank_customisation_name()
         {
             // Given
-            var model = GetEditCourseDetailsViewModel(customisationName: "");
+            var model = GetEditCourseDetailsViewModel(customisationName: string.Empty);
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
