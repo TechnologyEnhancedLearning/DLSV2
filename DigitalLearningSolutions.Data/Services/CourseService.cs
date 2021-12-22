@@ -82,7 +82,7 @@
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
-        void CreateNewCentreCourse(CourseDetails courseDetails);
+        int CreateNewCentreCourse(CourseDetails courseDetails);
     }
 
     public class CourseService : ICourseService
@@ -339,6 +339,25 @@
             return courseDataService.GetCourseValidationDetails(customisationId, centreId)?.CourseCategoryId;
         }
 
+        public int CreateNewCentreCourse(CourseDetails courseDetails)
+        {
+            var customisationId = courseDataService.CreateNewCentreCourse(
+                courseDetails.CentreId,
+                courseDetails.ApplicationId,
+                courseDetails.CustomisationName,
+                courseDetails.Password,
+                courseDetails.SelfRegister,
+                courseDetails.TutCompletionThreshold,
+                courseDetails.IsAssessed,
+                courseDetails.DiagCompletionThreshold,
+                courseDetails.DiagObjSelect,
+                courseDetails.HideInLearnerPortal,
+                courseDetails.NotificationEmails
+            );
+
+            return customisationId;
+        }
+
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(
             DelegateCourseInfo info
         )
@@ -353,24 +372,6 @@
                 : new AttemptStats(0, 0);
 
             return new DelegateCourseDetails(info, customPrompts, attemptStats);
-        }
-
-        public void CreateNewCentreCourse(CourseDetails courseDetails)
-        {
-            courseDataService.CreateNewCentreCourse(
-                courseDetails.CentreId,
-                courseDetails.ApplicationId,
-                courseDetails.CustomisationName,
-                courseDetails.Password,
-                courseDetails.SelfRegister,
-                courseDetails.TutCompletionThreshold,
-                courseDetails.IsAssessed,
-                courseDetails.DiagCompletionThreshold,
-                courseDetails.DiagObjSelect,
-                courseDetails.HideInLearnerPortal,
-                courseDetails.NotificationEmails);
-
-
         }
     }
 }

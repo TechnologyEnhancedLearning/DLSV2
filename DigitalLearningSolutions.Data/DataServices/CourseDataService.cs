@@ -77,7 +77,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
 
-        void CreateNewCentreCourse(
+        int CreateNewCentreCourse(
             int centreId,
             int applicationId,
             string customisationName,
@@ -251,25 +251,27 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
         {
-            int enrolmentExists = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
+            var enrolmentExists = (int)connection.ExecuteScalar(
+                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-               new { selfAssessmentId, candidateId });
+                new { selfAssessmentId, candidateId }
+            );
 
             if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
-                @"INSERT INTO [dbo].[CandidateAssessments]
+                    @"INSERT INTO [dbo].[CandidateAssessments]
                            ([CandidateID]
                            ,[SelfAssessmentID])
                      VALUES
                            (@candidateId,
                            @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
-            );
+                    new { selfAssessmentId, candidateId }
+                );
             }
+
             if (enrolmentExists < 1)
             {
                 logger.LogWarning(
@@ -477,7 +479,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         public IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<ApplicationDetails>(
-                $@"SELECT
+                @"SELECT
                         ap.ApplicationID,
                         ap.ApplicationName,
                         ap.PLAssess,
@@ -672,7 +674,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             ).FirstOrDefault();
         }
 
-        public void CreateNewCentreCourse(
+        public int CreateNewCentreCourse(
             int centreId,
             int applicationId,
             string customisationName,
@@ -686,31 +688,44 @@ namespace DigitalLearningSolutions.Data.DataServices
             string? notificationEmails
         )
         {
-            connection.Execute(
-                @"INSERT INTO [dbo].[Customisations]
-                           ([CentreID]
-                           ,[ApplicationID])
-                     VALUES
-                           (CurrentVersion = 1,
-                            CentreId = @centreId,
-                            ApplicationId = @applicationId,
-                            Active = 1,
-                            CustomisationName = @customisationName,
-                            Password = @password,
-                            SelfRegister = @selfRegister,
-                            TutCompletionThreshold = @tutCompletionThreshold,
-                            IsAssessed = @isAssessed,
-                            DiagCompletionThreshold = @diagCompletionThreshold,
-                            DiagObjSelect = @diagObjSelect,
-                            HideInLearnerPortal = @hideInLearnerPortal
-                            NotificationEmails = @notificationEmails
-                           )",
+            var customisationId = connection.QuerySingle<int>(
+                @"INSERT INTO Customisations(
+                        CurrentVersion
+                        ,CentreID
+                        ,ApplicationID
+                        ,Active
+                        ,CustomisationName
+                        ,Password
+                        ,SelfRegister
+                        ,TutCompletionThreshold
+                        ,IsAssessed
+                        ,DiagCompletionThreshold
+                        ,DiagObjSelect
+                        ,HideInLearnerPortal
+                        ,NotificationEmails)
+                    OUTPUT Inserted.CustomisationID
+                    VALUES
+                        (1,
+                        @centreId,
+                        @applicationId,
+                        1,
+                        @customisationName,
+                        @password,
+                        @selfRegister,
+                        @tutCompletionThreshold,
+                        @isAssessed,
+                        @diagCompletionThreshold,
+                        @diagObjSelect,
+                        @hideInLearnerPortal,
+                        @notificationEmails)",
                 new
                 {
                     centreId, applicationId, customisationName, password, selfRegister, tutCompletionThreshold,
                     isAssessed, diagCompletionThreshold, diagObjSelect, hideInLearnerPortal, notificationEmails,
                 }
             );
+
+            return customisationId;
         }
     }
 }
