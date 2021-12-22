@@ -1,19 +1,25 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Net.Mime;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.Extensions;
+    using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
+    using FluentAssertions.AspNetCore.Mvc;
 
     public class CourseSetupControllerTests
     {
@@ -44,6 +50,19 @@
             new Topic { CourseTopic = "Topic 2" }
         };
 
+        private readonly List<ApplicationDetails> applicationOptions = new List<ApplicationDetails>
+        { new ApplicationDetails
+            {
+                ApplicationId = 1,
+                ApplicationName = "Test Name",
+                CategoryName = "Test Category Name",
+                CourseTopicId = 1,
+                CourseTopic = "Topic",
+                PLAssess = true,
+                DiagAssess = true,
+            },
+        };
+
         private CourseSetupController controller = null!;
         private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
@@ -64,6 +83,10 @@
             A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                 .Returns(categories);
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
+
+            A.CallTo(
+                () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int>._)
+            ).Returns(applicationOptions);
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
@@ -171,6 +194,60 @@
             // Then
             result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
                 .Be("Status|Active|true");
+        }
+
+        [Test]
+        public void AddCourseNew_sets_new_temp_data()
+        {
+            // When
+            var result = controller.AddCourseNew();
+
+            // Then
+            controller.TempData.Peek<AddNewCentreCourseData>().Should().NotBeNull();
+            result.Should().BeRedirectToActionResult().WithActionName("SelectCourse");
+        }
+
+        [Test]
+        public void SelectCourse_post_updates_temp_data_and_redirects()
+        {
+            var application = new ApplicationDetails
+            {
+                ApplicationId = 1,
+                ApplicationName = "Test Name",
+                CategoryName = "Test Category Name",
+                CourseTopicId = 1,
+                CourseTopic = "Topic",
+                PLAssess = true,
+                DiagAssess = true,
+            };
+
+            var expectedModel = new SelectCourseViewModel { Application = application };
+            var formData = new SelectCourseFormData { ApplicationId = application.ApplicationId };
+            var initialTempData = new AddNewCentreCourseData();
+            controller.TempData.Set(initialTempData);
+
+            // When
+            var result = controller.SelectCourse(formData);
+
+            // Then
+            controller.TempData.Peek<AddNewCentreCourseData>()!.SelectCourseViewModel.Should()
+                .BeEquivalentTo(expectedModel);
+            result.As<ViewResult>().Model.Should().BeOfType<SetCourseDetailsViewModel>();
+        }
+
+        [Test]
+        public void SelectCourse_does_not_redirect_with_invalid_model()
+        {
+            var model = new SelectCourseViewModel { ApplicationId = 1 };
+            controller.ModelState.AddModelError("ApplicationId", "Select a course");
+
+            // When
+            var result = controller.SelectCourse(model);
+
+            // Then
+            result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
+            controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
+                .BeEquivalentTo("Select a course");
         }
 
         /*[Test]
@@ -282,6 +359,13 @@
             ).MustHaveHappened();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }*/
+
+        private static void AssertModelStateErrorIsExpected(IActionResult result, string expectedErrorMessage)
+        {
+            var errorMessage = result.As<ViewResult>().ViewData.ModelState.Select(x => x.Value.Errors)
+                .Where(y => y.Count > 0).ToList().First().First().ErrorMessage;
+            errorMessage.Should().BeEquivalentTo(expectedErrorMessage);
+        }
 
         private static EditCourseDetailsFormData GetEditCourseDetailsFormData(
             int applicationId = 1,

@@ -16,26 +16,25 @@
         )
         {
             if (string.IsNullOrEmpty(formData.CustomisationName) && courseService.DoesCourseNameExistAtCentre(
-                formData.CustomisationName,
+                formData.CustomisationName!,
                 centreId,
                 formData.ApplicationId,
                 customisationId
             ))
             {
-                modelState.ClearErrorsOnField(nameof(EditCourseDetailsViewModel.CustomisationName));
                 modelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    nameof(formData.CustomisationName),
                     "A course with no add on already exists"
                 );
             }
             else if (string.IsNullOrEmpty(formData.CustomisationName))
             {
-                modelState.ClearErrorsOnField(nameof(EditCourseDetailsViewModel.CustomisationName));
+                modelState.ClearErrorsOnField(nameof(formData.CustomisationName));
             }
             else if (formData.CustomisationName.Length > 250)
             {
                 modelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    nameof(formData.CustomisationName),
                     "Course name must be 250 characters or fewer, including any additions"
                 );
             }
@@ -47,7 +46,7 @@
             ))
             {
                 modelState.AddModelError(
-                    nameof(EditCourseDetailsViewModel.CustomisationName),
+                    nameof(formData.CustomisationName),
                     "Course name must be unique, including any additions"
                 );
             }

@@ -45,7 +45,7 @@
 
         public string ApplicationName { get; set; }
 
-        public string CustomisationName { get; set; }
+        public string? CustomisationName { get; set; }
 
         public bool PasswordProtected { get; set; }
 

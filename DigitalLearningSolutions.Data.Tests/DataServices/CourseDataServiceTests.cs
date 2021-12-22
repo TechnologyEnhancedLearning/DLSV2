@@ -610,7 +610,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
         [Test]
         public void
-            DoesCourseNameExistAtCentre_returns_false_if_course_name_exists_at_centre_other_than_the_customisation_specified()
+            DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_at_centre_other_than_the_customisation_specified()
         {
             // When
             var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 1, 100);
@@ -623,7 +623,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_at_centre()
         {
             // When
-            var result = courseDataService.DoesCourseNameExistAtCentre("This course name does not exist", 101, 99, 1);
+            var result = courseDataService.DoesCourseNameExistAtCentre("This course name does not exist", 101, 99);
 
             // Then
             result.Should().BeFalse();
@@ -633,7 +633,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public void DoesCourseNameExistAtCentre_returns_false_if_course_name_does_not_exist_with_applicationId()
         {
             // When
-            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 2, 1);
+            var result = courseDataService.DoesCourseNameExistAtCentre("Standard", 101, 2, 100);
 
             // Then
             result.Should().BeFalse();

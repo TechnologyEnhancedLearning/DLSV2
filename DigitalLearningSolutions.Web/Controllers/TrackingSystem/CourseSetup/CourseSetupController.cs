@@ -150,9 +150,11 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
+            var applicationOptionssss = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
+            var sa = applicationOptionssss.First();
             var selectedApplication =
-                courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
-                    .Single(ap => ap.ApplicationId == formData.ApplicationId);
+
+                applicationOptionssss.Single(ap => ap.ApplicationId == formData.ApplicationId);
 
             data!.SetCourse(selectedApplication);
             TempData.Set(data);
