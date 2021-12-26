@@ -1,5 +1,8 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
-@model SignpostingCardViewModel;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model SignpostingCardViewModel
+@{
+    var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
+}
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
@@ -14,13 +17,13 @@
     <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Assessment Question
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.AssessmentQuestion
-      </dd>
-  </div>
+        <dt class="nhsuk-summary-list__key">
+          Assessment Question
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.AssessmentQuestion
+        </dd>
+      </div>
   <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Minimum result match
@@ -48,7 +51,12 @@
   </dl>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1" asp-action="ManageParameter">Manage parameters</a>
+      <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"
+          asp-action="StartSignpostingParametersSession"
+          asp-route-frameworkId="@parent.FrameworkId"
+          asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
+          asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
+          asp-route-assessmentQuestionParameterId="@parent.FrameworkCompetencyId">Manage parameters</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
       <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
     </div>

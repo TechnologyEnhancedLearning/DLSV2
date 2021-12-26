@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Data.Models.LearningResources;
+using Microsoft.AspNetCore.Http;
+
+namespace DigitalLearningSolutions.Data.Models.SessionData.Frameworks
+{
+    public class SessionCompetencyLearningResourceSignpostingParameter
+    {
+        public Guid Id { get; set; }
+        public LearningResourceReference Resource { get; set; }
+        public List<AssessmentQuestion> Questions { get; set; }
+        public AssessmentQuestion SelectedQuestion { get; set; }
+        public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
+        public FrameworkCompetency Competency { get; set; }
+
+        public SessionCompetencyLearningResourceSignpostingParameter()
+        {
+        }
+        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency competency, LearningResourceReference resource, List<AssessmentQuestion> questions, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
+        {
+            var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
+            Competency = competency;
+            Resource = resource;
+            Questions = questions;
+            AssessmentQuestionParameter = assessmentQuestionParameter;
+
+            if(requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
+            {
+                this.Id = Guid.Parse(id);
+            }
+            else
+            {
+                var guid = Guid.NewGuid();
+                responseCookies.Append(cookieName, guid.ToString(), options);
+                this.Id = guid;
+            }
+        }
+    }
+}

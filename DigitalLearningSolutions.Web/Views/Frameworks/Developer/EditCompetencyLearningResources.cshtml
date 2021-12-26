@@ -32,7 +32,7 @@
 {
   foreach (var link in Model.CompetencyResourceLinks)
   {
-    <partial name="_SignpostingCard.cshtml" model="link" />
+    <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})"/>
   }
 
   <div class="nhsuk-u-margin-top-5">

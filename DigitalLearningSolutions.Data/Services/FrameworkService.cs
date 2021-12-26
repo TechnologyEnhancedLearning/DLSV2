@@ -65,6 +65,8 @@
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
+        CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterById(int competencyResourceAssessmentQuestionParameterId);
+        LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResourceID);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId, string? commentsPrompt, string? commentsHint);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
@@ -1601,6 +1603,33 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             return connection.Query<int>(
                 "SELECT MAX(ID) FROM FrameworkCompetencyGroups"
                 ).Single();
+        }
+
+        public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterById(int competencyResourceAssessmentQuestionParameterId)
+        {
+            var parameter = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                $@"SELECT *
+                    FROM CompetencyResourceAssessmentQuestionParameters
+                    WHERE ID = @competencyResourceAssessmentQuestionParameterId",
+                    new { competencyResourceAssessmentQuestionParameterId }).FirstOrDefault();
+            if (parameter != null)
+            {
+                var questions = connection.Query<AssessmentQuestion>(
+                    $@"SELECT * FROM AssessmentQuestions
+                        WHERE ID IN ({parameter.AssessmentQuestionID}, {parameter.RelevanceAssessmentQuestionID})");
+                parameter.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.AssessmentQuestionID);
+                parameter.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.RelevanceAssessmentQuestionID);
+            }
+            return parameter;
+        }
+
+        public LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResouceId)
+        {
+            return connection.Query<LearningResourceReference>(
+                $@"SELECT * FROM LearningResourceReferences lrr
+                    INNER JOIN CompetencyLearningResources clr ON clr.LearningResourceReferenceID = lrr.ID
+                    WHERE clr.ID = @competencyLearningResouceId",
+                new { competencyLearningResouceId }).FirstOrDefault();
         }
     }
 }

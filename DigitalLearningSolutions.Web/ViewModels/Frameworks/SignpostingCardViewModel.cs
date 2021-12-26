@@ -8,5 +8,6 @@
         public int MinimumResultMatch { get; set; }
         public int MaximumResultMatch { get; set; }
         public string CompareResultTo { get; set; }
+        public int AssessmentQuestionParameterId { get; set; }
     }
 }
