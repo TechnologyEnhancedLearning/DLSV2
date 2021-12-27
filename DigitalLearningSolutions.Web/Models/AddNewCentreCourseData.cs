@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Models
 {
     using System;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
@@ -59,7 +58,7 @@
 
         public void SetCourseContent(SetCourseContentViewModel model)
         {
-            // TODO: Set course content
+            SetCourseContentViewModel.SectionsToInclude = model.SectionsToInclude;
         }
 
         public void SetSectionContent(EditCourseSectionFormData formData)

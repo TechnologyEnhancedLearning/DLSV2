@@ -9,6 +9,9 @@
 
 @{
   ViewData["Title"] = "Set course content";
+  var availableSections = Model.AvailableSections;
+  const string chooseSectionsId = "conditional-choose-sections";
+  var radioExpanded = (!Model.IncludeAllSections).ToString();
 }
 
 <div class="nhsuk-grid-row">
@@ -16,9 +19,58 @@
     <h1 class="nhsuk-heading-xl">Set course content</h1>
 
     <form method="post" novalidate asp-action="SetCourseContent">
-      // TODO: Add partial
+
+      <input type="hidden" asp-for="SectionsToInclude" />
+      <input type="hidden" asp-for="AvailableSections" />
+
+      <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
+          <div class="nhsuk-hint" id="set-course-content-hint">
+            Select one option
+          </div>
+
+          <div class="nhsuk-radios nhsuk-radios--conditional">
+
+            <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
+              <input class="nhsuk-radios__input"
+                     id="IncludeAllSections"
+                     asp-for="IncludeAllSections"
+                     type="radio"
+                     value="true">
+              <label class="nhsuk-label nhsuk-radios__label" for="IncludeAllSections">
+                Include all course content
+              </label>
+            </div>
+
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input"
+                     id="ChooseSections"
+                     asp-for="IncludeAllSections"
+                     aria-controls="@chooseSectionsId"
+                     aria-expanded="@radioExpanded"
+                     type="radio"
+                     value="false">
+              <label class="nhsuk-label nhsuk-radios__label" for="ChooseSections">
+                Choose sections to include
+              </label>
+            </div>
+
+            <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="@chooseSectionsId">
+              <div class="nhsuk-form-group">
+                @foreach (var sectionModel in Model.AvailableSections) {
+                  <partial name="../AddNewCentreCourse/_SectionCheckbox" model="sectionModel" />
+                }
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Next</button>
+
     </form>
 
-    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseOptions" />
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseOptions" link-text="Go back" />
   </div>
 </div>

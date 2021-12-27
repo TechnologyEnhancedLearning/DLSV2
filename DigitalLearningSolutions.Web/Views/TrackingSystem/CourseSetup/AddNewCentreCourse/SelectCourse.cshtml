@@ -10,6 +10,8 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
+  var options = Model.CourseOptions;
+  var c = options;
 }
 
 <div class="nhsuk-grid-row">

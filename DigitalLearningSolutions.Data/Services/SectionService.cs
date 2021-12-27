@@ -8,7 +8,10 @@
     public interface ISectionService
     {
         IEnumerable<Section> GetSectionsAndTutorialsForCustomisation(int customisationId, int applicationId);
+
         Section? GetSectionAndTutorialsBySectionIdForCustomisation(int customisationId, int sectionId);
+
+        IEnumerable<Section> GetSectionsForApplication(int applicationId);
     }
 
     public class SectionService : ISectionService
@@ -32,7 +35,7 @@
                 s => new Section(
                     s.SectionId,
                     s.SectionName,
-                    tutorialContentDataService.GetTutorialsBySectionId(s.SectionId, customisationId)
+                    tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(s.SectionId, customisationId)
                 )
             );
 
@@ -48,8 +51,23 @@
                 return null;
             }
 
-            section.Tutorials = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId);
+            section.Tutorials =
+                tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(sectionId, customisationId);
             return section;
+        }
+
+        public IEnumerable<Section> GetSectionsForApplication(int applicationId)
+        {
+            var sections = sectionContentDataService.GetSectionsByApplicationId(applicationId);
+            var sectionsWithTutorials = sections.Select(
+                s => new Section(
+                    s.SectionId,
+                    s.SectionName,
+                    tutorialContentDataService.GetTutorialsForSection(s.SectionId)
+                )
+            );
+
+            return sectionsWithTutorials;
         }
     }
 }
