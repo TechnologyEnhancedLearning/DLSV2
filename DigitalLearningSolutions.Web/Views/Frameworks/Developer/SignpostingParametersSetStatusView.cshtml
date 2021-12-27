@@ -1,45 +1,46 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
 
-<h2>Choose assessment question for signposting</h2>
-<label class="nhsuk-label">Which assessment question will be used to determine whether this learning resource is at the right level for the learner?</label>
+<h2>Choose trigger range for - @(Model.SelectedQuestion?.Question ?? "no question selected")</h2>
+<label class="nhsuk-label">Choose the minimum and maximum result values that </label>
 <form method="post" asp-controller="Frameworks">
-  <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-    <div class="nhsuk-radios">
-      @foreach (var question in Model.Questions)
+  <div class="nhsuk-form-group">
+    @if (Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
+    {
+      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml"
+               model="Model.MinimumQuestion"
+               view-data="@(new ViewDataDictionary(ViewData) {{ "index", 0 }})" />
+      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml"
+               model="Model.MaximumQuestion"
+               view-data="@(new ViewDataDictionary(ViewData) {{ "index", 1 }})" />
+    }
+    else
+    {
+      foreach (var levelDescriptor in Model.AssessmentQuestionLevelDescriptors)
       {
-        <div class="nhsuk-radios__item">
-          <input type="radio"
-                 id="Question@(question.ID)"
-                 name="SelectedQuestionId"
-                 @(question.ID == Model.SelectedQuestionId ? "checked" : String.Empty)
-                 value="@question.ID"
-                 class="nhsuk-radios__input">
-          <label class="nhsuk-label nhsuk-radios__label" for="Question@(question.ID)">
-            @question.Question
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" name="checkedLevelDescriptors" type="checkbox" value="@levelDescriptor.LevelValue">
+          <label class="nhsuk-label nhsuk-checkboxes__label">
+            @levelDescriptor.LevelLabel
           </label>
         </div>
       }
-    </div>
-  </fieldset>
+    }
+  </div>
   <div class="nhsuk-u-margin-top-5">
     <button asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit">
       Back
     </button>
-    <button asp-action="EditSignpostingParameterSkip" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit">
-      Skip
-    </button>
-    <button asp-action="EditSignpostingParameterNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
+    <button asp-action="SignpostingParametersSetStatusViewNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
       Next
     </button>
   </div>
   @Html.HiddenFor(m => m.FrameworkId)
   @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
   @Html.HiddenFor(m => m.FrameworkCompetencyId)
-  @Html.Hidden("SelectedQuestionId", Model.SelectedQuestionId)
 </form>
 
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
@@ -50,3 +51,7 @@
     Cancel
   </a>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+}
