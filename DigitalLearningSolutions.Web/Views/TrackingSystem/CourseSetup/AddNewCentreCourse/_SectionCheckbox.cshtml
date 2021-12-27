@@ -1,0 +1,7 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SelectSectionViewModel
+
+<vc:single-checkbox
+  asp-for="@nameof(Model.IsSectionSelected)"
+  label="@Model.Name"
+  hint-text="" />
