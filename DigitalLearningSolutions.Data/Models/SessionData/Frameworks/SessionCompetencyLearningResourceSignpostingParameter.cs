@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Data.Models.SessionData.Frameworks
         public LearningResourceReference Resource { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
+        public int[] SelectedLevelValues { get; set; }
         public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
         public FrameworkCompetency Competency { get; set; }
 

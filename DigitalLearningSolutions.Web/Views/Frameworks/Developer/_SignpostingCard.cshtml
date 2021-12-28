@@ -56,7 +56,7 @@
           asp-route-frameworkId="@parent.FrameworkId"
           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-assessmentQuestionParameterId="@parent.FrameworkCompetencyId">Manage parameters</a>
+          asp-route-assessmentQuestionParameterId="@Model.AssessmentQuestionParameterId">Manage parameters</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
       <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
     </div>

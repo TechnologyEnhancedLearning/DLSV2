@@ -19,6 +19,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             }
         }
         public List<LevelDescriptor> AssessmentQuestionLevelDescriptors { get; set; }
+        public int[] SelectedLevelValues { get; set; }
         public CompetencyLearningResourceSignpostingParametersViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
 

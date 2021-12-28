@@ -126,12 +126,27 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [HttpPost]
-        public IActionResult SignpostingParametersSetStatusViewNext(AssessmentQuestion assessmentQuestion)
+        public IActionResult SignpostingParametersSetStatusViewNext(AssessmentQuestion selectedQuestion, int[] selectedLevelValues)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            session.SelectedQuestion = assessmentQuestion;
+            if (session.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
+            {
+                session.SelectedQuestion.MinValue = selectedQuestion.MinValue;
+                session.SelectedQuestion.MaxValue = selectedQuestion.MaxValue;
+            }
+            else
+            {
+                session.SelectedQuestion.MinValue = selectedLevelValues.Min();
+                session.SelectedQuestion.MaxValue = selectedLevelValues.Max();
+            }
             TempData.Set(session);
-            return View("Developer/SignpostingParametersCompareResultView");
+            return ShowSession(session);
+            //return View("Developer/SignpostingParametersCompareResultView");
+        }
+
+        private ContentResult ShowSession(SessionCompetencyLearningResourceSignpostingParameter session)
+        {
+            return Content("SELECTED\r\n\r\n" + JsonConvert.SerializeObject(session.SelectedQuestion) + "\r\n\r\nSESSION\r\n\r\n" + JsonConvert.SerializeObject(session));
         }
 
         private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
