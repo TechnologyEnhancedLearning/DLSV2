@@ -16,19 +16,5 @@ using System.ComponentModel.DataAnnotations;
         public string? CommentsPrompt { get; set; }
         [StringLength(255)]
         public string? CommentsHint { get; set; }
-
-        //public static explicit operator SelfAssessments.AssessmentQuestion(Frameworks.AssessmentQuestion question)
-        //{
-        //    return new SelfAssessments.AssessmentQuestion()
-        //    {
-        //        Id = question.ID,
-        //        CommentsHint = question.CommentsHint,
-        //        CommentsPrompt = question.CommentsPrompt,
-        //        MaxValue = question.MaxValue,
-        //        MinValue = question.MinValue,
-        //        Question = question.Question,
-        //        AssessmentQuestionInputTypeID = question.AssessmentQuestionInputTypeID
-        //    };
-        //}
     }
 }

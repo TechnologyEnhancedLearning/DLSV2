@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
 using DigitalLearningSolutions.Web.Extensions;
 using SelfAssessments = DigitalLearningSolutions.Data.Models.SelfAssessments;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -119,42 +120,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             model.Questions = session.Questions;
             session.SelectedQuestion = model.SelectedQuestion;
-            model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(model.SelectedQuestionId.Value,  adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, true).ToList();
-            
-            if(model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
-            {
-                int minValue = model.AssessmentQuestionLevelDescriptors.Min(d => d.LevelValue);
-                int maxValue = model.AssessmentQuestionLevelDescriptors.Max(d => d.LevelValue);
-                model.MinimumQuestion = new SelfAssessments.AssessmentQuestion
-                {
-                    Id = 1,
-                    MinValue = minValue,
-                    MaxValue = maxValue,                    
-                    LevelDescriptors = model.AssessmentQuestionLevelDescriptors,
-                    ScoringInstructions = "Minimum"
-                };
-                model.MaximumQuestion = new SelfAssessments.AssessmentQuestion
-                {
-                    Id = 2,
-                    MinValue = minValue,
-                    MaxValue = maxValue,
-                    LevelDescriptors = model.AssessmentQuestionLevelDescriptors,
-                    ScoringInstructions = "Maximum"
-                };
-            }
+            model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
             TempData.Set(session);
             return View("Developer/SignpostingParametersSetStatusView", model);
         }
 
         [HttpPost]
-        public IActionResult SignpostingParametersSetStatusViewNext(ICollection<SelfAssessments.AssessmentQuestion> assessmentQuestions)
+        public IActionResult SignpostingParametersSetStatusViewNext(AssessmentQuestion assessmentQuestion)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            if(session.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
-            {
-                session.SelectedQuestion.MinValue = assessmentQuestions.Min(q => q.Result).Value;
-                session.SelectedQuestion.MaxValue = assessmentQuestions.Max(q => q.Result).Value;
-            }
+            session.SelectedQuestion = assessmentQuestion;
             TempData.Set(session);
             return View("Developer/SignpostingParametersCompareResultView");
         }

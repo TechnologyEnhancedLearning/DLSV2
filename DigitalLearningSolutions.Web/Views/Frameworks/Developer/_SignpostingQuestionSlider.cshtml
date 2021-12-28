@@ -1,0 +1,50 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks
+@model AssessmentQuestion
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+
+<label for="@Model.ID-input">
+  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question</h3>
+</label>
+<div class="nhsuk-hint">
+  Minimum
+</div>
+<div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
+  <div class="grid-column-85">
+    <input type="range"
+           id="MinValue-input"
+           name="MinValue"
+           min="@Model.MinValue"
+           max="@Model.MaxValue"
+           value="@Model.MinValue"
+           step="1"
+           aria-valuemin="@Model.MinValue"
+           aria-valuemax="@Model.MaxValue"
+           aria-valuenow="@Model.MinValue">
+  </div>
+  <div class="grid-column-15">
+    <span class="range-output" for="MinValue-input">@Model.MinValue</span>
+  </div>
+  <input hidden name="MinValue" value="@Model.MinValue" />
+</div>
+<div class="nhsuk-hint">
+  Maximum
+</div>
+<div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
+  <div class="grid-column-85">
+    <input type="range"
+           id="MaxValue-input"
+           name="MaxValue"
+           min="@Model.MinValue"
+           max="@Model.MaxValue"
+           value="@Model.MaxValue"
+           step="1"
+           aria-valuemin="@Model.MinValue"
+           aria-valuemax="@Model.MaxValue"
+           aria-valuenow="@Model.MaxValue">
+  </div>
+  <div class="grid-column-15">
+    <span class="range-output" for="MaxValue-input">@Model.MaxValue</span>
+  </div>
+  <input hidden name="MaxValue" value="@Model.MaxValue" />
+</div>

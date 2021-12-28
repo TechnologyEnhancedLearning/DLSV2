@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
-<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
 
 <h2>Choose trigger range for - @(Model.SelectedQuestion?.Question ?? "no question selected")</h2>
@@ -10,12 +9,7 @@
   <div class="nhsuk-form-group">
     @if (Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
     {
-      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml"
-               model="Model.MinimumQuestion"
-               view-data="@(new ViewDataDictionary(ViewData) {{ "index", 0 }})" />
-      <partial name="~/Views/LearningPortal/SelfAssessments/_SliderQuestion.cshtml"
-               model="Model.MaximumQuestion"
-               view-data="@(new ViewDataDictionary(ViewData) {{ "index", 1 }})" />
+      <partial name="Developer/_SignpostingQuestionSlider" model="Model.SelectedQuestion" />
     }
     else
     {
@@ -53,5 +47,5 @@
 </div>
 
 @section scripts {
-  <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
+  <script src="@Url.Content("~/js/frameworks/signposting.js")" asp-append-version="true"></script>
 }
