@@ -118,6 +118,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminID();
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            model.Competency = session.Competency.Description;
+            model.ResourceName = session.Resource?.OriginalResourceName;
             model.Questions = session.Questions;
             session.SelectedQuestion = model.SelectedQuestion;
             model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();

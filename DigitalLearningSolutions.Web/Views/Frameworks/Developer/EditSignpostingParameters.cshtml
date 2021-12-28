@@ -1,5 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
+@{
+  ViewData["Title"] = "Edit Signposting Parameters";
+  ViewData["Application"] = "Framework Service";
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
