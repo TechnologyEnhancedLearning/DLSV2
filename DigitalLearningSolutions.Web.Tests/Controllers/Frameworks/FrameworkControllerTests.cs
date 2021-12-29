@@ -49,9 +49,7 @@
                 frameworkService,
                 commonService,
                 frameworkNotificationService,
-                configService,
                 logger,
-                config,
                 importCompetenciesFromFileService,
                 competencyLearningResourcesDataService
             )

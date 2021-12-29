@@ -16,7 +16,7 @@
         [Route("/Framework/{frameworkId}/DefaultQuestions")]
         public IActionResult FrameworkDefaultQuestions(int frameworkId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
@@ -36,7 +36,7 @@
         [Route("/Framework/{frameworkId}/DefaultQuestions")]
         public IActionResult AddDefaultQuestion(int frameworkId, bool addToExisting, int assessmentQuestionId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, addToExisting);
@@ -45,7 +45,7 @@
         [Route("/Framework/{frameworkId}/DefaultQuestions/Remove/{assessmentQuestionId}")]
         public IActionResult RemoveDefaultQuestion(int frameworkId, int assessmentQuestionId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             var frameworkDefaultQuestionUsage = frameworkService.GetFrameworkDefaultQuestionUsage(frameworkId, assessmentQuestionId);
@@ -66,7 +66,7 @@
         }
         public IActionResult ConfirmRemoveDefaultQuestion(int frameworkId, int assessmentQuestionId, bool deleteFromExisting)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, deleteFromExisting);
@@ -75,7 +75,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
         public IActionResult EditCompetencyAssessmentQuestions(int frameworkId, int frameworkCompetencyId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
@@ -99,7 +99,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
         public IActionResult AddCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
@@ -107,7 +107,7 @@
         }
         public IActionResult RemoveCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             frameworkService.DeleteCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
@@ -115,7 +115,7 @@
         }
         public IActionResult StartAssessmentQuestionSession(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
             TempData.Clear();
@@ -177,7 +177,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/")]
         public IActionResult EditAssessmentQuestion(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2)
             {
@@ -232,7 +232,7 @@
             {
                 ModelState.Remove(nameof(AssessmentQuestionDetail.Question));
                 ModelState.AddModelError(nameof(AssessmentQuestionDetail.Question), $"Please enter a valid question (between 3 and 255 characters)");
-                var adminId = GetAdminID();
+                var adminId = GetAdminId();
                 string name;
                 if (frameworkCompetencyId > 0)
                 {
@@ -278,7 +278,7 @@
                     return StatusCode(404);
                 }
             }
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -321,7 +321,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
         public IActionResult EditAssessmentQuestionScoring(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -331,7 +331,7 @@
             {
                 var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
                 TempData.Set(sessionAssessmentQuestion);
-                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
                 if (detailFramework != null)
                 {
                     var model = new AssessmentQuestionViewModel()
@@ -361,7 +361,7 @@
             {
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -386,7 +386,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Options/")]
         public IActionResult EditAssessmentQuestionOptions(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -398,7 +398,7 @@
             }
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
-            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (detailFramework == null)
             {
                 return StatusCode(404);
@@ -435,7 +435,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
         public IActionResult AssessmentQuestionLevelDescriptor(int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -455,7 +455,7 @@
             var levelDescriptor = sessionAssessmentQuestion.LevelDescriptors.Find(x => x.LevelValue == level) ?? new LevelDescriptor()
             {
                 LevelValue = level,
-                UpdatedByAdminID = GetAdminID()
+                UpdatedByAdminID = GetAdminId()
             };
             var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
             var model = new AssessmentQuestionLevelDescriptorViewModel()
@@ -517,7 +517,7 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Confirm/")]
         public IActionResult AssessmentQuestionConfirm(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
+            var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
@@ -542,7 +542,7 @@
                 CommentsPrompt = assessmentQuestionDetail.CommentsPrompt,
                 CommentsHint = assessmentQuestionDetail.CommentsHint
             };
-            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (detailFramework == null) return StatusCode(404);
             var model = new AssessmentQuestionConfirmViewModel()
             {
@@ -556,7 +556,7 @@
         }
         public IActionResult SubmitAssessmentQuestion(int frameworkId, bool addToExisting, int frameworkCompetencyId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestion = sessionAssessmentQuestion.AssessmentQuestionDetail;

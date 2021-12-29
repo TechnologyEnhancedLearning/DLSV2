@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Framework/{frameworkId}/Structure/Import")]
         public IActionResult ImportCompetencies(int frameworkId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2)
             {
@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 var results = importCompetenciesFromFileService.ProcessCompetenciesFromFile(
                     model.ImportFile!,
-                    GetAdminID(),
+                    GetAdminId(),
                     model.FrameworkId
                 );
                 var resultsModel = new ImportCompetenciesResultsViewModel(results);

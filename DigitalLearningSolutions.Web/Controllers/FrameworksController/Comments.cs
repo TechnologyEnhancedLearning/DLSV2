@@ -8,7 +8,7 @@
         public IActionResult InsertComment(int frameworkId, string comment)
         {
             if (comment == "") return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, null, null);
             return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
@@ -16,14 +16,14 @@
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult ViewThread(int frameworkId, int commentId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             if (baseFramework == null) return StatusCode(404);
             if(baseFramework.UserRole == 0)
             {
                 return StatusCode(403);
             }
-            var commentReplies = frameworkService.GetCommentRepliesById(commentId, GetAdminID());
+            var commentReplies = frameworkService.GetCommentRepliesById(commentId, GetAdminId());
             return View("Developer/CommentThread", commentReplies);
         }
         [HttpPost]
@@ -31,7 +31,7 @@
         public IActionResult InsertReply(int frameworkId, int commentId, string comment, string parentComment)
         {
             if (comment == "") return RedirectToAction("ViewThread", new { frameworkId, commentId });
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, commentId, parentComment);
             return RedirectToAction("ViewThread", new { frameworkId, commentId });

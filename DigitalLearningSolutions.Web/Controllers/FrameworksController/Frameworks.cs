@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private const string CookieName = "DLSFrameworkService";
         public IActionResult Index()
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var username = GetUserFirstName();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var isFrameworkContributor = GetIsFrameworkContributor();
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             string tabname = "All")
         {
             sortBy ??= FrameworkSortByOptions.FrameworkName.PropertyName;
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var isFrameworkDeveloper = GetIsFrameworkDeveloper();
             var isFrameworkContributor = GetIsFrameworkContributor();
             IEnumerable<BrandedFramework> frameworks;
@@ -103,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         public IActionResult StartNewFrameworkSession()
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             TempData.Clear();
             var sessionNewFramework = new SessionNewFramework();
             if (!Request.Cookies.ContainsKey(CookieName))
@@ -155,7 +155,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Name/{actionname}")]
         public IActionResult CreateNewFramework(string actionname, int frameworkId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             DetailFramework? detailFramework;
             if (frameworkId > 0)
             {
@@ -196,7 +196,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("SetNewFrameworkName", new { frameworkname = detailFramework.FrameworkName, actionname });
             }
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var isUpdated = frameworkService.UpdateFrameworkName(detailFramework.ID, adminId, detailFramework.FrameworkName);
             if (isUpdated) return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
             ModelState.AddModelError(nameof(BaseFramework.FrameworkName), "Another framework exists with that name. Please choose a different name.");
@@ -210,7 +210,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 var sessionNewFramework = TempData.Peek<SessionNewFramework>();
                 TempData.Set(sessionNewFramework);
             }
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var sameItems = frameworkService.GetFrameworkByFrameworkName(frameworkname, adminId);
             var frameworks = frameworkService.GetAllFrameworks(adminId);
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -251,7 +251,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkDescription(string actionname, int frameworkId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             DetailFramework? framework;
             if (actionname == "New")
@@ -286,7 +286,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("FrameworkType", "Frameworks", new { actionname });
             }
-            frameworkService.UpdateFrameworkDescription(frameworkId, GetAdminID(), detailFramework.Description);
+            frameworkService.UpdateFrameworkDescription(frameworkId, GetAdminId(), detailFramework.Description);
             return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
 
         }
@@ -294,7 +294,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
         public IActionResult FrameworkType(string actionname, int frameworkId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             DetailFramework? framework;
             if (actionname == "New")
@@ -329,14 +329,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 TempData.Set(sessionNewFramework);
                 return RedirectToAction("SetNewFrameworkBrand", "Frameworks", new { actionname });
             }
-            frameworkService.UpdateFrameworkConfig(frameworkId, GetAdminID(), detailFramework.FrameworkConfig);
+            frameworkService.UpdateFrameworkConfig(frameworkId, GetAdminId(), detailFramework.FrameworkConfig);
             return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
         }
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(string actionname, int frameworkId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             DetailFramework? framework;
             if (actionname == "New")
@@ -380,7 +380,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
         public IActionResult SetNewFrameworkBrand(DetailFramework? detailFramework, string actionname, int frameworkId = 0)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var centreId = GetCentreId();
             if (actionname != "New" && frameworkId > 0)
             {
@@ -458,7 +458,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborators(string actionname, int frameworkId)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var collaborators = frameworkService.GetCollaboratorsForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             if (framework == null) return StatusCode(404);
@@ -477,7 +477,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
             if (collaboratorId > 0)
-                frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminID());
+                frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
@@ -490,7 +490,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Framework/{frameworkId}/{tabname}/")]
         public IActionResult ViewFramework(string tabname, int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var model = new FrameworkViewModel()
             {
@@ -514,7 +514,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
         public IActionResult InsertFramework()
         {
-            var adminId = GetAdminID();
+            var adminId = GetAdminId();
             var sessionNewFramework = TempData.Peek<SessionNewFramework>();
             if (sessionNewFramework == null) return StatusCode(404);
             var detailFramework = sessionNewFramework.DetailFramework;
