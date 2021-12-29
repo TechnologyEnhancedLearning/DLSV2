@@ -1,12 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     using DigitalLearningSolutions.Data.Models.Frameworks;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Frameworks;
-    using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.Extensions.Logging;
     using System.Linq;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
@@ -21,33 +18,28 @@
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var assessmentQuestions = frameworkService.GetFrameworkDefaultQuestionsById(frameworkId, adminId);
             var questionList = frameworkService.GetAssessmentQuestions(frameworkId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
+            if (baseFramework == null) return StatusCode(404);
             var model = new DefaultQuestionsViewModel()
             {
                 BaseFramework = baseFramework,
                 AssessmentQuestions = assessmentQuestions,
-                QuestionSelectList = questionSelectList
+                QuestionSelectList = questionSelectList,
             };
             return View("Developer/DefaultQuestions", model);
         }
         [HttpPost]
         [Route("/Framework/{frameworkId}/DefaultQuestions")]
-        public IActionResult AddDefaultQuestion(int frameworkId, bool addToExisting, int assessmentQuestionID)
+        public IActionResult AddDefaultQuestion(int frameworkId, bool addToExisting, int assessmentQuestionId)
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
-            frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionID, adminId, addToExisting);
+            if (userRole < 2) return StatusCode(403);
+            frameworkService.AddFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, addToExisting);
             return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId });
         }
         [Route("/Framework/{frameworkId}/DefaultQuestions/Remove/{assessmentQuestionId}")]
@@ -55,37 +47,28 @@
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             var frameworkDefaultQuestionUsage = frameworkService.GetFrameworkDefaultQuestionUsage(frameworkId, assessmentQuestionId);
             if (frameworkDefaultQuestionUsage.CompetencyAssessmentQuestions == 0)
             {
                 frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, false);
                 return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId });
             }
-            else
+            var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (baseFramework == null) return StatusCode(404);
+            var model = new RemoveDefaultQuestionViewModel()
             {
-                var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-                var model = new RemoveDefaultQuestionViewModel()
-                {
-                    BaseFramework = baseFramework,
-                    AssessmentQuestionId = assessmentQuestionId,
-                    FrameworkDefaultQuestionUsage = frameworkDefaultQuestionUsage
-                };
-                return View("Developer/RemoveDefaultQuestion", model);
-            }
-
+                BaseFramework = baseFramework,
+                AssessmentQuestionId = assessmentQuestionId,
+                FrameworkDefaultQuestionUsage = frameworkDefaultQuestionUsage,
+            };
+            return View("Developer/RemoveDefaultQuestion", model);
         }
         public IActionResult ConfirmRemoveDefaultQuestion(int frameworkId, int assessmentQuestionId, bool deleteFromExisting)
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             frameworkService.DeleteFrameworkDefaultQuestion(frameworkId, assessmentQuestionId, adminId, deleteFromExisting);
             return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId });
         }
@@ -94,59 +77,47 @@
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             var assessmentQuestions = frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId);
             var questionList = frameworkService.GetAssessmentQuestionsForCompetency(frameworkCompetencyId, adminId).ToList();
             var questionSelectList = new SelectList(questionList, "ID", "Label");
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
+            if (detailFramework == null || competency == null) return StatusCode(404);
             var model = new CompetencyAssessmentQuestionsViewModel()
             {
                 DetailFramework = detailFramework,
                 FrameworkCompetencyId = frameworkCompetencyId,
                 CompetencyId = competency.CompetencyID,
-                CompetencyName = (string)competency.Name,
+                CompetencyName = competency.Name,
                 AssessmentQuestions = assessmentQuestions,
-                QuestionSelectList = questionSelectList
+                QuestionSelectList = questionSelectList,
             };
             return View("Developer/CompetencyAssessmentQuestions", model);
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Questions")]
-        public IActionResult AddCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionID)
+        public IActionResult AddCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
-            frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionID, adminId);
+            if (userRole < 2) return StatusCode(403);
+            frameworkService.AddCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
             return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
         }
         public IActionResult RemoveCompetencyAssessmentQuestion(int frameworkId, int frameworkCompetencyId, int assessmentQuestionId)
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             frameworkService.DeleteCompetencyAssessmentQuestion(frameworkCompetencyId, assessmentQuestionId, adminId);
             return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
-
         }
         public IActionResult StartAssessmentQuestionSession(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
             var adminId = GetAdminID();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
-            if (userRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (userRole < 2) return StatusCode(403);
             TempData.Clear();
             var sessionAssessmentQuestion = new SessionAssessmentQuestion();
             if (!Request.Cookies.ContainsKey(CookieName))
@@ -160,7 +131,6 @@
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     });
-
                 sessionAssessmentQuestion.Id = id;
             }
             else
@@ -184,14 +154,14 @@
                     sessionAssessmentQuestion.Id = id;
                 }
             }
-            AssessmentQuestionDetail assessmentQuestionDetail = new AssessmentQuestionDetail()
+            var assessmentQuestionDetail = new AssessmentQuestionDetail()
             {
                 AddedByAdminId = adminId,
                 UserIsOwner = true,
                 MinValue = 1,
-                MaxValue = 5
+                MaxValue = 5,
             };
-            List<LevelDescriptor> levelDescriptors = new List<LevelDescriptor>();
+            var levelDescriptors = new List<LevelDescriptor>();
             if (assessmentQuestionId > 0)
             {
                 assessmentQuestionDetail = frameworkService.GetAssessmentQuestionDetailById(assessmentQuestionId, adminId);
@@ -214,22 +184,34 @@
                 return StatusCode(403);
             }
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion == null)
+            {
+                return StatusCode(404);
+            }
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
-            string name = "";
+            string name = null;
             if (frameworkCompetencyId > 0)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-                name = competency.Name;
+                if (competency != null)
+                {
+                    name = competency.Name;
+                }
             }
             else
             {
                 var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-                name = framework.FrameworkName;
+                if (framework != null)
+                {
+                    name = framework.FrameworkName;
+                }
             }
+            if (name == null) return StatusCode(404);
             var inputTypes = frameworkService.GetAssessmentQuestionInputTypes();
             var inputTypeSelectList = new SelectList(inputTypes, "ID", "Label");
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
+            if (detailFramework == null) return StatusCode(404);
             var model = new AssessmentQuestionViewModel()
             {
                 DetailFramework = detailFramework,
@@ -239,6 +221,7 @@
                 InputTypeSelectList = inputTypeSelectList
             };
             return View("Developer/AssessmentQuestion", model);
+
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/")]
@@ -250,51 +233,88 @@
                 ModelState.Remove(nameof(AssessmentQuestionDetail.Question));
                 ModelState.AddModelError(nameof(AssessmentQuestionDetail.Question), $"Please enter a valid question (between 3 and 255 characters)");
                 var adminId = GetAdminID();
-                string name = "";
+                string name;
                 if (frameworkCompetencyId > 0)
                 {
                     var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-                    name = competency.Name;
+                    if (competency != null)
+                    {
+                        name = competency.Name;
+                    }
+                    else
+                    {
+                        return StatusCode(404);
+                    }
                 }
                 else
                 {
                     var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-                    name = framework.FrameworkName;
+                    if (framework != null)
+                    {
+                        name = framework.FrameworkName;
+                    }
+                    else
+                    {
+                        return StatusCode(404);
+                    }
                 }
                 var inputTypes = frameworkService.GetAssessmentQuestionInputTypes();
                 var inputTypeSelectList = new SelectList(inputTypes, "ID", "Label");
                 var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
-                var model = new AssessmentQuestionViewModel()
+                if (detailFramework != null)
                 {
-                    DetailFramework = detailFramework,
-                    FrameworkCompetencyId = frameworkCompetencyId,
-                    Name = name,
-                    AssessmentQuestionDetail = assessmentQuestionDetail,
-                    InputTypeSelectList = inputTypeSelectList
-                };
-                return View("Developer/AssessmentQuestion", model);
+                    var model = new AssessmentQuestionViewModel()
+                    {
+                        DetailFramework = detailFramework,
+                        FrameworkCompetencyId = frameworkCompetencyId,
+                        Name = name,
+                        AssessmentQuestionDetail = assessmentQuestionDetail,
+                        InputTypeSelectList = inputTypeSelectList
+                    };
+                    return View("Developer/AssessmentQuestion", model);
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
             }
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminID(), frameworkId);
             if (userRole < 2)
             {
                 return StatusCode(403);
             }
-            
-            if(assessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
+
+            if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 3)
             {
                 assessmentQuestionDetail.MinValue = 0;
                 assessmentQuestionDetail.MaxValue = 1;
-                SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                TempData.Set(sessionAssessmentQuestion);
-                int level = assessmentQuestionDetail.MinValue;
+                var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+                if (sessionAssessmentQuestion != null)
+                {
+                    sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                    TempData.Set(sessionAssessmentQuestion);
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+
+                var level = assessmentQuestionDetail.MinValue;
                 return RedirectToAction("AssessmentQuestionLevelDescriptor", "Frameworks", new { frameworkId, level, assessmentQuestionId, frameworkCompetencyId });
             }
             else
             {
                 SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-                TempData.Set(sessionAssessmentQuestion);
+                if (sessionAssessmentQuestion != null)
+                {
+                    sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                    TempData.Set(sessionAssessmentQuestion);
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
         }
@@ -306,18 +326,32 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-            var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
-            var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
-            var model = new AssessmentQuestionViewModel()
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion != null)
             {
-                DetailFramework = detailFramework,
-                FrameworkCompetencyId = frameworkCompetencyId,
-                Name = assessmentQuestionDetail.Question,
-                AssessmentQuestionDetail = assessmentQuestionDetail
-            };
-            return View("Developer/AssessmentQuestionScoring", model);
+                var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
+                TempData.Set(sessionAssessmentQuestion);
+                var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+                if (detailFramework != null)
+                {
+                    var model = new AssessmentQuestionViewModel()
+                    {
+                        DetailFramework = detailFramework,
+                        FrameworkCompetencyId = frameworkCompetencyId,
+                        Name = assessmentQuestionDetail.Question,
+                        AssessmentQuestionDetail = assessmentQuestionDetail
+                    };
+                    return View("Developer/AssessmentQuestionScoring", model);
+                }
+                else
+                {
+                    return StatusCode(404);
+                }
+            }
+            else
+            {
+                return StatusCode(404);
+            }
         }
         [HttpPost]
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Scoring/")]
@@ -332,12 +366,16 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-            sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion != null)
+            {
+                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                TempData.Set(sessionAssessmentQuestion);
+            }
+
             if (assessmentQuestionDetail.AssessmentQuestionInputTypeID == 1)
             {
-                int level = assessmentQuestionDetail.MinValue;
+                var level = assessmentQuestionDetail.MinValue;
                 return RedirectToAction("AssessmentQuestionLevelDescriptor", "Frameworks", new { frameworkId, level, assessmentQuestionId, frameworkCompetencyId });
             }
             else
@@ -353,10 +391,18 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion == null)
+            {
+                return StatusCode(404);
+            }
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+            if (detailFramework == null)
+            {
+                return StatusCode(404);
+            }
             var model = new AssessmentQuestionViewModel()
             {
                 DetailFramework = detailFramework,
@@ -375,9 +421,16 @@
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
             SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
-            sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
-            TempData.Set(sessionAssessmentQuestion);
-                return RedirectToAction("AssessmentQuestionConfirm", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
+            if (sessionAssessmentQuestion != null)
+            {
+                sessionAssessmentQuestion.AssessmentQuestionDetail = assessmentQuestionDetail;
+                TempData.Set(sessionAssessmentQuestion);
+            }
+            else
+            {
+                return StatusCode(404);
+            }
+            return RedirectToAction("AssessmentQuestionConfirm", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
         public IActionResult AssessmentQuestionLevelDescriptor(int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
@@ -387,26 +440,23 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             TempData.Set(sessionAssessmentQuestion);
             if (level < assessmentQuestionDetail.MinValue)
             {
                 return RedirectToAction("EditAssessmentQuestionScoring", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
-            else if(level > assessmentQuestionDetail.MaxValue)
+            else if (level > assessmentQuestionDetail.MaxValue)
             {
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
-            var levelDescriptor = sessionAssessmentQuestion.LevelDescriptors.Find(x => x.LevelValue == level);
-            if (levelDescriptor == null)
+            var levelDescriptor = sessionAssessmentQuestion.LevelDescriptors.Find(x => x.LevelValue == level) ?? new LevelDescriptor()
             {
-                levelDescriptor = new LevelDescriptor()
-                {
-                    LevelValue = level,
-                    UpdatedByAdminID = GetAdminID()
-                };
-            }
+                LevelValue = level,
+                UpdatedByAdminID = GetAdminID()
+            };
             var frameworkConfig = frameworkService.GetFrameworkConfigForFrameworkId(frameworkId);
             var model = new AssessmentQuestionLevelDescriptorViewModel()
             {
@@ -415,7 +465,7 @@
                 Name = assessmentQuestionDetail.Question,
                 AssessmentQuestionDetail = assessmentQuestionDetail,
                 LevelDescriptor = levelDescriptor,
-                FrameworkConfig = frameworkConfig
+                FrameworkConfig = frameworkConfig,
             };
             return View("Developer/AssessmentQuestionLevelDescriptor", model);
         }
@@ -423,41 +473,46 @@
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/LevelDescriptor/{level}")]
         public IActionResult AssessmentQuestionLevelDescriptor(LevelDescriptor levelDescriptor, int frameworkId, int level, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
         {
-            
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(LevelDescriptor.LevelLabel));
                 ModelState.AddModelError(nameof(LevelDescriptor.LevelLabel), $"Please enter a valid option {level} label (between 3 and 255 characters)");
+                if (sessionAssessmentQuestion == null) return StatusCode(404);
                 var model = new AssessmentQuestionLevelDescriptorViewModel()
                 {
                     FrameworkId = frameworkId,
                     FrameworkCompetencyId = frameworkCompetencyId,
                     Name = sessionAssessmentQuestion.AssessmentQuestionDetail.Question,
                     AssessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail,
-                    LevelDescriptor = levelDescriptor
+                    LevelDescriptor = levelDescriptor,
                 };
                 return View("Developer/AssessmentQuestionLevelDescriptor", model);
             }
+            if (sessionAssessmentQuestion == null) return StatusCode(404);
             var existingDescriptor = sessionAssessmentQuestion.LevelDescriptors.Find(x => x.LevelValue == level);
-            if(existingDescriptor != null)
+            if (existingDescriptor != null)
             {
                 sessionAssessmentQuestion.LevelDescriptors.Remove(existingDescriptor);
             }
             sessionAssessmentQuestion.LevelDescriptors.Add(levelDescriptor);
             TempData.Set(sessionAssessmentQuestion);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
-           
-            if (level < assessmentQuestionDetail.MaxValue)
+
+            if (level >= assessmentQuestionDetail.MaxValue)
             {
-                int nextLevel = level + 1;
-                return RedirectToAction("AssessmentQuestionLevelDescriptor", "Frameworks", new { frameworkId, level=nextLevel, assessmentQuestionId, frameworkCompetencyId });
+                return RedirectToAction(
+                    "EditAssessmentQuestionOptions",
+                    "Frameworks",
+                    new { frameworkId, assessmentQuestionId, frameworkCompetencyId }
+                );
             }
-            else
-            {
-                return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
-            }
-            
+            var nextLevel = level + 1;
+            return RedirectToAction(
+                "AssessmentQuestionLevelDescriptor",
+                "Frameworks",
+                new { frameworkId, level = nextLevel, assessmentQuestionId, frameworkCompetencyId }
+            );
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/Question/{assessmentQuestionId}/Confirm/")]
         public IActionResult AssessmentQuestionConfirm(int frameworkId, int assessmentQuestionId = 0, int frameworkCompetencyId = 0)
@@ -467,7 +522,8 @@
             {
                 return StatusCode(403);
             }
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestionDetail = sessionAssessmentQuestion.AssessmentQuestionDetail;
             var levelDescriptors = sessionAssessmentQuestion.LevelDescriptors;
             TempData.Set(sessionAssessmentQuestion);
@@ -487,6 +543,7 @@
                 CommentsHint = assessmentQuestionDetail.CommentsHint
             };
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminID());
+            if (detailFramework == null) return StatusCode(404);
             var model = new AssessmentQuestionConfirmViewModel()
             {
                 DetailFramework = detailFramework,
@@ -500,35 +557,44 @@
         public IActionResult SubmitAssessmentQuestion(int frameworkId, bool addToExisting, int frameworkCompetencyId = 0)
         {
             var adminId = GetAdminID();
-            SessionAssessmentQuestion sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            var sessionAssessmentQuestion = TempData.Peek<SessionAssessmentQuestion>();
+            if (sessionAssessmentQuestion == null) return StatusCode(404);
             var assessmentQuestion = sessionAssessmentQuestion.AssessmentQuestionDetail;
-            int newId = assessmentQuestion.ID;
+            var newId = assessmentQuestion.ID;
             if (newId > 0)
             {
                 frameworkService.UpdateAssessmentQuestion(newId, assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId, assessmentQuestion.CommentsPrompt, assessmentQuestion.CommentsHint);
-                if(assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                if (assessmentQuestion.AssessmentQuestionInputTypeID == 2)
                 {
-                    foreach(var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
+                    return frameworkCompetencyId > 0
+                        ? RedirectToAction(
+                            "EditCompetencyAssessmentQuestions",
+                            "Frameworks",
+                            new { frameworkId, frameworkCompetencyId }
+                        )
+                        : RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId });
+                }
+
+                foreach (var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
+                {
+                    if (levelDescriptor.ID > 0)
                     {
-                        if(levelDescriptor.ID > 0)
-                        {
-                            frameworkService.UpdateLevelDescriptor(levelDescriptor.ID, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
-                        }
-                        else
-                        {
-                            frameworkService.InsertLevelDescriptor(newId, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
-                        }
+                        frameworkService.UpdateLevelDescriptor(levelDescriptor.ID, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
+                    }
+                    else
+                    {
+                        frameworkService.InsertLevelDescriptor(newId, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
                     }
                 }
             }
             else
             {
                 newId = frameworkService.InsertAssessmentQuestion(assessmentQuestion.Question, assessmentQuestion.AssessmentQuestionInputTypeID, assessmentQuestion.MaxValueDescription, assessmentQuestion.MinValueDescription, assessmentQuestion.ScoringInstructions, assessmentQuestion.MinValue, assessmentQuestion.MaxValue, assessmentQuestion.IncludeComments, adminId, assessmentQuestion.CommentsPrompt, assessmentQuestion.CommentsHint);
-                if(newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID != 2)
+                if (newId > 0 && assessmentQuestion.AssessmentQuestionInputTypeID != 2)
                 {
                     foreach (var levelDescriptor in sessionAssessmentQuestion.LevelDescriptors)
                     {
-                            frameworkService.InsertLevelDescriptor(newId, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
+                        frameworkService.InsertLevelDescriptor(newId, levelDescriptor.LevelValue, levelDescriptor.LevelLabel, levelDescriptor.LevelDescription, adminId);
                     }
                 }
                 if (frameworkCompetencyId > 0)
@@ -542,16 +608,9 @@
                     frameworkService.AddFrameworkDefaultQuestion(frameworkId, newId, adminId, addToExisting);
                 }
             }
-            if(frameworkCompetencyId > 0)
-            {
-                return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId});
-            }
-            else
-            {
-                return RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId});
-            }
+            return frameworkCompetencyId > 0 ? RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId }) : RedirectToAction("FrameworkDefaultQuestions", "Frameworks", new { frameworkId });
         }
-        public IActionResult CompetencyAssessmentQuestionReorder(string? direction, int competencyId, int assessmentQuestionId, int frameworkCompetencyId, int frameworkId)
+        public IActionResult CompetencyAssessmentQuestionReorder(string direction, int competencyId, int assessmentQuestionId, int frameworkCompetencyId, int frameworkId)
         {
             frameworkService.MoveCompetencyAssessmentQuestion(competencyId, assessmentQuestionId, true, direction);
             return RedirectToAction("EditCompetencyAssessmentQuestions", "Frameworks", new { frameworkId, frameworkCompetencyId });
