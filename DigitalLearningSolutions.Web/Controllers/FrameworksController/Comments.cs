@@ -1,17 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     public partial class FrameworksController
     {
         [HttpPost]
         [Route("/Framework/{frameworkId}/Comments/")]
         public IActionResult InsertComment(int frameworkId, string comment)
         {
-            if (comment == null)
-            {
-                return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
-            }
+            if (comment == "") return RedirectToAction("ViewFramework", new { tabname = "Comments", frameworkId });
             var adminId = GetAdminID();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, null, null);
@@ -22,26 +18,19 @@
         {
             var adminId = GetAdminID();
             var baseFramework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (baseFramework == null) return StatusCode(404);
             if(baseFramework.UserRole == 0)
             {
                 return StatusCode(403);
             }
             var commentReplies = frameworkService.GetCommentRepliesById(commentId, GetAdminID());
-            if (commentReplies == null )
-            {
-                logger.LogWarning($"Failed to load comment: commentId: {commentId}");
-                return StatusCode(500);
-            }
             return View("Developer/CommentThread", commentReplies);
         }
         [HttpPost]
         [Route("/Framework/{frameworkId}/Comments/{commentId}")]
         public IActionResult InsertReply(int frameworkId, int commentId, string comment, string parentComment)
         {
-            if (comment == null)
-            {
-                return RedirectToAction("ViewThread", new { frameworkId, commentId });
-            }
+            if (comment == "") return RedirectToAction("ViewThread", new { frameworkId, commentId });
             var adminId = GetAdminID();
             var newCommentId = frameworkService.InsertComment(frameworkId, adminId, comment, commentId);
             frameworkNotificationService.SendCommentNotifications(adminId, frameworkId, newCommentId, comment, commentId, parentComment);
