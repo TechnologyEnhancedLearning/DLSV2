@@ -195,13 +195,15 @@
         public void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE aspProgress SET
-                                        DiagHigh = MAX(@myScore, DiagHigh),
-                                        DiagLow = MAX(@myScore, DiagLow),
-                                        DiagLast = MAX(@diagLast,
-                                        DiagAttempts = DiagAttempts + 1
-                                    WHERE ProgressID = @progressId
-                                    AND TutorialID = @tutorialId OR OriginalTutorialID = @tutorialId",
+                @"UPDATE ap
+                        SET ap.DiagHigh = IIF(@myScore > DiagHigh, @myScore, DiagHigh),
+                            ap.DiagLow = IIF(@myScore > DiagLow, DiagLow, @myScore),
+                            ap.DiagLast = @myScore,
+                            ap.DiagAttempts = DiagAttempts + 1
+                        FROM aspProgress AS ap
+                        INNER JOIN Tutorials AS t ON t.TutorialID = ap.TutorialID
+                        WHERE ap.ProgressID = @progressId
+                        AND ap.TutorialID = @tutorialId OR t.OriginalTutorialID = @tutorialId",
                 new { progressId, tutorialId, myScore }
             );
 

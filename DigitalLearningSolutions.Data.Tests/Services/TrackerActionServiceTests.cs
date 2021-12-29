@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
@@ -138,6 +139,64 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void StoreDiagnosticJson_returns_success_response_if_successful()
+        {
+            // Given
+            const int progressId = 1;
+            const string diagnosticOutcome = "[{'tutorialId':425,'myscore':4},{'tutorialId':424,'myscore':3}]";
+
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = trackerActionService.StoreDiagnosticJson(progressId, diagnosticOutcome);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.Success);
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    1,
+                    424,
+                    3
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    1,
+                    425,
+                    4
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [TestCase(null, "[{'tutorialId':425,'myscore':4},{'tutorialId':424,'myscore':3}]")]
+        [TestCase(1, null)]
+        public void StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_parameter_missing(
+            int? progressId,
+            string? diagnosticOutcome
+        )
+        {
+            // When
+            var result = trackerActionService.StoreDiagnosticJson(progressId, diagnosticOutcome);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.StoreDiagnosticScoreException);
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
                 )
             ).MustNotHaveHappened();
         }

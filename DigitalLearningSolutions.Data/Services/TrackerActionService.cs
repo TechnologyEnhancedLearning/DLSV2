@@ -68,9 +68,9 @@
             return ccObjectives.Any() ? new TrackerObjectiveArrayCc(ccObjectives) : null;
         }
 
-        public TrackerEndpointResponse? StoreDiagnosticJson(int? progressId, string? diagnosticOutcome)
+        public TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome)
         {
-            if (progressId == null || diagnosticOutcome == null)
+            if (!progressId.HasValue || string.IsNullOrEmpty(diagnosticOutcome))
             {
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
