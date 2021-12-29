@@ -11,26 +11,18 @@
         {
             AvailableSections = availableSections;
             IncludeAllSections = true;
-        }
-
-        public SetCourseContentViewModel(bool includeAllSections, IEnumerable<SelectSectionViewModel> sectionsToInclude)
-        {
-            IncludeAllSections = includeAllSections;
-            SectionsToInclude = sectionsToInclude;
+            SectionsToInclude = new List<SelectSectionViewModel>();
         }
 
         public bool IncludeAllSections { get; set; }
         public IEnumerable<SelectSectionViewModel> AvailableSections { get; set; }
         public IEnumerable<SelectSectionViewModel> SectionsToInclude { get; set; }
 
-        public void SetAvailableSections(IEnumerable<SelectSectionViewModel> sections)
+        public void SetSectionsToInclude()
         {
-            AvailableSections = sections;
-        }
-
-        public void SetSections()
-        {
-            SectionsToInclude = AvailableSections.Where(section => section.IsSectionSelected);
+            SectionsToInclude = IncludeAllSections
+                ? AvailableSections
+                : AvailableSections.Where(section => section.IsSectionSelected);
         }
     }
 }

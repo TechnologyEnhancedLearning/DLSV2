@@ -58,16 +58,7 @@
 
         public IEnumerable<Section> GetSectionsForApplication(int applicationId)
         {
-            var sections = sectionContentDataService.GetSectionsByApplicationId(applicationId);
-            var sectionsWithTutorials = sections.Select(
-                s => new Section(
-                    s.SectionId,
-                    s.SectionName,
-                    tutorialContentDataService.GetTutorialsForSection(s.SectionId)
-                )
-            );
-
-            return sectionsWithTutorials;
+            return sectionContentDataService.GetSectionsByApplicationId(applicationId);
         }
     }
 }

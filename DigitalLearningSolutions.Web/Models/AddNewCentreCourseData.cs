@@ -15,7 +15,7 @@
             SetCourseDetailsViewModel = new EditCourseDetailsFormData();
             SetCourseOptionsViewModel = new EditCourseOptionsFormData();
             SetCourseContentViewModel = new SetCourseContentViewModel();
-            SetCourseSectionViewModel = new EditCourseSectionFormData();
+            SetSectionContentViewModel = new SetSectionContentViewModel();
             SummaryViewModel = new SummaryViewModel();
         }
 
@@ -24,7 +24,7 @@
         public EditCourseDetailsFormData SetCourseDetailsViewModel { get; set; }
         public EditCourseOptionsFormData SetCourseOptionsViewModel { get; set; }
         public SetCourseContentViewModel SetCourseContentViewModel { get; set; }
-        public EditCourseSectionFormData SetCourseSectionViewModel { get; set; }
+        public SetSectionContentViewModel SetSectionContentViewModel { get; set; }
         public SummaryViewModel SummaryViewModel { get; set; }
 
         public void SetCourse(ApplicationDetails application)
@@ -58,14 +58,14 @@
 
         public void SetCourseContent(SetCourseContentViewModel model)
         {
+            SetCourseContentViewModel.AvailableSections = model.AvailableSections;
+            SetCourseContentViewModel.IncludeAllSections = model.IncludeAllSections;
             SetCourseContentViewModel.SectionsToInclude = model.SectionsToInclude;
         }
 
-        public void SetSectionContent(EditCourseSectionFormData formData)
+        public void SetSectionContent(SetSectionContentViewModel model)
         {
-            SetCourseSectionViewModel.CourseName = formData.CourseName;
-            SetCourseSectionViewModel.SectionName = formData.SectionName;
-            SetCourseSectionViewModel.Tutorials = formData.Tutorials;
+            SetSectionContentViewModel.Sections = model.Sections;
         }
 
         public void PopulateSummaryData(SummaryViewModel model)
