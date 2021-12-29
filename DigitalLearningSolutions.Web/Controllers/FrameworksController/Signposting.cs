@@ -130,7 +130,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult SignpostingParametersSetStatusViewNext(AssessmentQuestion selectedQuestion, int[] selectedLevelValues)
         {
+            var model = new CompetencyLearningResourceSignpostingParametersViewModel();
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            model.Competency = session.Competency.Description;
+            model.ResourceName = session.Resource?.OriginalResourceName;
+            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
             if (session.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
             {
                 session.SelectedQuestion.MinValue = selectedQuestion.MinValue;
@@ -142,14 +146,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 session.SelectedQuestion.MaxValue = selectedLevelValues.Max();
             }
             TempData.Set(session);
-            return ShowSession(session);
-            //return View("Developer/SignpostingParametersCompareResultView");
+            return View("Developer/CompareSelfAssessmentResult", model);
+            //return ShowSession(session);
         }
 
-        private ContentResult ShowSession(SessionCompetencyLearningResourceSignpostingParameter session)
-        {
-            return Content("SELECTED\r\n\r\n" + JsonConvert.SerializeObject(session.SelectedQuestion) + "\r\n\r\nSESSION\r\n\r\n" + JsonConvert.SerializeObject(session));
-        }
+        //private ContentResult ShowSession(SessionCompetencyLearningResourceSignpostingParameter session)
+        //{
+        //    return Content("SELECTED\r\n\r\n" + JsonConvert.SerializeObject(session.SelectedQuestion) + "\r\n\r\nSESSION\r\n\r\n" + JsonConvert.SerializeObject(session));
+        //}
 
         private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
