@@ -11,8 +11,11 @@
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0">
     <div class="nhsuk-u-margin-bottom-4">
-      <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
-      <div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div>
+      @if (Model.Essential)
+      {
+        <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
+      }
+      @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
     </div>
     <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
     <dl class="nhsuk-summary-list">

@@ -96,6 +96,7 @@
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
+        IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -1616,11 +1617,31 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             {
                 var questions = connection.Query<AssessmentQuestion>(
                     $@"SELECT * FROM AssessmentQuestions
-                        WHERE ID IN ({parameter.AssessmentQuestionID}, {parameter.RelevanceAssessmentQuestionID})");
+                        WHERE ID IN ({parameter.AssessmentQuestionID}, {parameter.RelevanceAssessmentQuestionID ?? parameter.AssessmentQuestionID})");
                 parameter.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.AssessmentQuestionID);
                 parameter.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.RelevanceAssessmentQuestionID);
             }
             return parameter;
+        }
+
+        public IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
+        {
+            return connection.Query<SignpostingResourceParameter>(
+                $@"SELECT p.ID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
+                    CASE 
+	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
+	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
+	                    ELSE 'Don''t compare result'
+                    END AS CompareResultTo
+                    FROM CompetencyResourceAssessmentQuestionParameters AS p
+                    INNER JOIN CompetencyLearningResources AS clr ON p.CompetencyLearningResourceID = clr.ID
+                    INNER JOIN Competencies AS c ON clr.CompetencyID = c.ID 
+                    INNER JOIN FrameworkCompetencies AS fc ON fc.CompetencyID = c.ID
+                    INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
+                    INNER JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
+                    LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
+                    WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
+                new { frameworkId, competencyId });
         }
 
         public LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResouceId)

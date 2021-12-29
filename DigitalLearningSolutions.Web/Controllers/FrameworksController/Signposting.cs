@@ -21,9 +21,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         private static IConfiguration SignpostingConfiguration { get; set; }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
-        public IActionResult EditCompetencyLearningResources(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
+        public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
-            var model = PopulatedModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
+            var model = PopulatedModel(frameworkId, frameworkCompetencyId);
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
@@ -155,33 +155,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         //    return Content("SELECTED\r\n\r\n" + JsonConvert.SerializeObject(session.SelectedQuestion) + "\r\n\r\nSESSION\r\n\r\n" + JsonConvert.SerializeObject(session));
         //}
 
-        private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
+        private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int frameworkCompetencyId)
         {
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
             model.NameOfCompetency = "I can organise my information and content using files and folders (either on my device, across multiple devices, or on the Cloud)";
-            model.CompetencyResourceLinks = new List<SignpostingCardViewModel>()
-            {
+            var parameters = frameworkService.GetSignpostingResourceParametersByFrameworkAndCompetencyId(frameworkId, frameworkCompetencyId);
+            model.CompetencyResourceLinks = parameters.Select(p =>
                 new SignpostingCardViewModel()
                 {
-                    Id = 1,
-                    Name = "Cloud storage",
-                    AssessmentQuestion = "Where are you now?",
-                    MinimumResultMatch = 6,
-                    MaximumResultMatch = 9,
-                    CompareResultTo = "Where do you need to be?",
-                    AssessmentQuestionParameterId = 1
-                },
-                new SignpostingCardViewModel()
-                {
-                    Id = 2,
-                    Name = "A guide to online file storage",
-                    AssessmentQuestion = "Where are you now?",
-                    MinimumResultMatch = 1,
-                    MaximumResultMatch = 10,
-                    CompareResultTo = "Where do you need to be?",
-                    AssessmentQuestionParameterId = 2
-                },
-            };
+                    Id = p.Id,
+                    Name = p.OriginalResourceName,
+                    AssessmentQuestion = p.Question,
+                    MinimumResultMatch = p.MinResultMatch,
+                    MaximumResultMatch = p.MaxResultMatch,
+                    CompareResultTo = p.CompareResultTo,
+                    AssessmentQuestionParameterId = p.Id,
+                    Essential=p.Essential
+                }
+            ).ToList();
             return model;
         }
 

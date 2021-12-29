@@ -9,5 +9,6 @@
         public int MaximumResultMatch { get; set; }
         public string CompareResultTo { get; set; }
         public int AssessmentQuestionParameterId { get; set; }
+        public bool Essential { get; set; }
     }
 }
