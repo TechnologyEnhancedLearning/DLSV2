@@ -148,7 +148,7 @@
         {
             // Given
             const int progressId = 1;
-            const string diagnosticOutcome = "[{'tutorialId':425,'myscore':4},{'tutorialId':424,'myscore':3}]";
+            const string diagnosticOutcome = "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]";
 
             A.CallTo(
                 () => progressService.UpdateDiagnosticScore(
@@ -180,7 +180,7 @@
         }
 
         [Test]
-        [TestCase(null, "[{'tutorialId':425,'myscore':4},{'tutorialId':424,'myscore':3}]")]
+        [TestCase(null, "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         [TestCase(1, null)]
         public void StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_parameter_missing(
             int? progressId,

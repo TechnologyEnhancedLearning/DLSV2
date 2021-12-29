@@ -81,7 +81,7 @@
             {
                 foreach (var obj in json)
                 {
-                    var tutorialId = (int)obj["tutorialId"];
+                    var tutorialId = (int)obj["tutorialid"];
                     var myScore = (int)obj["myscore"];
                     progressService.UpdateDiagnosticScore(progressId.Value, tutorialId, myScore);
                 }
