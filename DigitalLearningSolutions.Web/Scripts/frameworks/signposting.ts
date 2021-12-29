@@ -1,4 +1,4 @@
-﻿import * as Checkboxes from '../checkboxes';
+import * as Checkboxes from '../checkboxes';
 
 function onSliderUpdate(inputElement: HTMLInputElement) {
   const selectedRatio = parseInt(inputElement.value, 10) / parseInt(inputElement.max, 10);
