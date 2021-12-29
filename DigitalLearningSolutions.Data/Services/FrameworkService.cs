@@ -1628,19 +1628,18 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         {
             return connection.Query<SignpostingResourceParameter>(
                 $@"SELECT p.ID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
-                    CASE 
-	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
-	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
-	                    ELSE 'Don''t compare result'
-                    END AS CompareResultTo
-                    FROM CompetencyResourceAssessmentQuestionParameters AS p
-                    INNER JOIN CompetencyLearningResources AS clr ON p.CompetencyLearningResourceID = clr.ID
-                    INNER JOIN Competencies AS c ON clr.CompetencyID = c.ID 
-                    INNER JOIN FrameworkCompetencies AS fc ON fc.CompetencyID = c.ID
-                    INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
-                    INNER JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
-                    LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
-                    WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
+                CASE 
+	                WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
+	                WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
+	                ELSE 'Don''t compare result'
+                END AS CompareResultTo
+                FROM CompetencyResourceAssessmentQuestionParameters AS p
+                INNER JOIN CompetencyLearningResources AS clr ON p.CompetencyLearningResourceID = clr.ID
+                INNER JOIN FrameworkCompetencies AS fc ON fc.CompetencyID = clr.CompetencyID
+                INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
+                INNER JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
+                LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
+                WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
                 new { frameworkId, competencyId });
         }
 
