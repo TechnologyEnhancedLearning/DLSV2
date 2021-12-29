@@ -1,10 +1,10 @@
-﻿using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Web.ViewModels.Frameworks;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-
-namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
+﻿namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public partial class FrameworksController
     {
         [Route("/Framework/{frameworkId}/Review")]
@@ -13,11 +13,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminId();
             var collaborators = frameworkService.GetReviewersForFrameworkId(frameworkId);
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework == null) return StatusCode(404);
             if (framework.UserRole < 2)
-            {
                 return StatusCode(403);
-            }
-            var frameworkName = (string)framework.FrameworkName;
             var model = new CollaboratorsViewModel()
             {
                 BaseFramework = framework,
@@ -44,23 +42,17 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             var framework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, adminId);
-            if (framework.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            if (framework == null) return StatusCode(404);
+            if (framework.UserRole < 2) return StatusCode(403);
             var frameworkReviews = frameworkService.GetFrameworkReviewsForFrameworkId(frameworkId);
-            bool canPublish = true;
-            foreach(FrameworkReview frameworkReview in frameworkReviews)
-            {
-                if (frameworkReview.SignOffRequired && (frameworkReview.ReviewComplete == null | !frameworkReview.SignedOff))
-                {
-                    canPublish = false;
-                }
-            }
+            var canPublish = true;
+            var enumerableFrameworkReviews = frameworkReviews.ToList();
+            foreach (var unused in enumerableFrameworkReviews.Where(frameworkReview => frameworkReview.SignOffRequired &&
+                         (frameworkReview.ReviewComplete == null | !frameworkReview.SignedOff))) canPublish = false;
             var model = new PublishViewModel()
             {
                 DetailFramework = framework,
-                FrameworkReviews = frameworkReviews,
+                FrameworkReviews = enumerableFrameworkReviews,
                 CanPublish = canPublish
             };
             return View("Developer/Publish", model);
@@ -70,16 +62,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
-            if (framework.UserRole < 1)
-            {
-                return StatusCode(403);
-            }
-            var frameworkName = (string)framework.FrameworkName;
+            if (framework == null) return StatusCode(404);
+            if (framework.UserRole < 1) return StatusCode(403);
+            var frameworkName = framework.FrameworkName;
             var frameworkReview = frameworkService.GetFrameworkReview(frameworkId, adminId, reviewId);
-            if (frameworkReview == null)
-            {
-                return StatusCode(403);
-            }
+            if (frameworkReview == null) return StatusCode(403);
             var model = new SubmitReviewViewModel()
             {
                 FrameworkId = frameworkId,
@@ -94,10 +81,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var adminId = GetAdminId();
             int? commentId = null;
-            if(comment != null)
-            {
-                commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
-            }
+            if(comment != null) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
             frameworkNotificationService.SendReviewOutcomeNotification(reviewId);
             return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId , tabname = "Structure"});
@@ -112,14 +96,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult RequestReReview(int frameworkId, int reviewId)
         {
             var adminId = GetAdminId();
-            var newReviewId = frameworkService.InsertFrameworkReReview(reviewId);
+            frameworkService.InsertFrameworkReReview(reviewId);
             var review = frameworkService.GetFrameworkReviewNotification(reviewId);
+            if (review == null) return StatusCode(404);
             frameworkNotificationService.SendReviewRequest(review.FrameworkCollaboratorID, adminId, review.SignOffRequired, false);
             return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
         }
         public IActionResult RemoveRequest(int frameworkId, int reviewId)
         {
-            var adminId = GetAdminId();
             frameworkService.ArchiveReviewRequest(reviewId);
             return RedirectToAction("ViewFrameworkReviews", "Frameworks", new { frameworkId });
         }
