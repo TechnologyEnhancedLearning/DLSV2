@@ -8,20 +8,26 @@
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Set course content";
-  var availableSections = Model.AvailableSections;
   const string chooseSectionsId = "conditional-choose-sections";
   var radioExpanded = (!Model.IncludeAllSections).ToString();
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+          <vc:error-summary order-of-property-names="@(new[] {
+                                                       nameof(Model.AvailableSections),
+                                                       nameof(Model.SectionsToInclude),
+                                                       nameof(Model.IncludeAllSections)})" />
+        }
+
     <h1 class="nhsuk-heading-xl">Set course content</h1>
 
     <form method="post" novalidate asp-action="SetCourseContent">
 
       <input type="hidden" asp-for="SectionsToInclude" />
-      <input type="hidden" asp-for="AvailableSections" />
 
       <div class="nhsuk-form-group">
         <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
@@ -56,11 +62,25 @@
             </div>
 
             <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="@chooseSectionsId">
-              <div class="nhsuk-form-group">
-                @foreach (var sectionModel in Model.AvailableSections) {
-                  <partial name="../AddNewCentreCourse/_SectionCheckbox" model="sectionModel" />
+
+              <div class="nhsuk-checkboxes">
+                @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i))) {
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Id)}")" value="@sectionModel.Id" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Name)}")" value="@sectionModel.Name" />
+                  <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           type="checkbox"
+                           name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.IsSectionSelected)}")"
+                           id="section-@sectionModel.Id"
+                           checked="@sectionModel.IsSectionSelected"
+                           value="true" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.Id">
+                      @sectionModel.Name
+                    </label>
+                  </div>
                 }
               </div>
+
             </div>
 
           </div>

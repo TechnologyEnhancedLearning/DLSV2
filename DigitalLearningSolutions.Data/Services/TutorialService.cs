@@ -8,6 +8,8 @@
     public interface ITutorialService
     {
         void UpdateTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId);
+
+        public IEnumerable<Tutorial> GetTutorialsForSection(int sectionId);
     }
 
     public class TutorialService : ITutorialService
@@ -41,6 +43,11 @@
             }
 
             transaction.Complete();
+        }
+
+        public IEnumerable<Tutorial> GetTutorialsForSection(int sectionId)
+        {
+            return tutorialContentDataService.GetTutorialsForSection(sectionId);
         }
     }
 }

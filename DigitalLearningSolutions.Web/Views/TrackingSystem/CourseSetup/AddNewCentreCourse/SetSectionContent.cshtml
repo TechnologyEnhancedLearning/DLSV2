@@ -1,10 +1,10 @@
 ﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.Extensions.Configuration
-@model EditCourseSectionFormData
+@model SetSectionContentViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 
@@ -16,20 +16,62 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Edit section content</h1>
 
-    <form method="post" novalidate asp-action="EditSectionContent">
+    <form method="post" novalidate asp-action="SetSectionContent">
       <div class="hidden-submit">
         <button name="action" class="nhsuk-button" value="@CourseSetupController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
       </div>
-      <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="SectionName" />
 
-      @*@foreach (var checkbox in Model.Sections) {
-        <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-          <partial name="Shared/_EditSectionDiagnostic" model="Model" />
+      @foreach (var sectionModel in Model.Sections) {
+        <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-6">
 
-          <partial name="Shared/_EditSectionLearning" model="Model" />
+          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Section: @sectionModel.SectionName</h2>
+
+          <div class="nhsuk-grid-column-one-half">
+            <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Diagnostic</h3>
+            <p class="nhsuk-body-m nhsuk-u-margin-bottom-2">Select all tutorials that should have diagnostic enabled.</p>
+
+            <div class="nhsuk-checkboxes">
+              @foreach (var (tutorial, tutIndex) in sectionModel.Tutorials.Select((t, i) => (t, i))) {
+                <input type="hidden" name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
+                <input type="hidden" name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
+                <div class="nhsuk-checkboxes__item">
+                  <input class="nhsuk-checkboxes__input diagnostic-checkbox"
+                         type="checkbox"
+                         name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
+                         id="diagnostic-enabled-@tutorial.TutorialId"
+                         checked="@tutorial.DiagnosticEnabled"
+                         value="true" />
+                  <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="diagnostic-enabled-@tutorial.TutorialId">
+                    @tutorial.TutorialName
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="nhsuk-grid-column-one-half tutorial-learning-column">
+            <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Learning</h3>
+            <p class="nhsuk-body-m nhsuk-u-margin-bottom-2">Select all tutorials that should have learning enabled.</p>
+
+            <div class="nhsuk-checkboxes">
+              @foreach (var (tutorial, tutIndex) in sectionModel.Tutorials.Select((t, i) => (t, i))) {
+                <div class="nhsuk-checkboxes__item">
+                  <input class="nhsuk-checkboxes__input learning-checkbox"
+                         type="checkbox"
+                         name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
+                         id="learning-enabled-@tutorial.TutorialId"
+                         checked="@tutorial.LearningEnabled"
+                         value="true" />
+                  <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="learning-enabled-@tutorial.TutorialId">
+                    @tutorial.TutorialName
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+
         </div>
-      }*@
+      }
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Save</button>
     </form>
