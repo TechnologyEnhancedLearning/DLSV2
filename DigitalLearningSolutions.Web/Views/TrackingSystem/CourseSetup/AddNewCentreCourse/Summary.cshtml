@@ -17,7 +17,7 @@
           Course
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CustomisationName
+          @Model.Application
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SelectCourse">
@@ -30,7 +30,8 @@
           Course name
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.CustomisationName - @Model.CustomisationNameSuffix
+          @(Model.CustomisationName == string.Empty ? Model.Application : $"{Model.Application} - {Model.CustomisationName}")
+
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -108,11 +109,11 @@
           Course content
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <p>@(Model.NumberOfLearning ? "Yes" : "No") learning</p>
-          <p>@(Model.NumberOfDiagnostic ? "Yes" : "No") diagnostic</p>
+          <p>@(Model.NumberOfLearning == 0 ? Model.NumberOfLearning.ToString() : "No") learning</p>
+          <p>@(Model.NumberOfDiagnostic == 0 ? Model.NumberOfDiagnostic.ToString() : "No") diagnostic</p>
         </dd>
         <dd class="nhsuk-summary-list__actions">
-          <a asp-action="SetCourseOptions">
+          <a asp-action="SetCourseContent">
             Change<span class="nhsuk-u-visually-hidden"> course content</span>
           </a>
         </dd>
