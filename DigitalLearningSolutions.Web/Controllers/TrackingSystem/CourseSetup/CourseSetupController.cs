@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -16,7 +17,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -147,18 +147,18 @@
 
             if (!ModelState.IsValid)
             {
-                var applicationOptions = GetApplicationOptionsSelectList();
-                var model = new SelectCourseViewModel(applicationOptions);
+                var applicationSelectList = GetApplicationOptionsSelectList();
+                var model = new SelectCourseViewModel(applicationSelectList);
                 return View("AddNewCentreCourse/SelectCourse", model);
             }
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var applicationOptionssss =
+            var applicationOptions =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
-            var sa = applicationOptionssss.First();
+
             var selectedApplication =
-                applicationOptionssss.Single(ap => ap.ApplicationId == formData.ApplicationId);
+                applicationOptions.Single(ap => ap.ApplicationId == formData.ApplicationId);
 
             data!.SetCourse(selectedApplication);
             TempData.Set(data);
@@ -171,7 +171,7 @@
         [Route("AddCourse/SetCourseDetails")]
         public IActionResult SetCourseDetails()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
             var model = new SetCourseDetailsViewModel(data!.SelectCourseViewModel.Application);
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
@@ -182,7 +182,7 @@
         [Route("AddCourse/SetCourseDetails")]
         public IActionResult SetCourseDetails(EditCourseDetailsFormData formData)
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
             var centreId = User.GetCentreId();
 
             if (string.IsNullOrWhiteSpace(formData.CustomisationName))
@@ -217,7 +217,7 @@
         [Route("AddCourse/SetCourseOptions")]
         public IActionResult SetCourseOptions()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             var diagAssess = data!.SelectCourseViewModel.Application.DiagAssess;
             var model = new SetCourseOptionsViewModel(diagAssess);
@@ -230,7 +230,7 @@
         [Route("AddCourse/SetCourseOptions")]
         public IActionResult SetCourseDetails(EditCourseOptionsFormData formData)
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             if (!ModelState.IsValid)
             {
@@ -250,7 +250,7 @@
         [Route("AddCourse/SetCourseContent")]
         public IActionResult SetCourseContent()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             var sections =
                 sectionService.GetSectionsForApplication(data!.SelectCourseViewModel.Application.ApplicationId);
@@ -269,7 +269,7 @@
         [Route("AddCourse/SetCourseContent")]
         public IActionResult SetCourseContent(SetCourseContentViewModel model)
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             model.SetSectionsToInclude();
 
@@ -289,7 +289,7 @@
         [Route("AddCourse/EditSectionContent")]
         public IActionResult SetSectionContent()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             var model = new SetSectionContentViewModel(data!.SetCourseContentViewModel.SectionsToInclude);
             foreach (var section in model.Sections)
@@ -311,7 +311,7 @@
             SetSectionContentViewModel model
         )
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
             if (!ModelState.IsValid)
             {
@@ -324,14 +324,14 @@
             return RedirectToAction("Summary");
         }
 
+        [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet]
         [Route("AddCourse/Summary")]
         public IActionResult Summary()
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
+            var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var model = new SummaryViewModel();
-            data!.PopulateSummaryData(model);
+            var model = new SummaryViewModel(data!);
 
             return View("AddNewCentreCourse/Summary", model);
         }
@@ -341,25 +341,42 @@
         [Route("AddCourse/Summary")]
         public IActionResult Summary(SummaryViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View("AddNewCentreCourse/Summary", model);
-            }
-
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            // TODO: Use a try...catch statement to try saving the new course, and update the tutorial statuses
+            try
+            {
+                var centreId = User.GetCentreId();
+                var customisationId = courseService.CreateNewCentreCourse(
+                    centreId,
+                    data.SelectCourseViewModel.ApplicationId.Value,
+                    data.SetCourseDetailsViewModel.CustomisationName ?? string.Empty,
+                    data.SetCourseDetailsViewModel.Password,
+                    data.SetCourseOptionsViewModel.AllowSelfEnrolment,
+                    int.Parse(data.SetCourseDetailsViewModel.TutCompletionThreshold!),
+                    data.SetCourseDetailsViewModel.PostLearningAssessment,
+                    int.Parse(data.SetCourseDetailsViewModel.DiagCompletionThreshold!),
+                    data.SetCourseOptionsViewModel.DiagnosticObjectiveSelection,
+                    data.SetCourseOptionsViewModel.HideInLearningPortal,
+                    data.SetCourseDetailsViewModel.NotificationEmails
+                );
 
-            // courseService.CreateNewCentreCourse();
-            // tutorialService.UpdateTutorialsStatuses();
+                var tutorialModels = data.SetSectionContentViewModel.GetTutorialsFromSections();
+                var tutorials = tutorialModels.Select(
+                    tm => new Tutorial(tm.TutorialId, tm.TutorialName, tm.LearningEnabled, tm.DiagnosticEnabled)
+                );
+                tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
 
-            // TODO: Get the newly created course's customisationId and customisationName and save them in tempdata
+                TempData.Clear();
+                TempData.Add("customisationId", customisationId);
+                TempData.Add("applicationName", data.SetCourseDetailsViewModel.ApplicationName);
+                TempData.Add("customisationName", data.SetCourseDetailsViewModel.CustomisationName);
 
-            // TempData.Clear();
-            // TempData.Add("customisationId", customisationId);
-            // TempData.Add("customisationName", customisationName);
-
-            return RedirectToAction("Confirmation");
+                return RedirectToAction("Confirmation");
+            }
+            catch (Exception e)
+            {
+                return new StatusCodeResult(500);
+            }
         }
 
         [HttpGet]
@@ -367,10 +384,11 @@
         public IActionResult Confirmation()
         {
             var customisationId = (int)TempData.Peek("customisationId");
-            var customisationName = (string)TempData.Peek("courseName");
+            var applicationName = (string)TempData.Peek("applicationName");
+            var customisationName = (string)TempData.Peek("customisationName");
             TempData.Clear();
 
-            var model = new ConfirmationViewModel(customisationId, customisationName);
+            var model = new ConfirmationViewModel(customisationId, applicationName, customisationName);
 
             return View("AddNewCentreCourse/Confirmation", model);
         }

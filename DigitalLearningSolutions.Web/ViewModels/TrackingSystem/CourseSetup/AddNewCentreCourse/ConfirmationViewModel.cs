@@ -2,10 +2,12 @@
 {
     public class ConfirmationViewModel
     {
-        public ConfirmationViewModel(int customisationId, string customisationName)
+        public ConfirmationViewModel(int customisationId, string applicationName, string customisationName)
         {
             CustomisationId = customisationId;
-            CustomisationName = customisationName;
+            CustomisationName = string.IsNullOrEmpty(customisationName)
+                ? applicationName
+                : $"{applicationName} - {customisationId}";
         }
 
         public int CustomisationId { get; set; }

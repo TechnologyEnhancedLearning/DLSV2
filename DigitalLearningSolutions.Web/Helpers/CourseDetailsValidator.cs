@@ -104,7 +104,6 @@
 
             formData.TutCompletionThreshold = "0";
             formData.DiagCompletionThreshold = "0";
-            ;
         }
     }
 }
