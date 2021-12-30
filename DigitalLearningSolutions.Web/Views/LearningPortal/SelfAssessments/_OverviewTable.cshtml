@@ -2,10 +2,6 @@
 @model IGrouping<string, Competency>;
 
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-  @if (!(bool)ViewData["linearNavigation"])
-  {
-    <caption class="nhsuk-table__caption"><h2>@Model.Key</h2></caption>
-  }
   <thead role="rowgroup" class="nhsuk-table__head">
     <tr role="row">
       <th role="columnheader" class="" scope="col">
