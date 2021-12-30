@@ -686,6 +686,7 @@
             return View("SelfAssessments/ManageOptionalCompetencies", model);
         }
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/Optional")]
         public IActionResult ManageOptionalCompetencies(int selfAssessmentId, string vocabulary, ManageOptionalCompetenciesViewModel model)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
@@ -715,6 +716,7 @@
         }
 
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/RequestSignOff")]
         public IActionResult RequestSignOff(int selfAssessmentId, string vocabulary, RequestSignOffViewModel model)
         {
             if (!ModelState.IsValid)
