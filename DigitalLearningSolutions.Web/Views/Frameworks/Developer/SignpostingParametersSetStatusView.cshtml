@@ -1,11 +1,25 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
-  ViewData["Title"] = "Add Signposting Parameters";
+  var addOrEdit = Model.AssessmentQuestionParameter == null ? "Add" : "Edit";
+  ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
   ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a></li>
+        <li class="nhsuk-breadcrumb__item">Parameters</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a></p>
+    </div>
+  </nav>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
