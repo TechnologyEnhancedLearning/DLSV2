@@ -10,7 +10,14 @@
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
-
+@if ((bool?)TempData["NoQuestionSelected"] == true)
+{
+  <div class="nhsuk-error-summary" aria-labelledby="error-summary-title">
+    <label class="nhsuk-label ">
+      Please select a question
+    </label>
+  </div>
+}
 <h2>Choose assessment question for signposting</h2>
 <label class="nhsuk-label">Which assessment question will be used to determine whether this learning resource is at the right level for the learner?</label>
 <form method="post" asp-controller="Frameworks">

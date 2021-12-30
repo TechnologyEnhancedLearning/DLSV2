@@ -13,31 +13,51 @@
 </label>
 <form method="post" asp-controller="Frameworks">
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-    <div class="nhsuk-radios">
+    <div class="nhsuk-radios nhsuk-radios--conditional">
       <div class="nhsuk-radios__item">
-        <input name="group" type="radio"
-               class="nhsuk-radios__input">
+        <input name="compareQuestionType" type="radio" class="nhsuk-radios__input" value="0">
         <label class="nhsuk-label nhsuk-radios__label">
           Don't compare result
         </label>
       </div>
       <div class="nhsuk-radios__item">
-        <input type="radio" name="group"
-               class="nhsuk-radios__input">
+        <input type="radio" name="compareQuestionType" class="nhsuk-radios__input" value="1">
         <label class="nhsuk-label nhsuk-radios__label">
           Competency assesstment question role requirements
         </label>
       </div>
-      <div class="nhsuk-radios__item">
-        <input type="radio" name="group" 
-               class="nhsuk-radios__input">
-        <label class="nhsuk-label nhsuk-radios__label">
-          Other competency assessment question response
-        </label>
-      </div>
+      @if (Model.Questions?.Count > 1)
+      {
+        <div class="nhsuk-radios__item">
+          <input id="compareToOther" type="radio" name="compareQuestionType" class="nhsuk-radios__input" aria-controls="conditional-compareToOther" aria-expanded="false" value="2">
+          <label class="nhsuk-label nhsuk-radios__label" for="compareToOther">
+            Other competency assessment question response
+          </label>
+        </div>
+
+        <div id="conditional-compareToOther" class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden">
+          <label class="nhsuk-label" for="email">
+            <select name="compareToQuestionId" class="nhsuk-select nhsuk-u-width-two-thirds nhsuk-u-margin-top-3">
+              @foreach (var question in Model.Questions)
+              {
+                <option value="@question.ID">@question.Question</option>
+              }
+            </select>
+          </label>
+        </div>
+
+      }
     </div>
   </fieldset>
-  <div class="nhsuk-u-margin-top-5">
+  @*<div class="nhsuk-inset-text nhsuk-inset-text nhsuk-u-clear nhsuk-u-margin-3">
+    <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown sort-by-dropdown">
+      @foreach (var question in Model.Questions)
+      {
+        <option value="@question.ID">@question.Question</option>
+      }
+    </select>
+  </div>*@
+  <div class="nhsuk-u-margin-top-6">
     <button asp-action="CompareSelfAssessmentResultBack" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit"
             asp-route-frameworkId="@Model.FrameworkId"
             asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"

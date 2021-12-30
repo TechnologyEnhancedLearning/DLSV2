@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Data.Models.LearningResources;
 using Microsoft.AspNetCore.Http;
+using DigitalLearningSolutions.Web.Models.Enums;
 
-namespace DigitalLearningSolutions.Data.Models.SessionData.Frameworks
+namespace DigitalLearningSolutions.Web.Models
 {
     public class SessionCompetencyLearningResourceSignpostingParameter
     {
@@ -16,6 +15,10 @@ namespace DigitalLearningSolutions.Data.Models.SessionData.Frameworks
         public int[] SelectedLevelValues { get; set; }
         public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
         public FrameworkCompetency Competency { get; set; }
+
+        public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
+        public AssessmentQuestion SelectedCompareToQuestion { get; set; }
+
 
         public SessionCompetencyLearningResourceSignpostingParameter()
         {
@@ -28,7 +31,7 @@ namespace DigitalLearningSolutions.Data.Models.SessionData.Frameworks
             Questions = questions;
             AssessmentQuestionParameter = assessmentQuestionParameter;
 
-            if(requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
+            if (requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
             {
                 this.Id = Guid.Parse(id);
             }

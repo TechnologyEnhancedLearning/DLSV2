@@ -9,10 +9,10 @@ using DigitalLearningSolutions.Data.ApiClients;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using DigitalLearningSolutions.Data.Models.SessionData.Frameworks;
 using DigitalLearningSolutions.Web.Extensions;
-using SelfAssessments = DigitalLearningSolutions.Data.Models.SelfAssessments;
 using DigitalLearningSolutions.Data.Models.Frameworks;
+using DigitalLearningSolutions.Web.Models.Enums;
+using DigitalLearningSolutions.Web.Models;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
-            var model = PopulatedModel(frameworkId, frameworkCompetencyId);
+            var model = GetSignpostingResourceParameters(frameworkId, frameworkCompetencyId);
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var response = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             if (frameworkCompetencyGroupId.HasValue)
             {
-                var competency = frameworkService.GetCompetencyGroupBaseById(frameworkCompetencyGroupId.Value);
+                var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
                 response.NameOfCompetency = competency?.Name ?? "";
             }
             if (searchText?.Trim().Length > 1)
@@ -116,15 +116,24 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         public IActionResult EditSignpostingParameterNext(CompetencyLearningResourceSignpostingParametersViewModel model)
         {
-            var adminId = GetAdminID();
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            model.Competency = session.Competency.Description;
-            model.ResourceName = session.Resource?.OriginalResourceName;
             model.Questions = session.Questions;
+            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
             session.SelectedQuestion = model.SelectedQuestion;
-            model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
-            TempData.Set(session);
-            return View("Developer/SignpostingParametersSetStatusView", model);
+            if(model.SelectedQuestion == null)
+            {
+                TempData["NoQuestionSelected"] = true;
+                return RedirectToAction("EditSignpostingParameters", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, model.AssessmentQuestionParameter.Id });
+            }
+            else
+            {
+                var adminId = GetAdminID();
+                model.Competency = session.Competency.Description;
+                model.ResourceName = session.Resource?.OriginalResourceName;
+                model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
+                TempData.Set(session);
+                return View("Developer/SignpostingParametersSetStatusView", model);
+            }
         }
 
         [HttpPost]
@@ -135,6 +144,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             model.Competency = session.Competency.Description;
             model.ResourceName = session.Resource?.OriginalResourceName;
             model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
+            model.Questions = session.Questions;
             if (session.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
             {
                 session.SelectedQuestion.MinValue = selectedQuestion.MinValue;
@@ -147,32 +157,47 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             TempData.Set(session);
             return View("Developer/CompareSelfAssessmentResult", model);
-            //return ShowSession(session);
         }
 
-        //private ContentResult ShowSession(SessionCompetencyLearningResourceSignpostingParameter session)
-        //{
-        //    return Content("SELECTED\r\n\r\n" + JsonConvert.SerializeObject(session.SelectedQuestion) + "\r\n\r\nSESSION\r\n\r\n" + JsonConvert.SerializeObject(session));
-        //}
-
-        private CompetencyResourceSignpostingViewModel PopulatedModel(int frameworkId, int frameworkCompetencyId)
+        [HttpPost]
+        public IActionResult CompareSelfAssessmentResultNext(CompareAssessmentQuestionType compareQuestionType, int? compareToQuestionId)
         {
-            var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId);
-            model.NameOfCompetency = "I can organise my information and content using files and folders (either on my device, across multiple devices, or on the Cloud)";
+            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            session.SelectedCompareQuestionType = compareQuestionType;
+            if(compareQuestionType == CompareAssessmentQuestionType.CompareToOtherQuestion)
+            {
+                session.SelectedCompareToQuestion = session.Questions.FirstOrDefault(q => q.ID == compareToQuestionId);
+            }
+            TempData.Set(session);
+            return ShowSession(session);
+        }
+
+        private ContentResult ShowSession(SessionCompetencyLearningResourceSignpostingParameter session)
+        {
+            return Content(JsonConvert.SerializeObject(session, Formatting.Indented));
+        }
+
+        private CompetencyResourceSignpostingViewModel GetSignpostingResourceParameters(int frameworkId, int frameworkCompetencyId)
+        {            
+            var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
             var parameters = frameworkService.GetSignpostingResourceParametersByFrameworkAndCompetencyId(frameworkId, frameworkCompetencyId);
-            model.CompetencyResourceLinks = parameters.Select(p =>
-                new SignpostingCardViewModel()
-                {
-                    Id = p.Id,
-                    Name = p.OriginalResourceName,
-                    AssessmentQuestion = p.Question,
-                    MinimumResultMatch = p.MinResultMatch,
-                    MaximumResultMatch = p.MaxResultMatch,
-                    CompareResultTo = p.CompareResultTo,
-                    AssessmentQuestionParameterId = p.Id,
-                    Essential=p.Essential
-                }
-            ).ToList();
+            var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId)
+            {
+                NameOfCompetency = competency.Name,
+                CompetencyResourceLinks = parameters.Select(p =>
+                    new SignpostingCardViewModel()
+                    {
+                        Id = p.Id,
+                        Name = p.OriginalResourceName,
+                        AssessmentQuestion = p.Question,
+                        MinimumResultMatch = p.MinResultMatch,
+                        MaximumResultMatch = p.MaxResultMatch,
+                        CompareResultTo = p.CompareResultTo,
+                        AssessmentQuestionParameterId = p.Id,
+                        Essential = p.Essential
+                    }
+                ).ToList()
+            };
             return model;
         }
 
