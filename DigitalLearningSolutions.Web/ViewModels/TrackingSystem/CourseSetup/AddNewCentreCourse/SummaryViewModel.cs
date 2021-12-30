@@ -60,29 +60,16 @@
 
         private static int GetNumberOfLearning(SetSectionContentViewModel model)
         {
-            var tutorials = GetTutorialsFromSections(model.Sections);
+            var tutorials = model.GetTutorialsFromSections();
 
             return tutorials.Count(t => t.LearningEnabled);
         }
 
         private static int GetNumberOfDiagnostic(SetSectionContentViewModel model)
         {
-            var tutorials = GetTutorialsFromSections(model.Sections);
+            var tutorials = model.GetTutorialsFromSections();
 
             return tutorials.Count(t => t.LearningEnabled);
-        }
-
-        private static IEnumerable<CourseTutorialViewModel> GetTutorialsFromSections(
-            IEnumerable<SectionContentViewModel> sections
-        )
-        {
-            var tutorials = new List<CourseTutorialViewModel>();
-            foreach (var section in sections)
-            {
-                tutorials.AddRange(section.Tutorials);
-            }
-
-            return tutorials;
         }
     }
 }

@@ -753,21 +753,6 @@
             const bool hideInLearnerPortal = false;
             const string notificationEmails = "hello@test.com";
 
-            var courseDetails = new CourseDetails
-            {
-                CentreId = centreId,
-                ApplicationId = applicationId,
-                CustomisationName = customisationName,
-                Password = password,
-                SelfRegister = selfRegister,
-                TutCompletionThreshold = tutCompletionThreshold,
-                IsAssessed = isAssessed,
-                DiagCompletionThreshold = diagCompletionThreshold,
-                DiagObjSelect = diagObjSelect,
-                HideInLearnerPortal = hideInLearnerPortal,
-                NotificationEmails = notificationEmails,
-            };
-
             A.CallTo(
                 () => courseDataService.CreateNewCentreCourse(
                     centreId,
@@ -785,7 +770,19 @@
             ).Returns(123);
 
             // When
-            var result = courseService.CreateNewCentreCourse(courseDetails);
+            var result = courseService.CreateNewCentreCourse(
+                centreId,
+                applicationId,
+                customisationName,
+                password,
+                selfRegister,
+                tutCompletionThreshold,
+                isAssessed,
+                diagCompletionThreshold,
+                diagObjSelect,
+                hideInLearnerPortal,
+                notificationEmails
+            );
 
             // Then
             result.Should().Be(123);

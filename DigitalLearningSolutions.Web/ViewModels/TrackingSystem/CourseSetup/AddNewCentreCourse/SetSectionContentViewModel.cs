@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
 
     public class SetSectionContentViewModel
     {
@@ -13,6 +14,18 @@
         }
 
         public IEnumerable<SectionContentViewModel> Sections { get; set; }
+
+        public IEnumerable<CourseTutorialViewModel> GetTutorialsFromSections(
+        )
+        {
+            var tutorials = new List<CourseTutorialViewModel>();
+            foreach (var section in Sections)
+            {
+                tutorials.AddRange(section.Tutorials);
+            }
+
+            return tutorials;
+        }
 
         private static IEnumerable<SectionContentViewModel> GetSectionModels(
             IEnumerable<SelectSectionViewModel> sections

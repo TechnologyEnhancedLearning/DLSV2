@@ -82,7 +82,19 @@
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
-        int CreateNewCentreCourse(CourseDetails courseDetails);
+        int CreateNewCentreCourse(
+            int centreId,
+            int applicationId,
+            string customisationName,
+            string? password,
+            bool selfRegister,
+            int tutCompletionThreshold,
+            bool isAssessed,
+            int diagCompletionThreshold,
+            bool diagObjSelect,
+            bool hideInLearnerPortal,
+            string? notificationEmails
+        );
     }
 
     public class CourseService : ICourseService
@@ -339,20 +351,32 @@
             return courseDataService.GetCourseValidationDetails(customisationId, centreId)?.CourseCategoryId;
         }
 
-        public int CreateNewCentreCourse(CourseDetails courseDetails)
+        public int CreateNewCentreCourse(
+            int centreId,
+            int applicationId,
+            string customisationName,
+            string? password,
+            bool selfRegister,
+            int tutCompletionThreshold,
+            bool isAssessed,
+            int diagCompletionThreshold,
+            bool diagObjSelect,
+            bool hideInLearnerPortal,
+            string? notificationEmails
+        )
         {
             var customisationId = courseDataService.CreateNewCentreCourse(
-                courseDetails.CentreId,
-                courseDetails.ApplicationId,
-                courseDetails.CustomisationName,
-                courseDetails.Password,
-                courseDetails.SelfRegister,
-                courseDetails.TutCompletionThreshold,
-                courseDetails.IsAssessed,
-                courseDetails.DiagCompletionThreshold,
-                courseDetails.DiagObjSelect,
-                courseDetails.HideInLearnerPortal,
-                courseDetails.NotificationEmails
+                centreId,
+                applicationId,
+                customisationName,
+                password,
+                selfRegister,
+                tutCompletionThreshold,
+                isAssessed,
+                diagCompletionThreshold,
+                diagObjSelect,
+                hideInLearnerPortal,
+                notificationEmails
             );
 
             return customisationId;

@@ -67,10 +67,5 @@
         {
             SetSectionContentViewModel.Sections = model.Sections;
         }
-
-        public void PopulateSummaryData(SummaryViewModel model)
-        {
-            // TODO: Populate summary data
-        }
     }
 }
