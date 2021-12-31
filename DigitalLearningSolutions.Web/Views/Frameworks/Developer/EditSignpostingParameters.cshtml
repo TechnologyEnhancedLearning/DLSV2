@@ -24,56 +24,52 @@
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
-@if ((bool?)TempData["NoQuestionSelected"] == true)
-{
-  <div class="nhsuk-error-summary" aria-labelledby="error-summary-title">
-    <label class="nhsuk-label ">
-      Please select a question
-    </label>
-  </div>
-}
 <h2>Choose assessment question for signposting</h2>
 <label class="nhsuk-label">Which assessment question will be used to determine whether this learning resource is at the right level for the learner?</label>
 <form method="post" asp-controller="Frameworks">
-  <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-    <div class="nhsuk-radios">
-      @foreach (var question in Model.Questions)
-      {
-        <div class="nhsuk-radios__item">
-          <input type="radio"
-                 id="Question@(question.ID)"
-                 name="SelectedQuestion.ID"
-                 @(question.ID == Model.SelectedQuestion?.ID ? "checked" : String.Empty)
-                 value="@question.ID"
-                 class="nhsuk-radios__input">
-          <label class="nhsuk-label nhsuk-radios__label" for="Question@(question.ID)">
-            @question.Question
-          </label>
-        </div>
-      }
+  <nhs-form-group nhs-validation-for="SelectedQuestion.ID">
+    <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
+      <div class="nhsuk-radios">
+        @foreach (var question in Model.Questions)
+        {
+          <div class="nhsuk-radios__item">
+            <input type="radio"
+                   id="Question@(question.ID)"
+                   name="SelectedQuestion.ID"
+                   @(question.ID == Model.SelectedQuestion?.ID ? "checked" : String.Empty)
+                   required="required"
+                   value="@question.ID"
+                   class="nhsuk-radios__input">
+            <label class="nhsuk-label nhsuk-radios__label" for="Question@(question.ID)">
+              @question.Question
+            </label>
+          </div>
+        }
+      </div>
+    </fieldset>
+    <div class="nhsuk-u-margin-top-5">
+      <a asp-action="EditCompetencyLearningResources"
+         asp-route-frameworkId="@Model.FrameworkId"
+         asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+         asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
+        Back
+      </a>
+      <a asp-action="CompareSelfAssessmentResult"
+         asp-route-frameworkId="@Model.FrameworkId"
+         asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+         asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
+        Skip
+      </a>
+      <button asp-action="EditSignpostingParametersNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
+        Next
+      </button>
     </div>
-  </fieldset>
-  <div class="nhsuk-u-margin-top-5">
-    <a asp-action="EditCompetencyLearningResources"
-       asp-route-frameworkId="@Model.FrameworkId"
-       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
-      Back
-    </a>
-    <a asp-action="CompareSelfAssessmentResult"
-       asp-route-frameworkId="@Model.FrameworkId"
-       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
-      Skip
-    </a>
-    <button asp-action="EditSignpostingParametersNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
-      Next
-    </button>
-  </div>
-  @Html.HiddenFor(m => m.FrameworkId)
-  @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
-  @Html.HiddenFor(m => m.FrameworkCompetencyId)
-  @Html.HiddenFor(m => m.SelectedQuestion.ID)
+    @Html.HiddenFor(m => m.FrameworkId)
+    @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
+    @Html.HiddenFor(m => m.FrameworkCompetencyId)
+    @Html.HiddenFor(m => m.SelectedQuestion.ID)
+    <span asp-validation-for="SelectedQuestion.ID" class="text-danger"></span>
+  </nhs-form-group>
 </form>
 
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">
@@ -84,3 +80,7 @@
     Cancel
   </a>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
+}

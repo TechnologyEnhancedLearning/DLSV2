@@ -149,13 +149,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
             if (model.SelectedQuestion == null)
             {
-                TempData["NoQuestionSelected"] = true;
                 return RedirectToAction("EditSignpostingParameters", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, model.AssessmentQuestionParameter.Id });
             }
             else
             {
                 var adminId = GetAdminID();
-                TempData["NoQuestionSelected"] = null;
                 model.Competency = session.Competency.Description;
                 model.ResourceName = session.Resource?.OriginalResourceName;
                 model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
