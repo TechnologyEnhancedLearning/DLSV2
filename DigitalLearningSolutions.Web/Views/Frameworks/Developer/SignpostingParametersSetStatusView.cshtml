@@ -30,14 +30,16 @@
   <div class="nhsuk-form-group">
     @if (Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
     {
-      <partial name="Developer/_SignpostingQuestionSlider" model="Model.SelectedQuestion" />
+      <partial name="Developer/_SignpostingQuestionSlider" model="Model.AssessmentQuestionParameter" />
     }
     else
     {
       foreach (var levelDescriptor in Model.AssessmentQuestionLevelDescriptors.Where(d => !string.IsNullOrEmpty(d.LevelLabel)))
       {
+        bool isChecked = levelDescriptor.LevelValue == Model.AssessmentQuestionParameter.MinResultMatch || levelDescriptor.LevelValue == Model.AssessmentQuestionParameter.MaxResultMatch;
         <div class="nhsuk-checkboxes__item">
-          <input class="nhsuk-checkboxes__input" name="selectedLevelValues" type="checkbox" value="@levelDescriptor.LevelValue">
+          <input class="nhsuk-checkboxes__input" name="selectedLevelValues" type="checkbox"
+                 value="@levelDescriptor.LevelValue" @(isChecked ? "checked" : string.Empty)>
           <label class="nhsuk-label nhsuk-checkboxes__label">
             @levelDescriptor.LevelLabel
           </label>

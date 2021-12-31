@@ -1,10 +1,10 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Frameworks
-@model AssessmentQuestion
+@model CompetencyResourceAssessmentQuestionParameter
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 
-<label for="@Model.ID-input">
-  <h3 class="nhsuk-u-margin-bottom-1">@Model.Question</h3>
+<label for="@Model.Id-input">
+  <h3 class="nhsuk-u-margin-bottom-1">@Model.AssessmentQuestion.Question</h3>
 </label>
 <div class="nhsuk-hint">
   Minimum
@@ -12,20 +12,20 @@
 <div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
   <div class="grid-column-85">
     <input type="range"
-           id="MinValue-input"
-           name="selectedQuestion.MinValue"
-           min="@Model.MinValue"
-           max="@Model.MaxValue"
-           value="@Model.MinValue"
+           id="MinResultMatch-input"
+           name="assessmentParameter.MinResultMatch"
+           min="@Model.AssessmentQuestion.MinValue"
+           max="@Model.AssessmentQuestion.MaxValue"
+           value="@Model.MinResultMatch"
            step="1"
-           aria-valuemin="@Model.MinValue"
-           aria-valuemax="@Model.MaxValue"
-           aria-valuenow="@Model.MinValue">
+           aria-valuemin="@Model.AssessmentQuestion.MinValue"
+           aria-valuemax="@Model.AssessmentQuestion.MaxValue"
+           aria-valuenow="@Model.MinResultMatch">
   </div>
   <div class="grid-column-15">
-    <span class="range-output" for="MinValue-input">@Model.MinValue</span>
+    <span class="range-output" for="MinResultMatch-input">@Model.MinResultMatch</span>
   </div>
-  <input hidden name="MinValue" value="@Model.MinValue" />
+  <input hidden name="MinResultMatch" value="@Model.MinResultMatch" />
 </div>
 <div class="nhsuk-hint">
   Maximum
@@ -33,18 +33,18 @@
 <div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
   <div class="grid-column-85">
     <input type="range"
-           id="MaxValue-input"
-           name="SelectedQuestion.MaxValue"
-           min="@Model.MinValue"
-           max="@Model.MaxValue"
-           value="@Model.MaxValue"
+           id="MaxResultMatch-input"
+           name="assessmentParameter.MaxResultMatch"
+           min="@Model.AssessmentQuestion.MinValue"
+           max="@Model.AssessmentQuestion.MaxValue"
+           value="@Model.MaxResultMatch"
            step="1"
-           aria-valuemin="@Model.MinValue"
-           aria-valuemax="@Model.MaxValue"
-           aria-valuenow="@Model.MaxValue">
+           aria-valuemin="@Model.AssessmentQuestion.MinValue"
+           aria-valuemax="@Model.AssessmentQuestion.MaxValue"
+           aria-valuenow="@Model.MaxResultMatch">
   </div>
   <div class="grid-column-15">
-    <span class="range-output" for="MaxValue-input">@Model.MaxValue</span>
+    <span class="range-output" for="MaxResultMatch-input">@Model.MaxResultMatch</span>
   </div>
-  <input hidden name="MaxValue" value="@Model.MaxValue" />
+  <input hidden name="MaxResultMatch" value="@Model.MaxResultMatch" />
 </div>

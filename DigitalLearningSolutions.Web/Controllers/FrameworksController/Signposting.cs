@@ -146,7 +146,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
             model.SelectedQuestion = model.Questions.FirstOrDefault(q => q.ID == model.SelectedQuestion.ID);
             session.SelectedQuestion = model.SelectedQuestion;
-            if(model.SelectedQuestion == null)
+            session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
+            if (model.SelectedQuestion == null)
             {
                 TempData["NoQuestionSelected"] = true;
                 return RedirectToAction("EditSignpostingParameters", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, model.AssessmentQuestionParameter.Id });
@@ -172,8 +173,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             model.SelectedLevelValues = session.SelectedLevelValues;
             model.Competency = session.Competency.Description;
             model.ResourceName = session.Resource?.OriginalResourceName;
+            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
             if(session.SelectedQuestion != null)
             {
+                model.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
                 model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, GetAdminID(), session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
                 TempData["NoQuestionSelected"] = null;
             };
@@ -181,26 +184,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [HttpPost]
-        public IActionResult SignpostingParametersSetStatusViewNext(AssessmentQuestion selectedQuestion, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        public IActionResult SignpostingParametersSetStatusViewNext(CompetencyResourceAssessmentQuestionParameter assessmentParameter, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var updateSelectedValuesFromSlider = session.SelectedQuestion.AssessmentQuestionInputTypeID == 2;
             model.Competency = session.Competency?.Description;
             model.ResourceName = session.Resource?.OriginalResourceName;
             model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
             model.Questions = session.Questions;
             model.SelectedQuestion = session.SelectedQuestion;
-            if (session.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
-            {
-                session.SelectedQuestion.MinValue = selectedQuestion.MinValue;
-                session.SelectedQuestion.MaxValue = selectedQuestion.MaxValue;
-            }
-            else
-            {
-                session.SelectedQuestion.MinValue = selectedLevelValues.Min();
-                session.SelectedQuestion.MaxValue = selectedLevelValues.Max();
-            }
-            session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
+            session.AssessmentQuestionParameter.MinResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MinResultMatch : selectedLevelValues.Min();
+            session.AssessmentQuestionParameter.MaxResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MaxResultMatch : selectedLevelValues.Max();
             TempData.Set(session);
             return View("Developer/CompareSelfAssessmentResult", model);
         }
