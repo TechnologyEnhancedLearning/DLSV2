@@ -42,8 +42,8 @@
         <div class="nhsuk-radios__item">
           <input type="radio"
                  id="Question@(question.ID)"
-                 name="SelectedQuestionId"
-                 @(question.ID == Model.SelectedQuestionId ? "checked" : String.Empty)
+                 name="SelectedQuestion.ID"
+                 @(question.ID == Model.SelectedQuestion?.ID ? "checked" : String.Empty)
                  value="@question.ID"
                  class="nhsuk-radios__input">
           <label class="nhsuk-label nhsuk-radios__label" for="Question@(question.ID)">
@@ -54,20 +54,26 @@
     </div>
   </fieldset>
   <div class="nhsuk-u-margin-top-5">
-    <button asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit">
+    <a asp-action="EditCompetencyLearningResources"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
       Back
-    </button>
-    <button asp-action="EditSignpostingParameterSkip" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit">
+    </a>
+    <a asp-action="CompareSelfAssessmentResult"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
       Skip
-    </button>
-    <button asp-action="EditSignpostingParameterNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
+    </a>
+    <button asp-action="EditSignpostingParametersNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
       Next
     </button>
   </div>
   @Html.HiddenFor(m => m.FrameworkId)
   @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
   @Html.HiddenFor(m => m.FrameworkCompetencyId)
-  @Html.Hidden("SelectedQuestionId", Model.SelectedQuestionId)
+  @Html.HiddenFor(m => m.SelectedQuestion.ID)
 </form>
 
 <div class="nhsuk-back-link nhsuk-u-margin-left-1">

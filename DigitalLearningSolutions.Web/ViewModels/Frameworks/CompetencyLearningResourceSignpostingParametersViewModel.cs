@@ -10,14 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public string Competency { get; set; }
         public string ResourceName { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
-        public int? SelectedQuestionId { get; set; }
-        public AssessmentQuestion SelectedQuestion
-        {
-            get
-            {
-                return Questions?.FirstOrDefault(q => q.ID == SelectedQuestionId);
-            }
-        }
+        public AssessmentQuestion SelectedQuestion { get; set; }
         public List<LevelDescriptor> AssessmentQuestionLevelDescriptors { get; set; }
         public int[] SelectedLevelValues { get; set; }
         public CompetencyLearningResourceSignpostingParametersViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)

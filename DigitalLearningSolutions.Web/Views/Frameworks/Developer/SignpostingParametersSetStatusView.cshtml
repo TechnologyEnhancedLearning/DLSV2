@@ -46,13 +46,13 @@
     }
   </div>
   <div class="nhsuk-u-margin-top-5">
-    <button asp-action="EditSignpostingParameters" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2" type="submit"
-            asp-route-frameworkId="@Model.FrameworkId"
-            asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-            asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
-            asp-route-assessmentQuestionParameter="@Model.AssessmentQuestionParameter?.Id">
+    <a asp-action="EditSignpostingParameters"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+       asp-route-assessmentQuestionParameter="@Model.AssessmentQuestionParameter?.Id" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
       Back
-    </button>
+    </a>
     <button asp-action="SignpostingParametersSetStatusViewNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
       Next
     </button>
