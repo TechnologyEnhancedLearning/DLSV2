@@ -11,23 +11,22 @@
 
         public SelectCourseViewModel(
             SelectCourseFormData formData,
-            IEnumerable<SelectListItem> courseOptions,
-            int applicationId
+            IEnumerable<SelectListItem> courseOptions
         ) : base(formData)
         {
-            ApplicationId = applicationId;
+            ApplicationId = formData.ApplicationId;
             CourseOptions = courseOptions;
         }
 
         public SelectCourseViewModel(
-            IEnumerable<SelectListItem> courseOptions
+            IEnumerable<SelectListItem> courseOptions,
+            int? applicationId = null
         )
         {
             CourseOptions = courseOptions;
+            ApplicationId = applicationId;
         }
 
         public IEnumerable<SelectListItem> CourseOptions { get; set; }
-
-        public ApplicationDetails Application { get; set; }
     }
 }

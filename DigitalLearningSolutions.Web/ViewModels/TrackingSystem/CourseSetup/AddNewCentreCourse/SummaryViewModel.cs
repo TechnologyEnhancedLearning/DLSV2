@@ -14,15 +14,15 @@
             AddNewCentreCourseData data
         )
         {
-            Application = data.SetCourseDetailsViewModel.ApplicationName;
-            CustomisationName = data.SetCourseDetailsViewModel.CustomisationName ?? string.Empty;
-            Password = data.SetCourseDetailsViewModel.Password;
-            NotificationEmails = data.SetCourseDetailsViewModel.NotificationEmails;
-            AllowSelfEnrolment = data.SetCourseOptionsViewModel.AllowSelfEnrolment;
-            HideInLearningPortal = data.SetCourseOptionsViewModel.HideInLearningPortal;
-            DiagnosticObjectiveSelection = data.SetCourseOptionsViewModel.DiagnosticObjectiveSelection;
-            NumberOfLearning = GetNumberOfLearning(data.SetSectionContentViewModel);
-            NumberOfDiagnostic = GetNumberOfDiagnostic(data.SetSectionContentViewModel);
+            Application = data.SetCourseDetailsModel.ApplicationName;
+            CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
+            Password = data.SetCourseDetailsModel.Password;
+            NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
+            AllowSelfEnrolment = data.SetCourseOptionsModel.AllowSelfEnrolment;
+            HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
+            DiagnosticObjectiveSelection = data.SetCourseOptionsModel.DiagnosticObjectiveSelection;
+            NumberOfLearning = GetNumberOfLearning(data.SetSectionContentModel);
+            NumberOfDiagnostic = GetNumberOfDiagnostic(data.SetSectionContentModel);
         }
 
         public SummaryViewModel(

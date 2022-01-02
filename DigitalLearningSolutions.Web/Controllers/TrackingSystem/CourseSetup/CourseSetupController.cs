@@ -17,7 +17,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -129,11 +128,14 @@
         [Route("AddCourse/SelectCourse")]
         public IActionResult SelectCourse()
         {
+            var data = TempData.Peek<AddNewCentreCourseData>()!;
+
             var centreId = User.GetCentreId();
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             var applicationOptions = GetApplicationOptionsSelectList();
-            var model = new SelectCourseViewModel(applicationOptions);
+
+            var model = new SelectCourseViewModel(applicationOptions, data!.Application?.ApplicationId);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -148,7 +150,7 @@
             if (!ModelState.IsValid)
             {
                 var applicationSelectList = GetApplicationOptionsSelectList();
-                var model = new SelectCourseViewModel(applicationSelectList);
+                var model = new SelectCourseViewModel(formData, applicationSelectList);
                 return View("AddNewCentreCourse/SelectCourse", model);
             }
 
@@ -160,7 +162,8 @@
             var selectedApplication =
                 applicationOptions.Single(ap => ap.ApplicationId == formData.ApplicationId);
 
-            data!.SetCourse(selectedApplication);
+            data!.SetApplicationAndResetModels(selectedApplication);
+
             TempData.Set(data);
 
             return RedirectToAction("SetCourseDetails");
@@ -172,7 +175,7 @@
         public IActionResult SetCourseDetails()
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
-            var model = new SetCourseDetailsViewModel(data!.SelectCourseViewModel.Application);
+            var model = data?.SetCourseDetailsModel ?? new SetCourseDetailsViewModel(data!.Application!);
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
         }
@@ -180,33 +183,32 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/SetCourseDetails")]
-        public IActionResult SetCourseDetails(EditCourseDetailsFormData formData)
+        public IActionResult SetCourseDetails(SetCourseDetailsViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
             var centreId = User.GetCentreId();
 
-            if (string.IsNullOrWhiteSpace(formData.CustomisationName))
+            if (string.IsNullOrWhiteSpace(model.CustomisationName))
             {
-                formData.CustomisationName = string.Empty;
+                model.CustomisationName = string.Empty;
             }
 
             CourseDetailsValidator.ValidateCustomisationName(
-                formData,
+                model,
                 ModelState,
                 courseService,
                 centreId
             );
-            CourseDetailsValidator.ValidatePassword(formData, ModelState);
-            CourseDetailsValidator.ValidateEmail(formData, ModelState);
-            CourseDetailsValidator.ValidateCompletionCriteria(formData, ModelState);
+            CourseDetailsValidator.ValidatePassword(model, ModelState);
+            CourseDetailsValidator.ValidateEmail(model, ModelState);
+            CourseDetailsValidator.ValidateCompletionCriteria(model, ModelState);
 
             if (!ModelState.IsValid)
             {
-                var model = new SetCourseDetailsViewModel(data!.SelectCourseViewModel.Application);
                 return View("AddNewCentreCourse/SetCourseDetails", model);
             }
 
-            data!.SetCourseDetails(formData);
+            data!.SetCourseDetailsModel = model;
             TempData.Set(data);
 
             return RedirectToAction("SetCourseOptions");
@@ -219,8 +221,8 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var diagAssess = data!.SelectCourseViewModel.Application.DiagAssess;
-            var model = new SetCourseOptionsViewModel(diagAssess);
+            var diagAssess = data!.Application!.DiagAssess;
+            var model = data.SetCourseOptionsModel ?? new SetCourseOptionsViewModel(diagAssess);
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }
@@ -228,18 +230,16 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/SetCourseOptions")]
-        public IActionResult SetCourseDetails(EditCourseOptionsFormData formData)
+        public IActionResult SetCourseDetails(SetCourseOptionsViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
             if (!ModelState.IsValid)
             {
-                var diagAssess = data!.SelectCourseViewModel.Application.DiagAssess;
-                var model = new SetCourseOptionsViewModel(diagAssess);
                 return View("AddNewCentreCourse/SetCourseOptions", model);
             }
 
-            data!.SetCourseOptions(formData);
+            data!.SetCourseOptionsModel = model;
             TempData.Set(data);
 
             return RedirectToAction("SetCourseContent");
@@ -252,13 +252,9 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var sections =
-                sectionService.GetSectionsForApplication(data!.SelectCourseViewModel.Application.ApplicationId);
-            var sectionModels = sections.Select(section => new SelectSectionViewModel(section, false)).ToList();
+            var model = GetSetCourseContentModel(data!);
 
-            var model = new SetCourseContentViewModel(sectionModels);
-
-            data.SetCourseContent(model);
+            data.SetCourseContentModel = model;
             TempData.Set(data);
 
             return View("AddNewCentreCourse/SetCourseContent", model);
@@ -278,7 +274,7 @@
                 return View("AddNewCentreCourse/SetCourseContent", model);
             }
 
-            data!.SetCourseContent(model);
+            data!.SetCourseContentModel = model;
             TempData.Set(data);
 
             return RedirectToAction("SetSectionContent");
@@ -286,27 +282,19 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet]
-        [Route("AddCourse/EditSectionContent")]
+        [Route("AddCourse/SetSectionContent")]
         public IActionResult SetSectionContent()
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var model = new SetSectionContentViewModel(data!.SetCourseContentViewModel.SectionsToInclude);
-            foreach (var section in model.Sections)
-            {
-                var tutorials = tutorialService.GetTutorialsForSection(section.SectionId);
-                section.SetTutorials(tutorials);
-            }
-
-            data.SetSectionContent(model);
-            TempData.Set(data);
+            var model = GetSetSectionContentModel(data!);
 
             return View("../AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
-        [Route("AddCourse/EditSectionContent")]
+        [Route("AddCourse/SetSectionContent")]
         public IActionResult SetSectionContent(
             SetSectionContentViewModel model
         )
@@ -318,7 +306,7 @@
                 return View("AddNewCentreCourse/SetSectionContent", model);
             }
 
-            data!.SetSectionContent(model);
+            data!.SetSectionContentModel = model;
             TempData.Set(data);
 
             return RedirectToAction("Summary");
@@ -348,19 +336,19 @@
                 var centreId = User.GetCentreId();
                 var customisationId = courseService.CreateNewCentreCourse(
                     centreId,
-                    data.SelectCourseViewModel.ApplicationId.Value,
-                    data.SetCourseDetailsViewModel.CustomisationName ?? string.Empty,
-                    data.SetCourseDetailsViewModel.Password,
-                    data.SetCourseOptionsViewModel.AllowSelfEnrolment,
-                    int.Parse(data.SetCourseDetailsViewModel.TutCompletionThreshold!),
-                    data.SetCourseDetailsViewModel.PostLearningAssessment,
-                    int.Parse(data.SetCourseDetailsViewModel.DiagCompletionThreshold!),
-                    data.SetCourseOptionsViewModel.DiagnosticObjectiveSelection,
-                    data.SetCourseOptionsViewModel.HideInLearningPortal,
-                    data.SetCourseDetailsViewModel.NotificationEmails
+                    data!.Application!.ApplicationId,
+                    data.SetCourseDetailsModel!.CustomisationName ?? string.Empty,
+                    data.SetCourseDetailsModel.Password,
+                    data.SetCourseOptionsModel!.AllowSelfEnrolment,
+                    int.Parse(data.SetCourseDetailsModel.TutCompletionThreshold!),
+                    data.SetCourseDetailsModel.PostLearningAssessment,
+                    int.Parse(data.SetCourseDetailsModel.DiagCompletionThreshold!),
+                    data.SetCourseOptionsModel.DiagnosticObjectiveSelection,
+                    data.SetCourseOptionsModel.HideInLearningPortal,
+                    data.SetCourseDetailsModel.NotificationEmails
                 );
 
-                var tutorialModels = data.SetSectionContentViewModel.GetTutorialsFromSections();
+                var tutorialModels = data.SetSectionContentModel!.GetTutorialsFromSections();
                 var tutorials = tutorialModels.Select(
                     tm => new Tutorial(tm.TutorialId, tm.TutorialName, tm.LearningEnabled, tm.DiagnosticEnabled)
                 );
@@ -368,8 +356,8 @@
 
                 TempData.Clear();
                 TempData.Add("customisationId", customisationId);
-                TempData.Add("applicationName", data.SetCourseDetailsViewModel.ApplicationName);
-                TempData.Add("customisationName", data.SetCourseDetailsViewModel.CustomisationName);
+                TempData.Add("applicationName", data.SetCourseDetailsModel.ApplicationName);
+                TempData.Add("customisationName", data.SetCourseDetailsModel.CustomisationName);
 
                 return RedirectToAction("Confirmation");
             }
@@ -405,6 +393,37 @@
             var applicationOptions = orderedApplications.Select(a => (a.ApplicationId, a.ApplicationName));
 
             return SelectListHelper.MapOptionsToSelectListItems(applicationOptions, selectedId);
+        }
+
+        private SetCourseContentViewModel GetSetCourseContentModel(AddNewCentreCourseData data)
+        {
+            if (data.SetCourseContentModel != null)
+            {
+                return data.SetCourseContentModel;
+            }
+
+            var sections =
+                sectionService.GetSectionsForApplication(data!.Application!.ApplicationId);
+            var sectionModels = sections.Select(section => new SelectSectionViewModel(section, false)).ToList();
+
+            return new SetCourseContentViewModel(sectionModels);
+        }
+
+        private SetSectionContentViewModel GetSetSectionContentModel(AddNewCentreCourseData data)
+        {
+            if (data.SetSectionContentModel != null)
+            {
+                return data.SetSectionContentModel;
+            }
+
+            var model = new SetSectionContentViewModel(data.SetCourseContentModel!.SectionsToInclude);
+            foreach (var section in model.Sections)
+            {
+                var tutorials = tutorialService.GetTutorialsForSection(section.SectionId);
+                section.SetTutorials(tutorials);
+            }
+
+            return model;
         }
     }
 }

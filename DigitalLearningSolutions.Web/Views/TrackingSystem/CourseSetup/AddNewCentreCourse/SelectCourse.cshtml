@@ -10,8 +10,8 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
-  var options = Model.CourseOptions;
-  var c = options;
+  var applicationId = Model.ApplicationId?.ToString();
+  var b = applicationId;
 }
 
 <div class="nhsuk-grid-row">
@@ -25,12 +25,12 @@
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
       <vc:select-list asp-for="@nameof(Model.ApplicationId)"
-                      label="Field name"
-                      value="@Model.ApplicationId.ToString()"
+                      label="Course"
+                      value="@Model.ApplicationId?.ToString()"
                       hint-text=""
                       deselectable="false"
                       css-class="nhsuk-u-width-one-half"
-                      default-option="Course"
+                      default-option="Select a course"
                       select-list-options="@Model.CourseOptions" />
 
       <button class="nhsuk-button" type="submit">Next</button>
