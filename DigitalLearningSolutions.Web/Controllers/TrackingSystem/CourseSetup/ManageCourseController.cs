@@ -244,7 +244,7 @@
         }
 
         [HttpGet]
-        [Route("CourseOptions")]
+        [Route("EditCourseOptions")]
         public IActionResult EditCourseOptions(int customisationId)
         {
             var centreId = User.GetCentreId();
@@ -261,7 +261,7 @@
         }
 
         [HttpPost]
-        [Route("CourseOptions")]
+        [Route("EditCourseOptions")]
         public IActionResult EditCourseOptions(
             int customisationId,
             EditCourseOptionsViewModel editCourseOptionsViewModel
