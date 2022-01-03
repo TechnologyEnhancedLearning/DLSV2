@@ -39,7 +39,10 @@
                     tutorial.Status!.Value
                 );
 
-                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorial.TutorialId, customisationId);
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(
+                    tutorial.TutorialId,
+                    customisationId
+                );
             }
 
             transaction.Complete();
