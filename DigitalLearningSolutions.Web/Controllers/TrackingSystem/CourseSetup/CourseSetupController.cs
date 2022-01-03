@@ -30,7 +30,6 @@
     public class CourseSetupController : Controller
     {
         public const string SaveAction = "save";
-
         private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;

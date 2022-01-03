@@ -30,7 +30,7 @@
 
         public IEnumerable<Section> GetSectionsAndTutorialsForCustomisation(int customisationId, int applicationId)
         {
-            var sections = sectionContentDataService.GetSectionsByApplicationId(applicationId);
+            var sections = sectionContentDataService.GetSectionsForApplication(applicationId);
             var sectionsWithTutorials = sections.Select(
                 s => new Section(
                     s.SectionId,
@@ -58,7 +58,7 @@
 
         public IEnumerable<Section> GetSectionsForApplication(int applicationId)
         {
-            return sectionContentDataService.GetSectionsByApplicationId(applicationId);
+            return sectionContentDataService.GetSectionsForApplication(applicationId);
         }
     }
 }
