@@ -9,7 +9,9 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
+    [FeatureGate(FeatureFlags.UseSignposting)]
     [Route("Signposting/[Controller]")]
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public class LinkLearningHubSsoController : Controller
