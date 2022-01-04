@@ -3,6 +3,7 @@
     using System;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
 
     public class AddNewCentreCourseData
     {
@@ -14,7 +15,7 @@
         public Guid Id { get; set; }
         public ApplicationDetails? Application { get; set; }
         public SetCourseDetailsViewModel? SetCourseDetailsModel { get; set; }
-        public SetCourseOptionsViewModel? SetCourseOptionsModel { get; set; }
+        public EditCourseOptionsFormData? SetCourseOptionsModel { get; set; }
         public SetCourseContentViewModel? SetCourseContentModel { get; set; }
         public SetSectionContentViewModel? SetSectionContentModel { get; set; }
 
