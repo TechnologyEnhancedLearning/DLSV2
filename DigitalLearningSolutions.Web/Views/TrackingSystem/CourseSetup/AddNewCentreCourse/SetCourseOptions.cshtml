@@ -16,9 +16,10 @@
     <h1 class="nhsuk-heading-xl">Set course options</h1>
 
     <form method="post" novalidate asp-action="SetCourseOptions">
+      <input type="hidden" asp-for="Checkboxes" />
 
       <vc:checkboxes label=""
-                     populate-with-current-values="false"
+                     populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"
                      hint-text="" />
 

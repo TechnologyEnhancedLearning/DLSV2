@@ -17,6 +17,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -220,8 +221,8 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var diagAssess = data!.Application!.DiagAssess;
-            var model = data.SetCourseOptionsModel ?? new SetCourseOptionsViewModel(diagAssess);
+            var model = data!.SetCourseOptionsModel ?? new EditCourseOptionsFormData();
+            model.SetUpCheckboxes(data.Application!.DiagAssess);
 
             return View("AddNewCentreCourse/SetCourseOptions", model);
         }
@@ -229,14 +230,9 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/SetCourseOptions")]
-        public IActionResult SetCourseDetails(SetCourseOptionsViewModel model)
+        public IActionResult SetCourseOptions(EditCourseOptionsFormData model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
-
-            if (!ModelState.IsValid)
-            {
-                return View("AddNewCentreCourse/SetCourseOptions", model);
-            }
 
             data!.SetCourseOptionsModel = model;
             TempData.Set(data);
@@ -289,6 +285,10 @@
             var model = GetSetSectionContentModel(data!);
 
             return View("../AddNewCentreCourse/SetSectionContent", model);
+
+            // Since I'll have the selected sections stored in temp data, I can pass the index of each section to the
+            // SetSectionContent controller get method. And the post can either redirect back to the get method with
+            // the next index, or to the next controller action if all sections have been assessed.
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
