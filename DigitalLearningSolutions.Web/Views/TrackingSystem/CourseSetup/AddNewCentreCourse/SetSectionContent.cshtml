@@ -16,64 +16,21 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Edit section content</h1>
 
-    <form method="post" novalidate asp-action="SetSectionContent">
-      <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@CourseSetupController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
+    <div class="nhsuk-grid-column-full nhsuk-heading-s word-break">
+      <label class="nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+        Section
+      </label>
+      <div class="nhsuk-u-margin-top-1">
+        @Model.SectionName
       </div>
+    </div>
 
-      @foreach (var sectionModel in Model.Sections) {
-        <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-6">
+    <form method="post" novalidate asp-action="SetSectionContent">
 
-          <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-3">Section: @sectionModel.SectionName</h2>
-
-          <div class="nhsuk-grid-column-one-half">
-            <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Diagnostic</h3>
-            <p class="nhsuk-body-m nhsuk-u-margin-bottom-2">Select all tutorials that should have diagnostic enabled.</p>
-
-            <div class="nhsuk-checkboxes">
-              @foreach (var (tutorial, tutIndex) in sectionModel.Tutorials.Select((t, i) => (t, i))) {
-                <input type="hidden" name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialId)}")" value="@tutorial.TutorialId" />
-                <input type="hidden" name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.TutorialName)}")" value="@tutorial.TutorialName" />
-                <div class="nhsuk-checkboxes__item">
-                  <input class="nhsuk-checkboxes__input diagnostic-checkbox"
-                         type="checkbox"
-                         name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.DiagnosticEnabled)}")"
-                         id="diagnostic-enabled-@tutorial.TutorialId"
-                         checked="@tutorial.DiagnosticEnabled"
-                         value="true" />
-                  <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="diagnostic-enabled-@tutorial.TutorialId">
-                    @tutorial.TutorialName
-                  </label>
-                </div>
-              }
-            </div>
-          </div>
-
-          <div class="nhsuk-grid-column-one-half tutorial-learning-column">
-            <h3 class="nhsuk-heading-m nhsuk-u-margin-bottom-1">Learning</h3>
-            <p class="nhsuk-body-m nhsuk-u-margin-bottom-2">Select all tutorials that should have learning enabled.</p>
-
-            <div class="nhsuk-checkboxes">
-              @foreach (var (tutorial, tutIndex) in sectionModel.Tutorials.Select((t, i) => (t, i))) {
-                <div class="nhsuk-checkboxes__item">
-                  <input class="nhsuk-checkboxes__input learning-checkbox"
-                         type="checkbox"
-                         name="@($"{nameof(sectionModel.Tutorials)}[{tutIndex}].{nameof(tutorial.LearningEnabled)}")"
-                         id="learning-enabled-@tutorial.TutorialId"
-                         checked="@tutorial.LearningEnabled"
-                         value="true" />
-                  <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="learning-enabled-@tutorial.TutorialId">
-                    @tutorial.TutorialName
-                  </label>
-                </div>
-              }
-            </div>
-          </div>
-
-        </div>
-      }
+      <partial name="CourseSetup/CourseContent/_EditSectionContentFormInputs" model="Model" />
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Save</button>
+
     </form>
 
     <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />

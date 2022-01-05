@@ -36,12 +36,8 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSection">
-      <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
-      </div>
-      <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="SectionName" />
-      <input type="hidden" asp-for="ShowDiagnostic" />
+
+      <partial name="_EditSectionContentFormInputs" model="Model" />
 
       <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
         <div @(Model.ShowDiagnostic ? "" : "hidden")>
@@ -51,6 +47,7 @@
       </div>
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
+
     </form>
 
     <vc:cancel-link asp-controller="CourseContent" asp-action="Index" asp-all-route-data="@cancelRouteData" />

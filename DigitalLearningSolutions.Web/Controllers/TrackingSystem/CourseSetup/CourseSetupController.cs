@@ -17,6 +17,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -264,6 +265,7 @@
 
             model.SetSectionsToInclude();
 
+            // TODO: Validation - user must select at least one section
             if (!ModelState.IsValid)
             {
                 return View("AddNewCentreCourse/SetCourseContent", model);
@@ -272,23 +274,23 @@
             data!.SetCourseContentModel = model;
             TempData.Set(data);
 
-            return RedirectToAction("SetSectionContent");
+            return RedirectToAction("SetSectionContent", 0);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet]
         [Route("AddCourse/SetSectionContent")]
-        public IActionResult SetSectionContent()
+        public IActionResult SetSectionContent(int sectionIndex)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var model = GetSetSectionContentModel(data!);
+            var section = data!.SetCourseContentModel!.SectionsToInclude.ElementAt(sectionIndex);
+            var model = new SetSectionContentViewModel(section, sectionIndex);
+
+            var tutorials = tutorialService.GetTutorialsForSection(section.Id);
+            model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
 
             return View("../AddNewCentreCourse/SetSectionContent", model);
-
-            // Since I'll have the selected sections stored in temp data, I can pass the index of each section to the
-            // SetSectionContent controller get method. And the post can either redirect back to the get method with
-            // the next index, or to the next controller action if all sections have been assessed.
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -300,15 +302,12 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            if (!ModelState.IsValid)
-            {
-                return View("AddNewCentreCourse/SetSectionContent", model);
-            }
-
-            data!.SetSectionContentModel = model;
+            data!.SetSectionContentModels.Add(model);
             TempData.Set(data);
 
-            return RedirectToAction("Summary");
+            return model.Index == data.SetCourseContentModel!.SectionsToInclude.Count() - 1
+                ? RedirectToAction("Summary")
+                : RedirectToAction("SetSectionContent", model.Index + 1);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -347,15 +346,20 @@
                     data.SetCourseDetailsModel.NotificationEmails
                 );
 
-                var tutorialModels = data.SetSectionContentModel!.GetTutorialsFromSections();
-                var tutorials = tutorialModels.Select(
-                    tm => new Tutorial(tm.TutorialId, tm.TutorialName, tm.LearningEnabled, tm.DiagnosticEnabled)
-                );
+                var tutorials = data.GetTutorialsFromSections()
+                    .Select(
+                        tm => new Tutorial(
+                            tm.TutorialId,
+                            tm.TutorialName,
+                            tm.LearningEnabled,
+                            tm.DiagnosticEnabled
+                        )
+                    );
                 tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
 
                 TempData.Clear();
                 TempData.Add("customisationId", customisationId);
-                TempData.Add("applicationName", data.SetCourseDetailsModel.ApplicationName);
+                TempData.Add("applicationName", data.SetCourseDetailsModel!.ApplicationName);
                 TempData.Add("customisationName", data.SetCourseDetailsModel.CustomisationName);
 
                 return RedirectToAction("Confirmation");
@@ -406,23 +410,6 @@
             var sectionModels = sections.Select(section => new SelectSectionViewModel(section, false)).ToList();
 
             return new SetCourseContentViewModel(sectionModels);
-        }
-
-        private SetSectionContentViewModel GetSetSectionContentModel(AddNewCentreCourseData data)
-        {
-            if (data.SetSectionContentModel != null)
-            {
-                return data.SetSectionContentModel;
-            }
-
-            var model = new SetSectionContentViewModel(data.SetCourseContentModel!.SectionsToInclude);
-            foreach (var section in model.Sections)
-            {
-                var tutorials = tutorialService.GetTutorialsForSection(section.SectionId);
-                section.SetTutorials(tutorials);
-            }
-
-            return model;
         }
     }
 }
