@@ -23,6 +23,7 @@
         private const int GenericLearningLogItemId = 1;
         private const int GenericDelegateId = 2;
         private const int GenericLearningHubResourceReferenceId = 3;
+        private const int GenericLearningResourceReferenceId = 33;
 
         private IActionPlanService actionPlanService = null!;
         private IClockService clockService = null!;
@@ -30,8 +31,8 @@
         private IConfiguration config = null!;
         private Catalogue genericCatalogue = null!;
         private ILearningHubApiClient learningHubApiClient = null!;
-        private ILearningHubApiService learningHubApiService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
+        private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
 
         [SetUp]
@@ -41,19 +42,19 @@
             clockService = A.Fake<IClockService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
-            learningHubApiService = A.Fake<ILearningHubApiService>();
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
+            learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
             config = A.Fake<IConfiguration>();
 
             actionPlanService = new ActionPlanService(
                 competencyLearningResourcesDataService,
                 learningLogItemsDataService,
                 clockService,
-                learningHubApiService,
                 learningHubApiClient,
                 selfAssessmentDataService,
-                config
+                config,
+                learningResourceReferenceDataService
             );
         }
 
@@ -61,7 +62,7 @@
         public void AddResourceToActionPlan_calls_expected_insert_data_service_methods()
         {
             // Given
-            const int competencyLearningResourceId = 1;
+            const int learningResourceReferenceId = 1;
             const int delegateId = 2;
             const int selfAssessmentId = 3;
             const string resourceName = "Activity";
@@ -72,23 +73,19 @@
             var addedDate = new DateTime(2021, 11, 1);
             A.CallTo(() => clockService.UtcNow).Returns(addedDate);
 
-            var competencyLearningResource = new CompetencyLearningResource
-            {
-                LearningHubResourceReferenceId = learningHubResourceId,
-            };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourceById(
-                    competencyLearningResourceId
+                () => learningResourceReferenceDataService.GetLearningHubResourceReferenceById(
+                    learningResourceReferenceId
                 )
-            ).Returns(competencyLearningResource);
+            ).Returns(learningHubResourceId);
 
-            A.CallTo(() => learningHubApiService.GetResourceNameAndLink(learningHubResourceId))
-                .Returns((resourceName, resourceLink));
+            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(learningHubResourceId))
+                .Returns(new ResourceReferenceWithResourceDetails { Title = resourceName, Link = resourceLink });
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    learningHubResourceId
+                () => competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                    learningResourceReferenceId
                 )
             ).Returns(resourceCompetencies);
 
@@ -109,7 +106,7 @@
             var expectedMatchingCompetencies = new[] { 2, 3, 5, 6, 8 };
 
             // When
-            actionPlanService.AddResourceToActionPlan(competencyLearningResourceId, delegateId, selfAssessmentId);
+            actionPlanService.AddResourceToActionPlan(learningResourceReferenceId, delegateId, selfAssessmentId);
 
             // Then
             A.CallTo(
@@ -118,7 +115,7 @@
                     addedDate,
                     resourceName,
                     resourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 )
             ).MustHaveHappenedOnceExactly();
             A.CallTo(
@@ -145,11 +142,11 @@
         }
 
         [Test]
-        public async Task GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
+        public async Task
+            GetIncompleteActionPlanResources_returns_empty_list_if_no_incomplete_learning_log_items_found()
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var invalidLearningLogItems = Builder<LearningLogItem>.CreateListOfSize(3)
                 .All().With(i => i.CompletedDate = null).And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = 1)
@@ -174,7 +171,6 @@
         {
             // Given
             const int delegateId = 1;
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
             var learningLogIds = new List<int> { 4, 5, 6, 7, 8 };
             var learningResourceIds = new List<int> { 15, 21, 33, 48, 51 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5).All()
@@ -261,6 +257,21 @@
                 )
                 .MustHaveHappenedOnceExactly();
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(resourceReferenceId))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void SetCompletionDate_calls_data_service()
+        {
+            // Given
+            const int learningLogItemId = 1;
+            var completedDate = new DateTime(2021, 09, 01);
+
+            // When
+            learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
+
+            // Then
+            A.CallTo(() => learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -381,7 +392,8 @@
         }
 
         [Test]
-        public void VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
+        public void
+            VerifyDelegateCanAccessActionPlanResource_returns_false_if_LearningLogItem_is_for_different_delegate()
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -432,6 +444,65 @@
                 A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(GenericLearningLogItemId))
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_true_with_no_learning_log_records()
+        {
+            // Given
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(new List<LearningLogItem>());
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(1, GenericDelegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_true_with_no_incomplete_learning_log_records()
+        {
+            // Given
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5)
+                .All()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = DateTime.UtcNow).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(learningLogItems);
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void ResourceCanBeAddedToActionPlan_returns_false_with_an_incomplete_learning_log_record()
+        {
+            // Given
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(5)
+                .TheFirst(1)
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = null)
+                .TheRest()
+                .With(i => i.LearningHubResourceReferenceId = GenericLearningHubResourceReferenceId)
+                .And(i => i.LearningResourceReferenceId = GenericLearningResourceReferenceId)
+                .And(i => i.ArchivedDate = null)
+                .And(i => i.CompletedDate = DateTime.UtcNow).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(GenericDelegateId))
+                .Returns(learningLogItems);
+
+            // When
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

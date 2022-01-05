@@ -2,10 +2,6 @@
 @model IGrouping<string, Competency>;
 
 <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-top-4">
-  @if (!(bool)ViewData["linearNavigation"])
-  {
-    <caption class="nhsuk-table__caption"><h2>@Model.Key</h2></caption>
-  }
   <thead role="rowgroup" class="nhsuk-table__head">
     <tr role="row">
       <th role="columnheader" class="" scope="col">
@@ -36,6 +32,9 @@
   <tr role="row" class="nhsuk-table__row first-row">
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
       <span class="nhsuk-table-responsive__heading">@competency.Vocabulary </span>@competency.Name
+      @if (competency.AlwaysShowDescription) {
+    <p class="nhsuk-u-margin-top-2">@Html.Raw(competency.Description)</p>
+      }
     </td>
     <partial name="Shared/_AssessmentQuestionOverviewCells" model="competency.AssessmentQuestions.First()" view-data="@(new ViewDataDictionary(ViewData) { { "competencyNumber", competency.RowNo } })" />
     <td role="cell" rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-font-size-16">

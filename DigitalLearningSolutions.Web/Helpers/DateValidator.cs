@@ -32,6 +32,11 @@
             return new DateValidationResult(!day.HasValue, !month.HasValue, !year.HasValue, errorMessage);
         }
 
+        public static bool IsDateNull(int? day, int? month, int? year)
+        {
+            return day == null && month == null && year == null;
+        }
+
         private static DateValidationResult ValidateDate(
             int day,
             int month,

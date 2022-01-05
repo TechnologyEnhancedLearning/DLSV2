@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -13,7 +14,7 @@
 
     public interface IActionPlanService
     {
-        void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId);
+        Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId);
 
         Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResources(int delegateId);
 
@@ -21,9 +22,15 @@
 
         Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
 
+        public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
+
+        public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate);
+
         void RemoveActionPlanResource(int learningLogItemId, int delegateId);
 
         bool? VerifyDelegateCanAccessActionPlanResource(int learningLogItemId, int delegateId);
+
+        bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId);
     }
 
     public class ActionPlanService : IActionPlanService
@@ -32,58 +39,57 @@
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
         private readonly IConfiguration config;
         private readonly ILearningHubApiClient learningHubApiClient;
-        private readonly ILearningHubApiService learningHubApiService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
+        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         public ActionPlanService(
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
             ILearningLogItemsDataService learningLogItemsDataService,
             IClockService clockService,
-            ILearningHubApiService learningHubApiService,
             ILearningHubApiClient learningHubApiClient,
             ISelfAssessmentDataService selfAssessmentDataService,
-            IConfiguration config
+            IConfiguration config,
+            ILearningResourceReferenceDataService learningResourceReferenceDataService
         )
         {
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
             this.learningLogItemsDataService = learningLogItemsDataService;
             this.clockService = clockService;
-            this.learningHubApiService = learningHubApiService;
             this.learningHubApiClient = learningHubApiClient;
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.config = config;
+            this.learningResourceReferenceDataService = learningResourceReferenceDataService;
         }
 
-        public void AddResourceToActionPlan(int competencyLearningResourceId, int delegateId, int selfAssessmentId)
+        public async Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId)
         {
-            var competencyLearningResource =
-                competencyLearningResourcesDataService.GetCompetencyLearningResourceById(competencyLearningResourceId);
+            var learningHubResourceReferenceId =
+                learningResourceReferenceDataService.GetLearningHubResourceReferenceById(learningResourceReferenceId);
 
-            var (resourceName, resourceLink) =
-                learningHubApiService.GetResourceNameAndLink(competencyLearningResource.LearningHubResourceReferenceId);
-
-            var otherCompetenciesForResource =
-                competencyLearningResourcesDataService.GetCompetencyIdsByLearningHubResourceReference(
-                    competencyLearningResource.LearningHubResourceReferenceId
+            var competenciesForResource =
+                competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                    learningResourceReferenceId
                 );
 
             var selfAssessmentCompetencies =
                 selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
 
             var learningLogCompetenciesToAdd =
-                otherCompetenciesForResource.Where(id => selfAssessmentCompetencies.Contains(id));
+                competenciesForResource.Where(id => selfAssessmentCompetencies.Contains(id));
 
             var addedDate = clockService.UtcNow;
+
+            var resource = await learningHubApiClient.GetResourceByReferenceId(learningHubResourceReferenceId);
 
             using var transaction = new TransactionScope();
 
             var learningLogItemId = learningLogItemsDataService.InsertLearningLogItem(
                 delegateId,
                 addedDate,
-                resourceName,
-                resourceLink,
-                competencyLearningResourceId
+                resource.Title,
+                resource.Link,
+                learningResourceReferenceId
             );
 
             learningLogItemsDataService.InsertCandidateAssessmentLearningLogItem(selfAssessmentId, learningLogItemId);
@@ -151,6 +157,16 @@
             return resource.Link;
         }
 
+        public void SetCompletionDate(int learningLogItemId, DateTime completedDate)
+        {
+            learningLogItemsDataService.SetCompletionDate(learningLogItemId, completedDate);
+        }
+
+        public void SetCompleteByDate(int learningLogItemId, DateTime? completeByDate)
+        {
+            learningLogItemsDataService.SetCompleteByDate(learningLogItemId, completeByDate);
+        }
+
         public void RemoveActionPlanResource(int learningLogItemId, int delegateId)
         {
             var removalDate = clockService.UtcNow;
@@ -166,12 +182,23 @@
 
             var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId);
 
-            if (!(actionPlanResource is { ArchivedDate: null }) || actionPlanResource.LearningHubResourceReferenceId == null)
+            if (!(actionPlanResource is { ArchivedDate: null }) ||
+                actionPlanResource.LearningHubResourceReferenceId == null)
             {
                 return null;
             }
 
             return actionPlanResource.LoggedById == delegateId;
+        }
+
+        public bool ResourceCanBeAddedToActionPlan(int resourceReferenceId, int delegateId)
+        {
+            var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
+                .Where(
+                    i => i.CompletedDate == null && i.ArchivedDate == null && i.LearningHubResourceReferenceId != null
+                ).ToList();
+
+            return incompleteLearningLogItems.All(i => i.LearningResourceReferenceId != resourceReferenceId);
         }
     }
 }

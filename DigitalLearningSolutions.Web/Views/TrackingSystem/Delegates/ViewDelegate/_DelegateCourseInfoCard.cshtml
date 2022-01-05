@@ -64,14 +64,12 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
           <dd class="nhsuk-summary-list__actions">
-            @if (Model.Completed == null) {
-              <a asp-controller="DelegateProgress"
-                 asp-action="EditCompletionDate"
-                 asp-route-progressId="@Model.ProgressId"
-                 asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
-                Set completed date
-              </a>
-            }
+            <a asp-controller="DelegateProgress"
+               asp-action="EditCompletionDate"
+               asp-route-progressId="@Model.ProgressId"
+               asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+              Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
+            </a>
           </dd>
         </div>
 

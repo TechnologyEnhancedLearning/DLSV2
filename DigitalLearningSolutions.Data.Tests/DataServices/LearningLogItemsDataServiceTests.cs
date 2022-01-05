@@ -6,13 +6,15 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningLogItemsDataServiceTests
     {
-        private const int GenericCompetencyLearningResourceId = 1;
+        private const int GenericLearningResourceReferenceId = 1;
         private const int GenericDelegateId = 2;
         private const string GenericActivityName = "generic activity";
         private const string GenericResourceLink = "generic resource link";
@@ -24,7 +26,9 @@
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            service = new LearningLogItemsDataService(connection);
+            var logger = A.Fake<ILogger<LearningLogItemsDataService>>();
+
+            service = new LearningLogItemsDataService(connection, logger);
 
             learningLogItemsTestHelper = new LearningLogItemsTestHelper(connection);
             competencyLearningResourcesTestHelper = new CompetencyLearningResourcesTestHelper(connection);
@@ -37,15 +41,22 @@
             try
             {
                 // Given
-                const int competencyLearningResourceId = 1;
+                const int learningResourceReferenceId = 1;
+                const int learningHubResourceReferenceId = 2;
                 const int delegateId = 2;
                 const string resourceName = "Activity";
                 const string resourceLink = "www.test.com";
                 var addedDate = new DateTime(2021, 11, 1);
+                competencyLearningResourcesTestHelper.InsertLearningResourceReference(
+                    learningResourceReferenceId,
+                    learningHubResourceReferenceId,
+                    7,
+                    "Resource"
+                );
                 competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                     1,
-                    competencyLearningResourceId,
                     1,
+                    learningResourceReferenceId,
                     7
                 );
 
@@ -55,7 +66,7 @@
                     addedDate,
                     resourceName,
                     resourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 );
                 var result = learningLogItemsTestHelper.SelectLearningLogItemWithResourceLink(resourceLink);
 
@@ -67,7 +78,7 @@
                         result!,
                         delegateId,
                         addedDate,
-                        competencyLearningResourceId,
+                        learningResourceReferenceId,
                         resourceName,
                         resourceLink
                     );
@@ -141,7 +152,8 @@
         public void GetLearningLogItems_returns_all_learning_hub_resource_log_items_for_delegate()
         {
             // Given
-            const int competencyLearningResourceId = 1;
+            const int learningResourceReferenceId = 1;
+            const int learningHubResourceReferenceId = 2;
             const int delegateId = 2;
             const int differentDelegateId = 3;
             const string firstActivityName = "activity 1";
@@ -152,10 +164,16 @@
 
             using (new TransactionScope())
             {
+                competencyLearningResourcesTestHelper.InsertLearningResourceReference(
+                    learningResourceReferenceId,
+                    learningHubResourceReferenceId,
+                    7,
+                    "Resource"
+                );
                 competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
                     1,
-                    competencyLearningResourceId,
                     1,
+                    learningResourceReferenceId,
                     7
                 );
                 service.InsertLearningLogItem(
@@ -163,21 +181,21 @@
                     addedDate,
                     firstActivityName,
                     firstResourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 );
                 service.InsertLearningLogItem(
                     delegateId,
                     addedDate,
                     secondActivityName,
                     secondResourceLink,
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 );
                 service.InsertLearningLogItem(
                     differentDelegateId,
                     addedDate,
                     "activity 3",
                     "resource link 3",
-                    competencyLearningResourceId
+                    learningResourceReferenceId
                 );
 
                 // When
@@ -191,7 +209,7 @@
                         result[0],
                         delegateId,
                         addedDate,
-                        competencyLearningResourceId,
+                        learningResourceReferenceId,
                         firstActivityName,
                         firstResourceLink
                     );
@@ -199,7 +217,7 @@
                         result[1],
                         delegateId,
                         addedDate,
-                        competencyLearningResourceId,
+                        learningResourceReferenceId,
                         secondActivityName,
                         secondResourceLink
                     );
@@ -228,7 +246,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId
+                    GenericLearningResourceReferenceId
                 );
 
                 // When
@@ -242,7 +260,7 @@
                         result!,
                         GenericDelegateId,
                         addedDate,
-                        GenericCompetencyLearningResourceId,
+                        GenericLearningResourceReferenceId,
                         GenericActivityName,
                         GenericResourceLink
                     );
@@ -262,7 +280,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId
+                    GenericLearningResourceReferenceId
                 );
 
                 // When
@@ -279,6 +297,60 @@
         }
 
         [Test]
+        public void Set_completed_date_should_update_db()
+        {
+            // Given
+            var addedDate = new DateTime(2021, 11, 1);
+            var newCompletedDate = new DateTime(2020, 7, 29);
+
+            using (new TransactionScope())
+            {
+                var itemId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericLearningResourceReferenceId
+                );
+
+                // When
+                service.SetCompletionDate(itemId, newCompletedDate);
+                var modifiedItem = service.GetLearningLogItem(itemId);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    modifiedItem!.CompletedDate.Should().Be(newCompletedDate);
+                }
+            }
+        }
+
+        [Test]
+        public void Set_complete_by_date_should_update_db()
+        {
+            // Given
+            var addedDate = new DateTime(2021, 11, 1);
+            var newCompleteByDate = new DateTime(3022, 7, 29);
+
+            using (new TransactionScope())
+            {
+                var itemId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericLearningResourceReferenceId
+                );
+
+                // When
+                service.SetCompleteByDate(itemId, newCompleteByDate);
+                var modifiedItem = service.GetLearningLogItem(itemId);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    modifiedItem!.DueDate.Should().Be(newCompleteByDate);
+                }
+            }
+        }
+
+        [Test]
         public void RemoveLearningLogItem_correctly_sets_removed_date_and_removed_by_id()
         {
             // Given
@@ -290,7 +362,7 @@
                 var itemId = InsertLearningLogItem(
                     GenericDelegateId,
                     addedDate,
-                    GenericCompetencyLearningResourceId
+                    GenericLearningResourceReferenceId
                 );
 
                 // When
@@ -307,18 +379,45 @@
             }
         }
 
+        private int InsertLearningLogItem(
+            int delegateId,
+            DateTime addedDate,
+            int learningResourceReferenceId
+        )
+        {
+            competencyLearningResourcesTestHelper.InsertLearningResourceReference(
+                learningResourceReferenceId,
+                1,
+                7,
+                "Resource"
+            );
+            competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
+                1,
+                1,
+                learningResourceReferenceId,
+                7
+            );
+            return service.InsertLearningLogItem(
+                delegateId,
+                addedDate,
+                GenericActivityName,
+                GenericResourceLink,
+                learningResourceReferenceId
+            );
+        }
+
         private void AssertLearningLogItemHasCorrectValuesForLearningHubResource(
             LearningLogItem item,
             int delegateId,
             DateTime addedDate,
-            int competencyLearningResourceId,
+            int learningResourceReferenceId,
             string resourceName,
             string resourceLink
         )
         {
             item.LoggedById.Should().Be(delegateId);
             item.LoggedDate.Should().Be(addedDate);
-            item.LinkedCompetencyLearningResourceId.Should().Be(competencyLearningResourceId);
+            item.LearningResourceReferenceId.Should().Be(learningResourceReferenceId);
             item.ExternalUri.Should().Be(resourceLink);
             item.Activity.Should().Be(resourceName);
             item.ActivityType.Should().Be("Learning Hub Resource");
@@ -337,27 +436,6 @@
             item.LoggedByAdminId.Should().BeNull();
             item.SeqInt.Should().BeNull();
             item.LastAccessedDate.Should().BeNull();
-        }
-
-        private int InsertLearningLogItem(
-            int delegateId,
-            DateTime addedDate,
-            int competencyLearningResourceId
-        )
-        {
-            competencyLearningResourcesTestHelper.InsertCompetencyLearningResource(
-                1,
-                competencyLearningResourceId,
-                1,
-                7
-            );
-            return service.InsertLearningLogItem(
-                delegateId,
-                addedDate,
-                GenericActivityName,
-                GenericResourceLink,
-                competencyLearningResourceId
-            );
         }
     }
 }
