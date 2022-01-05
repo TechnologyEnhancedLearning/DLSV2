@@ -55,6 +55,7 @@
                         SA.IncludesSignposting,
                         SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
                         SA.SupervisorSelfAssessmentReview,
+                        SA.EnforceRoleRequirementsForSignOff,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
                         CA.StartedDate,
@@ -106,7 +107,7 @@
                         SA.IncludesSignposting, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'),
                         CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
-                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview",
+                        SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview, SA.EnforceRoleRequirementsForSignOff",
                 new { candidateId, selfAssessmentId }
             );
         }

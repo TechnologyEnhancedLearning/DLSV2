@@ -126,6 +126,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/LearningPortal/{0}.cshtml");
                     }
                 )
                 .AddMvcOptions(
@@ -195,6 +196,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IPostLearningAssessmentService, PostLearningAssessmentService>();
             services.AddScoped<IProgressService, ProgressService>();
+            services.AddScoped<IRecommendedLearningService, RecommendedLearningService>();
             services.AddScoped<IRegistrationService, RegistrationService>();
             services.AddScoped<IResourcesService, ResourcesService>();
             services.AddScoped<IRoleProfileService, RoleProfileService>();
@@ -278,6 +280,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyAdminUserCanManageCourse>();
             services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
+            services.AddScoped<VerifyAdminUserCanAccessGroupCourse>();
             services.AddScoped<VerifyAdminUserCanAccessAdminUser>();
             services.AddScoped<VerifyAdminUserCanAccessDelegateUser>();
             services.AddScoped<VerifyAdminUserCanAccessProgress>();

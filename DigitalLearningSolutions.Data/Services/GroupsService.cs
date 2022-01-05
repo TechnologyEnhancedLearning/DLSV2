@@ -36,8 +36,6 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
-
         string? GetGroupName(int groupId, int centreId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
@@ -52,7 +50,13 @@
             bool removeStartedEnrolments
         );
 
+        void RemoveGroupCourseAndRelatedProgress(int customisationId, int groupId, bool deleteStartedEnrolment);
+
         int? GetGroupCentreId(int groupId);
+
+        IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId);
+
+        GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId);
 
         IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
 
@@ -154,7 +158,7 @@
             int? addedByAdminId = null
         )
         {
-            var groupCourses = groupsDataService.GetGroupCourses(groupId, delegateAccountWithOldDetails.CentreId);
+            var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
 
             foreach (var groupCourse in groupCourses)
             {
@@ -259,9 +263,22 @@
             return groupsDataService.GetGroupDelegates(groupId);
         }
 
-        public IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId)
+        public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCourses(groupId, centreId);
+            return groupsDataService.GetGroupCoursesForCentre(centreId)
+                .Where(gc => gc.IsUsable && gc.GroupId == groupId);
+        }
+
+        public GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
+        {
+            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId);
+
+            if ((!groupCourse?.IsUsable ?? true) || groupCourse.GroupId != groupId)
+            {
+                return null;
+            }
+
+            return groupCourse;
         }
 
         public string? GetGroupName(int groupId, int centreId)
@@ -304,6 +321,24 @@
             transaction.Complete();
         }
 
+        public void RemoveGroupCourseAndRelatedProgress(
+            int groupCustomisationId,
+            int groupId,
+            bool deleteStartedEnrolment
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                deleteStartedEnrolment,
+                clockService.UtcNow
+            );
+            groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
+            transaction.Complete();
+        }
+
         public int? GetGroupCentreId(int groupId)
         {
             return groupsDataService.GetGroupCentreId(groupId);
@@ -311,7 +346,7 @@
 
         public IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId)
         {
-            return groupsDataService.GetGroupCourses(groupId, centreId)
+            return GetUsableGroupCoursesForCentre(groupId, centreId)
                 .Where(gc => !categoryId.HasValue || categoryId == gc.CourseCategoryId);
         }
 

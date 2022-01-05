@@ -11,6 +11,7 @@
   var emailDateCss = "nhsuk-checkboxes__conditional"
                      + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
                      + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
 <div class="nhsuk-grid-row">
@@ -41,7 +42,7 @@
                        month-id="Month"
                        year-id="Year"
                        css-class="@emailDateCss"
-                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                       hint-text-lines="@hintTextLines" />
       </div>
 
       <vc:file-input asp-for="@nameof(Model.DelegatesFile)" label="File with updated information" hint-text="" css-class="nhsuk-u-width-one-half" />

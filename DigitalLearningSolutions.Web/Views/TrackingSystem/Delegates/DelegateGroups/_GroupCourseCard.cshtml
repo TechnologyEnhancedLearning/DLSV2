@@ -46,7 +46,12 @@
         </div>
       </dl>
 
-      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1" role="button">
+      <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
+         role="button"
+         asp-controller="DelegateGroups"
+         asp-action="RemoveGroupCourse"
+         asp-route-groupId="@(ViewContext.RouteData.Values["groupId"].ToString()!)"
+         asp-route-groupCustomisationId="@Model.GroupCustomisationId">
         Remove from group
       </a>
     </div>
