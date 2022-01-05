@@ -3,10 +3,13 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ICompetencyLearningResourcesDataService
     {
-        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int lhResourceReferenceId);
+        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
+
+        IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
         void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
     }
 
@@ -27,6 +30,22 @@
                     FROM CompetencyLearningResources
                     WHERE LearningResourceReferenceID = @learningResourceReferenceId",
                 new { learningResourceReferenceId }
+            );
+        }
+
+        public IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId)
+        {
+            return connection.Query<CompetencyLearningResource>(
+                @"SELECT
+                        clr.ID,
+                        clr.CompetencyID,
+                        clr.LearningResourceReferenceID,
+                        clr.AdminID,
+                        lrr.ResourceRefID AS LearningHubResourceReferenceId
+                    FROM CompetencyLearningResources AS clr
+                    INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = clr.LearningResourceReferenceID
+                    WHERE CompetencyID = @competencyId",
+                new { competencyId }
             );
         }
 

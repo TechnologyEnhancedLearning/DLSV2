@@ -633,7 +633,8 @@
                 .Build();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId)).Returns(new List<GroupCourse>());
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
+                .Returns(new List<GroupCourse>());
 
             // When
             var result = courseService.GetEligibleCoursesToAddToGroup(centreId, categoryId, groupId);
@@ -653,10 +654,10 @@
                 .All()
                 .With(c => c.Active = true)
                 .Build();
-            var groupCourse = new GroupCourse { CustomisationId = 2 };
+            var groupCourse = new GroupCourse { CustomisationId = 2, Active = true, GroupId = 1 };
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
                 .Returns(new List<GroupCourse> { groupCourse });
 
             // When

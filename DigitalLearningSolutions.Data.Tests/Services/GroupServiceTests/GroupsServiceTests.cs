@@ -182,15 +182,21 @@
             // Given
             const int groupId = 1;
             const int centreId = 1;
-            var groupCourses = Builder<GroupCourse>.CreateListOfSize(10).Build();
-            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId)).Returns(groupCourses);
+            var groupCourses = Builder<GroupCourse>.CreateListOfSize(15)
+                .All().With(g => g.Active = true).With(g => g.ApplicationArchivedDate = null)
+                .With(g => g.InactivatedDate = null)
+                .TheFirst(10).With(g => g.GroupId = 1)
+                .TheLast(5).With(g => g.GroupId = 2)
+                .Build();
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId)).Returns(groupCourses);
 
             // When
-            var result = groupsService.GetGroupCourses(groupId, centreId).ToList();
+            var result = groupsService.GetUsableGroupCoursesForCentre(groupId, centreId).ToList();
 
             // Then
+            var expectedResults = groupCourses.Where(g => g.GroupId == 1);
             result.Should().HaveCount(10);
-            result.Should().BeEquivalentTo(groupCourses);
+            result.Should().BeEquivalentTo(expectedResults);
         }
 
         [Test]
@@ -309,7 +315,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
                 new[]
                 {
                     correctCategoryCourse,
@@ -318,7 +324,7 @@
             );
 
             // When
-            var result = groupsService.GetGroupCoursesForCategory(1, 1, 1).ToList();
+            var result = groupsService.GetGroupCoursesForCategory(8, 1, 1).ToList();
 
             // Then
             result.Should().Contain(correctCategoryCourse);
@@ -334,7 +340,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
                 new[]
                 {
                     oneCategoryCourse,
@@ -343,7 +349,7 @@
             );
 
             // When
-            var result = groupsService.GetGroupCoursesForCategory(1, 1, null).ToList();
+            var result = groupsService.GetGroupCoursesForCategory(8, 1, null).ToList();
 
             // Then
             result.Should().Contain(oneCategoryCourse);
@@ -448,7 +454,7 @@
         )
         {
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            A.CallTo(() => groupsDataService.GetGroupCourses(A<int>._, A<int>._)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(
                 new List<GroupCourse> { groupCourse }
             );
             var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };
