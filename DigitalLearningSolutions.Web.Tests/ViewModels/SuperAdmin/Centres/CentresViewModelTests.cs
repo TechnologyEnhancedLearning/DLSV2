@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.SuperAdmin.Centres
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -13,19 +13,19 @@
         public void CentresViewModel_default_should_return_first_page_of_centres_in_ascending_order()
         {
             // Given
-            var centres = new List<Centre>
+            var centres = new List<CentreSummaryForSuperAdmin>
             {
-                new Centre { CentreName = "A" },
-                new Centre { CentreName = "b" },
-                new Centre { CentreName = "C" },
-                new Centre { CentreName = "F" },
-                new Centre { CentreName = "J" },
-                new Centre { CentreName = "e" },
-                new Centre { CentreName = "w" },
-                new Centre { CentreName = "S" },
-                new Centre { CentreName = "r" },
-                new Centre { CentreName = "H" },
-                new Centre { CentreName = "m" },
+                new CentreSummaryForSuperAdmin { CentreName = "A" },
+                new CentreSummaryForSuperAdmin { CentreName = "b" },
+                new CentreSummaryForSuperAdmin { CentreName = "C" },
+                new CentreSummaryForSuperAdmin { CentreName = "F" },
+                new CentreSummaryForSuperAdmin { CentreName = "J" },
+                new CentreSummaryForSuperAdmin { CentreName = "e" },
+                new CentreSummaryForSuperAdmin { CentreName = "w" },
+                new CentreSummaryForSuperAdmin { CentreName = "S" },
+                new CentreSummaryForSuperAdmin { CentreName = "r" },
+                new CentreSummaryForSuperAdmin { CentreName = "H" },
+                new CentreSummaryForSuperAdmin { CentreName = "m" },
             };
 
             // When

@@ -26,7 +26,7 @@
 
         public IActionResult Index()
         {
-            var centres = centresService.GetAllCentreSummaries();
+            var centres = centresService.GetAllCentreSummariesForSuperAdmin();
             var viewModel = new CentresViewModel(centres);
 
             return View(viewModel);

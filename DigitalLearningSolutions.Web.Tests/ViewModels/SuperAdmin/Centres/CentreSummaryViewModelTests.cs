@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.SuperAdmin.Centres
 {
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -12,7 +12,7 @@
         public void CentreSummaryViewModel_constructor_should_populate_expected_properties()
         {
             // Given
-            var centre = new Centre
+            var centre = new CentreSummaryForSuperAdmin()
             {
                 CentreId = 2,
                 CentreName = "North West Boroughs Healthcare NHS Foundation Trust",

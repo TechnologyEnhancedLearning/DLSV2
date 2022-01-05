@@ -1,10 +1,10 @@
-﻿using DigitalLearningSolutions.Data.Models;
-
-namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
 {
+    using DigitalLearningSolutions.Data.Models.Centres;
+
     public class CentreSummaryViewModel
     {
-        public CentreSummaryViewModel(Centre model)
+        public CentreSummaryViewModel(CentreSummaryForSuperAdmin model)
         {
             CentreId = model.CentreId;
             CentreName = model.CentreName;

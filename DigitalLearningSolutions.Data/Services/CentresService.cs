@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
 
     public interface ICentresService
@@ -12,7 +12,7 @@
 
         int? GetCentreRankForCentre(int centreId);
 
-        IEnumerable<Centre> GetAllCentreSummaries();
+        IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
     }
 
     public class CentresService : ICentresService
@@ -43,9 +43,9 @@
             return centreRanking?.Ranking;
         }
 
-        public IEnumerable<Centre> GetAllCentreSummaries()
+        public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
         {
-            return centresDataService.GetAllCentreSummaries();
+            return centresDataService.GetAllCentreSummariesForSuperAdmin();
         }
     }
 }

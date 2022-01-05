@@ -303,10 +303,10 @@
         }
 
         [Test]
-        public void GetAllCentreSummaries_returns_active_and_inactive_summary_details_and_reference_data()
+        public void GetAllCentreSummariesForSuperAdmin_returns_active_and_inactive_summary_details_and_reference_data()
         {
                 // When
-                var summaries = centresDataService.GetAllCentreSummaries().ToList();
+                var summaries = centresDataService.GetAllCentreSummariesForSuperAdmin().ToList();
 
                 // Then
                 var activeCentre = summaries.Single(c => c.CentreId == 2);

@@ -3,7 +3,7 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -73,14 +73,14 @@
         }
 
         [Test]
-        public void GetAllCentreSummaries_calls_dataService_and_returns_all_summary_details()
+        public void GetAllCentreSummariesForSuperAdmin_calls_dataService_and_returns_all_summary_details()
         {
             // Given
-            var centres = Builder<Centre>.CreateListOfSize(10).Build();
-            A.CallTo(() => centresDataService.GetAllCentreSummaries()).Returns(centres);
+            var centres = Builder<CentreSummaryForSuperAdmin>.CreateListOfSize(10).Build();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForSuperAdmin()).Returns(centres);
 
             // When
-            var result = centresService.GetAllCentreSummaries();
+            var result = centresService.GetAllCentreSummariesForSuperAdmin();
 
             // Then
             result
