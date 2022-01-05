@@ -1,28 +1,25 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.Models;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
 
     public class SummaryViewModel
     {
-        // TODO: Create SummaryViewModel
         public SummaryViewModel() { }
 
         public SummaryViewModel(
             AddNewCentreCourseData data
         )
         {
-            Application = data.SetCourseDetailsModel.ApplicationName;
+            Application = data.SetCourseDetailsModel!.ApplicationName;
             CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
             Password = data.SetCourseDetailsModel.Password;
             NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
-            AllowSelfEnrolment = data.SetCourseOptionsModel.AllowSelfEnrolment;
+            AllowSelfEnrolment = data.SetCourseOptionsModel!.AllowSelfEnrolment;
             HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
             DiagnosticObjectiveSelection = data.SetCourseOptionsModel.DiagnosticObjectiveSelection;
-            NumberOfLearning = GetNumberOfLearning(data.SetSectionContentModel);
-            NumberOfDiagnostic = GetNumberOfDiagnostic(data.SetSectionContentModel);
+            NumberOfLearning = GetNumberOfLearning(data);
+            NumberOfDiagnostic = GetNumberOfDiagnostic(data);
         }
 
         public SummaryViewModel(
@@ -58,18 +55,18 @@
         public int NumberOfLearning { get; set; }
         public int NumberOfDiagnostic { get; set; }
 
-        private static int GetNumberOfLearning(SetSectionContentViewModel model)
+        private static int GetNumberOfLearning(AddNewCentreCourseData data)
         {
-            var tutorials = model.GetTutorialsFromSections();
+            var tutorials = data.GetTutorialsFromSections();
 
             return tutorials.Count(t => t.LearningEnabled);
         }
 
-        private static int GetNumberOfDiagnostic(SetSectionContentViewModel model)
+        private static int GetNumberOfDiagnostic(AddNewCentreCourseData data)
         {
-            var tutorials = model.GetTutorialsFromSections();
+            var tutorials = data.GetTutorialsFromSections();
 
-            return tutorials.Count(t => t.LearningEnabled);
+            return tutorials.Count(t => t.DiagnosticEnabled);
         }
     }
 }

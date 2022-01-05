@@ -1,37 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
 
     public class SetSectionContentViewModel
     {
         public SetSectionContentViewModel() { }
 
-        public SetSectionContentViewModel(IEnumerable<SelectSectionViewModel> sections)
+        public SetSectionContentViewModel(SelectSectionViewModel section, int index)
         {
-            Sections = GetSectionModels(sections);
+            SectionName = section.Name;
+            Index = index;
         }
 
-        public IEnumerable<SectionContentViewModel> Sections { get; set; }
+        public string SectionName { get; set; }
 
-        public IEnumerable<CourseTutorialViewModel> GetTutorialsFromSections(
-        )
-        {
-            var tutorials = new List<CourseTutorialViewModel>();
-            foreach (var section in Sections)
-            {
-                tutorials.AddRange(section.Tutorials);
-            }
+        public int Index { get; set; }
 
-            return tutorials;
-        }
-
-        private static IEnumerable<SectionContentViewModel> GetSectionModels(
-            IEnumerable<SelectSectionViewModel> sections
-        )
-        {
-            return sections.Select(section => new SectionContentViewModel(section, false)).ToList();
-        }
+        public IEnumerable<CourseTutorialViewModel> Tutorials { get; set; }
     }
 }
