@@ -24,42 +24,33 @@
         [Test]
         public void GetObjectiveArray_returns_results_in_specified_json_format()
         {
-            // given
+            // Given
+            var sampleObjectiveArrayResult = new[]
+            {
+                new Objective(1, new List<int> { 6, 7, 8 }, 4),
+                new Objective(2, new List<int> { 17, 18, 19 }, 0),
+            };
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
-                .Returns(
-                    new[]
-                    {
-                        new Objective(1, new List<int> { 6, 7, 8 }, 4),
-                        new Objective(2, new List<int> { 17, 18, 19 }, 0),
-                    }
-                );
+                .Returns(sampleObjectiveArrayResult);
 
-            // when
+            // When
             var result = trackerActionService.GetObjectiveArray(1, 1);
 
-            // then
-            result.Should().BeEquivalentTo(
-                new TrackerObjectiveArray(
-                    new[]
-                    {
-                        new Objective(1, new List<int> { 6, 7, 8 }, 4),
-                        new Objective(2, new List<int> { 17, 18, 19 }, 0),
-                    }
-                )
-            );
+            // Then
+            result.Should().BeEquivalentTo(new TrackerObjectiveArray(sampleObjectiveArrayResult));
         }
 
         [Test]
         public void GetObjectiveArray_returns_empty_object_json_if_no_results_found()
         {
-            // given
+            // Given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
                 .Returns(new List<Objective>());
 
-            // when
+            // When
             var result = trackerActionService.GetObjectiveArray(1, 1);
 
-            // then
+            // Then
             result.Should().Be(null);
         }
 
@@ -72,15 +63,78 @@
             int? sectionId
         )
         {
-            // given
+            // Given
             A.CallTo(() => dataService.GetNonArchivedObjectivesBySectionAndCustomisationId(A<int>._, A<int>._))
                 .Returns(new[] { new Objective(1, new List<int> { 1 }, 9) });
 
-            // when
+            // When
             var result = trackerActionService.GetObjectiveArray(customisationId, sectionId);
 
-            // then
+            // Then
             result.Should().Be(null);
+        }
+
+        [Test]
+        public void GetObjectiveArrayCc_returns_results_in_specified_json_format()
+        {
+            // Given
+            var sampleCcObjectiveArrayResult = new[]
+            {
+                new CcObjective(1, "name1", 4),
+                new CcObjective(1, "name2", 0),
+            };
+            A.CallTo(() => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(1, 1, true))
+                .Returns(sampleCcObjectiveArrayResult);
+
+            // When
+            var result = trackerActionService.GetObjectiveArrayCc(1, 1, true);
+
+            // Then
+            result.Should().BeEquivalentTo(new TrackerObjectiveArrayCc(sampleCcObjectiveArrayResult));
+        }
+
+        [Test]
+        public void GetObjectiveArrayCc_returns_empty_object_json_if_no_results_found()
+        {
+            // Given
+            A.CallTo(
+                    () => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+                        A<int>._,
+                        A<int>._,
+                        A<bool>._
+                    )
+                )
+                .Returns(new List<CcObjective>());
+
+            // When
+            var result = trackerActionService.GetObjectiveArrayCc(1, 1, true);
+
+            // Then
+            result.Should().Be(null);
+        }
+
+        [Test]
+        [TestCase(null, 1, true)]
+        [TestCase(1, null, true)]
+        [TestCase(1, 1, null)]
+        public void GetObjectiveArrayCc_returns_null_if_parameter_missing(
+            int? customisationId,
+            int? sectionId,
+            bool? isPostLearning
+        )
+        {
+            // When
+            var result = trackerActionService.GetObjectiveArrayCc(customisationId, sectionId, isPostLearning);
+
+            // Then
+            result.Should().Be(null);
+            A.CallTo(
+                () => dataService.GetNonArchivedCcObjectivesBySectionAndCustomisationId(
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._
+                )
+            ).MustNotHaveHappened();
         }
     }
 }

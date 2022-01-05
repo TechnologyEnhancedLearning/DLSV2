@@ -13,6 +13,7 @@
         public int CompetencyGroupID { get; set; }
         public string? Vocabulary { get; set; }
         public bool Optional { get; set; }
+        public bool AlwaysShowDescription { get; set; }
         public bool IncludedInSelfAssessment { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
     }

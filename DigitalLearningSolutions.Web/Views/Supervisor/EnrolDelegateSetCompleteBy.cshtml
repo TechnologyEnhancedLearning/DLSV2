@@ -19,14 +19,23 @@
         <li class="nhsuk-breadcrumb__item">
           <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
              asp-action="DelegateProfileAssessments"
-             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName</a>
-          </li>
-          <li class="nhsuk-breadcrumb__item">
-            Enrol
-          </li>
-        </ol>
-      </div>
-    </nav>
+             asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+            @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+          </a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+          Enrol
+        </li>
+      </ol>
+    </div>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+         asp-action="DelegateProfileAssessments"
+         asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+        Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+      </a>
+    </p>
+  </nav>
 }
 @{
   var exampleDate = @DateTime.Today + TimeSpan.FromDays(7);

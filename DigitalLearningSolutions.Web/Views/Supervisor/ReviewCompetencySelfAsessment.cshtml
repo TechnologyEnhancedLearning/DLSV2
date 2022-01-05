@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;    
-    ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
-    ViewData["Application"] = "Supervisor";
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
+  ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -26,17 +26,24 @@
                asp-action="ReviewDelegateSelfAssessment"
                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
                asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName )
+              @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
             </a>
           </li>
           <li class="nhsuk-breadcrumb__item">
-            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0, 32) + "..." : Model.Competency.Name )
+            @(Model.Competency.Name.Length > 35 ? Model.Competency.Name.Substring(0,32) + "..." : Model.Competency.Name )
           </li>
         </ol>
       </div>
+      <p class="nhsuk-breadcrumb__back">
+        <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+           asp-action="ReviewDelegateSelfAssessment"
+           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+           asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+          Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0,32) + "..." : Model.DelegateSelfAssessment.RoleName )
+        </a>
+      </p>
     </nav>
 }
-
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <h1 class="nhsuk-details__summary-text nhsuk-u-margin-bottom-0">
@@ -63,8 +70,7 @@
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
-      @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.DescriptionLabel) ? "Description" :
-                           Model.DelegateSelfAssessment.DescriptionLabel)
+      Description
     </dt>
     <dd class="nhsuk-summary-list__value">
       @Html.Raw(Model.Competency.Description)
@@ -73,8 +79,7 @@
   }
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
-    @(string.IsNullOrWhiteSpace(Model.DelegateSelfAssessment.QuestionLabel) ? "Question" :
-    Model.DelegateSelfAssessment.QuestionLabel) 
+    Question
   </dt>
   <dd class="nhsuk-summary-list__value">
     @Model.Competency.AssessmentQuestions.First().Question
@@ -143,7 +148,6 @@
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
           <nhs-form-group nhs-validation-for="SupervisorComments">
             <vc:text-area asp-for="SupervisorComments" character-count="null" label="Reviewer comments" rows="5" css-class="" hint-text="" populate-with-current-value="true" spell-check="false"></vc:text-area>
-            <span asp-validation-for="SupervisorComments" class="text-danger"></span>
           </nhs-form-group>
 
           <nhs-form-group nhs-validation-for="SignedOff">

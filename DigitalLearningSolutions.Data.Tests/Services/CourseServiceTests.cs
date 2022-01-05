@@ -6,8 +6,10 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
 
@@ -18,6 +20,7 @@
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
+        private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
 
         [SetUp]
@@ -28,7 +31,13 @@
                 .Returns(GetSampleCourses());
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             progressDataService = A.Fake<IProgressDataService>();
-            courseService = new CourseService(courseDataService, courseAdminFieldsService, progressDataService);
+            groupsDataService = A.Fake<IGroupsDataService>();
+            courseService = new CourseService(
+                courseDataService,
+                courseAdminFieldsService,
+                progressDataService,
+                groupsDataService
+            );
         }
 
         [Test]
@@ -142,66 +151,267 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_and_categoryId_match()
+        public void VerifyAdminUserCanManageCourse_should_return_true_when_centreId_and_categoryId_match()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2, 2));
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
         [Test]
         public void
-            VerifyAdminUserCanAccessCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
+            VerifyAdminUserCanManageCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2, 2));
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 2, null);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, null);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_centre()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_centre()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((2, 2, 2));
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_false_with_incorrect_categoryID()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_categoryID()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((1, 1, 2));
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanManageCourse_should_return_null_when_course_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(null);
+
+            // When
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_null_when_course_does_not_exist()
+        {
+            // Given
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(null);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_not_at_centre_but_is_all_centres()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_but_is_not_all_centres()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 2,
+                AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_false_with_incorrect_categoryID()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            VerifyAdminUserCanViewCourse_should_return_true_when_centreId_matches_and_admin_category_id_is_null()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, null);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void
+            VerifyAdminUserCanViewCourse_should_return_false_when_course_is_not_at_centre_and_is_not_all_centres()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, null);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void
+            VerifyAdminUserCanViewCourse_should_return_false_when_course_is_all_centres_but_centre_doesnt_have_access()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = true,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 2, null);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeFalse();
         }
@@ -305,7 +515,7 @@
             // Given
             const int categoryId = 1;
             const int centreId = 1;
-            var courseOptions = new List<Course>();
+            var courseOptions = new List<CourseAssessmentDetails>();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courseOptions);
 
@@ -440,6 +650,53 @@
             // Then
             result.Count.Should().Be(2);
             result.All(x => x.DelegateCourseInfo.CourseCategoryId == 1).Should().BeTrue();
+        }
+
+        [Test]
+        public void GetEligibleCoursesToAddToGroup_does_not_return_inactive_courses()
+        {
+            // Given
+            const int centreId = 1;
+            const int categoryId = 1;
+            const int groupId = 1;
+            var courses = Builder<CourseAssessmentDetails>.CreateListOfSize(5)
+                .All()
+                .With(c => c.Active = false)
+                .Build();
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courses);
+            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId)).Returns(new List<GroupCourse>());
+
+            // When
+            var result = courseService.GetEligibleCoursesToAddToGroup(centreId, categoryId, groupId);
+
+            // Then
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void GetEligibleCoursesToAddToGroup_does_not_return_courses_already_in_group()
+        {
+            // Given
+            const int centreId = 1;
+            const int categoryId = 1;
+            const int groupId = 1;
+            var courses = Builder<CourseAssessmentDetails>.CreateListOfSize(5)
+                .All()
+                .With(c => c.Active = true)
+                .Build();
+            var groupCourse = new GroupCourse { CustomisationId = 2 };
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(courses);
+            A.CallTo(() => groupsDataService.GetGroupCourses(groupId, centreId))
+                .Returns(new List<GroupCourse> { groupCourse });
+
+            // When
+            var result = courseService.GetEligibleCoursesToAddToGroup(centreId, categoryId, groupId).ToList();
+
+            // Then
+            result.Should().HaveCount(4);
+            result.Should().NotContain(c => c.CustomisationId == 2);
         }
     }
 }
