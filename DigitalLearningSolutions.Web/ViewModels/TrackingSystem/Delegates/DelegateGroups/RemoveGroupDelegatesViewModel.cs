@@ -3,11 +3,11 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class GroupDelegatesRemoveViewModel
+    public class RemoveGroupDelegatesViewModel
     {
-        public GroupDelegatesRemoveViewModel() { }
+        public RemoveGroupDelegatesViewModel() { }
 
-        public GroupDelegatesRemoveViewModel(GroupDelegate delegateUser, string groupName, int groupId, int? progressId)
+        public RemoveGroupDelegatesViewModel(GroupDelegate delegateUser, string groupName, int groupId, int? progressId)
         {
             GroupId = groupId;
             GroupName = groupName;

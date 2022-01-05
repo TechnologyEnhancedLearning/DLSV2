@@ -13,7 +13,9 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId);
+        IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId);
+
+        GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -34,9 +36,18 @@
 
         void AddDelegateToGroup(int delegateId, int groupId, DateTime addedDate, int addedByFieldLink);
 
+        void RemoveRelatedProgressRecordsForGroupCourse(
+            int groupId,
+            int groupCustomisationId,
+            bool deleteStartedEnrolment,
+            DateTime removedDate
+        );
+
         void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate);
 
         void DeleteGroupDelegates(int groupId);
+
+        void DeleteGroupCustomisation(int groupCustomisationId);
 
         void DeleteGroupCustomisations(int groupId);
 
@@ -61,6 +72,32 @@
                 AND gc.InactivatedDate IS NULL
                 AND ap.ArchivedDate IS NULL
                 AND c.Active = 1";
+
+        private const string GroupCourseSql = @"SELECT
+                        GroupCustomisationID,
+                        GroupID,
+                        gc.CustomisationID,
+                        ap.ApplicationName,
+                        ap.CourseCategoryID,
+                        CustomisationName,
+                        Mandatory AS IsMandatory,
+                        IsAssessed,
+                        AddedDate AS AddedToGroup,
+                        c.CurrentVersion,
+                        gc.SupervisorAdminID,
+                        au.Forename AS SupervisorFirstName,
+                        au.Surname AS SupervisorLastName,
+                        gc.CompleteWithinMonths,
+                        ValidityMonths,
+                        c.Active,
+                        ap.ArchivedDate AS ApplicationArchivedDate,
+                        gc.InactivatedDate
+                    FROM GroupCustomisations AS gc
+                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
+                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
+                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
+                    WHERE c.CentreId = @centreId
+                    AND ap.DefaultContentTypeID <> 4AND ap.DefaultContentTypeID <> 4";
 
         private readonly IDbConnection connection;
 
@@ -120,38 +157,20 @@
             );
         }
 
-        public IEnumerable<GroupCourse> GetGroupCourses(int groupId, int centreId)
+        public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
-                @"SELECT
-                        GroupCustomisationID,
-                        GroupID,
-                        gc.CustomisationID,
-                        ap.ApplicationName,
-                        ap.CourseCategoryID,
-                        CustomisationName,
-                        Mandatory AS IsMandatory,
-                        IsAssessed,
-                        AddedDate AS AddedToGroup,
-                        c.CurrentVersion,
-                        gc.SupervisorAdminID,
-                        au.Forename AS SupervisorFirstName,
-                        au.Surname AS SupervisorLastName,
-                        gc.CompleteWithinMonths,
-                        ValidityMonths
-                    FROM GroupCustomisations AS gc
-                    JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
-                    INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = c.ApplicationID
-                    INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
-                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
-                    WHERE gc.GroupID = @groupId
-                        AND ca.CentreId = @centreId
-                        AND gc.InactivatedDate IS NULL
-                        AND ap.ArchivedDate IS NULL
-                        AND c.Active = 1
-                        AND ap.DefaultContentTypeID <> 4",
-                new { groupId, centreId }
+                GroupCourseSql,
+                new { centreId }
             );
+        }
+
+        public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId)
+        {
+            return connection.Query<GroupCourse>(
+                @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
+                new { groupCustomisationId, centreId }
+            ).FirstOrDefault();
         }
 
         public string? GetGroupName(int groupId, int centreId)
@@ -173,11 +192,6 @@
                         WHERE GroupID = @groupId",
                 new { groupId }
             ).SingleOrDefault();
-        }
-
-        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
-        {
-            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
         }
 
         public int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId)
@@ -242,6 +256,15 @@
             );
         }
 
+        public void DeleteGroupCustomisation(int groupCustomisationId)
+        {
+            connection.Execute(
+                @"DELETE FROM GroupCustomisations
+                     WHERE GroupCustomisationID = @groupCustomisationId",
+                new { groupCustomisationId }
+            );
+        }
+
         public void DeleteGroupCustomisations(int groupId)
         {
             connection.Execute(
@@ -260,6 +283,8 @@
             );
         }
 
+        // TODO: HEEDLS-689 see note on ticket regarding
+        // commonising duplicate SQL here and in method RemoveRelatedProgressRecordsForGroupCourse
         public void RemoveRelatedProgressRecordsForGroup(
             int groupId,
             int? delegateId,
@@ -288,6 +313,40 @@
                                                 AND GD.DelegateID = P.CandidateID
                                                 AND GCInner.GroupID != GC.GroupID))",
                 new { groupId, removedDate, deleteStartedEnrolment, delegateId }
+            );
+        }
+
+        // TODO: HEEDLS-689 see note on ticket regarding
+        // commonising duplicate SQL here and in method RemoveRelatedProgressRecordsForGroup
+        public void RemoveRelatedProgressRecordsForGroupCourse(
+            int groupId,
+            int groupCustomisationId,
+            bool deleteStartedEnrolment,
+            DateTime timeOfRemoval
+        )
+        {
+            connection.Execute(
+                @"UPDATE Progress
+                        SET
+                            RemovedDate = @timeOfRemoval,
+                            RemovalMethodID = 3
+                        WHERE ProgressID IN
+                            (SELECT ProgressID
+                             FROM Progress AS P
+                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+	                         INNER JOIN GroupDelegates AS GD ON GD.DelegateID = P.CandidateID AND GD.GroupID = GC.GroupID
+                             WHERE P.Completed IS NULL
+                             AND P.EnrollmentMethodID = 3
+                             AND GC.GroupID = @groupId
+                             AND GC.GroupCustomisationID = @groupCustomisationId
+                             AND P.RemovedDate IS NULL
+                             AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
+                             AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
+                                                INNER JOIN GroupDelegates AS GDInner ON GCInner.GroupID = GDInner.GroupID
+                                                WHERE GCInner.CustomisationID = P.CustomisationID
+                                                AND GDInner.DelegateID = P.CandidateID
+                                                AND GCInner.GroupID != GC.GroupID))",
+                new { groupId, timeOfRemoval, deleteStartedEnrolment, groupCustomisationId }
             );
         }
 
@@ -344,6 +403,11 @@
                     WHERE GroupID = @groupId AND CentreId = @centreId",
                 new { groupName, groupId, centreId }
             );
+        }
+
+        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
         }
     }
 }

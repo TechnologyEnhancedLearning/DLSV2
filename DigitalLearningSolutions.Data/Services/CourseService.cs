@@ -274,7 +274,9 @@
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
                 .Where(c => c.Active);
 
-            var groupCourseIds = groupsDataService.GetGroupCourses(centreId, groupId).Select(gc => gc.CustomisationId);
+            var groupCourseIds = groupsDataService.GetGroupCoursesForCentre(centreId)
+                .Where(gc => gc.IsUsable && gc.GroupId == groupId)
+                .Select(gc => gc.CustomisationId);
 
             var coursesNotAlreadyInGroup = allPossibleCourses.Where(c => !groupCourseIds.Contains(c.CustomisationId));
 
