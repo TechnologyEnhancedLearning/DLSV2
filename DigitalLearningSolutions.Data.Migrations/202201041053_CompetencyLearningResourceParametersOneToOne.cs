@@ -11,6 +11,9 @@
                                 (SELECT MIN(ID) As ID
                                     FROM CompetencyResourceAssessmentQuestionParameters as craqp
                                     WHERE craqp.CompetencyLearningResourceID = CompetencyResourceAssessmentQuestionParameters.CompetencyLearningResourceID)");
+            Delete.PrimaryKey("PK_CompetencyResourceAssessmentQuestionParameters")
+                .FromTable("CompetencyResourceAssessmentQuestionParameters");
+            Delete.Column("ID").FromTable("CompetencyResourceAssessmentQuestionParameters");
             Create.UniqueConstraint("IX_CompetencyResourceAssessmentQuestionParameters_CompetencyLearningResourceID")
                 .OnTable("CompetencyResourceAssessmentQuestionParameters").Column("CompetencyLearningResourceID");
         }
@@ -18,6 +21,8 @@
         {
             Delete.Index("IX_CompetencyResourceAssessmentQuestionParameters_CompetencyLearningResourceID")
                 .OnTable("CompetencyResourceAssessmentQuestionParameters");
+            Alter.Table("CompetencyResourceAssessmentQuestionParameters").AddColumn("ID").AsInt32().NotNullable()
+                .PrimaryKey().Identity();
         }
     }
 }
