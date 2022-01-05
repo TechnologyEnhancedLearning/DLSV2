@@ -551,7 +551,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CourseCategoryId = 2,
                 AllCentres = false,
                 CentreHasApplication = true,
-                DefaultContentTypeId = 1
+                DefaultContentTypeId = 1,
             };
 
             // When
@@ -580,7 +580,8 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CentreId = 549,
                 CourseCategoryId = 2,
                 AllCentres = true,
-                CentreHasApplication = true
+                CentreHasApplication = true,
+                DefaultContentTypeId = 1,
             };
 
             // When

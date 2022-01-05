@@ -6,5 +6,6 @@
         public int CourseCategoryId { get; set; }
         public bool AllCentres { get; set; }
         public bool CentreHasApplication { get; set; }
+        public int DefaultContentTypeId { get; set; }
     }
 }

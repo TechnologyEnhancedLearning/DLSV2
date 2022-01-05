@@ -237,25 +237,27 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
         {
-            int enrolmentExists = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
+            var enrolmentExists = (int)connection.ExecuteScalar(
+                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-               new { selfAssessmentId, candidateId });
+                new { selfAssessmentId, candidateId }
+            );
 
             if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
-                @"INSERT INTO [dbo].[CandidateAssessments]
+                    @"INSERT INTO [dbo].[CandidateAssessments]
                            ([CandidateID]
                            ,[SelfAssessmentID])
                      VALUES
                            (@candidateId,
                            @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
-            );
+                    new { selfAssessmentId, candidateId }
+                );
             }
+
             if (enrolmentExists < 1)
             {
                 logger.LogWarning(
@@ -539,7 +541,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                             )
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT)
-                        END AS CentreHasApplication
+                        END AS CentreHasApplication,
                         a.DefaultContentTypeID AS DefaultContentTypeId
                     FROM Customisations AS c
                     INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID

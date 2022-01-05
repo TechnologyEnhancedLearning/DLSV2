@@ -420,14 +420,22 @@
         public void VerifyAdminUserCanAccessCourse_should_return_null_with_content_type_id_4()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((1, 1, 4));
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 1,
+                AllCentres = true,
+                CentreHasApplication = false,
+                DefaultContentTypeId = 4,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .Returns(validationDetails);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeNull();
         }
@@ -472,14 +480,14 @@
         public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._))
-                .Returns((null, null, null));
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(null);
 
             // When
-            var result = courseService.VerifyAdminUserCanAccessCourse(1, 1, 2);
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
 
             // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1))
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeNull();
         }

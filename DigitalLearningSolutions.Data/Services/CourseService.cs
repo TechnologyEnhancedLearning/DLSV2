@@ -134,7 +134,8 @@
         {
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null || courseValidationDetails.DefaultContentTypeId == OldCompetencySelfAssessmentContentTypeId)
+            if (courseValidationDetails == null || courseValidationDetails.DefaultContentTypeId ==
+                OldCompetencySelfAssessmentContentTypeId)
             {
                 return null;
             }
@@ -156,7 +157,8 @@
         {
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null)
+            if (courseValidationDetails == null || courseValidationDetails.DefaultContentTypeId ==
+                OldCompetencySelfAssessmentContentTypeId)
             {
                 return null;
             }
