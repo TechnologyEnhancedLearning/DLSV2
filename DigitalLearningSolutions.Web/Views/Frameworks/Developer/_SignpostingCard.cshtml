@@ -27,30 +27,30 @@
           @Model.AssessmentQuestion
         </dd>
       </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Minimum result match
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.MinimumResultMatch
-    </dd>
-  </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Maximum result match
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.MaximumResultMatch
-    </dd>
-  </div>
-  <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Compare result to
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.CompareResultTo
-    </dd>
-  </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Minimum result match
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.MinimumResultMatch
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Maximum result match
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.MaximumResultMatch
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Compare result to
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.CompareResultTo
+        </dd>
+      </div>
   </dl>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -59,7 +59,7 @@
           asp-route-frameworkId="@parent.FrameworkId"
           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-assessmentQuestionParameterId="@Model.AssessmentQuestionParameterId">Manage parameters</a>
+          asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Manage parameter</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
       <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
     </div>

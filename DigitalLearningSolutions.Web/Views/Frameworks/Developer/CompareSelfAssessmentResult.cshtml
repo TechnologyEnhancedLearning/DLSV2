@@ -78,7 +78,8 @@
     <a asp-action="@(Model.SelectedQuestion != null ? "SignpostingParametersSetStatusView" : "EditSignpostingParameters")"
        asp-route-frameworkId="@Model.FrameworkId"
        asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+       asp-route-competencyLearningResourceId="@Model.AssessmentQuestionParameter?.CompetencyLearningResourceId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
       Back
     </a>
     <button asp-action="CompareSelfAssessmentResultNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">

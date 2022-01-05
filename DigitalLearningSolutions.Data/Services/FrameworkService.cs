@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
     using DigitalLearningSolutions.Data.Models.Email;
+    using System;
 
     public interface IFrameworkService
     {
@@ -65,7 +66,7 @@
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
-        CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterById(int competencyResourceAssessmentQuestionParameterId);
+        CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyResourceAssessmentQuestionParameterId);
         LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResourceID);
         int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
@@ -1607,13 +1608,13 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                 ).Single();
         }
 
-        public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterById(int competencyResourceAssessmentQuestionParameterId)
+        public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyLearningResourceId)
         {
             var parameter = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 $@"SELECT *
                     FROM CompetencyResourceAssessmentQuestionParameters
-                    WHERE ID = @competencyResourceAssessmentQuestionParameterId",
-                    new { competencyResourceAssessmentQuestionParameterId }).FirstOrDefault();
+                    WHERE CompetencyLearningResourceID = @competencyLearningResourceId",
+                    new { competencyLearningResourceId }).FirstOrDefault();
             if (parameter != null)
             {
                 var questions = connection.Query<AssessmentQuestion>(
@@ -1628,7 +1629,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
         {
             return connection.Query<SignpostingResourceParameter>(
-                $@"SELECT p.ID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
+                $@"SELECT p.CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
                     CASE 
 	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
 	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
@@ -1655,54 +1656,42 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
 
         public int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter)
         {
-            int rowsAffected = 0;
-            if (parameter.Id.HasValue)
+            int rowsAffected;
+            var relevance = parameter.RelevanceAssessmentQuestionID.HasValue ? parameter.RelevanceAssessmentQuestionID.Value.ToString() : "null";
+            if (parameter.CompetencyLearningResourceId.HasValue)
             {
                 rowsAffected = connection.Execute(
-                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters SET
-                            CompetencyLearningResourceID = {parameter.CompetencyLearningResourceID},
+                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters
+                        SET CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId},
                             AssessmentQuestionID = {parameter.AssessmentQuestionID},
                             MinResultMatch = {parameter.MinResultMatch},
                             MaxResultMatch = {parameter.MaxResultMatch},
-                            Essential = {(parameter.Essential ? 1 : 0)},
-                            RelevanceAssessmentQuestionID = {(parameter.RelevanceAssessmentQuestionID.HasValue ? parameter.RelevanceAssessmentQuestionID.Value.ToString() : "null")},
-                            CompareToRoleRequirements = {(parameter.CompareToRoleRequirements ? 1 : 0)}
-                        WHERE ID = {parameter.Id.Value}"
+                            Essential = {Convert.ToInt32(parameter.Essential)},
+                            RelevanceAssessmentQuestionID = {relevance},
+                            CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
+                        WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId.Value}"
                     );
             }
             else
             {
                 rowsAffected = connection.Execute(
                     $@"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
-                            CompetencyLearningResourceID,
-                            AssessmentQuestionID,
-                            MinResultMatch,
-                            MaxResultMatch,
-                            Essential,
-                            RelevanceAssessmentQuestionID,
-                            CompareToRoleRequirements)
+                        CompetencyLearningResourceID,
+                        AssessmentQuestionID,
+                        MinResultMatch,
+                        MaxResultMatch,
+                        Essential,
+                        RelevanceAssessmentQuestionID,
+                        CompareToRoleRequirements)
                         VALUES(
-                            {parameter.CompetencyLearningResourceID},
+                            {parameter.CompetencyLearningResourceId},
                             {parameter.AssessmentQuestionID},
                             {parameter.MinResultMatch},
                             {parameter.MaxResultMatch},
-                            {(parameter.Essential ? 1 : 0)},
-                            {(parameter.RelevanceAssessmentQuestionID.HasValue ? parameter.RelevanceAssessmentQuestionID.Value.ToString() : "null")},
-                            {(parameter.CompareToRoleRequirements ? 1 : 0)})"
+                            {Convert.ToInt32(parameter.Essential)},
+                            {relevance},
+                            {Convert.ToInt32(parameter.CompareToRoleRequirements)})"
                     );
-            }
-            if(rowsAffected < 1)
-            {
-                logger.LogWarning(
-                    $"Unable to {(parameter.Id.HasValue ? "update" : "insert")} CompetencyResourceAssessmentQuestionParameter."
-                    + $" Id: {parameter.Id}, AssessmentQuestionID: {parameter.AssessmentQuestionID},"
-                    + $" RelevanceAssessmentQuestionID: {parameter.RelevanceAssessmentQuestionID},"
-                    + $" CompetencyLearningResourceID: {parameter.CompetencyLearningResourceID}"
-                );
-            }
-            else if(rowsAffected > 1)
-            {
-                logger.LogError($"More than one row affected by update on table CompetencyResourceAssessmentQuestionParameter while filter condition was ID: {parameter.Id}");
             }
             return rowsAffected;
         }

@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class SignpostingResourceParameter
     {
-        public int Id { get; set; }
+        public int CompetencyLearningResourceId { get; set; }
         public string OriginalResourceName { get; set; }
         public bool Essential { get; set; }
         public string Question { get; set; }
