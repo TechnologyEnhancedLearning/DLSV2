@@ -27,7 +27,6 @@
   </p>
 </div>
 <h2>Competency Resource Links</h2>
-
 @if (Model.CompetencyResourceLinks.Any())
 {
   foreach (var link in Model.CompetencyResourceLinks)
@@ -36,7 +35,10 @@
   }
 
   <div class="nhsuk-u-margin-top-5">
-    <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
+    <a asp-action="SearchLearningResourcesAsync" class="nhsuk-button nhsuk-u-margin-bottom-4"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
       Add resource
     </a>
   </div>
@@ -48,7 +50,6 @@
       Cancel
     </a>
   </div>
-
 }
 else if (!Model.CompetencyResourceLinks.Any())
 {

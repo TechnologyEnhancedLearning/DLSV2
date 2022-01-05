@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     public class CompetencyResourceAssessmentQuestionParameter
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int CompetencyLearningResourceID { get; set; }
         public int AssessmentQuestionID { get; set; }
         public int MinResultMatch { get; set; }
