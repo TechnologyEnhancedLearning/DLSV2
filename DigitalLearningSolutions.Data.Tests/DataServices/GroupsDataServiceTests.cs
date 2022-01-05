@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Transactions;
@@ -49,7 +50,7 @@
                 LinkedToField = 4,
                 LinkedToFieldName = "Job group",
                 ShouldAddNewRegistrantsToGroup = true,
-                ChangesToRegistrationDetailsShouldChangeGroupMembership = true
+                ChangesToRegistrationDetailsShouldChangeGroupMembership = true,
             };
 
             // When
@@ -82,20 +83,30 @@
         }
 
         [Test]
-        public void GetGroupCourses_returns_expected_courses()
+        public void GetGroupCoursesForCentre_returns_expected_courses()
         {
             // Given
-            var expectedDateTime = new DateTime(2018, 11, 02, 10, 53, 38, 920);
-            var expectedFirstGroupCourse = GroupTestHelper.GetDefaultGroupCourse(addedToGroup: expectedDateTime);
+            var expectedGroupCourseIds = new List<int>
+            {
+                1,
+                2,
+                21,
+                22,
+                23,
+                24,
+                25,
+                28,
+            };
 
             // When
-            var result = groupsDataService.GetGroupCourses(8, 101).ToList();
+            var result = groupsDataService.GetGroupCoursesForCentre(101).ToList();
 
             // Then
             using (new AssertionScope())
             {
-                result.Count.Should().Be(2);
-                result.First(x => x.GroupCustomisationId == 1).Should().BeEquivalentTo(expectedFirstGroupCourse);
+                result.Should().HaveCount(8);
+                result.Should().OnlyHaveUniqueItems();
+                result.Should().OnlyContain(c => expectedGroupCourseIds.Contains(c.GroupCustomisationId));
             }
         }
 
@@ -155,7 +166,12 @@
                 const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
@@ -182,7 +198,12 @@
                 const int progressId = 282560;
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(progressId);
 
                 // Then
@@ -210,7 +231,12 @@
                 AddProgressRecordForGroupWithSharedCourse();
 
                 // When
-                groupsDataService.RemoveRelatedProgressRecordsForGroup(8, delegateId, removeStartedEnrolments, removedDate);
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    8,
+                    delegateId,
+                    removeStartedEnrolments,
+                    removedDate
+                );
                 var progressFields = await connection.GetProgressRemovedFields(285172);
 
                 // Then
@@ -267,7 +293,7 @@
                     LinkedToField = 0,
                     SyncFieldChanges = false,
                     AddNewRegistrants = false,
-                    PopulateExisting = false
+                    PopulateExisting = false,
                 };
 
                 // When
@@ -314,7 +340,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_false()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -347,7 +374,8 @@
         }
 
         [Test]
-        public async Task RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_deletes_records_correctly_when_deleteStartedEnrolment_is_true()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
@@ -402,28 +430,6 @@
         }
 
         [Test]
-        public async Task DeleteGroupCustomisations_deletes_all_group_customisations()
-        {
-            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                // Given
-                const int groupId = 8;
-
-                // When
-                groupsDataService.DeleteGroupCustomisations(groupId);
-
-                // Then
-                var groupCustomisations = await connection.GetCustomisationsForGroup(groupId);
-                groupCustomisations.Should().BeEmpty();
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void DeleteGroup_deletes_group()
         {
             using var transaction = new TransactionScope();
@@ -447,21 +453,177 @@
         }
 
         [Test]
+        public void GetGroupCourseForCentre_returns_expected_course()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
+            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                25,
+                103,
+                supervisorAdminId: 1,
+                completeWithinMonths: 0,
+                supervisorFirstName: "Kevin",
+                supervisorLastName: "Whittaker (Developer)",
+                addedToGroup: expectedDateTime
+            );
+
+            // When
+            var result = groupsDataService.GetGroupCourseForCentre(25, 101);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(expectedGroupCourse);
+            }
+        }
+
+        [Test]
+        public async Task DeleteGroupCustomisations_deletes_all_group_customisations()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int groupId = 8;
+
+            // When
+            groupsDataService.DeleteGroupCustomisations(groupId);
+
+            // Then
+            var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
+            groupCustomisations.Should().BeEmpty();
+
+            transaction.Dispose();
+        }
+
+        [Test]
+        public async Task DeleteGroupCustomisation_deletes_expected_group_customisation()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int groupCustomisationId = 25;
+            const int groupId = 101;
+
+            // When
+            groupsDataService.DeleteGroupCustomisation(groupCustomisationId);
+
+            // Then
+            var groupCustomisations = await connection.GetGroupCustomisationIdsForGroup(groupId);
+            groupCustomisations.Should().NotContain(groupCustomisationId);
+
+            transaction.Dispose();
+        }
+
+        [TestCase("self_enrolled", 60, 13, 273606)]
+        [TestCase("course_started", 60, 9, 282560)]
+        [TestCase("course_completed", 60, 9, 282564)]
+        [TestCase("non_group_candidate", 5, 28, 284992)]
+        public async Task RemoveRelatedProgressRecordsForGroupCourse_should_not_remove_progress_for_case(
+            string testCase,
+            int groupId,
+            int groupCustomisationId,
+            int progressId
+        )
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                false,
+                DateTime.Now
+            );
+
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+
+            removalMethod.Should().Be(0);
+            removalDate.Should().BeNull();
+
+            transaction.Dispose();
+        }
+
+        [TestCase("course_not_started", 60, 12, 282619, false)]
+        [TestCase("course_started_force_remove", 60, 9, 282560, true)]
+        public async Task RemoveRelatedProgressRecordsForGroupCourse_should_remove_progress_for_case(
+            string testCase,
+            int groupId,
+            int groupCustomisationId,
+            int progressId,
+            bool deleteStartedEnrolment
+        )
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            var progressRemoved = new DateTime(2021, 11, 6, 22, 23, 24, 567);
+
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                deleteStartedEnrolment,
+                progressRemoved
+            );
+
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressId);
+
+            removalMethod.Should().Be(3);
+            removalDate.Should().Be(progressRemoved);
+
+            transaction.Dispose();
+        }
+
+        [Test]
+        public async Task
+            RemoveRelatedProgressRecordsForGroupCourse_should_not_remove_progress_when_course_in_additional_groups()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+            // Given
+            const int progressRecordId = 285130;
+            const int groupId = 8;
+            const int groupCustomisationId = 1;
+
+            AddDelegateToGroupWithSharedCourse();
+
+            // When
+            groupsDataService.RemoveRelatedProgressRecordsForGroupCourse(
+                groupId,
+                groupCustomisationId,
+                false,
+                DateTime.Now
+            );
+
+            // Then
+            var (removalMethod, removalDate) = await connection.GetProgressRemovedFields(progressRecordId);
+
+            removalMethod.Should().Be(0);
+            removalDate.Should().BeNull();
+
+            transaction.Dispose();
+        }
+
+        [Test]
         public void UpdateGroupDescription_updates_record()
         {
+            // Given
+            const int centerId = 101;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope();
             try
             {
-                // Given
-                const int centerId = 101;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     centerId,
-                    newDescription);
+                    newDescription
+                );
 
                 // Then
                 var result = GetGroupDescriptionById(groupId);
@@ -476,19 +638,20 @@
         [Test]
         public void UpdateGroupDescription_with_incorrect_centreId_does_not_update_record()
         {
+            // Given
+            const int incorrectCentreId = 107;
+            const int groupId = 5;
+            const string newDescription = "Test group description1";
+
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
             try
             {
-                // Given
-                const int incorrectCentreId = 107;
-                const int groupId = 5;
-                const string newDescription = "Test group description1";
-
                 // When
                 groupsDataService.UpdateGroupDescription(
                     groupId,
                     incorrectCentreId,
-                    newDescription);
+                    newDescription
+                );
 
                 //Then
                 var result = GetGroupDescriptionById(groupId);
@@ -512,7 +675,6 @@
             //Then
             result.Should().BeEquivalentTo(expectedGroup);
         }
-
 
         [Test]
         public void GetGroupAtCentreById_returns_null_with_incorrect_centreId()
@@ -543,7 +705,8 @@
                 groupsDataService.UpdateGroupName(
                     groupId,
                     centerId,
-                    newGroupName);
+                    newGroupName
+                );
 
                 // Then
                 var result = GetGroupNameById(groupId);
@@ -570,7 +733,8 @@
                 groupsDataService.UpdateGroupName(
                     groupId,
                     incorrectCentreId,
-                    "Test group name");
+                    "Test group name"
+                );
 
                 //Then
                 var result = GetGroupNameById(groupId);
