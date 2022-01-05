@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.InteropServices.WindowsRuntime;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -517,6 +518,82 @@
                     WHERE (CAOC.IncludedInSelfAssessment = 1)",
                 new { selfAssessmentId, candidateId }
             ).ToList();
+        }
+
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>
+            GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
+        {
+            return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                @"SELECT
+                        ID,
+                        CompetencyLearningResourceID,
+                        AssessmentQuestionID,
+                        MinResultMatch,
+                        MaxResultMatch,
+                        Essential,
+                        RelevanceAssessmentQuestionID,
+                        CompareToRoleRequirements
+                    FROM CompetencyResourceAssessmentQuestionParameters
+                    WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
+                new { competencyLearningResourceIds }
+            );
+        }
+
+        public IEnumerable<CompetencyAssessmentQuestionRoleRequirement> GetCompetencyAssessmentQuestionRoleRequirements(
+            int competencyId,
+            int selfAssessmentId
+        )
+        {
+            return connection.Query<CompetencyAssessmentQuestionRoleRequirement>(
+                @"SELECT
+                        ID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        LevelValue,
+                        LevelRAG
+                    FROM CompetencyAssessmentQuestionRoleRequirements
+                    WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId",
+                new { selfAssessmentId, competencyId }
+            );
+        }
+
+        public IEnumerable<CompetencyAssessmentQuestion> GetCompetencyAssessmentQuestions(int competencyId)
+        {
+            return connection.Query<CompetencyAssessmentQuestion>(
+                @"SELECT
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        Ordering,
+                        Required
+                    FROM CompetencyAssessmentQuestions
+                    WHERE CompetencyID = @competencyId",
+                new { competencyId }
+            );
+        }
+
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+            int delegateId,
+            int selfAssessmentId,
+            int competencyId
+        )
+        {
+            return connection.Query<SelfAssessmentResult>(
+                @"SELECT
+                        ID,
+                        CandidateID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        Result,
+                        DateTime,
+                        SupportingComments
+                    FROM SelfAssessmentResults
+                    WHERE CompetencyID = @competencyId
+                        AND SelfAssessmentID = @selfAssessmentId
+                        AND CandidateID = @delegateId",
+                new { selfAssessmentId, delegateId, competencyId }
+            );
         }
 
         private static string PrintResult(

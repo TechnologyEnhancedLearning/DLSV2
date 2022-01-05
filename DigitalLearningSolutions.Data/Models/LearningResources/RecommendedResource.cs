@@ -10,7 +10,8 @@
             int resourceReferenceId,
             ResourceReferenceWithResourceDetails resourceReferenceDetails,
             LearningLogItem? incompleteLearningLogItem,
-            bool isCompleted
+            bool isCompleted,
+            decimal recommendationScore
         )
         {
             LearningResourceReferenceId = resourceReferenceId;
@@ -23,7 +24,7 @@
             IsInActionPlan = incompleteLearningLogItem != null;
             IsCompleted = isCompleted;
             LearningLogId = incompleteLearningLogItem?.LearningLogItemId;
-            RecommendationScore = 0; // TODO HEEDLS-705 Calculate this score
+            RecommendationScore = recommendationScore;
         }
 
         public int LearningResourceReferenceId { get; set; }
@@ -45,8 +46,7 @@
         public bool IsCompleted { get; set; }
 
         public int? LearningLogId { get; set; }
-
-        // TODO HEEDLS-705 Actually populate and use this
+        
         public decimal RecommendationScore { get; set; }
     }
 }
