@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Enums
 {
-    using DigitalLearningSolutions.Data.Models.Tracker;
-
-    public class TrackerEndpointResponse : Enumeration, ITrackerEndpointDataModel
+    public class TrackerEndpointResponse : Enumeration
     {
         public static readonly TrackerEndpointResponse Success =
             new TrackerEndpointResponse(1, nameof(Success));

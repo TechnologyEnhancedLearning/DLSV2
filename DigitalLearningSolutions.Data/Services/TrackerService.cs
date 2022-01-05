@@ -38,25 +38,34 @@
             {
                 if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
                 {
-                    ITrackerEndpointDataModel? actionDataResult = action switch
+                    if (action == TrackerEndpointAction.GetObjectiveArray)
                     {
-                        TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(
+                        var result = trackerActionService.GetObjectiveArray(
                             query.CustomisationId,
                             query.SectionId
-                        ),
-                        TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
+                        );
+                        return ConvertToJsonString(result);
+                    }
+
+                    if (action == TrackerEndpointAction.GetObjectiveArrayCc)
+                    {
+                        var result = trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
                             query.SectionId,
                             ConvertParamToNullableBoolean(query.IsPostLearning)
-                        ),
-                        TrackerEndpointAction.StoreDiagnosticJson => trackerActionService.StoreDiagnosticJson(
+                        );
+                        return ConvertToJsonString(result);
+                    }
+
+                    if (action == TrackerEndpointAction.StoreDiagnosticJson)
+                    {
+                        return trackerActionService.StoreDiagnosticJson(
                             query.ProgressId,
                             query.DiagnosticOutcome
-                        ),
-                        _ => throw new ArgumentOutOfRangeException(),
-                    };
+                        );
+                    }
 
-                    return ConvertToJsonString(actionDataResult);
+                    throw new ArgumentOutOfRangeException();
                 }
 
                 return TrackerEndpointResponse.InvalidAction;
