@@ -765,7 +765,7 @@
             const string alias = "alias";
             const int centreId = 1;
             const int delegateId = 2;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(id: delegateId,centreId: centreId, aliasId: alias);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateId, centreId, aliasId: alias);
             A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
 
             // When
@@ -868,7 +868,7 @@
             // Given
             const string email = "test@email.com";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(id: 3, emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
                 .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
@@ -901,7 +901,7 @@
                     editDelegateDetailsData.Surname,
                     editDelegateDetailsData.Email,
                     A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
-            )
+                )
             ).MustHaveHappened();
         }
 
@@ -961,6 +961,39 @@
             // Then
             A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void DelegateUserLearningHubAccountIsLinked_returns_true_when_user_has_authid()
+        {
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(learningHubAuthId);
+
+            // When
+            var result = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DelegateUserLearningHubAccountIsLinked_returns_false_when_user_does_not_have_authid()
+        {
+            // Given
+            const int delegateId = 3;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(null);
+
+            // When
+            var result = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
+
+            // Then
+            result.Should().BeFalse();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

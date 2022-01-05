@@ -133,7 +133,8 @@
 
         [Test]
         public void VerifyHash_returns_true_for_hashed_created_within_tolerance_time(
-            [Range(-TestTolerance, TestTolerance, 1)] int delay
+            [Range(-TestTolerance, TestTolerance, 1)]
+            int delay
         )
         {
             // Given
@@ -152,7 +153,8 @@
 
         [Test]
         public void VerifyHash_returns_false_for_hashes_created_outside_tolerance_time(
-            [Values(-(TestTolerance + 1), TestTolerance + 1)] int delay
+            [Values(-(TestTolerance + 1), TestTolerance + 1)]
+            int delay
         )
         {
             // Given
@@ -173,7 +175,11 @@
         public void ParseSsoAccountLinkingRequest_throws_exception_when_verifyHash_returns_false()
         {
             // Given
-            var linkLearningHubRequest = new LinkLearningHubRequest();
+            var linkLearningHubRequest = new LinkLearningHubRequest
+            {
+                Hash = "vrdz",
+                UserId = 56789,
+            };
 
             // When
             Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
@@ -223,11 +229,12 @@
         public void ParseSsoAccountLinkingRequest_throws_exception_when_state_is_incomplete()
         {
             // Given
+            var sessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
                 Hash = "vrdz",
-                SessionIdentifier = Guid.NewGuid(),
-                State = $"{Guid.NewGuid()}",
+                SessionIdentifier = sessionIdentifier,
+                State = $"{sessionIdentifier}",
                 UserId = 12345,
             };
 
