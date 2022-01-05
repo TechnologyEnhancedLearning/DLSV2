@@ -14,11 +14,15 @@
             Delete.PrimaryKey("PK_CompetencyResourceAssessmentQuestionParameters")
                 .FromTable("CompetencyResourceAssessmentQuestionParameters");
             Delete.Column("ID").FromTable("CompetencyResourceAssessmentQuestionParameters");
+            Create.PrimaryKey("PK_CompetencyResourceAssessmentQuestionParameters")
+                .OnTable("CompetencyResourceAssessmentQuestionParameters").Column("CompetencyLearningResourceID");
             Create.UniqueConstraint("IX_CompetencyResourceAssessmentQuestionParameters_CompetencyLearningResourceID")
                 .OnTable("CompetencyResourceAssessmentQuestionParameters").Column("CompetencyLearningResourceID");
         }
         public override void Down()
         {
+            Delete.PrimaryKey("PK_CompetencyResourceAssessmentQuestionParameters")
+                .FromTable("CompetencyResourceAssessmentQuestionParameters");
             Delete.Index("IX_CompetencyResourceAssessmentQuestionParameters_CompetencyLearningResourceID")
                 .OnTable("CompetencyResourceAssessmentQuestionParameters");
             Alter.Table("CompetencyResourceAssessmentQuestionParameters").AddColumn("ID").AsInt32().NotNullable()
