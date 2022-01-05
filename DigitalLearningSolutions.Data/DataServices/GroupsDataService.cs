@@ -97,7 +97,7 @@
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
                     WHERE c.CentreId = @centreId
-                    AND ap.DefaultContentTypeID <> 4AND ap.DefaultContentTypeID <> 4";
+                    AND ap.DefaultContentTypeID <> 4";
 
         private readonly IDbConnection connection;
 
