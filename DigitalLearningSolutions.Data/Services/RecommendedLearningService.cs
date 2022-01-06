@@ -134,7 +134,6 @@
 
             foreach (var competencyLearningResource in competencyLearningResources)
             {
-                // TODO Is this correct, can we assume single here?
                 var competencyResourceAssessmentQuestionParameterForClr =
                     competencyResourceAssessmentQuestionParameters.SingleOrDefault(
                         c => c.CompetencyLearningResourceId == competencyLearningResource.Id
@@ -170,7 +169,6 @@
 
         private decimal CalculateRoleRequirementValue(int competencyId, int selfAssessmentId)
         {
-            // TODO Is this correct? Can we assume single here?
             var competencyAssessmentQuestionRoleRequirement =
                 selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     competencyId,
