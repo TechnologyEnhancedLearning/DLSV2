@@ -97,7 +97,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             {
                 validationResults.Add(
                     new ValidationResult(
-                        "Select an option",
+                        "Select your professional registration number status",
                         new[] { nameof(HasProfessionalRegistrationNumber) }
                     )
                 );

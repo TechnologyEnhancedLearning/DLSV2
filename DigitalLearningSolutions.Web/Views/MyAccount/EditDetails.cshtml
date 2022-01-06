@@ -14,8 +14,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
+    @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password), nameof(Model.ProfessionalRegistrationNumber), nameof(Model.HasProfessionalRegistrationNumber) })" />
     }
 
@@ -30,44 +29,43 @@
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="@nameof(Model.FirstName)"
-                     label="First name"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="given-name"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input 
+        asp-for="@nameof(Model.FirstName)"
+        label="First name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="given-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="@nameof(Model.LastName)"
-                     label="Last name"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="family-name"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input 
+        asp-for="@nameof(Model.LastName)"
+        label="Last name"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="family-name"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input asp-for="@nameof(Model.Email)"
-                     label="Email address"
-                     populate-with-current-value="true"
-                     type="text"
-                     spell-check="false"
-                     autocomplete="email"
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input 
+        asp-for="@nameof(Model.Email)"
+        label="Email address"
+        populate-with-current-value="true"
+        type="text"
+        spell-check="false"
+        autocomplete="email"
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
-      @if (Model.IsDelegateUser)
-      {
+      @if (Model.IsDelegateUser) {
         <partial name="_EditRegistrationNumber" model="@Model" />
       }
     </div>
-
-
   </div>
 
-  @if (Model.IsDelegateUser)
-  {
+  @if (Model.IsDelegateUser) {
     <input type="hidden" asp-for="IsDelegateUser" />
     <div class="nhsuk-grid-row divider">
       <div class="nhsuk-grid-column-full">
@@ -114,18 +112,16 @@
                                 To remove your profile picture click the remove button.
                                 Changes will not be made until the Save button below is clicked."; }
       <input type="hidden" asp-for="ProfileImage" />
-      <vc:file-input asp-for="@nameof(Model.ProfileImageFile)"
-                     label="Profile picture (optional)"
-                     hint-text="@hintText"
-                     css-class="nhsuk-u-width-full" />
+      <vc:file-input 
+        asp-for="@nameof(Model.ProfileImageFile)"
+        label="Profile picture (optional)"
+        hint-text="@hintText"
+        css-class="nhsuk-u-width-full" />
     </div>
     <div class="nhsuk-grid-column-one-half">
-      @if (Model.ProfileImage != null)
-      {
+      @if (Model.ProfileImage != null) {
         <img class="profile-picture__image" src="data:image;base64,@Convert.ToBase64String(Model.ProfileImage)" alt="Profile Picture" />
-      }
-      else
-      {
+      } else {
         <img class="profile-picture__image" src="@Url.Content("~/images/avatar.png")" alt="Default Profile Picture" />
       }
     </div>
@@ -140,14 +136,15 @@
 
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input asp-for="@nameof(Model.Password)"
-                     label="Confirm password to save changes:"
-                     populate-with-current-value="false"
-                     type="password"
-                     spell-check="false"
-                     autocomplete=""
-                     hint-text=""
-                     css-class="nhsuk-u-width-one-half" />
+      <vc:text-input
+        asp-for="@nameof(Model.Password)"
+        label="Confirm password to save changes:"
+        populate-with-current-value="false"
+        type="password"
+        spell-check="false"
+        autocomplete=""
+        hint-text=""
+        css-class="nhsuk-u-width-one-half" />
 
       <button name="action" class="nhsuk-button" value="save">Save</button>
     </div>
