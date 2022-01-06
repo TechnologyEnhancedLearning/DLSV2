@@ -12,5 +12,5 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
     true,
     false,
     undefined,
-    ["title", "content"]);
+    ['title', 'content']);
 }());
