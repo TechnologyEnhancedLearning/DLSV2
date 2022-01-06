@@ -5,7 +5,7 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
   if (pathMatchResults === null) {
     return;
   }
-  const subApplication = pathMatchResults.groups.SubApplication;
+  const subApplication = pathMatchResults.groups?.SubApplication;
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate(`${subApplication}/Support/FAQs/AllItems`,
     true,
