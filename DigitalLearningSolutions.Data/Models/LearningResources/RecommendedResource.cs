@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
-    public class RecommendedResource
+    public class RecommendedResource : BaseSearchableItem
     {
         public RecommendedResource() { }
 
@@ -48,5 +48,11 @@
         public int? LearningLogId { get; set; }
         
         public decimal RecommendationScore { get; set; }
+
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? ResourceName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

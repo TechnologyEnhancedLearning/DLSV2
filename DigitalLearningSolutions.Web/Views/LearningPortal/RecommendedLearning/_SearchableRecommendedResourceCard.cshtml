@@ -16,17 +16,22 @@
   <div class="nhsuk-u-padding-left-4 nhsuk-u-margin-bottom-3">
     <div class="tags">
       <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--blue">@Model.Rating</strong>
+      </div>
+      <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
       </div>
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
       </div>
-      @if (Model.IsInActionPlan) {
+      @if (Model.IsInActionPlan)
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--blue">Already in action plan</strong>
         </div>
       }
-      @if (Model.IsCompleted) {
+      @if (Model.IsCompleted)
+      {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--green">Completed</strong>
         </div>
