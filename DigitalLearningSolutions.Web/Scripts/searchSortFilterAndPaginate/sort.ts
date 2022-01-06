@@ -11,14 +11,14 @@ export function sortSearchableElements(
   searchableElements: ISearchableElement[],
 ): ISearchableElement[] {
   const sortByValue = getSortBy();
-  const sortByIteratees = document.querySelector('[data-sort-by-multiple]') ? sortByValue.split(',') : [sortByValue];
+  const fieldsToSortBy = document.querySelector('[data-sort-by-multiple]') ? sortByValue.split(',') : [sortByValue];
   const sortDirection = getSortDirection();
 
   return _.orderBy<ISearchableElement>(
     searchableElements,
-    sortByIteratees
+    fieldsToSortBy
       .map((sortBy: string) => (searchableElement) => getSortValue(searchableElement, sortBy)),
-    sortByIteratees.map(() => ((sortDirection === 'Descending') ? 'desc' : 'asc')),
+    fieldsToSortBy.map(() => ((sortDirection === 'Descending') ? 'desc' : 'asc')),
   );
 }
 

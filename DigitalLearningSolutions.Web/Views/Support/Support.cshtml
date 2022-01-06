@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Support
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
@@ -20,7 +21,7 @@
     <p class="nhsuk-lede-text nhsuk-u-margin-top-4">Access Digital Learning Solutions support in 5 easy steps...</p>
     <ol>
       <li>
-        <a href="@Model.SupportSideNavViewModel.HelpUrl" target="_blank">Check the online Help documentation</a>. It is searchable and comprehensive.
+        <a href="@SupportLinksHelper.HelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">Check the online Help documentation</a>. It is searchable and comprehensive.
       </li>
       <li>
         <a asp-action="Index" asp-controller="Faqs" asp-route-dlsSubApplication="@Model.DlsSubApplication">Search our Frequently Asked Questions (FAQs)</a>.
@@ -39,7 +40,7 @@
       <li>
         If you have suggestions that you believe would help improve the platform,
         please also <a asp-action="Index" asp-controller="SupportTickets" asp-route-dlsSubApplication="@Model.DlsSubApplication">raise a support ticket</a>.
-        You can then <a href="@Model.SupportSideNavViewModel.ChangeRequestsUrl" target="_blank" rel="noreferrer">track these on our GitHub Change requests page</a>.
+        You can then <a href="@SupportLinksHelper.ChangeRequestsUrl" target="_blank" rel="noreferrer">track these on our GitHub Change requests page</a>.
       </li>
     </ol>
 

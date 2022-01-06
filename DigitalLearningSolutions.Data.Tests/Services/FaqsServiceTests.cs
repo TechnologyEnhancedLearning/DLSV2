@@ -32,7 +32,7 @@
             var expectedFaq = Builder<Faq>.CreateNew().With(f => f.Published = true).And(f => f.TargetGroup = 0)
                 .Build();
 
-            A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(expectedFaqId, expectedTargetGroup))
+            A.CallTo(() => faqDataService.GetFaqById(expectedFaqId))
                 .Returns(expectedFaq);
 
             // When
@@ -43,7 +43,7 @@
             {
                 result.Should().BeEquivalentTo(expectedFaq);
 
-                A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(expectedFaqId, expectedTargetGroup))
+                A.CallTo(() => faqDataService.GetFaqById(expectedFaqId))
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -55,7 +55,7 @@
             const int faqId = 2;
             const int targetGroup = 0;
 
-            A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup))
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
                 .Returns(null);
 
             // When
@@ -63,7 +63,48 @@
 
             // Then
             result.Should().BeNull();
-            A.CallTo(() => faqDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup))
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void GetPublishedFaqByIdForTargetGroup_returns_null_when_data_service_returns_unpublished_faq()
+        {
+            // Given
+            const int faqId = 2;
+            const int targetGroup = 0;
+            var faq = new Faq();
+
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
+                .Returns(faq);
+
+            // When
+            var result = faqsService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+
+            // Then
+            result.Should().BeNull();
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void
+            GetPublishedFaqByIdForTargetGroup_returns_null_when_data_service_returns_faq_with_different_targetGroup()
+        {
+            // Given
+            const int faqId = 2;
+            const int targetGroup = 0;
+            var faq = new Faq { Published = true, TargetGroup = 2 };
+
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
+                .Returns(faq);
+
+            // When
+            var result = faqsService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+
+            // Then
+            result.Should().BeNull();
+            A.CallTo(() => faqDataService.GetFaqById(faqId))
                 .MustHaveHappenedOnceExactly();
         }
 

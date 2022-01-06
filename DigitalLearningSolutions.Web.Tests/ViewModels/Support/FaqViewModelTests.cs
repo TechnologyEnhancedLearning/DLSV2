@@ -15,7 +15,7 @@
             var expectedSearchableName = "A common question?  p Helpful content  p ";
 
             // When
-            var faqViewModel = new FaqViewModel(faq);
+            var faqViewModel = new SearchableFaqModel(faq);
 
             // Then
             faqViewModel.Should().NotBeNull();

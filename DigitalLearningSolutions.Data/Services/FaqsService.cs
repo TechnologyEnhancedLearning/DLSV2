@@ -22,7 +22,14 @@
 
         public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
         {
-            return faqsDataService.GetPublishedFaqByIdForTargetGroup(faqId, targetGroup);
+            var faq = faqsDataService.GetFaqById(faqId);
+
+            if (faq?.Published == true && faq?.TargetGroup == targetGroup)
+            {
+                return faq;
+            }
+
+            return null;
         }
 
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)

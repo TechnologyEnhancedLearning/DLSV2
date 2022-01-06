@@ -57,8 +57,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "/SuperAdmin/Admins",
             "Super Admin - System Configuration",
             "SuperAdmin",
-            null,
-            false
+            displayHelpMenuItem: false
         );
 
         public readonly bool DisplayHelpMenuItem;

@@ -185,17 +185,17 @@
         }
 
         [Test]
-        public void ReplaceNoneAlphaNumericSpaceChars_null_input_returns_null()
+        public void ReplaceNonAlphaNumericSpaceChars_null_input_returns_null()
         {
             // When
-            var result = DisplayStringHelper.ReplaceNoneAlphaNumericSpaceChars(null, "a");
+            var result = DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(null, "a");
 
             // Then
             result.Should().BeNull();
         }
 
         [Test]
-        public void ReplaceNoneAlphaNumericSpaceChars_returns_cleaned_string_with_replacement()
+        public void ReplaceNonAlphaNumericSpaceChars_returns_cleaned_string_with_replacement()
         {
             // Given
             var input = "abcdefghijklmnopqrstuvwxyz" +
@@ -209,7 +209,7 @@
                                  "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr ";
 
             // When
-            var result = DisplayStringHelper.ReplaceNoneAlphaNumericSpaceChars(input, "r");
+            var result = DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(input, "r");
 
             // Then
             result.Should().Be(expectedOutput);

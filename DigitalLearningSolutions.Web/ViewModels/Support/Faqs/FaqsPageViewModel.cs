@@ -7,36 +7,31 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class FaqsViewModel : BaseSearchablePageViewModel, ISupportViewModel
+    public class FaqsPageViewModel : BaseSearchablePageViewModel, ISupportViewModel
     {
+        // A MatchCutOffScore of 65 is being used here rather than the default 80.
+        // The default Fuzzy Search configuration does not reliably bring back expected FAQs.
+        // Through trial and error a combination of the PartialTokenSetScorer ratio scorer
+        // and this cut off score bring back reliable results comparable to the JS search.
         private const int MatchCutOffScore = 65;
         private const string FaqSortBy = "Weighting,FaqId";
 
-        public FaqsViewModel(
+        public FaqsPageViewModel(
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
-            IEnumerable<FaqViewModel> faqs,
+            IEnumerable<SearchableFaqModel> faqs,
             int page,
             string? searchString
         ) : base(searchString, page, false, FaqSortBy, Descending, searchLabel: "Search faqs")
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
-            SupportSideNavViewModel = new SupportSideNavViewModel(currentSystemBaseUrl);
+            CurrentSystemBaseUrl = currentSystemBaseUrl;
 
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                faqs.AsQueryable(),
-                SortBy,
-                SortDirection
-            );
-
-            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(sortedItems, SearchString, MatchCutOffScore).ToList();
-            MatchingSearchResults = searchedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
-
-            Faqs = paginatedItems.Select(f => new SearchableFaqViewModel(DlsSubApplication, f));
+            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(faqs, SearchString, MatchCutOffScore).ToList();
+            var faqsToShow = SortFilterAndPaginate(searchedItems);
+            Faqs = faqsToShow.Select(f => new SearchableFaqViewModel(DlsSubApplication, f));
         }
 
         public IEnumerable<SearchableFaqViewModel> Faqs { get; set; }
@@ -49,6 +44,6 @@
 
         public DlsSubApplication DlsSubApplication { get; set; }
 
-        public SupportSideNavViewModel SupportSideNavViewModel { get; set; }
+        public string CurrentSystemBaseUrl { get; set; }
     }
 }

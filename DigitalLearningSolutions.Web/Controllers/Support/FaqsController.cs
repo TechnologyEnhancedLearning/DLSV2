@@ -59,9 +59,9 @@
             }
 
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
-                .Select(f => new FaqViewModel(f));
+                .Select(f => new SearchableFaqModel(f));
 
-            var model = new FaqsViewModel(
+            var model = new FaqsPageViewModel(
                 dlsSubApplication,
                 SupportPage.Faqs,
                 configuration.GetCurrentSystemBaseUrl(),
@@ -102,7 +102,7 @@
                 return NotFound();
             }
 
-            var model = new SearchableFaqViewModel(dlsSubApplication, new FaqViewModel(faq));
+            var model = new SearchableFaqViewModel(dlsSubApplication, new SearchableFaqModel(faq));
 
             return View(model);
         }
@@ -131,7 +131,7 @@
             }
 
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
-                .Select(f => new FaqViewModel(f));
+                .Select(f => new SearchableFaqModel(f));
 
             var model = new FaqItemsViewModel(dlsSubApplication, faqs);
 

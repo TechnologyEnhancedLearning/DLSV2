@@ -52,7 +52,7 @@
             return number == 1 ? string.Empty : "s";
         }
 
-        public static string? ReplaceNoneAlphaNumericSpaceChars(string? input, string replacement)
+        public static string? ReplaceNonAlphaNumericSpaceChars(string? input, string replacement)
         {
             if (string.IsNullOrWhiteSpace(input))
             {

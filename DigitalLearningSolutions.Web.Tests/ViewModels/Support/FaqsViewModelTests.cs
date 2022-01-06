@@ -52,13 +52,13 @@
         };
 
         [Test]
-        public void FaqsViewModel_search_for_document_page_one_returns_expected_first_ten_faqs()
+        public void FaqsPageViewModel_search_for_document_page_one_returns_expected_first_ten_faqs()
         {
             // Given
-            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f));
+            var faqViewModels = allFaqs.Select(f => new SearchableFaqModel(f));
 
             // When
-            var result = new FaqsViewModel(
+            var result = new FaqsPageViewModel(
                 DlsSubApplication.TrackingSystem,
                 SupportPage.HelpDocumentation,
                 "currentSystemBaseUrl",
@@ -73,14 +73,14 @@
         }
 
         [Test]
-        public void FaqsViewModel_search_for_document_page_two_returns_expected_one_faq()
+        public void FaqsPageViewModel_search_for_document_page_two_returns_expected_one_faq()
         {
             // Given
-            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new SearchableFaqModel(f)).ToList();
             var expectedFaq = new SearchableFaqViewModel(DlsSubApplication.TrackingSystem, faqViewModels.ElementAt(8));
 
             // When
-            var result = new FaqsViewModel(
+            var result = new FaqsPageViewModel(
                 DlsSubApplication.TrackingSystem,
                 SupportPage.HelpDocumentation,
                 "currentSystemBaseUrl",
@@ -96,14 +96,14 @@
         }
 
         [Test]
-        public void FaqsViewModel_search_for_help_returns_expected_six_faqs()
+        public void FaqsPageViewModel_search_for_help_returns_expected_six_faqs()
         {
             // Given
-            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new SearchableFaqModel(f)).ToList();
             var expectedFaqIds = new List<int> { 1, 2, 5, 7, 9, 10 };
 
             // When
-            var result = new FaqsViewModel(
+            var result = new FaqsPageViewModel(
                 DlsSubApplication.TrackingSystem,
                 SupportPage.HelpDocumentation,
                 "currentSystemBaseUrl",
@@ -120,10 +120,10 @@
         }
 
         [Test]
-        public void FaqsViewModel_search_for_word_returns_expected_two_faqs_in_weight_order_descending()
+        public void FaqsPageViewModel_search_for_word_returns_expected_two_faqs_in_weight_order_descending()
         {
             // Given
-            var faqViewModels = allFaqs.Select(f => new FaqViewModel(f)).ToList();
+            var faqViewModels = allFaqs.Select(f => new SearchableFaqModel(f)).ToList();
             var expectedFirstFaq = new SearchableFaqViewModel(
                 DlsSubApplication.TrackingSystem,
                 faqViewModels.ElementAt(4)
@@ -134,7 +134,7 @@
             );
 
             // When
-            var result = new FaqsViewModel(
+            var result = new FaqsPageViewModel(
                 DlsSubApplication.TrackingSystem,
                 SupportPage.HelpDocumentation,
                 "currentSystemBaseUrl",

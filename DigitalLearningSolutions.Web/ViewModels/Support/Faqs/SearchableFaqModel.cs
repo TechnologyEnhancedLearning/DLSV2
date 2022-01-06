@@ -5,11 +5,11 @@
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class FaqViewModel : BaseSearchableItem
+    public class SearchableFaqModel : BaseSearchableItem
     {
-        public FaqViewModel() { }
+        public SearchableFaqModel() { }
 
-        public FaqViewModel(Faq model)
+        public SearchableFaqModel(Faq model)
         {
             FaqId = model.FaqId;
             AHtml = model.AHtml;
@@ -33,7 +33,7 @@
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ??
-                   $"{QText} {DisplayStringHelper.ReplaceNoneAlphaNumericSpaceChars(AHtml, " ")}";
+                   $"{QText} {DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(AHtml, " ")}";
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }

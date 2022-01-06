@@ -6,6 +6,6 @@
     {
         SupportPage CurrentPage { get; set; }
         DlsSubApplication DlsSubApplication { get; set; }
-        SupportSideNavViewModel SupportSideNavViewModel { get; set; }
+        string CurrentSystemBaseUrl { get; set; }
     }
 }

@@ -99,15 +99,15 @@ export class SearchSortFilterAndPaginate {
       : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
 
-    const uniqueElements = _.uniqBy(sortedElements, 'parentIndex');
-    const resultCount = uniqueElements.length;
+    const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
+    const resultCount = sortedUniqueElements.length;
     SearchSortFilterAndPaginate
       .updateResultCount(resultCount);
 
     const totalPages = Math.ceil(resultCount / ITEMS_PER_PAGE);
     const paginatedElements = this.paginationEnabled
-      ? paginateResults(uniqueElements, this.page, totalPages)
-      : uniqueElements;
+      ? paginateResults(sortedUniqueElements, this.page, totalPages)
+      : sortedUniqueElements;
     SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
 

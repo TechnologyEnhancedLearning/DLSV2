@@ -12,11 +12,11 @@
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
-            SupportSideNavViewModel = new SupportSideNavViewModel(currentSystemBaseUrl);
+            CurrentSystemBaseUrl = currentSystemBaseUrl;
         }
 
         public SupportPage CurrentPage { get; set; }
         public DlsSubApplication DlsSubApplication { get; set; }
-        public SupportSideNavViewModel SupportSideNavViewModel { get; set; }
+        public string CurrentSystemBaseUrl { get; set; }
     }
 }

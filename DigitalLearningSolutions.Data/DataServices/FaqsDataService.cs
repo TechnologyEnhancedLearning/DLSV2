@@ -8,14 +8,14 @@
 
     public interface IFaqsDataService
     {
-        Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup);
+        Faq? GetFaqById(int faqId);
 
         IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
     }
 
     public class FaqsDataService : IFaqsDataService
     {
-        private const string PublishedFaqsForTargetGroupSql =
+        private const string FaqsSql =
             @"SELECT
                     FAQID,
 	                AHTML,
@@ -25,9 +25,7 @@
 	                QText,
 	                TargetGroup,
 	                Weighting
-                FROM FAQs
-                WHERE TargetGroup = @targetGroup
-                AND Published = 1";
+                FROM FAQs";
 
         private readonly IDbConnection connection;
 
@@ -36,18 +34,20 @@
             this.connection = connection;
         }
 
-        public Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup)
+        public Faq? GetFaqById(int faqId)
         {
             return connection.Query<Faq>(
-                @$"{PublishedFaqsForTargetGroupSql} AND FAQID = @faqId",
-                new { faqId, targetGroup }
+                @$"{FaqsSql} WHERE FAQID = @faqId",
+                new { faqId }
             ).SingleOrDefault();
         }
 
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
             return connection.Query<Faq>(
-                PublishedFaqsForTargetGroupSql,
+                @$"{FaqsSql}
+                WHERE TargetGroup = @targetGroup
+                AND Published = 1",
                 new { targetGroup }
             );
         }
