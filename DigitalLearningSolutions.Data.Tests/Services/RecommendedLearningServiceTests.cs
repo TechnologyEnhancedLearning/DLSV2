@@ -366,7 +366,7 @@
             )
         {
             // Given
-            
+
             GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
             GivenGetLearningLogItemsReturnsAnItem();
             GivenNotComparingToRoleRequirements();
@@ -417,7 +417,8 @@
                     A<int>._
                 )
             ).MustNotHaveHappened();
-            A.CallTo(() => selfAssessmentDataService.GetCompetencyAssessmentQuestions(CompetencyId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => selfAssessmentDataService.GetCompetencyAssessmentQuestions(CompetencyId))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -465,7 +466,8 @@
                     A<int>._
                 )
             ).MustNotHaveHappened();
-            A.CallTo(() => selfAssessmentDataService.GetCompetencyAssessmentQuestions(CompetencyId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => selfAssessmentDataService.GetCompetencyAssessmentQuestions(CompetencyId))
+                .MustHaveHappenedOnceExactly();
         }
 
         private void GivenResourceForSelfAssessmentIsReturnedByLearningHubApi(decimal rating = 0)
