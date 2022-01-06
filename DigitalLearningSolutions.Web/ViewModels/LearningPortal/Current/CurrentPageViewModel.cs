@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                     {
                         CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse),
                         SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment),
-                        _ => new LearningResourceCardViewModel((ActionPlanResource)activity)
+                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity)
                     };
                 }
             );

@@ -81,13 +81,13 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -109,13 +109,13 @@
         {
             // Given
             GivenCurrentActivitiesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -439,64 +439,6 @@
 
             // Then
             A.CallTo(() => actionPlanService.SetCompletionDate(learningLogItemId, completedDate))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public void SetCompleteByDate_for_action_plan_resource_calls_correct_service_method()
-        {
-            // Given
-            const int learningLogItemId = 4;
-            const int day = 1;
-            const int month = 1;
-            const int year = 2021;
-            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
-            var completeByDate = new DateTime(year, month, day);
-            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
-
-            // When
-            var result = controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
-
-            // Then
-            A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate))
-                .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Current");
-        }
-
-        [Test]
-        public void Setting_an_empty_complete_by_date_for_resource_calls_service_with_null()
-        {
-            // Given
-            const int learningLogItemId = 4;
-            var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
-            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
-
-            // When
-            var result = controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
-
-            // Then
-            A.CallTo(() => actionPlanService.SetCompleteByDate(learningLogItemId, null))
-                .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Current");
-        }
-
-        [Test]
-        public void SetCompleteByDate_for_action_plan_resource_does_not_call_service_with_invalid_model()
-        {
-            // Given
-            const int learningLogItemId = 4;
-            const int day = 1;
-            const int month = 1;
-            const int year = 4000;
-            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
-            controller.ModelState.AddModelError("year", "message");
-            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._)).DoesNothing();
-
-            // When
-            controller.SetCurrentActionPlanResourceCompleteByDate(learningLogItemId, formData);
-
-            // Then
-            A.CallTo(() => actionPlanService.SetCompleteByDate(A<int>._, A<DateTime>._))
                 .MustNotHaveHappened();
         }
 
