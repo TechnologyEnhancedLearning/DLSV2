@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web.Models
 
         public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
         public AssessmentQuestion SelectedCompareToQuestion { get; set; }
-
+        public List<LevelDescriptor> LevelDescriptors { get; set; }
 
         public SessionCompetencyLearningResourceSignpostingParameter()
         {

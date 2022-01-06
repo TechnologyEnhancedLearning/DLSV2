@@ -91,6 +91,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return RedirectToAction("EditSignpostingParameters", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId, competencyLearningResourceID });
         }
 
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Compare")]
         public IActionResult CompareSelfAssessmentResult(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             return ViewFromSession("Developer/CompareSelfAssessmentResult", frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
@@ -100,31 +101,19 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult CompareSelfAssessmentResultNext(CompareAssessmentQuestionType compareQuestionType, int? compareToQuestionId, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
-            {
-                Competency = session.Competency?.Description,
-                ResourceName = session.Resource?.OriginalResourceName,
-                AssessmentQuestionParameter = session.AssessmentQuestionParameter,
-            };
             session.SelectedCompareQuestionType = compareQuestionType;
             if (compareQuestionType == CompareAssessmentQuestionType.CompareToOtherQuestion)
             {
                 session.SelectedCompareToQuestion = session.Questions.FirstOrDefault(q => q.ID == compareToQuestionId);
             }
             TempData.Set(session);
-            return View("Developer/SignpostingSetStatus", model);
+            return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetStatus")]
         public IActionResult SignpostingSetStatus(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             return ViewFromSession("Developer/SignpostingSetStatus", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
-        }
-
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Summary")]
-        public IActionResult AddSignpostingParametersSummary(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
-        {
-            return ViewFromSession("Developer/AddSignpostingParametersSummary", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
         }
 
         private IActionResult ViewFromSession(string view, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
@@ -135,11 +124,22 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 Competency = session.Competency?.Description,
                 ResourceName = session.Resource?.OriginalResourceName,
                 AssessmentQuestionParameter = session.AssessmentQuestionParameter,
-                SelectedQuestion = session.SelectedQuestion,
+                Questions = session.Questions,
+                SelectedQuestion = session.Questions.FirstOrDefault(q => q.ID == session.SelectedQuestion?.ID),
                 SelectedLevelValues = session.SelectedLevelValues,
                 SelectedCompareToQuestion = session.SelectedCompareToQuestion,
-                Questions = session.Questions,
-                SelectedCompareQuestionType = session.SelectedCompareQuestionType
+                SelectedCompareQuestionType = session.SelectedCompareQuestionType,
+                AssessmentQuestionLevelDescriptors = session.LevelDescriptors
+            };
+            if (session.SelectedQuestion != null)
+            {
+                model.AssessmentQuestionParameter.AssessmentQuestion = session.AssessmentQuestionParameter.AssessmentQuestion;
+                model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(
+                    session.SelectedQuestion.ID,
+                    GetAdminId(),
+                    session.SelectedQuestion.MinValue,
+                    session.SelectedQuestion.MaxValue,
+                    session.SelectedQuestion.MinValue == 0).ToList();
             };
             return View(view, model);
         }
@@ -150,7 +150,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             session.AssessmentQuestionParameter.Essential = model.AssessmentQuestionParameter.Essential;
             TempData.Set(session);
-            return ViewFromSession("Developer/AddSignpostingParametersSummary", model.FrameworkId, model.FrameworkCompetencyId.Value, model.FrameworkCompetencyGroupId.Value);
+            return RedirectToAction("AddSignpostingParametersSummary", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
+        }
+
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Summary")]
+        public IActionResult AddSignpostingParametersSummary(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId)
+        {
+            return ViewFromSession("Developer/AddSignpostingParametersSummary", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
         }
 
         [HttpPost]
@@ -187,61 +193,43 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult EditSignpostingParametersNext(CompetencyLearningResourceSignpostingParametersViewModel model)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            model.Questions = session.Questions;
-            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter ?? new CompetencyResourceAssessmentQuestionParameter();
-            model.SelectedQuestion = model.Questions.FirstOrDefault(q => q.ID == model.SelectedQuestion.ID);
-            session.SelectedQuestion = model.SelectedQuestion;
-            session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
-            if (model.SelectedQuestion == null)
+            if (model.SelectedQuestion?.ID == null)
             {
-                return RedirectToAction("EditSignpostingParameters", "Frameworks",
-                    new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, model.AssessmentQuestionParameter?.CompetencyLearningResourceId });
+                return RedirectToAction("EditSignpostingParameters", "Frameworks", new {
+                    model.FrameworkId,
+                    model.FrameworkCompetencyId,
+                    model.FrameworkCompetencyGroupId,
+                    model.AssessmentQuestionParameter?.CompetencyLearningResourceId });
             }
             else
             {
-                var adminId = GetAdminId();
-                model.Competency = session.Competency.Description;
-                model.ResourceName = session.Resource?.OriginalResourceName;
-                model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, adminId, session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
+                session.SelectedQuestion = session.Questions.FirstOrDefault(q => q.ID == model.SelectedQuestion.ID);
+                session.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(
+                    session.SelectedQuestion.ID,
+                    GetAdminId(),
+                    session.SelectedQuestion.MinValue,
+                    session.SelectedQuestion.MaxValue,
+                    session.SelectedQuestion.MinValue == 0).ToList();
                 TempData.Set(session);
-                return View("Developer/SignpostingParametersSetStatusView", model);
+                return RedirectToAction("SignpostingParametersSetStatusView", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
             }
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetStatusView")]
         public IActionResult SignpostingParametersSetStatusView(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
-            var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
-            model.SelectedQuestion = session.SelectedQuestion;
-            model.SelectedLevelValues = session.SelectedLevelValues;
-            model.Competency = session.Competency.Description;
-            model.ResourceName = session.Resource?.OriginalResourceName;
-            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
-            if(session.SelectedQuestion != null)
-            {
-                model.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
-                model.AssessmentQuestionLevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(session.SelectedQuestion.ID, GetAdminId(), session.SelectedQuestion.MinValue, session.SelectedQuestion.MaxValue, session.SelectedQuestion.MinValue == 0).ToList();
-                TempData["NoQuestionSelected"] = null;
-            };
-            return View("Developer/SignpostingParametersSetStatusView", model);
+            return ViewFromSession("Developer/SignpostingParametersSetStatusView", frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
         }
 
         [HttpPost]
         public IActionResult SignpostingParametersSetStatusViewNext(CompetencyResourceAssessmentQuestionParameter assessmentParameter, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             var updateSelectedValuesFromSlider = session.SelectedQuestion.AssessmentQuestionInputTypeID == 2;
-            model.Competency = session.Competency?.Description;
-            model.ResourceName = session.Resource?.OriginalResourceName;
-            model.AssessmentQuestionParameter = session.AssessmentQuestionParameter;
-            model.Questions = session.Questions;
-            model.SelectedQuestion = session.SelectedQuestion;
             session.AssessmentQuestionParameter.MinResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MinResultMatch : selectedLevelValues.Min();
             session.AssessmentQuestionParameter.MaxResultMatch = updateSelectedValuesFromSlider ? assessmentParameter.MaxResultMatch : selectedLevelValues.Max();
             TempData.Set(session);
-            return View("Developer/CompareSelfAssessmentResult", model);
+            return RedirectToAction("CompareSelfAssessmentResult", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 
         private CompetencyResourceSignpostingViewModel GetSignpostingResourceParameters(int frameworkId, int frameworkCompetencyId)
