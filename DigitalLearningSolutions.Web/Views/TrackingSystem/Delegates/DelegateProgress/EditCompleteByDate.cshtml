@@ -8,7 +8,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit complete by date" : "Edit complete by date";
   var routeParamsForBackLink = new Dictionary<string, string?>();
-    
+
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
@@ -16,6 +16,10 @@
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the complete by date.",
+    "Activities with no complete by date will be removed after 6 months of inactivity.",
+  };
 }
 
 @section NavBreadcrumbs {
@@ -53,9 +57,8 @@
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
-                     css-class=""
-                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the complete by date.
-                     Activities with no complete by date will be removed after 6 months of inactivity." />
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

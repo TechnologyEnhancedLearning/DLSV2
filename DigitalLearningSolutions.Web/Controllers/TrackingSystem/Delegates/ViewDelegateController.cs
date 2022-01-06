@@ -86,9 +86,14 @@
 
         [HttpGet]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult ConfirmRemoveFromCourse(int delegateId, int customisationId)
         {
+            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
+            {
+                return new NotFoundResult();
+            }
+
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId);
             var course = courseDataService.GetCourseNameAndApplication(customisationId);
 
@@ -105,7 +110,7 @@
 
         [HttpPost]
         [Route("{customisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult ExecuteRemoveFromCourse(
             int delegateId,
             int customisationId,
@@ -117,14 +122,16 @@
                 return View("ConfirmRemoveFromCourse", model);
             }
 
-            if (!courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
-                delegateId,
-                customisationId,
-                RemovalMethod.RemovedByAdmin
-            ))
+            if (!courseService.DelegateHasCurrentProgress(delegateId, customisationId))
             {
                 return new NotFoundResult();
             }
+
+            courseService.RemoveDelegateFromCourse(
+                delegateId,
+                customisationId,
+                RemovalMethod.RemovedByAdmin
+            );
 
             return RedirectToAction("Index", new { delegateId });
         }

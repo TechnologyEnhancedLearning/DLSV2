@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
@@ -58,28 +59,31 @@
         }
 
         [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCurrentCourseCompleteByDate(int id, int day, int month, int year, int progressId)
+        public IActionResult SetCurrentCourseCompleteByDate(
+            int id,
+            int progressId,
+            EditCompleteByDateFormData formData
+        )
         {
-            if (day == 0 && month == 0 && year == 0)
+            if (!ModelState.IsValid)
             {
-                courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), null);
-                return RedirectToAction("Current");
+                var model = new EditCompleteByDateViewModel(formData, id, progressId);
+                return View("Current/SetCompleteByDate", model);
             }
 
-            var validationResult = OldDateValidator.ValidateDate(day, month, year);
-            if (!validationResult.DateValid)
-            {
-                return RedirectToAction("SetCurrentCourseCompleteByDate", new { id, day, month, year });
-            }
+            var completeByDate = DateValidator.IsDateNull(formData.Day, formData.Month, formData.Year)
+                ? (DateTime?)null
+                : new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
-            var completeByDate = new DateTime(year, month, day);
             courseDataService.SetCompleteByDate(progressId, User.GetCandidateIdKnownNotNull(), completeByDate);
             return RedirectToAction("Current");
         }
 
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [Route("/LearningPortal/Current/CompleteBy/{id:int}")]
-        public IActionResult SetCurrentCourseCompleteByDate(int id, int? day, int? month, int? year)
+        public IActionResult SetCurrentCourseCompleteByDate(int id)
         {
             var currentCourses = courseDataService.GetCurrentCourses(User.GetCandidateIdKnownNotNull());
             var course = currentCourses.FirstOrDefault(c => c.Id == id);
@@ -91,8 +95,8 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 404 });
             }
 
-            var model = new CurrentCourseViewModel(course);
-            if (model.CompleteByDate != null && !model.SelfEnrolled)
+            var courseModel = new CurrentCourseViewModel(course);
+            if (courseModel.CompleteByDate != null && !courseModel.SelfEnrolled)
             {
                 logger.LogWarning(
                     $"Attempt to set complete by date for course with id {id} for user with id ${User.GetCandidateIdKnownNotNull()} " +
@@ -101,12 +105,14 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (day != null && month != null && year != null)
-            {
-                model.CompleteByValidationResult = OldDateValidator.ValidateDate(day.Value, month.Value, year.Value);
-            }
-
-            return View("Current/SetCompleteByDate", model);
+            var editCompleteByDateViewModel = new EditCompleteByDateViewModel(
+                id,
+                course.Name,
+                LearningItemType.Course,
+                courseModel.CompleteByDate,
+                courseModel.ProgressId
+            );
+            return View("Current/SetCompleteByDate", editCompleteByDateViewModel);
         }
 
         [Route("/LearningPortal/Current/Remove/{id:int}")]
@@ -202,6 +208,47 @@
             var completionDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
 
             actionPlanService.SetCompletionDate(learningLogItemId, completionDate);
+            return RedirectToAction("Current");
+        }
+
+        [HttpGet]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
+        public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId)
+        {
+            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            var model = new EditCompleteByDateViewModel(
+                learningLogItemId,
+                actionPlanResource!.Name,
+                LearningItemType.Resource,
+                actionPlanResource.CompleteByDate
+            );
+
+            return View("Current/SetCompleteByDate", model);
+        }
+
+        [HttpPost]
+        [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
+        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
+        [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
+        public IActionResult SetCurrentActionPlanResourceCompleteByDate(
+            int learningLogItemId,
+            EditCompleteByDateFormData formData
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompleteByDateViewModel(formData, learningLogItemId);
+                return View("Current/SetCompleteByDate", model);
+            }
+
+            var completeByDate = DateValidator.IsDateNull(formData.Day, formData.Month, formData.Year)
+                ? (DateTime?)null
+                : new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
+
+            actionPlanService.SetCompleteByDate(learningLogItemId, completeByDate);
             return RedirectToAction("Current");
         }
 
