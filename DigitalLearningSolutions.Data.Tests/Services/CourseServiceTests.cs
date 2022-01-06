@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -440,6 +441,58 @@
             result.Should().BeNull();
         }
 
+        public void DelegateHasCurrentProgress_returns_true_if_delegate_has_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress> {
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
+                }
+            );
+
+            // When
+            var result = courseService.DelegateHasCurrentProgress(1, 1);
+
+            // then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DelegateHasCurrentProgress_returns_false_if_delegate_has_no_current_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>()
+            );
+
+            // When
+            var result = courseService.DelegateHasCurrentProgress(1, 1);
+
+            // then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void DelegateHasCurrentProgress_returns_false_if_delegate_has_only_completed_or_removed_progress()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
+                new List<Progress>
+                {
+                    new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
+                    new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
+                }
+            );
+
+            // When
+            var result = courseService.DelegateHasCurrentProgress(1, 1);
+
+            // then
+            result.Should().BeFalse();
+        }
+
         [Test]
         public void RemoveDelegateFromCourse_removes_delegate_from_course()
         {
@@ -449,17 +502,15 @@
             );
 
             // When
-            var result =
-                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+            courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
-            result.Should().BeTrue();
             A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
                 .MustHaveHappened();
         }
 
         [Test]
-        public void RemoveDelegateFromCourse_returns_false_if_no_current_progress()
+        public void RemoveDelegateFromCourse_does_nothing_if_no_current_progress()
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
@@ -467,11 +518,9 @@
             );
 
             // When
-            var result =
-                courseService.RemoveDelegateFromCourseIfDelegateHasCurrentProgress(1, 1, RemovalMethod.RemovedByAdmin);
+            courseService.RemoveDelegateFromCourse(1, 1, RemovalMethod.RemovedByAdmin);
 
             // then
-            result.Should().BeFalse();
             A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
                 .MustNotHaveHappened();
         }
