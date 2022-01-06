@@ -37,6 +37,7 @@
           </span>
         </legend>
         <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+        <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SupervisorDelegateId" />
         <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
         <div class="nhsuk-radios">
           @foreach (var role in Model.SelfAssessmentSupervisorRoles)
@@ -59,10 +60,13 @@
       </fieldset>
     </nhs-form-group>
     <div class=" nhsuk-u-margin-top-5">
+      @if (Model.SupervisorDelegateId == null) {
       <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
         Back
       </a>
-      <button class="nhsuk-button" id="save-button" type="submit">Next</button>
+      }
+      
+      <button class="nhsuk-button" id="save-button" type="submit">@(Model.SupervisorDelegateId == null ? "Next" : "Submit")</button>
     </div>
 
   </form>

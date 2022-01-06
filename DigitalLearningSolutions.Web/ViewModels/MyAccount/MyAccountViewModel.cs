@@ -13,7 +13,8 @@
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             CentreCustomPromptsWithAnswers? customPrompts,
-            DlsSubApplication dlsSubApplication)
+            DlsSubApplication dlsSubApplication
+        )
         {
             FirstName = adminUser?.FirstName ?? delegateUser?.FirstName;
             Surname = adminUser?.LastName ?? delegateUser?.LastName;
@@ -23,12 +24,22 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
+            ProfessionalRegistrationNumber = delegateUser?.HasBeenPromptedForPrn == true
+                ? delegateUser.ProfessionalRegistrationNumber ?? "Not professionally registered"
+                : "Not yet provided";
 
             CustomFields = new List<CustomFieldViewModel>();
             if (customPrompts != null)
             {
-                CustomFields = customPrompts.CustomPrompts.Select(cp =>
-                        new CustomFieldViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory, cp.Answer))
+                CustomFields = customPrompts.CustomPrompts.Select(
+                        cp =>
+                            new CustomFieldViewModel(
+                                cp.CustomPromptNumber,
+                                cp.CustomPromptText,
+                                cp.Mandatory,
+                                cp.Answer
+                            )
+                    )
                     .ToList();
             }
 
@@ -50,6 +61,8 @@
         public byte[]? ProfilePicture { get; set; }
 
         public string? JobGroup { get; set; }
+
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public List<CustomFieldViewModel> CustomFields { get; set; }
 

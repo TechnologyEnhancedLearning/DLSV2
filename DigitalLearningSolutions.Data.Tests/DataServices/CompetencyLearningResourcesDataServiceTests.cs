@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.LearningResources;
@@ -22,34 +23,6 @@
         }
 
         [Test]
-        public void GetCompetencyLearningResourceById_returns_expected_resource()
-        {
-            using var transaction = new TransactionScope();
-            try
-            {
-                // Given
-                var expectedResource = new CompetencyLearningResource
-                {
-                    Id = 1,
-                    CompetencyId = 1,
-                    LearningHubResourceReferenceId = 2,
-                    AdminId = 7,
-                };
-                InsertCompetencyLearningResources();
-
-                // When
-                var result = service.GetCompetencyLearningResourceById(1);
-
-                // Then
-                result.Should().BeEquivalentTo(expectedResource);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
-        }
-
-        [Test]
         public void GetCompetencyIdsByLearningHubResourceReference_returns_expected_ids()
         {
             using var transaction = new TransactionScope();
@@ -60,7 +33,7 @@
                 InsertCompetencyLearningResources();
 
                 // When
-                var result = service.GetCompetencyIdsByLearningHubResourceReference(2);
+                var result = service.GetCompetencyIdsByLearningResourceReferenceId(2);
 
                 // Then
                 result.Should().BeEquivalentTo(expectedIds);
@@ -71,9 +44,37 @@
             }
         }
 
+        [Test]
+        public void GetCompetencyLearningResourcesByCompetencyId_returns_expected_records()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            InsertCompetencyLearningResources();
+            var expectedItem = new CompetencyLearningResource
+            {
+                Id = 1,
+                CompetencyId = 1,
+                LearningResourceReferenceId = 2,
+                AdminId = 7,
+                LearningHubResourceReferenceId = 2
+            };
+
+            // When
+            var result = service.GetCompetencyLearningResourcesByCompetencyId(1).ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Should().ContainEquivalentOf(expectedItem);
+        }
+
         private void InsertCompetencyLearningResources()
         {
             var adminId = UserTestHelper.GetDefaultAdminUser().Id;
+
+            testHelper.InsertLearningResourceReference(2, 2, adminId, "Resource 2");
+            testHelper.InsertLearningResourceReference(3, 3, adminId, "Resource 3");
+
             testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
             testHelper.InsertCompetencyLearningResource(2, 2, 2, adminId);
             testHelper.InsertCompetencyLearningResource(3, 3, 2, adminId);
