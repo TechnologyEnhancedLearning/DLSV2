@@ -181,7 +181,7 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
                     myAccountDetailsData.ProfessionRegistrationNumber,
-                    myAccountDetailsData.HasBeenPromptedForPrns,
+                    myAccountDetailsData.HasBeenPromptedForPrn,
                     delegateIds
                 );
 

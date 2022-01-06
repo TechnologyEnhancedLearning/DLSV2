@@ -20,7 +20,7 @@
             DelegateId = delegateId;
             Password = password;
             ProfessionRegistrationNumber = professionalRegNumber;
-            HasBeenPromptedForPrns = yesNoSelection != YesNoSelectionEnum.None;
+            HasBeenPromptedForPrn = yesNoSelection != YesNoSelectionEnum.None;
 
             ProfileImage = profileImage;
         }
@@ -30,6 +30,6 @@
         public string Password { get; set; }
         public byte[]? ProfileImage { get; set; }
         public string? ProfessionRegistrationNumber { get; set; }
-        public bool HasBeenPromptedForPrns { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
     }
 }
