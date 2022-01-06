@@ -1,12 +1,16 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 (function dlsSupportFaqsHelper(): void {
-  const matches = window.location.pathname.match(/^\/(\w+)\/Support\/FAQs#?$/);
-
-  if (!matches || matches.length < 2) {
+  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?$/);
+  if (pathMatchResults === null) {
     return;
   }
-
+  const subApplication = pathMatchResults.groups.SubApplication;
   // eslint-disable-next-line no-new
-  new SearchSortFilterAndPaginate(`${matches[1]}/Support/FAQs/AllItems`, true, true, false, undefined, ['title', 'content']);
+  new SearchSortFilterAndPaginate(`${subApplication}/Support/FAQs/AllItems`,
+    true,
+    true,
+    false,
+    undefined,
+    ["title", "content"]);
 }());
