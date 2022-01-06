@@ -104,6 +104,7 @@
                 ELSE 0
             END AS HasDelegateNominatedRoles,
             SAS.Optional,
+            C.AlwaysShowDescription,
             AQ.ID AS Id,
             AQ.Question,
             AQ.MaxValueDescription,

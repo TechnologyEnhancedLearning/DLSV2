@@ -9,6 +9,7 @@
   var emailDateCss = "nhsuk-checkboxes__conditional"
                      + (Model.ShouldSendEmail ? "" : " nhsuk-checkboxes__conditional--hidden")
                      + (errorHasOccurred ? " nhsuk-u-padding-left-5" : "");
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
 @section NavMenuItems {
@@ -45,7 +46,7 @@
                        month-id="Month"
                        year-id="Year"
                        css-class="@emailDateCss"
-                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                       hint-text-lines="@hintTextLines" />
       </div>
 
       <a class="nhsuk-button nhsuk-button--secondary" asp-controller="RegisterDelegateByCentre" asp-action="LearnerInformation" role="button">Back</a>

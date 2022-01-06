@@ -23,13 +23,9 @@
             <div class="nhsuk-checkboxes__item">
               <input type="hidden" name="name" value="@Model.Name" />
               <input type="hidden" name="courseName" value="@Model.CourseName" />
-              <input class="nhsuk-checkboxes__input" id="confirm" name="confirm" type="checkbox" value="true" aria-describedby="confirm-item-hint">
-              <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="confirm">
-                I am sure that I want to remove @Model.Name from the @Model.CourseName course.
-              </label>
-              <div class="nhsuk-hint nhsuk-checkboxes__hint" id="confirm-item-hint">
-                This action will remove the course from the delegate's Current courses list and archive their progress.
-              </div>
+              <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                                  label="I am sure that I want to remove @Model.Name from the @Model.CourseName course."
+                                  hint-text="This action will remove the course from the delegate's Current courses list and archive their progress." />
             </div>
           </div>
           <button class="nhsuk-button delete-button nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6" role="button" type="submit">Remove delegate</button>
