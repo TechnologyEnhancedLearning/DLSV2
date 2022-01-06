@@ -37,42 +37,11 @@
                         ExternalUri,
                         SeqInt,
                         LastAccessedDate,
-                        LinkedCompetencyLearningResourceID
+                        LearningResourceReferenceID
                     FROM LearningLogItems l
                     INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     WHERE ExternalUri = @resourceLink",
                 new { resourceLink }
-            );
-        }
-
-        public LearningLogItem? SelectLearningLogItemById(int id)
-        {
-            return connection.QuerySingleOrDefault<LearningLogItem>(
-                @"SELECT
-                        LearningLogItemID,
-                        LoggedDate,
-                        LoggedByID,
-                        DueDate,
-                        CompletedDate,
-                        DurationMins,
-                        Activity,
-                        Outcomes,
-                        LinkedCustomisationID,
-                        VerifiedByID,
-                        VerifierComments,
-                        ArchivedDate,
-                        ArchivedByID,
-                        ICSGUID,
-                        LoggedByAdminID,
-                        TypeLabel AS ActivityType,
-                        ExternalUri,
-                        SeqInt,
-                        LastAccessedDate,
-                        LinkedCompetencyLearningResourceID
-                    FROM LearningLogItems l
-                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
-                    WHERE LearningLogItemID = @id",
-                new { id }
             );
         }
 

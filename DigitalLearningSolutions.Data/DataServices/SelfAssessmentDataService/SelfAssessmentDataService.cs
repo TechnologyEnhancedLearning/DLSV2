@@ -67,6 +67,8 @@
 
         void SetBookmark(int selfAssessmentId, int candidateId, string bookmark);
 
+        IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateId, int selfAssessmentId);
+
         // SelfAssessmentSupervisorDataService
         SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int candidateId);
 

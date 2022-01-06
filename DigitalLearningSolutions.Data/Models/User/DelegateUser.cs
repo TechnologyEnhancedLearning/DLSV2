@@ -16,6 +16,8 @@
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
         public string? AliasId { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public override UserReference ToUserReference()
         {

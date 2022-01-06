@@ -20,11 +20,17 @@
             var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
                 new List<CustomPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1)
-                });
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                }
+            );
 
             // When
-            var returnedModel = new MyAccountViewModel(adminUser, delegateUser, customPrompts, DlsSubApplication.Default);
+            var returnedModel = new MyAccountViewModel(
+                adminUser,
+                delegateUser,
+                customPrompts,
+                DlsSubApplication.Default
+            );
 
             // Then
             using (new AssertionScope())
@@ -71,8 +77,9 @@
             var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
                 new List<CustomPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1)
-                });
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                }
+            );
 
             // When
             var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
@@ -100,8 +107,9 @@
                 new List<CustomPromptWithAnswer>
                 {
                     CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2)
-                });
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                }
+            );
 
             // When
             var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
@@ -121,6 +129,80 @@
                     .BeEquivalentTo(customPrompts.CustomPrompts[1].CustomPromptText);
                 returnedModel.CustomFields[1].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
                 returnedModel.CustomFields[1].Mandatory.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void MyAccountViewModel_where_user_has_not_been_asked_for_prn_says_not_yet_provided()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+                hasBeenPromptedForPrn: false,
+                professionalRegistrationNumber: null
+            );
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
+                new List<CustomPromptWithAnswer>{}
+            );
+
+            // When
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedModel.ProfessionalRegistrationNumber.Should().Be("Not yet provided");
+            }
+        }
+
+        [Test]
+        public void MyAccountViewModel_with_no_prn_should_show_not_registered()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+                hasBeenPromptedForPrn: true,
+                professionalRegistrationNumber: null
+            );
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
+                new List<CustomPromptWithAnswer>
+                {
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                }
+            );
+
+            // When
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedModel.ProfessionalRegistrationNumber.Should().Be("Not professionally registered");
+            }
+        }
+
+        [Test]
+        public void MyAccountViewModel_with_prn_displays_prn()
+        {
+            // Given
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(
+                hasBeenPromptedForPrn: true,
+                professionalRegistrationNumber: "12345678"
+            );
+            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
+                new List<CustomPromptWithAnswer>
+                {
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                }
+            );
+
+            // When
+            var returnedModel = new MyAccountViewModel(null, delegateUser, customPrompts, DlsSubApplication.Default);
+
+            // Then
+            using (new AssertionScope())
+            {
+                returnedModel.ProfessionalRegistrationNumber.Should().Be(delegateUser.ProfessionalRegistrationNumber);
             }
         }
     }

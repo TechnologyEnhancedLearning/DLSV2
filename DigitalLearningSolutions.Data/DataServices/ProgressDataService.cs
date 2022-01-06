@@ -5,6 +5,7 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
+    using Microsoft.Extensions.Logging;
 
     public interface IProgressDataService
     {
@@ -25,16 +26,19 @@
         void CreateNewAspProgress(int tutorialId, int progressId);
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
         void ClearAspProgressVerificationRequest(int progressId);
+        void SetCompletionDate(int progressId, DateTime? completeByDate);
         void UnlockProgress(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
     {
         private readonly IDbConnection connection;
+        private readonly ILogger<ProgressDataService> logger;
 
-        public ProgressDataService(IDbConnection connection)
+        public ProgressDataService(IDbConnection connection, ILogger<ProgressDataService> logger)
         {
             this.connection = connection;
+            this.logger = logger;
         }
 
         public IEnumerable<Progress> GetDelegateProgressForCourse(
@@ -43,19 +47,19 @@
         )
         {
             return connection.Query<Progress>(
-                @"SELECT ProgressId, 
-                        CandidateID, 
-                        CustomisationID, 
-                        Completed, 
-                        RemovedDate, 
-                        SystemRefreshed, 
+                @"SELECT ProgressId,
+                        CandidateID,
+                        CustomisationID,
+                        Completed,
+                        RemovedDate,
+                        SystemRefreshed,
                         SupervisorAdminID,
                         CompleteByDate,
                         EnrollmentMethodID,
                         EnrolledByAdminID,
                         SubmittedTime,
                         CustomisationVersion
-                    FROM Progress 
+                    FROM Progress
                     WHERE CandidateID = @delegateId
                         AND CustomisationID = @customisationId",
                 new { delegateId, customisationId }
@@ -161,6 +165,24 @@
                     WHERE ProgressID = @progressId",
                 new { progressId }
             );
+        }
+
+        public void SetCompletionDate(int progressId, DateTime? completionDate)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE Progress
+                        SET Completed = @completionDate
+                        WHERE ProgressID = @progressId",
+                new { completionDate, progressId }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not setting current course completion date as db update failed. " +
+                    $"Progress id: {progressId}, completion date: {completionDate}"
+                );
+            }
         }
 
         public void UnlockProgress(int progressId)

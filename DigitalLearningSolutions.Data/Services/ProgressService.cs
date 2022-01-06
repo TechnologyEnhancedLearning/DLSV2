@@ -11,6 +11,8 @@
 
         void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
 
+        void UpdateCompletionDate(int progressId, DateTime? completionDate);
+
         void UnlockProgress(int progressId);
     }
 
@@ -64,6 +66,18 @@
             }
 
             courseDataService.SetCompleteByDate(progressId, courseInfo.DelegateId, completeByDate);
+        }
+
+        public void UpdateCompletionDate(int progressId, DateTime? date)
+        {
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (courseInfo == null)
+            {
+                throw new ProgressNotFoundException($"No progress record found for ProgressID {progressId}");
+            }
+
+            progressDataService.SetCompletionDate(progressId, date);
         }
 
         public void UnlockProgress(int progressId)

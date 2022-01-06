@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
+    using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -122,9 +123,47 @@
             }
 
             var completeByDate = formData.Year != null ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value) : (DateTime?)null;
-            
+
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+        }
+
+        [HttpGet]
+        [Route("EditCompletionDate")]
+        public IActionResult EditCompletionDate(int progressId, DelegateProgressAccessRoute accessedVia)
+        {
+            var centreId = User.GetCentreId();
+            var delegateCourseProgress =
+                courseService.GetDelegateCourseProgress(progressId, centreId);
+
+            var model = new EditCompletionDateViewModel(
+                progressId,
+                accessedVia,
+                delegateCourseProgress!.DelegateCourseInfo
+            );
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("EditCompletionDate")]
+        public IActionResult EditCompletionDate(
+            EditCompletionDateFormData formData,
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new EditCompletionDateViewModel(formData, progressId, accessedVia);
+                return View(model);
+            }
+
+            var completionDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
+
+            progressService.UpdateCompletionDate(progressId, completionDate);
             return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
         }
 

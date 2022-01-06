@@ -14,7 +14,7 @@
         public AllCurrentItemsPageViewModel(
             IEnumerable<CurrentCourse> currentCourses,
             IEnumerable<SelfAssessment> selfAssessments,
-            IEnumerable<ActionPlanItem> actionPlanItems
+            IEnumerable<ActionPlanResource> actionPlanResources
         )
         {
             CurrentItems = currentCourses.Select(course => new CurrentCourseViewModel(course));
@@ -23,9 +23,9 @@
                 CurrentItems = CurrentItems.Append(new SelfAssessmentCardViewModel(selfAssessment));
             }
 
-            foreach (var actionPlanItem in actionPlanItems)
+            foreach (var actionPlanResource in actionPlanResources)
             {
-                CurrentItems = CurrentItems.Append(new LearningResourceCardViewModel(actionPlanItem));
+                CurrentItems = CurrentItems.Append(new CurrentLearningResourceViewModel(actionPlanResource));
             }
         }
     }

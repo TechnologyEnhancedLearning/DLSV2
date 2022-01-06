@@ -114,6 +114,30 @@
         [Test]
         [TestCaseSource(
             typeof(DelegateProgressControllerTests),
+            nameof(EditEndpointRedirectTestData)
+        )]
+        public void EditCompletionDatePost_redirects_to_correct_action(
+            DelegateProgressAccessRoute accessedVia,
+            string expectedController,
+            string expectedAction
+        )
+        {
+            // Given
+            const int progressId = 1;
+            var formData = new EditCompletionDateFormData { Day = 1, Month = 1, Year = 2021 };
+            A.CallTo(() => progressService.UpdateCompletionDate(progressId, A<DateTime?>._)).DoesNothing();
+
+            // When
+            var result = delegateProgressController.EditCompletionDate(formData, progressId, accessedVia);
+
+            // Then
+            result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
+                .WithActionName(expectedAction);
+        }
+
+        [Test]
+        [TestCaseSource(
+            typeof(DelegateProgressControllerTests),
             nameof(UnlockCourseProgressData)
         )]
         public void UnlockCourseProgress_redirects_to_correct_action_and_unlocks_progress_and_sends_notification(
