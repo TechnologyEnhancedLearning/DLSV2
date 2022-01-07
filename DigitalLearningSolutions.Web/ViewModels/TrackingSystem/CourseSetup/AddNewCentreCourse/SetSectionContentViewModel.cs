@@ -1,9 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
 
-    public class SetSectionContentViewModel
+    public class SetSectionContentViewModel : EditCourseSectionFormData
     {
         public SetSectionContentViewModel() { }
 
@@ -13,10 +12,14 @@
             Index = index;
         }
 
-        public string SectionName { get; set; }
+        public SetSectionContentViewModel(
+            EditCourseSectionFormData formData,
+            int index
+        ) : base(formData)
+        {
+            Index = index;
+        }
 
         public int Index { get; set; }
-
-        public IEnumerable<CourseTutorialViewModel> Tutorials { get; set; }
     }
 }

@@ -31,8 +31,13 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class CourseSetupController : Controller
     {
-        public const string SaveAction = "save";
         private const string CourseFilterCookieName = "CourseFilter";
+        public const string SelectAllDiagnosticAction = "diagnostic-select-all";
+        public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
+        public const string SelectAllLearningAction = "learning-select-all";
+        public const string DeselectAllLearningAction = "learning-deselect-all";
+        public const string SaveAction = "save";
+
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
@@ -297,9 +302,13 @@
         [HttpPost]
         [Route("AddCourse/SetSectionContent")]
         public IActionResult SetSectionContent(
-            SetSectionContentViewModel model
+            SetSectionContentViewModel model,
+            string action
         )
         {
+            return action == SaveAction
+                ? SaveSectionTutorials(model)
+                : ProcessBulkSelect(model, action);
             var data = TempData.Peek<AddNewCentreCourseData>();
 
             data!.SetSectionContentModels.Add(model);
@@ -410,6 +419,77 @@
             var sectionModels = sections.Select(section => new SelectSectionViewModel(section, false)).ToList();
 
             return new SetCourseContentViewModel(sectionModels);
+        }
+
+        private IActionResult SaveSectionTutorials(SetSectionContentViewModel model)
+        {
+            var data = TempData.Peek<AddNewCentreCourseData>();
+
+            data!.SetSectionContentModels.Add(model);
+            TempData.Set(data);
+
+            return model.Index == data.SetCourseContentModel!.SectionsToInclude.Count() - 1
+                ? RedirectToAction("Summary")
+                : RedirectToAction("SetSectionContent", model.Index + 1);
+        }
+
+        // TODO: Can this be commonized with CourseContentController?
+        private IActionResult ProcessBulkSelect(
+            SetSectionContentViewModel model,
+            string action
+        )
+        {
+            switch (action)
+            {
+                case SelectAllDiagnosticAction:
+                    SelectAllDiagnostics(model);
+                    break;
+                case DeselectAllDiagnosticAction:
+                    DeselectAllDiagnostics(model);
+                    break;
+                case SelectAllLearningAction:
+                    SelectAllLearning(model);
+                    break;
+                case DeselectAllLearningAction:
+                    DeselectAllLearning(model);
+                    break;
+                default:
+                    return new StatusCodeResult(400);
+            }
+
+            return View(model);
+        }
+
+        private static void SelectAllDiagnostics(EditCourseSectionFormData model)
+        {
+            foreach (var tutorial in model.Tutorials)
+            {
+                tutorial.DiagnosticEnabled = true;
+            }
+        }
+
+        private static void DeselectAllDiagnostics(EditCourseSectionFormData model)
+        {
+            foreach (var tutorial in model.Tutorials)
+            {
+                tutorial.DiagnosticEnabled = false;
+            }
+        }
+
+        private static void SelectAllLearning(EditCourseSectionFormData model)
+        {
+            foreach (var tutorial in model.Tutorials)
+            {
+                tutorial.LearningEnabled = true;
+            }
+        }
+
+        private static void DeselectAllLearning(EditCourseSectionFormData model)
+        {
+            foreach (var tutorial in model.Tutorials)
+            {
+                tutorial.LearningEnabled = false;
+            }
         }
     }
 }

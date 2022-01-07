@@ -6,7 +6,7 @@
 @using Microsoft.Extensions.Configuration
 @model SetSectionContentViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Set section content";
@@ -27,9 +27,9 @@
 
     <form method="post" novalidate asp-action="SetSectionContent">
 
-      <partial name="CourseSetup/CourseContent/_EditSectionContentFormInputs" model="Model" />
+      <partial name="../CourseContent/_EditSectionContentFormInputs" model="Model" />
 
-      <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Save</button>
+      <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Next</button>
 
     </form>
 
