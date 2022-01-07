@@ -9,7 +9,7 @@
     public interface ILearningHubAuthClient
     {
         Task LoginUserToLearningHub();
-        Task<int> LinkLearningHubUser();
+        Task<int> CreateLearningHubUser();
     }
 
     public class LearningHubAuthClient : ILearningHubAuthClient
@@ -32,7 +32,7 @@
             throw new System.NotImplementedException();
         }
 
-        public Task<int> LinkLearningHubUser()
+        public Task<int> CreateLearningHubUser()
         {
             throw new System.NotImplementedException();
         }
