@@ -1,17 +1,16 @@
 ﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model EditCourseSectionViewModel
+@model EditCourseSectionFormData
 
 <div class="hidden-submit">
   <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
 </div>
-<input type="hidden" asp-for="CourseName" />
 <input type="hidden" asp-for="SectionName" />
 <input type="hidden" asp-for="ShowDiagnostic" />
 
 <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-  <partial name="_EditSectionDiagnostic" model="Model" />
+  <partial name="../CourseContent/_EditSectionDiagnostic" model="Model" />
 
-  <partial name="_EditSectionLearning" model="Model" />
+  <partial name="../CourseContent/_EditSectionLearning" model="Model" />
 </div>

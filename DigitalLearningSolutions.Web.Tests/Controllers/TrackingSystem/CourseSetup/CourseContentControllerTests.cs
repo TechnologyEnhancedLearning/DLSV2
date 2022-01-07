@@ -178,7 +178,6 @@
         {
             return new EditCourseSectionFormData
             {
-                CourseName = "Course",
                 SectionName = "Section",
                 Tutorials = new List<CourseTutorialViewModel>
                 {

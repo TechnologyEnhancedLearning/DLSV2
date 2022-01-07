@@ -1,6 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
-@model EditCourseSectionViewModel
+@model EditCourseSectionFormData
+
+@{
+  var selectAllAction = Model is EditCourseSectionViewModel ?
+    CourseContentController.SelectAllLearningAction : CourseSetupController.SelectAllLearningAction;
+  var deselectAllAction = Model is EditCourseSectionViewModel ?
+    CourseContentController.DeselectAllLearningAction : CourseSetupController.DeselectAllLearningAction;
+}
 
 <div class="nhsuk-grid-column-one-half tutorial-learning-column">
   <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-1">Learning</h2>
@@ -10,12 +17,12 @@
     <div class="nhsuk-grid-column-full">
       <button name="action"
               class="nhsuk-search__submit select-all-button"
-              value="@CourseContentController.SelectAllLearningAction">
+              value="@selectAllAction">
         Select all
       </button>
       <button name="action"
               class="nhsuk-search__submit deselect-all-button"
-              value="@CourseContentController.DeselectAllLearningAction">
+              value="@deselectAllAction">
         Deselect all
       </button>
     </div>
