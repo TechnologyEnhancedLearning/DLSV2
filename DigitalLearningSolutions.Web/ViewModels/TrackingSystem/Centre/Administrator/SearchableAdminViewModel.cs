@@ -6,6 +6,8 @@
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {
+        public readonly bool CanShowDeactivateAdminButton;
+
         public SearchableAdminViewModel(AdminUser adminUser, AdminUser loggedInAdminUser)
         {
             Id = adminUser.Id;
@@ -14,20 +16,7 @@
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
 
-            if (loggedInAdminUser.IsUserAdmin)
-            {
-                CanShowDeactivateAdminButton = adminUser.Id != loggedInAdminUser.Id;
-            }
-            else if (loggedInAdminUser.IsCentreManager)
-            {
-                CanShowDeactivateAdminButton = !adminUser.IsUserAdmin
-                                               && !adminUser.IsCentreManager
-                                               && adminUser.Id != loggedInAdminUser.Id;
-            }
-            else
-            {
-                CanShowDeactivateAdminButton = true;
-            }
+            CanShowDeactivateAdminButton = LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
         }
@@ -46,6 +35,21 @@
 
         public bool IsLocked { get; set; }
 
-        public  bool CanShowDeactivateAdminButton { get; }
+        private static bool LoggedInAdminCanDeactivateUser(AdminUser adminUser, AdminUser loggedInAdminUser)
+        {
+            if (loggedInAdminUser.IsUserAdmin)
+            {
+                return adminUser.Id != loggedInAdminUser.Id;
+            }
+
+            if (loggedInAdminUser.IsCentreManager)
+            {
+                return !adminUser.IsUserAdmin
+                       && !adminUser.IsCentreManager
+                       && adminUser.Id != loggedInAdminUser.Id;
+            }
+
+            return true;
+        }
     }
 }

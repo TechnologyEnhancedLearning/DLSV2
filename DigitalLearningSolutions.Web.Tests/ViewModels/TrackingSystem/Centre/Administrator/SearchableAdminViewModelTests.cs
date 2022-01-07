@@ -28,8 +28,8 @@
         public void SearchableAdmin_centre_manager_should_not_be_able_to_deactivate_other_centre_manager()
         {
             // Given
-            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreAdmin: true);
-            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isCentreAdmin: true);
+            var adminUser = UserTestHelper.GetDefaultAdminUser(id: 1, isCentreManager: true);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser(id: 2, isCentreManager: true);
 
             // When
             var model = new SearchableAdminViewModel(
