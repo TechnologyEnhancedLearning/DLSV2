@@ -203,7 +203,7 @@
                     lastName,
                     email,
                     professionalRegNumber,
-                    YesNoSelectionEnum.No,
+                    true,
                     null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
@@ -237,7 +237,7 @@
             var email = "test@email.com";
             var professionalRegNumber = "123-number";
             var accountDetailsData =
-                new MyAccountDetailsData(null, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, YesNoSelectionEnum.Yes, null);
+                new MyAccountDetailsData(null, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, true, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
@@ -289,7 +289,7 @@
             var email = "test@email.com";
             var professionalRegNumber = "test-1234";
             var accountDetailsData =
-                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, YesNoSelectionEnum.Yes,null);
+                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, true, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
@@ -345,7 +345,7 @@
             var email = "test@email.com";
             var professionalRegNumber = "test-1234";
             var accountDetailsData =
-                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, YesNoSelectionEnum.Yes, null);
+                new MyAccountDetailsData(adminUser.Id, delegateUser.Id, password, firstName, lastName, email, professionalRegNumber, true, null);
             var centreAnswersData = new CentreAnswersData(2, 1, null, null, null, null, null, null);
 
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);

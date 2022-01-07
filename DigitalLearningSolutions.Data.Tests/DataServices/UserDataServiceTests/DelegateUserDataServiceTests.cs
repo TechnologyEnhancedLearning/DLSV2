@@ -142,10 +142,10 @@
             try
             {
                 // Given
-                var firstName = "TestFirstName";
-                var lastName = "TestLastName";
-                var email = "test@email.com";
-                var professionalRegNumber = "test-1234";
+                const string firstName = "TestFirstName";
+                const string lastName = "TestLastName";
+                const string email = "test@email.com";
+                const string professionalRegNumber = "test-1234";
 
                 // When
                 userDataService.UpdateDelegateUsers(firstName, lastName, email, null, professionalRegNumber, true, new[] { 2, 3 });

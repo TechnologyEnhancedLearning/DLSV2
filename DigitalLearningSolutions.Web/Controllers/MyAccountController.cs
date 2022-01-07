@@ -166,7 +166,6 @@
             var customPrompts =
                 centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
-            model.ValidateManually(ModelState);
             return View(model);
         }
 

@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Data.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 
@@ -47,7 +47,6 @@
                type="radio"
                value="@YesNoSelectionEnum.Yes"
                aria-controls="@professionalRegConditionalId"
-               aria-expanded="@(optionYesSelected ? "true" : "false")"
                @(optionYesSelected ? "checked" : "") />
         <label class="nhsuk-label nhsuk-radios__label" for="optionYes">
           Yes

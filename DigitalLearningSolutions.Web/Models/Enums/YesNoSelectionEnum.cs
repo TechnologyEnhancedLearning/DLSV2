@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Enums
+﻿namespace DigitalLearningSolutions.Web.Models.Enums
 {
     public enum YesNoSelectionEnum
     {

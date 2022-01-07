@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
-    using DigitalLearningSolutions.Data.Enums;
-
     public class MyAccountDetailsData : AccountDetailsData
     {
         public MyAccountDetailsData(
@@ -12,7 +10,7 @@
             string surname,
             string email,
             string? professionalRegNumber,
-            YesNoSelectionEnum yesNoSelection,
+            bool hasBeenPromptedForPrn,
             byte[]? profileImage
         ) : base(firstName, surname, email)
         {
@@ -20,8 +18,7 @@
             DelegateId = delegateId;
             Password = password;
             ProfessionRegistrationNumber = professionalRegNumber;
-            HasBeenPromptedForPrn = yesNoSelection != YesNoSelectionEnum.None;
-
+            HasBeenPromptedForPrn = hasBeenPromptedForPrn;
             ProfileImage = profileImage;
         }
 

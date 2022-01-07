@@ -4,9 +4,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
@@ -78,22 +78,18 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public bool IsDelegateUser { get; set; }
 
+        [RunValidateMethod(nameof(ValidateProfessionalRegistrationNumber))]
         public string? ProfessionalRegistrationNumber { get; set; }
 
+        [RunValidateMethod(nameof(ValidateHasProfessionalRegistrationNumber))]
         public YesNoSelectionEnum HasProfessionalRegistrationNumber { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public IEnumerable<ValidationResult> ValidateHasProfessionalRegistrationNumber()
         {
             var validationResults = new List<ValidationResult>();
 
-            if (!IsDelegateUser ||
-                HasProfessionalRegistrationNumber == YesNoSelectionEnum.No)
-            {
-                ProfessionalRegistrationNumber = null;
-                return validationResults;
-            }
-
-            if (HasProfessionalRegistrationNumber == YesNoSelectionEnum.None)
+            if (IsDelegateUser &&
+                HasProfessionalRegistrationNumber == YesNoSelectionEnum.None)
             {
                 validationResults.Add(
                     new ValidationResult(
@@ -102,6 +98,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                     )
                 );
 
+                return validationResults;
+            }
+
+            return validationResults;
+        }
+
+        public IEnumerable<ValidationResult> ValidateProfessionalRegistrationNumber()
+        {
+            var validationResults = new List<ValidationResult>();
+
+            if (!IsDelegateUser ||
+                HasProfessionalRegistrationNumber != YesNoSelectionEnum.Yes)
+            {
+                ProfessionalRegistrationNumber = null;
                 return validationResults;
             }
 
@@ -126,6 +136,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                         new[] { nameof(ProfessionalRegistrationNumber) }
                     )
                 );
+
+                return validationResults;
             }
 
             const string pattern = @"^[a-z\d-]+$";
@@ -138,6 +150,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                         new[] { nameof(ProfessionalRegistrationNumber) }
                     )
                 );
+
+                return validationResults;
             }
 
             return validationResults;

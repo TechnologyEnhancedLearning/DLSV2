@@ -194,7 +194,7 @@
                 surname,
                 email,
                 null,
-                YesNoSelectionEnum.No,
+                true,
                 profileImage
             );
         }
