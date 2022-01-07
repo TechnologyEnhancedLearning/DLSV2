@@ -34,22 +34,19 @@
     <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})"/>
   }
 
-  <div class="nhsuk-u-margin-top-5">
-    <a asp-action="SearchLearningResourcesAsync" class="nhsuk-button nhsuk-u-margin-bottom-4"
-       asp-route-frameworkId="@Model.FrameworkId"
-       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-      Add resource
-    </a>
-  </div>
-  <div class="nhsuk-back-link nhsuk-u-margin-left-1">
-    <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
-      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-      </svg>
-      Cancel
-    </a>
-  </div>
+<div class="nhsuk-u-margin-top-5">
+  <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
+    Add resource
+  </a>
+</div>
+<div class="nhsuk-back-link nhsuk-u-margin-left-1">
+  <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>
 }
 else if (!Model.CompetencyResourceLinks.Any())
 {

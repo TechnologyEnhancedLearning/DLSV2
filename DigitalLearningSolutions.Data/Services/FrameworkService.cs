@@ -1610,36 +1610,36 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
 
         public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyLearningResourceId)
         {
-            var parameter = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
-                $@"SELECT *
-                    FROM CompetencyResourceAssessmentQuestionParameters
-                    WHERE CompetencyLearningResourceID = @competencyLearningResourceId",
+            var resource = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                $@"SELECT clr.ID AS CompetencyLearningResourceID, * FROM CompetencyLearningResources AS clr
+                    INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
+                    LEFT OUTER JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
+                    WHERE clr.ID = @competencyLearningResourceId",
                     new { competencyLearningResourceId }).FirstOrDefault();
-            if (parameter != null)
-            {
-                var questions = connection.Query<AssessmentQuestion>(
-                    $@"SELECT * FROM AssessmentQuestions
-                        WHERE ID IN ({parameter.AssessmentQuestionID}, {parameter.RelevanceAssessmentQuestionID ?? parameter.AssessmentQuestionID})");
-                parameter.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.AssessmentQuestionID);
-                parameter.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == parameter.RelevanceAssessmentQuestionID);
-            }
-            return parameter;
+            var questions = connection.Query<AssessmentQuestion>(
+                $@"SELECT * FROM AssessmentQuestions
+                    WHERE ID IN ({resource.AssessmentQuestionID}, {resource.RelevanceAssessmentQuestionID ?? 0})");
+            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionID);
+            resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionID);
+            resource.IsNewParameter = resource.AssessmentQuestion == null;
+            return resource;
         }
 
         public IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
         {
             return connection.Query<SignpostingResourceParameter>(
-                $@"SELECT p.CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
+                $@"SELECT clr.ID AS CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
                     CASE 
 	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
 	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
 	                    ELSE 'Don''t compare result'
                     END AS CompareResultTo
-                    FROM CompetencyResourceAssessmentQuestionParameters AS p
-                    INNER JOIN CompetencyLearningResources AS clr ON p.CompetencyLearningResourceID = clr.ID
-                    INNER JOIN FrameworkCompetencies AS fc ON fc.CompetencyID = clr.CompetencyID
+                    FROM FrameworkCompetencies AS fc
+					INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
+					INNER JOIN CompetencyLearningResources AS clr ON clr.CompetencyID = c.ID
                     INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
-                    INNER JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
+                    LEFT JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
+                    LEFT JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
                     LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
                     WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
                 new { frameworkId, competencyId });
@@ -1658,21 +1658,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         {
             int rowsAffected;
             var relevance = parameter.RelevanceAssessmentQuestionID.HasValue ? parameter.RelevanceAssessmentQuestionID.Value.ToString() : "null";
-            if (parameter.CompetencyLearningResourceId.HasValue)
-            {
-                rowsAffected = connection.Execute(
-                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters
-                        SET CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId},
-                            AssessmentQuestionID = {parameter.AssessmentQuestionID},
-                            MinResultMatch = {parameter.MinResultMatch},
-                            MaxResultMatch = {parameter.MaxResultMatch},
-                            Essential = {Convert.ToInt32(parameter.Essential)},
-                            RelevanceAssessmentQuestionID = {relevance},
-                            CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
-                        WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId.Value}"
-                    );
-            }
-            else
+            if (parameter.IsNewParameter)
             {
                 rowsAffected = connection.Execute(
                     $@"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
@@ -1685,12 +1671,25 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                         CompareToRoleRequirements)
                         VALUES(
                             {parameter.CompetencyLearningResourceId},
-                            {parameter.AssessmentQuestionID},
+                            {parameter.AssessmentQuestion.ID},
                             {parameter.MinResultMatch},
                             {parameter.MaxResultMatch},
                             {Convert.ToInt32(parameter.Essential)},
                             {relevance},
                             {Convert.ToInt32(parameter.CompareToRoleRequirements)})"
+                    );
+            }
+            else
+            {
+                rowsAffected = connection.Execute(
+                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters
+                    SET AssessmentQuestionID = {parameter.AssessmentQuestionID},
+                        MinResultMatch = {parameter.MinResultMatch},
+                        MaxResultMatch = {parameter.MaxResultMatch},
+                        Essential = {Convert.ToInt32(parameter.Essential)},
+                        RelevanceAssessmentQuestionID = {relevance},
+                        CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
+                    WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId}"
                     );
             }
             return rowsAffected;

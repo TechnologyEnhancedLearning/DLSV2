@@ -10,14 +10,20 @@
     </span>
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0">
-    <div class="nhsuk-u-margin-bottom-4">
-      @if (Model.Essential)
-      {
-        <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
-      }
-      @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
-    </div>
-    <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
+  <div class="nhsuk-u-margin-bottom-4">
+    @if (Model.Essential)
+    {
+      <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
+    }
+    @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
+  </div>
+  @if(Model.AssessmentQuestion == null)
+  {
+    <h5>This resource has no parameter yet.</h5>
+  }
+  else
+  {
+    <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameter</h4>
     <dl class="nhsuk-summary-list">
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -52,6 +58,7 @@
         </dd>
       </div>
   </dl>
+  }
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"
@@ -59,7 +66,7 @@
           asp-route-frameworkId="@parent.FrameworkId"
           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Manage parameter</a>
+          asp-route-competencyLearningResourceId="@(Model.CompetencyLearningResourceId?.ToString() ?? "")">@(Model.AssessmentQuestion == null ? "Add" : "Manage") parameter</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
       <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
     </div>

@@ -77,13 +77,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 return StatusCode(403);
             }
-            var parameter = competencyLearningResourceID.HasValue ?
-                frameworkService.GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(competencyLearningResourceID.Value)
-                : null;
+            var parameter = frameworkService.GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(competencyLearningResourceID.Value);
             var session = new SessionCompetencyLearningResourceSignpostingParameter(
                 CookieName, Request.Cookies, Response.Cookies,
                 competency: frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId),
-                resource: parameter?.CompetencyLearningResourceId != null ? frameworkService.GetLearningResourceReferenceByCompetencyLearningResouceId(parameter.CompetencyLearningResourceId.Value) : null,
+                resource: frameworkService.GetLearningResourceReferenceByCompetencyLearningResouceId(parameter.CompetencyLearningResourceId),
                 questions: frameworkService.GetCompetencyAssessmentQuestionsByFrameworkCompetencyId(frameworkCompetencyId, adminId).ToList(),
                 parameter);
             TempData.Clear();
@@ -122,7 +120,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
                 Competency = session.Competency?.Description,
-                ResourceName = session.Resource?.OriginalResourceName,
+                ResourceName = session.LearningResourceReference?.OriginalResourceName,
                 AssessmentQuestionParameter = session.AssessmentQuestionParameter,
                 Questions = session.Questions,
                 SelectedQuestion = session.Questions.FirstOrDefault(q => q.ID == session.SelectedQuestion?.ID),
@@ -180,7 +178,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
                 Competency = session.Competency.Description,
-                ResourceName = session.Resource?.OriginalResourceName,
+                ResourceName = session.LearningResourceReference?.OriginalResourceName,
                 Questions = session.Questions,
                 SelectedQuestion = session.SelectedQuestion,
                 AssessmentQuestionParameter = session.AssessmentQuestionParameter
@@ -204,6 +202,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             else
             {
                 session.SelectedQuestion = session.Questions.FirstOrDefault(q => q.ID == model.SelectedQuestion.ID);
+                session.AssessmentQuestionParameter.AssessmentQuestion = session.SelectedQuestion;
                 session.LevelDescriptors = frameworkService.GetLevelDescriptorsForAssessmentQuestionId(
                     session.SelectedQuestion.ID,
                     GetAdminId(),

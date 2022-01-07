@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.Models
     public class SessionCompetencyLearningResourceSignpostingParameter
     {
         public Guid Id { get; set; }
-        public LearningResourceReference Resource { get; set; }
+        public LearningResourceReference LearningResourceReference { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
         public int[] SelectedLevelValues { get; set; }
@@ -27,7 +27,7 @@ namespace DigitalLearningSolutions.Web.Models
         {
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
             Competency = competency;
-            Resource = resource;
+            LearningResourceReference = resource;
             Questions = questions;
             AssessmentQuestionParameter = assessmentQuestionParameter;
 

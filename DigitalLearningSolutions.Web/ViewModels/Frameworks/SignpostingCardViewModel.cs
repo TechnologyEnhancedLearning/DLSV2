@@ -2,7 +2,7 @@
 {
     public class SignpostingCardViewModel
     {
-        public int CompetencyLearningResourceId { get; set; }
+        public int? CompetencyLearningResourceId { get; set; }
         public string Name { get; set; }
         public string AssessmentQuestion { get; set; }
         public int MinimumResultMatch { get; set; }
