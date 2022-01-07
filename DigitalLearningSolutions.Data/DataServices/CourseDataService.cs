@@ -542,10 +542,10 @@ namespace DigitalLearningSolutions.Data.DataServices
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT)
                         END AS CentreHasApplication,
-                        a.DefaultContentTypeID AS DefaultContentTypeId
                     FROM Customisations AS c
                     INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                    WHERE CustomisationID = @customisationId",
+                    WHERE CustomisationID = @customisationId
+                        AND a.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }

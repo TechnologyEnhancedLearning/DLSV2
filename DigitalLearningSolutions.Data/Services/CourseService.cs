@@ -80,8 +80,6 @@
 
     public class CourseService : ICourseService
     {
-        private const int OldCompetencySelfAssessmentContentTypeId = 4;
-
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDataService courseDataService;
         private readonly IGroupsDataService groupsDataService;
@@ -134,22 +132,17 @@
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
         {
+            var viewValidation = VerifyAdminUserCanViewCourse(customisationId, centreId, categoryId);
+            if (viewValidation != true)
+            {
+                return viewValidation;
+            }
+
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null || courseValidationDetails.DefaultContentTypeId ==
-                OldCompetencySelfAssessmentContentTypeId)
+            if (courseValidationDetails!.AllCentres)
             {
                 return null;
-            }
-
-            if (courseValidationDetails.CentreId != centreId)
-            {
-                return false;
-            }
-
-            if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
-            {
-                return false;
             }
 
             return true;
@@ -159,8 +152,7 @@
         {
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null || courseValidationDetails.DefaultContentTypeId ==
-                OldCompetencySelfAssessmentContentTypeId)
+            if (courseValidationDetails == null)
             {
                 return null;
             }

@@ -418,29 +418,6 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_null_with_content_type_id_4()
-        {
-            // Given
-            var validationDetails = new CourseValidationDetails
-            {
-                CentreId = 1,
-                CourseCategoryId = 1,
-                AllCentres = true,
-                CentreHasApplication = false,
-                DefaultContentTypeId = 4,
-            };
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
-                .Returns(validationDetails);
-
-            // When
-            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
-
-            // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeNull();
-        }
-
         public void DelegateHasCurrentProgress_returns_true_if_delegate_has_current_progress()
         {
             // Given
