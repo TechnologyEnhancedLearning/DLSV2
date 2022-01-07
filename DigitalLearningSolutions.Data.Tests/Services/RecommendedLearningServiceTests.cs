@@ -257,7 +257,7 @@
                         .With(qp => qp.Essential = essential).Build();
 
             A.CallTo(
-                () => selfAssessmentDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
                     A<IEnumerable<int>>._
                 )
             ).Returns(questionParameters);
@@ -321,7 +321,7 @@
                 .With(qp => qp.Essential = true)
                 .And(qp => qp.CompareToRoleRequirements = true).Build();
             A.CallTo(
-                () => selfAssessmentDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
                     A<IEnumerable<int>>._
                 )
             ).Returns(questionParameters);
@@ -530,7 +530,7 @@
                 .And(qp => qp.AssessmentQuestionId = CompetencyAssessmentQuestionId)
                 .And(qp => qp.RelevanceAssessmentQuestionId = RelevanceAssessmentQuestionId).Build();
             A.CallTo(
-                () => selfAssessmentDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
                     A<IEnumerable<int>>._
                 )
             ).Returns(questionParameters);

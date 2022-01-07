@@ -8,10 +8,6 @@
 
         public int AssessmentQuestionId { get; set; }
 
-        public int MinResultMatch { get; set; }
-
-        public int MaxResultMatch { get; set; }
-
         public bool Essential { get; set; }
 
         public int? RelevanceAssessmentQuestionId { get; set; }

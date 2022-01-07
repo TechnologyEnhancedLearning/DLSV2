@@ -98,7 +98,7 @@
                 competencyLearningResources.Where(clr => clr.LearningHubResourceReferenceId == resource.RefId).ToList();
 
             var competencyResourceAssessmentQuestionParameters =
-                selfAssessmentDataService
+                competencyLearningResourcesDataService
                     .GetCompetencyResourceAssessmentQuestionParameters(clrsForResource.Select(clr => clr.Id)).ToList();
 
             var essentialnessValue = CalculateEssentialnessValue(competencyResourceAssessmentQuestionParameters);

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public partial class SelfAssessmentDataServiceTests
@@ -568,6 +569,93 @@
                     .Be(thirdResult);
                 SelfAssessmentHelper.GetQuestionResult(results, secondCompetencyId, fourthAssessmentQuestionId).Should()
                     .Be(fourthResult);
+            }
+        }
+
+        [Test]
+        public void GetCompetencyAssessmentQuestions_returns_expected_results()
+        {
+            // Given
+            var expectedItem = new CompetencyAssessmentQuestion
+            {
+                CompetencyId = 1,
+                AssessmentQuestionId = 1,
+                Ordering = 0,
+                Required = true,
+            };
+
+            // When
+            var result = selfAssessmentDataService.GetCompetencyAssessmentQuestions(1).ToList();
+
+            // Then
+            result.Should().HaveCount(2);
+            result.Should().ContainEquivalentOf(expectedItem);
+        }
+
+        [Test]
+        public void GetCompetencyAssessmentQuestionRoleRequirements_returns_expected_results()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                var expectedItem = new CompetencyAssessmentQuestionRoleRequirement
+                {
+                    Id = 1,
+                    SelfAssessmentId = 1,
+                    CompetencyId = 1,
+                    AssessmentQuestionId = 1,
+                    LevelValue = 0,
+                    LevelRag = 1,
+                };
+
+                competencyTestHelper.InsertCompetencyAssessmentQuestionRoleRequirement(1, 1, 1, 1, 1);
+
+                // When
+                var result = selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(1, 1).ToList();
+
+                // Then
+                result.Should().HaveCount(1);
+                result.Should().ContainEquivalentOf(expectedItem);
+            }
+        }
+
+        [Test]
+        public void GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency_returns_expected_result()
+        {
+            using (new TransactionScope())
+            {
+                // Given
+                const int competencyId = 2;
+                const int assessmentQuestionId = 2;
+                const int result = 5;
+                selfAssessmentDataService.SetResultForCompetency(
+                    competencyId,
+                    SelfAssessmentId,
+                    CandidateId,
+                    assessmentQuestionId,
+                    result,
+                    null
+                );
+
+                // When
+                var results =
+                    selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                        CandidateId,
+                        SelfAssessmentId,
+                        competencyId
+                    ).ToList();
+
+                // Then
+                using (new AssertionScope())
+                {
+                    results.Should().HaveCount(1);
+                    results.First().CandidateId.Should().Be(CandidateId);
+                    results.First().SelfAssessmentId.Should().Be(SelfAssessmentId);
+                    results.First().AssessmentQuestionId.Should().Be(assessmentQuestionId);
+                    results.First().CompetencyId.Should().Be(competencyId);
+                    results.First().Result.Should().Be(result);
+                }
+                
             }
         }
 

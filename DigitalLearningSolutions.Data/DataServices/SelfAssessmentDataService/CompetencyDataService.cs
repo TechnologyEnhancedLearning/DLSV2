@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -518,25 +517,6 @@
                     WHERE (CAOC.IncludedInSelfAssessment = 1)",
                 new { selfAssessmentId, candidateId }
             ).ToList();
-        }
-
-        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>
-            GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
-        {
-            return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
-                @"SELECT
-                        ID,
-                        CompetencyLearningResourceID,
-                        AssessmentQuestionID,
-                        MinResultMatch,
-                        MaxResultMatch,
-                        Essential,
-                        RelevanceAssessmentQuestionID,
-                        CompareToRoleRequirements
-                    FROM CompetencyResourceAssessmentQuestionParameters
-                    WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
-                new { competencyLearningResourceIds }
-            );
         }
 
         public IEnumerable<CompetencyAssessmentQuestionRoleRequirement> GetCompetencyAssessmentQuestionRoleRequirements(

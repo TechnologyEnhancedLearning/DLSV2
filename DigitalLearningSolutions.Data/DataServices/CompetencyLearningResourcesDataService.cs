@@ -4,13 +4,24 @@
     using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public interface ICompetencyLearningResourcesDataService
     {
         IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
 
         IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
-        void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
+
+        void AddCompetencyLearningResource(
+            int resourceRefId,
+            string originalResourceName,
+            int competencyId,
+            int adminId
+        );
+
+        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(
+            IEnumerable<int> competencyLearningResourceIds
+        );
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -49,25 +60,47 @@
             );
         }
 
-        public void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId)
+        public void AddCompetencyLearningResource(
+            int resourceRefId,
+            string originalResourceName,
+            int competencyId,
+            int adminId
+        )
         {
             connection.Execute(
-                @$" DECLARE @learningResourceReferenceID int
+                @" DECLARE @learningResourceReferenceID int
                     IF NOT EXISTS(SELECT * FROM LearningResourceReferences WHERE @resourceRefID = resourceRefID)
                         BEGIN
-	                        INSERT INTO LearningResourceReferences(ResourceRefID, OriginalResourceName, AdminID, Added)
-	                        VALUES(@resourceRefID, @originalResourceName, @adminID, GETDATE())
-	                        SELECT @learningResourceReferenceID = SCOPE_IDENTITY()
+                            INSERT INTO LearningResourceReferences(ResourceRefID, OriginalResourceName, AdminID, Added)
+                            VALUES(@resourceRefID, @originalResourceName, @adminID, GETDATE())
+                            SELECT @learningResourceReferenceID = SCOPE_IDENTITY()
                         END
                     ELSE
                         BEGIN
-	                        SELECT TOP 1 @learningResourceReferenceID = ID 
-	                        FROM LearningResourceReferences 
-	                        WHERE @resourceRefID = resourceRefID
+                            SELECT TOP 1 @learningResourceReferenceID = ID 
+                            FROM LearningResourceReferences 
+                            WHERE @resourceRefID = resourceRefID
                         END
                     INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
                            VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
-                new { resourceRefID, originalResourceName, competencyID, adminId }
+                new { resourceRefID = resourceRefId, originalResourceName, competencyID = competencyId, adminId }
+            );
+        }
+
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>
+            GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
+        {
+            return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                @"SELECT
+                        ID,
+                        CompetencyLearningResourceID,
+                        AssessmentQuestionID,
+                        Essential,
+                        RelevanceAssessmentQuestionID,
+                        CompareToRoleRequirements
+                    FROM CompetencyResourceAssessmentQuestionParameters
+                    WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
+                new { competencyLearningResourceIds }
             );
         }
     }
