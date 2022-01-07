@@ -170,7 +170,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeTrue();
         }
 
@@ -183,7 +183,7 @@
             {
                 CentreId = 2,
                 CourseCategoryId = 2,
-                AllCentres = true,
+                AllCentres = false,
                 CentreHasApplication = true,
             };
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
@@ -194,7 +194,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeTrue();
         }
 
@@ -217,7 +217,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeFalse();
         }
 
