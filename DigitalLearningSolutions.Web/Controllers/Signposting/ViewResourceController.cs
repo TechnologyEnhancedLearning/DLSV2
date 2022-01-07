@@ -20,20 +20,24 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
         private readonly ILearningHubAuthClient learningHubAuthClient;
 
         [Route("Signposting/ViewResource/{resourceReferenceId}")]
-        public IActionResult Index()
+        public IActionResult Index(int resourceReferenceId)
         {
             // check linking here
+            var delegateId = User.GetCandidateIdKnownNotNull();
 
-            int? learningHubAuthId = userService.GetDelegateUserLearningHubAuthId;
+            int? learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
 
             if (learningHubAuthId.HasValue)
             {
-                // go to sso/login
-                learningHubAuthClient.LoginUserToLearningHub(learningHubAuthId.Value);
+                // get resource link from DB
+
+                // redirect here to sso/login endpoint with auth id, hash, etc (see document)
             }
-            
+
+            // redirect to create-user endpoint
+
             // go to sso/create-user
-            learningHubAuthClient.CreateLearningHubUser();
+            //learningHubAuthClient.CreateLearningHubUser();
         }
     }
 }

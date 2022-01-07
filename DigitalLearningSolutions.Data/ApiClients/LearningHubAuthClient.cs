@@ -8,7 +8,6 @@
 
     public interface ILearningHubAuthClient
     {
-        Task LoginUserToLearningHub();
         Task<int> CreateLearningHubUser();
     }
 
@@ -25,11 +24,6 @@
             client.BaseAddress = new Uri(learningHubAuthBaseUrl);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("X-API-KEY", learningHubAuthKey); // todo is this right?
-        }
-
-        public Task LoginUserToLearningHub()
-        {
-            throw new System.NotImplementedException();
         }
 
         public Task<int> CreateLearningHubUser()
