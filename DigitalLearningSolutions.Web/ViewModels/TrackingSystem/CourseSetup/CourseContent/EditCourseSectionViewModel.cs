@@ -23,7 +23,5 @@
         }
 
         public int CustomisationId { get; set; }
-
-        
     }
 }
