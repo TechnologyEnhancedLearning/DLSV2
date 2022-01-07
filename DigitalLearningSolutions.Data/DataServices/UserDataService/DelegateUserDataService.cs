@@ -33,9 +33,9 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
+                        jg.JobGroupName,
                         cd.HasBeenPromptedForPrn,
-                        cd.ProfessionalRegistrationNumber,
-                        jg.JobGroupName
+                        cd.ProfessionalRegistrationNumber
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID

@@ -4,7 +4,6 @@
     using System.Linq;
     using Castle.Core.Internal;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;

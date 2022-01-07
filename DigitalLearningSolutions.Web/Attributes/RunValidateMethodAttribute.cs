@@ -13,13 +13,19 @@
 
         public string MethodName { get; set; }
 
-        public string GetErrorMessage() => string.Empty;
+        public string GetErrorMessage()
+        {
+            return string.Empty;
+        }
 
-        protected override ValidationResult IsValid(object value,
-            ValidationContext validationContext)
+        protected override ValidationResult IsValid(
+            object value,
+            ValidationContext validationContext
+        )
         {
             var method = validationContext.ObjectType.GetMethod(MethodName);
-            var results = ((IEnumerable<ValidationResult>)method.Invoke(validationContext.ObjectInstance, null)).ToList();
+            var results =
+                ((IEnumerable<ValidationResult>)method.Invoke(validationContext.ObjectInstance, null)).ToList();
 
             if (results.Any())
             {
