@@ -72,7 +72,7 @@
         }
 
         [Test]
-        public void Trying_to_sent_unlock_makes_request_to_feature_manager_to_get_correct_url()
+        public void Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
         {
             //setup
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
@@ -86,7 +86,7 @@
         }
 
         [Test]
-        public void trying_to_send_unlock_request_send_email_with_correct_old_url()
+        public void Trying_to_send_unlock_request_send_email_with_correct_old_url()
         {
             //setup
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))

@@ -6,13 +6,17 @@ namespace DigitalLearningSolutions.Data.Migrations
     {
         public override void Up()
         {
-            Insert.IntoTable("Config").Row(
-                new
-                {
-                    ConfigName = "V2AppBaseUrl",
-                    ConfigText = "https://hee-dls-test.softwire.com/", isHtml = 0
-                }
-            );
+
+            Execute.Sql(@"
+            BEGIN TRAN
+
+            IF NOT EXISTS (SELECT * FROM Config WHERE ConfigName = 'V2AppBaseUrl')
+            begin
+                INSERT INTO Config VALUES ('V2AppBaseUrl', 'https://hee-dls-test.softwire.com/', 0)
+            end
+
+            commit
+            ");
         }
 
         public override void Down()
