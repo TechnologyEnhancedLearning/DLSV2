@@ -132,17 +132,17 @@
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
         {
-            var viewValidation = VerifyAdminUserCanViewCourse(customisationId, centreId, categoryId);
-            if (viewValidation != true)
+            var viewVerificationResult = VerifyAdminUserCanViewCourse(customisationId, centreId, categoryId);
+            if (viewVerificationResult != true)
             {
-                return viewValidation;
+                return viewVerificationResult;
             }
 
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
             if (courseValidationDetails!.AllCentres)
             {
-                return null;
+                return false;
             }
 
             return true;

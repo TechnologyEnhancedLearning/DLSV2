@@ -541,7 +541,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                             )
                             THEN CAST(1 AS BIT)
                             ELSE CAST(0 AS BIT)
-                        END AS CentreHasApplication,
+                        END AS CentreHasApplication
                     FROM Customisations AS c
                     INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                     WHERE CustomisationID = @customisationId
