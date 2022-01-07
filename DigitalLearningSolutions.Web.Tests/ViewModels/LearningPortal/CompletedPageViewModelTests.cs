@@ -3,9 +3,11 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
@@ -13,8 +15,9 @@
     public class CompletedPageViewModelTests
     {
         private readonly IConfiguration config = A.Fake<IConfiguration>();
-        private CompletedPageViewModel model = null!;
         private CompletedCourse[] completedCourses = null!;
+        private CompletedActionPlanResource[] completedResources = null!;
+        private CompletedPageViewModel model = null!;
 
         [SetUp]
         public void SetUp()
@@ -67,9 +70,11 @@
                     Sections = 6,
                 },
             };
+            completedResources = Builder<CompletedActionPlanResource>.CreateListOfSize(2).Build().ToArray();
 
             model = new CompletedPageViewModel(
                 completedCourses,
+                completedResources,
                 config,
                 null,
                 "Name",
@@ -133,9 +138,10 @@
             DateTime expectedEvaluated,
             int expectedDiagnosticScore,
             int expectedPasses,
-            int expectedSections)
+            int expectedSections
+        )
         {
-            var course = model.CompletedCourses.ElementAt(index);
+            var course = model.CompletedActivities.ElementAt(index);
             course.Id.Should().Be(expectedId);
             course.Name.Should().Be(expectedName);
             course.HasDiagnosticAssessment.Should().Be(expectedDiagnostic);
@@ -149,12 +155,11 @@
             course.Sections.Should().Be(expectedSections);
         }
 
-
-
         [Test]
         public void Completed_courses_should_default_to_returning_the_first_ten_courses()
         {
-            var courses = new[] {
+            var courses = new[]
+            {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "a course 1"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "b course 2"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "c course 3"),
@@ -170,6 +175,7 @@
 
             model = new CompletedPageViewModel(
                 courses,
+                completedResources,
                 config,
                 null,
                 "Name",
@@ -178,14 +184,15 @@
                 1
             );
 
-            model.CompletedCourses.Count().Should().Be(10);
-            model.CompletedCourses.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
+            model.CompletedActivities.Count().Should().Be(10);
+            model.CompletedActivities.FirstOrDefault(course => course.Name == "k course 11").Should().BeNull();
         }
 
         [Test]
         public void Completed_courses_should_correctly_return_the_second_page_of_courses()
         {
-            var courses = new[] {
+            var courses = new[]
+            {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "a course 1"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "b course 2"),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(courseName: "c course 3"),
@@ -201,6 +208,7 @@
 
             model = new CompletedPageViewModel(
                 courses,
+                completedResources,
                 config,
                 null,
                 "Name",
@@ -209,8 +217,8 @@
                 2
             );
 
-            model.CompletedCourses.Count().Should().Be(1);
-            model.CompletedCourses.First().Name.Should().Be("k course 11");
+            model.CompletedActivities.Count().Should().Be(3);
+            model.CompletedActivities.First().Name.Should().Be("k course 11");
         }
     }
 }

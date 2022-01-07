@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
@@ -119,6 +120,193 @@
         }
 
         [Test]
+        public void DeleteDelegateGroup_calls_expected_data_services()
+        {
+            // Given
+            const int groupId = 1;
+            const bool deleteStartedEnrolment = true;
+            var dateTime = DateTime.UtcNow;
+            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
+
+            // When
+            groupsService.DeleteDelegateGroup(groupId, deleteStartedEnrolment);
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    deleteStartedEnrolment,
+                    dateTime
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegates(groupId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.DeleteGroupCustomisations(groupId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.DeleteGroup(groupId)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void GetGroupsForCentre_returns_expected_groups()
+        {
+            // Given
+            const int centreId = 1;
+            var groups = Builder<Group>.CreateListOfSize(10).Build();
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(centreId)).Returns(groups);
+
+            // When
+            var result = groupsService.GetGroupsForCentre(centreId).ToList();
+
+            // Then
+            result.Should().HaveCount(10);
+            result.Should().BeEquivalentTo(groups);
+        }
+
+        [Test]
+        public void GetGroupDelegates_returns_expected_group_delegates()
+        {
+            // Given
+            const int groupId = 1;
+            var groupDelegates = Builder<GroupDelegate>.CreateListOfSize(10).Build();
+            A.CallTo(() => groupsDataService.GetGroupDelegates(groupId)).Returns(groupDelegates);
+
+            // When
+            var result = groupsService.GetGroupDelegates(groupId).ToList();
+
+            // Then
+            result.Should().HaveCount(10);
+            result.Should().BeEquivalentTo(groupDelegates);
+        }
+
+        [Test]
+        public void GetGroupCourses_returns_expected_group_courses()
+        {
+            // Given
+            const int groupId = 1;
+            const int centreId = 1;
+            var groupCourses = Builder<GroupCourse>.CreateListOfSize(15)
+                .All().With(g => g.Active = true).With(g => g.ApplicationArchivedDate = null)
+                .With(g => g.InactivatedDate = null)
+                .TheFirst(10).With(g => g.GroupId = 1)
+                .TheLast(5).With(g => g.GroupId = 2)
+                .Build();
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId)).Returns(groupCourses);
+
+            // When
+            var result = groupsService.GetUsableGroupCoursesForCentre(groupId, centreId).ToList();
+
+            // Then
+            var expectedResults = groupCourses.Where(g => g.GroupId == 1);
+            result.Should().HaveCount(10);
+            result.Should().BeEquivalentTo(expectedResults);
+        }
+
+        [Test]
+        public void GetGroupName_returns_expected_group_name()
+        {
+            // Given
+            const int groupId = 1;
+            const int centreId = 1;
+            var groupName = "Group name";
+            A.CallTo(() => groupsDataService.GetGroupName(groupId, centreId)).Returns(groupName);
+
+            // When
+            var result = groupsService.GetGroupName(groupId, centreId);
+
+            // Then
+            result.Should().BeEquivalentTo(groupName);
+        }
+
+        [Test]
+        public void GetRelatedProgressIdForGroupDelegate_returns_expected_progress_id()
+        {
+            // Given
+            const int groupId = 1;
+            const int delegateId = 1;
+            const int progressId = 12;
+            A.CallTo(() => groupsDataService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId))
+                .Returns(progressId);
+
+            // When
+            var result = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
+
+            // Then
+            result.Should().Be(progressId);
+        }
+
+        [Test]
+        public void GetGroupAtCentreById_returns_expected_group()
+        {
+            // Given
+            const int groupId = 1;
+            const int centreId = 1;
+            var group = GroupTestHelper.GetDefaultGroup();
+            A.CallTo(() => groupsDataService.GetGroupAtCentreById(groupId, centreId)).Returns(group);
+
+            // When
+            var result = groupsService.GetGroupAtCentreById(groupId, centreId);
+
+            // Then
+            result.Should().BeEquivalentTo(group);
+        }
+
+        [Test]
+        public void UpdateGroupDescription_calls_expected_data_services()
+        {
+            // Given
+            const int groupId = 1;
+            const int centreId = 1;
+            const string groupDescription = "Description";
+
+            // When
+            groupsService.UpdateGroupDescription(groupId, centreId, groupDescription);
+
+            // Then
+            A.CallTo(() => groupsDataService.UpdateGroupDescription(groupId, centreId, groupDescription))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void RemoveDelegateFromGroup_calls_expected_data_services()
+        {
+            // Given
+            const int groupId = 1;
+            const int delegateId = 1;
+            const bool deleteStartedEnrolment = true;
+            var dateTime = DateTime.UtcNow;
+            A.CallTo(() => clockService.UtcNow).Returns(dateTime);
+
+            // When
+            groupsService.RemoveDelegateFromGroup(groupId, delegateId, deleteStartedEnrolment);
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
+                    groupId,
+                    delegateId,
+                    deleteStartedEnrolment,
+                    dateTime
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.DeleteGroupDelegatesRecordForDelegate(groupId, delegateId))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void GetGroupCentreId_returns_expected_centre_id()
+        {
+            // Given
+            const int groupId = 1;
+            const int centreId = 12;
+            A.CallTo(() => groupsDataService.GetGroupCentreId(groupId))
+                .Returns(centreId);
+
+            // When
+            var result = groupsService.GetGroupCentreId(groupId);
+
+            // Then
+            result.Should().Be(centreId);
+        }
+
+        [Test]
         public void GetGroupCoursesForCategory_filters_courses_by_category()
         {
             // Given
@@ -127,7 +315,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
                 new[]
                 {
                     correctCategoryCourse,
@@ -136,7 +324,7 @@
             );
 
             // When
-            var result = groupsService.GetGroupCoursesForCategory(1, 1, 1).ToList();
+            var result = groupsService.GetGroupCoursesForCategory(8, 1, 1).ToList();
 
             // Then
             result.Should().Contain(correctCategoryCourse);
@@ -152,7 +340,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCourses(1, 1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
                 new[]
                 {
                     oneCategoryCourse,
@@ -161,7 +349,7 @@
             );
 
             // When
-            var result = groupsService.GetGroupCoursesForCategory(1, 1, null).ToList();
+            var result = groupsService.GetGroupCoursesForCategory(8, 1, null).ToList();
 
             // Then
             result.Should().Contain(oneCategoryCourse);
@@ -266,7 +454,7 @@
         )
         {
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            A.CallTo(() => groupsDataService.GetGroupCourses(A<int>._, A<int>._)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(
                 new List<GroupCourse> { groupCourse }
             );
             var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };

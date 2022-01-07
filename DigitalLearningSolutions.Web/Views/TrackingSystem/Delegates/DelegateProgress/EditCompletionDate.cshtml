@@ -1,0 +1,63 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EditCompletionDateViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completion Date" : "Edit Completion Date";
+
+  var routeParamsForBackLink = new Dictionary<string, string?>();
+
+  var cancelLinkController = "";
+
+  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
+    routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    cancelLinkController = "DelegateProgress";
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+    cancelLinkController = "ViewDelegate";
+  }
+  var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completion date" };
+
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)}" />
+    }
+
+    <h1 class="nhsuk-heading-xl word-break">Edit completion date for @Model.CourseName</h1>
+
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
+        Delegate
+      </div>
+      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @Model.DelegateName
+      </div>
+    </div>
+
+    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
+      <input type="hidden" asp-for="DelegateId" />
+      <input type="hidden" asp-for="ProgressId" />
+      <input type="hidden" asp-for="DelegateName" />
+      <input type="hidden" asp-for="CourseName" />
+      <vc:date-input id="completion-date"
+                     label="Completion date"
+                     day-id="Day"
+                     month-id="Month"
+                     year-id="Year"
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
+
+      <button class="nhsuk-button" type="submit">Save</button>
+    </form>
+
+    <vc:cancel-link asp-controller="@cancelLinkController" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+  </div>
+</div>

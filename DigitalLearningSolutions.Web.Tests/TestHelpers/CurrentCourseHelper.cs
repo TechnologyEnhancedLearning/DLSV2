@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
 {
     using System;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Controllers.LearningPortalController;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
@@ -48,9 +49,9 @@
             };
         }
 
-        public static CurrentPageViewModel CurrentPageViewModelFromController(LearningPortalController controller)
+        public static async Task<CurrentPageViewModel> CurrentPageViewModelFromController(LearningPortalController controller)
         {
-            var result = controller.Current() as ViewResult;
+            var result = await controller.Current() as ViewResult;
             return (CurrentPageViewModel)result!.Model;
         }
     }

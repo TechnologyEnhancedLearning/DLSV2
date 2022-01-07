@@ -2,7 +2,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.Extensions.Configuration;
@@ -13,6 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 
         public CompletedPageViewModel(
             IEnumerable<CompletedCourse> completedCourses,
+            IEnumerable<CompletedActionPlanResource> completedResources,
             IConfiguration config,
             string? searchString,
             string sortBy,
@@ -22,8 +25,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your completed courses")
         {
             BannerText = bannerText;
+            var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
+            allItems.AddRange(completedResources);
+
             var sortedItems = GenericSortingHelper.SortAllItems(
-                completedCourses.AsQueryable(),
+                allItems.AsQueryable(),
                 sortBy,
                 sortDirection
             );
@@ -31,22 +37,28 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            CompletedCourses = paginatedItems.Select(
-                completedCourse =>
-                    new CompletedCourseViewModel(completedCourse, config)
+            CompletedActivities = paginatedItems.Select<BaseLearningItem, CompletedLearningItemViewModel>(
+                activity =>
+                {
+                    return activity switch
+                    {
+                        CompletedCourse completedCourse => new CompletedCourseViewModel(completedCourse, config),
+                        _ => new CompletedLearningResourceViewModel((CompletedActionPlanResource)activity),
+                    };
+                }
             );
         }
 
-        public IEnumerable<CompletedCourseViewModel> CompletedCourses { get; }
+        public IEnumerable<CompletedLearningItemViewModel> CompletedActivities { get; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
             CourseSortByOptions.Name,
             CourseSortByOptions.StartedDate,
             CourseSortByOptions.LastAccessed,
-            CourseSortByOptions.CompletedDate
+            CourseSortByOptions.CompletedDate,
         };
 
-        public override bool NoDataFound => !CompletedCourses.Any() && NoSearchOrFilter;
+        public override bool NoDataFound => !CompletedActivities.Any() && NoSearchOrFilter;
     }
 }

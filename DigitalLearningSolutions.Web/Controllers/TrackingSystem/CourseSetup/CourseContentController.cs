@@ -19,7 +19,7 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.CourseSetup))]
     [Route("/TrackingSystem/CourseSetup/{customisationId:int}/Content")]
-    [ServiceFilter(typeof(VerifyAdminUserCanAccessCourse))]
+    [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     public class CourseContentController : Controller
     {
         public const string SelectAllDiagnosticAction = "diagnostic-select-all";

@@ -1,0 +1,27 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using Microsoft.Extensions.Configuration
+@model AddCourseToGroupCoursesViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/delegateGroups.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = $"Add course to {Model.GroupName} group";
+  var routeParamsForBackLink = new Dictionary<string, string> {
+    { "groupId", Model.GroupId.ToString() },
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl word-break">@ViewData["Title"]</h1>
+
+    <div id="searchable-elements">
+      @foreach (var course in Model.Courses) {
+        <partial name="_SearchableCourseCard" model="course" />
+      }
+    </div>
+
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupCourses" asp-all-route-data="@routeParamsForBackLink" />
+  </div>
+</div>

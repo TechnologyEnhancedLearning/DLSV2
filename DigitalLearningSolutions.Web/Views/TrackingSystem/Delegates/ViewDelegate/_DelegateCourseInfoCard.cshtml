@@ -41,7 +41,12 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.CompleteBy" />
           <dd class="nhsuk-summary-list__actions">
-            <a href="#">Edit<span class="nhsuk-u-visually-hidden"> complete by date</span></a>
+            <a asp-controller="DelegateProgress"
+               asp-action="EditCompleteByDate"
+               asp-route-progressId="@Model.ProgressId"
+               asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+              Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
+            </a>
           </dd>
         </div>
 
@@ -59,9 +64,12 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.Completed" />
           <dd class="nhsuk-summary-list__actions">
-            @if (Model.Completed == null) {
-              <a href="#">Set completed date</a>
-            }
+            <a asp-controller="DelegateProgress"
+               asp-action="EditCompletionDate"
+               asp-route-progressId="@Model.ProgressId"
+               asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+              Edit<span class="nhsuk-u-visually-hidden"> completed date</span>
+            </a>
           </dd>
         </div>
 
@@ -150,15 +158,17 @@
         View progress
       </a>
       <a class="nhsuk-button nhsuk-button--secondary" role="button">See learning log</a>
-      <a
-        class="nhsuk-button delete-button"
-        role="button"
-        asp-controller="ViewDelegate"
-        asp-action="ConfirmRemoveFromCourse"
-        asp-route-delegateId="@Model.DelegateId"
-        asp-route-customisationId="@Model.CustomisationId">
-        Remove
-      </a>
+      @if (string.IsNullOrEmpty(Model.Completed)) {
+        <a
+          class="nhsuk-button delete-button"
+          role="button"
+          asp-controller="ViewDelegate"
+          asp-action="ConfirmRemoveFromCourse"
+          asp-route-delegateId="@Model.DelegateId"
+          asp-route-customisationId="@Model.CustomisationId">
+          Remove
+        </a>
+      }
     </div>
   </details>
 </div>

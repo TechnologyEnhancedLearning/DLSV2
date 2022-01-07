@@ -6,7 +6,7 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models.LearningHubApiClient;
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;
 
