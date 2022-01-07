@@ -26,7 +26,7 @@
   <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">
   <h1 class="competency-group-header nhsuk-u-font-size-32">@Model.Competency.CompetencyGroup</h1>
   <div class=" nhsuk-u-margin-top-8 nhsuk-u-margin-bottom-8">
-    @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders)
+    @if (Model.Competency.Description != null && Model.Assessment.UseDescriptionExpanders && !Model.Competency.AlwaysShowDescription)
     {
       <details class="nhsuk-details">
         <summary class="nhsuk-details__summary">
@@ -54,7 +54,7 @@
       }
     }
   </div>
-  <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-rout-competencyGroupId="@Model.Competency.CompetencyGroupID">
+  <form asp-action="SelfAssessmentCompetency" asp-route-competencyNumber="@Model.CompetencyNumber" asp-route-competencyId="@Model.Competency.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID">
     @foreach (var question in @Model.Competency.AssessmentQuestions.Select((value, i) => new { i, value }))
     {
       if (question.value.AssessmentQuestionInputTypeID == 2)

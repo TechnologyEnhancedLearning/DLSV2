@@ -1,52 +1,69 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model BaseLearningItemViewModel
 
 <div class="nhsuk-grid-column-three-quarters tags">
-  @if (Model.HasDiagnosticAssessment)
-  {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      Diagnostic assessment
+  @if (Model is CompletedCourseViewModel) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
     </div>
   }
-  @if (Model.HasLearningContent)
-  {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      Learning content
+  @if (Model is CurrentCourseViewModel currentCourseViewModel) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
     </div>
-  }
-  @if (Model.HasLearningAssessmentAndCertification)
-  {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      Learning assessment and certification
-    </div>
-  }
-  @if (Model.IsSelfAssessment)
-  {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      Competency assessment
-    </div>
-  }
-  @if (Model.IncludesSignposting)
-  {
-    <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-      Signposts learning
-    </div>
-  }
-  @if (Model is CurrentCourseViewModel currentCourseViewModel)
-  {
-    @if (currentCourseViewModel.UserIsSupervisor)
-    {
-      <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-        Supervisor
+    @if (currentCourseViewModel.UserIsSupervisor) {
+      <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--grey">Supervisor</strong>
       </div>
     }
-    @if (currentCourseViewModel.IsEnrolledWithGroup)
-    {
-      <div class="tag nhsuk-u-font-size-14" aria-describedby="@Model.Id-name">
-        In group
+    @if (currentCourseViewModel.IsEnrolledWithGroup) {
+      <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--grey">In group</strong>
       </div>
     }
   }
-
+  @if (Model is SelfAssessmentCardViewModel) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Self assessment</strong>
+    </div>
+  }
+  @if (Model is ILearningResourceCardViewModel resource) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Learning resource</strong>
+    </div>
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.ResourceType</strong>
+    </div>
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.CatalogueName</strong>
+    </div>
+  }
+  @if (Model.HasDiagnosticAssessment) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Diagnostic assessment</strong>
+    </div>
+  }
+  @if (Model.HasLearningContent) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Learning content</strong>
+    </div>
+  }
+  @if (Model.HasLearningAssessmentAndCertification) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Learning assessment and certification</strong>
+    </div>
+  }
+  @if (Model.IsSelfAssessment) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Competency assessment</strong>
+    </div>
+  }
+  @if (Model.IncludesSignposting) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--grey">Signposts learning</strong>
+    </div>
+  }
 </div>

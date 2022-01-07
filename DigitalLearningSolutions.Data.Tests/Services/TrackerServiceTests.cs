@@ -65,7 +65,7 @@
         }
 
         [Test]
-        public void ProcessQuery_with_GetObjectiveArray_action_correctly_serialises_contentful_response()
+        public void ProcessQuery_with_valid_action_correctly_serialises_contentful_response()
         {
             // Given
             var dataToReturn = new TrackerObjectiveArray(
@@ -75,8 +75,8 @@
                 }
             );
             var expectedJson =
-                "{\"objectives\":[{\"tutorialid\":1,\"interactions\":[6,7,8],\"possible\":4,\"myscore\":0}," +
-                "{\"tutorialid\":2,\"interactions\":[17,18,19],\"possible\":0,\"myscore\":0}]}";
+                "{\"objectives\":[{\"interactions\":[6,7,8],\"tutorialid\":1,\"possible\":4,\"myscore\":0}," +
+                "{\"interactions\":[17,18,19],\"tutorialid\":2,\"possible\":0,\"myscore\":0}]}";
 
             var query = new TrackerEndpointQueryParams
                 { Action = "GetObjectiveArray", CustomisationId = 1, SectionId = 1 };
@@ -90,7 +90,7 @@
         }
 
         [Test]
-        public void ProcessQuery_with_GetObjectiveArray_action_correctly_serialises_null_response()
+        public void ProcessQuery_with_valid_action_correctly_serialises_null_response()
         {
             // Given
             TrackerObjectiveArray? dataToReturn = null;
@@ -104,6 +104,34 @@
 
             // Then
             result.Should().Be("{}");
+        }
+
+        [Test]
+        [TestCase("true", true)]
+        [TestCase("True", true)]
+        [TestCase("false", false)]
+        [TestCase("False", false)]
+        [TestCase("1", true)]
+        [TestCase("0", false)]
+        [TestCase("mu", null)]
+        [TestCase(null, null)]
+        public void ProcessQuery_with_GetObjectiveArrayCc_action_passes_query_params_and_parses_IsPostLearning(
+            string? isPostLearningValue,
+            bool? expectedBool
+        )
+        {
+            // Given
+            var query = new TrackerEndpointQueryParams
+            {
+                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue,
+            };
+
+            // When
+            trackerService.ProcessQuery(query);
+
+            // Then
+            A.CallTo(() => actionService.GetObjectiveArrayCc(1, 2, expectedBool))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

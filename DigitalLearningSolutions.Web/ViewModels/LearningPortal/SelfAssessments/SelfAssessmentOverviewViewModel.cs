@@ -32,6 +32,13 @@
                             allVerifiedOrNotRequired = false;
                             break;
                         }
+
+                        if (SelfAssessment.EnforceRoleRequirementsForSignOff &&
+                            assessmentQuestion.ResultRAG == 1 | assessmentQuestion.ResultRAG == 2)
+                        {
+                            allVerifiedOrNotRequired = false;
+                            break;
+                        }
                     }
                 }
             }

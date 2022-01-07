@@ -9,7 +9,7 @@
         public int LoggedById { get; set; }
         public string? Activity { get; set; }
         public string? ExternalUri { get; set; }
-        public int? LinkedCompetencyLearningResourceId { get; set; }
+        public int? LearningResourceReferenceId { get; set; }
         public string ActivityType { get; set; }
 
         public DateTime? DueDate { get; set; }
@@ -25,5 +25,6 @@
         public int? LoggedByAdminId { get; set; }
         public int? SeqInt { get; set; }
         public DateTime? LastAccessedDate { get; set; }
+        public int? LearningHubResourceReferenceId { get; set; }
     }
 }

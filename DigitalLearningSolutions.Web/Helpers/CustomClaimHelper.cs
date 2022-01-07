@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Security.Claims;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public static class CustomClaimHelper
     {
@@ -127,6 +128,11 @@
         public static bool HasSupervisorAdminPermissions(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsBool(CustomClaimTypes.IsSupervisor) == true;
+        }
+
+        public static string GetCandidateNumberKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaim(CustomClaimTypes.LearnCandidateNumber)!;
         }
     }
 }

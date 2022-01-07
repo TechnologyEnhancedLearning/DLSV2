@@ -77,7 +77,7 @@ $nhs-dark-grey: #425563;
   display: flex;
 }
 
-button.nhsuk-pagination__link {
+button.nhsuk-pagination__link, a.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
   color: $nhsuk-link-color;

@@ -15,7 +15,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/MyAccount/EditDetails", "Edit details")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
-        [InlineData("/TrackingSystem/Centre/Administrators/1/DeactivateAdmin", "Are you sure you would like to deactivate this admin account?")]
+        [InlineData(
+            "/TrackingSystem/Centre/Administrators/1/DeactivateAdmin",
+            "Are you sure you would like to deactivate this admin account?"
+        )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
         [InlineData("/TrackingSystem/Centre/Ranking", "Centre ranking")]
         [InlineData("/TrackingSystem/Centre/ContractDetails", "Contract details")]
@@ -51,14 +54,28 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/EditDescription", "Edit description for Activities worker or coordinator group (optional)")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/EditDescription",
+            "Edit description for Activities worker or coordinator group (optional)"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
-
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
         )]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
+            "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/Courses/Add/SelectCourse",
+            "Add course to Activities worker or coordinator group"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
+            "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
+        )]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
@@ -75,6 +92,13 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditSupervisor",
             "Edit supervisor for Digital Literacy for the Workplace - CC Test"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
+            "Edit complete by date for Digital Literacy for the Workplace - CC Test"
+        )]
+        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+            "Edit completion date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]

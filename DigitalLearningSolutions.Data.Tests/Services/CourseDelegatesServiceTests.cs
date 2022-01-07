@@ -36,7 +36,7 @@
             const int centreId = 2;
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
-                .Returns(new List<Course> { new Course { CustomisationId = 1 } });
+                .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
 
@@ -60,7 +60,8 @@
         public void GetCoursesAndCourseDelegatesForCentre_contains_empty_lists_with_no_courses_in_category()
         {
             // Given
-            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(2, 7)).Returns(new List<Course>());
+            A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(2, 7))
+                .Returns(new List<CourseAssessmentDetails>());
 
             // When
             var result = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(2, 7, null);
@@ -84,7 +85,7 @@
             const int centreId = 2;
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
-                .Returns(new List<Course> { new Course { CustomisationId = 1 } });
+                .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
 
@@ -110,7 +111,7 @@
             const int centreId = 2;
             const int categoryId = 1;
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
-                .Returns(new List<Course> { new Course { CustomisationId = 1 } });
+                .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
 
             // Then
             Assert.Throws<CourseNotFoundException>(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
