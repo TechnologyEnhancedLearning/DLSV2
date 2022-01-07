@@ -7,8 +7,9 @@
         public EditCourseSectionViewModel(
             int customisationId,
             string courseName,
-            Section section
-        ) : base(section, courseName)
+            Section section,
+            bool showDiagnostic
+        ) : base(section, courseName, showDiagnostic)
         {
             CustomisationId = customisationId;
         }
@@ -22,5 +23,7 @@
         }
 
         public int CustomisationId { get; set; }
+
+        
     }
 }
