@@ -9,6 +9,7 @@
   ViewData["Title"] = "Send welcome messages";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
 <div class="nhsuk-grid-row">
@@ -53,8 +54,8 @@
                        day-id="@nameof(Model.Day)"
                        month-id="@nameof(Model.Month)"
                        year-id="@nameof(Model.Year)"
-                       css-class="nhsuk-form-group"
-                       hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                       css-class="nhsuk-u-margin-bottom-4"
+                       hint-text-lines="@hintTextLines" />
         <button class="nhsuk-button" type="submit">Send welcome emails</button>
       </form>
     }
