@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Data;
     using Dapper;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
     using Microsoft.Extensions.Logging;
 
@@ -14,6 +14,7 @@
         string? GetCentreName(int centreId);
         IEnumerable<(int, string)> GetCentresForDelegateSelfRegistrationAlphabetical();
         Centre? GetCentreDetailsById(int centreId);
+        IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
 
         void UpdateCentreManagerDetails(
             int centreId,
@@ -159,6 +160,26 @@
             }
 
             return centre;
+        }
+
+        public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
+        {
+            return connection.Query<CentreSummaryForSuperAdmin>(
+                @"SELECT c.CentreID,
+                            c.CentreName,
+                            c.RegionID,
+                            r.RegionName,
+                            c.ContactForename,
+                            c.ContactSurname,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            c.CentreTypeId,
+                            ct.CentreType,
+                            c.Active
+                        FROM Centres AS c
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId"
+            );
         }
 
         public void UpdateCentreManagerDetails(
