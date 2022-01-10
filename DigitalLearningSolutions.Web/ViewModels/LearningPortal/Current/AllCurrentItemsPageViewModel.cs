@@ -25,7 +25,7 @@
 
             foreach (var actionPlanResource in actionPlanResources)
             {
-                CurrentItems = CurrentItems.Append(new LearningResourceCardViewModel(actionPlanResource));
+                CurrentItems = CurrentItems.Append(new CurrentLearningResourceViewModel(actionPlanResource));
             }
         }
     }

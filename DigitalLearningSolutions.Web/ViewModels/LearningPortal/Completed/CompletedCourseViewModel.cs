@@ -1,25 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
-    using System;
-    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
-    public class CompletedCourseViewModel : StartedLearningItemViewModel
+    public class CompletedCourseViewModel : CompletedLearningItemViewModel
     {
-        public DateTime CompletedDate { get; }
-        public DateTime? EvaluatedDate { get; }
-        public DateTime? ArchivedDate { get; }
-        public string EvaluateUrl { get; }
-
-
-        public CompletedCourseViewModel(CompletedCourse course, IConfiguration config) : base(course)
+        public CompletedCourseViewModel(CompletedLearningItem course, IConfiguration config) : base(course)
         {
-            CompletedDate = course.Completed;
-            EvaluatedDate = course.Evaluated;
             EvaluateUrl = config.GetEvaluateUrl(course.ProgressID, true);
-            ArchivedDate = course.ArchivedDate;
         }
+
+        public string EvaluateUrl { get; }
 
         public string FinaliseButtonText()
         {
@@ -42,7 +34,7 @@
             {
                 "Evaluate" => "Evaluate course",
                 "Certificate" => "View or print certificate",
-                _ => ""
+                _ => "",
             };
         }
 

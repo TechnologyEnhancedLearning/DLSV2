@@ -12,7 +12,9 @@
 
         public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
 
-        bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+        public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
+
+        public void RemoveDelegateFromCourse(
             int delegateId,
             int customisationId,
             RemovalMethod removalMethod
@@ -261,6 +263,13 @@
             );
         }
 
+        public bool DelegateHasCurrentProgress(int delegateId, int customisationId)
+        {
+            return progressDataService
+                .GetDelegateProgressForCourse(delegateId, customisationId)
+                .Any(p => p.Completed == null && p.RemovedDate == null);
+        }
+
         public IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(
             int centreId,
             int? categoryId,
@@ -284,7 +293,7 @@
             return courseDataService.GetCourseNameAndApplication(customisationId);
         }
 
-        public bool RemoveDelegateFromCourseIfDelegateHasCurrentProgress(
+        public void RemoveDelegateFromCourse(
             int delegateId,
             int customisationId,
             RemovalMethod removalMethod
@@ -295,17 +304,10 @@
                 .Select(p => p.ProgressId)
                 .ToList();
 
-            if (!currentProgressIds.Any())
-            {
-                return false;
-            }
-
             foreach (var progressId in currentProgressIds)
             {
                 courseDataService.RemoveCurrentCourse(progressId, delegateId, removalMethod);
             }
-
-            return true;
         }
 
         public void UpdateCourseOptions(CourseOptions courseOptions, int customisationId)

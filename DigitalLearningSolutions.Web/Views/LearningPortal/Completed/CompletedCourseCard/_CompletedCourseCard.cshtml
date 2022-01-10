@@ -20,26 +20,26 @@
   </details>
 
   <div class="flex-row">
-    @if (Model.ArchivedDate == null)
-    {
-      <a class="nhsuk-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-right-2"
+    @if (Model.ArchivedDate == null) {
+      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
          aria-describedby="@Model.Id-name"
          asp-controller="LearningMenu"
          asp-action="Index"
-         asp-route-customisationId="@Model.Id">
+         asp-route-customisationId="@Model.Id"
+         role="button">
         Launch course
       </a>
     }
-      @if (Model.HasFinaliseButton())
-      {
-        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-0"
-           aria-describedby="@Model.Id-name"
-           aria-label="@Model.FinaliseButtonAriaLabel()"
-           href="@Model.EvaluateUrl">
-          <span aria-hidden="true">
-            @Model.FinaliseButtonText()
-          </span>
-        </a>
-      }
-    </div>
+    @if (Model.HasFinaliseButton()) {
+      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+         aria-describedby="@Model.Id-name"
+         aria-label="@Model.FinaliseButtonAriaLabel()"
+         href="@Model.EvaluateUrl"
+         role="button">
+        <span aria-hidden="true">
+          @Model.FinaliseButtonText()
+        </span>
+      </a>
+    }
+  </div>
 </div>
