@@ -9,11 +9,11 @@
 
     public class UnlockServiceTests
     {
-        private IConfigService configService;
-        private IEmailService emailService;
-        private INotificationDataService notificationDataService;
-        private NotificationService notificationService;
-        private IFeatureManager featureManager;
+        private IConfigService configService = null!;
+        private IEmailService emailService = null!;
+        private INotificationDataService notificationDataService = null!;
+        private NotificationService notificationService = null!;
+        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
@@ -100,7 +100,6 @@
                     emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/")))
                 )
                 .MustHaveHappened();
-
         }
 
         [Test]
@@ -118,7 +117,6 @@
                     emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/")))
                 )
                 .MustHaveHappened();
-
         }
     }
 }
