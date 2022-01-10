@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 {
-    using DigitalLearningSolutions.Data.Models;
-
+    using DigitalLearningSolutions.Data.Models.Centres;
     public class DashboardCentreDetailsViewModel
     {
         public DashboardCentreDetailsViewModel(Centre centre, string userIpAddress, int? centreRank)
