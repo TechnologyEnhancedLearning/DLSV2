@@ -36,11 +36,11 @@
                                                             AND au.Password = cd.Password
                                                                 AND au.CentreID = cd.CentreID
                                                                 AND au.Email != ''
-                                                          ) AS AdminID,
-                                                           cd.AliasID
-                                                           FROM Candidates AS cd
-                                                            INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
-                                                            INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID ";
+                                                        ) AS AdminID,
+                                                        cd.AliasID
+                                                        FROM Candidates AS cd
+                                                          INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
+                                                          INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID";
 
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
@@ -66,8 +66,11 @@
         {
             return connection.Query<DelegateUserCard>(
                 @$"{DelegateUserSelectQuery} 
-					    LEFT JOIN GroupDelegates gd ON cd.CandidateID = gd.DelegateID AND gd.GroupID = @groupId
-                        WHERE cd.CentreId = @centreId AND cd.Approved = 1 AND gd.DelegateID IS NULL",
+                        WHERE cd.CentreId = @centreId
+                        AND cd.Approved = 1
+                        AND cd.Active = 1
+                        AND NOT EXISTS (SELECT DelegateID FROM GroupDelegates WHERE DelegateID = cd.CandidateID
+                                        AND GroupID = @groupId)",
                 new
                 {
                     centreId, groupId,

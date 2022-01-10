@@ -1,13 +1,12 @@
 ﻿@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AddDelegateToGroup
-@model DelegateAddedToGroupConfirmationViewModel;
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
+@model ConfirmDelegateAddedViewModel
 
 @{
   ViewData["Title"] = "Delegate added to group"; 
 
   var routeParamsForIndexLink = new Dictionary<string, string?> {
     { "groupId", Model.GroupId.ToString() },
-    { "page", "1" },
   };
 }
 
@@ -21,6 +20,6 @@
       @(Model.DelegateName) has been added to the @(Model.GroupName) group
     </p>
 
-    <vc:action-link link-text="See all delegates in @(Model.GroupName) group" asp-controller="DelegateGroups" asp-action="GroupDelegates" asp-all-route-data="@routeParamsForIndexLink" />
+    <vc:action-link link-text="See all delegates in @(Model.GroupName) group" asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeParamsForIndexLink" />
   </div>
 </div>

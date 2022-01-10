@@ -78,8 +78,8 @@
   <form method="post" aria-hidden="false">
     <input type="hidden" name="delegateId" value="@Model.DelegateInfo.Id" />
     <button class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2"
-            asp-controller="AddDelegateToGroup"
-            asp-action="DelegateAddedToGroupConfirmation"
+            asp-controller="GroupDelegates"
+            asp-action="AddDelegate"
             asp-route-groupId="@ViewData["groupId"]"
             asp-route-delegateId="@Model.DelegateInfo.Id">
       Add to group

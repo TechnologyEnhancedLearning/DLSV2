@@ -87,181 +87,7 @@
 
             return View(model);
         }
-
-        [Route("{groupId:int}/Delegates/{page:int=1}")]
-        public IActionResult GroupDelegates(int groupId, int page = 1)
-        {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-
-            if (groupName == null)
-            {
-                return NotFound();
-            }
-
-            var groupDelegates = groupsService.GetGroupDelegates(groupId);
-
-            var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
-
-            return View(model);
-        }
-
-        [HttpGet]
-        [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult RemoveGroupDelegates(int groupId, int delegateId)
-        {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-            var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
-            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
-
-            if (groupName == null || delegateUser == null)
-            {
-                return NotFound();
-            }
-
-            var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
-
-            var model = new RemoveGroupDelegatesViewModel(delegateUser, groupName, groupId, progressId);
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult RemoveGroupDelegates(RemoveGroupDelegatesViewModel model, int groupId, int delegateId)
-        {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-            var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
-            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
-
-            if (groupName == null || delegateUser == null)
-            {
-                return NotFound();
-            }
-
-            if (!model.ConfirmRemovalFromGroup)
-            {
-                ModelState.AddModelError(
-                    nameof(RemoveGroupDelegatesViewModel.ConfirmRemovalFromGroup),
-                    "You must confirm before removing this user from the group"
-                );
-                return View(model);
-            }
-
-            groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments);
-
-            return RedirectToAction("GroupDelegates", new { groupId });
-        }
-
-        [Route("{groupId:int}/Courses/{page:int=1}")]
-        public IActionResult GroupCourses(int groupId, int page = 1)
-        {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-
-            if (groupName == null)
-            {
-                return NotFound();
-            }
-
-            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
-
-            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
-
-            var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
-
-            return View(model);
-        }
-
-        [Route("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
-        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
-        {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-            var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
-
-            var model = new RemoveGroupCourseViewModel(
-                groupCourse!.GroupCustomisationId,
-                groupCourse.CourseName,
-                groupName!
-            );
-
-            return View(model);
-        }
-
-        [HttpPost("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
-        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, RemoveGroupCourseViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            groupsService.RemoveGroupCourseAndRelatedProgress(
-                groupCustomisationId,
-                groupId,
-                model.DeleteStartedEnrolments
-            );
-
-            return RedirectToAction(nameof(GroupCourses), new { groupId });
-        }
-
-        [Route("{groupId:int}/Delete")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult DeleteGroup(int groupId)
-        {
-            var delegates = groupsService.GetGroupDelegates(groupId);
-            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
-
-            if (delegates.Any() || courses.Any())
-            {
-                return RedirectToAction("ConfirmDeleteGroup", new { groupId });
-            }
-
-            groupsService.DeleteDelegateGroup(groupId, false);
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        [Route("{groupId:int}/Delete/Confirm")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult ConfirmDeleteGroup(int groupId)
-        {
-            var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
-            var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
-            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId()).Count();
-
-            var model = new ConfirmDeleteGroupViewModel
-            {
-                GroupLabel = groupLabel,
-                DelegateCount = delegateCount,
-                CourseCount = courseCount,
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        [Route("{groupId:int}/Delete/Confirm")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments);
-
-            return RedirectToAction("Index");
-        }
-
+        
         [Route("Add")]
         [HttpGet]
         public IActionResult AddDelegateGroup()
@@ -366,6 +192,76 @@
             return RedirectToAction("Index");
         }
 
+        [Route("{groupId:int}/Delete")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult DeleteGroup(int groupId)
+        {
+            var delegates = groupsService.GetGroupDelegates(groupId);
+            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
+
+            if (delegates.Any() || courses.Any())
+            {
+                return RedirectToAction("ConfirmDeleteGroup", new { groupId });
+            }
+
+            groupsService.DeleteDelegateGroup(groupId, false);
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult ConfirmDeleteGroup(int groupId)
+        {
+            var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
+            var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
+            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId()).Count();
+
+            var model = new ConfirmDeleteGroupViewModel
+            {
+                GroupLabel = groupLabel,
+                DelegateCount = delegateCount,
+                CourseCount = courseCount,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("{groupId:int}/Delete/Confirm")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            groupsService.DeleteDelegateGroup(groupId, model.DeleteEnrolments);
+
+            return RedirectToAction("Index");
+        }
+
+        [Route("{groupId:int}/Courses/{page:int=1}")]
+        public IActionResult GroupCourses(int groupId, int page = 1)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+
+            if (groupName == null)
+            {
+                return NotFound();
+            }
+
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter();
+
+            var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
+
+            var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
+
+            return View(model);
+        }
+
         [HttpGet]
         [Route("{groupId:int}/Courses/Add/SelectCourse")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
@@ -415,6 +311,43 @@
 
             // TODO HEEDLS-658 Save + Confirmation page
             return RedirectToAction("GroupCourses", new { groupId });
+        }
+
+        [Route("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+            var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
+
+            var model = new RemoveGroupCourseViewModel(
+                groupCourse!.GroupCustomisationId,
+                groupCourse.CourseName,
+                groupName!
+            );
+
+            return View(model);
+        }
+
+        [HttpPost("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, RemoveGroupCourseViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            groupsService.RemoveGroupCourseAndRelatedProgress(
+                groupCustomisationId,
+                groupId,
+                model.DeleteStartedEnrolments
+            );
+
+            return RedirectToAction(nameof(GroupCourses), new { groupId });
         }
 
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)

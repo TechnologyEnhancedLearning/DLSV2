@@ -426,7 +426,7 @@
             var result = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(5, 101);
 
             // Then
-            result.Should().HaveCount(30);
+            result.Should().HaveCount(106);
         }
     }
 }

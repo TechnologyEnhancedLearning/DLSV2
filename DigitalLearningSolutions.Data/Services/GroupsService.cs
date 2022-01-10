@@ -17,6 +17,8 @@
     {
         int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
 
+        void AddDelegateToGroup(int delegateId, int groupId, int addedByFieldLink);
+
         void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDelegateDetails,
@@ -251,6 +253,11 @@
             groupsDataService.DeleteGroup(groupId);
 
             transaction.Complete();
+        }
+
+        public void AddDelegateToGroup(int delegateId, int groupId, int addedByFieldLink)
+        {
+            groupsDataService.AddDelegateToGroup(delegateId, groupId, clockService.UtcNow, addedByFieldLink);
         }
 
         public IEnumerable<Group> GetGroupsForCentre(int centreId)

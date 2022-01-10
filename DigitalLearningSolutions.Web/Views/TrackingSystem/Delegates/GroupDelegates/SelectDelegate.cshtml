@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AddDelegateToGroup
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @using Microsoft.Extensions.Configuration
-@model AddDelegateToGroupViewModel
+@model AddGroupDelegateViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/allDelegates.css")" asp-append-version="true">
@@ -22,7 +22,7 @@
     </div>
     <input id="selected-group-Id" type="hidden" asp-for="@Model.GroupId" />
 
-    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
     @if (Model.NoDataFound)
     {
@@ -37,7 +37,7 @@
       <div id="searchable-elements">
         @foreach (var delegateModel in Model.Delegates)
         {
-          <partial name="_AddDelegateToGroupCard"
+          <partial name="_AddGroupDelegateCard"
                    model="delegateModel"
                    view-data="@(new ViewDataDictionary(ViewData) { { "groupId", @Model.GroupId } })" />
         }
@@ -48,11 +48,11 @@
       <partial name="SearchablePage/_Pagination" model="Model" />
     }
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupDelegates" asp-all-route-data="@routeParamsForGroupDelegates" />
+    <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeParamsForGroupDelegates" />
 
   </div>
 </div>
 
 @section scripts {
-  <script src="@Url.Content("~/js/trackingSystem/addDelegatesToGroup.js")" asp-append-version="true"></script>
+  <script src="@Url.Content("~/js/trackingSystem/addGroupDelegate.js")" asp-append-version="true"></script>
 }
