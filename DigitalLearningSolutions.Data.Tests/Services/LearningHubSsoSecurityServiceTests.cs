@@ -1,8 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
-    using DigitalLearningSolutions.Data.Exceptions;
-    using DigitalLearningSolutions.Data.Models.Signposting.LinkLearningHubSso;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
@@ -14,7 +12,6 @@
         private const int TestTolerance = 3;
         private const int TestIterations = 1000;
         private const int TestLength = 3;
-        private ILearningHubSsoSecurityService learningHubSsoSecurityService = null!;
         private IConfiguration Config { get; set; } = null!;
 
         [SetUp]
@@ -22,7 +19,6 @@
         {
             var clockService = A.Fake<IClockService>();
             A.CallTo(() => clockService.UtcNow).Returns(new DateTime(2021, 12, 9, 8, 30, 45));
-            learningHubSsoSecurityService = new LearningHubSsoSecurityService(clockService, Config);
         }
 
         [OneTimeSetUp]
@@ -170,140 +166,7 @@
             // Then
             result.Should().BeFalse();
         }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_throws_exception_when_verifyHash_returns_false()
-        {
-            // Given
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                UserId = 56789,
-            };
-
-            // When
-            Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            act.Should().Throw<LearningHubLinkingRequestException>();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_throws_exception_when_stored_sessionIdentifier_is_null()
-        {
-            // Given
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                State = $"{Guid.NewGuid()}_refId:1234",
-                UserId = 12345,
-            };
-
-            // When
-            Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            act.Should().Throw<LearningHubLinkingRequestException>();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_throws_exception_when_sessionIdentifier_does_not_match()
-        {
-            // Given
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                SessionIdentifier = Guid.NewGuid(),
-                State = $"{Guid.NewGuid()}_refId:1234",
-                UserId = 12345,
-            };
-
-            // When
-            Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            act.Should().Throw<LearningHubLinkingRequestException>();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_throws_exception_when_state_is_incomplete()
-        {
-            // Given
-            var sessionIdentifier = Guid.NewGuid();
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                SessionIdentifier = sessionIdentifier,
-                State = $"{sessionIdentifier}",
-                UserId = 12345,
-            };
-
-            // When
-            Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            act.Should().Throw<LearningHubLinkingRequestException>();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_throws_exception_when_state_sessionIdentifier_is_not_guid()
-        {
-            // Given
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                SessionIdentifier = Guid.NewGuid(),
-                State = "no-a-guid_refId:1234",
-                UserId = 12345,
-            };
-
-            // When
-            Action act = () => learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            act.Should().Throw<LearningHubLinkingRequestException>();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_returns_null_when_resource_id_could_not_be_parsed()
-        {
-            // Given
-            var sessionIdentifier = Guid.NewGuid();
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                SessionIdentifier = sessionIdentifier,
-                State = $"{sessionIdentifier}_refId:badInteger",
-                UserId = 12345,
-            };
-
-            // When
-            var result = learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void ParseSsoAccountLinkingRequest_returns_resourceId_when_request_parsed_successfully()
-        {
-            // Given
-            var sessionIdentifier = Guid.NewGuid();
-            var linkLearningHubRequest = new LinkLearningHubRequest
-            {
-                Hash = "vrdz",
-                SessionIdentifier = sessionIdentifier,
-                State = $"{sessionIdentifier}_refId:1234",
-                UserId = 12345,
-            };
-
-            // When
-            var result = learningHubSsoSecurityService.ParseSsoAccountLinkingRequest(linkLearningHubRequest);
-
-            // Then
-            result.Should().Be(1234);
-        }
-
+        
         private class BinaryClockService : IClockService
         {
             public BinaryClockService(DateTime firstResult, DateTime secondResult)

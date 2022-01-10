@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Signposting
 {
-    using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso;
+    using DigitalLearningSolutions.Web.ViewModels.SignpostingSso;
     using FluentAssertions;
     using NUnit.Framework;
 

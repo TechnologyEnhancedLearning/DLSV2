@@ -439,30 +439,12 @@
         }
 
         [Test]
-        public void GetDelegateUserLearningHubAuthId_returns_expected_delegate_learningHubAuthId()
-        {
-            using var transaction = new TransactionScope();
-
-            // Given
-            const int delegateId = 11;
-            const int expectedLearningHubAuthId = 5678;
-            userDataService.SetDelegateUserLearningHubAuthId(delegateId, expectedLearningHubAuthId);
-
-            // When
-            var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);
-
-            // Then
-            result.Should().NotBeNull()
-                .And.Subject.Should().Be(expectedLearningHubAuthId);
-        }
-
-        [Test]
         public void GetDelegateUserLearningHubAuthId_returns_null_delegate_learningHubAuthId()
         {
             using var transaction = new TransactionScope();
 
             // Given
-            const int delegateId = 11;
+            const int delegateId = 3;
 
             // When
             var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);

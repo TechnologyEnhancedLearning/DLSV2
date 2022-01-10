@@ -1,5 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.SignpostingSso
 @model LinkLearningHubViewModel
 
 @{
@@ -18,8 +19,8 @@
 
     @if (Model.ShowIsAlreadyLinkedWarning)
     {
-      <p>Your account has already been linked with the Learning Hub in a previous link request.</p>
-      <p>Therefore no changes have been made to your account regarding this link request.</p>
+      <p>Your account is already linked with Learning Hub.</p>
+      <p>No change has been made.</p>
     }
     else
     {

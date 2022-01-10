@@ -1,6 +1,5 @@
-﻿namespace DigitalLearningSolutions.Data.Models.Signposting.LinkLearningHubSso
+﻿namespace DigitalLearningSolutions.Data.Models.Signposting
 {
-    using System;
     using System.ComponentModel.DataAnnotations;
 
     public class LinkLearningHubRequest
@@ -12,8 +11,6 @@
 
         [Required]
         public string State { get; set; }
-
-        public Guid? SessionIdentifier { get; set; }
 
         public static string SessionIdentifierKey = "LinkLearningHubRequestIdentifier";
     }

@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Signposting.LinkLearningHubSso
+﻿namespace DigitalLearningSolutions.Web.ViewModels.SignpostingSso
 {
     public class LinkLearningHubViewModel
     {
@@ -6,13 +6,12 @@
         {
             ShowIsAlreadyLinkedWarning = isAccountAlreadyLinked;
             ResourceLinkId = learningHubResourceId;
-            ShowResourceLink = learningHubResourceId.HasValue;
         }
 
         public bool ShowIsAlreadyLinkedWarning { get; set; }
 
         public int? ResourceLinkId { get; set; }
 
-        public bool ShowResourceLink { get; set; }
+        public bool ShowResourceLink => ResourceLinkId.HasValue;
     }
 }

@@ -2,7 +2,7 @@
 {
     using System.Net;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Models.Signposting.LinkLearningHubSso;
+    using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.IntegrationTests.TestHelpers;
     using FluentAssertions;
@@ -20,7 +20,7 @@
         }
 
         [Theory]
-        [InlineData(1, 1, "Your account has already been linked with the Learning Hub in a previous link request.")]
+        [InlineData(1, 1, "Your account is already linked with Learning Hub.")]
         [InlineData(2, 2, "Your account has been linked with the Learning Hub.")]
         public async Task LinkAccountValidRequestShowsConfirmationPage(
             int delegateId,
