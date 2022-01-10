@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewComponents
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@
         /// <param name="monthId"></param>
         /// <param name="yearId"></param>
         /// <param name="cssClass">Leave blank for no custom css class.</param>
-        /// <param name="hintText">Leave blank for no hint.</param>
+        /// <param name="hintTextLines">Leave blank for no hint.</param>
         /// <returns></returns>
         public IViewComponentResult Invoke(
             string id,
@@ -25,7 +26,7 @@
             string monthId,
             string yearId,
             string cssClass,
-            string hintText
+            IEnumerable<string>? hintTextLines
         )
         {
             var model = ViewData.Model;
@@ -58,7 +59,7 @@
                 yearErrors?.Count > 0,
                 nonEmptyErrors,
                 string.IsNullOrEmpty(cssClass) ? null : cssClass,
-                string.IsNullOrEmpty(hintText) ? null : hintText
+                hintTextLines.Any() ? hintTextLines : null
             );
             return View(viewModel);
         }

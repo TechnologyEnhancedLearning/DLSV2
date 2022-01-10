@@ -19,6 +19,12 @@
         public string? SupervisorLastName { get; set; }
         public int CompleteWithinMonths { get; set; }
         public int ValidityMonths { get; set; }
+        public bool Active { get; set; }
+        public DateTime? ApplicationArchivedDate { get; set; }
+        public DateTime? InactivatedDate { get; set; }
+
+        public bool IsUsable => Active && InactivatedDate == null
+                                                 && ApplicationArchivedDate == null;
 
         public string CourseName => string.IsNullOrWhiteSpace(CustomisationName)
             ? ApplicationName

@@ -18,7 +18,7 @@
 @foreach (var currentLearningItem in Model.CurrentItems) {
   if (currentLearningItem is SelfAssessmentCardViewModel) {
     <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
-  } else if (currentLearningItem is LearningResourceCardViewModel) {
+  } else if (currentLearningItem is CurrentLearningResourceViewModel) {
     <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
   } else {
     <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />

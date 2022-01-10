@@ -108,7 +108,7 @@
 
         [HttpGet]
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult GroupDelegatesRemove(int groupId, int delegateId)
+        public IActionResult RemoveGroupDelegates(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -122,14 +122,14 @@
 
             var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
-            var model = new GroupDelegatesRemoveViewModel(delegateUser, groupName, groupId, progressId);
+            var model = new RemoveGroupDelegatesViewModel(delegateUser, groupName, groupId, progressId);
 
             return View(model);
         }
 
         [HttpPost]
         [Route("{groupId:int}/Delegates/Remove/{delegateId:int}")]
-        public IActionResult GroupDelegatesRemove(GroupDelegatesRemoveViewModel model, int groupId, int delegateId)
+        public IActionResult RemoveGroupDelegates(RemoveGroupDelegatesViewModel model, int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
@@ -144,7 +144,7 @@
             if (!model.ConfirmRemovalFromGroup)
             {
                 ModelState.AddModelError(
-                    nameof(GroupDelegatesRemoveViewModel.ConfirmRemovalFromGroup),
+                    nameof(RemoveGroupDelegatesViewModel.ConfirmRemovalFromGroup),
                     "You must confirm before removing this user from the group"
                 );
                 return View(model);
@@ -175,12 +175,49 @@
             return View(model);
         }
 
+        [Route("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
+        {
+            var centreId = User.GetCentreId();
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+            var groupCourse = groupsService.GetUsableGroupCourseForCentre(groupCustomisationId, groupId, centreId);
+
+            var model = new RemoveGroupCourseViewModel(
+                groupCourse!.GroupCustomisationId,
+                groupCourse.CourseName,
+                groupName!
+            );
+
+            return View(model);
+        }
+
+        [HttpPost("{groupId:int}/Courses/{groupCustomisationId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
+        public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, RemoveGroupCourseViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            groupsService.RemoveGroupCourseAndRelatedProgress(
+                groupCustomisationId,
+                groupId,
+                model.DeleteStartedEnrolments
+            );
+
+            return RedirectToAction(nameof(GroupCourses), new { groupId });
+        }
+
         [Route("{groupId:int}/Delete")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult DeleteGroup(int groupId)
         {
             var delegates = groupsService.GetGroupDelegates(groupId);
-            var courses = groupsService.GetGroupCourses(groupId, User.GetCentreId());
+            var courses = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId());
 
             if (delegates.Any() || courses.Any())
             {
@@ -198,7 +235,7 @@
         {
             var groupLabel = groupsService.GetGroupName(groupId, User.GetCentreId())!;
             var delegateCount = groupsService.GetGroupDelegates(groupId).Count();
-            var courseCount = groupsService.GetGroupCourses(groupId, User.GetCentreId()).Count();
+            var courseCount = groupsService.GetUsableGroupCoursesForCentre(groupId, User.GetCentreId()).Count();
 
             var model = new ConfirmDeleteGroupViewModel
             {

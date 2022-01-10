@@ -324,6 +324,33 @@
         }
 
         [Test]
+        public void Set_complete_by_date_should_update_db()
+        {
+            // Given
+            var addedDate = new DateTime(2021, 11, 1);
+            var newCompleteByDate = new DateTime(3022, 7, 29);
+
+            using (new TransactionScope())
+            {
+                var itemId = InsertLearningLogItem(
+                    GenericDelegateId,
+                    addedDate,
+                    GenericLearningResourceReferenceId
+                );
+
+                // When
+                service.SetCompleteByDate(itemId, newCompleteByDate);
+                var modifiedItem = service.GetLearningLogItem(itemId);
+
+                // Then
+                using (new AssertionScope())
+                {
+                    modifiedItem!.DueDate.Should().Be(newCompleteByDate);
+                }
+            }
+        }
+
+        [Test]
         public void RemoveLearningLogItem_correctly_sets_removed_date_and_removed_by_id()
         {
             // Given
