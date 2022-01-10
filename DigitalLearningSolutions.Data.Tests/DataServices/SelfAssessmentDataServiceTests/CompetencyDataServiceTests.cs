@@ -573,26 +573,6 @@
         }
 
         [Test]
-        public void GetCompetencyAssessmentQuestions_returns_expected_results()
-        {
-            // Given
-            var expectedItem = new CompetencyAssessmentQuestion
-            {
-                CompetencyId = 1,
-                AssessmentQuestionId = 1,
-                Ordering = 0,
-                Required = true,
-            };
-
-            // When
-            var result = selfAssessmentDataService.GetCompetencyAssessmentQuestions(1).ToList();
-
-            // Then
-            result.Should().HaveCount(2);
-            result.Should().ContainEquivalentOf(expectedItem);
-        }
-
-        [Test]
         public void GetCompetencyAssessmentQuestionRoleRequirements_returns_expected_results()
         {
             using (new TransactionScope())
@@ -611,11 +591,10 @@
                 competencyTestHelper.InsertCompetencyAssessmentQuestionRoleRequirement(1, 1, 1, 1, 1);
 
                 // When
-                var result = selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(1, 1).ToList();
+                var result = selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(1, 1);
 
                 // Then
-                result.Should().HaveCount(1);
-                result.Should().ContainEquivalentOf(expectedItem);
+                result.Should().BeEquivalentTo(expectedItem);
             }
         }
 
@@ -655,7 +634,6 @@
                     results.First().CompetencyId.Should().Be(competencyId);
                     results.First().Result.Should().Be(result);
                 }
-                
             }
         }
 

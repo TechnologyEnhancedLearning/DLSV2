@@ -92,7 +92,6 @@
         {
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 @"SELECT
-                        ID,
                         CompetencyLearningResourceID,
                         AssessmentQuestionID,
                         Essential,

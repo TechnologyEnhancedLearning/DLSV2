@@ -173,7 +173,7 @@
                 selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     competencyId,
                     selfAssessmentId
-                ).SingleOrDefault();
+                );
 
             return (3 - competencyAssessmentQuestionRoleRequirement?.LevelRag) * 25 ?? 0;
         }
@@ -185,39 +185,29 @@
             CompetencyResourceAssessmentQuestionParameter competencyResourceAssessmentQuestionParameter
         )
         {
-            var competencyAssessmentQuestions =
-                selfAssessmentDataService.GetCompetencyAssessmentQuestions(competencyId).ToList();
+            var delegateResults = selfAssessmentDataService
+                .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                    delegateId,
+                    selfAssessmentId,
+                    competencyId
+                ).ToList();
 
-            var confidenceQuestion = competencyAssessmentQuestions.SingleOrDefault(
-                caq => caq.AssessmentQuestionId == competencyResourceAssessmentQuestionParameter.AssessmentQuestionId
-            );
+            var latestConfidenceResult = delegateResults
+                .Where(
+                    dr => dr.AssessmentQuestionId == competencyResourceAssessmentQuestionParameter.AssessmentQuestionId
+                )
+                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
 
-            var relevanceQuestion = competencyAssessmentQuestions.SingleOrDefault(
-                caq => caq.AssessmentQuestionId ==
-                       competencyResourceAssessmentQuestionParameter.RelevanceAssessmentQuestionId
-            );
+            var latestRelevanceResult = delegateResults
+                .Where(
+                    dr => dr.AssessmentQuestionId ==
+                          competencyResourceAssessmentQuestionParameter.RelevanceAssessmentQuestionId
+                )
+                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
 
-            if (confidenceQuestion != null && relevanceQuestion != null)
+            if (latestConfidenceResult != null && latestRelevanceResult != null)
             {
-                var delegateResults = selfAssessmentDataService
-                    .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                        delegateId,
-                        selfAssessmentId,
-                        competencyId
-                    ).ToList();
-
-                var latestConfidenceResult = delegateResults
-                    .Where(dr => dr.AssessmentQuestionId == confidenceQuestion.AssessmentQuestionId)
-                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
-                var latestRelevanceResult = delegateResults
-                    .Where(dr => dr.AssessmentQuestionId == relevanceQuestion.AssessmentQuestionId)
-                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
-                if (latestConfidenceResult != null && latestRelevanceResult != null)
-                {
-                    return (latestRelevanceResult.Result - latestConfidenceResult.Result) * 10;
-                }
+                return (latestRelevanceResult.Result - latestConfidenceResult.Result) * 10;
             }
 
             return 0;

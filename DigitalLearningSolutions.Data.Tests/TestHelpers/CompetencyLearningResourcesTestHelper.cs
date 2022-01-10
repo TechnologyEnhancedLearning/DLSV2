@@ -43,7 +43,6 @@
         }
 
         public void InsertCompetencyResourceAssessmentQuestionParameters(
-            int id,
             int competencyLearningResourceId,
             int assessmentQuestionId,
             bool essential,
@@ -52,12 +51,10 @@
         )
         {
             connection.Execute(
-                @"SET IDENTITY_INSERT dbo.CompetencyResourceAssessmentQuestionParameters ON
-                    INSERT INTO CompetencyResourceAssessmentQuestionParameters
-                    (ID, CompetencyLearningResourceId, AssessmentQuestionID, Essential, RelevanceAssessmentQuestionID, CompareToRoleRequirements, MinResultMatch, MaxResultMatch)
-                    VALUES (@id, @competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, 0, 0)
-                    SET IDENTITY_INSERT dbo.CompetencyResourceAssessmentQuestionParameters OFF",
-                new { id, competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId, compareToRoleRequirements }
+                @"INSERT INTO CompetencyResourceAssessmentQuestionParameters
+                    (CompetencyLearningResourceId, AssessmentQuestionID, Essential, RelevanceAssessmentQuestionID, CompareToRoleRequirements, MinResultMatch, MaxResultMatch)
+                    VALUES (@competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, 0, 0)",
+                new { competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId, compareToRoleRequirements }
             );
         }
     }

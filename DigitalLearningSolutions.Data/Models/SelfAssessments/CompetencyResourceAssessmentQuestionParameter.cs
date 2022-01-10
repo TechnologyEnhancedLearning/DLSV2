@@ -2,8 +2,6 @@
 {
     public class CompetencyResourceAssessmentQuestionParameter
     {
-        public int Id { get; set; }
-
         public int CompetencyLearningResourceId { get; set; }
 
         public int AssessmentQuestionId { get; set; }

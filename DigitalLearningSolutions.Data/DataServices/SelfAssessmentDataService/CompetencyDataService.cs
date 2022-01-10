@@ -519,12 +519,12 @@
             ).ToList();
         }
 
-        public IEnumerable<CompetencyAssessmentQuestionRoleRequirement> GetCompetencyAssessmentQuestionRoleRequirements(
+        public CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
             int competencyId,
             int selfAssessmentId
         )
         {
-            return connection.Query<CompetencyAssessmentQuestionRoleRequirement>(
+            return connection.QuerySingleOrDefault<CompetencyAssessmentQuestionRoleRequirement>(
                 @"SELECT
                         ID,
                         SelfAssessmentID,
@@ -535,20 +535,6 @@
                     FROM CompetencyAssessmentQuestionRoleRequirements
                     WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId",
                 new { selfAssessmentId, competencyId }
-            );
-        }
-
-        public IEnumerable<CompetencyAssessmentQuestion> GetCompetencyAssessmentQuestions(int competencyId)
-        {
-            return connection.Query<CompetencyAssessmentQuestion>(
-                @"SELECT
-                        CompetencyID,
-                        AssessmentQuestionID,
-                        Ordering,
-                        Required
-                    FROM CompetencyAssessmentQuestions
-                    WHERE CompetencyID = @competencyId",
-                new { competencyId }
             );
         }
 

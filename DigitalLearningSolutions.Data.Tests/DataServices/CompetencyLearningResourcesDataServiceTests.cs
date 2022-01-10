@@ -78,10 +78,9 @@
 
                 testHelper.InsertLearningResourceReference(2, 2, adminId, "Resource 2");
                 testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
-                testHelper.InsertCompetencyResourceAssessmentQuestionParameters(1, 1, 1, true, 2, false);
+                testHelper.InsertCompetencyResourceAssessmentQuestionParameters(1, 1, true, 2, false);
                 var expectedItem = new CompetencyResourceAssessmentQuestionParameter
                 {
-                    Id = 1,
                     CompetencyLearningResourceId = 1,
                     AssessmentQuestionId = 1,
                     Essential = true,
