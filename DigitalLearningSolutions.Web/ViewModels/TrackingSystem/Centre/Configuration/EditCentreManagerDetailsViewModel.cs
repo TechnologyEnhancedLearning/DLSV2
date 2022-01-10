@@ -1,7 +1,7 @@
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Configuration
 {
     using System.ComponentModel.DataAnnotations;
-    using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Web.Attributes;
 
     public class EditCentreManagerDetailsViewModel

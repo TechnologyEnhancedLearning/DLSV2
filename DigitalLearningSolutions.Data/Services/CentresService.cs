@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.DbModels;
 
     public interface ICentresService
@@ -10,6 +11,8 @@
         IEnumerable<CentreRanking> GetCentresForCentreRankingPage(int centreId, int numberOfDays, int? regionId);
 
         int? GetCentreRankForCentre(int centreId);
+
+        IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin();
     }
 
     public class CentresService : ICentresService
@@ -38,6 +41,11 @@
             var centreRankings = centresDataService.GetCentreRanks(dateSince, null, NumberOfCentresToDisplay, centreId);
             var centreRanking = centreRankings.SingleOrDefault(cr => cr.CentreId == centreId);
             return centreRanking?.Ranking;
+        }
+
+        public IEnumerable<CentreSummaryForSuperAdmin> GetAllCentreSummariesForSuperAdmin()
+        {
+            return centresDataService.GetAllCentreSummariesForSuperAdmin();
         }
     }
 }
