@@ -2,9 +2,9 @@
 @using DigitalLearningSolutions.Web.Models.Enums;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
-  var addOrEdit = Model.AssessmentQuestionParameter == null ? "Add" : "Edit";
-  ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
-  ViewData["Application"] = "Framework Service";
+    var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
+    ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -41,14 +41,17 @@
           Don't compare result
         </label>
       </div>
-      <div class="nhsuk-radios__item">
-        <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
-               value="1"
-               @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
-        <label class="nhsuk-label nhsuk-radios__label">
-          Competency assesstment question role requirements
-        </label>
-      </div>
+      @if (Model.CompetencyAssessmentQuestionRoleRequirements)
+      {
+        <div class="nhsuk-radios__item">
+          <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
+                 value="1"
+                 @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
+          <label class="nhsuk-label nhsuk-radios__label">
+            Competency assesstment question role requirements
+          </label>
+        </div>
+      }
       @if (Model.Questions?.Count > 1)
       {
         <div class="nhsuk-radios__item">
@@ -60,12 +63,15 @@
           </label>
         </div>
 
-        <div id="conditional-compareToOther" class="nhsuk-radios__conditional @(Model.SelectedCompareToQuestion == null ? "nhsuk-radios__conditional--hidden" : String.Empty)">
+        <div id="conditional-compareToOther" class="nhsuk-radios__conditional @(Model.SelectedCompareQuestionType != CompareAssessmentQuestionType.CompareToOtherQuestion ? "nhsuk-radios__conditional--hidden" : String.Empty)">
           <label class="nhsuk-label" for="email">
             <select name="compareToQuestionId" class="nhsuk-select nhsuk-u-width-two-thirds nhsuk-u-margin-top-3">
               @foreach (var question in Model.Questions)
               {
-                <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question</!option>
+                @if (question.ID != Model.SelectedQuestion.ID)
+                {
+                  <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question</!option>
+                }
               }
             </select>
           </label>

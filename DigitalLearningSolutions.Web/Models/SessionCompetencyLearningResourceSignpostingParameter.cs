@@ -14,22 +14,25 @@ namespace DigitalLearningSolutions.Web.Models
         public AssessmentQuestion SelectedQuestion { get; set; }
         public int[] SelectedLevelValues { get; set; }
         public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
-        public FrameworkCompetency Competency { get; set; }
+        public FrameworkCompetency FrameworkCompetency { get; set; }
 
         public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
-        public AssessmentQuestion SelectedCompareToQuestion { get; set; }
+        public bool CompetencyAssessmentQuestionRoleRequirements { get; set; }
         public List<LevelDescriptor> LevelDescriptors { get; set; }
 
         public SessionCompetencyLearningResourceSignpostingParameter()
         {
         }
-        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency competency, LearningResourceReference resource, List<AssessmentQuestion> questions, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
+        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, LearningResourceReference resource, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, bool competencyAssessmentQuestionRoleRequirements, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
         {
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
-            Competency = competency;
+            FrameworkCompetency = frameworkCompetency;
             LearningResourceReference = resource;
             Questions = questions;
             AssessmentQuestionParameter = assessmentQuestionParameter;
+            SelectedQuestion = selectedQuestion;
+            SelectedCompareQuestionType = selectedCompareQuestionType;
+            CompetencyAssessmentQuestionRoleRequirements = competencyAssessmentQuestionRoleRequirements;
 
             if (requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
             {

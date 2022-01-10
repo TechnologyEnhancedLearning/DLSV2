@@ -17,6 +17,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
 
         public AssessmentQuestion AssessmentQuestion { get; set; }
         public AssessmentQuestion RelevanceAssessmentQuestion { get; set; }
-        public bool IsNewParameter { get; set; }
+        public bool IsNew { get; set; }
     }
 }

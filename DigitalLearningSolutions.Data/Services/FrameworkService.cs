@@ -71,6 +71,7 @@
         int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId, string? commentsPrompt, string? commentsHint);
+        int GetCompetencyAssessmentQuestionRoleRequirementsCountByCompetencyId(int frameworkCompetencyId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
@@ -1621,7 +1622,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     WHERE ID IN ({resource.AssessmentQuestionID}, {resource.RelevanceAssessmentQuestionID ?? 0})");
             resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionID);
             resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionID);
-            resource.IsNewParameter = resource.AssessmentQuestion == null;
+            resource.IsNew = resource.AssessmentQuestion == null;
             return resource;
         }
 
@@ -1654,11 +1655,20 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                 new { competencyLearningResouceId }).FirstOrDefault();
         }
 
+        public int GetCompetencyAssessmentQuestionRoleRequirementsCountByCompetencyId(int competencyId)
+        {
+            var count = connection.ExecuteScalar(
+                $@"SELECT COUNT(*) FROM CompetencyAssessmentQuestionRoleRequirements
+                    WHERE CompetencyID = @competencyId",
+                new { competencyId });
+            return Convert.ToInt32(count);
+        }
+
         public int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter)
         {
             int rowsAffected;
-            var relevance = parameter.RelevanceAssessmentQuestionID.HasValue ? parameter.RelevanceAssessmentQuestionID.Value.ToString() : "null";
-            if (parameter.IsNewParameter)
+            string relevance = parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null";
+            if (parameter.IsNew)
             {
                 rowsAffected = connection.Execute(
                     $@"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
@@ -1683,7 +1693,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             {
                 rowsAffected = connection.Execute(
                     $@"UPDATE CompetencyResourceAssessmentQuestionParameters
-                    SET AssessmentQuestionID = {parameter.AssessmentQuestionID},
+                    SET AssessmentQuestionID = {parameter.AssessmentQuestion.ID},
                         MinResultMatch = {parameter.MinResultMatch},
                         MaxResultMatch = {parameter.MaxResultMatch},
                         Essential = {Convert.ToInt32(parameter.Essential)},

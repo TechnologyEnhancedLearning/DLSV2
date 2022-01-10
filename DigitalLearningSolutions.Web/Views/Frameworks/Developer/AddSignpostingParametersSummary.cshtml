@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
-  var addOrEdit = Model.AssessmentQuestionParameter == null ? "Add" : "Edit";
-  ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
-  ViewData["Application"] = "Framework Service";
+    var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    ViewData["Title"] = $"{addOrEdit} Signposting Parameter";
+    ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -29,7 +29,7 @@
       Competency
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.Competency
+      @Model.FrameworkCompetency
     </dd>
     <dd class="nhsuk-summary-list__actions"></dd>
   </div>
@@ -125,7 +125,7 @@
       </dd>
       <dd class="nhsuk-summary-list__actions">
         <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
-           asp-action="SignpostingSetStatus"
+           asp-action="CompareSelfAssessmentResult"
            asp-route-frameworkId="@Model.FrameworkId"
            asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
            asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">

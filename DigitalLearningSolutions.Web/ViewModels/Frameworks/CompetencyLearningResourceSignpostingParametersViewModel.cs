@@ -8,7 +8,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
     public class CompetencyLearningResourceSignpostingParametersViewModel : BaseSignpostingViewModel
     {
         public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
-        public string Competency { get; set; }
+        public string FrameworkCompetency { get; set; }
         public string ResourceName { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
         public List<LevelDescriptor> AssessmentQuestionLevelDescriptors { get; set; }
         public int[] SelectedLevelValues { get; set; }
+        public bool CompetencyAssessmentQuestionRoleRequirements { get; set; }
         public CompetencyLearningResourceSignpostingParametersViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
 

@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
-  var addOrEdit = Model.AssessmentQuestionParameter == null ? "Add" : "Edit";
-  ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
-  ViewData["Application"] = "Framework Service";
+    var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
+    ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
