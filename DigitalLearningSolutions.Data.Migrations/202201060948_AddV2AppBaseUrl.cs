@@ -19,9 +19,6 @@ namespace DigitalLearningSolutions.Data.Migrations
             ");
         }
 
-        public override void Down()
-        {
-            Delete.FromTable("Config").Row(new { ConfigName = "V2AppBaseUrl" });
-        }
+        public override void Down() {}
     }
 }
