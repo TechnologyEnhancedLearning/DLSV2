@@ -1,9 +1,15 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model BaseLearningItemViewModel
 
 <div class="nhsuk-grid-column-three-quarters tags">
+  @if (Model is CompletedCourseViewModel) {
+    <div class="card-filter-tag">
+      <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
+    </div>
+  }
   @if (Model is CurrentCourseViewModel currentCourseViewModel) {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
@@ -24,7 +30,7 @@
       <strong class="nhsuk-tag nhsuk-tag--blue">Self assessment</strong>
     </div>
   }
-  @if (Model is LearningResourceCardViewModel resource) {
+  @if (Model is ILearningResourceCardViewModel resource) {
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Learning resource</strong>
     </div>

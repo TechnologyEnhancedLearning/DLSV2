@@ -21,6 +21,8 @@
     cancelLinkController = "ViewDelegate";
   }
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completion date" };
+
 }
 
 <div class="nhsuk-grid-row">
@@ -50,9 +52,8 @@
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
-                     css-class=""
-                     key="1"
-                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the completion date" />
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

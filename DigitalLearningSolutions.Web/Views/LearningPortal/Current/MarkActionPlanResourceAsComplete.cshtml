@@ -5,6 +5,7 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Mark {Model.ResourceName} as complete" : $"Mark {Model.ResourceName} as complete";
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
 }
 
 <div class="nhsuk-grid-row">
@@ -22,8 +23,8 @@
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
-                     css-class=""
-                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year" />
+                     css-class="nhsuk-u-margin-bottom-4"
+                     hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

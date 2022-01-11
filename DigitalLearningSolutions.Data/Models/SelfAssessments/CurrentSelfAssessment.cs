@@ -14,5 +14,6 @@
         public string? VerificationRoleName { get; set; }
         public string? SignOffRoleName { get; set; }
         public string? SignOffRequestorStatement { get; set; }
+        public bool EnforceRoleRequirementsForSignOff { get; set; }
     }
 }
