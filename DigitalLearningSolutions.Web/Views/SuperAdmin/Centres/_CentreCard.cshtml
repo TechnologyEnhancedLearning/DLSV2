@@ -1,0 +1,91 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model CentreSummaryViewModel
+
+<div class="searchable-element nhsuk-expander-group" id="@Model.CentreId-card">
+  <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CentreId-name" name="centre-name">
+        @Model.CentreName (@Model.CentreId)
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <dl class="nhsuk-summary-list">
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre ID
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CentreId
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Centre type
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CentreType
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Region
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.RegionName
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Contact
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.ContactForename @Model.ContactSurname
+          </dd>
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Contact email
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.ContactEmail" />
+        </div>
+
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Telephone
+          </dt>
+          <partial name="_SummaryFieldValue" model="Model.ContactTelephone" />
+        </div>
+
+      </dl>
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button"
+         href="#">
+        Manage centre
+      </a>
+      <a class="nhsuk-button nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-2"
+         role="button"
+         href="#">
+        View courses
+      </a>
+      @if (Model.Active) {
+        <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-2"
+           role="button"
+           href="#">
+          Deactivate centre
+        </a>
+      } else {
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           role="button"
+           href="#">
+          Reactivate centre
+        </a>
+      }
+    </div>
+  </details>
+</div>
