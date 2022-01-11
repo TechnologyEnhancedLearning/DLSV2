@@ -2,6 +2,7 @@
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
     var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    bool displayRange = Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2;
     ViewData["Title"] = $"{addOrEdit} Signposting Parameter";
     ViewData["Application"] = "Framework Service";
 }
@@ -60,14 +61,23 @@
     </a>
   </dd>
   </div>
-  @if(Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
-  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        Minimum trigger value
+        Trigger @(displayRange ? "range" : "responses") 
       </dt>
       <dd class="nhsuk-summary-list__value">
-        @Model.AssessmentQuestionParameter.MinResultMatch
+        @if (displayRange)
+        {
+          <label class="nhsuk-label">@Model.AssessmentQuestionParameter.MinResultMatch to @Model.AssessmentQuestionParameter.MaxResultMatch</label>
+        }
+        else
+        {
+          <label class="nhsuk-label">@Model.GetLevelLabel(Model.AssessmentQuestionParameter.MinResultMatch)</label>
+          @if (Model.AssessmentQuestionParameter.MaxResultMatch != Model.AssessmentQuestionParameter.MinResultMatch)
+          {
+            <label class="nhsuk-label">@Model.GetLevelLabel(Model.AssessmentQuestionParameter.MaxResultMatch)</label>
+          }
+        }
       </dd>
       <dd class="nhsuk-summary-list__actions">
         <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
@@ -79,45 +89,6 @@
         </a>
       </dd>
     </div>
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Maximum trigger value
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        @Model.AssessmentQuestionParameter.MaxResultMatch
-      </dd>
-      <dd class="nhsuk-summary-list__actions">
-        <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
-           asp-action="SignpostingParametersSetStatusView"
-           asp-route-frameworkId="@Model.FrameworkId"
-           asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-          Change
-        </a>
-      </dd>
-    </div>
-  }
-  else
-  {
-    <div class="nhsuk-summary-list__row">
-      <dt class="nhsuk-summary-list__key">
-        Trigger responses
-      </dt>
-      <dd class="nhsuk-summary-list__value">
-        <label class="nhsuk-label">@Model.GetLevelLabel(Model.AssessmentQuestionParameter.MinResultMatch)</label>
-        <label class="nhsuk-label">@Model.GetLevelLabel(Model.AssessmentQuestionParameter.MaxResultMatch)</label>
-      </dd>
-      <dd class="nhsuk-summary-list__actions">
-        <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
-           asp-action="SignpostingParametersSetStatusView"
-           asp-route-frameworkId="@Model.FrameworkId"
-           asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-           asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-          Change
-        </a>
-      </dd>
-    </div>
-  }
   <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     Signposting status
