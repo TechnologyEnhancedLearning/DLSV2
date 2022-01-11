@@ -18,7 +18,8 @@
             IsCompleted = recommendedResource.IsCompleted;
             LearningLogItemId = recommendedResource.LearningLogId;
 
-            Rating = GetRecommendationRatingString(recommendedResource.RecommendationScore);
+            Rating = recommendedResource.RecommendationScore >= 100 ? "Essential" :
+                recommendedResource.RecommendationScore >= 40 ? "Recommended" : "Optional";
         }
 
         public int SelfAssessmentId { get; set; }
@@ -44,10 +45,5 @@
         public int? LearningLogItemId { get; set; }
 
         public string Rating { get; set; }
-
-        private string GetRecommendationRatingString(decimal recommendationScore)
-        {
-            return recommendationScore >= 100 ? "Essential" : recommendationScore >= 40 ? "Recommended" : "Optional";
-        }
     }
 }
