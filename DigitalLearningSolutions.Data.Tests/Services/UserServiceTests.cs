@@ -947,55 +947,7 @@
             result.Should().OnlyContain(au => au.IsSupervisor);
             result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
         }
-
-        [Test]
-        public void SetDelegateUserLearningHubAuthId_calls_expected_data_service()
-        {
-            // Given
-            const int delegateId = 3;
-            const int learningHubAuthId = 1;
-
-            // When
-            userService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId);
-
-            // Then
-            A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId))
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public void DelegateUserLearningHubAccountIsLinked_returns_true_when_user_has_authid()
-        {
-            // Given
-            const int delegateId = 3;
-            const int learningHubAuthId = 1;
-
-            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
-                .Returns(learningHubAuthId);
-
-            // When
-            var result = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
-
-            // Then
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void DelegateUserLearningHubAccountIsLinked_returns_false_when_user_does_not_have_authid()
-        {
-            // Given
-            const int delegateId = 3;
-
-            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
-                .Returns(null);
-
-            // When
-            var result = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
-
-            // Then
-            result.Should().BeFalse();
-        }
-
+        
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

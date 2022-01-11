@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting;
 
@@ -10,22 +11,50 @@
             LinkLearningHubRequest linkLearningHubRequest,
             string linkRequestSessionIdentifier
         );
+
+        bool IsLearningHubAccountLinked(int delegateId);
+
+        void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId);
     }
 
     public class LearningHubLinkService : ILearningHubLinkService
     {
         private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
+        private readonly IUserDataService userDataService;
 
-        public LearningHubLinkService(ILearningHubSsoSecurityService learningHubSsoSecurityService)
+        public LearningHubLinkService(
+            ILearningHubSsoSecurityService learningHubSsoSecurityService,
+            IUserDataService userDataService
+        )
         {
             this.learningHubSsoSecurityService = learningHubSsoSecurityService;
+            this.userDataService = userDataService;
         }
 
-        public int? ValidateLinkingRequestAndExtractDestinationResourceId(LinkLearningHubRequest linkLearningHubRequest, string linkRequestSessionIdentifier)
+        public bool IsLearningHubAccountLinked(int delegateId)
         {
-            if (!Guid.TryParse(linkRequestSessionIdentifier, out Guid storedSessionIdentifier))
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
+        }
+
+        public void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId)
+        {
+            var isAccountAlreadyLinked = IsLearningHubAccountLinked(delegateId);
+            if (!isAccountAlreadyLinked)
             {
-                throw new LearningHubLinkingRequestException("Invalid Learning Hub linking request session identifier.");
+                userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubUserId);
+            }
+        }
+
+        public int? ValidateLinkingRequestAndExtractDestinationResourceId(
+            LinkLearningHubRequest linkLearningHubRequest,
+            string linkRequestSessionIdentifier
+        )
+        {
+            if (!Guid.TryParse(linkRequestSessionIdentifier, out var storedSessionIdentifier))
+            {
+                throw new LearningHubLinkingRequestException(
+                    "Invalid Learning Hub linking request session identifier."
+                );
             }
 
             ValidateLearningHubUserId(linkLearningHubRequest);
@@ -48,7 +77,10 @@
             }
         }
 
-        private (Guid sessionIdentifier, int? resourceId) ParseAccountLinkingRequest(LinkLearningHubRequest linkLearningHubRequest, Guid storedSessionIdentifier)
+        private (Guid sessionIdentifier, int? resourceId) ParseAccountLinkingRequest(
+            LinkLearningHubRequest linkLearningHubRequest,
+            Guid storedSessionIdentifier
+        )
         {
             var stateItems = linkLearningHubRequest.State.Split("_refId:");
 

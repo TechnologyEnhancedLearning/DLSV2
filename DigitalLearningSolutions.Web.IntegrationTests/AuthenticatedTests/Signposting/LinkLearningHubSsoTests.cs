@@ -2,6 +2,7 @@
 {
     using System.Net;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.IntegrationTests.TestHelpers;
@@ -31,7 +32,7 @@
             // Given
             using var scope = _factory.Services.CreateScope();
             var learningHubSecurityService = scope.ServiceProvider.GetRequiredService<ILearningHubSsoSecurityService>();
-            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+            var userDataService = scope.ServiceProvider.GetRequiredService<IUserDataService>();
             var testUserData = TestUserDataService.GetDelegate(delegateId);
             var userIdHash = learningHubSecurityService.GenerateHash(learningHubAuthId.ToString());
             var state = $"{testUserData.SessionData[LinkLearningHubRequest.SessionIdentifierKey]}_refId:12345";
@@ -50,7 +51,7 @@
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 responseContent.Should().Contain(expectedContent);
-                userService.DelegateUserLearningHubAccountIsLinked(delegateId).Should().BeTrue();
+                userDataService.GetDelegateUserLearningHubAuthId(delegateId).Should().NotBeNull();
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
@@ -12,19 +13,21 @@
     {
         private ILearningHubLinkService learningHubLinkService = null!;
         private ILearningHubSsoSecurityService learningHubSsoSecurityService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
+            userDataService = A.Fake<IUserDataService>();
             learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", A<string>._)).Returns(false);
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("12345", A<string>._)).Returns(true);
-            learningHubLinkService = new LearningHubLinkService(learningHubSsoSecurityService);
+            learningHubLinkService = new LearningHubLinkService(learningHubSsoSecurityService, userDataService);
         }
 
-
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_stored_sessionIdentifier_is_invalid()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_stored_sessionIdentifier_is_invalid()
         {
             // Given
             var linkLearningHubRequest = new LinkLearningHubRequest
@@ -35,14 +38,20 @@
             };
 
             // When
-            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, "invalid-guid");
+            Action act = () =>
+                learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                    linkLearningHubRequest,
+                    "invalid-guid"
+                );
 
             // Then
-            act.Should().Throw<LearningHubLinkingRequestException>().WithMessage("Invalid Learning Hub linking request session identifier.");
+            act.Should().Throw<LearningHubLinkingRequestException>()
+                .WithMessage("Invalid Learning Hub linking request session identifier.");
         }
 
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_verifyHash_returns_false()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_verifyHash_returns_false()
         {
             // Given
             var storedSessionIdentifier = Guid.NewGuid();
@@ -54,14 +63,18 @@
             };
 
             // When
-            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
             act.Should().Throw<LearningHubLinkingRequestException>().WithMessage("Invalid Learning Hub UserId hash.");
         }
 
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_sessionIdentifier_does_not_match()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_sessionIdentifier_does_not_match()
         {
             // Given
             var storedSessionIdentifier = Guid.NewGuid();
@@ -73,10 +86,14 @@
             };
 
             // When
-            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
-            act.Should().Throw<LearningHubLinkingRequestException>().WithMessage("Invalid Learning Hub linking session.");
+            act.Should().Throw<LearningHubLinkingRequestException>()
+                .WithMessage("Invalid Learning Hub linking session.");
         }
 
         [Test]
@@ -92,14 +109,18 @@
             };
 
             // When
-            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
             act.Should().Throw<LearningHubLinkingRequestException>().WithMessage("Invalid Learning Hub linking state.");
         }
 
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_state_sessionIdentifier_is_not_guid()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_throws_exception_when_state_sessionIdentifier_is_not_guid()
         {
             // Given
             var storedSessionIdentifier = Guid.NewGuid();
@@ -111,14 +132,19 @@
             };
 
             // When
-            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            Action act = () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
-            act.Should().Throw<LearningHubLinkingRequestException>().WithMessage("Invalid Learning Hub linking session.");
+            act.Should().Throw<LearningHubLinkingRequestException>()
+                .WithMessage("Invalid Learning Hub linking session.");
         }
 
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_returns_null_when_resource_id_could_not_be_parsed()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_returns_null_when_resource_id_could_not_be_parsed()
         {
             // Given
             var storedSessionIdentifier = Guid.NewGuid();
@@ -130,14 +156,18 @@
             };
 
             // When
-            var result = learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            var result = learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
             result.Should().BeNull();
         }
 
         [Test]
-        public void ValidateLinkingRequestAndExtractDestinationResourceId_returns_resourceId_when_request_parsed_successfully()
+        public void
+            ValidateLinkingRequestAndExtractDestinationResourceId_returns_resourceId_when_request_parsed_successfully()
         {
             // Given
             var storedSessionIdentifier = Guid.NewGuid();
@@ -149,10 +179,83 @@
             };
 
             // When
-            var result = learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(linkLearningHubRequest, storedSessionIdentifier.ToString());
+            var result = learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
+                linkLearningHubRequest,
+                storedSessionIdentifier.ToString()
+            );
 
             // Then
             result.Should().Be(1234);
+        }
+
+        [Test]
+        public void IsLearningHubAccountLinked_returns_true_when_user_has_authid()
+        {
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(learningHubAuthId);
+
+            // When
+            var result = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void DelegateUserLearningHubAccountIsLinked_returns_false_when_user_does_not_have_authid()
+        {
+            // Given
+            const int delegateId = 3;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(null);
+
+            // When
+            var result = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
+
+            // Then
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void LinkLearningHubAccountIfNotLinked_calls_service_to_update_delegate_authId_when_not_linked()
+        {
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(null);
+
+            // When
+            learningHubLinkService.LinkLearningHubAccountIfNotLinked(delegateId, learningHubAuthId);
+
+            // Then
+            A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void
+            LinkLearningHubAccountIfNotLinked_does_not_call_service_to_update_delegate_authId_when_already_linked()
+        {
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1;
+
+            A.CallTo(() => userDataService.GetDelegateUserLearningHubAuthId(delegateId))
+                .Returns(learningHubAuthId);
+
+            // When
+            learningHubLinkService.LinkLearningHubAccountIfNotLinked(delegateId, learningHubAuthId);
+
+            // Then
+            A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
+                .MustNotHaveHappened();
         }
     }
 }

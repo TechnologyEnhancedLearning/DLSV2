@@ -17,19 +17,17 @@
     {
         private SignpostingSsoController controller = null!;
         private ILearningHubLinkService learningHubLinkService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             learningHubLinkService = A.Fake<ILearningHubLinkService>();
-            userService = A.Fake<IUserService>();
 
-            controller = new SignpostingSsoController(learningHubLinkService, userService)
+            controller = new SignpostingSsoController(learningHubLinkService)
                 .WithDefaultContext()
                 .WithMockUser(true);
 
-            A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).Returns(false);
+            A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._)).Returns(true);
         }
 
         [Test]
@@ -52,8 +50,9 @@
                         )
                     )
                     .MustNotHaveHappened();
-                A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustNotHaveHappened();
-                A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
+                    .MustNotHaveHappened();
             }
         }
 
@@ -89,8 +88,9 @@
                         )
                     )
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustNotHaveHappened();
-                A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._)).MustNotHaveHappened();
+                A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
+                    .MustNotHaveHappened();
             }
         }
 
@@ -126,9 +126,9 @@
                         )
                     )
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._))
+                A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._))
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
+                A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -150,7 +150,6 @@
                     )
                 )
                 .Returns(1);
-            A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).Returns(true);
 
             // When
             var result = testController.LinkLearningHubSso(new LinkLearningHubRequest());
@@ -166,10 +165,10 @@
                         )
                     )
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._))
+                A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._))
                     .MustHaveHappenedOnceExactly();
-                A.CallTo(() => userService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
-                    .MustNotHaveHappened();
+                A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
+                    .MustHaveHappenedOnceExactly();
             }
         }
     }

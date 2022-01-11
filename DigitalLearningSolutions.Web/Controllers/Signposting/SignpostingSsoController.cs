@@ -16,15 +16,12 @@
     public class SignpostingSsoController : Controller
     {
         private readonly ILearningHubLinkService learningHubLinkService;
-        private readonly IUserService userService;
 
         public SignpostingSsoController(
-            ILearningHubLinkService learningHubLinkService,
-            IUserService userService
+            ILearningHubLinkService learningHubLinkService
         )
         {
             this.learningHubLinkService = learningHubLinkService;
-            this.userService = userService;
         }
 
         [HttpGet("LinkLearningHubSso")]
@@ -41,14 +38,8 @@
             );
 
             var delegateId = User.GetCandidateIdKnownNotNull();
-            var isAccountAlreadyLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
-            if (!isAccountAlreadyLinked)
-            {
-                userService.SetDelegateUserLearningHubAuthId(
-                    delegateId,
-                    linkLearningHubRequest.UserId
-                );
-            }
+            var isAccountAlreadyLinked = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
+            learningHubLinkService.LinkLearningHubAccountIfNotLinked(delegateId, linkLearningHubRequest.UserId);
 
             var model = new LinkLearningHubViewModel(isAccountAlreadyLinked, learningHubResourcedId);
             return View(model);
