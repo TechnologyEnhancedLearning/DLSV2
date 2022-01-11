@@ -107,6 +107,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Support", "Support")]
         [InlineData("/TrackingSystem/Support/FAQs", "FAQS")]
         [InlineData("/TrackingSystem/Resources", "Resources")]
+        [InlineData("/SuperAdmin/Centres", "Centres")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

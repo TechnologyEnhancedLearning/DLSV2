@@ -3,17 +3,19 @@
     using System;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using NUnit.Framework;
 
     public class CentresServiceTests
     {
         private ICentresDataService centresDataService = null!;
-        private IClockService clockService = null!;
         private ICentresService centresService = null!;
+        private IClockService clockService = null!;
 
         [SetUp]
         public void Setup()
@@ -35,7 +37,7 @@
                     CentreTestHelper.GetCentreRank(7),
                     CentreTestHelper.GetCentreRank(8),
                     CentreTestHelper.GetCentreRank(9),
-                    CentreTestHelper.GetCentreRank(10)
+                    CentreTestHelper.GetCentreRank(10),
                 }
             );
         }
@@ -68,6 +70,22 @@
 
             // Then
             result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetAllCentreSummariesForSuperAdmin_calls_dataService_and_returns_all_summary_details()
+        {
+            // Given
+            var centres = Builder<CentreSummaryForSuperAdmin>.CreateListOfSize(10).Build();
+            A.CallTo(() => centresDataService.GetAllCentreSummariesForSuperAdmin()).Returns(centres);
+
+            // When
+            var result = centresService.GetAllCentreSummariesForSuperAdmin();
+
+            // Then
+            result
+                .Should()
+                .HaveCount(10);
         }
     }
 }
