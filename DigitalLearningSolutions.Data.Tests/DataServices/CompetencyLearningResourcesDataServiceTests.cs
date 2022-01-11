@@ -78,7 +78,7 @@
 
                 testHelper.InsertLearningResourceReference(2, 2, adminId, "Resource 2");
                 testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
-                testHelper.InsertCompetencyResourceAssessmentQuestionParameters(1, 1, true, 2, false);
+                testHelper.InsertCompetencyResourceAssessmentQuestionParameters(1, 1, true, 2, false, 1, 10);
                 var expectedItem = new CompetencyResourceAssessmentQuestionParameter
                 {
                     CompetencyLearningResourceId = 1,
@@ -86,6 +86,8 @@
                     Essential = true,
                     RelevanceAssessmentQuestionId = 2,
                     CompareToRoleRequirements = false,
+                    MinResultMatch = 1,
+                    MaxResultMatch = 10,
                 };
 
                 // When
