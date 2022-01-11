@@ -5,13 +5,13 @@
 
     public class SearchableFaqViewModel : BaseFilterableViewModel
     {
-        public SearchableFaqViewModel(DlsSubApplication dlsSubApplication, SearchableFaqModel faq)
+        public SearchableFaqViewModel(DlsSubApplication dlsSubApplication, SearchableFaq faq)
         {
             DlsSubApplication = dlsSubApplication;
             Faq = faq;
         }
 
-        public SearchableFaqModel Faq { get; set; }
+        public SearchableFaq Faq { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
     }

@@ -9,7 +9,7 @@
     {
         public readonly IEnumerable<SearchableFaqViewModel> Faqs;
 
-        public FaqItemsViewModel(DlsSubApplication dlsSubApplication, IEnumerable<SearchableFaqModel> faqs)
+        public FaqItemsViewModel(DlsSubApplication dlsSubApplication, IEnumerable<SearchableFaq> faqs)
         {
             Faqs = faqs.Select(f => new SearchableFaqViewModel(dlsSubApplication, f));
         }

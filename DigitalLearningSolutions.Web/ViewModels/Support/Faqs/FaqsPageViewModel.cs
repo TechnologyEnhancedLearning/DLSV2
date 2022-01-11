@@ -20,7 +20,7 @@
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
-            IEnumerable<SearchableFaqModel> faqs,
+            IEnumerable<SearchableFaq> faqs,
             int page,
             string? searchString
         ) : base(searchString, page, false, FaqSortBy, Descending, searchLabel: "Search faqs")

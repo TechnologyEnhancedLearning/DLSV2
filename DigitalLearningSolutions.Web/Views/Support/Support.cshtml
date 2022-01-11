@@ -21,7 +21,7 @@
     <p class="nhsuk-lede-text nhsuk-u-margin-top-4">Access Digital Learning Solutions support in 5 easy steps...</p>
     <ol>
       <li>
-        <a href="@SupportLinksHelper.HelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">Check the online Help documentation</a>. It is searchable and comprehensive.
+        <a href="@SupportLinksHelper.GenerateHelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">Check the online Help documentation</a>. It is searchable and comprehensive.
       </li>
       <li>
         <a asp-action="Index" asp-controller="Faqs" asp-route-dlsSubApplication="@Model.DlsSubApplication">Search our Frequently Asked Questions (FAQs)</a>.

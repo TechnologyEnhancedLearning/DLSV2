@@ -17,14 +17,25 @@
         }
 
         [Test]
-        public void HelpUrl_returns_expected()
+        public void GenerateHelpUrl_returns_expected()
         {
             // Given
             const string baseUrl = "base.com";
             const string expectedHelpUrl = "base.com/help/Introduction.html";
 
             // Then
-            SupportLinksHelper.HelpUrl(baseUrl).Should().Be(expectedHelpUrl);
+            SupportLinksHelper.GenerateHelpUrl(baseUrl).Should().Be(expectedHelpUrl);
+        }
+
+        [Test]
+        public void GenerateSupportTicketsIframeUrl_returns_expected()
+        {
+            // Given
+            const string baseUrl = "base.com";
+            const string expectedIframeUrl = "base.com/tracking/tickets?nonav=true";
+
+            // Then
+            SupportLinksHelper.GenerateSupportTicketsIframeUrl(baseUrl).Should().Be(expectedIframeUrl);
         }
     }
 }

@@ -34,7 +34,7 @@
         )
         {
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
-                .Select(f => new SearchableFaqModel(f));
+                .Select(f => new SearchableFaq(f));
 
             var model = new FaqsPageViewModel(
                 dlsSubApplication,
@@ -57,7 +57,7 @@
                 return NotFound();
             }
 
-            var model = new SearchableFaqViewModel(dlsSubApplication, new SearchableFaqModel(faq));
+            var model = new SearchableFaqViewModel(dlsSubApplication, new SearchableFaq(faq));
 
             return View(model);
         }
@@ -66,7 +66,7 @@
         public IActionResult AllFaqItems(DlsSubApplication dlsSubApplication)
         {
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
-                .Select(f => new SearchableFaqModel(f));
+                .Select(f => new SearchableFaq(f));
 
             var model = new FaqItemsViewModel(dlsSubApplication, faqs);
 

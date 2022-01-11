@@ -73,7 +73,7 @@
             // Given
             const int faqId = 2;
             const int targetGroup = 0;
-            var faq = new Faq();
+            var faq = new Faq { Published = false, TargetGroup = 0 };
 
             A.CallTo(() => faqDataService.GetFaqById(faqId))
                 .Returns(faq);

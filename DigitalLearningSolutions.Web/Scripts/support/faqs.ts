@@ -1,11 +1,8 @@
 import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
-(function dlsSupportFaqsHelper(): void {
-  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?$/);
-  if (pathMatchResults === null) {
-    return;
-  }
-  const subApplication = pathMatchResults.groups?.SubApplication;
+(function initiateFaqsSearchAndPagination(): void {
+  const subApplication = getDlsSubApplicationFromFaqUrl();
+
   // eslint-disable-next-line no-new
   new SearchSortFilterAndPaginate(`${subApplication}/Support/FAQs/AllItems`,
     true,
@@ -14,3 +11,8 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
     undefined,
     ['title', 'content']);
 }());
+
+function getDlsSubApplicationFromFaqUrl(): string {
+  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?$/);
+  return pathMatchResults?.groups?.SubApplication ?? '';
+}
