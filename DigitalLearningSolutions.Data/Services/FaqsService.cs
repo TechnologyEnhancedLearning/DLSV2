@@ -9,6 +9,8 @@
         Faq? GetPublishedFaqByIdForTargetGroup(int faqId, int targetGroup);
 
         IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
+
+        IEnumerable<Faq> GetAllFaqs();
     }
 
     public class FaqsService : IFaqsService
@@ -35,6 +37,11 @@
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
             return faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
+        }
+
+        public IEnumerable<Faq> GetAllFaqs()
+        {
+            return faqsDataService.GetAllFaqs();
         }
     }
 }

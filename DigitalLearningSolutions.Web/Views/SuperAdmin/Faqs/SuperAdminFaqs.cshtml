@@ -1,0 +1,32 @@
+@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
+@using Microsoft.Extensions.Configuration
+@model FaqsPageViewModel
+
+@* todo make this page pretty *@
+<link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
+
+@section scripts {
+  <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
+}
+
+@{
+  ViewData["Title"] = "FAQs";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <h1 class="nhsuk-heading-xl">FAQs</h1>
+
+       <div id="searchable-elements">
+        @foreach (var faq in Model.Faqs)
+        {
+          <p>@faq.Faq.CreatedDate</p>
+        }
+      </div>
+
+  </div>
+</div>

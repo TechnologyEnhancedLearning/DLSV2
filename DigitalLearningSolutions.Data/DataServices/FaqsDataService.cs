@@ -11,6 +11,8 @@
         Faq? GetFaqById(int faqId);
 
         IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
+
+        IEnumerable<Faq> GetAllFaqs();
     }
 
     public class FaqsDataService : IFaqsDataService
@@ -50,6 +52,11 @@
                 AND Published = 1",
                 new { targetGroup }
             );
+        }
+
+        public IEnumerable<Faq> GetAllFaqs()
+        {
+            return connection.Query<Faq>($@"{FaqsSql}");
         }
     }
 }
