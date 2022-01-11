@@ -1,8 +1,8 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
 import {
-  setUpFilter, filterSearchableElements, getFilterByValue, IAppliedFilterTag,
+  setUpFilter, filterSearchableElements, IAppliedFilterTag,
 } from './filter';
-import { getQuery, search, setUpSearch } from './search';
+import { search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
 import { paginateResults, setUpPagination } from './paginate';
 import getPathForEndpoint from '../common';

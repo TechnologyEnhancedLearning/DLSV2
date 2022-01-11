@@ -15,7 +15,7 @@
 }
 
 .items-per-page-dropdown {
-  @extend .left-dropdown;
+  @extend .input-with-submit-button;
   width: 100%;
 
   @include mq($from: tablet) {
