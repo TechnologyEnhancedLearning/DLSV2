@@ -645,10 +645,10 @@ FROM   SelfAssessmentResultSupervisorVerifications INNER JOIN
                  FROM    SelfAssessmentResults AS sar2
                  WHERE (CompetencyID = caq1.CompetencyID) AND (AssessmentQuestionID = caq1.AssessmentQuestionID) AND (CandidateID = ca1.CandidateID) AND (SelfAssessmentID = ca1.SelfAssessmentID)) LEFT OUTER JOIN
              CandidateAssessmentOptionalCompetencies AS caoc1 ON sas1.CompetencyID = caoc1.CompetencyID AND sas1.CompetencyGroupID = caoc1.CompetencyGroupID AND ca1.ID = caoc1.CandidateAssessmentID
-WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
-             (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
-             (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.ID IS NULL) OR
-             (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.ID IS NULL)) AS UngradedCount,
+WHERE (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.SelfAssessmentID IS NULL) OR
+             (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.SelfAssessmentID IS NULL) OR
+             (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.SelfAssessmentID IS NULL) OR
+             (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (SelfAssessmentResultSupervisorVerifications.SignedOff = 1) AND (caqrr1.SelfAssessmentID IS NULL)) AS UngradedCount,
                  (SELECT COUNT(sas1.CompetencyID) AS NotMeetingCount
 FROM   SelfAssessmentResultSupervisorVerifications INNER JOIN
              SelfAssessmentResults AS sar1 ON SelfAssessmentResultSupervisorVerifications.SelfAssessmentResultId = sar1.ID LEFT OUTER JOIN
