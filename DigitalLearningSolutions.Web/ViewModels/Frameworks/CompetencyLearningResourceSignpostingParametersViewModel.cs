@@ -26,5 +26,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 
         }
 
+        public string GetLevelLabel(int value)
+        {
+            return AssessmentQuestionLevelDescriptors[value].LevelLabel ?? value.ToString();
+        }
+
     }
 }

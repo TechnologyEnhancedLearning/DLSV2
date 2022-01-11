@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyResourceSignpostingViewModel
 @{
-    ViewData["Title"] = "Competency Resource Signposting";
-    ViewData["Application"] = "Framework Service";
+  ViewData["Title"] = "Competency Resource Signposting";
+  ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -31,9 +31,19 @@
 {
   foreach (var link in Model.CompetencyResourceLinks)
   {
-    <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})"/>
+    <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})" />
   }
-
+}
+else if (!Model.CompetencyResourceLinks.Any())
+{
+  <div class="nhsuk-warning-callout callout-green">
+    <h3 class="nhsuk-warning-callout__label">
+      <span role="text">
+        This is an empty competency resource signposting.
+      </span>
+    </h3>
+  </div>
+}
 <div class="nhsuk-u-margin-top-5">
   <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
     Add resource
@@ -47,15 +57,4 @@
     Cancel
   </a>
 </div>
-}
-else if (!Model.CompetencyResourceLinks.Any())
-{
-  <div class="nhsuk-warning-callout callout-green">
-    <h3 class="nhsuk-warning-callout__label">
-      <span role="text">
-        This is an empty competency resource signposting.
-      </span>
-    </h3>
-  </div>
-}
 

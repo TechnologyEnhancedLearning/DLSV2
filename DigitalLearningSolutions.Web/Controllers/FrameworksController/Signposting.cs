@@ -128,7 +128,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
-                FrameworkCompetency = session.FrameworkCompetency?.Description,
+                FrameworkCompetency = session.FrameworkCompetency?.Name,
                 ResourceName = session.LearningResourceReference?.OriginalResourceName,
                 AssessmentQuestionParameter = session.AssessmentQuestionParameter,
                 Questions = session.Questions,
@@ -187,7 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             var model = new CompetencyLearningResourceSignpostingParametersViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
             {
-                FrameworkCompetency = session.FrameworkCompetency.Description,
+                FrameworkCompetency = session.FrameworkCompetency.Name,
                 ResourceName = session.LearningResourceReference?.OriginalResourceName,
                 Questions = session.Questions,
                 SelectedQuestion = session.SelectedQuestion,
