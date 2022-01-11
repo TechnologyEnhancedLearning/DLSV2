@@ -132,21 +132,7 @@
             );
         }
 
-        public void ValidateCustomPrompts(EditDelegateFormData formData, int centreId, ModelStateDictionary modelState)
-        {
-            ValidateCustomPrompts(
-                centreId,
-                formData.Answer1,
-                formData.Answer2,
-                formData.Answer3,
-                formData.Answer4,
-                formData.Answer5,
-                formData.Answer6,
-                modelState
-            );
-        }
-
-        public void ValidateCustomPrompts(MyAccountEditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
+        public void ValidateCustomPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
         {
             ValidateCustomPrompts(
                 centreId,

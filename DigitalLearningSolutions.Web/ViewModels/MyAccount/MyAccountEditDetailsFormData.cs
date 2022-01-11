@@ -36,7 +36,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer5 = delegateUser?.Answer5;
             Answer6 = delegateUser?.Answer6;
 
-            if(IsDelegateUser)
+            if (IsDelegateUser)
             {
                 ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber!;
                 if (delegateUser!.HasBeenPromptedForPrn)
