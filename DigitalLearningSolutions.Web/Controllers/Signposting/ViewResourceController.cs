@@ -29,8 +29,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
         private const string LoginEndpointRelativePath = "/login";
         private const string CreateUserEndpointRelativePath = "/create-user";
 
-        private const string ClientCode = "tst"; // TODO what is this supposed to be? does it come from config?
-
         [Route("Signposting/ViewResource/{resourceReferenceId}")]
         public IActionResult Index(int resourceReferenceId)
         {
@@ -41,6 +39,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             var authEndpoint = config.GetLearningHubAuthApiBaseUrl();
 
+            var clientCode = config.GetLearningHubAuthApiClientCode();
+
             if (learningHubAuthId.HasValue)
             {
                 var resourceUrl = learningResourceReferenceDataService.GetLearningHubResourceReferenceById(resourceReferenceId); // TODO url encoding?
@@ -48,7 +48,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
                 var idHash = learningHubSsoSecurityService.GenerateHash(learningHubAuthId.ToString());
 
                 var loginQueryString =
-                    $"?clientcode={ClientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={resourceUrl}";
+                    $"?clientcode={clientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={resourceUrl}";
 
                 return Redirect(authEndpoint + LoginEndpointRelativePath + loginQueryString);
             }
@@ -57,8 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             var stateHash = learningHubSsoSecurityService.GenerateHash(state);
 
-            var createUserQueryString =
-                $"?clientcode={ClientCode}&state={state}&hash={stateHash}";
+            var createUserQueryString = $"?clientcode={clientCode}&state={state}&hash={stateHash}";
 
             return Redirect(authEndpoint + CreateUserEndpointRelativePath+ createUserQueryString);
         }
