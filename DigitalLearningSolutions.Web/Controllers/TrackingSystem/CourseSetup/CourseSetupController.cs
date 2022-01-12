@@ -279,7 +279,7 @@
             data!.SetCourseContentModel = model;
             TempData.Set(data);
 
-            return RedirectToAction("SetSectionContent", 0);
+            return RedirectToAction(model.IncludeAllSections ? "Summary" : "SetSectionContent");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
