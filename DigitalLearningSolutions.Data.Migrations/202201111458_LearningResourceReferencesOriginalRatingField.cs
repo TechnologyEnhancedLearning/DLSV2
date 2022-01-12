@@ -7,7 +7,7 @@
         public override void Up()
         {
             Alter.Table("LearningResourceReferences")
-                .AddColumn("OriginalRating").AsDecimal(2, 1).Nullable();
+                .AddColumn("OriginalRating").AsDecimal(2, 1).NotNullable().WithDefaultValue(0);
         }
         public override void Down()
         {
