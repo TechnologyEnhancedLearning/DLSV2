@@ -4,6 +4,8 @@
 @model CourseSetupViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseSetup.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Centre course setup";
 }
@@ -15,8 +17,8 @@
       <div class="nhsuk-grid-column-three-quarters">
         <h1 class="nhsuk-heading-xl">Centre course setup</h1>
       </div>
-      <div class="nhsuk-grid-column-one-quarter heading-button-group align-right">
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
+      <div class="nhsuk-grid-column-one-quarter heading-button-group">
+        <a class="nhsuk-button heading-button" asp-controller="CourseSetup" asp-action="AddCourseNew" role="button">
           Add
         </a>
       </div>
