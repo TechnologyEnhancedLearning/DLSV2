@@ -65,22 +65,22 @@
         {
             <partial name="SelfAssessments/_RadioQuestion" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
         }
+        @if (question.value.SignedOff != null)
+            if ((bool)question.value.SignedOff)
+            {
+                <div class="nhsuk-warning-callout">
+                    <h3 class="nhsuk-warning-callout__label">
+                        <span role="text">
+                            <span class="nhsuk-u-visually-hidden">Important: </span>
+                            Response verified
+                        </span>
+                    </h3>
+                    <p>Your self assessment response against this question has been verified. Changing your response will reset verification.</p>
+                </div>
+            }
         @if (question.value.IncludeComments)
         {
             <partial name="SelfAssessments/_CommentsInput" model="question.value" view-data="@(new ViewDataDictionary(ViewData) { { "index", question.i } })" />
-        }
-        @if (question.value.SignedOff != null)
-        if((bool)question.value.SignedOff)
-        {
-            <div class="nhsuk-warning-callout">
-                <h3 class="nhsuk-warning-callout__label">
-                    <span role="text">
-                        <span class="nhsuk-u-visually-hidden">Important: </span>
-                        Response verified
-                    </span>
-                </h3>
-                <p>Your self assessment response against this question has been verified. Changing your response will reset verification.</p>
-            </div>
         }
     }
     <input type="hidden" name="competencyGroupId" value="@Model.Competency.CompetencyGroupID" />
