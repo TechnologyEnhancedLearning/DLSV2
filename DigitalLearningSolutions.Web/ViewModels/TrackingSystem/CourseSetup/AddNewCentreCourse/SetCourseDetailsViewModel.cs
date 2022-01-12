@@ -12,6 +12,7 @@
             ApplicationName = application.ApplicationName;
             PostLearningAssessment = application.PLAssess;
             DiagAssess = application.DiagAssess;
+            IsAssessed = true;
         }
     }
 }

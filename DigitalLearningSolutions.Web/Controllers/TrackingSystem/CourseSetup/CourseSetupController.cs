@@ -268,9 +268,12 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            model.SetSectionsToInclude();
+            if (model.IncludeAllSections)
+            {
+                ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
+                model.SelectedSectionIds = model.AvailableSections.Select(s => s.Id);
+            }
 
-            // TODO: Validation - user must select at least one section
             if (!ModelState.IsValid)
             {
                 return View("AddNewCentreCourse/SetCourseContent", model);
@@ -289,7 +292,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var section = data!.SetCourseContentModel!.SectionsToInclude.ElementAt(sectionIndex);
+            var section = data!.SetCourseContentModel!.GetSelectedSections().ElementAt(sectionIndex);
             var model = new SetSectionContentViewModel(section, sectionIndex);
 
             var tutorials = tutorialService.GetTutorialsForSection(section.Id);
@@ -422,7 +425,7 @@
 
             var sectionIndex = model.Index + 1;
 
-            return model.Index == data.SetCourseContentModel!.SectionsToInclude.Count() - 1
+            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
                 ? RedirectToAction("Summary")
                 : RedirectToAction("SetSectionContent", new { sectionIndex });
         }

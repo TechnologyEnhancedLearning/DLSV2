@@ -9,25 +9,24 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Set course content";
+  ViewData["Title"] = errorHasOccurred ? "Error: Set course content" : "Set course content";
   const string chooseSectionsId = "conditional-choose-sections";
-  var radioExpanded = (!Model.IncludeAllSections).ToString();
+  var selectSectionsCss = "nhsuk-radios__conditional"
+                          + (Model.IncludeAllSections ? " nhsuk-radios__conditional--hidden" : "");
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-          <vc:error-summary order-of-property-names="@(new[] {
-                                                       nameof(Model.AvailableSections),
-                                                       nameof(Model.SectionsToInclude),
-                                                       nameof(Model.IncludeAllSections)})" />
-        }
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.AvailableSections),
+                                                   nameof(Model.SelectedSectionIds),
+                                                   nameof(Model.IncludeAllSections) })" />
+    }
 
     <h1 class="nhsuk-heading-xl">Set course content</h1>
 
     <form method="post" novalidate asp-action="SetCourseContent">
-
-      <input type="hidden" asp-for="SectionsToInclude" />
 
       <div class="nhsuk-form-group">
         <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
@@ -53,7 +52,7 @@
                      id="ChooseSections"
                      asp-for="IncludeAllSections"
                      aria-controls="@chooseSectionsId"
-                     aria-expanded="@radioExpanded"
+                     aria-expanded="@(!Model.IncludeAllSections)"
                      type="radio"
                      value="false">
               <label class="nhsuk-label nhsuk-radios__label" for="ChooseSections">
@@ -61,8 +60,7 @@
               </label>
             </div>
 
-            <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="@chooseSectionsId">
-
+            <div class="@selectSectionsCss" id="@chooseSectionsId">
               <div class="nhsuk-checkboxes">
                 @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i))) {
                   <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Id)}")" value="@sectionModel.Id" />
@@ -70,17 +68,16 @@
                   <div class="nhsuk-checkboxes__item">
                     <input class="nhsuk-checkboxes__input"
                            type="checkbox"
-                           name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.IsSectionSelected)}")"
+                           name="SelectedSectionIds"
                            id="section-@sectionModel.Id"
                            checked="@sectionModel.IsSectionSelected"
-                           value="true" />
+                           value="@sectionModel.Id" />
                     <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.Id">
                       @sectionModel.Name
                     </label>
                   </div>
                 }
               </div>
-
             </div>
 
           </div>

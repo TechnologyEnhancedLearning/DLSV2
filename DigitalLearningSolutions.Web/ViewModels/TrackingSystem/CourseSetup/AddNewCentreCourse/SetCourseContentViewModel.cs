@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
 
     public class SetCourseContentViewModel
     {
@@ -12,18 +12,19 @@
         {
             AvailableSections = availableSections;
             IncludeAllSections = true;
-            SectionsToInclude = new List<SelectSectionViewModel>();
+            SelectedSectionIds = null;
         }
 
         public bool IncludeAllSections { get; set; }
-        public IEnumerable<SelectSectionViewModel> AvailableSections { get; set; }
-        public IEnumerable<SelectSectionViewModel> SectionsToInclude { get; set; }
 
-        public void SetSectionsToInclude()
+        public IEnumerable<SelectSectionViewModel> AvailableSections { get; set; }
+
+        [Required(ErrorMessage = "You must select at least one section")]
+        public IEnumerable<int>? SelectedSectionIds { get; set; }
+
+        public IEnumerable<SelectSectionViewModel> GetSelectedSections()
         {
-            SectionsToInclude = IncludeAllSections
-                ? AvailableSections
-                : AvailableSections.Where(section => section.IsSectionSelected);
+            return AvailableSections.Where(section => SelectedSectionIds!.Contains(section.Id)).ToList();
         }
     }
 }
