@@ -247,11 +247,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         private CompetencyResourceSignpostingViewModel GetSignpostingResourceParameters(int frameworkId, int frameworkCompetencyId)
         {            
-            var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-            var parameters = frameworkService.GetSignpostingResourceParametersByFrameworkAndCompetencyId(frameworkId, frameworkCompetencyId);
+            var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
+            var parameters = frameworkService.GetSignpostingResourceParametersByFrameworkAndCompetencyId(frameworkId, frameworkCompetency.CompetencyID);
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId)
             {
-                NameOfCompetency = competency.Name,
+                NameOfCompetency = frameworkCompetency.Name,
                 CompetencyResourceLinks = parameters.Select(p =>
                     new SignpostingCardViewModel()
                     {
