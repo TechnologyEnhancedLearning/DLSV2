@@ -25,13 +25,13 @@
           </a>
         </dd>
       </div>
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Course name
         </dt>
         <dd class="nhsuk-summary-list__value">
           @(Model.CustomisationName == string.Empty ? Model.Application : $"{Model.Application} - {Model.CustomisationName}")
-
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -39,12 +39,13 @@
           </a>
         </dd>
       </div>
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Password protected
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.Password == null ? Model.Password : "No")
+          @(Model.Password ?? "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -52,12 +53,13 @@
           </a>
         </dd>
       </div>
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Completion notification email
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.NotificationEmails == null ? Model.NotificationEmails : "No")
+          @(Model.NotificationEmails ?? "No")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">
@@ -65,6 +67,21 @@
           </a>
         </dd>
       </div>
+
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Active
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(Model.Active ? "Yes" : "No")
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+          <a asp-action="SetCourseOptions">
+            Change<span class="nhsuk-u-visually-hidden"> self-enrolment</span>
+          </a>
+        </dd>
+      </div>
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Allow self-enrolment
@@ -78,6 +95,7 @@
           </a>
         </dd>
       </div>
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Hide in Learning Portal
@@ -91,26 +109,34 @@
           </a>
         </dd>
       </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Allow diagnostic objective selection
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @(Model.DiagnosticObjectiveSelection ? "Yes" : "No")
-        </dd>
-        <dd class="nhsuk-summary-list__actions">
-          <a asp-action="SetCourseOptions">
-            Change<span class="nhsuk-u-visually-hidden"> diagnostic objective selection</span>
-          </a>
-        </dd>
-      </div>
+
+      @if (Model.DiagAssess) {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Allow diagnostic objective selection
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @(Model.DiagnosticObjectiveSelection ? "Yes" : "No")
+          </dd>
+          <dd class="nhsuk-summary-list__actions">
+            <a asp-action="SetCourseOptions">
+              Change<span class="nhsuk-u-visually-hidden"> diagnostic objective selection</span>
+            </a>
+          </dd>
+        </div>
+      }
+
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Course content
         </dt>
         <dd class="nhsuk-summary-list__value">
-          <p>@(Model.NumberOfLearning == 0 ? Model.NumberOfLearning.ToString() : "No") learning</p>
-          <p>@(Model.NumberOfDiagnostic == 0 ? Model.NumberOfDiagnostic.ToString() : "No") diagnostic</p>
+          @if (Model.IncludeAllSections) {
+            <p>All content enabled</p>
+          } else {
+            <p>@(Model.NumberOfLearning == 0 ? "No" : Model.NumberOfLearning.ToString()) learning</p>
+            <p>@(Model.NumberOfDiagnostic == 0 ? "No" : Model.NumberOfDiagnostic.ToString()) diagnostic</p>
+          }
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseContent">
