@@ -2,22 +2,34 @@
 
 namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
-    using DigitalLearningSolutions.Data.ApiClients;
+    using System;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.UseSignposting)]
     public class ViewResourceController : Controller
     {
-        public ViewResourceController(IUserService userService, ILearningHubAuthClient learningHubAuthClient)
+        public ViewResourceController(IUserService userService, ILearningResourceReferenceDataService learningResourceReferenceDataService, ILearningHubSsoSecurityService learningHubSsoSecurityService, IConfiguration config)
         {
             this.userService = userService;
-            this.learningHubAuthClient = learningHubAuthClient;
+            this.learningResourceReferenceDataService = learningResourceReferenceDataService;
+            this.learningHubSsoSecurityService = learningHubSsoSecurityService;
+            this.config = config;
         }
 
         private readonly IUserService userService;
-        private readonly ILearningHubAuthClient learningHubAuthClient;
+        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
+        private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
+        private readonly IConfiguration config;
+
+        private const string LoginEndpointRelativePath = "/login";
+        private const string CreateUserEndpointRelativePath = "/create-user";
+
+        private const string ClientCode = "tst"; // TODO what is this supposed to be? does it come from config?
 
         [Route("Signposting/ViewResource/{resourceReferenceId}")]
         public IActionResult Index(int resourceReferenceId)
@@ -27,17 +39,28 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             int? learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
 
+            var authEndpoint = config.GetLearningHubAuthApiBaseUrl();
+
             if (learningHubAuthId.HasValue)
             {
-                // get resource link from DB
+                var resourceUrl = learningResourceReferenceDataService.GetLearningHubResourceReferenceById(resourceReferenceId); // TODO url encoding?
 
-                // redirect here to sso/login endpoint with auth id, hash, etc (see document)
+                var idHash = learningHubSsoSecurityService.GenerateHash(learningHubAuthId.ToString());
+
+                var loginQueryString =
+                    $"?clientcode={ClientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={resourceUrl}";
+
+                return Redirect(authEndpoint + LoginEndpointRelativePath + loginQueryString);
             }
 
-            // redirect to create-user endpoint
+            var state = Guid.NewGuid().ToString(); // TODO is this correct?
 
-            // go to sso/create-user
-            //learningHubAuthClient.CreateLearningHubUser();
+            var stateHash = learningHubSsoSecurityService.GenerateHash(state);
+
+            var createUserQueryString =
+                $"?clientcode={ClientCode}&state={state}&hash={stateHash}";
+
+            return Redirect(authEndpoint + CreateUserEndpointRelativePath+ createUserQueryString);
         }
     }
 }
