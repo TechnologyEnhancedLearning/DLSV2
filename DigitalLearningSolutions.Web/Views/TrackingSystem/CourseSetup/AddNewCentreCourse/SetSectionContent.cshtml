@@ -16,21 +16,16 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">Edit section content</h1>
 
-    <div class="nhsuk-grid-column-full nhsuk-heading-s word-break">
-      <label class="nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
-        Section
-      </label>
-      <div class="nhsuk-u-margin-top-1">
-        @Model.SectionName
-      </div>
-    </div>
+    <h2 class="nhsuk-u-font-weight-normal nhsuk-heading-l word-break">
+      Section: @Model.SectionName
+    </h2>
 
     <form method="post" novalidate asp-action="SetSectionContent">
+      <input type="hidden" asp-for="Index" />
 
       <partial name="../CourseContent/_EditSectionContentFormInputs" model="Model" />
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Next</button>
-
     </form>
 
     <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />
