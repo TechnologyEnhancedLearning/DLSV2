@@ -11,11 +11,6 @@
     public class AuthenticationWebApplicationFactory<TStartup>
         : WebApplicationFactory<TStartup> where TStartup : class
     {
-        protected sealed override IWebHostBuilder CreateWebHostBuilder()
-        {
-            return base.CreateWebHostBuilder();
-        }
-
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder
