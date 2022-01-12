@@ -19,6 +19,8 @@
         public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
 
+        public override string[] SearchableContent => new []{ SearchableName, CandidateNumber };
+
         public override UserReference ToUserReference()
         {
             return new UserReference(Id, UserType.DelegateUser);

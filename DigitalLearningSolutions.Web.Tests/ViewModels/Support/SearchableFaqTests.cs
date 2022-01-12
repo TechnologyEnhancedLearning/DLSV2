@@ -5,21 +5,20 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class FaqViewModelTests
+    public class SearchableFaqTests
     {
         [Test]
-        public void FaqViewModelTests_returns_model_with_cleaned_searchName()
+        public void SearchableFaq_returns_model_with_cleaned_SearchableFaqAnswer()
         {
             // Given
             var faq = FaqTestHelper.GetDefaultFaq();
-            var expectedSearchableName = "A common question?  p Helpful content  p ";
+            var expectedSearchableFaqAnswer = " p Helpful content  p ";
 
             // When
-            var faqViewModel = new SearchableFaq(faq);
+            var searchableFaq = new SearchableFaq(faq);
 
             // Then
-            faqViewModel.Should().NotBeNull();
-            faqViewModel.SearchableName.Should().Be(expectedSearchableName);
+            searchableFaq.SearchableFaqAnswer.Should().Be(expectedSearchableFaqAnswer);
         }
     }
 }
