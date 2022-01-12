@@ -10,7 +10,7 @@
         IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
 
         IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
-        void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
+        int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -49,9 +49,9 @@
             );
         }
 
-        public void AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId)
+        public int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId)
         {
-            connection.Execute(
+            return connection.ExecuteScalar<int>(
                 @$" DECLARE @learningResourceReferenceID int
                     IF NOT EXISTS(SELECT * FROM LearningResourceReferences WHERE @resourceRefID = resourceRefID)
                         BEGIN
@@ -66,7 +66,8 @@
 	                        WHERE @resourceRefID = resourceRefID
                         END
                     INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
-                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
+                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)
+                    SELECT SCOPE_IDENTITY() AS CompetencyLearningResourceId",
                 new { resourceRefID, originalResourceName, competencyID, adminId }
             );
         }
