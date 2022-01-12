@@ -17,9 +17,7 @@
             IsInActionPlan = recommendedResource.IsInActionPlan;
             IsCompleted = recommendedResource.IsCompleted;
             LearningLogItemId = recommendedResource.LearningLogId;
-
-            Rating = recommendedResource.RecommendationScore >= 100 ? "Essential" :
-                recommendedResource.RecommendationScore >= 40 ? "Recommended" : "Optional";
+            RecommendationScore = recommendedResource.RecommendationScore;
         }
 
         public int SelfAssessmentId { get; set; }
@@ -44,6 +42,9 @@
 
         public int? LearningLogItemId { get; set; }
 
-        public string Rating { get; set; }
+        public decimal RecommendationScore { get; set; }
+
+        public string Rating => RecommendationScore >= 100 ? "Essential" :
+            RecommendationScore >= 40 ? "Recommended" : "Optional";
     }
 }
