@@ -309,14 +309,6 @@
             return action == SaveAction
                 ? SaveSectionTutorials(model)
                 : ProcessBulkSelect(model, action);
-            var data = TempData.Peek<AddNewCentreCourseData>();
-
-            data!.SetSectionContentModels.Add(model);
-            TempData.Set(data);
-
-            return model.Index == data.SetCourseContentModel!.SectionsToInclude.Count() - 1
-                ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", model.Index + 1);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -428,9 +420,11 @@
             data!.SetSectionContentModels.Add(model);
             TempData.Set(data);
 
+            var sectionIndex = model.Index + 1;
+
             return model.Index == data.SetCourseContentModel!.SectionsToInclude.Count() - 1
                 ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", model.Index + 1);
+                : RedirectToAction("SetSectionContent", new { sectionIndex });
         }
 
         // TODO: Can this be commonized with CourseContentController?
@@ -457,7 +451,7 @@
                     return new StatusCodeResult(400);
             }
 
-            return View(model);
+            return View("../AddNewCentreCourse/SetSectionContent", model);
         }
 
         private static void SelectAllDiagnostics(EditCourseSectionFormData model)
