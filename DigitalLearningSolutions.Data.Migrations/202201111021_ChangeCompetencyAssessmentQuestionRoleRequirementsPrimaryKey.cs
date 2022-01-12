@@ -18,8 +18,9 @@
         {
             Delete.PrimaryKey("PK_CompetencyAssessmentQuestionRoleRequirements")
                 .FromTable("CompetencyAssessmentQuestionRoleRequirements");
-            Alter.Table("CompetencyAssessmentQuestionRoleRequirements").AddColumn("ID").AsInt32().NotNullable()
-                .PrimaryKey().Identity();
+            Alter.Table("CompetencyAssessmentQuestionRoleRequirements").AddColumn("ID").AsInt32().NotNullable().Identity();
+            Create.PrimaryKey("PK_CompetencyAssessmentQuestionRoleRequirements")
+                .OnTable("CompetencyAssessmentQuestionRoleRequirements").Column("ID");
         }
     }
 }
