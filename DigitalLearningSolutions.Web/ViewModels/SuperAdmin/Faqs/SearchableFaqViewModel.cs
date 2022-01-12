@@ -1,18 +1,33 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
 {
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SearchableFaqViewModel : BaseFilterableViewModel
     {
-        public SearchableFaqViewModel(DlsSubApplication dlsSubApplication, SearchableFaqModel faq)
+        public SearchableFaqViewModel(SearchableFaqModel faq)
         {
-            DlsSubApplication = dlsSubApplication; //todo this is just copied from support I dont think we need them here
-            Faq = faq;
+            FaqId = faq.FaqId;
+            AHtml = faq.AHtml;
+            CreatedDate = faq.CreatedDate.ToShortDateString();
+            Published = faq.Published ? "Published" : "Unpublished";
+            QAnchor = faq.QAnchor;
+            QText = faq.QText;
+            TargetGroup = Enumeration.GetAll<DlsSubApplication>()
+                .Where(x => x.Id == faq.TargetGroup)
+                .Select(x => x.HeaderExtension).First();
+            Weighting = faq.Weighting;
         }
 
-        public SearchableFaqModel Faq { get; set; }
-
-        public DlsSubApplication DlsSubApplication { get; set; }
+        public int FaqId { get; set; }
+        public string AHtml { get; set; }
+        public string CreatedDate { get; set; }
+        public string Published { get; set; }
+        public string QAnchor { get; set; }
+        public string QText { get; set; }
+        public string TargetGroup { get; set; }
+        public int Weighting { get; set; }
     }
 }

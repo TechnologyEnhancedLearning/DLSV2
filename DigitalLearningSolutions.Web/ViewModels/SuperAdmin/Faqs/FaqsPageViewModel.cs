@@ -2,13 +2,12 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Models.Enums;
 
     public class FaqsPageViewModel
     {
         public FaqsPageViewModel(IEnumerable<SearchableFaqModel> faqs)
         {
-            Faqs = faqs.Select(f => new SearchableFaqViewModel(DlsSubApplication.SuperAdmin, f));
+            Faqs = faqs.Select(f => new SearchableFaqViewModel(f));
         }
 
         public IEnumerable<SearchableFaqViewModel> Faqs { get; set; }

@@ -24,7 +24,7 @@
        <div id="searchable-elements">
         @foreach (var faq in Model.Faqs)
         {
-          <p>@faq.Faq.CreatedDate</p>
+          <partial name = "_FaqCard" model = "faq" />
         }
       </div>
 

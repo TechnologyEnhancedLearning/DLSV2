@@ -35,6 +35,5 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
 
             return View("SuperAdminFaqs", model);
         }
-
     }
 }
