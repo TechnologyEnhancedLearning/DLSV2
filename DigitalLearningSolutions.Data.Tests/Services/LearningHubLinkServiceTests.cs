@@ -20,8 +20,8 @@
         {
             userDataService = A.Fake<IUserDataService>();
             learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
-            A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", A<string>._)).Returns(false);
-            A.CallTo(() => learningHubSsoSecurityService.VerifyHash("12345", A<string>._)).Returns(true);
+            A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", "invalid-hash")).Returns(false);
+            A.CallTo(() => learningHubSsoSecurityService.VerifyHash("12345", "valid-hash")).Returns(true);
             learningHubLinkService = new LearningHubLinkService(learningHubSsoSecurityService, userDataService);
         }
 
@@ -32,7 +32,7 @@
             // Given
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = $"{Guid.NewGuid()}_refId:1234",
                 UserId = 12345,
             };
@@ -80,7 +80,7 @@
             var storedSessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = $"{Guid.NewGuid()}_refId:1234",
                 UserId = 12345,
             };
@@ -103,7 +103,7 @@
             var storedSessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = $"{storedSessionIdentifier}",
                 UserId = 12345,
             };
@@ -126,7 +126,7 @@
             var storedSessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = "not-a-guid_refId:1234",
                 UserId = 12345,
             };
@@ -150,7 +150,7 @@
             var storedSessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = $"{storedSessionIdentifier}_refId:badInteger",
                 UserId = 12345,
             };
@@ -173,7 +173,7 @@
             var storedSessionIdentifier = Guid.NewGuid();
             var linkLearningHubRequest = new LinkLearningHubRequest
             {
-                Hash = "some-valid-hash",
+                Hash = "valid-hash",
                 State = $"{storedSessionIdentifier}_refId:1234",
                 UserId = 12345,
             };
