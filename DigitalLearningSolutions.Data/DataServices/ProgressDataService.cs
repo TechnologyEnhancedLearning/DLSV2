@@ -197,7 +197,8 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE ap
                         SET ap.DiagHigh = IIF(@myScore > DiagHigh, @myScore, DiagHigh),
-                            ap.DiagLow = IIF(@myScore > DiagLow, DiagLow, @myScore),
+                            ap.DiagLow = CASE WHEN ap.DiagAttempts = 0 THEN @myScore
+                                ELSE IIF(@myScore > DiagLow, DiagLow, @myScore) END,
                             ap.DiagLast = @myScore,
                             ap.DiagAttempts = DiagAttempts + 1
                         FROM aspProgress AS ap
