@@ -11,7 +11,7 @@
         }
         public override void Down()
         {
-            Delete.Column("OriginalRating").FromTable("OriginalRating");
+            Delete.Column("OriginalRating").FromTable("LearningResourceReferences");
         }
     }
 }
