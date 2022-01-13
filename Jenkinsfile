@@ -4,6 +4,7 @@ pipeline {
     }
     environment {
         DlsRefactor_ConnectionStrings__UnitTestConnection = credentials('ci-db-connection-string')
+        DlsRefactor_LearningHubOpenAPIKey = credentials('ci-learning-hub-open-api-key')
     }
     parameters {
         booleanParam(name: 'DeployToUAT', defaultValue: false, description: 'Deploy changes to UAT after build? NB will not deploy to test if this is set')
@@ -46,16 +47,15 @@ pipeline {
         }
         stage('Integration Tests') {
             environment {
-               DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
-           }
+                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
+        }
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.IntegrationTests"
             }
         }
         stage('Automated UI Tests') {
             environment {
-               DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
-               DlsRefactor_LearningHubOpenAPIKey = credentials('ci-learning-hub-open-api-key')
+                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
             }
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.AutomatedUiTests"
