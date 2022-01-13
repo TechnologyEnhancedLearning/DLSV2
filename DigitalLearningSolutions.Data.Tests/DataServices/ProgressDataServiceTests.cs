@@ -308,6 +308,32 @@
         }
 
         [Test]
+        public void UpdateDiagnosticScore_should_update_DiagLow_when_DiagAttempts_is_zero()
+        {
+            // Given
+            const int aspProgressId = 100;
+            const int progressId = 15913;
+            const int tutorialId = 90;
+            const int myScore = 3;
+
+            using var transaction = new TransactionScope();
+
+            // When
+            progressDataService.UpdateDiagnosticScore(
+                progressId,
+                tutorialId,
+                myScore
+            );
+            var diagnosticInfo = progressTestHelper.GetDiagnosticInfoByAspProgressId(aspProgressId);
+
+            // Then
+            diagnosticInfo.DiagHigh.Should().Be(myScore);
+            diagnosticInfo.DiagLow.Should().Be(myScore);
+            diagnosticInfo.DiagLast.Should().Be(myScore);
+            diagnosticInfo.DiagAttempts.Should().Be(1);
+        }
+
+        [Test]
         public void UnlockCourseProgress_updates_progress_record()
         {
             // Given
