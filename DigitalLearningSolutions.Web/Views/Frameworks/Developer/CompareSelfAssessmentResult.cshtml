@@ -68,7 +68,7 @@
             <select name="compareToQuestionId" class="nhsuk-select nhsuk-u-width-two-thirds nhsuk-u-margin-top-3">
               @foreach (var question in Model.Questions)
               {
-                @if (question.ID != Model.SelectedQuestion.ID)
+                @if (question.ID != Model.SelectedQuestion?.ID)
                 {
                   <!option value="@question.ID" @(Model.SelectedCompareToQuestion?.ID == question.ID ? "selected" : String.Empty)>@question.Question</!option>
                 }

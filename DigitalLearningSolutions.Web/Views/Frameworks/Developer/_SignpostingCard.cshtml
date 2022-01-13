@@ -21,7 +21,7 @@
     }
     @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
   </div>
-  @if(Model.AssessmentQuestion == null)
+  @if(Model.ParameterHasNotBeenSet)
   {
     <h5>This resource has no parameter yet.</h5>
   }
@@ -29,30 +29,33 @@
   {
     <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameter</h4>
     <dl class="nhsuk-summary-list">
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Assessment Question
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.AssessmentQuestion
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Minimum result match
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.MinimumResultMatch
-        </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Maximum result match
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.MaximumResultMatch
-        </dd>
-      </div>
+      @if(!String.IsNullOrEmpty(Model.AssessmentQuestion))
+      {
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Assessment Question
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.AssessmentQuestion
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Minimum result match
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.MinimumResultMatch
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Maximum result match
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.MaximumResultMatch
+          </dd>
+        </div>
+      }
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
           Compare result to
@@ -61,7 +64,7 @@
           @Model.CompareResultTo
         </dd>
       </div>
-  </dl>
+    </dl>
   }
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -70,7 +73,7 @@
           asp-route-frameworkId="@parent.FrameworkId"
           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-competencyLearningResourceId="@(Model.CompetencyLearningResourceId?.ToString() ?? "")">@(Model.AssessmentQuestion == null ? "Add" : "Manage") parameter</a>
+          asp-route-competencyLearningResourceId="@(Model.CompetencyLearningResourceId?.ToString() ?? "")">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameter</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
       <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
     </div>

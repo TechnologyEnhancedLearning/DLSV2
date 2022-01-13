@@ -1612,7 +1612,12 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyLearningResourceId)
         {
             var resource = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
-                $@"SELECT clr.ID AS CompetencyLearningResourceID, * FROM CompetencyLearningResources AS clr
+                $@"SELECT p.AssessmentQuestionId, clr.ID AS CompetencyLearningResourceID,
+                    CASE
+                        WHEN p.CompetencyLearningResourceId IS NULL THEN 1
+                        ELSE 0
+                    END AS IsNew
+                    FROM CompetencyLearningResources AS clr
                     INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
                     LEFT OUTER JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
                     WHERE clr.ID = @competencyLearningResourceId",
@@ -1622,7 +1627,6 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     WHERE ID IN ({resource.AssessmentQuestionID}, {resource.RelevanceAssessmentQuestionID ?? 0})");
             resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionID);
             resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionID);
-            resource.IsNew = resource.AssessmentQuestion == null;
             return resource;
         }
 
@@ -1634,7 +1638,11 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
 	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
 	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
 	                    ELSE 'Don''t compare result'
-                    END AS CompareResultTo
+                    END AS CompareResultTo,
+                    CASE
+                        WHEN p.CompetencyLearningResourceId IS NULL THEN 1
+                        ELSE 0
+                    END AS IsNew
                     FROM FrameworkCompetencies AS fc
 					INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
 					INNER JOIN CompetencyLearningResources AS clr ON clr.CompetencyID = c.ID
@@ -1667,7 +1675,6 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter)
         {
             int rowsAffected;
-            string relevance = parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null";
             if (parameter.IsNew)
             {
                 rowsAffected = connection.Execute(
@@ -1681,11 +1688,11 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                         CompareToRoleRequirements)
                         VALUES(
                             {parameter.CompetencyLearningResourceId},
-                            {parameter.AssessmentQuestion.ID},
+                            {parameter.AssessmentQuestion?.ID.ToString() ?? "null"},
                             {parameter.MinResultMatch},
                             {parameter.MaxResultMatch},
                             {Convert.ToInt32(parameter.Essential)},
-                            {relevance},
+                            {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
                             {Convert.ToInt32(parameter.CompareToRoleRequirements)})"
                     );
             }
@@ -1693,11 +1700,11 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             {
                 rowsAffected = connection.Execute(
                     $@"UPDATE CompetencyResourceAssessmentQuestionParameters
-                    SET AssessmentQuestionID = {parameter.AssessmentQuestion.ID},
+                    SET AssessmentQuestionID = {parameter.AssessmentQuestion?.ID.ToString() ?? "null" },
                         MinResultMatch = {parameter.MinResultMatch},
                         MaxResultMatch = {parameter.MaxResultMatch},
                         Essential = {Convert.ToInt32(parameter.Essential)},
-                        RelevanceAssessmentQuestionID = {relevance},
+                        RelevanceAssessmentQuestionID = {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
                         CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
                     WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId}"
                     );

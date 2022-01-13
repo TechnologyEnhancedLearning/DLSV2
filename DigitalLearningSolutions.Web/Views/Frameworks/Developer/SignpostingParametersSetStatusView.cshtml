@@ -2,6 +2,7 @@
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
     var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    var question = Model.Questions.Count() <= 1 ? Model.Questions.FirstOrDefault() : Model.SelectedQuestion; 
     ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
     ViewData["Application"] = "Framework Service";
 }
@@ -24,11 +25,11 @@
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <partial name="Developer/_SignpostingParametersHeader" model="Model" />
 
-<h2>Choose trigger range for - @(Model.SelectedQuestion?.Question ?? "no question selected")</h2>
+<h2>Choose trigger range for - @question.Question</h2>
 <label class="nhsuk-label nhsuk-u-margin-bottom-4">Choose the minimum and maximum result values that </label>
 <form method="post" asp-controller="Frameworks">
   <div class="nhsuk-form-group">
-    @if (Model.SelectedQuestion.AssessmentQuestionInputTypeID == 2)
+    @if (question.AssessmentQuestionInputTypeID == 2)
     {
       <partial name="Developer/_SignpostingQuestionSlider" model="Model.AssessmentQuestionParameter" />
     }

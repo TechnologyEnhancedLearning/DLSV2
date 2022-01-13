@@ -79,7 +79,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 return StatusCode(403);
             }
-            var parameter = frameworkService.GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(competencyLearningResourceID.Value);
+            var parameter = frameworkService.GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(competencyLearningResourceID.Value) ?? new CompetencyResourceAssessmentQuestionParameter(true);
             var questionHasRoleRequirements = frameworkService.GetCompetencyAssessmentQuestionRoleRequirementsCountByCompetencyId(frameworkCompetency.CompetencyID) > 0;
             var questionType = parameter.RelevanceAssessmentQuestion != null ? CompareAssessmentQuestionType.CompareToOtherQuestion
                 : questionHasRoleRequirements ? CompareAssessmentQuestionType.CompareToRole
@@ -95,7 +95,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 parameter);
             TempData.Clear();
             TempData.Set(session);
-            return RedirectToAction("EditSignpostingParameters", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId, competencyLearningResourceID });
+
+            if(session.Questions.Count() == 0)
+                return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
+            else
+                return RedirectToAction("EditSignpostingParameters", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId, competencyLearningResourceID });
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/Compare")]
@@ -256,13 +260,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 CompetencyResourceLinks = parameters.Select(p =>
                     new SignpostingCardViewModel()
                     {
+                        AssessmentQuestionId = p.AssessmentQuestionId,
                         CompetencyLearningResourceId = p.CompetencyLearningResourceId,
                         Name = p.OriginalResourceName,
                         AssessmentQuestion = p.Question,
                         MinimumResultMatch = p.MinResultMatch,
                         MaximumResultMatch = p.MaxResultMatch,
                         CompareResultTo = p.CompareResultTo,
-                        Essential = p.Essential
+                        Essential = p.Essential,
+                        ParameterHasNotBeenSet = p.IsNew
                     }
                 ).ToList()
             };
