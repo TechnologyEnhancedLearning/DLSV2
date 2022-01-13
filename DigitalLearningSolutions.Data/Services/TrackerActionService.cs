@@ -16,7 +16,7 @@
 
         TrackerObjectiveArrayCc? GetObjectiveArrayCc(int? customisationId, int? sectionId, bool? isPostLearning);
 
-        public TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
+        TrackerEndpointResponse StoreDiagnosticJson(int? progressId, string? diagnosticOutcome);
     }
 
     public class TrackerActionService : ITrackerActionService

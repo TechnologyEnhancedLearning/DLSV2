@@ -13,7 +13,7 @@
 
         void UpdateCompletionDate(int progressId, DateTime? completionDate);
 
-        public void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
+        void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
 
         void UnlockProgress(int progressId);
     }
