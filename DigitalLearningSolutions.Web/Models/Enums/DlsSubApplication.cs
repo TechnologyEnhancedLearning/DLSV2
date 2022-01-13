@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "/TrackingSystem/Centre/Dashboard",
             "Tracking System",
             "TrackingSystem",
+            0,
             false
         );
 
@@ -25,7 +26,8 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "Frameworks",
             null,
             null,
-            "Frameworks"
+            "Frameworks",
+            3
         );
 
         public static readonly DlsSubApplication Main = new DlsSubApplication(2, nameof(Main), "", null, null, null);
@@ -55,14 +57,16 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             "/SuperAdmin/Admins",
             "Super Admin - System Configuration",
             "SuperAdmin",
-            false
+            displayHelpMenuItem: false
         );
+
+        public readonly bool DisplayHelpMenuItem;
+        public readonly int? FaqTargetGroupId;
 
         public readonly string HeaderExtension;
         public readonly string? HeaderPath;
         public readonly string? HeaderPathName;
         public readonly string? UrlSegment;
-        public readonly bool DisplayHelpMenuItem;
 
         private DlsSubApplication(
             int id,
@@ -71,10 +75,13 @@ namespace DigitalLearningSolutions.Web.Models.Enums
             string? headerPath,
             string? headerPathName,
             string? urlSegment,
+            int? faqTargetGroupId = null,
             bool displayHelpMenuItem = true
         ) : base(id, name)
         {
             HeaderExtension = headerExtension;
+
+            FaqTargetGroupId = faqTargetGroupId;
 
             HeaderPath = headerPath != null
                 ? ConfigHelper.GetAppConfig()["AppRootPath"] + headerPath
