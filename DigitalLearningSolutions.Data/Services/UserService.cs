@@ -60,6 +60,8 @@ namespace DigitalLearningSolutions.Data.Services
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
 
         IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId);
+
+        bool DelegateUserLearningHubAccountIsLinked(int delegateId);
     }
 
     public class UserService : IUserService
@@ -377,6 +379,11 @@ namespace DigitalLearningSolutions.Data.Services
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
                 .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+        }
+
+        public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
+        {
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

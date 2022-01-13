@@ -22,7 +22,7 @@
 
         Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
 
-        Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
+        void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateId);
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
 
@@ -139,21 +139,24 @@
             return new ActionPlanResource(learningLogItem, response);
         }
 
-        public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(
-            int learningLogItemId,
+        public void UpdateActionPlanResourcesLastAccessedDateIfPresent(
+            int resourceReferenceId,
             int delegateId
         )
         {
-            var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
+            var actionPlanResourcesToUpdate = learningLogItemsDataService.GetLearningLogItems(delegateId).Where(
+                r =>
+                    r.ArchivedDate == null &&
+                    r.LearningHubResourceReferenceId == resourceReferenceId
+            );
 
-            learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, clockService.UtcNow);
-
-            var resource =
-                await learningHubApiClient.GetResourceByReferenceId(
-                    actionPlanResource.LearningHubResourceReferenceId!.Value
+            foreach (var actionPlanResourceToUpdate in actionPlanResourcesToUpdate)
+            {
+                learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(
+                    actionPlanResourceToUpdate.LearningLogItemId,
+                    clockService.UtcNow
                 );
-
-            return resource.Link;
+            }
         }
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate)
