@@ -16,6 +16,9 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public bool CompareToRoleRequirements { get; set; }
         public string Competency { get; set; }
 
+        public string OriginalResourceName { get; set; }
+        public string Question { get; set; }
+        public string CompareResultTo { get; set; }
         public AssessmentQuestion AssessmentQuestion { get; set; }
         public AssessmentQuestion RelevanceAssessmentQuestion { get; set; }
         public bool IsNew { get; set; }

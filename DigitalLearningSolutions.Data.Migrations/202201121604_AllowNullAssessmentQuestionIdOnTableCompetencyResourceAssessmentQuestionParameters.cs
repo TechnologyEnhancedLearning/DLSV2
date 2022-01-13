@@ -13,6 +13,9 @@
         }
         public override void Down()
         {
+            Delete.FromTable("CompetencyResourceAssessmentQuestionParameters")
+                .Row(new { AssessmentQuestionID = (int?)null });
+
             Alter.Column("AssessmentQuestionID")
                 .OnTable("CompetencyResourceAssessmentQuestionParameters")
                 .AsInt32()

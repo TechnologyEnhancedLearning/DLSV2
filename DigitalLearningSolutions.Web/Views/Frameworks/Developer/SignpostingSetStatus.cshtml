@@ -26,7 +26,7 @@
 
 <h2>Signposting status</h2>
 <label class="nhsuk-label nhsuk-u-margin-bottom-4">
-  Choose whether the learning resorice should be tagged as Recommended or Essential. Only choose Essential if completion of the learning is a mandatory requirement for the role.
+  Choose whether the learning resource should be tagged as Essential. Only choose Essential if completion of the learning is a mandatory requirement for the role.
 </label>
 <form method="post" asp-controller="Frameworks">
   <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
@@ -36,7 +36,7 @@
                 value="false"
                 @(Model.AssessmentQuestionParameter?.Essential == false ? "checked" : String.Empty)>
         <label class="nhsuk-label nhsuk-radios__label">
-          Recommended
+          Recommended / Optional
         </label>
       </div>
       <div class="nhsuk-radios__item">

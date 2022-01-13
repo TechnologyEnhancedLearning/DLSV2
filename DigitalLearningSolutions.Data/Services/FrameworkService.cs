@@ -99,7 +99,7 @@
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-        IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
+        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -1630,9 +1630,9 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             return resource;
         }
 
-        public IEnumerable<SignpostingResourceParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
         {
-            return connection.Query<SignpostingResourceParameter>(
+            return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 $@"SELECT clr.ID AS CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
                     CASE 
 	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  

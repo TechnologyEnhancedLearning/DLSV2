@@ -225,18 +225,18 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     session.SelectedQuestion.MaxValue,
                     session.SelectedQuestion.MinValue == 0).ToList();
                 TempData.Set(session);
-                return RedirectToAction("SignpostingParametersSetStatusView", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
+                return RedirectToAction("SignpostingParametersSetTriggerValues", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId });
             }
         }
 
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetStatusView")]
-        public IActionResult SignpostingParametersSetStatusView(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/SignpostingParameters/SetTriggerValues")]
+        public IActionResult SignpostingParametersSetTriggerValues(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
-            return ViewFromSession("Developer/SignpostingParametersSetStatusView", frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            return ViewFromSession("Developer/SignpostingParametersSetTriggerValues", frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
         }
 
         [HttpPost]
-        public IActionResult SignpostingParametersSetStatusViewNext(CompetencyResourceAssessmentQuestionParameter assessmentParameter, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        public IActionResult SignpostingParametersSetTriggerValuesNext(CompetencyResourceAssessmentQuestionParameter assessmentParameter, int[] selectedLevelValues, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             var updateSelectedValuesFromSlider = session.SelectedQuestion.AssessmentQuestionInputTypeID == 2;

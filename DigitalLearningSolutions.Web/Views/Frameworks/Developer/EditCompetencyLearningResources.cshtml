@@ -36,7 +36,7 @@
 }
 else if (!Model.CompetencyResourceLinks.Any())
 {
-  <p>This is an empty competency resource signposting.</p>
+  <p>No learning resources have been added to this competency.</p>
 }
 <div class="nhsuk-u-margin-top-5">
   <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
