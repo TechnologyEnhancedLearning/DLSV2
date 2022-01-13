@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Data.Models.Tracker;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     public interface ITrackerActionService
     {
@@ -75,15 +74,16 @@
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
 
-            var json = JsonConvert.DeserializeObject<IEnumerable<JObject>>(diagnosticOutcome);
-
+            var diagnosticOutcomes = JsonConvert.DeserializeObject<IEnumerable<DiagnosticOutcome>>(diagnosticOutcome);
             try
             {
-                foreach (var obj in json)
+                foreach (var diagOutcome in diagnosticOutcomes)
                 {
-                    var tutorialId = (int)obj["tutorialid"];
-                    var myScore = (int)obj["myscore"];
-                    progressService.UpdateDiagnosticScore(progressId.Value, tutorialId, myScore);
+                    progressService.UpdateDiagnosticScore(
+                        progressId.Value,
+                        diagOutcome.TutorialId,
+                        diagOutcome.MyScore
+                    );
                 }
             }
             catch (Exception e)

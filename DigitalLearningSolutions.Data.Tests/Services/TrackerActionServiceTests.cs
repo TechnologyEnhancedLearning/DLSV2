@@ -181,9 +181,8 @@
 
         [Test]
         [TestCase(null, "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
-        [TestCase(1, null)]
-        [TestCase(1, "[{'unexpectedkey':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
-        public void StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_parameter_missing_or_error_when_updating_score(
+        [TestCase(1, null)][TestCase(1, null)]
+        public void StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_parameter_missing(
             int? progressId,
             string? diagnosticOutcome
         )
