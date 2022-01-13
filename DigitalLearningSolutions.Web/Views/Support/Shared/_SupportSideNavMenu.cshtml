@@ -21,7 +21,7 @@
     </li>
   } else {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@SupportLinksHelper.GenerateHelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">
+      <a class="side-nav__link" href="@SupportLinksHelper.GetHelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">
         Help documentation
       </a>
     </li>
@@ -51,7 +51,7 @@
     </li>
   } else {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@SupportLinksHelper.ChangeRequestsUrl" target="_blank" rel="noreferrer">
+      <a class="side-nav__link" href="@SupportLinksHelper.GetChangeRequestsUrl" target="_blank" rel="noreferrer">
         Change requests
       </a>
     </li>
