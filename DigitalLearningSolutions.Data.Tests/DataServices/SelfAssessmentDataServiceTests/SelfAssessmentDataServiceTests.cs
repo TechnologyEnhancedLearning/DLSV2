@@ -13,6 +13,7 @@
         private const int CandidateId = 11;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
         private SqlConnection connection = null!;
+        private CompetencyTestHelper competencyTestHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -20,6 +21,8 @@
             connection = ServiceTestHelper.GetDatabaseConnection();
             var logger = A.Fake<ILogger<SelfAssessmentDataService>>();
             selfAssessmentDataService = new SelfAssessmentDataService(connection, logger);
+
+            competencyTestHelper = new CompetencyTestHelper(connection);
         }
     }
 }
