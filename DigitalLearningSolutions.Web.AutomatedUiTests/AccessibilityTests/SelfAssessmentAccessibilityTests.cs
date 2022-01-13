@@ -34,7 +34,7 @@
             var capabilitiesResult = new AxeBuilder(Driver).Analyze();
 
             Driver.Navigate().GoToUrl(BaseUrl + completeByUrl);
-            ValidatePageHeading("Enter a completion date for Digital Capability Self Assessment");
+            ValidatePageHeading("Enter a complete by date for Digital Capability Self Assessment");
             var completeByPageResult = new AxeBuilder(Driver).Analyze();
 
             //Then

@@ -41,5 +41,21 @@
                 new { id, competencyId, learningResourceReferenceId, adminId }
             );
         }
+
+        public void InsertCompetencyResourceAssessmentQuestionParameters(
+            int competencyLearningResourceId,
+            int assessmentQuestionId,
+            bool essential,
+            int? relevanceQuestionId,
+            bool compareToRoleRequirements
+        )
+        {
+            connection.Execute(
+                @"INSERT INTO CompetencyResourceAssessmentQuestionParameters
+                    (CompetencyLearningResourceId, AssessmentQuestionID, Essential, RelevanceAssessmentQuestionID, CompareToRoleRequirements, MinResultMatch, MaxResultMatch)
+                    VALUES (@competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, 0, 0)",
+                new { competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId, compareToRoleRequirements }
+            );
+        }
     }
 }
