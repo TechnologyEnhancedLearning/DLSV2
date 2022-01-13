@@ -55,7 +55,8 @@ pipeline {
         stage('Automated UI Tests') {
             environment {
                DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
-           }
+               DlsRefactor_LearningHubOpenAPIKey = credentials('ci-learning-hub-open-api-key')
+            }
             steps {
                 bat "dotnet test DigitalLearningSolutions.Web.AutomatedUiTests"
             }
@@ -110,7 +111,7 @@ def sendSlackMessageToTeamChannel(message, color) {
 	sendSlackNotificationToChannel("#hee-notifications", message, color)
 }
 
-def sendSlackNotificationToChannel(channel, message, color) {	
+def sendSlackNotificationToChannel(channel, message, color) {
 	withCredentials([string(credentialsId: 'slack-token', variable: 'SLACKTOKEN')]) {
         slackSend teamDomain: "softwire",
             channel: channel,
