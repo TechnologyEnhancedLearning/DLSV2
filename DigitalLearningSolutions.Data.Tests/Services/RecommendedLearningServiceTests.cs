@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
@@ -23,6 +24,9 @@
         private const int LearningHubResourceReferenceId = 4;
         private const int DelegateId = 5;
         private const int LearningLogId = 6;
+        private const int CompetencyLearningResourceId = 1;
+        private const int CompetencyAssessmentQuestionId = 1;
+        private const int RelevanceAssessmentQuestionId = 2;
         private const string ResourceName = "Resource";
         private const string ResourceDescription = "Description";
         private const string ResourceCatalogue = "Catalogue";
@@ -230,14 +234,254 @@
                 .MustHaveHappenedOnceExactly();
         }
 
-        private void GivenResourceForSelfAssessmentIsReturnedByLearningHubApi()
+        [Test]
+        [TestCase(1, true, 100)]
+        [TestCase(1, false, 30)]
+        [TestCase(0, true, 0)]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_essential_question_parameters_only(
+                int numberOfQuestionParameters,
+                bool essential,
+                decimal expectedScore
+            )
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+            GivenGetLearningLogItemsReturnsAnItem();
+
+            var questionParameters =
+                numberOfQuestionParameters == 0
+                    ? new List<CompetencyResourceAssessmentQuestionParameter>()
+                    : Builder<CompetencyResourceAssessmentQuestionParameter>
+                        .CreateListOfSize(numberOfQuestionParameters).All()
+                        .With(qp => qp.Essential = essential).Build();
+
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                    A<IEnumerable<int>>._
+                )
+            ).Returns(questionParameters);
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, expectedScore);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+        }
+
+        [Test]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with__multiple_essential_question_parameters_of_different_value()
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+            GivenGetLearningLogItemsReturnsAnItem();
+
+            var questionParameters = Builder<CompetencyResourceAssessmentQuestionParameter>
+                        .CreateListOfSize(5).TheFirst(2)
+                        .With(qp => qp.Essential = true)
+                        .TheRest()
+                        .With(qp => qp.Essential = false).Build();
+
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                    A<IEnumerable<int>>._
+                )
+            ).Returns(questionParameters);
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, 100);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+        }
+
+        [Test]
+        [TestCase(0, 0)]
+        [TestCase(1, 4)]
+        [TestCase(2.4, 9.6)]
+        [TestCase(5, 20)]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_learning_hub_ratings_only(
+                decimal learningHubRating,
+                decimal expectedScore
+            )
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi(learningHubRating);
+            GivenGetLearningLogItemsReturnsAnItem();
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, expectedScore);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+        }
+
+        [Test]
+        [TestCase(0, 175)]
+        [TestCase(1, 150)]
+        [TestCase(2, 125)]
+        [TestCase(5, 100)]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_competency_role_requirements(
+                int levelRag,
+                decimal expectedScore
+            )
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+            GivenGetLearningLogItemsReturnsAnItem();
+
+            var questionParameters = Builder<CompetencyResourceAssessmentQuestionParameter>
+                .CreateListOfSize(1).All()
+                .With(qp => qp.Essential = true)
+                .And(qp => qp.CompareToRoleRequirements = true).Build();
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                    A<IEnumerable<int>>._
+                )
+            ).Returns(questionParameters);
+
+            var roleRequirement = Builder<CompetencyAssessmentQuestionRoleRequirement>.CreateNew()
+                .With(rr => rr.LevelRag = levelRag).Build();
+            A.CallTo(
+                () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
+                    CompetencyId,
+                    SelfAssessmentId
+                )
+            ).Returns(roleRequirement);
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, expectedScore);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+            A.CallTo(
+                () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
+                    CompetencyId,
+                    SelfAssessmentId
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        [TestCase(10, 10, 100)]
+        [TestCase(1, 10, 100)]
+        [TestCase(10, 1, 190)]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_self_assessment_results(
+                int relevanceResult,
+                int confidenceResult,
+                decimal expectedScore
+            )
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+            GivenGetLearningLogItemsReturnsAnItem();
+            GivenNotComparingToRoleRequirements();
+
+            var assessmentResults = Builder<SelfAssessmentResult>.CreateListOfSize(2)
+                .All()
+                .With(r => r.SelfAssessmentId = SelfAssessmentId)
+                .And(r => r.CandidateId = DelegateId)
+                .And(r => r.CompetencyId = CompetencyId)
+                .TheFirst(1)
+                .With(r => r.AssessmentQuestionId = CompetencyAssessmentQuestionId)
+                .And(r => r.Result = confidenceResult)
+                .TheRest()
+                .With(r => r.AssessmentQuestionId = RelevanceAssessmentQuestionId)
+                .And(r => r.Result = relevanceResult)
+                .Build();
+            A.CallTo(
+                () => selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                    DelegateId,
+                    SelfAssessmentId,
+                    CompetencyId
+                )
+            ).Returns(assessmentResults);
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, expectedScore);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+            A.CallTo(
+                () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public async Task
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_missing_self_assessment_results()
+        {
+            // Given
+            GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
+            GivenGetLearningLogItemsReturnsAnItem();
+            GivenNotComparingToRoleRequirements();
+
+            A.CallTo(
+                () => selfAssessmentDataService.GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                    DelegateId,
+                    SelfAssessmentId,
+                    CompetencyId
+                )
+            ).Returns(new List<SelfAssessmentResult>());
+
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, 100);
+
+            // When
+            var result =
+                (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .ToList();
+
+            // Then
+            result.Should().HaveCount(1);
+            result.Single().Should().BeEquivalentTo(expectedResource);
+            A.CallTo(
+                () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
+                    A<int>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        private void GivenResourceForSelfAssessmentIsReturnedByLearningHubApi(decimal rating = 0)
         {
             A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(SelfAssessmentId))
                 .Returns(new[] { CompetencyId });
 
             var competencyLearningResource = new CompetencyLearningResource
             {
-                Id = 1,
+                Id = CompetencyLearningResourceId,
                 CompetencyId = CompetencyId,
                 LearningResourceReferenceId = LearningResourceReferenceId,
                 AdminId = 7,
@@ -260,7 +504,7 @@
                         Description = ResourceDescription,
                         Catalogue = new Catalogue { Name = ResourceCatalogue },
                         ResourceType = ResourceType,
-                        Rating = 0,
+                        Rating = rating,
                         Link = ResourceLink,
                     },
                 },
@@ -270,7 +514,38 @@
                 .Returns(clientResponse);
         }
 
-        private RecommendedResource GetExpectedResource(bool isInActionPlan, bool isCompleted, int? learningLogId)
+        private void GivenGetLearningLogItemsReturnsAnItem()
+        {
+            var learningLogItem = Builder<LearningLogItem>.CreateNew()
+                .With(i => i.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
+                .And(i => i.CompletedDate = null)
+                .And(i => i.LearningLogItemId = LearningLogId)
+                .And(i => i.ArchivedDate = null).Build();
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateId))
+                .Returns(new List<LearningLogItem> { learningLogItem });
+        }
+
+        private void GivenNotComparingToRoleRequirements()
+        {
+            var questionParameters = Builder<CompetencyResourceAssessmentQuestionParameter>
+                .CreateListOfSize(1).All()
+                .With(qp => qp.Essential = true)
+                .And(qp => qp.CompareToRoleRequirements = false)
+                .And(qp => qp.AssessmentQuestionId = CompetencyAssessmentQuestionId)
+                .And(qp => qp.RelevanceAssessmentQuestionId = RelevanceAssessmentQuestionId).Build();
+            A.CallTo(
+                () => competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(
+                    A<IEnumerable<int>>._
+                )
+            ).Returns(questionParameters);
+        }
+
+        private RecommendedResource GetExpectedResource(
+            bool isInActionPlan,
+            bool isCompleted,
+            int? learningLogId,
+            decimal recommendationScore = 0
+        )
         {
             return new RecommendedResource
             {
@@ -284,7 +559,7 @@
                 IsInActionPlan = isInActionPlan,
                 IsCompleted = isCompleted,
                 LearningLogId = learningLogId,
-                RecommendationScore = 0,
+                RecommendationScore = recommendationScore,
             };
         }
     }
