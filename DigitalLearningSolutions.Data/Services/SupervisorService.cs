@@ -45,7 +45,7 @@
         int InsertCandidateAssessmentSupervisor(int delegateId, int supervisorDelegateId, int selfAssessmentId, int? selfAssessmentSupervisorRoleId);
         bool InsertSelfAssessmentResultSupervisorVerification(int candidateAssessmentSupervisorId, int resultId);
         //DELETE DATA
-        bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId);
+        bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId);
     }
     public class SupervisorService : ISupervisorService
     {
@@ -535,21 +535,18 @@ WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
             return true;
         }
 
-        public bool RemoveCandidateAssessmentSupervisor(int candidateAssessmentSupervisorId)
+        public bool RemoveCandidateAssessmentSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            var supervisorDelegateId = (int)connection.ExecuteScalar(
-                 @"SELECT SupervisorDelegateId
-                  FROM    CandidateAssessmentSupervisors
-                   WHERE (ID = @candidateAssessmentSupervisorId)",
-               new { candidateAssessmentSupervisorId });
             var numberOfAffectedRows = connection.Execute(
-         @"DELETE CandidateAssessmentSupervisors 
-            WHERE ID = @candidateAssessmentSupervisorId",
-        new { candidateAssessmentSupervisorId });
+         @"DELETE FROM cas
+FROM  CandidateAssessmentSupervisors AS cas INNER JOIN
+         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
+WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = @supervisorDelegateId)",
+        new { selfAssessmentId, supervisorDelegateId });
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    $"Not removing Candidate Assessment Supervisor as db update failed. candidateAssessmentSupervisorId: {candidateAssessmentSupervisorId}"
+                    $"Not removing Candidate Assessment Supervisor as db update failed. selfAssessmentId: {selfAssessmentId}, supervisorDelegateId: {supervisorDelegateId}"
                 );
                 return false;
             }
