@@ -3,8 +3,7 @@
 @using Microsoft.Extensions.Configuration
 @model FaqsPageViewModel
 
-@* todo make this page pretty *@
-<link rel="stylesheet" href="@Url.Content("~/css/support/faqs.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/superAdmin/faqs.css")" asp-append-version="true">
 
 @section scripts {
   <script src="@Url.Content("~/js/support/faqs.js")" asp-append-version="true"></script>
@@ -17,19 +16,33 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-          <partial name="~/Views/SuperAdmin/Shared/_SideNavMenu.cshtml" model="Model" />
-        </nav>
+      <partial name="~/Views/SuperAdmin/Shared/_SideNavMenu.cshtml" model="Model" />
+    </nav>
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <h1 class="nhsuk-heading-xl">FAQs</h1>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-third">
+        <h1 id="page-heading" class="nhsuk-heading-xl">FAQs</h1>
+      </div>
+      <div class="nhsuk-grid-column-two-thirds heading-button-group">
+        <a class="nhsuk-button nhsuk-button--primary heading-button" asp-controller="RegisterDelegateByCentre" asp-action="Index" role="button">
+          Add
+        </a>
 
-       <div id="searchable-elements">
-        @foreach (var faq in Model.Faqs)
-        {
-          <partial name = "_FaqCard" model = "faq" />
+      </div>
+    </div>
+
+    @if (!Model.Faqs.Any()) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No FAQs found.</b>
+      </p>
+    } else {
+      <div id="searchable-elements">
+        @foreach (var faq in Model.Faqs) {
+          <partial name="_FaqCard" model="faq" />
         }
       </div>
-
+    }
   </div>
 </div>

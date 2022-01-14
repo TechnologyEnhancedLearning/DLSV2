@@ -1,15 +1,19 @@
 <div class="searchable-element nhsuk-expander-group word-break" id="@Model.FaqId-card">
 
   <details class="nhsuk-details nhsuk-expander">
-    <div>
-      <span>
-        <div>
-          @Model.TargetGroup
+    <div class="nhsuk-details__text">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-quarter">
+          <div class="tag">
+            @Model.TargetGroup
+          </div>
         </div>
-        <div>
-          @Model.Published
+        <div class="nhsuk-grid-column-one-quarter">
+          <div class="tag">
+            @Model.Published
+          </div>
         </div>
-      </span>
+      </div>
     </div>
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.FaqId-name">
@@ -20,8 +24,19 @@
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-margin-bottom-4">
         <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
-        <p class="searchable-element-content">Created: @Model.CreatedDate</p>
-        <p class="searchable-element-content">Weighting: @Model.Weighting</p>
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-quarter">
+            <div class="nhsuk-u-font-weight-bold">
+              <p>Created</p>
+              <p>Weighting</p>
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-quarter">
+            <p>@Model.CreatedDate</p>
+            <p>@Model.Weighting</p>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -32,7 +47,7 @@
       </div>
       <div>
         <a class="nhsuk-button nhsuk-button"
-           rols="button">
+           role="button">
           Edit
         </a>
         <a class="nhsuk-button nhsuk-button--secondary"
@@ -40,7 +55,6 @@
           View on separate page
         </a>
       </div>
-
     </div>
   </details>
 </div>
