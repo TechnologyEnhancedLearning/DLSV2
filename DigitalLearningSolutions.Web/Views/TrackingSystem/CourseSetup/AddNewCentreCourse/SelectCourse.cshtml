@@ -5,37 +5,71 @@
 @using Microsoft.Extensions.Configuration
 @model SelectCourseViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/selectCourse.css")" asp-append-version="true">
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
-  var applicationId = Model.ApplicationId?.ToString();
-  var b = applicationId;
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
-    <h1 class="nhsuk-heading-xl">Add course admin field</h1>
+    @* TODO: Make sure titles of all pages are correct, and account for errors *@
+    <h1 class="nhsuk-heading-xl">Add new centre course</h1>
 
-    @* TODO: Add filtering *@
+    <div class="nhsuk-grid-row">
 
-    <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-      <vc:select-list asp-for="@nameof(Model.ApplicationId)"
-                      label="Course"
-                      value="@Model.ApplicationId?.ToString()"
-                      hint-text=""
-                      deselectable="false"
-                      css-class="nhsuk-u-width-one-half"
-                      default-option="Select a course"
-                      select-list-options="@Model.CourseOptions" />
+      <div class="nhsuk-grid-column-one-half nhsuk-u-margin-bottom-4">
+        @if (Model.TopicOptions != null) {
+          <div class="nhsuk-grid-row">
+            <form method="get" role="search">
+              <div class="nhsuk-grid-column-full">
+                <label class="nhsuk-label nhsuk-u-margin-bottom-1">Filter courses by topic</label>
+                <div class="course-dropdown-container">
+                  <select id="selected-topic-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                          asp-for="TopicId"
+                          asp-items="Model.TopicOptions"
+                          deselectable="true"
+                          default-option="Filter courses by topic"
+                          aria-label="Choose topic">
+                    <option value="" selected=@(Model.TopicId != null ? "" : "selected")>Select a topic</option>
+                  </select>
+                  <button class="nhsuk-search__submit course-submit" type="submit">
+                    Select
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        }
+      </div>
+    </div>
 
-      <button class="nhsuk-button" type="submit">Next</button>
-    </form>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-half">
 
-    <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+        <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
+          <input type="hidden" asp-for="CourseOptions">
+          <input type="hidden" asp-for="TopicOptions">
+
+          <vc:select-list asp-for="@nameof(Model.ApplicationId)"
+                          label="Course"
+                          value="@Model.ApplicationId?.ToString()"
+                          hint-text=""
+                          deselectable="false"
+                          css-class="nhsuk-u-margin-bottom-2"
+                          default-option="Select a course"
+                          select-list-options="@Model.CourseOptions" />
+
+          <button class="nhsuk-button" type="submit">Next</button>
+        </form>
+
+        <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+      </div>
+    </div>
   </div>
 </div>
