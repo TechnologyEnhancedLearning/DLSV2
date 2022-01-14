@@ -1612,7 +1612,8 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyLearningResourceId)
         {
             var resource = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
-                $@"SELECT p.AssessmentQuestionId, clr.ID AS CompetencyLearningResourceID,
+                $@"SELECT p.AssessmentQuestionId, clr.ID AS CompetencyLearningResourceId, p.MinResultMatch, p.MaxResultMatch, p.Essential,
+                          p.RelevanceAssessmentQuestionId, p.CompareToRoleRequirements, lrr.OriginalResourceName,
                     CASE
                         WHEN p.CompetencyLearningResourceId IS NULL THEN 1
                         ELSE 0
@@ -1624,9 +1625,9 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     new { competencyLearningResourceId }).FirstOrDefault();
             var questions = connection.Query<AssessmentQuestion>(
                 $@"SELECT * FROM AssessmentQuestions
-                    WHERE ID IN ({resource.AssessmentQuestionID}, {resource.RelevanceAssessmentQuestionID ?? 0})");
-            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionID);
-            resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionID);
+                    WHERE ID IN ({resource.AssessmentQuestionId}, {resource.RelevanceAssessmentQuestionId ?? 0})");
+            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId);
+            resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId);
             return resource;
         }
 

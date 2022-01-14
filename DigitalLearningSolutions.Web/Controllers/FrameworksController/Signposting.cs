@@ -112,11 +112,25 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult CompareSelfAssessmentResultNext(CompareAssessmentQuestionType compareQuestionType, int? compareToQuestionId, int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
+            var parameter = session.AssessmentQuestionParameter;
             session.SelectedCompareQuestionType = compareQuestionType;
-            session.AssessmentQuestionParameter.CompareToRoleRequirements = (compareQuestionType == CompareAssessmentQuestionType.CompareToRole);
-            if (compareQuestionType == CompareAssessmentQuestionType.CompareToOtherQuestion)
+            switch (compareQuestionType)
             {
-                session.AssessmentQuestionParameter.RelevanceAssessmentQuestion = session.Questions.FirstOrDefault(q => q.ID == compareToQuestionId);
+                case CompareAssessmentQuestionType.DontCompare:
+                    parameter.RelevanceAssessmentQuestion = null;
+                    parameter.RelevanceAssessmentQuestionId = null;
+                    parameter.CompareToRoleRequirements = false;
+                    break;
+                case CompareAssessmentQuestionType.CompareToRole:
+                    parameter.RelevanceAssessmentQuestion = null;
+                    parameter.RelevanceAssessmentQuestionId = null;
+                    parameter.CompareToRoleRequirements = true;
+                    break;
+                case CompareAssessmentQuestionType.CompareToOtherQuestion:
+                    parameter.RelevanceAssessmentQuestion = session.Questions.FirstOrDefault(q => q.ID == compareToQuestionId);
+                    parameter.RelevanceAssessmentQuestionId = parameter.RelevanceAssessmentQuestion?.ID;
+                    parameter.CompareToRoleRequirements = false;
+                    break;                
             }
             TempData.Set(session);
             return RedirectToAction("SignpostingSetStatus", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
