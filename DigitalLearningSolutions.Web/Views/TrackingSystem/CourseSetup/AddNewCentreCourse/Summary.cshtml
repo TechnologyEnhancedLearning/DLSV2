@@ -135,7 +135,9 @@
             <p>All content enabled</p>
           } else {
             <p>@(Model.NumberOfLearning == 0 ? "No" : Model.NumberOfLearning.ToString()) learning</p>
-            <p>@(Model.NumberOfDiagnostic == 0 ? "No" : Model.NumberOfDiagnostic.ToString()) diagnostic</p>
+            @if (Model.DiagAssess) {
+              <p>@(Model.NumberOfDiagnostic == 0 ? "No" : Model.NumberOfDiagnostic.ToString()) diagnostic</p>
+            }
           }
         </dd>
         <dd class="nhsuk-summary-list__actions">
