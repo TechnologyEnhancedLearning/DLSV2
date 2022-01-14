@@ -302,7 +302,7 @@
         [TestCase(2.4, 9.6)]
         [TestCase(5, 20)]
         public async Task
-            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_learning_hub_ratings_only(
+            GetRecommendedLearningForSelfAssessment_returns_correct_recommendation_score_for_resource_with_learning_hub_ratings_and_no_question_parameters(
                 decimal learningHubRating,
                 decimal expectedScore
             )
