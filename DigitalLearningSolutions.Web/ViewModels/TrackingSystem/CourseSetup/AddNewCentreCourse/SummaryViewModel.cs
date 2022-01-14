@@ -17,7 +17,6 @@
             CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
             Password = data.SetCourseDetailsModel.Password;
             NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
-            Active = data.SetCourseOptionsModel!.Active;
             AllowSelfEnrolment = data.SetCourseOptionsModel!.AllowSelfEnrolment;
             HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
             DiagAssess = data.Application!.DiagAssess;

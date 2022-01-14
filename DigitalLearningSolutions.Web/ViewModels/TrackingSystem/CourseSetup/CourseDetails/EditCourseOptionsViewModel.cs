@@ -8,7 +8,6 @@
 
         public EditCourseOptionsViewModel(CourseOptions courseOptions, int customisationId)
         {
-            Active = courseOptions.Active;
             AllowSelfEnrolment = courseOptions.SelfRegister;
             DiagnosticObjectiveSelection = courseOptions.DiagObjSelect;
             HideInLearningPortal = courseOptions.HideInLearnerPortal;
