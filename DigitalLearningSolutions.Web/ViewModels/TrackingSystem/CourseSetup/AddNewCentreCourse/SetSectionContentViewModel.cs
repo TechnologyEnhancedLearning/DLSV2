@@ -6,10 +6,11 @@
     {
         public SetSectionContentViewModel() { }
 
-        public SetSectionContentViewModel(SelectSectionViewModel section, int index)
+        public SetSectionContentViewModel(SelectSectionViewModel section, int index, bool showDiagnostic)
         {
             SectionName = section.Name;
             Index = index;
+            ShowDiagnostic = showDiagnostic;
         }
 
         public SetSectionContentViewModel(

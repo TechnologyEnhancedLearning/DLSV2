@@ -10,7 +10,9 @@
 <input type="hidden" asp-for="ShowDiagnostic" />
 
 <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-  <partial name="../CourseContent/_EditSectionDiagnostic" model="Model" />
+  <div @(Model.ShowDiagnostic ? "" : "hidden")>
+    <partial name="../CourseContent/_EditSectionDiagnostic" model="Model" />
+  </div>
 
   <partial name="../CourseContent/_EditSectionLearning" model="Model" />
 </div>

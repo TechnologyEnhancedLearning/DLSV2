@@ -286,7 +286,8 @@
             var data = TempData.Peek<AddNewCentreCourseData>();
 
             var section = data!.SetCourseContentModel!.GetSelectedSections().ElementAt(sectionIndex);
-            var model = new SetSectionContentViewModel(section, sectionIndex);
+            var showDiagnostic = data.Application!.DiagAssess;
+            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic);
 
             var tutorials = tutorialService.GetTutorialsForSection(section.Id);
             model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
@@ -424,9 +425,13 @@
                 return data.SetCourseContentModel;
             }
 
+            // TODO: Ask Steve if I should only show sections with tutorials here / only courses with tutorials with sections in the dropdown
             var sections =
                 sectionService.GetSectionsForApplication(data!.Application!.ApplicationId);
-            var sectionModels = sections.Select(section => new SelectSectionViewModel(section, false)).ToList();
+            var sectionsWithTutorials =
+                sections.Where(s => tutorialService.GetTutorialsForSection(s.SectionId).Count() != 0);
+            var sectionModels = sectionsWithTutorials.Select(section => new SelectSectionViewModel(section, false))
+                .ToList();
 
             return new SetCourseContentViewModel(sectionModels);
         }
