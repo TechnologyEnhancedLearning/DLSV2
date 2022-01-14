@@ -27,7 +27,7 @@
 
 <h2>Compare self-assessment result to</h2>
 <label class="nhsuk-label nhsuk-u-margin-bottom-4">
-  Optionally choose a maechanism to dermine whether the individual is meetinf their role-requirements for this competency.
+  Optionally, choose a mechanism to dermine whether the individual is meeting their role-requirements for this competency.
   If they are not, the prominence of this learning resource in their recommendations will increase.
 </label>
 <form method="post" asp-controller="Frameworks">
@@ -48,7 +48,7 @@
                  value="1"
                  @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
           <label class="nhsuk-label nhsuk-radios__label">
-            Competency assesstment question role requirements
+            Competency assessment question role requirements
           </label>
         </div>
       }
