@@ -132,16 +132,11 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet]
         [Route("AddCourse/SelectCourse")]
-        public IActionResult SelectCourse()
+        public IActionResult SelectCourse(int? topicId = null)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            var centreId = User.GetCentreId();
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
-
-            var applicationOptions = GetApplicationOptionsSelectList();
-
-            var model = new SelectCourseViewModel(applicationOptions, data!.Application?.ApplicationId);
+            var model = GetSelectCourseViewModel(data!.Application?.ApplicationId, topicId);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -149,14 +144,12 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/SelectCourse")]
-        public IActionResult SelectCourse(SelectCourseFormData formData)
+        public IActionResult SelectCourse(SelectCourseViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
             if (!ModelState.IsValid)
             {
-                var applicationSelectList = GetApplicationOptionsSelectList();
-                var model = new SelectCourseViewModel(formData, applicationSelectList);
                 return View("AddNewCentreCourse/SelectCourse", model);
             }
 
@@ -166,7 +159,7 @@
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             var selectedApplication =
-                applicationOptions.Single(ap => ap.ApplicationId == formData.ApplicationId);
+                applicationOptions.Single(ap => ap.ApplicationId == model.ApplicationId);
 
             data!.SetApplicationAndResetModels(selectedApplication);
 
@@ -388,7 +381,14 @@
             return View("AddNewCentreCourse/Confirmation", model);
         }
 
-        private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId = null)
+        private SelectCourseViewModel GetSelectCourseViewModel(int? selectedCourseId, int? topicId)
+        {
+            var availableTopics = GetTopicOptionsSelectListOrNull(topicId);
+            var availableCourses = GetApplicationOptionsSelectList(selectedCourseId, topicId);
+            return new SelectCourseViewModel(availableCourses, availableTopics, topicId);
+        }
+
+        private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId, int? topicId)
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter()!;
@@ -397,9 +397,24 @@
             var orderedApplications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
                 .ToList();
-            var applicationOptions = orderedApplications.Select(a => (a.ApplicationId, a.ApplicationName));
+            var filteredApplications = orderedApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
+            var applicationOptions = filteredApplications.Select(a => (a.ApplicationId, a.ApplicationName));
 
             return SelectListHelper.MapOptionsToSelectListItems(applicationOptions, selectedId);
+        }
+
+        private IEnumerable<SelectListItem>? GetTopicOptionsSelectListOrNull(int? selectedId)
+        {
+            if (User.GetAdminCourseCategoryFilter() != null)
+            {
+                return null;
+            }
+
+            var centreId = User.GetCentreId();
+            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId)
+                .Where(c => c.Active)
+                .Select(c => (c.CourseTopicID, c.CourseTopic));
+            return SelectListHelper.MapOptionsToSelectListItems(topics, selectedId);
         }
 
         private SetCourseContentViewModel GetSetCourseContentModel(AddNewCentreCourseData data)

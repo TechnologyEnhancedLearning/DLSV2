@@ -243,7 +243,7 @@
         }
         */
 
-        [Test]
+        /*[Test]
         public void SelectCourse_does_not_redirect_with_invalid_model()
         {
             var model = new SelectCourseViewModel { ApplicationId = 1 };
@@ -256,7 +256,7 @@
             result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
             controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
                 .BeEquivalentTo("Select a course");
-        }
+        }*/
 
         /*[Test]
         public void
