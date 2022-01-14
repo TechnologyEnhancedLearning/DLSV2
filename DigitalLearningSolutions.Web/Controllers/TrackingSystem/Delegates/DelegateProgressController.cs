@@ -191,7 +191,6 @@
         )
         {
             progressService.UnlockProgress(progressId);
-            notificationService.SendUnlockRequest(progressId);
 
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {

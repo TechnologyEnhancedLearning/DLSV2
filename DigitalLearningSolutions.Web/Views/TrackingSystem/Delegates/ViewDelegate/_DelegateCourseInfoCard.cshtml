@@ -117,9 +117,7 @@
           <dt class="nhsuk-summary-list__key">
             Progress locked
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @(Model.IsProgressLocked ? "Yes" : "No")
-          </dd>
+         <partial name="_SummaryBooleanField" model="@Model.IsProgressLocked" />
         </div>
 
         @if (Model.IsAssessed) {

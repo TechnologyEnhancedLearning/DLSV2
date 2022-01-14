@@ -58,7 +58,7 @@
           <dt class="nhsuk-summary-list__key">
             Removed date
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
+          <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -72,9 +72,7 @@
           <dt class="nhsuk-summary-list__key">
             Progress locked
           </dt>
-          <dd class="nhsuk-summary-list__value">
-            @(Model.Locked? "Yes": "No")
-          </dd>
+          <partial name="_SummaryBooleanField" model="Model.Locked" />
         </div>
       </dl>
 

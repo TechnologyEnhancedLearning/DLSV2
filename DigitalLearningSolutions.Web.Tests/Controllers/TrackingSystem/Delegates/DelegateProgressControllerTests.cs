@@ -152,7 +152,6 @@
             const int customisationId = 1;
 
             A.CallTo(() => progressService.UnlockProgress(progressId)).DoesNothing();
-            A.CallTo(() => notificationService.SendUnlockRequest(progressId)).DoesNothing();
 
             // When
             var result = delegateProgressController.UnlockProgress(
@@ -164,8 +163,6 @@
 
             // Then
             A.CallTo(() => progressService.UnlockProgress(progressId)).MustHaveHappened();
-            A.CallTo(() => notificationService.SendUnlockRequest(progressId)).MustHaveHappened();
-
             result.Should().BeRedirectToActionResult().WithControllerName(expectedController)
                 .WithActionName(expectedAction);
         }
