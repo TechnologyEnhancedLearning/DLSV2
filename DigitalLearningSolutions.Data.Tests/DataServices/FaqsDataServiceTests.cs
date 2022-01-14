@@ -58,7 +58,7 @@
             // Then
             result.Should().BeNull();
         }
-        
+
         [Test]
         public void GetPublishedFaqsForTargetGroup_returns_only_published_faqs_for_target_group()
         {
@@ -86,5 +86,15 @@
             // Then
             result.Should().BeEmpty();
         }
+
+        [Test]
+        public void GetAllFaqs_returns_expected_information()
+        {
+            //When
+            var result = faqsDataService.GetAllFaqs();
+
+            //Then
+            result.Count().Should().Be(121);
+      }
     }
 }

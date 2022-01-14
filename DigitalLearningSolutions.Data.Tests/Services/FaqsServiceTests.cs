@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -153,6 +154,40 @@
                 A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(targetGroup))
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public void GetAllFaqs_calls_data_service_method_and_returns_expected_results()
+        {
+            //Given
+            var expectedFaqs = Builder<Faq>.CreateListOfSize(10)
+                .Build();
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(expectedFaqs);
+
+            //When
+            var result = faqsService.GetAllFaqs();
+
+            //Then
+            result.Count().Should().Be(10);
+
+        }
+
+        [Test]
+        public void GetAll_returns_null_when_data_service_returns_null()
+        {
+            IEnumerable<Faq> emptyList = Array.Empty<Faq>();
+
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(emptyList);
+
+            // When
+            var result = faqsService.GetAllFaqs();
+
+            // Then
+            result.Should().BeEmpty();
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .MustHaveHappenedOnceExactly();
         }
     }
 }
