@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
     using System;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;

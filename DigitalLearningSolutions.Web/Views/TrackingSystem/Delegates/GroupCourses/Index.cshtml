@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 @using Microsoft.Extensions.Configuration
 @model GroupCoursesViewModel
 
@@ -10,13 +10,13 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/groupDelegates.css")" asp-append-version="true">
 
 @section NavBreadcrumbs {
-  <partial name="_DelegateGroupBreadcrumbs" />
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupBreadcrumbs.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="_DelegateGroupsSideNavMenu" model="Model.NavViewModel" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupsSideNavMenu.cshtml" model="Model.NavViewModel" />
     </nav>
   </div>
 
@@ -29,7 +29,7 @@
       <div class="nhsuk-grid-column-one-third heading-button-group">
         <a class="nhsuk-button heading-button"
            role="button"
-           asp-controller="DelegateGroups"
+           asp-controller="GroupCourses"
            asp-action="AddCourseToGroupSelectCourse"
            asp-route-groupId="@Model.GroupId">
           Add
@@ -57,7 +57,7 @@
     </form>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="_DelegateGroupsSideNavMenu" model="Model.NavViewModel" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupsSideNavMenu.cshtml" model="Model.NavViewModel" />
     </nav>
   </div>
 </div>

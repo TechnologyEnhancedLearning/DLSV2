@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
-    using NUnit.Framework;
-    using FluentAssertions;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
+    using FluentAssertions;
+    using NUnit.Framework;
 
     public class RemoveGroupCourseViewModelTests
     {

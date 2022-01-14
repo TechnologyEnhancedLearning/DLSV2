@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 @using Microsoft.Extensions.Configuration
 @model AddCourseToGroupCoursesViewModel
 
@@ -22,6 +22,6 @@
       }
     </div>
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupCourses" asp-all-route-data="@routeParamsForBackLink" />
+    <vc:cancel-link asp-controller="GroupCourses" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>

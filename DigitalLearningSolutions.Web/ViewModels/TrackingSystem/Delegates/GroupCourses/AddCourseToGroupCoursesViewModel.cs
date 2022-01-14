@@ -1,11 +1,11 @@
-﻿using DigitalLearningSolutions.Data.Models.Courses;
-using System.Collections.Generic;
-
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
 
     public class AddCourseToGroupCoursesViewModel
     {
