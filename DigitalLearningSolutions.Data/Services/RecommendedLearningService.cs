@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -77,7 +78,7 @@
                 )
             );
 
-            return recommendedResources.Where(r => r != null).Select(r => r!);
+            return recommendedResources.WhereNotNull();
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(
