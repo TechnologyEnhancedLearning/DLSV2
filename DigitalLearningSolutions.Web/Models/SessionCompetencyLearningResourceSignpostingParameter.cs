@@ -17,13 +17,14 @@ namespace DigitalLearningSolutions.Web.Models
         public FrameworkCompetency FrameworkCompetency { get; set; }
 
         public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
-        public bool CompetencyAssessmentQuestionRoleRequirements { get; set; }
         public List<LevelDescriptor> LevelDescriptors { get; set; }
+        public bool TriggerValuesConfirmed { get; set; }
+        public bool CompareQuestionConfirmed { get; set; }
 
         public SessionCompetencyLearningResourceSignpostingParameter()
         {
         }
-        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, LearningResourceReference resource, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, bool competencyAssessmentQuestionRoleRequirements, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
+        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, LearningResourceReference resource, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
         {
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
             FrameworkCompetency = frameworkCompetency;
@@ -32,7 +33,8 @@ namespace DigitalLearningSolutions.Web.Models
             AssessmentQuestionParameter = assessmentQuestionParameter;
             SelectedQuestion = selectedQuestion;
             SelectedCompareQuestionType = selectedCompareQuestionType;
-            CompetencyAssessmentQuestionRoleRequirements = competencyAssessmentQuestionRoleRequirements;
+            TriggerValuesConfirmed = false;
+            CompareQuestionConfirmed = false;
 
             if (requestCookies.ContainsKey(cookieName) && requestCookies.TryGetValue(cookieName, out string id))
             {

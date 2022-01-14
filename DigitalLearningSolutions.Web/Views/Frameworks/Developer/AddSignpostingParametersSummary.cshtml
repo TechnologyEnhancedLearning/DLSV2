@@ -63,6 +63,9 @@
         </a>
       </dd>
     </div>
+  }
+  @if (Model.TriggerValuesConfirmed)
+  {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
         Trigger @(displayRange ? "range" : "responses")
@@ -92,14 +95,14 @@
       </dd>
     </div>
   }
-  @if (Model.SelectedCompareToQuestion != null)
+  @if (Model.CompareQuestionConfirmed)
   {
     <div class="nhsuk-summary-list__row">
     <dt class="nhsuk-summary-list__key">
       Compare value to
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.SelectedCompareToQuestion.Question
+      @Model.SelectedCompareToQuestion?.Question
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
@@ -113,24 +116,24 @@
     </div>
   }
   <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      Signposting status
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @(Model.AssessmentQuestionParameter?.Essential == true ? "Essential"
+  <dt class="nhsuk-summary-list__key">
+    Signposting status
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.AssessmentQuestionParameter?.Essential == true ? "Essential"
             : Model.AssessmentQuestionParameter?.Essential == false ? "Optional/Recommended"
             : String.Empty)
-    </dd>
-    <dd class="nhsuk-summary-list__actions">
-      <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
-         asp-controller="Frameworks"
-         asp-action="SignpostingSetStatus"
-         asp-route-frameworkId="@Model.FrameworkId"
-         asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
-         asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
-        Change
-      </a>
-    </dd>
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
+       asp-controller="Frameworks"
+       asp-action="SignpostingSetStatus"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+      Change
+    </a>
+  </dd>
   </div>
 </dl>
 <form method="post" asp-controller="Frameworks">

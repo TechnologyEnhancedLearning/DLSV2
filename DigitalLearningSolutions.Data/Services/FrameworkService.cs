@@ -71,7 +71,7 @@
         int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId, string? commentsPrompt, string? commentsHint);
-        int GetCompetencyAssessmentQuestionRoleRequirementsCountByCompetencyId(int frameworkCompetencyId);
+        int GetCompetencyAssessmentQuestionRoleRequirementsCount(int assessmentQuestionId, int competencyId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
@@ -1625,7 +1625,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     new { competencyLearningResourceId }).FirstOrDefault();
             var questions = connection.Query<AssessmentQuestion>(
                 $@"SELECT * FROM AssessmentQuestions
-                    WHERE ID IN ({resource.AssessmentQuestionId}, {resource.RelevanceAssessmentQuestionId ?? 0})");
+                    WHERE ID IN ({resource.AssessmentQuestionId ?? 0}, {resource.RelevanceAssessmentQuestionId ?? 0})");
             resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId);
             resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId);
             return resource;
@@ -1664,12 +1664,12 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                 new { competencyLearningResouceId }).FirstOrDefault();
         }
 
-        public int GetCompetencyAssessmentQuestionRoleRequirementsCountByCompetencyId(int competencyId)
+        public int GetCompetencyAssessmentQuestionRoleRequirementsCount(int assessmentQuestionId, int competencyId)
         {
             var count = connection.ExecuteScalar(
                 $@"SELECT COUNT(*) FROM CompetencyAssessmentQuestionRoleRequirements
-                    WHERE CompetencyID = @competencyId",
-                new { competencyId });
+                    WHERE AssessmentQuestionID = @assessmentQuestionId AND CompetencyID = @competencyId",
+                new { assessmentQuestionId, competencyId });
             return Convert.ToInt32(count);
         }
 
