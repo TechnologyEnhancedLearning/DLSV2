@@ -6,7 +6,6 @@
     public class EditCourseOptionsFormData
     {
         public List<CheckboxListItemViewModel> Checkboxes { get; set; }
-        public bool Active { get; set; }
         public bool AllowSelfEnrolment { get; set; }
         public bool DiagnosticObjectiveSelection { get; set; }
         public bool HideInLearningPortal { get; set; }
@@ -15,7 +14,6 @@
         {
             Checkboxes = new List<CheckboxListItemViewModel>
             {
-                CourseOptionsInputs.ActiveCheckbox,
                 CourseOptionsInputs.AllowSelfEnrolmentCheckbox,
                 CourseOptionsInputs.HideInLearningPortalCheckbox,
             };
