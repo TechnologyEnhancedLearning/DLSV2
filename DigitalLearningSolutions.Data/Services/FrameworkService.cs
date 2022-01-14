@@ -1625,7 +1625,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     new { competencyLearningResourceId }).FirstOrDefault();
             var questions = connection.Query<AssessmentQuestion>(
                 $@"SELECT * FROM AssessmentQuestions
-                    WHERE ID IN ({resource.AssessmentQuestionId}, {resource.RelevanceAssessmentQuestionId ?? 0})");
+                    WHERE ID IN ({resource.AssessmentQuestionId ?? 0}, {resource.RelevanceAssessmentQuestionId ?? 0})");
             resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId);
             resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId);
             return resource;
