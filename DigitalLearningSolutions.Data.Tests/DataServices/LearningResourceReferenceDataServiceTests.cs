@@ -41,5 +41,28 @@
             // Then
             result.Should().Be(learningHubResourceRefId);
         }
+
+        [Test]
+        public void GetLearningHubResourceLinkById_gets_expected_record()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int learningResourceReferenceId = 1;
+            const string learningHubResourceLink = "www.example.com";
+            testHelper.InsertLearningResourceReference(
+                learningResourceReferenceId,
+                10,
+                7,
+                "Resource",
+                learningHubResourceLink
+            );
+
+            // When
+            var result = service.GetLearningHubResourceLinkById(learningResourceReferenceId);
+
+            // Then
+            result.Should().Be(learningHubResourceLink);
+        }
     }
 }

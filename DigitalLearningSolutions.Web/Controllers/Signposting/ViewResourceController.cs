@@ -3,6 +3,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System;
+    using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
@@ -32,7 +33,6 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
         [Route("Signposting/ViewResource/{resourceReferenceId}")]
         public IActionResult Index(int resourceReferenceId)
         {
-            // check linking here
             var delegateId = User.GetCandidateIdKnownNotNull();
 
             int? learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
@@ -43,23 +43,45 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             if (learningHubAuthId.HasValue)
             {
-                var resourceUrl = learningResourceReferenceDataService.GetLearningHubResourceReferenceById(resourceReferenceId); // TODO url encoding?
+                var resourceUrl = learningResourceReferenceDataService.GetLearningHubResourceLinkById(resourceReferenceId);
+
+                if (string.IsNullOrEmpty(resourceUrl))
+                {
+                    return new NotFoundResult();
+                }
 
                 var idHash = learningHubSsoSecurityService.GenerateHash(learningHubAuthId.ToString());
 
                 var loginQueryString =
-                    $"?clientcode={clientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={resourceUrl}";
+                    ComposeLoginQueryString(clientCode, learningHubAuthId, idHash, resourceUrl);
 
                 return Redirect(authEndpoint + LoginEndpointRelativePath + loginQueryString);
             }
 
-            var state = Guid.NewGuid().ToString(); // TODO is this correct?
+            var state = ComposeCreateUserState(resourceReferenceId);
 
             var stateHash = learningHubSsoSecurityService.GenerateHash(state);
 
-            var createUserQueryString = $"?clientcode={clientCode}&state={state}&hash={stateHash}";
+            var createUserQueryString = ComposeCreateUserQueryString(clientCode, state, stateHash);
 
             return Redirect(authEndpoint + CreateUserEndpointRelativePath+ createUserQueryString);
+        }
+
+        private static string ComposeCreateUserState(int resourceReferenceId)
+        {
+            return Guid.NewGuid() + $"_refId:{resourceReferenceId}";
+        }
+
+        private static string ComposeLoginQueryString(string clientCode, int? learningHubAuthId, string idHash, string resourceUrl)
+        {
+            var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
+
+            return $"?clientcode={clientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={encodedUrl}";
+        }
+
+        private static string ComposeCreateUserQueryString(string clientCode, string state, string stateHash)
+        {
+            return $"?clientcode={clientCode}&state={state}&hash={stateHash}";
         }
     }
 }

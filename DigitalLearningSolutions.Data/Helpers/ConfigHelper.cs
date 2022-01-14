@@ -8,8 +8,8 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
-        private const string LearningHubAuthApiClientCode = "LearningHubAuthAPIClientCode";
-        private const string LearningHubAuthApiBaseUrl = "LearningHubAuthAPIBaseUrl";
+        public const string LearningHubAuthApiClientCode = "LearningHubAuthAPIClientCode";
+        public const string LearningHubAuthApiBaseUrl = "LearningHubAuthAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
 
         private const string LearningHubSsoSectionKey = "LearningHubSSO";

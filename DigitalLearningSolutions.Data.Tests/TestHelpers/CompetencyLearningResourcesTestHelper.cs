@@ -12,15 +12,15 @@
             this.connection = connection;
         }
 
-        public void InsertLearningResourceReference(int id, int resourceRefId, int adminId, string resourceName)
+        public void InsertLearningResourceReference(int id, int resourceRefId, int adminId, string resourceName, string resourceLink = "")
         {
             connection.Execute(
                 @"SET IDENTITY_INSERT dbo.LearningResourceReferences ON
                     INSERT INTO LearningResourceReferences
-                    (ID, ResourceRefID, OriginalResourceName, AdminId)
-                    VALUES (@id, @resourceRefId, @resourceName, @adminId)
+                    (ID, ResourceRefID, OriginalResourceName, AdminId, ResourceLink)
+                    VALUES (@id, @resourceRefId, @resourceName, @adminId, @resourceLink)
                     SET IDENTITY_INSERT dbo.LearningResourceReferences OFF",
-                new { id, resourceRefId, resourceName, adminId }
+                new { id, resourceRefId, resourceName, adminId, resourceLink }
             );
         }
 
