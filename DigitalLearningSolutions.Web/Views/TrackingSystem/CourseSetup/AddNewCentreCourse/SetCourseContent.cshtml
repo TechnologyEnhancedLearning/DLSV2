@@ -30,9 +30,6 @@
 
       <div class="nhsuk-form-group">
         <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
-          <div class="nhsuk-hint" id="set-course-content-hint">
-            Select one option
-          </div>
 
           <div class="nhsuk-radios nhsuk-radios--conditional">
 
@@ -70,7 +67,7 @@
                            type="checkbox"
                            name="SelectedSectionIds"
                            id="section-@sectionModel.Id"
-                           checked="@sectionModel.IsSectionSelected"
+                           checked="@(Model.SelectedSectionIds?.Contains(sectionModel.Id) ?? false)"
                            value="@sectionModel.Id" />
                     <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.Id">
                       @sectionModel.Name

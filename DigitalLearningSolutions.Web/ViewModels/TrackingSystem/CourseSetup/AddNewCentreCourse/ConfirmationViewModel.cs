@@ -7,7 +7,7 @@
             CustomisationId = customisationId;
             CustomisationName = string.IsNullOrEmpty(customisationName)
                 ? applicationName
-                : $"{applicationName} - {customisationId}";
+                : $"{applicationName} - {customisationName}";
         }
 
         public int CustomisationId { get; set; }

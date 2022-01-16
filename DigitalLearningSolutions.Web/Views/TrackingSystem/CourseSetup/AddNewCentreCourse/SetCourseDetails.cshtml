@@ -26,10 +26,6 @@
 
     <form method="post" novalidate asp-action="SetCourseDetails">
 
-      <input type="hidden" asp-for="ApplicationName" />
-      <input type="hidden" asp-for="PostLearningAssessment" />
-      <input type="hidden" asp-for="DiagAssess" />
-
       <partial name="../Shared/_EditCourseDetailsFormInputs" model="Model" />
 
       <button class="nhsuk-button" type="submit">Next</button>

@@ -39,13 +39,6 @@
 
       <partial name="_EditSectionContentFormInputs" model="Model" />
 
-      <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-        <div @(Model.ShowDiagnostic ? "" : "hidden")>
-          <partial name="Shared/_EditSectionDiagnostic" model="Model" />
-        </div>
-        <partial name="Shared/_EditSectionLearning" model="Model" />
-      </div>
-
       <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
 
     </form>

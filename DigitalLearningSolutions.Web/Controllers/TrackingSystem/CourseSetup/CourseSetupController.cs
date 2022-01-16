@@ -246,10 +246,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            var model = GetSetCourseContentModel(data!);
-
-            data.SetCourseContentModel = model;
-            TempData.Set(data);
+            var model = data!.SetCourseContentModel ?? GetSetCourseContentModel(data!);
 
             return View("AddNewCentreCourse/SetCourseContent", model);
         }
@@ -265,6 +262,14 @@
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
                 model.SelectedSectionIds = model.AvailableSections.Select(s => s.Id);
+                var availableSections = model.AvailableSections.Select(
+                    (s, index) =>
+                    {
+                        var tutorials = tutorialService.GetTutorialsForSection(s.Id);
+                        return new SetSectionContentViewModel(s, index, data!.Application!.DiagAssess, tutorials);
+                    }
+                );
+                data!.SetSectionContentModels = availableSections.ToList();
             }
 
             if (!ModelState.IsValid)
@@ -392,8 +397,7 @@
         private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId, int? topicId)
         {
             var centreId = User.GetCentreId();
-            var categoryId = User.GetAdminCourseCategoryFilter()!;
-            var categoryIdFilter = categoryId == 0 ? null : categoryId;
+            var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
 
             var orderedApplications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)

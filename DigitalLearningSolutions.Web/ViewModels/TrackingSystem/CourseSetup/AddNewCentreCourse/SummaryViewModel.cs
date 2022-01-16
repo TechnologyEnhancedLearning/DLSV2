@@ -47,7 +47,6 @@
             CustomisationName = customisationName;
             Password = password;
             NotificationEmails = notificationEmails;
-            Active = active;
             AllowSelfEnrolment = allowSelfEnrolment;
             HideInLearningPortal = hideInLearningPortal;
             DiagAssess = diagAssess;
@@ -62,7 +61,6 @@
         public string CustomisationName { get; set; }
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
-        public bool Active { get; set; }
         public bool AllowSelfEnrolment { get; set; }
         public bool HideInLearningPortal { get; set; }
         public bool DiagAssess { get; set; }
