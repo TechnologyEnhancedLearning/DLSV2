@@ -89,6 +89,8 @@
         {
             if (!formData.IsAssessed)
             {
+                formData.TutCompletionThreshold ??= "0";
+                formData.DiagCompletionThreshold ??= "0";
                 return;
             }
 

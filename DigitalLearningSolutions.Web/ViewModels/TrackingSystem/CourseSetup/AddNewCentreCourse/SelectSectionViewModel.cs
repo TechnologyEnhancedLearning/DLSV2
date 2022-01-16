@@ -4,7 +4,7 @@
 
     public class SelectSectionViewModel
     {
-        public SelectSectionViewModel() {}
+        public SelectSectionViewModel() { }
 
         public SelectSectionViewModel(
             Section section,

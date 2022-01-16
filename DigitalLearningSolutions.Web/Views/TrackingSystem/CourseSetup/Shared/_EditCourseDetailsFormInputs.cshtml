@@ -13,6 +13,11 @@
                                    + (!Model.IsAssessed ? "" : " nhsuk-radios__conditional--hidden");
 }
 
+<input type="hidden" asp-for="ApplicationId" />
+<input type="hidden" asp-for="ApplicationName" />
+<input type="hidden" asp-for="PostLearningAssessment" />
+<input type="hidden" asp-for="DiagAssess" />
+
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
 
   <div class="nhsuk-grid-column-one-half nhsuk-heading-s word-break">
