@@ -109,7 +109,12 @@
                 return EditSave(formData, customisationId);
             }
 
-            EditCourseSectionHelper.ProcessBulkSelect(formData, action);
+            var bulkSelectResult = EditCourseSectionHelper.ProcessBulkSelect(formData, action);
+            if (bulkSelectResult != null)
+            {
+                return bulkSelectResult;
+            }
+
             var viewModel = new EditCourseSectionViewModel(formData, customisationId);
             return View(viewModel);
         }
