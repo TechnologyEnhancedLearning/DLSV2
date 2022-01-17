@@ -12,12 +12,12 @@
         {
             // Given
             var list = new List<string?> { "1", "2", null, "3", null, "4" };
-            var expectedResult = new List<string?> { "1", "2", "3", "4" };
 
             // When
             var result = list.WhereNotNull();
 
             // Then
+            var expectedResult = new List<string> { "1", "2", "3", "4" };
             result.Should().BeEquivalentTo(expectedResult);
         }
     }
