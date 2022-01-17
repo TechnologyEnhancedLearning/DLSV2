@@ -6,7 +6,6 @@
 
     public class SelectCourseViewModel
     {
-        // TODO: Set up javascript filtering
         public SelectCourseViewModel() { }
 
         public SelectCourseViewModel(
