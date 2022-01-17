@@ -319,22 +319,13 @@
             string action
         )
         {
-            if (action != SaveAction)
+            if (action == SaveAction)
             {
-                EditCourseSectionHelper.ProcessBulkSelect(model, action);
-                return View("../AddNewCentreCourse/SetSectionContent", model);
+                return SaveSectionAndRedirect(model);
             }
 
-            var data = TempData.Peek<AddNewCentreCourseData>();
-
-            data!.SetSectionContentModels!.Add(model);
-            TempData.Set(data);
-
-            var sectionIndex = model.Index + 1;
-
-            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
-                ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", new { sectionIndex });
+            var bulkSelectResult = EditCourseSectionHelper.ProcessBulkSelect(model, action);
+            return bulkSelectResult ?? View("../AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -461,6 +452,20 @@
                 .ToList();
 
             return new SetCourseContentViewModel(sectionModels);
+        }
+
+        private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)
+        {
+            var data = TempData.Peek<AddNewCentreCourseData>();
+
+            data!.SetSectionContentModels!.Add(model);
+            TempData.Set(data);
+
+            var sectionIndex = model.Index + 1;
+
+            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
+                ? RedirectToAction("Summary")
+                : RedirectToAction("SetSectionContent", new { sectionIndex });
         }
     }
 }
