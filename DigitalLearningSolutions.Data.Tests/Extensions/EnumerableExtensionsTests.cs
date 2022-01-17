@@ -17,8 +17,7 @@
             var result = list.WhereNotNull();
 
             // Then
-            var expectedResult = new List<string> { "1", "2", "3", "4" };
-            result.Should().BeEquivalentTo(expectedResult);
+            result.Should().BeEquivalentTo(new List<string> { "1", "2", "3", "4" });
         }
     }
 }
