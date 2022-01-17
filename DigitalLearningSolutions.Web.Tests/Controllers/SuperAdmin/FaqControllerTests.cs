@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             var controller = new FaqsController(faqService);
 
             //When
-            var results = controller.AllFaqItems();
+            var results = controller.Index();
 
             //Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs");
@@ -62,7 +62,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 .Returns(faqs.Take(2));
 
             //When
-            var results = controller.AllFaqItems();
+            var results = controller.Index();
 
             //Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs")
@@ -82,7 +82,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             var controller = new FaqsController(faqService);
 
             //When
-            var results = controller.AllFaqItems();
+            var results = controller.Index();
 
             //Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs")

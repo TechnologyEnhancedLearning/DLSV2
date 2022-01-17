@@ -170,7 +170,6 @@
 
             //Then
             result.Count().Should().Be(10);
-
         }
 
         [Test]

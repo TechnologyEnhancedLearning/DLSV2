@@ -97,7 +97,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
             "Edit completion date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]

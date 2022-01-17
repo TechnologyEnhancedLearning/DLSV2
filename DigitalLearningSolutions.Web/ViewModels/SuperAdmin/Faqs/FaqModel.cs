@@ -5,7 +5,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
 
     public class FaqModel
     {
-        public FaqModel() {}
+        public FaqModel() { }
 
         public FaqModel(Faq model)
         {

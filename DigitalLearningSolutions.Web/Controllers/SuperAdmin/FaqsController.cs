@@ -23,8 +23,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
             this.faqsService = faqsService;
         }
 
-        [Route("All")]
-        public IActionResult AllFaqItems()
+        public IActionResult Index()
         {
             var faqs = faqsService.GetAllFaqs()
                 .OrderByDescending(f => f.CreatedDate)
