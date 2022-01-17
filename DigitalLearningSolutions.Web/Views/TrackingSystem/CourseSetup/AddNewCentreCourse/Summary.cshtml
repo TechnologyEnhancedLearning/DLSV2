@@ -17,7 +17,7 @@
           Course
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.Application
+          @Model.ApplicationName
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SelectCourse">
@@ -31,7 +31,7 @@
           Course name
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @(Model.CustomisationName == string.Empty ? Model.Application : $"{Model.Application} - {Model.CustomisationName}")
+          @(Model.CustomisationName == string.Empty ? Model.ApplicationName : $"{Model.ApplicationName} - {Model.CustomisationName}")
         </dd>
         <dd class="nhsuk-summary-list__actions">
           <a asp-action="SetCourseDetails">

@@ -15,6 +15,13 @@
             SelectedSectionIds = null;
         }
 
+        public SetCourseContentViewModel(IEnumerable<SelectSectionViewModel> availableSections, bool includeAllSections, IEnumerable<int>? selectedSectionIds)
+        {
+            AvailableSections = availableSections;
+            IncludeAllSections = includeAllSections;
+            SelectedSectionIds = selectedSectionIds;
+        }
+
         public bool IncludeAllSections { get; set; }
 
         public IEnumerable<SelectSectionViewModel> AvailableSections { get; set; }

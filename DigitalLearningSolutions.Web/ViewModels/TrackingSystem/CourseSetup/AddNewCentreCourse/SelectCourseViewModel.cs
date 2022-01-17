@@ -19,6 +19,15 @@
             TopicId = topicId;
         }
 
+        public SelectCourseViewModel(
+            int applicationId,
+            IEnumerable<SelectListItem> courseOptions
+        )
+        {
+            ApplicationId = applicationId;
+            CourseOptions = courseOptions;
+        }
+
         [Required(ErrorMessage = "Select a course")]
         public int? ApplicationId { get; set; }
 
