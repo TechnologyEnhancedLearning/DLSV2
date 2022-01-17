@@ -303,7 +303,7 @@
 
             if (!tutorials.Any())
             {
-                return RedirectToAction("Summary");
+                return RedirectToNextSectionOrSummary(model.Index, data.SetCourseContentModel);
             }
 
             model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
@@ -373,7 +373,10 @@
                             tm.DiagnosticEnabled
                         )
                     );
-                tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
+                if (data.SetSectionContentModels != null)
+                {
+                    tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
+                }
 
                 TempData.Clear();
                 TempData.Add("customisationId", customisationId);
@@ -461,11 +464,19 @@
             data!.SetSectionContentModels!.Add(model);
             TempData.Set(data);
 
-            var sectionIndex = model.Index + 1;
+            return RedirectToNextSectionOrSummary(model.Index, data.SetCourseContentModel!);
+        }
 
-            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
+        private IActionResult RedirectToNextSectionOrSummary(
+            int index,
+            SetCourseContentViewModel setCourseContentViewModel
+        )
+        {
+            var nextSectionIndex = index + 1;
+
+            return nextSectionIndex == setCourseContentViewModel.GetSelectedSections().Count()
                 ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", new { sectionIndex });
+                : RedirectToAction("SetSectionContent", new { nextSectionIndex });
         }
     }
 }

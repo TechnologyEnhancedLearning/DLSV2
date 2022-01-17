@@ -33,12 +33,13 @@
             SetCourseDetailsModel = null;
             SetCourseOptionsModel = null;
             SetCourseContentModel = null;
+            SetSectionContentModels = null;
         }
 
         public IEnumerable<CourseTutorialViewModel> GetTutorialsFromSections()
         {
             var tutorials = new List<CourseTutorialViewModel>();
-            foreach (var section in SetSectionContentModels)
+            foreach (var section in SetSectionContentModels!)
             {
                 tutorials.AddRange(section.Tutorials);
             }

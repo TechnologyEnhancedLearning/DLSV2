@@ -16,6 +16,17 @@
             IsSectionSelected = isSectionSelected;
         }
 
+        public SelectSectionViewModel(
+            int sectionId,
+            string sectionName,
+            bool isSectionSelected
+        )
+        {
+            Id = sectionId;
+            Name = sectionName;
+            IsSectionSelected = isSectionSelected;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsSectionSelected { get; set; }

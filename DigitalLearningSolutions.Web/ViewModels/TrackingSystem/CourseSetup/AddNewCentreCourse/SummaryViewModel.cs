@@ -11,7 +11,7 @@
             AddNewCentreCourseData data
         )
         {
-            Application = data.SetCourseDetailsModel!.ApplicationName;
+            ApplicationName = data.SetCourseDetailsModel!.ApplicationName;
             CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
             Password = data.SetCourseDetailsModel.Password;
             NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
@@ -23,11 +23,10 @@
             IncludeAllSections = data.SetCourseContentModel!.IncludeAllSections;
             NumberOfLearning = GetNumberOfLearning(data);
             NumberOfDiagnostic = GetNumberOfDiagnostic(data);
-            NumberOfTutorials = data.GetTutorialsFromSections().Count();
         }
 
         public SummaryViewModel(
-            string application,
+            string applicationName,
             string customisationName,
             string? password,
             string? notificationEmails,
@@ -38,11 +37,10 @@
             bool noContent,
             bool includeAllSections,
             int numberOfLearning,
-            int numberOfDiagnostic,
-            int numberOfTutorials
+            int numberOfDiagnostic
         )
         {
-            Application = application;
+            ApplicationName = applicationName;
             CustomisationName = customisationName;
             Password = password;
             NotificationEmails = notificationEmails;
@@ -54,10 +52,9 @@
             IncludeAllSections = includeAllSections;
             NumberOfLearning = numberOfLearning;
             NumberOfDiagnostic = numberOfDiagnostic;
-            NumberOfTutorials = numberOfTutorials;
         }
 
-        public string Application { get; set; }
+        public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
@@ -69,7 +66,6 @@
         public bool IncludeAllSections { get; set; }
         public int NumberOfLearning { get; set; }
         public int NumberOfDiagnostic { get; set; }
-        public int NumberOfTutorials { get; set; }
 
         private static int GetNumberOfLearning(AddNewCentreCourseData data)
         {
