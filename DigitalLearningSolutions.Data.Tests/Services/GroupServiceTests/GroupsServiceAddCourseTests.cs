@@ -10,36 +10,57 @@
 
     public partial class GroupsServiceTests
     {
-        private readonly string genericEmailBodyHtml = @"
-                <p>Dear newFirst newLast</p>
-                <p>This is an automated message to notify you that you have been enrolled on the course
-                <b>application - customisation</b>
-                by the system because a previous course completion has expired.</p>
-                <p>To login to the course directly <a href=""baseUrl/LearningMenu/13"">click here</a>.</p>
-                <p>To login to the Learning Portal to access and complete your course
-                <a href=""baseUrl/LearningPortal/Current"">click here</a>.</p>";
-
-        private readonly string genericEmailBodyText = @"
-                Dear newFirst newLast
-                This is an automated message to notify you that you have been enrolled on the course
-                application - customisation
-                by the system because a previous course completion has expired.
-                To login to the course directly click here:baseUrl/LearningMenu/13.
-                To login to the Learning Portal to access and complete your course click here:
-                baseUrl/LearningPortal/Current.";
-
         [Test]
-        public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_no_existing_progress_found()
+        public void AddCourseToGroup_adds_new_group_customisations_record()
         {
             // Given
+            const int adminId = 1;
+            const int completeWithinMonths = 8;
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+
+            // When
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                completeWithinMonths,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
+            );
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.InsertGroupCustomisation(
+                    groupCourse.GroupId,
+                    groupCourse.CustomisationId,
+                    completeWithinMonths,
+                    adminId,
+                    true,
+                    adminId
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void AddCourseToGroup_adds_new_progress_record_when_no_existing_progress_found()
+        {
+            // Given
+            const int adminId = 1;
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
             SetupEnrolProcessFakes(GenericNewProgressId, GenericRelatedTutorialId);
-            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -48,14 +69,14 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
-                        reusableGroupCourse.CustomisationId,
-                        reusableGroupCourse.CurrentVersion,
+                        reusableGroupDelegate.DelegateId,
+                        groupCourse.CustomisationId,
+                        groupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         A<DateTime?>._,
-                        A<int>._
+                        adminId
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -64,22 +85,28 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_existing_progress_record_is_removed()
+        public void AddCourseToGroup_adds_new_progress_record_when_existing_progress_record_is_removed()
         {
             // Given
+            const int adminId = 1;
             var existingProgressRecord = ProgressTestHelper.GetDefaultProgress(removedDate: testDate);
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
                 existingProgressRecord
             );
-            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -88,14 +115,14 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
-                        reusableGroupCourse.CustomisationId,
-                        reusableGroupCourse.CurrentVersion,
+                        reusableGroupDelegate.DelegateId,
+                        groupCourse.CustomisationId,
+                        groupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         A<DateTime?>._,
-                        A<int>._
+                        adminId
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -104,22 +131,28 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_existing_progress_record_is_completed()
+        public void AddCourseToGroup_adds_new_progress_record_when_existing_progress_record_is_completed()
         {
             // Given
+            const int adminId = 1;
             var existingProgressRecord = ProgressTestHelper.GetDefaultProgress(completed: testDate);
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
                 existingProgressRecord
             );
-            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -128,14 +161,14 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
+                        reusableGroupDelegate.DelegateId,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         A<DateTime?>._,
-                        A<int>._
+                        adminId
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -145,21 +178,26 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_add_new_progress_record_uses_zero_for_supervisor_id_if_course_supervisor_is_null()
+            AddCourseToGroup_add_new_progress_record_uses_zero_for_supervisor_id_if_course_supervisor_is_null()
         {
             // Given
+            const int adminId = 1;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: null);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                null,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -168,12 +206,12 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
+                        reusableGroupDelegate.DelegateId,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         A<DateTime?>._,
                         0
                     )
@@ -185,22 +223,27 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_add_new_progress_record_uses_course_supervisor_id_if_course_supervisor_is_not_null()
+            AddCourseToGroup_add_new_progress_record_uses_course_supervisor_id_if_course_supervisor_is_not_null()
         {
             // Given
+            const int adminId = 1;
             const int supervisorId = 14;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: supervisorId);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                supervisorId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -209,12 +252,12 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
+                        reusableGroupDelegate.DelegateId,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         testDate.AddMonths(12),
                         supervisorId
                     )
@@ -226,21 +269,29 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_add_new_progress_record_sets_CompleteByDate_as_null_if_course_CompleteWithinMonths_is_zero()
+            AddCourseToGroup_add_new_progress_record_sets_CompleteByDate_as_null_if_course_CompleteWithinMonths_is_zero()
         {
             // Given
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(completeWithinMonths: 0);
+            const int adminId = 1;
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                completeWithinMonths: 0,
+                supervisorAdminId: adminId
+            );
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -249,14 +300,14 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
+                        reusableGroupDelegate.DelegateId,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
                         testDate,
                         3,
+                        adminId,
                         null,
-                        null,
-                        A<int>._
+                        adminId
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -266,23 +317,31 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_add_new_progress_record_sets_CompleteByDate_as_correct_future_date_if_course_CompleteWithinMonths_is_not_zero()
+            AddCourseToGroup_add_new_progress_record_sets_CompleteByDate_as_correct_future_date_if_course_CompleteWithinMonths_is_not_zero()
         {
             // Given
+            const int adminId = 1;
             const int completeWithinMonths = 3;
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(completeWithinMonths: completeWithinMonths);
+            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                completeWithinMonths: completeWithinMonths,
+                supervisorAdminId: adminId
+            );
             var expectedFutureDate = testDate.AddMonths(3);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                adminId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -291,14 +350,14 @@
                 DelegateProgressRecordMustNotHaveBeenUpdated();
                 A.CallTo(
                     () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
+                        reusableGroupDelegate.DelegateId,
                         reusableGroupCourse.CustomisationId,
                         reusableGroupCourse.CurrentVersion,
                         testDate,
                         3,
-                        null,
+                        adminId,
                         expectedFutureDate,
-                        A<int>._
+                        adminId
                     )
                 ).MustHaveHappened();
                 A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
@@ -307,75 +366,11 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_updates_existing_progress_record()
-        {
-            // Given
-            SetupEnrolProcessFakes(
-                GenericNewProgressId,
-                GenericRelatedTutorialId,
-                reusableProgressRecord
-            );
-            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
-
-            // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                NewDelegateProgressRecordMustNotHaveBeenAdded();
-                A.CallTo(
-                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        reusableProgressRecord.ProgressId,
-                        A<int>._,
-                        A<DateTime?>._
-                    )
-                ).MustHaveHappened();
-            }
-        }
-
-        [Test]
         public void
-            EnrolDelegateOnGroupCourses_update_uses_existing_record_supervisor_id_if_course_supervisor_id_is_null()
+            AddCourseToGroup_keeps_existing_supervisor_when_updating_progress_when_course_supervisor_id_is_not_null()
         {
             // Given
-            var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: null);
-            SetupEnrolProcessFakes(
-                GenericNewProgressId,
-                GenericRelatedTutorialId,
-                reusableProgressRecord
-            );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
-
-            // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
-            );
-
-            // Then
-            using (new AssertionScope())
-            {
-                NewDelegateProgressRecordMustNotHaveBeenAdded();
-                A.CallTo(
-                    () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                        reusableProgressRecord.ProgressId,
-                        reusableProgressRecord.SupervisorAdminId,
-                        A<DateTime?>._
-                    )
-                ).MustHaveHappened();
-            }
-        }
-
-        [Test]
-        public void EnrolDelegateOnGroupCourses_update_uses_course_supervisor_id_if_course_supervisor_id_is_not_null()
-        {
-            // Given
+            const int adminId = 1;
             const int supervisorId = 12;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: supervisorId);
             SetupEnrolProcessFakes(
@@ -383,13 +378,17 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                adminId,
+                true,
+                supervisorId,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -399,7 +398,7 @@
                 A.CallTo(
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
-                        supervisorId,
+                        adminId,
                         A<DateTime?>._
                     )
                 ).MustHaveHappened();
@@ -408,7 +407,7 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_update_sets_CompleteByDate_as_null_if_course_CompleteWithinMonths_is_zero()
+            AddCourseToGroup_update_sets_CompleteByDate_as_null_if_course_CompleteWithinMonths_is_zero()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(completeWithinMonths: 0);
@@ -417,13 +416,17 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                1,
+                true,
+                1,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -442,7 +445,7 @@
 
         [Test]
         public void
-            EnrolDelegateOnGroupCourses_update_sets_CompleteByDate_as_correct_future_date_if_course_CompleteWithinMonths_is_not_zero()
+            AddCourseToGroup_update_sets_CompleteByDate_as_correct_future_date_if_course_CompleteWithinMonths_is_not_zero()
         {
             // Given
             const int completeWithinMonths = 3;
@@ -453,13 +456,17 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                1,
+                true,
+                1,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -477,34 +484,38 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_sends_email_on_successful_enrolment_with_correct_process_name()
+        public void AddCourseToGroup_sends_email_on_successful_enrolment_with_correct_process_name()
         {
             // Given
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
+            SetUpAddCourseEnrolProcessFakes(reusableGroupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                reusableDelegateDetails,
-                reusableMyAccountDetailsData,
-                8
+            groupsService.AddCourseToGroup(
+                reusableGroupCourse.GroupId,
+                reusableGroupCourse.CustomisationId,
+                8,
+                1,
+                true,
+                1,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => emailService.ScheduleEmail(A<Email>._, "AddDelegateToGroup_Refactor", null)
+                        () => emailService.ScheduleEmail(A<Email>._, "AddCourseToDelegateGroup_Refactor", null)
                     )
                     .MustHaveHappened();
             }
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_sends_correct_email_with_no_CompleteByDate()
+        public void AddCourseToGroup_sends_correct_email_with_no_CompleteByDate()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
@@ -513,27 +524,21 @@
                 customisationName: "customisation",
                 completeWithinMonths: 0
             );
-            var oldDelegateDetails = UserTestHelper.GetDefaultDelegateUser(
-                firstName: "oldFirst",
-                lastName: "oldLast",
-                emailAddress: "oldEmail"
-            );
-            var newAccountDetails = UserTestHelper.GetDefaultAccountDetailsData(
-                firstName: "newFirst",
-                surname: "newLast",
-                email: "newEmail"
-            );
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                oldDelegateDetails,
-                newAccountDetails,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                0,
+                1,
+                true,
+                1,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -543,7 +548,7 @@
                         e =>
                             e.Bcc.IsNullOrEmpty()
                             && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == newAccountDetails.Email
+                            && e.To[0] == reusableGroupDelegate.EmailAddress
                             && e.Subject == "New Learning Portal Course Enrolment"
                             && e.Body.TextBody == genericEmailBodyText
                             && e.Body.HtmlBody == genericEmailBodyHtml
@@ -555,7 +560,7 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_sends_correct_email_with_additional_CompleteByDate()
+        public void AddCourseToGroup_sends_correct_email_with_additional_CompleteByDate()
         {
             // Given
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(
@@ -563,16 +568,6 @@
                 applicationName: "application",
                 customisationName: "customisation",
                 completeWithinMonths: 12
-            );
-            var oldDelegateDetails = UserTestHelper.GetDefaultDelegateUser(
-                firstName: "oldFirst",
-                lastName: "oldLast",
-                emailAddress: "oldEmail"
-            );
-            var newAccountDetails = UserTestHelper.GetDefaultAccountDetailsData(
-                firstName: "newFirst",
-                surname: "newLast",
-                email: "newEmail"
             );
             var expectedTextBody = genericEmailBodyText + "The date the course should be completed by is 11/12/2022";
             var expectedHtmlBody =
@@ -582,13 +577,17 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddDelegateEnrolProcessFakes(groupCourse);
+            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
 
             // When
-            groupsService.EnrolDelegateOnGroupCourses(
-                oldDelegateDetails,
-                newAccountDetails,
-                8
+            groupsService.AddCourseToGroup(
+                groupCourse.GroupId,
+                groupCourse.CustomisationId,
+                8,
+                1,
+                true,
+                1,
+                reusableDelegateDetails.CentreId
             );
 
             // Then
@@ -598,7 +597,7 @@
                         e =>
                             e.Bcc.IsNullOrEmpty()
                             && e.Cc.IsNullOrEmpty()
-                            && e.To[0] == newAccountDetails.Email
+                            && e.To[0] == reusableGroupDelegate.EmailAddress
                             && e.Subject == "New Learning Portal Course Enrolment"
                             && e.Body.TextBody == expectedTextBody
                             && e.Body.HtmlBody == expectedHtmlBody

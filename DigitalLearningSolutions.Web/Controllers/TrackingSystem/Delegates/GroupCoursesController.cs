@@ -119,7 +119,7 @@
             var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;
             var courseNameInfo = courseService.GetCourseNameAndApplication(customisationId)!;
             var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseCategoryId);
-            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel, courseNameInfo);
+            var viewModel = new AddCourseViewModel(groupId, customisationId, supervisors, groupLabel!, courseNameInfo!);
             return View(viewModel);
         }
 
@@ -129,16 +129,28 @@
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
         {
+            var centreId = User.GetCentreId();
             if (!ModelState.IsValid)
             {
-                var courseCategoryId = courseService.GetCourseCategoryId(customisationId, User.GetCentreId())!.Value;
-                var supervisors = userService.GetSupervisorsAtCentreForCategory(User.GetCentreId(), courseCategoryId);
+                var courseCategoryId = courseService.GetCourseCategoryId(customisationId, centreId)!.Value;
+                var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, courseCategoryId);
                 var model = new AddCourseViewModel(formData, groupId, customisationId, supervisors);
                 return View(model);
             }
 
-            // TODO HEEDLS-658 Save + Confirmation page
-            return RedirectToAction("GroupCourses", new { groupId });
+            var completeWithinMonths = formData.MonthsToComplete == null ? 0 : int.Parse(formData.MonthsToComplete);
+            groupsService.AddCourseToGroup(
+                groupId,
+                customisationId,
+                completeWithinMonths,
+                User.GetAdminId()!.Value,
+                formData.CohortLearners,
+                formData.SupervisorId,
+                centreId
+            );
+
+            // TODO HEEDLS-658 Confirmation page
+            return RedirectToAction("Index", new { groupId });
         }
     }
 }
