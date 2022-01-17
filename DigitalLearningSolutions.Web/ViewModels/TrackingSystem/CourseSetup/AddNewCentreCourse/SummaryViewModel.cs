@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 {
     using System.Linq;
-    using ClosedXML.Excel;
     using DigitalLearningSolutions.Web.Models;
-    using DocumentFormat.OpenXml.Drawing;
 
     public class SummaryViewModel
     {
@@ -21,6 +19,7 @@
             HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
             DiagAssess = data.Application!.DiagAssess;
             DiagnosticObjectiveSelection = data.SetCourseOptionsModel.DiagnosticObjectiveSelection;
+            NoContent = data.SetSectionContentModels == null || !data.GetTutorialsFromSections().Any();
             IncludeAllSections = data.SetCourseContentModel!.IncludeAllSections;
             NumberOfLearning = GetNumberOfLearning(data);
             NumberOfDiagnostic = GetNumberOfDiagnostic(data);
@@ -32,11 +31,11 @@
             string customisationName,
             string? password,
             string? notificationEmails,
-            bool active,
             bool allowSelfEnrolment,
             bool hideInLearningPortal,
             bool diagAssess,
             bool diagnosticObjectiveSelection,
+            bool noContent,
             bool includeAllSections,
             int numberOfLearning,
             int numberOfDiagnostic,
@@ -51,6 +50,7 @@
             HideInLearningPortal = hideInLearningPortal;
             DiagAssess = diagAssess;
             DiagnosticObjectiveSelection = diagnosticObjectiveSelection;
+            NoContent = noContent;
             IncludeAllSections = includeAllSections;
             NumberOfLearning = numberOfLearning;
             NumberOfDiagnostic = numberOfDiagnostic;
@@ -65,6 +65,7 @@
         public bool HideInLearningPortal { get; set; }
         public bool DiagAssess { get; set; }
         public bool DiagnosticObjectiveSelection { get; set; }
+        public bool NoContent { get; set; }
         public bool IncludeAllSections { get; set; }
         public int NumberOfLearning { get; set; }
         public int NumberOfDiagnostic { get; set; }

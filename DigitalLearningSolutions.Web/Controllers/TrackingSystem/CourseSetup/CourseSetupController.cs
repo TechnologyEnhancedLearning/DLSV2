@@ -246,6 +246,11 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
+            if (!sectionService.GetSectionsForApplication(data!.Application!.ApplicationId).Any())
+            {
+                return RedirectToAction("Summary");
+            }
+
             var model = data!.SetCourseContentModel ?? GetSetCourseContentModel(data!);
 
             return View("AddNewCentreCourse/SetCourseContent", model);
@@ -294,7 +299,13 @@
             var showDiagnostic = data.Application!.DiagAssess;
             var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic);
 
-            var tutorials = tutorialService.GetTutorialsForSection(section.Id);
+            var tutorials = tutorialService.GetTutorialsForSection(section.Id).ToList();
+
+            if (!tutorials.Any())
+            {
+                return RedirectToAction("Summary");
+            }
+
             model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
 
             return View("../AddNewCentreCourse/SetSectionContent", model);
@@ -308,9 +319,22 @@
             string action
         )
         {
-            return action == SaveAction
-                ? SaveSectionTutorials(model)
-                : ProcessBulkSelect(model, action);
+            if (action != SaveAction)
+            {
+                EditCourseSectionHelper.ProcessBulkSelect(model, action);
+                return View("../AddNewCentreCourse/SetSectionContent", model);
+            }
+
+            var data = TempData.Peek<AddNewCentreCourseData>();
+
+            data!.SetSectionContentModels!.Add(model);
+            TempData.Set(data);
+
+            var sectionIndex = model.Index + 1;
+
+            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
+                ? RedirectToAction("Summary")
+                : RedirectToAction("SetSectionContent", new { sectionIndex });
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -367,7 +391,7 @@
 
                 return RedirectToAction("Confirmation");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new StatusCodeResult(500);
             }
@@ -429,7 +453,6 @@
                 return data.SetCourseContentModel;
             }
 
-            // TODO: Ask Steve if I should only show sections with tutorials here / only courses with tutorials with sections in the dropdown
             var sections =
                 sectionService.GetSectionsForApplication(data!.Application!.ApplicationId);
             var sectionsWithTutorials =
@@ -438,79 +461,6 @@
                 .ToList();
 
             return new SetCourseContentViewModel(sectionModels);
-        }
-
-        private IActionResult SaveSectionTutorials(SetSectionContentViewModel model)
-        {
-            var data = TempData.Peek<AddNewCentreCourseData>();
-
-            data!.SetSectionContentModels.Add(model);
-            TempData.Set(data);
-
-            var sectionIndex = model.Index + 1;
-
-            return model.Index == data.SetCourseContentModel!.GetSelectedSections().Count() - 1
-                ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", new { sectionIndex });
-        }
-
-        // TODO: Can this be commonized with CourseContentController?
-        private IActionResult ProcessBulkSelect(
-            SetSectionContentViewModel model,
-            string action
-        )
-        {
-            switch (action)
-            {
-                case SelectAllDiagnosticAction:
-                    SelectAllDiagnostics(model);
-                    break;
-                case DeselectAllDiagnosticAction:
-                    DeselectAllDiagnostics(model);
-                    break;
-                case SelectAllLearningAction:
-                    SelectAllLearning(model);
-                    break;
-                case DeselectAllLearningAction:
-                    DeselectAllLearning(model);
-                    break;
-                default:
-                    return new StatusCodeResult(400);
-            }
-
-            return View("../AddNewCentreCourse/SetSectionContent", model);
-        }
-
-        private static void SelectAllDiagnostics(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.DiagnosticEnabled = true;
-            }
-        }
-
-        private static void DeselectAllDiagnostics(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.DiagnosticEnabled = false;
-            }
-        }
-
-        private static void SelectAllLearning(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.LearningEnabled = true;
-            }
-        }
-
-        private static void DeselectAllLearning(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.LearningEnabled = false;
-            }
         }
     }
 }

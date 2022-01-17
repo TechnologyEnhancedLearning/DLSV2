@@ -117,7 +117,9 @@
           Course content
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @if (Model.IncludeAllSections) {
+          @if (Model.NoContent) {
+            <p>No content</p>
+          } else if (Model.IncludeAllSections) {
             <p>All content enabled</p>
           } else {
             <p>@(Model.NumberOfLearning == 0 ? "No" : Model.NumberOfLearning.ToString()) learning</p>

@@ -20,7 +20,7 @@
         public SetCourseDetailsViewModel? SetCourseDetailsModel { get; set; }
         public EditCourseOptionsFormData? SetCourseOptionsModel { get; set; }
         public SetCourseContentViewModel? SetCourseContentModel { get; set; }
-        public List<SetSectionContentViewModel> SetSectionContentModels { get; set; }
+        public List<SetSectionContentViewModel>? SetSectionContentModels { get; set; }
 
         public void SetApplicationAndResetModels(ApplicationDetails application)
         {
