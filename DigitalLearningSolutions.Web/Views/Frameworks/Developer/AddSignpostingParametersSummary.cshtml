@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using DigitalLearningSolutions.Web.Models.Enums
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
     var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
@@ -102,7 +103,9 @@
       Compare value to
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.SelectedCompareToQuestion?.Question
+      @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "Role requirements"
+        : Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion != null ? Model.AssessmentQuestionParameter.RelevanceAssessmentQuestion.Question
+        : "Don''t compare result")
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state"
