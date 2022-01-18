@@ -13,92 +13,92 @@
     {
         [Test]
         public void
-            EditSection_post_with_select_all_learning_action_returns_EditSection_page_with_all_learning_selected()
+            ProcessBulkSelect_with_select_all_learning_action_selects_all_learning_and_returns_null()
         {
             // Given
-            var postData = GetDefaultEditCourseSectionFormData();
+            var formData = GetDefaultEditCourseSectionFormData();
 
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
-                postData,
+                formData,
                 CourseContentController.SelectAllLearningAction
             );
 
             // Then
             result.Should().BeNull();
-            postData.Tutorials
+            formData.Tutorials
                 .All(t => t.LearningEnabled)
                 .Should().BeTrue();
         }
 
         [Test]
         public void
-            EditSection_post_with_select_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_selected()
+            ProcessBulkSelect_with_select_all_diagnostic_action_selects_all_diagnostic_and_returns_null()
         {
             // Given
-            var postData = GetDefaultEditCourseSectionFormData();
+            var formData = GetDefaultEditCourseSectionFormData();
 
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
-                postData,
+                formData,
                 CourseContentController.SelectAllDiagnosticAction
             );
 
             // Then
             result.Should().BeNull();
-            postData.Tutorials
+            formData.Tutorials
                 .All(t => t.DiagnosticEnabled)
                 .Should().BeTrue();
         }
 
         [Test]
         public void
-            EditSection_post_with_deselect_all_learning_action_returns_EditSection_page_with_all_learning_deselected()
+            ProcessBulkSelect_with_deselect_all_learning_action_deselects_all_learning_and_returns_null()
         {
             // Given
-            var postData = GetDefaultEditCourseSectionFormData();
+            var formData = GetDefaultEditCourseSectionFormData();
 
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
-                postData,
+                formData,
                 CourseContentController.DeselectAllLearningAction
             );
 
             // Then
             result.Should().BeNull();
-            postData.Tutorials
+            formData.Tutorials
                 .All(t => !t.LearningEnabled)
                 .Should().BeTrue();
         }
 
         [Test]
         public void
-            EditSection_post_with_deselect_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_deselected()
+            ProcessBulkSelect_with_deselect_all_diagnostic_action_deselects_all_diagnostic_and_returns_null()
         {
             // Given
-            var postData = GetDefaultEditCourseSectionFormData();
+            var formData = GetDefaultEditCourseSectionFormData();
 
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
-                postData,
+                formData,
                 CourseContentController.DeselectAllDiagnosticAction
             );
 
             // Then
             result.Should().BeNull();
-            postData.Tutorials
+            formData.Tutorials
                 .All(t => !t.DiagnosticEnabled)
                 .Should().BeTrue();
         }
 
         [Test]
-        public void EditSection_post_with_unexpected_action_returns_internal_server_error_response()
+        public void ProcessBulkSelect_with_unexpected_action_returns_internal_server_error_response()
         {
             // Given
-            var postData = GetDefaultEditCourseSectionFormData();
+            var formData = GetDefaultEditCourseSectionFormData();
 
             // When
-            var result = EditCourseSectionHelper.ProcessBulkSelect(postData, "Incorrect string");
+            var result = EditCourseSectionHelper.ProcessBulkSelect(formData, "Incorrect string");
 
             // Then
             result.Should().BeStatusCodeResult().WithStatusCode(400);
