@@ -17,7 +17,7 @@
             AdminId = adminId;
             DelegateId = delegateId;
             Password = password;
-            ProfessionRegistrationNumber = professionalRegNumber;
+            ProfessionalRegistrationNumber = professionalRegNumber;
             HasBeenPromptedForPrn = hasBeenPromptedForPrn;
             ProfileImage = profileImage;
         }
@@ -26,7 +26,7 @@
         public int? DelegateId { get; set; }
         public string Password { get; set; }
         public byte[]? ProfileImage { get; set; }
-        public string? ProfessionRegistrationNumber { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
         public bool HasBeenPromptedForPrn { get; set; }
     }
 }

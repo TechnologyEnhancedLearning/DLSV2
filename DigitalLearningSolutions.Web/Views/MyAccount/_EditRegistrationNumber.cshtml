@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.MyAccount
+﻿@using DigitalLearningSolutions.Web.ViewModels.MyAccount
 @using Microsoft.AspNetCore.Mvc.ModelBinding
 
 @model MyAccountEditDetailsViewModel
@@ -10,16 +9,19 @@
     errorHasOccurred = modelState.ValidationState != ModelValidationState.Valid;
   }
 
-  var optionYesSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.Yes;
-  var optionNoSelected = Model.HasProfessionalRegistrationNumber == YesNoSelectionEnum.No;
+  var optionYesSelected = Model.HasProfessionalRegistrationNumber == true;
+  var optionNoSelected = Model.HasProfessionalRegistrationNumber == false;
   const string professionalRegConditionalId = "professional-reg-conditional-Id";
 }
 
 <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
   <fieldset class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
-    <div class="nhsuk-hint" id="professional-registration-hint">
-      Do you have a Professional Registration Number?
-    </div>
+
+    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+      <div class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
+        Do you have a Professional Registration Number?
+      </div>
+    </legend>
 
     @if (errorHasOccurred) {
       <span class="nhsuk-error-message" id="no-selection-error">
@@ -31,11 +33,11 @@
       <div class="nhsuk-radios__item">
         <input name="@nameof(Model.HasProfessionalRegistrationNumber)"
                class="nhsuk-radios__input"
-               id="optionNo"
+               id="HasProfessionalRegistrationNumber_No"
                type="radio"
-               value="@YesNoSelectionEnum.No"
+               value="false"
                @(optionNoSelected ? "checked" : "") />
-        <label class="nhsuk-label nhsuk-radios__label" for="optionNo">
+        <label class="nhsuk-label nhsuk-radios__label" for="HasProfessionalRegistrationNumber_No">
           No
         </label>
       </div>
@@ -43,12 +45,12 @@
       <div class="nhsuk-radios__item">
         <input name="@nameof(Model.HasProfessionalRegistrationNumber)"
                class="nhsuk-radios__input"
-               id="optionYes"
+               id="HasProfessionalRegistrationNumber_Yes"
                type="radio"
-               value="@YesNoSelectionEnum.Yes"
+               value="true"
                aria-controls="@professionalRegConditionalId"
                @(optionYesSelected ? "checked" : "") />
-        <label class="nhsuk-label nhsuk-radios__label" for="optionYes">
+        <label class="nhsuk-label nhsuk-radios__label" for="HasProfessionalRegistrationNumber_Yes">
           Yes
         </label>
       </div>

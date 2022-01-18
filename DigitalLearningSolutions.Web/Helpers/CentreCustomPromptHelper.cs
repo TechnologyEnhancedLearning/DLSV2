@@ -4,13 +4,10 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.ViewModels.MyAccount;
-    using EditDetailsFormData = DigitalLearningSolutions.Web.ViewModels.Common.EditDetailsFormData;
 
     public class CentreCustomPromptHelper
     {

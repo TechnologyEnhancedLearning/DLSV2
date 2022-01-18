@@ -3,10 +3,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
@@ -36,16 +35,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer5 = delegateUser?.Answer5;
             Answer6 = delegateUser?.Answer6;
 
-            if (IsDelegateUser)
-            {
-                ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber!;
-                if (delegateUser!.HasBeenPromptedForPrn)
-                {
-                    HasProfessionalRegistrationNumber = !string.IsNullOrEmpty(ProfessionalRegistrationNumber)
-                        ? YesNoSelectionEnum.Yes
-                        : YesNoSelectionEnum.No;
-                }
-            }
+            ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber =
+                ProfessionalRegistrationNumberHelper.SetHasProfessionalRegistrationNumber(
+                    delegateUser?.HasBeenPromptedForPrn,
+                    delegateUser?.ProfessionalRegistrationNumber
+                );
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -78,83 +73,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
         public bool IsDelegateUser { get; set; }
 
-        [RunValidateMethod(nameof(ValidateProfessionalRegistrationNumber))]
         public string? ProfessionalRegistrationNumber { get; set; }
 
-        [RunValidateMethod(nameof(ValidateHasProfessionalRegistrationNumber))]
-        public YesNoSelectionEnum HasProfessionalRegistrationNumber { get; set; }
-
-        public IEnumerable<ValidationResult> ValidateHasProfessionalRegistrationNumber()
-        {
-            var validationResults = new List<ValidationResult>();
-
-            if (IsDelegateUser &&
-                HasProfessionalRegistrationNumber == YesNoSelectionEnum.None)
-            {
-                validationResults.Add(
-                    new ValidationResult(
-                        "Select your professional registration number status",
-                        new[] { nameof(HasProfessionalRegistrationNumber) }
-                    )
-                );
-
-                return validationResults;
-            }
-
-            return validationResults;
-        }
-
-        public IEnumerable<ValidationResult> ValidateProfessionalRegistrationNumber()
-        {
-            var validationResults = new List<ValidationResult>();
-
-            if (!IsDelegateUser ||
-                HasProfessionalRegistrationNumber != YesNoSelectionEnum.Yes)
-            {
-                ProfessionalRegistrationNumber = null;
-                return validationResults;
-            }
-
-            if (string.IsNullOrEmpty(ProfessionalRegistrationNumber))
-            {
-                validationResults.Add(
-                    new ValidationResult(
-                        "Enter professional registration number",
-                        new[] { nameof(ProfessionalRegistrationNumber) }
-                    )
-                );
-
-                return validationResults;
-            }
-
-            if (ProfessionalRegistrationNumber.Trim().Length < 5 ||
-                ProfessionalRegistrationNumber.Trim().Length > 20)
-            {
-                validationResults.Add(
-                    new ValidationResult(
-                        "Professional registration number must be between 5 and 20 characters",
-                        new[] { nameof(ProfessionalRegistrationNumber) }
-                    )
-                );
-
-                return validationResults;
-            }
-
-            const string pattern = @"^[a-z\d-]+$";
-            var rg = new Regex(pattern, RegexOptions.IgnoreCase);
-            if (!rg.Match(ProfessionalRegistrationNumber).Success)
-            {
-                validationResults.Add(
-                    new ValidationResult(
-                        "Invalid professional registration number format (only alphanumeric and hyphens allowed)",
-                        new[] { nameof(ProfessionalRegistrationNumber) }
-                    )
-                );
-
-                return validationResults;
-            }
-
-            return validationResults;
-        }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
     }
 }

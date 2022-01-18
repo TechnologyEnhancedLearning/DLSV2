@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
@@ -11,7 +12,6 @@
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
 
     [Route("/{dlsSubApplication}/MyAccount", Order = 1)]
     [Route("/MyAccount", Order = 2)]
@@ -129,6 +129,13 @@
                     CommonValidationErrorMessages.IncorrectPassword
                 );
             }
+
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                userDelegateId.HasValue,
+                formData.HasProfessionalRegistrationNumber,
+                formData.ProfessionalRegistrationNumber,
+                ModelState
+            );
 
             if (!ModelState.IsValid)
             {

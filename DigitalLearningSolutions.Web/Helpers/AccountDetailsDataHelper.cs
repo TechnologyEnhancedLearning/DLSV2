@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EditDelegate;
 
@@ -22,7 +21,7 @@
                 formData.LastName!,
                 formData.Email!,
                 formData.ProfessionalRegistrationNumber,
-                formData.HasProfessionalRegistrationNumber != YesNoSelectionEnum.None,
+                formData.HasProfessionalRegistrationNumber.HasValue,
                 formData.ProfileImage
             );
 
