@@ -3,12 +3,15 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
     [Route("Signposting")]
     public class SignpostingController : Controller
     {
