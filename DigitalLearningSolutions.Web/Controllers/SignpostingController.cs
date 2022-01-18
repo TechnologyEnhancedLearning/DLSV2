@@ -2,7 +2,6 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
@@ -15,17 +14,14 @@
     {
         private readonly IActionPlanService actionPlanService;
         private readonly ILearningHubApiClient learningHubApiClient;
-        private readonly IUserDataService userDataService;
         private readonly IUserService userService;
 
         public SignpostingController(
-            IUserDataService userDataService,
             IUserService userService,
             ILearningHubApiClient learningHubApiClient,
             IActionPlanService actionPlanService
         )
         {
-            this.userDataService = userDataService;
             this.userService = userService;
             this.learningHubApiClient = learningHubApiClient;
             this.actionPlanService = actionPlanService;
@@ -45,7 +41,7 @@
             var delegateId = User.GetCandidateIdKnownNotNull();
             actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateId);
 
-            var delegateUser = userDataService.GetDelegateUserById(delegateId);
+            var delegateUser = userService.GetDelegateUserById(delegateId);
 
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
@@ -68,7 +64,7 @@
             if (model.LearningHubLoginWarningDismissed)
             {
                 var delegateId = User.GetCandidateIdKnownNotNull();
-                userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, true);
+                userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, true);
             }
 
             return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
