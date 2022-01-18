@@ -140,7 +140,7 @@
 
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails!.AllCentres)
+            if (courseValidationDetails!.AllCentres && courseValidationDetails.CentreId != centreId)
             {
                 return false;
             }
