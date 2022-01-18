@@ -19,59 +19,50 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
 
+
     <h1 class="nhsuk-heading-xl">Add new centre course</h1>
+  </div>
 
-    <div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-half">
 
-      @if (Model.TopicOptions != null) {
-        <div class="nhsuk-grid-column-one-half nhsuk-u-margin-bottom-4">
-
-          <div class="nhsuk-grid-row">
-            <form method="get" role="search">
-              <div class="nhsuk-grid-column-full">
-                <label class="nhsuk-label nhsuk-u-margin-bottom-1">Filter courses by topic</label>
-                <div class="course-dropdown-container">
-                  <select id="selected-topic-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
-                          asp-for="TopicId"
-                          asp-items="Model.TopicOptions"
-                          deselectable="true"
-                          default-option="Filter courses by topic"
-                          aria-label="Choose topic">
-                    <option value="" selected=@(Model.TopicId != null ? "" : "selected")>Select a topic</option>
-                  </select>
-                  <button class="nhsuk-search__submit course-submit" type="submit">
-                    Select
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+    @if (Model.TopicOptions != null) {
+      <form method="get" role="search">
+        <label class="nhsuk-label nhsuk-u-margin-bottom-1">Filter courses by topic</label>
+        <div class="course-dropdown-container">
+          <select id="selected-topic-Id"
+                  class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown nhsuk-u-margin-bottom-4"
+                  asp-for="TopicId"
+                  asp-items="Model.TopicOptions"
+                  deselectable="true"
+                  default-option="Filter courses by topic"
+                  aria-label="Choose topic">
+            <option value="" selected=@(Model.TopicId != null ? "" : "selected")>Select a topic</option>
+          </select>
+          <button class="nhsuk-search__submit course-submit" type="submit">
+            Select
+          </button>
         </div>
-      }
+      </form>
+    }
 
-    </div>
+    <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
+      <input type="hidden" asp-for="CourseOptions">
+      <input type="hidden" asp-for="TopicOptions">
+      <input type="hidden" asp-for="TopicId">
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-half">
+      <vc:select-list asp-for="@nameof(Model.ApplicationId)"
+                      label="Course"
+                      value="@Model.ApplicationId?.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-margin-bottom-2"
+                      default-option="Select a course"
+                      select-list-options="@Model.CourseOptions" />
 
-        <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-          <input type="hidden" asp-for="CourseOptions">
-          <input type="hidden" asp-for="TopicOptions">
+      <button class="nhsuk-button" type="submit">Next</button>
+    </form>
 
-          <vc:select-list asp-for="@nameof(Model.ApplicationId)"
-                          label="Course"
-                          value="@Model.ApplicationId?.ToString()"
-                          hint-text=""
-                          deselectable="false"
-                          css-class="nhsuk-u-margin-bottom-2"
-                          default-option="Select a course"
-                          select-list-options="@Model.CourseOptions" />
+    <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
 
-          <button class="nhsuk-button" type="submit">Next</button>
-        </form>
-
-        <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
-      </div>
-    </div>
   </div>
 </div>

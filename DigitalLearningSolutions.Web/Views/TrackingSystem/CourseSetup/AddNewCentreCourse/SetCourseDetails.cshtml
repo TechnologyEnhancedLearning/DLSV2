@@ -5,8 +5,6 @@
 @using Microsoft.Extensions.Configuration
 @model SetCourseDetailsViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
-
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Set course details" : "Set course details";

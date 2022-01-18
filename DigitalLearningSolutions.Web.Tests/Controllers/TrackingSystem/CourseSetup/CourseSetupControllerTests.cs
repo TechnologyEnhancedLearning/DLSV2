@@ -259,6 +259,7 @@
         {
             var model = new SelectCourseViewModel { ApplicationId = 1 };
             controller.ModelState.AddModelError("ApplicationId", "Select a course");
+            SetAddNewCentreCourseTempData(application);
 
             // When
             var result = controller.SelectCourse(model);

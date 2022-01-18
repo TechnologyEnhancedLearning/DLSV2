@@ -150,7 +150,7 @@
 
             if (!ModelState.IsValid)
             {
-                return View("AddNewCentreCourse/SelectCourse", model);
+                return View("AddNewCentreCourse/SelectCourse", GetSelectCourseViewModel(data!.Application?.ApplicationId, model.TopicId));
             }
 
             var centreId = User.GetCentreId();
@@ -379,8 +379,8 @@
 
                 TempData.Clear();
                 TempData.Add("customisationId", customisationId);
-                TempData.Add("applicationName", model.ApplicationName);
-                TempData.Add("customisationName", model.CustomisationName);
+                TempData.Add("applicationName", data.Application!.ApplicationName);
+                TempData.Add("customisationName", data.SetCourseDetailsModel!.CustomisationName);
 
                 return RedirectToAction("Confirmation");
             }
@@ -480,7 +480,7 @@
 
             return nextSectionIndex == setCourseContentViewModel.GetSelectedSections().Count()
                 ? RedirectToAction("Summary")
-                : RedirectToAction("SetSectionContent", new { nextSectionIndex });
+                : RedirectToAction("SetSectionContent", new { sectionIndex = nextSectionIndex });
         }
     }
 }
