@@ -11,13 +11,13 @@
                 "IX_CompetencyAssessmentQuestionRoleRequirements_SelfAssessmentID_CompetencyID"
             ).Exists())
             {
-                // This undoes the changes from 202201120821_ChangeUniqueConstraintsOnCompetencyAssessmentQuestionRoleRequirements
+                // This undoes the unwanted changes from 202201120821_ChangeUniqueConstraintsOnCompetencyAssessmentQuestionRoleRequirements
                 Delete.UniqueConstraint("IX_CompetencyAssessmentQuestionRoleRequirements_SelfAssessmentID_CompetencyID")
                     .FromTable("CompetencyAssessmentQuestionRoleRequirements");
             }
             else if (!Schema.Table("CompetencyAssessmentQuestionRoleRequirements").Column("ID").Exists())
             {
-                // This undoes the changes from 202201111021_ChangeCompetencyAssessmentQuestionRoleRequirementsPrimaryKey
+                // This undoes the unwanted changes from 202201111021_ChangeCompetencyAssessmentQuestionRoleRequirementsPrimaryKey
                 Delete.PrimaryKey("PK_CompetencyAssessmentQuestionRoleRequirements")
                     .FromTable("CompetencyAssessmentQuestionRoleRequirements");
                 Alter.Table("CompetencyAssessmentQuestionRoleRequirements").AddColumn("ID").AsInt32().NotNullable()

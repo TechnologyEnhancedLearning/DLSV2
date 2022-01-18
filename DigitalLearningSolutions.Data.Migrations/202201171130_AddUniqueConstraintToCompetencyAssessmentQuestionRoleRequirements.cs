@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202217011130)]
+    [Migration(202201171130)]
     public class AddUniqueConstraintToCompetencyAssessmentQuestionRoleRequirements : Migration
     {
         public override void Up()
