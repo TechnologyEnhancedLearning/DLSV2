@@ -43,7 +43,8 @@
             string? sortBy = null,
             string sortDirection = BaseSearchablePageViewModel.Ascending,
             string? filterBy = null,
-            string? filterValue = null
+            string? filterValue = null,
+            int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -68,7 +69,8 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                filterBy
+                filterBy,
+                itemsPerPage
             );
 
             Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, filterBy);
