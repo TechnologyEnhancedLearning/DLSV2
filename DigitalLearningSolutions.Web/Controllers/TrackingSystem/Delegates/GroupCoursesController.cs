@@ -145,12 +145,16 @@
                 completeWithinMonths,
                 User.GetAdminId()!.Value,
                 formData.CohortLearners,
-                formData.SupervisorId,
-                centreId
+                formData.SupervisorId
             );
 
-            // TODO HEEDLS-658 Confirmation page
-            return RedirectToAction("Index", new { groupId });
+            var confirmationViewModel = new AddCourseConfirmationViewModel(
+                groupId,
+                formData.GroupName,
+                formData.CourseName,
+                completeWithinMonths
+            );
+            return View("AddCourseToGroupConfirmation", confirmationViewModel);
         }
     }
 }
