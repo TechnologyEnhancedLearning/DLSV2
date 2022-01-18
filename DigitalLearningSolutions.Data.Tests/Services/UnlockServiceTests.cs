@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Configuration;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
@@ -52,17 +53,18 @@
             A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(null);
 
             // Then
-            Assert.Throws<NotificationDataException>(() => notificationService.SendUnlockRequest(1));
+            Assert.ThrowsAsync<NotificationDataException>(async () => await notificationService.SendUnlockRequest(1));
         }
 
         [Test]
         public void Throws_an_exception_when_tracking_system_base_url_is_null()
         {
             // Given
-            A.CallTo(() => configService.GetConfigValue(ConfigService.TrackingSystemBaseUrl)).Returns(null);
+            A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
+            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns(null);
 
             // Then
-            Assert.Throws<ConfigValueMissingException>(() => notificationService.SendUnlockRequest(1));
+            Assert.ThrowsAsync<ConfigValueMissingException>(async () => await notificationService.SendUnlockRequest(1));
         }
 
         [Test]

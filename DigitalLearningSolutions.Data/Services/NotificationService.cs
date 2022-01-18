@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
@@ -10,13 +11,13 @@
 
     public interface INotificationService
     {
-        void SendUnlockRequest(int progressId);
+        Task SendUnlockRequest(int progressId);
     }
 
     public class NotificationService : INotificationService
     {
-        private readonly IConfiguration configuration;
         private readonly IConfigService configService;
+        private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
         private readonly IFeatureManager featureManager;
         private readonly INotificationDataService notificationDataService;
@@ -36,7 +37,7 @@
             this.featureManager = featureManager;
         }
 
-        public async void SendUnlockRequest(int progressId)
+        public async Task SendUnlockRequest(int progressId)
         {
             var unlockData = notificationDataService.GetUnlockData(progressId);
             if (unlockData == null)
@@ -46,15 +47,22 @@
                 );
             }
 
-            unlockData.ContactForename = unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
+            unlockData.ContactForename =
+                unlockData.ContactForename == "" ? "Colleague" : unlockData.ContactForename;
             var refactoredTrackingSystemEnabled = await featureManager.IsEnabledAsync("RefactoredTrackingSystem");
-            var baseUrlConfigOption = refactoredTrackingSystemEnabled ? configuration.GetAppRootPath() : configuration.GetCurrentSystemBaseUrl();
+
+            var baseUrlConfigOption = refactoredTrackingSystemEnabled
+                ? configuration.GetAppRootPath()
+                : configService.GetConfigValue(ConfigHelper.CurrentSystemBaseUrlName);
             if (baseUrlConfigOption == null)
             {
                 throw new ConfigValueMissingException(
-                    configService.GetConfigValueMissingExceptionMessage(refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl")
+                    configService.GetConfigValueMissingExceptionMessage(
+                        refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl"
+                    )
                 );
             }
+
             var baseUrl = refactoredTrackingSystemEnabled
                 ? $"{configuration.GetAppRootPath()}/TrackingSystem/Delegates/CourseDelegates"
                 : $"{configuration.GetCurrentSystemBaseUrl()}/Tracking/";
