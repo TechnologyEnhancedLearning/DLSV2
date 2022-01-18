@@ -1,6 +1,7 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.Support
-@model SupportViewModel
+@model ISupportViewModel
 
 @{
   var routeData = new Dictionary<string, string?> { { "dlsSubApplication", Model.DlsSubApplication.UrlSegment } };
@@ -20,15 +21,17 @@
     </li>
   } else {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@Model.HelpUrl" target="_blank">
+      <a class="side-nav__link" href="@SupportLinksHelper.GetHelpUrl(Model.CurrentSystemBaseUrl)" target="_blank">
         Help documentation
       </a>
     </li>
   }
 
-  <vc:side-menu-link-with-href href="@Model.FaqUrl"
-                               link-text="FAQs"
-                               is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="Faqs"
+                     asp-all-route-data="@routeData"
+                     link-text="FAQs"
+                     is-current-page="@(Model.CurrentPage == SupportPage.Faqs)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Resources"
@@ -48,7 +51,7 @@
     </li>
   } else {
     <li class="side-nav__item">
-      <a class="side-nav__link" href="@Model.ChangeRequestsUrl" target="_blank" rel="noreferrer">
+      <a class="side-nav__link" href="@SupportLinksHelper.GetChangeRequestsUrl" target="_blank" rel="noreferrer">
         Change requests
       </a>
     </li>

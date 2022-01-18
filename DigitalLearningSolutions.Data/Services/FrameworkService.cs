@@ -926,7 +926,7 @@ WHERE (fc.Id = @frameworkCompetencyId)",
             {
                 numberOfAffectedRows = connection.Execute(
                     @"INSERT INTO CompetencyAssessmentQuestions (CompetencyID, AssessmentQuestionID, Ordering)
-                        SELECT CompetencyID, @assessmentQuestionId AS AssessmentQuestionID, COALESCE
+                        SELECT DISTINCT CompetencyID, @assessmentQuestionId AS AssessmentQuestionID, COALESCE
                              ((SELECT        MAX(Ordering)
                                  FROM            [CompetencyAssessmentQuestions]
                                  WHERE        ([CompetencyId] = fc.CompetencyID)), 0)+1 AS Ordering

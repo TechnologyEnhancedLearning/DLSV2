@@ -4,6 +4,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class RecommendedLearningViewModel
     {
@@ -14,8 +16,14 @@
         {
             SelfAssessment = selfAssessment;
 
+            var sortedResources = GenericSortingHelper.SortAllItems(
+                recommendedResources.AsQueryable(),
+                nameof(RecommendedResource.RecommendationScore),
+                BaseSearchablePageViewModel.Descending
+            );
+
             // TODO HEEDLS-650 Search/Pagination
-            var resourcesToDisplay = recommendedResources.Take(10);
+            var resourcesToDisplay = sortedResources.Take(10);
 
             RecommendedResources =
                 resourcesToDisplay.Select(r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id));
