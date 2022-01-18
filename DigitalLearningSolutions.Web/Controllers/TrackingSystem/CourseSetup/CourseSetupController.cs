@@ -379,8 +379,8 @@
 
                 TempData.Clear();
                 TempData.Add("customisationId", customisationId);
-                TempData.Add("applicationName", data.SetCourseDetailsModel!.ApplicationName);
-                TempData.Add("customisationName", data.SetCourseDetailsModel.CustomisationName);
+                TempData.Add("applicationName", model.ApplicationName);
+                TempData.Add("customisationName", model.CustomisationName);
 
                 return RedirectToAction("Confirmation");
             }
@@ -459,6 +459,11 @@
         private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
+
+            if (data!.SetSectionContentModels == null)
+            {
+                data.SetSectionContentModels = new List<SetSectionContentViewModel>();
+            }
 
             data!.SetSectionContentModels!.Add(model);
             TempData.Set(data);
