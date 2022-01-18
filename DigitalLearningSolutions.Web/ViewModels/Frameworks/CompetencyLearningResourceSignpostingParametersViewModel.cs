@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
         public AssessmentQuestion SelectedCompareToQuestion { get; set; }
+        public int SelectedQuestionRoleRequirements { get; set; }
         public CompareAssessmentQuestionType? SelectedCompareQuestionType { get; set; }
         public List<LevelDescriptor> AssessmentQuestionLevelDescriptors { get; set; }
         public int[] SelectedLevelValues { get; set; }

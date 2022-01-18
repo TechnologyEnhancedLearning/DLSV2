@@ -41,14 +41,17 @@
           Don't compare result
         </label>
       </div>
-      <div class="nhsuk-radios__item">
-        <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
-                value="1"
-                @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
-        <label class="nhsuk-label nhsuk-radios__label">
-          Competency assessment question role requirements
-        </label>
-      </div>
+      @if(Model.SelectedQuestionRoleRequirements > 0)
+      {
+        <div class="nhsuk-radios__item">
+          <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
+                  value="1"
+                  @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.CompareToRole ? "checked" : String.Empty)>
+          <label class="nhsuk-label nhsuk-radios__label">
+            Competency assessment question role requirements
+          </label>
+        </div>
+      }
       @if (Model.Questions?.Count > 1)
       {
         <div class="nhsuk-radios__item">
@@ -73,7 +76,6 @@
             </select>
           </label>
         </div>
-
       }
     </div>
   </fieldset>

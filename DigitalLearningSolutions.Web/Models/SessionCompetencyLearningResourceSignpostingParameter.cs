@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Web.Models
         public LearningResourceReference LearningResourceReference { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
+        public int SelectedQuestionRoleRequirements { get; set; }
         public int[] SelectedLevelValues { get; set; }
         public CompetencyResourceAssessmentQuestionParameter AssessmentQuestionParameter { get; set; }
         public FrameworkCompetency FrameworkCompetency { get; set; }

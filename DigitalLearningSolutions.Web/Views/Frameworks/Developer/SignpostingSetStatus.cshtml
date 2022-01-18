@@ -2,6 +2,9 @@
 @model CompetencyLearningResourceSignpostingParametersViewModel
 @{
     var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    var backToAction = Model.CompareQuestionConfirmed ? "CompareSelfAssessmentResult"
+        : !Model.TriggerValuesConfirmed ? "EditSignpostingParameters"
+        : "SignpostingParametersSetTriggerValues";
     ViewData["Title"] = $"{addOrEdit} Signposting Parameter";
     ViewData["Application"] = "Framework Service";
 }
@@ -50,7 +53,7 @@
     </div>
   </fieldset>
   <div class="nhsuk-u-margin-top-6">
-    <a asp-action="CompareSelfAssessmentResult"
+    <a asp-action="@backToAction"
        asp-route-frameworkId="@Model.FrameworkId"
        asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
        asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
