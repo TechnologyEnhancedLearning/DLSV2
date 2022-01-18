@@ -445,7 +445,8 @@
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress> {
+                new List<Progress>
+                {
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
