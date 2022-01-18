@@ -239,7 +239,7 @@
         {
             var applicationOptionsSelectList = new List<SelectListItem> { new SelectListItem("Test Name", "1") };
             var model = new SelectCourseViewModel(application.ApplicationId, applicationOptionsSelectList);
-            SetBlankAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData();
 
             // When
             var result = controller.SelectCourse(model);
@@ -329,7 +329,7 @@
                 receiveNotificationEmails: false,
                 isAssessed: true
             );
-            SetBlankAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData();
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
@@ -352,7 +352,7 @@
         {
             // Given
             var model = GetSetCourseDetailsViewModel();
-            SetBlankAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData();
 
             // When
             var result = controller.SetCourseDetails(model);
@@ -367,7 +367,7 @@
         {
             // Given
             var model = new EditCourseOptionsFormData(true, true, true);
-            SetBlankAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData();
 
             // When
             var result = controller.SetCourseOptions(model);
@@ -381,8 +381,7 @@
         public void SetCourseContent_get_redirects_to_summary_if_application_has_no_sections()
         {
             // Given
-            var initialTempData = new AddNewCentreCourseData { Application = application };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(application);
 
             A.CallTo(
                 () => sectionService.GetSectionsForApplication(1)
@@ -400,8 +399,13 @@
         {
             // Given
             var sectionModel = new SelectSectionViewModel(1, "Test name", false);
-            var model = new SetCourseContentViewModel(new List<SelectSectionViewModel> { sectionModel }, true, null);
-            SetBlankAddNewCentreCourseTempData();
+            var model = new SetCourseContentViewModel(
+                new List<SelectSectionViewModel> { sectionModel },
+                true,
+                new List<int> { 1 }
+            );
+            controller.ModelState.AddModelError("SelectedSectionIds", "test message");
+            SetAddNewCentreCourseTempData(application);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -411,7 +415,8 @@
             var result = controller.SetCourseContent(model);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("SetSectionContent");
+            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should().BeEquivalentTo(model);
+            result.Should().BeRedirectToActionResult().WithActionName("Summary");
         }
 
         [Test]
@@ -422,7 +427,7 @@
             var sectionModel = new SelectSectionViewModel(1, "Test name", false);
             var model = new SetCourseContentViewModel(new List<SelectSectionViewModel> { sectionModel }, false, null);
             controller.ModelState.AddModelError("SelectedSectionIds", "test message");
-            SetBlankAddNewCentreCourseTempData();
+            SetAddNewCentreCourseTempData();
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -449,9 +454,7 @@
                 false,
                 new List<int> { 1, 2 }
             );
-            var initialTempData = new AddNewCentreCourseData
-                { Application = application, SetCourseContentModel = setCourseContentModel };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -475,9 +478,7 @@
                 false,
                 new List<int> { 1 }
             );
-            var initialTempData = new AddNewCentreCourseData
-                { Application = application, SetCourseContentModel = setCourseContentModel };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -502,9 +503,7 @@
                 false,
                 new List<int> { 1, 2 }
             );
-            var initialTempData = new AddNewCentreCourseData
-                { Application = application, SetCourseContentModel = setCourseContentModel };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(application, setCourseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(A<int>._)
@@ -530,8 +529,7 @@
                 false,
                 new List<int> { 1 }
             );
-            var initialTempData = new AddNewCentreCourseData { SetCourseContentModel = setCourseContentModel };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(setCourseContentModel: setCourseContentModel);
 
             A.CallTo(
                 () => tutorialService.GetTutorialsForSection(1)
@@ -550,12 +548,12 @@
         public void Summary_post_resets_temp_data_and_redirects_to_confirmation()
         {
             // Given
-            const string applicationName = "Application Name";
-            const string customisationName = "Course Name";
+            var applicationName = application.ApplicationName;
+            var customisationName = GetSetCourseDetailsViewModel().CustomisationName;
 
             var model = new SummaryViewModel(
                 applicationName,
-                customisationName,
+                customisationName!,
                 "password",
                 "email@test",
                 true,
@@ -569,15 +567,13 @@
             );
 
             var setCourseOptionsModel = new EditCourseOptionsFormData(true, true, true);
-            var initialTempData = new AddNewCentreCourseData
-            {
-                Application = application,
-                SetCourseDetailsModel = GetSetCourseDetailsViewModel(),
-                SetCourseOptionsModel = setCourseOptionsModel,
-                SetCourseContentModel = new SetCourseContentViewModel(),
-                SetSectionContentModels = new List<SetSectionContentViewModel>(),
-            };
-            controller.TempData.Set(initialTempData);
+            SetAddNewCentreCourseTempData(
+                application,
+                GetSetCourseDetailsViewModel(),
+                setCourseOptionsModel,
+                new SetCourseContentViewModel(),
+                new List<SetSectionContentViewModel>()
+            );
 
             A.CallTo(
                 () => courseService.CreateNewCentreCourse(
@@ -640,9 +636,22 @@
             };
         }
 
-        private void SetBlankAddNewCentreCourseTempData()
+        private void SetAddNewCentreCourseTempData(
+            ApplicationDetails? selectedApplication = null,
+            SetCourseDetailsViewModel? setCourseDetailsModel = null,
+            EditCourseOptionsFormData setCourseOptionsModel = null!,
+            SetCourseContentViewModel setCourseContentModel = null!,
+            List<SetSectionContentViewModel>? setSectionContentModels = null
+        )
         {
-            var initialTempData = new AddNewCentreCourseData();
+            var initialTempData = new AddNewCentreCourseData
+            {
+                Application = selectedApplication,
+                SetCourseDetailsModel = setCourseDetailsModel,
+                SetCourseOptionsModel = setCourseOptionsModel,
+                SetCourseContentModel = setCourseContentModel,
+                SetSectionContentModels = setSectionContentModels,
+            };
             controller.TempData.Set(initialTempData);
         }
     }
