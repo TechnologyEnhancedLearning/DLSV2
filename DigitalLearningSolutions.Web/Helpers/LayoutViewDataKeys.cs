@@ -11,6 +11,5 @@
         public const string HeaderPrefix = "HeaderPrefix";
         public const string DoNotDisplayNavBar = "DoNotDisplayNavBar";
         public const string CustomisationIdForHeaderLogo = "CustomisationId";
-        public const string TransactionalHeader = "TransactionalHeader";
     }
 }

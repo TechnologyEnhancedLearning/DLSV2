@@ -18,6 +18,11 @@
                 .ConfigureServices(
                     services =>
                     {
+                        // Filter: AutoValidateAntiforgeryTokenAttribute
+                        // * This globally forces anti-forgery validation in tests.
+                        // * Additional setup would be required to pass this validation.
+                        // * This filter has been removed, as per below, for testing
+                        //   so as to remove the anti-forgery requirements.
                         services.Configure<MvcOptions>(
                             o => { o.Filters.Remove(new AutoValidateAntiforgeryTokenAttribute()); }
                         );
