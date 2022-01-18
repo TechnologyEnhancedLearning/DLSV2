@@ -24,7 +24,7 @@ describe('paginateResults', () => {
 
     // Then
     expect(paginatedCards.length).toBe(1);
-    expect(paginatedCards[0].title).toBe('k: course');
+    expect(paginatedCards[0].searchableContent).toBe('k: course');
   });
 
   it('updates the page number', () => {
