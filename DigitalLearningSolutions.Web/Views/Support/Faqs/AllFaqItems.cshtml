@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.Faqs
+@model FaqItemsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var faq in Model.Faqs) {
+  <partial name="_SearchableFaqCard" model="faq" />
+}
+</body>
+</html>

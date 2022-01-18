@@ -3,7 +3,7 @@ import { ISearchableElement } from '../searchSortFilterAndPaginate/searchSortFil
 
 export default function getSearchableElements(): ISearchableElement[] {
   return Array.from(document.getElementById('searchable-elements')!.children).map((searchableElement) => ({
-    title: searchableElement.getElementsByClassName('searchable-element-title')[0].textContent,
+    searchableContent: searchableElement.getElementsByClassName('searchable-element-title')[0].textContent,
     element: searchableElement,
   } as ISearchableElement));
 }
