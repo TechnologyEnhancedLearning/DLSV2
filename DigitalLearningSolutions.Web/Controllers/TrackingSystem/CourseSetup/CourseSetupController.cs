@@ -160,9 +160,7 @@
 
             var selectedApplication =
                 applicationOptions.Single(ap => ap.ApplicationId == model.ApplicationId);
-
             data!.SetApplicationAndResetModels(selectedApplication);
-
             TempData.Set(data);
 
             return RedirectToAction("SetCourseDetails");
@@ -174,6 +172,7 @@
         public IActionResult SetCourseDetails()
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
+
             var model = data?.SetCourseDetailsModel ?? new SetCourseDetailsViewModel(data!.Application!);
 
             return View("AddNewCentreCourse/SetCourseDetails", model);
