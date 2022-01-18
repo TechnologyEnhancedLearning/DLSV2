@@ -96,7 +96,9 @@
                         AssessmentQuestionID,
                         Essential,
                         RelevanceAssessmentQuestionID,
-                        CompareToRoleRequirements
+                        CompareToRoleRequirements,
+                        MinResultMatch,
+                        MaxResultMatch
                     FROM CompetencyResourceAssessmentQuestionParameters
                     WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
                 new { competencyLearningResourceIds }
