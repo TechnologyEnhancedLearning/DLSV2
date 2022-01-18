@@ -131,10 +131,10 @@
             }
 
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
-                userDelegateId.HasValue,
+                ModelState,
                 formData.HasProfessionalRegistrationNumber,
                 formData.ProfessionalRegistrationNumber,
-                ModelState
+                userDelegateId.HasValue
             );
 
             if (!ModelState.IsValid)

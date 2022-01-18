@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Web.Helpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -58,10 +57,10 @@
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
-                isDelegate,
+                state,
                 hasPrn,
                 null,
-                state
+                isDelegate
             );
 
             // Then
@@ -77,10 +76,9 @@
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                state,
                 true,
-                true,
-                validPrn,
-                state
+                validPrn
             );
 
             // Then
@@ -96,10 +94,9 @@
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
-                true,
+                state,
                 null,
-                null,
-                state
+                null
             );
 
             // Then
@@ -124,10 +121,9 @@
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                state,
                 true,
-                true,
-                prn,
-                state
+                prn
             );
 
             // Then

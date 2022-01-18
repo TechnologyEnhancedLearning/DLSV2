@@ -15,7 +15,7 @@
             return !string.IsNullOrEmpty(prn);
         }
 
-        public static void ValidateProfessionalRegistrationNumber(bool isDelegateUser, bool? hasPrn, string? prn, ModelStateDictionary modelState)
+        public static void ValidateProfessionalRegistrationNumber(ModelStateDictionary modelState, bool? hasPrn, string? prn, bool isDelegateUser = true)
         {
             if (!isDelegateUser || hasPrn == false)
             {
