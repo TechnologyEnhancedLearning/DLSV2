@@ -199,7 +199,7 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_centre()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_all_centres_course_on_different_centre()
         {
             // Given
             var validationDetails = new CourseValidationDetails
@@ -219,6 +219,29 @@
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
                 .MustHaveHappenedTwiceExactly();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanManageCourse_should_return_true_with_all_centres_course_on_same_centre()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
+                .MustHaveHappenedTwiceExactly();
+            result.Should().BeTrue();
         }
 
         [Test]
