@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Centres
+@model CentresViewModel
+
+@* TODO: HEEDLS-641: add search/filter/pagination components *@
+@{
+  ViewData["Title"] = "Centres";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">Centres</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button heading-button"
+           role="button">
+          Add
+        </a>
+      </div>
+    </div>
+    <div id="searchable-elements">
+      @foreach (var centre in Model.Centres)
+      {
+        <partial name="_CentreCard" model="centre" />
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Support.Faqs
+@model SearchableFaqViewModel
+
+@{
+  var viewFaqRouteData = new Dictionary<string, string?> {
+    { "dlsSubApplication", Model.DlsSubApplication.UrlSegment },
+    { "faqId", Model.Faq.FaqId.ToString() },
+  };
+}
+
+<div class="searchable-element nhsuk-expander-group word-break" id="@Model.Faq.FaqId-card">
+
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.Faq.FaqId-name">
+        <span class="searchable-element-title" name="name">@Model.Faq.QText</span>
+      </span>
+    </summary>
+
+    <div class="nhsuk-details__text">
+      <div class="display-none" data-name-for-sorting="faq-weighting" aria-hidden="true">@Model.Faq.Weighting</div>
+      <div class="display-none" data-name-for-sorting="faq-id" aria-hidden="true">@Model.Faq.FaqId</div>
+      <div class="nhsuk-u-margin-bottom-4">
+        <span class="searchable-element-content">@Html.Raw(Model.Faq.AHtml)</span>
+      </div>
+
+      <a class="nhsuk-button nhsuk-button--secondary"
+         asp-controller="Faqs"
+         asp-action="ViewFaq"
+         asp-all-route-data="@viewFaqRouteData"
+         role="button">
+        View on separate page
+      </a>
+
+    </div>
+  </details>
+</div>

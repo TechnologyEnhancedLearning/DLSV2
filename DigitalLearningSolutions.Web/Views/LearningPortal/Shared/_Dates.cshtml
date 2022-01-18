@@ -15,12 +15,7 @@
   <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
   <p aria-describedby="@Model.Id-name @Model.Id-last-access-title" name="accessed-date">
-    @if (Model.LastAccessedDate?.ToShortDateString() == null) {
-      <span class='nhsuk-u-visually-hidden'>Not started </span>
-      @:-
-    } else {
-      @Model.LastAccessedDate?.ToShortDateString()
-    }
+    @Html.Raw(Model.LastAccessedDate?.ToShortDateString() ?? "<span class='nhsuk-u-visually-hidden'>Not started </span>-")
   </p>
 </div>
 @if (Model is CurrentLearningItemViewModel currentLearningItemViewModel) {
@@ -31,13 +26,9 @@
     </div>
     <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
       <p class="@currentLearningItemViewModel.DateStyle()" aria-describedby="@Model.Id-name @Model.Id-complete-by-title" name="complete-by-date">
-        @if (currentLearningItemViewModel.CompleteByDate == null) {
-          <span class='nhsuk-u-visually-hidden'>No complete by date set </span>
-          @:-
-        } else {
-          <span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>
-          @currentLearningItemViewModel.CompleteByDate?.ToShortDateString()
-        }
+        @(currentLearningItemViewModel.CompleteByDate == null ?
+          Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
+          Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
       </p>
     </div>
     @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled)) {
@@ -62,7 +53,7 @@
           Edit
         </a>
       </div>
-    } else if (currentLearningItemViewModel is LearningResourceCardViewModel) {
+    } else if (currentLearningItemViewModel is CurrentLearningResourceViewModel) {
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
            aria-describedby="@Model.Id-name"
@@ -76,24 +67,23 @@
     }
   </div>
 }
-@if (Model is CompletedCourseViewModel completedCourseViewModel) {
+@if (Model is CompletedLearningItemViewModel completedLearningItem) {
   <div class="nhsuk-grid-column-one-quarter">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-completed-title" aria-describedby="@Model.Id-name">Completed</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
-    <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedCourseViewModel.CompletedDate.ToShortDateString()</p>
+    <p aria-describedby="@Model.Id-name @Model.Id-completed-title" name="completed-date">@completedLearningItem.CompletedDate.ToShortDateString()</p>
   </div>
+}
+@if (Model is CompletedCourseViewModel completedCourseViewModel) {
   <div class="nhsuk-grid-column-one-quarter">
     <span class="nhsuk-label--s nhsuk-u-margin-bottom-2" id="@Model.Id-evaluated-title" aria-describedby="@Model.Id-name">Evaluated</span>
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
     <p aria-describedby="@Model.Id-name @Model.Id-evaluated-title" name="evaluated-date">
-      @if (completedCourseViewModel.EvaluatedDate == null) {
-        <span class='nhsuk-u-visually-hidden'>Not evaluated</span>
-        @:-
-      } else {
-        @completedCourseViewModel.EvaluatedDate?.ToShortDateString()
-      }
-    </p>
+      @(completedCourseViewModel.EvaluatedDate == null ?
+        Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
+        Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
   </div>
 }
+

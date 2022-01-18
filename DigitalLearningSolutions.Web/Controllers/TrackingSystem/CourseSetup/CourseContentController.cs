@@ -88,8 +88,9 @@
 
             var model = new EditCourseSectionViewModel(
                 customisationId,
-                courseDetails.CourseName,
-                section
+                courseDetails!.CourseName,
+                section,
+                courseDetails.DiagAssess
             );
 
             return View(model);

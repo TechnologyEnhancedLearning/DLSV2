@@ -558,6 +558,7 @@
         }
 
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
         public IActionResult SetSupervisorRole(SetSupervisorRoleViewModel model)
         {
             if (!ModelState.IsValid)
@@ -617,6 +618,7 @@
         }
 
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         public IActionResult SubmitSummary()
         {
             var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
@@ -648,9 +650,9 @@
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
 
-        public IActionResult RemoveSupervisor(int selfAssessmentId, int candidateAssessmentSupervisorId)
+        public IActionResult RemoveSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            supervisorService.RemoveCandidateAssessmentSupervisor(candidateAssessmentSupervisorId);
+            supervisorService.RemoveCandidateAssessmentSupervisor(selfAssessmentId, supervisorDelegateId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 

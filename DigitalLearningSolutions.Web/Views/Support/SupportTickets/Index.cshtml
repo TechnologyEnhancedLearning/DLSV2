@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Support
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Support
 @model SupportTicketsViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/support/support.css")" asp-append-version="true">
@@ -18,7 +19,7 @@
     <h1 class="nhsuk-heading-xl">Support tickets</h1>
 
     <div class="nhsuk-grid-row responsive-iframe-wrapper responsive-iframe-wrapper-padding">
-      <iframe class="responsive-iframe responsive-iframe-min-height" title="Support tickets" src="@Model.IframeUrl"></iframe>
+      <iframe class="responsive-iframe responsive-iframe-min-height" title="Support tickets" src="@SupportLinksHelper.GetSupportTicketsIframeUrl(Model.CurrentSystemBaseUrl)"></iframe>
     </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
