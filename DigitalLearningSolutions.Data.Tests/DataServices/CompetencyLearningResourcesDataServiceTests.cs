@@ -4,6 +4,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
@@ -57,7 +58,7 @@
                 CompetencyId = 1,
                 LearningResourceReferenceId = 2,
                 AdminId = 7,
-                LearningHubResourceReferenceId = 2
+                LearningHubResourceReferenceId = 2,
             };
 
             // When
@@ -66,6 +67,36 @@
             // Then
             result.Should().HaveCount(1);
             result.Should().ContainEquivalentOf(expectedItem);
+        }
+
+        [Test]
+        public void GetCompetencyResourceAssessmentQuestionParameters_returns_expected_results()
+        {
+            using (new TransactionScope())
+            {
+                var adminId = UserTestHelper.GetDefaultAdminUser().Id;
+
+                testHelper.InsertLearningResourceReference(2, 2, adminId, "Resource 2");
+                testHelper.InsertCompetencyLearningResource(1, 1, 2, adminId);
+                testHelper.InsertCompetencyResourceAssessmentQuestionParameters(1, 1, true, 2, false, 1, 10);
+                var expectedItem = new CompetencyResourceAssessmentQuestionParameter
+                {
+                    CompetencyLearningResourceId = 1,
+                    AssessmentQuestionId = 1,
+                    Essential = true,
+                    RelevanceAssessmentQuestionId = 2,
+                    CompareToRoleRequirements = false,
+                    MinResultMatch = 1,
+                    MaxResultMatch = 10,
+                };
+
+                // When
+                var result = service.GetCompetencyResourceAssessmentQuestionParameters(new[] { 1 }).ToList();
+
+                // Then
+                result.Should().HaveCount(1);
+                result.Should().ContainEquivalentOf(expectedItem);
+            }
         }
 
         private void InsertCompetencyLearningResources()

@@ -76,6 +76,8 @@ If you just want to make temporary changes to the database for testing (e.g. add
 
 We're using [fluent migrator](https://fluentmigrator.github.io/articles/intro.html) for our migrations. Our migrations live in DigitalLearningSolutions.Data.Migrations. The migrations are applied by the RegisterMigrationRunner method in MigrationHelperMethods.cs. They should get applied when you run the app and when you run the data unit tests.
 
+Fluent Migrator keeps a record of which migrations have been applied in the db, in `[dbo].[VersionInfo]`. FM will apply any unrecorded migrations even if their date is "before" some already-applied migrations ([source](https://fluentmigrator.github.io/articles/migration-example.html)).
+
 ### Add a new migration
 Right click on DigitalLearningSolutions.Data.Migrations and select Add -> New item -> C# class. Name it using the convention ID_NAME.cs. Here ID should be the date and time in the format yyyyMMddHHmm for example 202007151810 for 18:10 on 15/07/2020. The NAME should be some descriptive name for what the migration does, e.g. AddCustomerTable. The fluent migrator docs have a good example of what a migration should look like: https://fluentmigrator.github.io/.
 

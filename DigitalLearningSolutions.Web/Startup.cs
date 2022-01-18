@@ -181,6 +181,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEvaluationSummaryService, EvaluationSummaryService>();
+            services.AddScoped<IFaqsService, FaqsService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
@@ -226,6 +227,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
+            services.AddScoped<IFaqsDataService, FaqsDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();

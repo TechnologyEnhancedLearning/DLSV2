@@ -50,6 +50,17 @@
 
         List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int candidateId);
 
+        CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
+            int competencyId,
+            int selfAssessmentId
+        );
+
+        IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+            int delegateId,
+            int selfAssessmentId,
+            int competencyId
+        );
+
         // CandidateAssessmentsDataService
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int candidateId);
 
