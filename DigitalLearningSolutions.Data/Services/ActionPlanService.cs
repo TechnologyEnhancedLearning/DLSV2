@@ -87,12 +87,6 @@
             var resource = (await learningHubResourceService.GetResourceByReferenceId(learningHubResourceReferenceId))
                 ?.ResourceReferenceWithResourceDetails;
 
-            // TODO: determine if we want to do this.
-            // If we are falling back, we can easily save without the details
-            // But what if the user has requested to add a resource that doesn't exist? Might need to be able to tell between the two
-            // How does current thing try to deal with non-existent references?
-            // Just throws error. would be a 404 either way, so can't add it. What if there are knock on effects from adding a discontinued resource? is that a possibility?
-            // could happen with regular API functionality I guess, if someone has something in action plan, but it is removed from learning hub DB, could cause errors
             if (resource == null)
             {
                 return;
