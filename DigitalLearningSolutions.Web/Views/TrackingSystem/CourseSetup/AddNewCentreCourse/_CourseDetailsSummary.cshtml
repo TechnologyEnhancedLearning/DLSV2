@@ -1,0 +1,59 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SummaryViewModel
+
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Course
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.ApplicationName
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SelectCourse">
+      Change<span class="nhsuk-u-visually-hidden"> course</span>
+    </a>
+  </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Course name
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.CustomisationName == string.Empty ? Model.ApplicationName : $"{Model.ApplicationName} - {Model.CustomisationName}")
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseDetails">
+      Change<span class="nhsuk-u-visually-hidden"> course name</span>
+    </a>
+  </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Password protected
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.Password ?? "No")
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseDetails">
+      Change<span class="nhsuk-u-visually-hidden"> password</span>
+    </a>
+  </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Completion notification email
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.NotificationEmails ?? "No")
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseDetails">
+      Change<span class="nhsuk-u-visually-hidden"> notification email</span>
+    </a>
+  </dd>
+</div>

@@ -1,7 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCourseSectionFormData
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
 
 <div class="hidden-submit">
   <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
