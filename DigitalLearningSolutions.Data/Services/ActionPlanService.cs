@@ -24,7 +24,7 @@
 
         Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
 
-        Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(int learningLogItemId, int delegateId);
+        void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateId);
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate);
 
@@ -152,22 +152,24 @@
                 : null;
         }
 
-        // TODO: HEEDLS-707, this method is replaced in HEEDLS-709, so when that gets merged, apply the new service to it
-        public async Task<string?> GetLearningResourceLinkAndUpdateLastAccessedDate(
-            int learningLogItemId,
+        public void UpdateActionPlanResourcesLastAccessedDateIfPresent(
+            int resourceReferenceId,
             int delegateId
         )
         {
-            var actionPlanResource = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
+            var actionPlanResourcesToUpdate = learningLogItemsDataService.GetLearningLogItems(delegateId).Where(
+                r =>
+                    r.ArchivedDate == null &&
+                    r.LearningHubResourceReferenceId == resourceReferenceId
+            );
 
-            learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, clockService.UtcNow);
-
-            var resource =
-                await learningHubResourceService.GetResourceByReferenceId(
-                    actionPlanResource.LearningHubResourceReferenceId!.Value
+            foreach (var actionPlanResourceToUpdate in actionPlanResourcesToUpdate)
+            {
+                learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(
+                    actionPlanResourceToUpdate.LearningLogItemId,
+                    clockService.UtcNow
                 );
-
-            return resource.ResourceReferenceWithResourceDetails.Link;
+            }
         }
 
         public void SetCompletionDate(int learningLogItemId, DateTime completedDate)

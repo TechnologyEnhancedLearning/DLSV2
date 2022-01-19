@@ -418,5 +418,18 @@
             // Then
             userDataService.GetDelegateUserById(delegateUserId)!.Active.Should().BeTrue();
         }
+
+        [Test]
+        public void UpdateDelegateLhLoginWarningDismissalStatus_changes_delegate_dismissal_status()
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            userDataService.UpdateDelegateLhLoginWarningDismissalStatus(2, true);
+
+            // Then
+            var updatedUser = userDataService.GetDelegateUserById(2)!;
+            updatedUser.HasDismissedLhLoginWarning.Should().BeTrue();
+        }
     }
 }

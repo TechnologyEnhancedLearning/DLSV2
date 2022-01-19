@@ -372,41 +372,6 @@
         }
 
         [Test]
-        public async Task LaunchLearningResource_should_redirect_to_not_found_if_link_cannot_be_retrieved()
-        {
-            // Given
-            const int learningLogItemId = 1;
-            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
-                .Returns((string?)null);
-
-            // When
-            var result = await controller.LaunchLearningResource(learningLogItemId);
-
-            // Then
-            result.Should().BeNotFoundResult();
-            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public async Task LaunchLearningResource_should_redirect_to_returned_link()
-        {
-            // Given
-            const int learningLogItemId = 1;
-            const string resourceLink = "www.resource.com";
-            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
-                .Returns(resourceLink);
-
-            // When
-            var result = await controller.LaunchLearningResource(learningLogItemId);
-
-            // Then
-            result.Should().BeRedirectResult().WithUrl(resourceLink);
-            A.CallTo(() => actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, 11))
-                .MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
         public void MarkActionPlanResourceAsComplete_calls_correct_service_method()
         {
             // Given

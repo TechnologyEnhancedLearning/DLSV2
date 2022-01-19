@@ -12,16 +12,8 @@
 
         IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
 
-        void AddCompetencyLearningResource(
-            int resourceRefId,
-            string originalResourceName,
-            int competencyId,
-            int adminId
-        );
-
-        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(
-            IEnumerable<int> competencyLearningResourceIds
-        );
+        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds);
+        int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -60,15 +52,10 @@
             );
         }
 
-        public void AddCompetencyLearningResource(
-            int resourceRefId,
-            string originalResourceName,
-            int competencyId,
-            int adminId
-        )
+        public int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId)
         {
-            connection.Execute(
-                @" DECLARE @learningResourceReferenceID int
+            return connection.ExecuteScalar<int>(
+                @$" DECLARE @learningResourceReferenceID int
                     IF NOT EXISTS(SELECT * FROM LearningResourceReferences WHERE @resourceRefID = resourceRefID)
                         BEGIN
                             INSERT INTO LearningResourceReferences(ResourceRefID, OriginalResourceName, AdminID, Added)
@@ -82,13 +69,13 @@
                             WHERE @resourceRefID = resourceRefID
                         END
                     INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
-                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)",
-                new { resourceRefID = resourceRefId, originalResourceName, competencyID = competencyId, adminId }
+                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)
+                    SELECT SCOPE_IDENTITY() AS CompetencyLearningResourceId",
+                new { resourceRefID, originalResourceName, competencyID, adminId }
             );
         }
 
-        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>
-            GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter>GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
         {
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 @"SELECT

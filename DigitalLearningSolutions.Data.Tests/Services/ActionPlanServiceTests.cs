@@ -293,45 +293,40 @@
         }
 
         [Test]
-        public async Task GetLearningResourceLinkAndUpdateLastAccessedDate_updates_last_accessed_returns_resource_link()
+        public void
+            UpdateActionPlanResourcesLastAccessedDateIfPresent_updates_last_accessed_date_of_appropriate_records()
         {
             // Given
             var testDate = new DateTime(2021, 12, 2);
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            const int learningLogItemId = 1;
             const int delegateId = 2;
             const int resourceReferenceId = 3;
-            const string resourceLink = "www.test.com";
-            var learningLogItems = Builder<LearningLogItem>.CreateNew()
+            var expectedLearningLogItemIdsToUpdate = new[] { 1, 4 };
+            var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(4).All()
                 .With(i => i.CompletedDate = null)
                 .And(i => i.ArchivedDate = null)
                 .And(i => i.LearningHubResourceReferenceId = resourceReferenceId)
-                .And(i => i.LearningLogItemId = learningLogItemId)
+                .And((i, index) => i.LearningLogItemId = index + 1)
+                .TheFirst(1).With(i => i.CompletedDate = DateTime.UtcNow)
+                .TheNext(1).With(i => i.ArchivedDate = DateTime.UtcNow)
+                .TheNext(1).With(i => i.LearningHubResourceReferenceId = resourceReferenceId + 100)
                 .Build();
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(learningLogItemId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
                 .Returns(learningLogItems);
-            var matchedResource = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
-                .With(r => r.RefId = resourceReferenceId)
-                .And(r => r.Title = "Title")
-                .And(r => r.Catalogue = genericCatalogue)
-                .And(r => r.Link = resourceLink).Build();
-            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(resourceReferenceId))
-                .Returns(new LearningResourceReferenceWithResourceDetails(matchedResource, false));
 
             // When
-            var result =
-                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
+            actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(resourceReferenceId, delegateId);
 
             // Then
-            result.Should().Be(resourceLink);
-            A.CallTo(() => learningLogItemsDataService.GetLearningLogItem(learningLogItemId))
+            A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(
-                    () => learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, testDate)
-                )
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(resourceReferenceId))
-                .MustHaveHappenedOnceExactly();
+            foreach (var id in expectedLearningLogItemIdsToUpdate)
+            {
+                A.CallTo(
+                        () => learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(id, testDate)
+                    )
+                    .MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
