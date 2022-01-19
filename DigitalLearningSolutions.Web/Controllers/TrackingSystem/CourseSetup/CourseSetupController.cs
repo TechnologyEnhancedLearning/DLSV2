@@ -160,6 +160,12 @@
 
             var selectedApplication =
                 applicationOptions.Single(ap => ap.ApplicationId == model.ApplicationId);
+
+            if (data!.Application != null && data.Application.ApplicationId == selectedApplication.ApplicationId)
+            {
+                return RedirectToAction("Summary");
+            }
+
             data!.SetApplicationAndResetModels(selectedApplication);
             TempData.Set(data);
 
@@ -209,7 +215,7 @@
             data!.SetCourseDetailsModel = model;
             TempData.Set(data);
 
-            return RedirectToAction("SetCourseOptions");
+            return data.SetCourseOptionsModel == null ? RedirectToAction("SetCourseOptions") : RedirectToAction("Summary");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -235,7 +241,7 @@
             data!.SetCourseOptionsModel = model;
             TempData.Set(data);
 
-            return RedirectToAction("SetCourseContent");
+            return data.SetCourseContentModel == null ? RedirectToAction("SetCourseContent") : RedirectToAction("Summary");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
