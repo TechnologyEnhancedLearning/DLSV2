@@ -397,16 +397,6 @@
             );
         }
 
-        public int? GetDelegateUserLearningHubAuthId(int delegateId)
-        {
-            return connection.Query<int?>(
-                @"SELECT LearningHubAuthId
-                    FROM Candidates
-                    WHERE CandidateID = @delegateId",
-                new { delegateId }
-            ).Single();
-        }
-
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
         {
             connection.Execute(
