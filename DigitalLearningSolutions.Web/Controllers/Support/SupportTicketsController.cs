@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Support
 {
-    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Attributes;
@@ -17,7 +16,11 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdminOrFrameworksAdmin)]
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
-    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
+    [TypeFilter(
+        typeof(ValidateAllowedDlsSubApplication),
+        Arguments = new object[]
+            { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } }
+    )]
     public class SupportTicketsController : Controller
     {
         private readonly IConfiguration configuration;
