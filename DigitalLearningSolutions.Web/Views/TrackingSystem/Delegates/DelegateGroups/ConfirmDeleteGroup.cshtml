@@ -8,6 +8,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Groups - Delete group";
+  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -53,6 +54,6 @@
       <button class="nhsuk-button delete-button" type="submit">Delete group</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>
