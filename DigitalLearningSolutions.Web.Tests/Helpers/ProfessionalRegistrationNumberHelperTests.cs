@@ -102,11 +102,10 @@
             );
 
             // Then
-            const string expectedError = "Select your professional registration number status.";
             using (new AssertionScope())
             {
                 state.IsValid.Should().BeFalse();
-                state.Values.First().Errors.Should().OnlyContain(e => e.ErrorMessage == expectedError);
+                state.Values.First().Errors.Should().OnlyContain(e => e.ErrorMessage == "Select your professional registration number status.");
             }
         }
 
