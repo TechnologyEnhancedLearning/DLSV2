@@ -74,22 +74,41 @@
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
 
-            var diagnosticOutcomes = JsonConvert.DeserializeObject<IEnumerable<DiagnosticOutcome>>(diagnosticOutcome);
             try
             {
-                foreach (var diagOutcome in diagnosticOutcomes)
+                var diagnosticOutcomes = JsonConvert.DeserializeObject<IEnumerable<DiagnosticOutcome>>(
+                    diagnosticOutcome,
+                    new JsonSerializerSettings
+                    {
+                        MissingMemberHandling = MissingMemberHandling.Error,
+                        NullValueHandling = NullValueHandling.Include,
+                        DefaultValueHandling = DefaultValueHandling.Include,
+                    }
+                );
+
+                try
                 {
-                    progressService.UpdateDiagnosticScore(
-                        progressId.Value,
-                        diagOutcome.TutorialId,
-                        diagOutcome.MyScore
+                    foreach (var diagOutcome in diagnosticOutcomes)
+                    {
+                        progressService.UpdateDiagnosticScore(
+                            progressId.Value,
+                            diagOutcome.TutorialId,
+                            diagOutcome.MyScore
+                        );
+                    }
+                }
+                catch (Exception e)
+                {
+                    logger.LogWarning(
+                        $"Updating diagnostic score failed. Error: {e}"
                     );
+                    return TrackerEndpointResponse.StoreDiagnosticScoreException;
                 }
             }
             catch (Exception e)
             {
                 logger.LogWarning(
-                    $"Updating diagnostic score failed. Error: {e}"
+                    $"Deserializing JSON failed: {e}"
                 );
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
