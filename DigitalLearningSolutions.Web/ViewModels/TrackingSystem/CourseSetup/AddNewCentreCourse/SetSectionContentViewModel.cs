@@ -17,14 +17,6 @@
         }
 
         public SetSectionContentViewModel(
-            EditCourseSectionFormData formData,
-            int index
-        ) : base(formData)
-        {
-            Index = index;
-        }
-
-        public SetSectionContentViewModel(
             SelectSectionViewModel section,
             int index,
             bool showDiagnostic,

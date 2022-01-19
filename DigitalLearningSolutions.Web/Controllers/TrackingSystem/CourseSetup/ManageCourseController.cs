@@ -203,11 +203,6 @@
         {
             var centreId = User.GetCentreId();
 
-            if (string.IsNullOrWhiteSpace(formData.CustomisationName))
-            {
-                formData.CustomisationName = string.Empty;
-            }
-
             CourseDetailsValidator.ValidateCustomisationName(
                 formData,
                 ModelState,

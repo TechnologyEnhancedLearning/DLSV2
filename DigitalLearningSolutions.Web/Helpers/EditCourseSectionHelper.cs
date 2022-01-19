@@ -1,15 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using Microsoft.AspNetCore.Mvc;
 
     public static class EditCourseSectionHelper
     {
-        private const string SelectAllDiagnosticAction = "diagnostic-select-all";
-        private const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
-        private const string SelectAllLearningAction = "learning-select-all";
-        private const string DeselectAllLearningAction = "learning-deselect-all";
-
         public static IActionResult? ProcessBulkSelect(
             EditCourseSectionFormData model,
             string action
@@ -17,21 +13,22 @@
         {
             switch (action)
             {
-                case SelectAllDiagnosticAction:
+                case CourseSetupController.SelectAllDiagnosticAction:
                     SelectAllDiagnostics(model);
                     break;
-                case DeselectAllDiagnosticAction:
+                case CourseSetupController.DeselectAllDiagnosticAction:
                     DeselectAllDiagnostics(model);
                     break;
-                case SelectAllLearningAction:
+                case CourseSetupController.SelectAllLearningAction:
                     SelectAllLearning(model);
                     break;
-                case DeselectAllLearningAction:
+                case CourseSetupController.DeselectAllLearningAction:
                     DeselectAllLearning(model);
                     break;
                 default:
                     return new StatusCodeResult(400);
             }
+
             return null;
         }
 

@@ -17,7 +17,6 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -150,21 +149,17 @@
 
             if (!ModelState.IsValid)
             {
-                return View("AddNewCentreCourse/SelectCourse", GetSelectCourseViewModel(data!.Application?.ApplicationId, model.TopicId));
+                return View(
+                    "AddNewCentreCourse/SelectCourse",
+                    GetSelectCourseViewModel(data!.Application?.ApplicationId, model.TopicId)
+                );
             }
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var applicationOptions =
-                courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
-
             var selectedApplication =
-                applicationOptions.Single(ap => ap.ApplicationId == model.ApplicationId);
-
-            if (data!.Application != null && data.Application.ApplicationId == selectedApplication.ApplicationId)
-            {
-                return RedirectToAction("Summary");
-            }
+                courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
+                    .Single(ap => ap.ApplicationId == model.ApplicationId);
 
             data!.SetApplicationAndResetModels(selectedApplication);
             TempData.Set(data);
@@ -192,11 +187,6 @@
             var data = TempData.Peek<AddNewCentreCourseData>();
             var centreId = User.GetCentreId();
 
-            if (string.IsNullOrWhiteSpace(model.CustomisationName))
-            {
-                model.CustomisationName = string.Empty;
-            }
-
             CourseDetailsValidator.ValidateCustomisationName(
                 model,
                 ModelState,
@@ -215,7 +205,7 @@
             data!.SetCourseDetailsModel = model;
             TempData.Set(data);
 
-            return data.SetCourseOptionsModel == null ? RedirectToAction("SetCourseOptions") : RedirectToAction("Summary");
+            return RedirectToAction("SetCourseOptions");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -241,7 +231,7 @@
             data!.SetCourseOptionsModel = model;
             TempData.Set(data);
 
-            return data.SetCourseContentModel == null ? RedirectToAction("SetCourseContent") : RedirectToAction("Summary");
+            return RedirectToAction("SetCourseContent");
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -271,7 +261,7 @@
             if (model.IncludeAllSections)
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
-                model.SelectedSectionIds = model.AvailableSections.Select(s => s.Id);
+                model.SelectAllSections();
                 var availableSections = model.AvailableSections.Select(
                     (s, index) =>
                     {
@@ -301,19 +291,13 @@
             var data = TempData.Peek<AddNewCentreCourseData>();
 
             var section = data!.SetCourseContentModel!.GetSelectedSections().ElementAt(sectionIndex);
-            var showDiagnostic = data.Application!.DiagAssess;
-            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic);
-
             var tutorials = tutorialService.GetTutorialsForSection(section.Id).ToList();
+            var showDiagnostic = data.Application!.DiagAssess;
+            var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
 
-            if (!tutorials.Any())
-            {
-                return RedirectToNextSectionOrSummary(model.Index, data.SetCourseContentModel);
-            }
-
-            model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
-
-            return View("AddNewCentreCourse/SetSectionContent", model);
+            return !tutorials.Any()
+                ? RedirectToNextSectionOrSummary(model.Index, data.SetCourseContentModel)
+                : View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -348,7 +332,7 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost]
         [Route("AddCourse/Summary")]
-        public IActionResult Summary(SummaryViewModel model)
+        public IActionResult? Summary(SummaryViewModel model)
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
@@ -392,7 +376,7 @@
             }
             catch (Exception)
             {
-                return new StatusCodeResult(500);
+                return null;
             }
         }
 
@@ -413,8 +397,8 @@
         private SelectCourseViewModel GetSelectCourseViewModel(int? selectedCourseId, int? topicId)
         {
             var availableTopics = GetTopicOptionsSelectListOrNull(topicId);
-            var availableCourses = GetApplicationOptionsSelectList(selectedCourseId, topicId);
-            return new SelectCourseViewModel(availableCourses, availableTopics, topicId);
+            var availableApplications = GetApplicationOptionsSelectList(selectedCourseId, topicId);
+            return new SelectCourseViewModel(availableApplications, availableTopics, topicId);
         }
 
         private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId, int? topicId)

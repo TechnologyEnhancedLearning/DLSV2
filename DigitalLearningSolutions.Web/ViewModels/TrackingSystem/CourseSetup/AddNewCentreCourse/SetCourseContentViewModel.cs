@@ -37,5 +37,10 @@
         {
             return AvailableSections.Where(section => SelectedSectionIds!.Contains(section.Id)).ToList();
         }
+
+        public void SelectAllSections()
+        {
+            SelectedSectionIds = AvailableSections.Select(s => s.Id);
+        }
     }
 }
