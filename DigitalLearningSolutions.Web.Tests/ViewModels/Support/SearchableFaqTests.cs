@@ -11,13 +11,13 @@
         public void SearchableFaq_returns_model_with_cleaned_SearchableFaqAnswer()
         {
             // Given
-            var faq = FaqTestHelper.GetDefaultFaq();
-            var expectedSearchableFaqAnswer = " p Helpful content  p ";
+            var faq = FaqTestHelper.GetDefaultFaq(aHtml: "<p>Helpful content.<p>");
 
             // When
             var searchableFaq = new SearchableFaq(faq);
 
             // Then
+            const string expectedSearchableFaqAnswer = " p Helpful content  p ";
             searchableFaq.SearchableFaqAnswer.Should().Be(expectedSearchableFaqAnswer);
         }
     }
