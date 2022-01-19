@@ -6,7 +6,7 @@ import {
 import { search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
 import { paginateResults, setUpPagination } from './paginate';
-import getPathForEndpoint from '../common';
+import getPathForEndpoint, {getPageNumber, updatePageNumber} from '../common';
 
 export interface ISearchableElement {
   parentIndex: number;
@@ -36,9 +36,8 @@ export class SearchSortFilterAndPaginate {
     filterEnabled: boolean,
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
-    initialPage = 1,
   ) {
-    this.page = initialPage;
+    this.page = getPageNumber();
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
@@ -71,12 +70,14 @@ export class SearchSortFilterAndPaginate {
 
   private onFilterUpdated(searchableData: ISearchableData): void {
     this.page = 1;
+    updatePageNumber(this.page);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
     this.page = 1;
+    updatePageNumber(this.page);
     this.searchSortAndPaginate(searchableData);
   }
 
@@ -87,12 +88,14 @@ export class SearchSortFilterAndPaginate {
 
   private onNextPagePressed(searchableData: ISearchableData): void {
     this.page += 1;
+    updatePageNumber(this.page);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
     this.page -= 1;
+    updatePageNumber(this.page);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
