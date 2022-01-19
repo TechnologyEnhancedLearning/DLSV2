@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
     using DigitalLearningSolutions.Data.Models.Email;
+    using System;
 
     public interface IFrameworkService
     {
@@ -65,8 +66,12 @@
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify);
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
+        CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyResourceAssessmentQuestionParameterId);
+        LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResourceID);
+        int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter);
         void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
         int InsertAssessmentQuestion(string question, int assessmentQuestionInputTypeId, string? maxValueDescription, string? minValueDescription, string? scoringInstructions, int minValue, int maxValue, bool includeComments, int adminId, string? commentsPrompt, string? commentsHint);
+        int GetCompetencyAssessmentQuestionRoleRequirementsCount(int assessmentQuestionId, int competencyId);
         void InsertLevelDescriptor(int assessmentQuestionId, int levelValue, string levelLabel, string? levelDescription, int adminId);
         int InsertComment(int frameworkId, int adminId, string comment, int? replyToCommentId);
         void InsertFrameworkReview(int frameworkId, int frameworkCollaboratorId, bool required);
@@ -94,6 +99,7 @@
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
+        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -1601,6 +1607,110 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
             return connection.Query<int>(
                 "SELECT MAX(ID) FROM FrameworkCompetencyGroups"
                 ).Single();
+        }
+
+        public CompetencyResourceAssessmentQuestionParameter? GetCompetencyResourceAssessmentQuestionParameterByCompetencyLearningResourceId(int competencyLearningResourceId)
+        {
+            var resource = connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                $@"SELECT p.AssessmentQuestionId, clr.ID AS CompetencyLearningResourceId, p.MinResultMatch, p.MaxResultMatch, p.Essential,
+                          p.RelevanceAssessmentQuestionId, p.CompareToRoleRequirements, lrr.OriginalResourceName,
+                    CASE
+                        WHEN p.CompetencyLearningResourceId IS NULL THEN 1
+                        ELSE 0
+                    END AS IsNew
+                    FROM CompetencyLearningResources AS clr
+                    INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
+                    LEFT OUTER JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
+                    WHERE clr.ID = @competencyLearningResourceId",
+                    new { competencyLearningResourceId }).FirstOrDefault();
+            var questions = connection.Query<AssessmentQuestion>(
+                $@"SELECT * FROM AssessmentQuestions
+                    WHERE ID IN ({resource.AssessmentQuestionId ?? 0}, {resource.RelevanceAssessmentQuestionId ?? 0})");
+            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId);
+            resource.RelevanceAssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId);
+            return resource;
+        }
+
+        public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
+        {
+            return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
+                $@"SELECT clr.ID AS CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
+                    CASE 
+	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
+	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question
+	                    ELSE 'Don''t compare result'
+                    END AS CompareResultTo,
+                    CASE
+                        WHEN p.CompetencyLearningResourceId IS NULL THEN 1
+                        ELSE 0
+                    END AS IsNew
+                    FROM FrameworkCompetencies AS fc
+					INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
+					INNER JOIN CompetencyLearningResources AS clr ON clr.CompetencyID = c.ID
+                    INNER JOIN LearningResourceReferences AS lrr ON clr.LearningResourceReferenceID = lrr.ID
+                    LEFT JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
+                    LEFT JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
+                    LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
+                    WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
+                new { frameworkId, competencyId });
+        }
+
+        public LearningResourceReference GetLearningResourceReferenceByCompetencyLearningResouceId(int competencyLearningResouceId)
+        {
+            return connection.Query<LearningResourceReference>(
+                $@"SELECT * FROM LearningResourceReferences lrr
+                    INNER JOIN CompetencyLearningResources clr ON clr.LearningResourceReferenceID = lrr.ID
+                    WHERE clr.ID = @competencyLearningResouceId",
+                new { competencyLearningResouceId }).FirstOrDefault();
+        }
+
+        public int GetCompetencyAssessmentQuestionRoleRequirementsCount(int assessmentQuestionId, int competencyId)
+        {
+            var count = connection.ExecuteScalar(
+                $@"SELECT COUNT(*) FROM CompetencyAssessmentQuestionRoleRequirements
+                    WHERE AssessmentQuestionID = @assessmentQuestionId AND CompetencyID = @competencyId",
+                new { assessmentQuestionId, competencyId });
+            return Convert.ToInt32(count);
+        }
+
+        public int EditCompetencyResourceAssessmentQuestionParameter(CompetencyResourceAssessmentQuestionParameter parameter)
+        {
+            int rowsAffected;
+            if (parameter.IsNew)
+            {
+                rowsAffected = connection.Execute(
+                    $@"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
+                        CompetencyLearningResourceID,
+                        AssessmentQuestionID,
+                        MinResultMatch,
+                        MaxResultMatch,
+                        Essential,
+                        RelevanceAssessmentQuestionID,
+                        CompareToRoleRequirements)
+                        VALUES(
+                            {parameter.CompetencyLearningResourceId},
+                            {parameter.AssessmentQuestion?.ID.ToString() ?? "null"},
+                            {parameter.MinResultMatch},
+                            {parameter.MaxResultMatch},
+                            {Convert.ToInt32(parameter.Essential)},
+                            {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
+                            {Convert.ToInt32(parameter.CompareToRoleRequirements)})"
+                    );
+            }
+            else
+            {
+                rowsAffected = connection.Execute(
+                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters
+                    SET AssessmentQuestionID = {parameter.AssessmentQuestion?.ID.ToString() ?? "null" },
+                        MinResultMatch = {parameter.MinResultMatch},
+                        MaxResultMatch = {parameter.MaxResultMatch},
+                        Essential = {Convert.ToInt32(parameter.Essential)},
+                        RelevanceAssessmentQuestionID = {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
+                        CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
+                    WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId}"
+                    );
+            }
+            return rowsAffected;
         }
     }
 }
