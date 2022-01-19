@@ -114,6 +114,8 @@
 
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
+        void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
+        
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
     }
 

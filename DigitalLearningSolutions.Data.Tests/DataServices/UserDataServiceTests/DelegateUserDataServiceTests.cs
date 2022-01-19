@@ -420,6 +420,40 @@
         }
 
         [Test]
+        public void SetDelegateUserLearningHubAuthId_correctly_sets_delegates_learningHubAuthId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1234;
+
+            // When
+            userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId);
+
+            // Then
+            var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+
+            result.Should().NotBeNull()
+                .And.Subject.Should().Be(learningHubAuthId);
+        }
+
+        [Test]
+        public void GetDelegateUserLearningHubAuthId_returns_null_delegate_learningHubAuthId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int delegateId = 3;
+
+            // When
+            var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void UpdateDelegateLhLoginWarningDismissalStatus_changes_delegate_dismissal_status()
         {
             using var transaction = new TransactionScope();
