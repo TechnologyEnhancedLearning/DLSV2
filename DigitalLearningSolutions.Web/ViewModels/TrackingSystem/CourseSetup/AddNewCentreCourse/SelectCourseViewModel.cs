@@ -9,29 +9,29 @@
         public SelectCourseViewModel() { }
 
         public SelectCourseViewModel(
-            IEnumerable<SelectListItem> courseOptions,
+            IEnumerable<SelectListItem> applicationOptions,
             IEnumerable<SelectListItem>? topicOptions,
             int? topicId
         )
         {
-            CourseOptions = courseOptions;
+            ApplicationOptions = applicationOptions;
             TopicOptions = topicOptions;
             TopicId = topicId;
         }
 
         public SelectCourseViewModel(
             int applicationId,
-            IEnumerable<SelectListItem> courseOptions
+            IEnumerable<SelectListItem> applicationOptions
         )
         {
             ApplicationId = applicationId;
-            CourseOptions = courseOptions;
+            ApplicationOptions = applicationOptions;
         }
 
         [Required(ErrorMessage = "Select a course")]
         public int? ApplicationId { get; set; }
 
-        public IEnumerable<SelectListItem> CourseOptions { get; set; }
+        public IEnumerable<SelectListItem> ApplicationOptions { get; set; }
 
         public IEnumerable<SelectListItem>? TopicOptions { get; set; }
 

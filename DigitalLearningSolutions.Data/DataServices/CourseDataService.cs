@@ -691,19 +691,19 @@ namespace DigitalLearningSolutions.Data.DataServices
         {
             var customisationId = connection.QuerySingle<int>(
                 @"INSERT INTO Customisations(
-                        CurrentVersion
-                        ,CentreID
-                        ,ApplicationID
-                        ,Active
-                        ,CustomisationName
-                        ,Password
-                        ,SelfRegister
-                        ,TutCompletionThreshold
-                        ,IsAssessed
-                        ,DiagCompletionThreshold
-                        ,DiagObjSelect
-                        ,HideInLearnerPortal
-                        ,NotificationEmails)
+                        CurrentVersion,
+                        CentreID,
+                        ApplicationID,
+                        Active,
+                        CustomisationName,
+                        Password,
+                        SelfRegister,
+                        TutCompletionThreshold,
+                        IsAssessed,
+                        DiagCompletionThreshold,
+                        DiagObjSelect,
+                        HideInLearnerPortal,
+                        NotificationEmails)
                     OUTPUT Inserted.CustomisationID
                     VALUES
                         (1,

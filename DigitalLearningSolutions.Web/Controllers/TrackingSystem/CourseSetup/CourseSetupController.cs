@@ -307,7 +307,7 @@
 
             model.Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));
 
-            return View("../AddNewCentreCourse/SetSectionContent", model);
+            return View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -324,7 +324,7 @@
             }
 
             var bulkSelectResult = EditCourseSectionHelper.ProcessBulkSelect(model, action);
-            return bulkSelectResult ?? View("../AddNewCentreCourse/SetSectionContent", model);
+            return bulkSelectResult ?? View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]

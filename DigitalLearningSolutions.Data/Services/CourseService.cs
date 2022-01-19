@@ -365,7 +365,7 @@
             string? notificationEmails
         )
         {
-            var customisationId = courseDataService.CreateNewCentreCourse(
+            return courseDataService.CreateNewCentreCourse(
                 centreId,
                 applicationId,
                 customisationName,
@@ -378,8 +378,6 @@
                 hideInLearnerPortal,
                 notificationEmails
             );
-
-            return customisationId;
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

@@ -1,8 +1,4 @@
-﻿@inject IConfiguration configuration
-@using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using Microsoft.Extensions.Configuration
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model SelectCourseViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/selectCourse.css")" asp-append-version="true">
@@ -46,7 +42,7 @@
     }
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-      <input type="hidden" asp-for="CourseOptions">
+      <input type="hidden" asp-for="ApplicationOptions">
       <input type="hidden" asp-for="TopicOptions">
       <input type="hidden" asp-for="TopicId">
 
@@ -57,7 +53,7 @@
                       deselectable="false"
                       css-class="nhsuk-u-width-full nhsuk-u-margin-bottom-2"
                       default-option="Select a course"
-                      select-list-options="@Model.CourseOptions" />
+                      select-list-options="@Model.ApplicationOptions" />
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
