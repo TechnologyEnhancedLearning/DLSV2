@@ -52,8 +52,9 @@
     <div class="nhsuk-grid-column-full">
       <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
          aria-describedby="@Model.Id-name-lhr"
+         asp-controller="Signposting"
          asp-action="LaunchLearningResource"
-         asp-route-learningLogItemId="@Model.Id"
+         asp-route-resourceReferenceId="@Model.ResourceReferenceId"
          role="button">
         Launch learning resource
       </a>

@@ -117,6 +117,34 @@
         }
 
         [Test]
+        public void GetDelegateUserById_returns_user_from_data_service()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userDataService.GetDelegateUserById(expectedDelegateUser.Id)).Returns(expectedDelegateUser);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserById(expectedDelegateUser.Id);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
+        public void GetDelegateUserById_returns_null_from_data_service()
+        {
+            // Given
+            const int delegateId = 1;
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateId)).Returns(null);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserById(delegateId);
+
+            // Then
+            returnedDelegateUser.Should().BeNull();
+        }
+
+        [Test]
         public void GetUsersWithActiveCentres_returns_users_with_active_centres()
         {
             // Given
@@ -777,7 +805,7 @@
             const string alias = "alias";
             const int centreId = 1;
             const int delegateId = 2;
-            var delegateUser = UserTestHelper.GetDefaultDelegateUser(id: delegateId,centreId: centreId, aliasId: alias);
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(delegateId, centreId, aliasId: alias);
             A.CallTo(() => userDataService.GetDelegateUsersByAliasId(alias)).Returns(new[] { delegateUser });
 
             // When
@@ -880,7 +908,7 @@
             // Given
             const string email = "test@email.com";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
-            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(id: 3, emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email);
             A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
                 .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
@@ -913,7 +941,7 @@
                     editDelegateDetailsData.Surname,
                     editDelegateDetailsData.Email,
                     A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
-            )
+                )
             ).MustHaveHappened();
         }
 
@@ -958,6 +986,21 @@
             result.Should().HaveCount(5);
             result.Should().OnlyContain(au => au.IsSupervisor);
             result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
+        }
+
+        [Test]
+        public void UpdateDelegateLhLoginWarningDismissalStatus_calls_data_service_with_correct_parameters()
+        {
+            // Given
+            const int delegateId = 1;
+            const bool status = true;
+
+            // When
+            userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status))
+                .MustHaveHappenedOnceExactly();
         }
 
         private void AssertAdminPermissionsCalledCorrectly(
