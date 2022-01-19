@@ -11,35 +11,38 @@
     {
         [TestCase(null)]
         [TestCase(false)]
-        public void SetHasProfessionalRegistrationNumber_returns_null_when_has_not_been_prompted(
+        public void GetHasProfessionalRegistrationNumberForView_returns_null_when_has_not_been_prompted(
             bool? hasBeenPromptedForPrn
         )
         {
             // When
             var result =
-                ProfessionalRegistrationNumberHelper.SetHasProfessionalRegistrationNumber(hasBeenPromptedForPrn, "prn");
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
+                    hasBeenPromptedForPrn,
+                    "prn"
+                );
 
             // Then
             result.Should().BeNull();
         }
 
         [Test]
-        public void SetHasProfessionalRegistrationNumber_returns_false_when_has_been_prompted_and_no_prn()
+        public void GetHasProfessionalRegistrationNumberForView_returns_false_when_has_been_prompted_and_no_prn()
         {
             // When
             var result =
-                ProfessionalRegistrationNumberHelper.SetHasProfessionalRegistrationNumber(true, null);
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(true, null);
 
             // Then
             result.Should().BeFalse();
         }
 
         [Test]
-        public void SetHasProfessionalRegistrationNumber_returns_true_when_has_been_prompted_and_has_prn()
+        public void GetHasProfessionalRegistrationNumberForView_returns_true_when_has_been_prompted_and_has_prn()
         {
             // When
             var result =
-                ProfessionalRegistrationNumberHelper.SetHasProfessionalRegistrationNumber(true, "prn-12");
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(true, "prn-12");
 
             // Then
             result.Should().BeTrue();
@@ -90,7 +93,6 @@
         {
             // Given
             var state = new ModelStateDictionary();
-            var expectedError = "Select your professional registration number status.";
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
@@ -100,6 +102,7 @@
             );
 
             // Then
+            const string expectedError = "Select your professional registration number status.";
             using (new AssertionScope())
             {
                 state.IsValid.Should().BeFalse();
@@ -111,10 +114,22 @@
         [TestCase("", "Enter professional registration number.")]
         [TestCase("123", "Professional registration number must be between 5 and 20 characters.")]
         [TestCase("0123456789-0123456789", "Professional registration number must be between 5 and 20 characters.")]
-        [TestCase("01234_", "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed.")]
-        [TestCase("01234 ", "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed.")]
-        [TestCase("01234$", "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed.")]
-        public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(string prn, string expectedError)
+        [TestCase(
+            "01234_",
+            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed."
+        )]
+        [TestCase(
+            "01234 ",
+            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed."
+        )]
+        [TestCase(
+            "01234$",
+            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed."
+        )]
+        public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(
+            string prn,
+            string expectedError
+        )
         {
             // Given
             var state = new ModelStateDictionary();

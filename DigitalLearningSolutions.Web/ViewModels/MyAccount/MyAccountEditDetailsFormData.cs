@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
 
             ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber;
             HasProfessionalRegistrationNumber =
-                ProfessionalRegistrationNumberHelper.SetHasProfessionalRegistrationNumber(
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
                     delegateUser?.HasBeenPromptedForPrn,
                     delegateUser?.ProfessionalRegistrationNumber
                 );

@@ -5,7 +5,7 @@
 
     public class ProfessionalRegistrationNumberHelper
     {
-        public static bool? SetHasProfessionalRegistrationNumber(bool? hasBeenPromptedForPrn, string? prn)
+        public static bool? GetHasProfessionalRegistrationNumberForView(bool? hasBeenPromptedForPrn, string? prn)
         {
             if (!hasBeenPromptedForPrn.HasValue || hasBeenPromptedForPrn == false)
             {
@@ -15,7 +15,11 @@
             return !string.IsNullOrEmpty(prn);
         }
 
-        public static void ValidateProfessionalRegistrationNumber(ModelStateDictionary modelState, bool? hasPrn, string? prn, bool isDelegateUser = true)
+        public static void ValidateProfessionalRegistrationNumber(
+            ModelStateDictionary modelState, 
+            bool? hasPrn, 
+            string? prn, 
+            bool isDelegateUser = true)
         {
             if (!isDelegateUser || hasPrn == false)
             {
@@ -24,7 +28,10 @@
 
             if (!hasPrn.HasValue)
             {
-                modelState.AddModelError("HasProfessionalRegistrationNumber", "Select your professional registration number status.");
+                modelState.AddModelError(
+                    "HasProfessionalRegistrationNumber",
+                    "Select your professional registration number status."
+                );
                 return;
             }
 
@@ -36,14 +43,20 @@
 
             if (prn.Length < 5 || prn.Length > 20)
             {
-                modelState.AddModelError("ProfessionalRegistrationNumber", "Professional registration number must be between 5 and 20 characters.");
+                modelState.AddModelError(
+                    "ProfessionalRegistrationNumber",
+                    "Professional registration number must be between 5 and 20 characters."
+                );
             }
 
             const string pattern = @"^[a-z\d-]+$";
             var rg = new Regex(pattern, RegexOptions.IgnoreCase);
             if (!rg.Match(prn).Success)
             {
-                modelState.AddModelError("ProfessionalRegistrationNumber", "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed.");
+                modelState.AddModelError(
+                    "ProfessionalRegistrationNumber",
+                    "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed."
+                );
             }
         }
     }
