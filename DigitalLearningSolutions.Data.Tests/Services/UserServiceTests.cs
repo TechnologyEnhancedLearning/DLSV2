@@ -117,6 +117,34 @@
         }
 
         [Test]
+        public void GetDelegateUserById_returns_user_from_data_service()
+        {
+            // Given
+            var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
+            A.CallTo(() => userDataService.GetDelegateUserById(expectedDelegateUser.Id)).Returns(expectedDelegateUser);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserById(expectedDelegateUser.Id);
+
+            // Then
+            returnedDelegateUser.Should().BeEquivalentTo(expectedDelegateUser);
+        }
+
+        [Test]
+        public void GetDelegateUserById_returns_null_from_data_service()
+        {
+            // Given
+            const int delegateId = 1;
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateId)).Returns(null);
+
+            // When
+            var returnedDelegateUser = userService.GetDelegateUserById(delegateId);
+
+            // Then
+            returnedDelegateUser.Should().BeNull();
+        }
+
+        [Test]
         public void GetUsersWithActiveCentres_returns_users_with_active_centres()
         {
             // Given
@@ -947,7 +975,22 @@
             result.Should().OnlyContain(au => au.IsSupervisor);
             result.Should().OnlyContain(au => au.CategoryId == 0 || au.CategoryId == 1);
         }
-        
+
+        [Test]
+        public void UpdateDelegateLhLoginWarningDismissalStatus_calls_data_service_with_correct_parameters()
+        {
+            // Given
+            const int delegateId = 1;
+            const bool status = true;
+
+            // When
+            userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
+
+            // Then
+            A.CallTo(() => userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status))
+                .MustHaveHappenedOnceExactly();
+        }
+
         private void AssertAdminPermissionsCalledCorrectly(
             int adminId,
             AdminRoles adminRoles,

@@ -1,22 +1,3 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "../shared/cardWithButtons";
 @import "../shared/searchableElements/searchableElements";
-
-.copy-course-button {
-  background: none;
-  border: none;
-  padding: 0;
-  color: $nhsuk-link-color;
-  @extend .nhsuk-u-font-size-19;
-  text-decoration: underline;
-
-  &:hover {
-    color: $nhsuk-link-hover-color;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  &:focus {
-    @include nhsuk-focused-text;
-  }
-}
