@@ -16,7 +16,7 @@ describe('filter', () => {
 
     // Then
     expect(filteredElements.length).toBe(3);
-    expect(filteredElements[0].title).toBe('a: Course');
+    expect(filteredElements[0].searchableContent).toBe('a: Course');
   });
 
   it('should return expected results with single filter', () => {
@@ -31,7 +31,7 @@ describe('filter', () => {
 
     // Then
     expect(filteredElements.length).toBe(2);
-    expect(filteredElements[0].title).toBe('a: Course');
+    expect(filteredElements[0].searchableContent).toBe('a: Course');
   });
 
   it('should return expected results with 2 filters in different groups', () => {
@@ -46,7 +46,7 @@ describe('filter', () => {
 
     // Then
     expect(filteredElements.length).toBe(1);
-    expect(filteredElements[0].title).toBe('b: Course');
+    expect(filteredElements[0].searchableContent).toBe('b: Course');
   });
 
   it('should return expected results with 2 filters in the same group', () => {
@@ -61,7 +61,7 @@ describe('filter', () => {
 
     // Then
     expect(filteredElements.length).toBe(2);
-    expect(filteredElements[0].title).toBe('a: Course');
+    expect(filteredElements[0].searchableContent).toBe('a: Course');
   });
 
   it('should return expected results with a mix of grouped and ungrouped filters', () => {
@@ -78,7 +78,7 @@ describe('filter', () => {
 
     // Then
     expect(filteredElements.length).toBe(1);
-    expect(filteredElements[0].title).toBe('c: Course');
+    expect(filteredElements[0].searchableContent).toBe('c: Course');
   });
 });
 

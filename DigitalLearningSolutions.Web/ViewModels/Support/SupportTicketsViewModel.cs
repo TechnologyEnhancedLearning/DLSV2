@@ -2,14 +2,12 @@
 {
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class SupportTicketsViewModel : SupportViewModel
+    public class SupportTicketsViewModel : BaseSupportViewModel
     {
         public SupportTicketsViewModel(
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl
         ) : base(dlsSubApplication, currentPage, currentSystemBaseUrl) { }
-
-        public string IframeUrl => $"{CurrentSystemBaseUrl}/tracking/tickets?nonav=true";
     }
 }

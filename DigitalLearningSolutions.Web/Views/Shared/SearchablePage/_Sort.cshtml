@@ -3,10 +3,13 @@
 
 <form method="get" role="search">
   <input type="hidden" name="searchString" value="@Model.SearchString" />
-  @if (Model.FilterEnabled) {
+  <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+  @if (Model.FilterEnabled)
+  {
     <input type="hidden" name="filterBy" value="@Model.FilterBy" />
   }
-  @foreach (var (key, value) in Model.RouteData) {
+  @foreach (var (key, value) in Model.RouteData)
+  {
     <input type="hidden" name="@key" value="@value" />
   }
   <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Sort by</label>

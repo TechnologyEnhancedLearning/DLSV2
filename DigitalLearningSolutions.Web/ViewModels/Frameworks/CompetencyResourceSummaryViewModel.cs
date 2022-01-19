@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
-    public class CompetencyResourceSummaryViewModel
+    public class CompetencyResourceSummaryViewModel : BaseSignpostingViewModel
     {
         public int ReferenceId { get; set; }
 
@@ -15,14 +15,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public string Description => Resource?.Description ?? String.Empty;
         public string Catalogue { get; set; }
         public string NameOfCompetency { get; set; }
-        public int FrameworkId { get; set; }
-        public int? FrameworkCompetencyId { get; set; }
-        public int? FrameworkCompetencyGroupId { get; set; }
-
         public string SearchText { get; set; }
-
         public ResourceMetadata Resource { get; set; }
-
         public CompetencyResourceSummaryViewModel()
         {
 
@@ -32,11 +26,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             Resource = resource;
         }
 
-        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId)
+        public CompetencyResourceSummaryViewModel(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
-            FrameworkId = frameworkId;
-            FrameworkCompetencyId = frameworkCompetencyId;
-            FrameworkCompetencyGroupId = frameworkCompetencyGroupId;
         }
     }
 }

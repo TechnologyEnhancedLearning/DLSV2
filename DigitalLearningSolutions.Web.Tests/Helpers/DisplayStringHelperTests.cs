@@ -183,5 +183,36 @@
             // Then
             result.Should().Be(string.Empty);
         }
+
+        [Test]
+        public void ReplaceNonAlphaNumericSpaceChars_null_input_returns_null()
+        {
+            // When
+            var result = DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(null, "a");
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void ReplaceNonAlphaNumericSpaceChars_returns_cleaned_string_with_replacement()
+        {
+            // Given
+            var input = "abcdefghijklmnopqrstuvwxyz" +
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                        "1234567890" +
+                        "`¬¦!\"£$%^&*)(_+-=[]{};'#:@~\\|,./<>? ";
+
+            var expectedOutput = "abcdefghijklmnopqrstuvwxyz" +
+                                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                                 "1234567890" +
+                                 "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr ";
+
+            // When
+            var result = DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(input, "r");
+
+            // Then
+            result.Should().Be(expectedOutput);
+        }
     }
 }

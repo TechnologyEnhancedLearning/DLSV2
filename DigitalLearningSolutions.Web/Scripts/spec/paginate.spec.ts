@@ -9,7 +9,7 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    const paginatedCards = paginate.paginateResults(courseCards, 1, 2);
+    const paginatedCards = paginate.paginateResults(courseCards, 1);
 
     // Then
     expect(paginatedCards.length).toBe(10);
@@ -20,11 +20,11 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    const paginatedCards = paginate.paginateResults(courseCards, 2, 2);
+    const paginatedCards = paginate.paginateResults(courseCards, 2);
 
     // Then
     expect(paginatedCards.length).toBe(1);
-    expect(paginatedCards[0].title).toBe('k: course');
+    expect(paginatedCards[0].searchableContent).toBe('k: course');
   });
 
   it('updates the page number', () => {
@@ -32,7 +32,7 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    paginate.paginateResults(courseCards, 1, 2);
+    paginate.paginateResults(courseCards, 1);
 
     // Then
     const pageText = document.getElementById('page-indicator')!.textContent;
@@ -45,8 +45,10 @@ describe('paginateResults', () => {
     // Given
     const courseCards = createCourseCards();
 
+    (<HTMLSelectElement>document.getElementById('items-per-page-select')).value = '11';
+
     // When
-    paginate.paginateResults(courseCards, 1, 1);
+    paginate.paginateResults(courseCards, 1);
 
     // Then
     const pageIndicator = document.getElementById('page-indicator');
@@ -58,7 +60,7 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    paginate.paginateResults(courseCards, 1, 2);
+    paginate.paginateResults(courseCards, 1);
 
     // Then
     const previousButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--previous')[0];
@@ -70,7 +72,7 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    paginate.paginateResults(courseCards, 1, 2);
+    paginate.paginateResults(courseCards, 1);
 
     // Then
     const nextButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--next')[0];
@@ -82,7 +84,7 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    paginate.paginateResults(courseCards, 2, 2);
+    paginate.paginateResults(courseCards, 2);
 
     // Then
     const nextButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--next')[0];
@@ -94,11 +96,24 @@ describe('paginateResults', () => {
     const courseCards = createCourseCards();
 
     // When
-    paginate.paginateResults(courseCards, 2, 2);
+    paginate.paginateResults(courseCards, 2);
 
     // Then
     const previousButton = <HTMLElement>document.getElementsByClassName('nhsuk-pagination-item--previous')[0];
     expect(previousButton.hidden).toBeFalsy();
+  });
+
+  it('shows 11 results when 11 items per page is selected', () => {
+    // Given
+    const courseCards = createCourseCards();
+
+    (<HTMLSelectElement>document.getElementById('items-per-page-select')).value = '11';
+
+    // When
+    const paginatedCards = paginate.paginateResults(courseCards, 1);
+
+    // Then
+    expect(paginatedCards.length).toBe(11);
   });
 });
 
@@ -107,6 +122,10 @@ function createCourseCards() {
       <html>
       <head></head>
       <body>
+        <select id="items-per-page-select">
+          <option value="10" selected>10</option>
+          <option value="11">11</option>
+        </select>
         <span id="page-indicator"></span>
         <div id="searchable-elements">
           <div class="searchable-element" id="course-a">

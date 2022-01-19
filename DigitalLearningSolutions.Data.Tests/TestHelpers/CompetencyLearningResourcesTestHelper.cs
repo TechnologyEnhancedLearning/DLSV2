@@ -47,14 +47,20 @@
             int assessmentQuestionId,
             bool essential,
             int? relevanceQuestionId,
-            bool compareToRoleRequirements
+            bool compareToRoleRequirements,
+            int minMatchResult,
+            int maxMatchResult
         )
         {
             connection.Execute(
                 @"INSERT INTO CompetencyResourceAssessmentQuestionParameters
                     (CompetencyLearningResourceId, AssessmentQuestionID, Essential, RelevanceAssessmentQuestionID, CompareToRoleRequirements, MinResultMatch, MaxResultMatch)
-                    VALUES (@competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, 0, 0)",
-                new { competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId, compareToRoleRequirements }
+                    VALUES (@competencyLearningResourceId, @assessmentQuestionId, @essential, @relevanceQuestionId, @compareToRoleRequirements, @minMatchResult, @maxMatchResult)",
+                new
+                {
+                    competencyLearningResourceId, assessmentQuestionId, essential, relevanceQuestionId,
+                    compareToRoleRequirements, minMatchResult, maxMatchResult,
+                }
             );
         }
     }
