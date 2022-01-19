@@ -40,8 +40,9 @@
             {
                 var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters
                     .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
-                controller.ViewData[LayoutViewDataKeys.DlsSubApplication] =
-                    context.ActionArguments[dlsSubApplicationParameterName!];
+                controller.ViewData[LayoutViewDataKeys.DlsSubApplication] = context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
+                    ? context.ActionArguments[dlsSubApplicationParameterName]
+                    : null;
             }
         }
     }
