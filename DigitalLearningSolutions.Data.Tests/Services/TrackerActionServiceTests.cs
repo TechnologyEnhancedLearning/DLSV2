@@ -181,11 +181,17 @@
 
         [Test]
         [TestCase(null, "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
-        [TestCase(1, null)][TestCase(1, null)]
-        public void StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_parameter_missing(
-            int? progressId,
-            string? diagnosticOutcome
-        )
+        [TestCase(1, null)]
+        [TestCase(1, null)]
+        [TestCase(1, "[{'unexpectedkey':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':999999999999999999,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':x,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':425,'myscore':x},{'tutorialid':424,'myscore':3}]")]
+        public void
+            StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_error_when_deserializing_json_or_updating_score(
+                int? progressId,
+                string? diagnosticOutcome
+            )
         {
             // When
             var result = trackerActionService.StoreDiagnosticJson(progressId, diagnosticOutcome);
