@@ -25,14 +25,20 @@
         private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
         private readonly ILogger<LearningHubResourceService> logger;
 
-        public LearningHubResourceService(ILearningHubApiClient learningHubApiClient, ILearningResourceReferenceDataService learningResourceReferenceDataService, ILogger<LearningHubResourceService> logger)
+        public LearningHubResourceService(
+            ILearningHubApiClient learningHubApiClient,
+            ILearningResourceReferenceDataService learningResourceReferenceDataService,
+            ILogger<LearningHubResourceService> logger
+        )
         {
             this.learningHubApiClient = learningHubApiClient;
             this.learningResourceReferenceDataService = learningResourceReferenceDataService;
             this.logger = logger;
         }
 
-        public async Task<LearningResourceReferenceWithResourceDetails?> GetResourceByReferenceId(int resourceReferenceId)
+        public async Task<LearningResourceReferenceWithResourceDetails?> GetResourceByReferenceId(
+            int resourceReferenceId
+        )
         {
             try
             {
@@ -42,8 +48,10 @@
             }
             catch (Exception e)
             {
-                logger.LogWarning($"Call to Learning Hub Open API failed when trying to call /Resource/{resourceReferenceId} endpoint. " +
-                                  $"Using fall-back data instead. Exception: {e.Message}");
+                logger.LogWarning(
+                    $"Call to Learning Hub Open API failed when trying to call /Resource/{resourceReferenceId} endpoint. " +
+                    $"Using fall-back data instead. Exception: {e.Message}"
+                );
 
                 var fallBackResourceDetails =
                     learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
@@ -59,28 +67,34 @@
             }
         }
 
-        public async Task<BulkLearningResourceReferences> GetBulkResourcesByReferenceIds(IList<int> resourceReferenceIds)
+        public async Task<BulkLearningResourceReferences> GetBulkResourcesByReferenceIds(
+            IList<int> resourceReferenceIds
+        )
         {
             try
             {
                 // TODO HEEDLS-747: tackle different response codes rather than catching all exceptions
-                var upToDateResourceDetails = await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceReferenceIds);
+                var upToDateResourceDetails =
+                    await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceReferenceIds);
                 return new BulkLearningResourceReferences(upToDateResourceDetails, false);
             }
             catch (Exception e)
             {
-                logger.LogWarning("Call to Learning Hub Open API failed when trying to call /Resource/Bulk endpoint. " +
-                                  $"Using fall-back data instead. Exception: {e.Message}");
+                logger.LogWarning(
+                    "Call to Learning Hub Open API failed when trying to call /Resource/Bulk endpoint. " +
+                    $"Using fall-back data instead. Exception: {e.Message}"
+                );
 
                 var fallBackResources =
-                    learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds).ToList();
+                    learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds)
+                        .ToList();
 
                 var bulkResourceReferences = new BulkResourceReferences
                 {
                     ResourceReferences = fallBackResources,
                     UnmatchedResourceReferenceIds = resourceReferenceIds.Where(
                         refId => fallBackResources.All(resource => resource.RefId != refId)
-                    ).ToList()
+                    ).ToList(),
                 };
                 return new BulkLearningResourceReferences(bulkResourceReferences, true);
             }
