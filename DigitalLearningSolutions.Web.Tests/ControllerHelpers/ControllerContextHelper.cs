@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FakeItEasy;
@@ -41,6 +42,7 @@
         ) where T : Controller
         {
             var httpContext = A.Fake<HttpContext>();
+            var fakeSession = A.Fake<ISession>();
 
             var cookieCollection = cookieName == null || cookieValue == null
                 ? A.Fake<IRequestCookieCollection>()
@@ -48,6 +50,7 @@
 
             A.CallTo(() => request.Cookies).Returns(cookieCollection);
             A.CallTo(() => httpContext.Request).Returns(request);
+            A.CallTo(() => httpContext.Session).Returns(fakeSession);
 
             if (response != null)
             {
@@ -110,6 +113,20 @@
         public static T WithMockTempData<T>(this T controller) where T : Controller
         {
             controller.TempData = new TempDataDictionary(controller.HttpContext, A.Fake<ITempDataProvider>());
+            return controller;
+        }
+
+        public static T WithMockSessionData<T>(this T controller, IDictionary<string, string> sessionData)
+            where T : Controller
+        {
+            var fakeSession = A.Fake<ISession>();
+            controller.HttpContext.Session = fakeSession;
+            byte[]? outValue;
+            A.CallTo(() => fakeSession.TryGetValue(A<string>._, out outValue))
+                .Returns(true)
+                .AssignsOutAndRefParametersLazily(
+                    (string key, byte[]? value) => new object[] { Encoding.UTF8.GetBytes(sessionData[key]) }
+                );
             return controller;
         }
 

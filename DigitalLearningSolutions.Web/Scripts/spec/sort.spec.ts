@@ -24,6 +24,8 @@ describe('getSortValue', () => {
   ${''}                 | ${''}             | ${'Topic'}                           | ${''}
   ${'delegate-count'}   | ${'5'}            | ${'DelegateCount'}                   | ${5}
   ${'courses-count'}    | ${'7'}            | ${'CoursesCount'}                    | ${7}
+  ${'faq-id'}           | ${'86'}           | ${'FaqId'}                           | ${86}
+  ${'faq-weighting'}    | ${'100'}          | ${'Weighting'}                       | ${100}
   `('should correctly sort $fieldName by $sortBy',
     ({
       fieldName, fieldValue, sortBy, expectedSortValue,
@@ -42,7 +44,8 @@ describe('getSortValue', () => {
 
       // When
       const searchableElements = {
-        title: ' title',
+        searchableContent: 'title',
+        parentIndex: 0,
         element: document.getElementsByClassName('searchable-element')[0],
       };
       const actualValue = getSortValue(searchableElements, sortBy);
@@ -384,6 +387,80 @@ describe('sortSearchableElements course setup', () => {
   ${'InProgressCount'}  | ${'Ascending'}  | ${'course-b'} | ${'course-c'} | ${'course-a'}
   ${'InProgressCount'}  | ${'Descending'} | ${'course-a'} | ${'course-c'} | ${'course-b'}
   `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+});
+
+describe('sortSearchableElements faqs', () => {
+  beforeEach(() => {
+    // Given
+    global.document = new JSDOM(`
+      <html>
+      <head></head>
+      <body>
+      <input type="text" id="select-sort-by" data-sort-by-multiple="true" />
+      <input type="text" id="select-sort-direction"/>
+        <div id="searchable-elements">
+          <div class="searchable-element" id="faq-a">
+            <span name="faq-name" class="searchable-element-title">FAQ: A</span>
+            <p name="faq-weighting">55</p>
+            <p name="faq-id">3</p>
+          </div>
+          <div class="searchable-element" id="faq-b">
+            <span name="faq-name" class="searchable-element-title">FAQ: B</span>
+            <p name="faq-weighting">55</p>
+            <p name="faq-id">2</p>
+          </div>
+          <div class="searchable-element" id="faq-c">
+            <span name="faq-name" class="searchable-element-title">FAQ: C</span>
+            <p name="faq-weighting">99</p>
+            <p name="faq-id">1</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `).window.document;
+  });
+
+  it.each`
+  sortBy         | sortDirection   | firstId    | secondId   | thirdId
+  ${'Weighting'} | ${'Ascending'}  | ${'faq-a'} | ${'faq-b'} | ${'faq-c'}
+  ${'Weighting'} | ${'Descending'} | ${'faq-c'} | ${'faq-a'} | ${'faq-b'}
+  ${'FaqId'}     | ${'Ascending'}  | ${'faq-c'} | ${'faq-b'} | ${'faq-a'}
+  ${'FaqId'}     | ${'Descending'} | ${'faq-a'} | ${'faq-b'} | ${'faq-c'}
+  `('should correctly sort the cards $sortDirection by $sortBy', ({
+    sortBy, sortDirection, firstId, secondId, thirdId,
+  }) => {
+    // When
+    setSortBy(sortBy);
+    setSortDirection(sortDirection);
+    const searchableElements = getSearchableElements();
+    const newSearchableElements = sortSearchableElements(searchableElements);
+
+    // Then
+    expect(newSearchableElements?.length).toEqual(3);
+    expect(newSearchableElements![0].element.id).toBe(firstId);
+    expect(newSearchableElements![1].element.id).toBe(secondId);
+    expect(newSearchableElements![2].element.id).toBe(thirdId);
+  });
+
+  it.each`
+  sortBy                | sortDirection   | firstId    | secondId   | thirdId
+  ${'Weighting,FaqId'}  | ${'Ascending'}  | ${'faq-b'} | ${'faq-a'} | ${'faq-c'}
+  ${'Weighting,FaqId'}  | ${'Descending'} | ${'faq-c'} | ${'faq-a'} | ${'faq-b'}
+  `('should correctly sort the cards $sortDirection by multiple criteria $sortBy', ({
     sortBy, sortDirection, firstId, secondId, thirdId,
   }) => {
     // When

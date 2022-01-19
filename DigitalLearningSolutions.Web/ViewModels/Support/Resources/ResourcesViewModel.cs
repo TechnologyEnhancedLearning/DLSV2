@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class ResourcesViewModel : SupportViewModel
+    public class ResourcesViewModel : BaseSupportViewModel
     {
         public ResourcesViewModel(
             DlsSubApplication dlsSubApplication,
@@ -14,8 +14,6 @@
             IEnumerable<ResourceGroup> resourceGroups
         ) : base(dlsSubApplication, currentPage, currentSystemBaseUrl)
         {
-            CurrentPage = currentPage;
-            DlsSubApplication = dlsSubApplication;
             Categories = resourceGroups.Select(rc => new ResourceGroupViewModel(rc, currentSystemBaseUrl));
         }
 

@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
@@ -160,23 +159,6 @@
 
             notificationService.SendUnlockRequest(progressId);
             return View("Current/UnlockCurrentCourse");
-        }
-
-        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
-        [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
-        public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
-        {
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            var learningResourceLink =
-                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
-
-            if (string.IsNullOrWhiteSpace(learningResourceLink))
-            {
-                return NotFound();
-            }
-
-            // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
-            return Redirect(learningResourceLink);
         }
 
         [HttpGet]
