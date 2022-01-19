@@ -3,7 +3,9 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.SignpostingSso;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
@@ -11,6 +13,7 @@
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.UseSignposting)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
     [Route("Signposting")]
     [Authorize(Policy = CustomPolicies.UserOnly)]
     public class SignpostingSsoController : Controller
