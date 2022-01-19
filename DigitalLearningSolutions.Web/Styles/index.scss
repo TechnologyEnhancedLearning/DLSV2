@@ -305,3 +305,21 @@ ul.no-bullets {
 .display-none {
   display: none;
 }
+
+.button-as-link {
+  background: none;
+  border: none;
+  color: $nhsuk-link-color;
+  @extend .nhsuk-u-font-size-19;
+  text-decoration: underline;
+
+  &:hover {
+    color: $nhsuk-link-hover-color;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &:focus {
+    @include nhsuk-focused-text;
+  }
+}
