@@ -74,6 +74,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.SIT.json")
                 .AddEnvironmentVariables("DlsRefactor_")
+                .AddUserSecrets(typeof(Startup).Assembly)
                 .Build();
         }
     }

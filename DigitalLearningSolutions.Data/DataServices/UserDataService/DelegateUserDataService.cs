@@ -35,7 +35,8 @@
                         cd.JobGroupID,
                         jg.JobGroupName,
                         cd.HasBeenPromptedForPrn,
-                        cd.ProfessionalRegistrationNumber
+                        cd.ProfessionalRegistrationNumber,
+                        cd.HasDismissedLhLoginWarning
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
@@ -393,6 +394,26 @@
                     SET Active = 1
                     WHERE CandidateID = @delegateId",
                 new { delegateId }
+            );
+        }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            ).Single();
+        }
+
+        public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET HasDismissedLhLoginWarning = @status
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, status }
             );
         }
 
