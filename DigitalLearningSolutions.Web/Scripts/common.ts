@@ -5,21 +5,6 @@ export default function getPathForEndpoint(endpoint: string): string {
   return `${currentPath.substring(0, indexOfBaseUrl)}${endpoint}`;
 }
 
-export function getPageNumber(): number {
-  fixPageNumber();
-  const currentPath = window.location.pathname;
-  const urlParts = currentPath.split('/');
-  return parseInt(urlParts[urlParts.length - 1], 10);
-}
-
-export function updatePageNumber(pageNumber: number): void {
-  fixPageNumber();
-  const currentPath = window.location.pathname;
-  const urlParts = currentPath.split('/');
-  const newUrl = `${urlParts.slice(0, -1).join('/')}/${pageNumber.toString()}`;
-  window.history.replaceState({}, '', newUrl);
-}
-
 /** This allows us to dispatch browser events in old IE and newer browsers. */
 export function sendBrowserAgnosticEvent <T extends HTMLElement>(
   elem: T,
@@ -37,20 +22,4 @@ export function sendBrowserAgnosticEvent <T extends HTMLElement>(
   elem.dispatchEvent(event);
 
   return event;
-}
-
-/* Guarantees the last element of the path is a number with no trailing slashes */
-function fixPageNumber(): void {
-  const currentPath = window.location.pathname;
-  const urlParts = currentPath.split('/');
-  if (urlParts[urlParts.length - 1] === '') {
-    urlParts.pop();
-  }
-
-  const pageNumber = parseInt(urlParts[urlParts.length - 1], 10);
-
-  if (Number.isNaN(pageNumber)) {
-    const newUrl = `${urlParts.join('/')}/1`;
-    window.history.replaceState({}, '', newUrl);
-  }
 }

@@ -6,7 +6,7 @@ import {
 import { search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
 import { paginateResults, setUpPagination } from './paginate';
-import getPathForEndpoint, {getPageNumber, updatePageNumber} from '../common';
+import getPathForEndpoint from '../common';
 
 export interface ISearchableElement {
   parentIndex: number;
@@ -37,7 +37,7 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
   ) {
-    this.page = getPageNumber();
+    this.page = SearchSortFilterAndPaginate.getPageNumber();
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
@@ -63,21 +63,20 @@ export class SearchSortFilterAndPaginate {
             () => this.onPreviousPagePressed(searchableData),
             () => this.onItemsPerPageUpdated(searchableData),
           );
+          this.updateSearchableElementLinks(searchableData);
         }
         this.searchSortAndPaginate(searchableData);
       });
   }
 
   private onFilterUpdated(searchableData: ISearchableData): void {
-    this.page = 1;
-    updatePageNumber(this.page);
+    this.updatePageNumber(1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
-    this.page = 1;
-    updatePageNumber(this.page);
+    this.updatePageNumber(1, searchableData);
     this.searchSortAndPaginate(searchableData);
   }
 
@@ -87,15 +86,13 @@ export class SearchSortFilterAndPaginate {
   }
 
   private onNextPagePressed(searchableData: ISearchableData): void {
-    this.page += 1;
-    updatePageNumber(this.page);
+    this.updatePageNumber(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
-    this.page -= 1;
-    updatePageNumber(this.page);
+    this.updatePageNumber(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
@@ -219,5 +216,51 @@ export class SearchSortFilterAndPaginate {
 
   private static scrollToTop() : void {
     window.scrollTo(0, 0);
+  }
+
+  private updatePageNumber(pageNumber: number, searchableData: ISearchableData): void {
+    this.page = pageNumber;
+
+    SearchSortFilterAndPaginate.fixPageNumber();
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    const newUrl = `${urlParts.slice(0, -1).join('/')}/${pageNumber.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+
+    this.updateSearchableElementLinks(searchableData);
+  }
+
+  private static getPageNumber(): number {
+    SearchSortFilterAndPaginate.fixPageNumber();
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    return parseInt(urlParts[urlParts.length - 1], 10);
+  }
+
+  /* Guarantees the last element of the path is a number with no trailing slashes */
+  private static fixPageNumber(): void {
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    if (urlParts[urlParts.length - 1] === '') {
+      urlParts.pop();
+    }
+
+    const pageNumber = parseInt(urlParts[urlParts.length - 1], 10);
+
+    if (Number.isNaN(pageNumber)) {
+      const newUrl = `${urlParts.join('/')}/1`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }
+
+  private updateSearchableElementLinks(searchableData: ISearchableData): void {
+    _.forEach(searchableData.searchableElements, (searchableElement) => {
+      _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
+        const params = new URLSearchParams(anchor.search);
+        params.set('returnPage', this.page.toString());
+        // eslint-disable-next-line no-param-reassign
+        anchor.search = `?${params.toString()}`;
+      });
+    });
   }
 }
