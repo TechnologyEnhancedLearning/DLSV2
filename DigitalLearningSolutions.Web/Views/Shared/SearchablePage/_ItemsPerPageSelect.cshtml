@@ -1,0 +1,33 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
+@model BaseSearchablePageViewModel
+
+<form method="get" role="search">
+  <input type="hidden" name="searchString" value="@Model.SearchString" />
+  <input type="hidden" name="sortBy" value="@Model.SortBy" />
+  <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+  @if (Model.FilterEnabled)
+  {
+    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+  }
+  @foreach (var (key, value) in Model.RouteData)
+  {
+    <input type="hidden" name="@key" value="@value" />
+  }
+
+  <div class="nhsuk-form-group items-per-page-select-container">
+    <label class="nhsuk-label--s nhsuk-u-margin-bottom-1" id="items-per-page" for="items-per-page-select">
+      Items per page
+    </label>
+    <div class="nhsuk-u-width-full items-per-page-button-container">
+      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown items-per-page-dropdown nhsuk-u-margin-bottom-0"
+              id="items-per-page-select"
+              asp-for="ItemsPerPage"
+              asp-items="Model.ItemsPerPageSelectListItems"
+              aria-label="Sort by">
+      </select>
+      <button class="non-js-only nhsuk-search__submit items-per-page-submit" type="submit">
+        Update
+      </button>
+    </div>
+  </div>
+</form>

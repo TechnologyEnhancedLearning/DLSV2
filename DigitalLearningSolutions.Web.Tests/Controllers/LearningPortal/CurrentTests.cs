@@ -66,7 +66,7 @@
         public async Task Current_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -80,21 +80,21 @@
         public async Task Current_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            GivenCurrentActivitiesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
         public async Task AllCurrentItems_action_should_not_fetch_ActionPlanResources_if_signposting_disabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
+            GivenCurrentActivitiesAreEmptyLists();
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
 
             // When
@@ -108,14 +108,14 @@
         public async Task AllCurrentItems_action_should_fetch_ActionPlanResources_if_signposting_enabled()
         {
             // Given
-            GivenCurrentActivitesAreEmptyLists();
-            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("false");
+            GivenCurrentActivitiesAreEmptyLists();
+            A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
             // When
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustNotHaveHappened();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -133,7 +133,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id, null, null, null);
+            var result = controller.SetCurrentCourseCompleteByDate(currentCourse.Id);
 
             // Then
             result.Should()
@@ -154,7 +154,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
 
             // When
-            var result = controller.SetCurrentCourseCompleteByDate(3, null, null, null);
+            var result = controller.SetCurrentCourseCompleteByDate(3);
 
             // Then
             result.Should()
@@ -165,30 +165,35 @@
         }
 
         [Test]
-        public void Setting_a_valid_complete_by_date_should_call_the_course_service()
+        public void Setting_a_valid_complete_by_date_for_course_should_call_the_course_service()
         {
             // Given
+            const int id = 1;
+            const int progressId = 1;
             const int newDay = 29;
             const int newMonth = 7;
             const int newYear = 3020;
+            var formData = new EditCompleteByDateFormData { Day = newDay, Month = newMonth, Year = newYear };
+
             var newDate = new DateTime(newYear, newMonth, newDay);
-            const int progressId = 1;
 
             // When
-            controller.SetCurrentCourseCompleteByDate(1, newDay, newMonth, newYear, 1);
+            controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
             A.CallTo(() => courseDataService.SetCompleteByDate(progressId, CandidateId, newDate)).MustHaveHappened();
         }
 
         [Test]
-        public void Setting_an_empty_complete_by_date_should_call_the_course_service_with_null()
+        public void Setting_an_empty_complete_by_date_for_course_should_call_the_course_service_with_null()
         {
             // Given
+            const int id = 1;
             const int progressId = 1;
+            var formData = new EditCompleteByDateFormData { Day = null, Month = null, Year = null };
 
             // When
-            controller.SetCurrentCourseCompleteByDate(1, 0, 0, 0, 1);
+            controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
             A.CallTo(() => courseDataService.SetCompleteByDate(progressId, CandidateId, null)).MustHaveHappened();
@@ -197,41 +202,38 @@
         [Test]
         public void Setting_a_valid_complete_by_date_should_redirect_to_current_courses()
         {
+            // Given
+            const int id = 1;
+            const int progressId = 1;
+            const int day = 29;
+            const int month = 7;
+            const int year = 3020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+
             // When
-            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(1, 29, 7, 3020, 1);
+            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
             result.ActionName.Should().Be("Current");
         }
 
         [Test]
-        public void Setting_an_invalid_complete_by_date_should_not_call_the_course_service()
-        {
-            // When
-            controller.SetCurrentCourseCompleteByDate(1, 31, 2, 2020, 1);
-
-            // Then
-            A.CallTo(() => courseDataService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
-        }
-
-        [Test]
-        public void Setting_an_invalid_complete_by_date_should_redirect_with_an_error_message()
+        public void Setting_an_invalid_complete_by_date_for_course_should_not_call_the_course_service()
         {
             // Given
             const int id = 1;
-            const int day = 31;
-            const int month = 2;
+            const int progressId = 1;
+            const int day = 1;
+            const int month = 1;
             const int year = 2020;
+            var formData = new EditCompleteByDateFormData { Day = day, Month = month, Year = year };
+            controller.ModelState.AddModelError("year", "message");
 
             // When
-            var result = (RedirectToActionResult)controller.SetCurrentCourseCompleteByDate(id, day, month, year, 1);
+            controller.SetCurrentCourseCompleteByDate(id, progressId, formData);
 
             // Then
-            result.ActionName.Should().Be("SetCurrentCourseCompleteByDate");
-            result.RouteValues["id"].Should().Be(id);
-            result.RouteValues["day"].Should().Be(day);
-            result.RouteValues["month"].Should().Be(month);
-            result.RouteValues["year"].Should().Be(year);
+            A.CallTo(() => courseDataService.SetCompleteByDate(1, CandidateId, A<DateTime>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -440,7 +442,7 @@
                 .MustNotHaveHappened();
         }
 
-        private void GivenCurrentActivitesAreEmptyLists()
+        private void GivenCurrentActivitiesAreEmptyLists()
         {
             A.CallTo(() => courseDataService.GetCurrentCourses(A<int>._)).Returns(new List<CurrentCourse>());
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))

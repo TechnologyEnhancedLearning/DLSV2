@@ -28,6 +28,6 @@ describe('search', () => {
 
     // Then
     expect(newCourses.length).toBe(1);
-    expect(newCourses[0].title).toBe('cheese');
+    expect(newCourses[0].searchableContent).toBe('cheese');
   });
 });

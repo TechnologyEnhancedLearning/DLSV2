@@ -21,6 +21,7 @@
           <input type="hidden" name="filterBy" value="@Model.FilterBy" />
           <input type="hidden" name="sortBy" value="@Model.SortBy" />
           <input type="hidden" name="sortDirection" value="@Model.SortDirection" />
+          <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
           @foreach (var (key, value) in Model.RouteData) {
             <input type="hidden" name="@key" value="@value" />
           }

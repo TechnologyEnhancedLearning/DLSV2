@@ -301,5 +301,24 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetAllCentreSummariesForSuperAdmin_returns_active_and_inactive_summary_details_and_reference_data()
+        {
+                // When
+                var summaries = centresDataService.GetAllCentreSummariesForSuperAdmin().ToList();
+
+                // Then
+                var activeCentre = summaries.Single(c => c.CentreId == 2);
+                var inActiveCentre = summaries.Single(c => c.CentreId == 6);
+
+                activeCentre.Active.Should().BeTrue();
+                activeCentre.CentreType.Should().Be("NHS Organisation");
+                activeCentre.RegionName.Should().Be("North West");
+
+                inActiveCentre.Active.Should().BeFalse();
+                inActiveCentre.CentreType.Should().Be("NHS Organisation");
+                inActiveCentre.RegionName.Should().Be("East Of England");
+        }
     }
 }

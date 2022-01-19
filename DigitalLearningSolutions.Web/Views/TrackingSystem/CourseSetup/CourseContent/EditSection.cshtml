@@ -1,6 +1,5 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
 @model EditCourseSectionViewModel
@@ -42,11 +41,13 @@
       </div>
       <input type="hidden" asp-for="CourseName" />
       <input type="hidden" asp-for="SectionName" />
+      <input type="hidden" asp-for="ShowDiagnostic" />
 
       <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-        <partial name="_EditSectionDiagnostic" model="Model"/>
-
-        <partial name="_EditSectionLearning" model="Model"/>
+        <div @(Model.ShowDiagnostic ? "" : "hidden")>
+          <partial name="_EditSectionDiagnostic" model="Model" />
+        </div>
+        <partial name="_EditSectionLearning" model="Model" />
       </div>
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
