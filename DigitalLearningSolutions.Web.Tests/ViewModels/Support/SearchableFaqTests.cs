@@ -17,8 +17,7 @@
             var searchableFaq = new SearchableFaq(faq);
 
             // Then
-            const string expectedSearchableFaqAnswer = " p Helpful content  p ";
-            searchableFaq.SearchableFaqAnswer.Should().Be(expectedSearchableFaqAnswer);
+            searchableFaq.SearchableFaqAnswer.Should().Be(" p Helpful content  p ");
         }
     }
 }
