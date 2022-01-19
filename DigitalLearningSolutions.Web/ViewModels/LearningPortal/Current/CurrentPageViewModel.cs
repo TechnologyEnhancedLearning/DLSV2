@@ -21,10 +21,12 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortDirection,
             IEnumerable<SelfAssessment> selfAssessments,
             IEnumerable<ActionPlanResource> actionPlanResources,
+            bool resourcesSourcedFromFallbackData,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
         {
+            ResourcesSourcedFromFallbackData = resourcesSourcedFromFallbackData;
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
@@ -47,13 +49,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                     {
                         CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse),
                         SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment),
-                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity)
+                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity),
                     };
                 }
             );
         }
 
         public IEnumerable<CurrentLearningItemViewModel> CurrentActivities { get; }
+
+        public bool ResourcesSourcedFromFallbackData { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
@@ -62,7 +66,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             CourseSortByOptions.LastAccessed,
             CourseSortByOptions.CompleteByDate,
             CourseSortByOptions.DiagnosticScore,
-            CourseSortByOptions.PassedSections
+            CourseSortByOptions.PassedSections,
         };
 
         public override bool NoDataFound => !CurrentActivities.Any() && NoSearchOrFilter;

@@ -11,9 +11,11 @@
     {
         public RecommendedLearningViewModel(
             SelfAssessment selfAssessment,
-            IEnumerable<RecommendedResource> recommendedResources
+            IEnumerable<RecommendedResource> recommendedResources,
+            bool resourcesSourcedFromFallbackData
         )
         {
+            ResourcesSourcedFromFallbackData = resourcesSourcedFromFallbackData;
             SelfAssessment = selfAssessment;
 
             var sortedResources = GenericSortingHelper.SortAllItems(
@@ -32,5 +34,7 @@
         public SelfAssessment SelfAssessment { get; set; }
 
         public IEnumerable<SearchableRecommendedResourceViewModel> RecommendedResources { get; set; }
+
+        public bool ResourcesSourcedFromFallbackData { get; set; }
     }
 }

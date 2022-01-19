@@ -26,6 +26,10 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
+    @if (Model.ResourcesSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     <div id="searchable-elements">
       @foreach (var resource in Model.RecommendedResources) {
         <partial name="_SearchableRecommendedResourceCard" model="resource" />

@@ -68,7 +68,7 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
@@ -100,7 +100,7 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
+            var destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
@@ -115,7 +115,7 @@
                 return NotFound();
             }
 
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/PlayList/" + playListId;
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/PlayList/" + playListId;
             selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var model = await filteredApiHelperService.GetPlayList<PlayList>(
@@ -134,8 +134,8 @@
                 return NotFound();
             }
 
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/LearningAsset/" +
-                             assetId;
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/LearningAsset/" +
+                          assetId;
             selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(
@@ -196,7 +196,7 @@
 
         private async Task<string> GetFilteredToken()
         {
-            string candidateNum = User.GetCandidateNumberKnownNotNull();
+            var candidateNum = User.GetCandidateNumberKnownNotNull();
             string? filteredToken = null;
             if (Request.Cookies.ContainsKey("filtered-" + candidateNum))
             {
@@ -207,7 +207,7 @@
             {
                 var accessToken = await filteredApiHelperService.GetUserAccessToken<AccessToken>(candidateNum);
                 filteredToken = accessToken.Jwt_access_token;
-                CookieOptions cookieOptions = new CookieOptions();
+                var cookieOptions = new CookieOptions();
                 cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(15));
                 Response.Cookies.Append("filtered-" + candidateNum, filteredToken, cookieOptions);
             }
@@ -254,10 +254,10 @@
         )
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var recommendedResources =
+            var (recommendedResources, sourcedFromFallbackData) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
-            var model = new RecommendedLearningViewModel(assessment, recommendedResources);
+            var model = new RecommendedLearningViewModel(assessment, recommendedResources, sourcedFromFallbackData);
             return View("RecommendedLearning", model);
         }
     }

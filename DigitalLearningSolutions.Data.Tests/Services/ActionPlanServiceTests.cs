@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Helpers;
@@ -30,7 +29,7 @@
         private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
         private IConfiguration config = null!;
         private Catalogue genericCatalogue = null!;
-        private ILearningHubApiClient learningHubApiClient = null!;
+        private ILearningHubResourceService learningHubResourceService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
@@ -42,7 +41,7 @@
             clockService = A.Fake<IClockService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
-            learningHubApiClient = A.Fake<ILearningHubApiClient>();
+            learningHubResourceService = A.Fake<ILearningHubResourceService>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
             learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
             config = A.Fake<IConfiguration>();
@@ -51,7 +50,7 @@
                 competencyLearningResourcesDataService,
                 learningLogItemsDataService,
                 clockService,
-                learningHubApiClient,
+                learningHubResourceService,
                 selfAssessmentDataService,
                 config,
                 learningResourceReferenceDataService
@@ -79,8 +78,9 @@
                 )
             ).Returns(learningHubResourceId);
 
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(learningHubResourceId))
-                .Returns(new ResourceReferenceWithResourceDetails { Title = resourceName, Link = resourceLink });
+            var resource = new ResourceReferenceWithResourceDetails { Title = resourceName, Link = resourceLink };
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(learningHubResourceId))
+                .Returns(new LearningResourceReferenceWithResourceDetails(resource, true));
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(
@@ -161,8 +161,9 @@
             var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
-            result.Should().BeEmpty();
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
+            result.resources.Should().BeEmpty();
+            result.SourcedFromFallbackData.Should().BeFalse();
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
                 .MustNotHaveHappened();
         }
 
@@ -181,13 +182,14 @@
                 .Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
                 .Returns(learningLogItems);
-            GivenLearningHubApiBulkResponseReturnsExpectedResources(learningResourceIds);
+            GivenLearningHubResourceServiceBulkResponseReturnsExpectedResources(learningResourceIds);
 
             // When
             var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
-            AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result, learningResourceIds);
+            result.SourcedFromFallbackData.Should().BeFalse();
+            AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result.resources, learningResourceIds);
         }
 
         [Test]
@@ -209,8 +211,9 @@
             var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
 
             // Then
-            result.Should().BeEmpty();
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
+            result.resources.Should().BeEmpty();
+            result.SourcedFromFallbackData.Should().BeFalse();
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
                 .MustNotHaveHappened();
         }
 
@@ -229,22 +232,24 @@
                 .Build();
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(delegateId))
                 .Returns(learningLogItems);
-            GivenLearningHubApiBulkResponseReturnsExpectedResources(learningResourceIds);
+            GivenLearningHubResourceServiceBulkResponseReturnsExpectedResources(learningResourceIds);
 
             // When
             var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
 
             // Then
-            AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result, learningResourceIds);
+            result.SourcedFromFallbackData.Should().BeFalse();
+            AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result.resources, learningResourceIds);
         }
 
         [Test]
-        public async Task GetCompleteActionPlanResources_returns_correctly_matched_action_plan_items_with_repeated_resource()
+        public async Task
+            GetCompleteActionPlanResources_returns_correctly_matched_action_plan_items_with_repeated_resource()
         {
             // Given
             const int delegateId = 1;
             var learningLogIds = new List<int> { 4, 5, 6 };
-            var learningResourceIds = new List<int> { 15, 26, 15};
+            var learningResourceIds = new List<int> { 15, 26, 15 };
             var expectedLearningResourceIdsUsedInApiCall = new List<int> { 15, 26 };
             var learningLogItems = Builder<LearningLogItem>.CreateListOfSize(3).All()
                 .With(i => i.CompletedDate = DateTime.UtcNow)
@@ -264,14 +269,14 @@
                 ResourceReferences = matchedResources,
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .Returns(bulkReturnedItems);
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+                .Returns(new BulkLearningResourceReferences(bulkReturnedItems, false));
 
             // When
             var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
 
             // Then
-            List<(int id, string title)> resultIdsAndTitles = result.Select(r => (r.Id, r.Name)).ToList();
+            List<(int id, string title)> resultIdsAndTitles = result.resources.Select(r => (r.Id, r.Name)).ToList();
             using (new AssertionScope())
             {
                 resultIdsAndTitles.Count.Should().Be(3);
@@ -279,8 +284,8 @@
                 resultIdsAndTitles[1].Should().Be((5, "Title 26"));
                 resultIdsAndTitles[2].Should().Be((6, "Title 15"));
                 A.CallTo(
-                        () => learningHubApiClient.GetBulkResourcesByReferenceIds(
-                            A<IEnumerable<int>>.That.IsSameSequenceAs(expectedLearningResourceIdsUsedInApiCall)
+                        () => learningHubResourceService.GetBulkResourcesByReferenceIds(
+                            A<List<int>>.That.IsSameSequenceAs(expectedLearningResourceIdsUsedInApiCall)
                         )
                     )
                     .MustHaveHappenedOnceExactly();
@@ -310,8 +315,8 @@
                 .And(r => r.Title = "Title")
                 .And(r => r.Catalogue = genericCatalogue)
                 .And(r => r.Link = resourceLink).Build();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(resourceReferenceId))
-                .Returns(matchedResource);
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(resourceReferenceId))
+                .Returns(new LearningResourceReferenceWithResourceDetails(matchedResource, false));
 
             // When
             var result =
@@ -325,7 +330,7 @@
                     () => learningLogItemsDataService.UpdateLearningLogItemLastAccessedDate(learningLogItemId, testDate)
                 )
                 .MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(resourceReferenceId))
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(resourceReferenceId))
                 .MustHaveHappenedOnceExactly();
         }
 
@@ -543,7 +548,10 @@
                 .Returns(learningLogItems);
 
             // When
-            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(
+                GenericLearningResourceReferenceId,
+                GenericDelegateId
+            );
 
             // Then
             result.Should().BeTrue();
@@ -568,13 +576,16 @@
                 .Returns(learningLogItems);
 
             // When
-            var result = actionPlanService.ResourceCanBeAddedToActionPlan(GenericLearningResourceReferenceId, GenericDelegateId);
+            var result = actionPlanService.ResourceCanBeAddedToActionPlan(
+                GenericLearningResourceReferenceId,
+                GenericDelegateId
+            );
 
             // Then
             result.Should().BeFalse();
         }
 
-        private void GivenLearningHubApiBulkResponseReturnsExpectedResources(IList<int> learningResourceIds)
+        private void GivenLearningHubResourceServiceBulkResponseReturnsExpectedResources(IList<int> learningResourceIds)
         {
             var matchedResources = Builder<ResourceReferenceWithResourceDetails>.CreateListOfSize(3).All()
                 .With((r, index) => r.RefId = learningResourceIds[index])
@@ -590,8 +601,8 @@
                 ResourceReferences = matchedResources,
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .Returns(bulkReturnedItems);
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+                .Returns(new BulkLearningResourceReferences(bulkReturnedItems, false));
         }
 
         private void AssertThatActionPlanResourceIdsAndTitlesAreCorrect(
@@ -607,8 +618,8 @@
                 resultIdsAndTitles[1].Should().Be((5, "Title 21"));
                 resultIdsAndTitles[2].Should().Be((6, "Title 33"));
                 A.CallTo(
-                        () => learningHubApiClient.GetBulkResourcesByReferenceIds(
-                            A<IEnumerable<int>>.That.IsSameSequenceAs(learningResourceIds)
+                        () => learningHubResourceService.GetBulkResourcesByReferenceIds(
+                            A<List<int>>.That.IsSameSequenceAs(learningResourceIds)
                         )
                     )
                     .MustHaveHappenedOnceExactly();

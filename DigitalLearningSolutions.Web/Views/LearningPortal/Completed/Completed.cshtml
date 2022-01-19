@@ -14,6 +14,10 @@
       <h2 class="page-subheading">@Model.BannerText</h2>
     }
 
+    @if (Model.ResourcesSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
     <hr class="nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-4" />

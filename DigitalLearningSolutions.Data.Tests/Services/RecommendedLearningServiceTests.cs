@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
@@ -36,7 +35,7 @@
         private const string ResourceLink = "www.test.com";
 
         private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService = null!;
-        private ILearningHubApiClient learningHubApiClient = null!;
+        private ILearningHubResourceService learningHubResourceService = null!;
         private ILearningLogItemsDataService learningLogItemsDataService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISelfAssessmentDataService selfAssessmentDataService = null!;
@@ -46,13 +45,13 @@
         {
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
             learningLogItemsDataService = A.Fake<ILearningLogItemsDataService>();
-            learningHubApiClient = A.Fake<ILearningHubApiClient>();
+            learningHubResourceService = A.Fake<ILearningHubResourceService>();
             selfAssessmentDataService = A.Fake<ISelfAssessmentDataService>();
 
             recommendedLearningService = new RecommendedLearningService(
                 selfAssessmentDataService,
                 competencyLearningResourcesDataService,
-                learningHubApiClient,
+                learningHubResourceService,
                 learningLogItemsDataService
             );
         }
@@ -74,6 +73,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
+                .recommendedResources
                 .ToList();
 
             // Then
@@ -101,7 +101,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -130,7 +130,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -159,7 +159,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -193,7 +193,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -201,7 +201,8 @@
         }
 
         [Test]
-        public async Task GetRecommendedLearningForSelfAssessment_calls_learning_hub_api_with_distinct_ids()
+        public async Task
+            GetRecommendedLearningForSelfAssessment_calls_learning_hub_resource_service_with_distinct_ids()
         {
             // Given
             A.CallTo(() => selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(SelfAssessmentId))
@@ -221,8 +222,8 @@
 
             // Then
             A.CallTo(
-                    () => learningHubApiClient.GetBulkResourcesByReferenceIds(
-                        A<IEnumerable<int>>.That.Matches(i => i.Single() == LearningHubResourceReferenceId)
+                    () => learningHubResourceService.GetBulkResourcesByReferenceIds(
+                        A<List<int>>.That.Matches(i => i.Single() == LearningHubResourceReferenceId)
                     )
                 )
                 .MustHaveHappenedOnceExactly();
@@ -248,7 +249,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -289,7 +290,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -317,7 +318,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -355,7 +356,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -390,7 +391,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -423,7 +424,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().BeEmpty();
@@ -469,7 +470,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
@@ -499,7 +500,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(expectedResultCount);
@@ -573,8 +574,8 @@
                 },
             };
 
-            A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .Returns(clientResponse);
+            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+                .Returns(new BulkLearningResourceReferences(clientResponse, false));
         }
 
         private void GivenGetLearningLogItemsReturnsAnItem()
