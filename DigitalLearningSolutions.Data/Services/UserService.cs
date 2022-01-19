@@ -65,6 +65,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         bool DelegateUserLearningHubAccountIsLinked(int delegateId);
 
+        int? GetDelegateUserLearningHubAuthId(int delegateId);
+
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
     }
 
@@ -388,6 +390,11 @@ namespace DigitalLearningSolutions.Data.Services
         public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
         {
             return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
+        }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId);
         }
 
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)

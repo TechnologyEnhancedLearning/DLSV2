@@ -1,41 +1,47 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace DigitalLearningSolutions.Web.Controllers.Signposting
+﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
-    using System;
     using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.UseSignposting)]
     public class ViewResourceController : Controller
     {
-        public ViewResourceController(IUserService userService, ILearningResourceReferenceDataService learningResourceReferenceDataService, ILearningHubSsoSecurityService learningHubSsoSecurityService, IConfiguration config)
+        private const string LoginEndpointRelativePath = "/login";
+        private const string CreateUserEndpointRelativePath = "/create-user";
+        private readonly IConfiguration config;
+        private readonly IGuidService guidService;
+        private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
+        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
+
+        private readonly IUserService userService;
+
+        public ViewResourceController(
+            IUserService userService,
+            ILearningResourceReferenceDataService learningResourceReferenceDataService,
+            ILearningHubSsoSecurityService learningHubSsoSecurityService,
+            IGuidService guidService,
+            IConfiguration config
+        )
         {
             this.userService = userService;
             this.learningResourceReferenceDataService = learningResourceReferenceDataService;
             this.learningHubSsoSecurityService = learningHubSsoSecurityService;
+            this.guidService = guidService;
             this.config = config;
         }
-
-        private readonly IUserService userService;
-        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
-        private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
-        private readonly IConfiguration config;
-
-        private const string LoginEndpointRelativePath = "/login";
-        private const string CreateUserEndpointRelativePath = "/create-user";
 
         [Route("Signposting/ViewResource/{resourceReferenceId}")]
         public IActionResult Index(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
 
-            int? learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
+            var learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
 
             var authEndpoint = config.GetLearningHubAuthApiBaseUrl();
 
@@ -43,7 +49,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             if (learningHubAuthId.HasValue)
             {
-                var resourceUrl = learningResourceReferenceDataService.GetLearningHubResourceLinkById(resourceReferenceId);
+                var resourceUrl =
+                    learningResourceReferenceDataService.GetLearningHubResourceLinkById(resourceReferenceId);
 
                 if (string.IsNullOrEmpty(resourceUrl))
                 {
@@ -64,15 +71,20 @@ namespace DigitalLearningSolutions.Web.Controllers.Signposting
 
             var createUserQueryString = ComposeCreateUserQueryString(clientCode, state, stateHash);
 
-            return Redirect(authEndpoint + CreateUserEndpointRelativePath+ createUserQueryString);
+            return Redirect(authEndpoint + CreateUserEndpointRelativePath + createUserQueryString);
         }
 
-        private static string ComposeCreateUserState(int resourceReferenceId)
+        private string ComposeCreateUserState(int resourceReferenceId)
         {
-            return Guid.NewGuid() + $"_refId:{resourceReferenceId}";
+            return guidService.NewGuid() + $"_refId:{resourceReferenceId}";
         }
 
-        private static string ComposeLoginQueryString(string clientCode, int? learningHubAuthId, string idHash, string resourceUrl)
+        private static string ComposeLoginQueryString(
+            string clientCode,
+            int? learningHubAuthId,
+            string idHash,
+            string resourceUrl
+        )
         {
             var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
 
