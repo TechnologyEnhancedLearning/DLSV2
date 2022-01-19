@@ -486,7 +486,7 @@
             );
         }
 
-        private void SetUpAddCourseEnrolProcessFakes(GroupCourse groupCourse, int centreId)
+        private void SetUpAddCourseEnrolProcessFakes(GroupCourse groupCourse)
         {
             A.CallTo(
                 () => groupsDataService.InsertGroupCustomisation(
@@ -502,7 +502,7 @@
             A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
-            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(groupCourse.GroupCustomisationId, centreId))
+            A.CallTo(() => groupsDataService.GetGroupCourseById(groupCourse.GroupCustomisationId))
                 .Returns(groupCourse);
         }
     }

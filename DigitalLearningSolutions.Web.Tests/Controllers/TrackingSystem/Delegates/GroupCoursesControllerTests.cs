@@ -119,5 +119,59 @@
                 .WithActionName("Index")
                 .WithRouteValue("groupId", groupId);
         }
+
+        [Test]
+        public void AddCourseToGroup_with_invalid_model_does_not_call_add_course_service_and_returns_view()
+        {
+            // Given
+            const int groupId = 1;
+            const int customisationId = 25;
+            var formData = new AddCourseFormData
+            {
+                MonthsToComplete = "invalidString",
+            };
+            groupCoursesController.ModelState.AddModelError(nameof(AddCourseFormData.MonthsToComplete), "Is Invalid.");
+            A.CallTo(() => courseService.GetCourseCategoryId(customisationId, ControllerContextHelper.CentreId))
+                .Returns(1);
+
+            // When
+            var result = groupCoursesController.AddCourseToGroup(formData, groupId, customisationId);
+
+            // Then
+            A.CallTo(() => groupsService.AddCourseToGroup(A<int>._, A<int>._, A<int>._, A<int>._, A<bool>._, A<int?>._))
+                .MustNotHaveHappened();
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
+        [Test]
+        public void AddCourseToGroup_with_valid_model_calls_add_course_service_and_returns_expected_view()
+        {
+            // Given
+            const int groupId = 1;
+            const int customisationId = 25;
+            var formData = new AddCourseFormData
+            {
+                CohortLearners = false,
+                SupervisorId = 1,
+                MonthsToComplete = "1",
+            };
+
+            // When
+            var result = groupCoursesController.AddCourseToGroup(formData, groupId, customisationId);
+
+            // Then
+            A.CallTo(
+                    () => groupsService.AddCourseToGroup(
+                        groupId,
+                        customisationId,
+                        1,
+                        ControllerContextHelper.AdminId,
+                        formData.CohortLearners,
+                        formData.SupervisorId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeViewResult().WithViewName("AddCourseToGroupConfirmation");
+        }
     }
 }

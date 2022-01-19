@@ -17,7 +17,7 @@
             const int adminId = 1;
             const int completeWithinMonths = 8;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -26,8 +26,7 @@
                 completeWithinMonths,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -50,7 +49,7 @@
             const int adminId = 1;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: adminId);
             SetupEnrolProcessFakes(GenericNewProgressId, GenericRelatedTutorialId);
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -59,8 +58,7 @@
                 8,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -96,7 +94,7 @@
                 GenericRelatedTutorialId,
                 existingProgressRecord
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -105,8 +103,7 @@
                 8,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -142,7 +139,7 @@
                 GenericRelatedTutorialId,
                 existingProgressRecord
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -151,8 +148,7 @@
                 8,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -187,7 +183,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -196,8 +192,7 @@
                 8,
                 adminId,
                 true,
-                null,
-                reusableDelegateDetails.CentreId
+                null
             );
 
             // Then
@@ -233,7 +228,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -242,8 +237,7 @@
                 8,
                 adminId,
                 true,
-                supervisorId,
-                reusableDelegateDetails.CentreId
+                supervisorId
             );
 
             // Then
@@ -281,7 +275,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -290,8 +284,7 @@
                 8,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -331,7 +324,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -340,8 +333,7 @@
                 8,
                 adminId,
                 true,
-                adminId,
-                reusableDelegateDetails.CentreId
+                adminId
             );
 
             // Then
@@ -378,7 +370,7 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -387,8 +379,7 @@
                 8,
                 adminId,
                 true,
-                supervisorId,
-                reusableDelegateDetails.CentreId
+                supervisorId
             );
 
             // Then
@@ -416,7 +407,7 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -425,8 +416,7 @@
                 8,
                 1,
                 true,
-                1,
-                reusableDelegateDetails.CentreId
+                1
             );
 
             // Then
@@ -456,7 +446,7 @@
                 GenericRelatedTutorialId,
                 reusableProgressRecord
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -465,8 +455,7 @@
                 8,
                 1,
                 true,
-                1,
-                reusableDelegateDetails.CentreId
+                1
             );
 
             // Then
@@ -491,7 +480,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(reusableGroupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -500,8 +489,7 @@
                 8,
                 1,
                 true,
-                1,
-                reusableDelegateDetails.CentreId
+                1
             );
 
             // Then
@@ -528,7 +516,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -537,8 +525,7 @@
                 0,
                 1,
                 true,
-                1,
-                reusableDelegateDetails.CentreId
+                1
             );
 
             // Then
@@ -577,7 +564,7 @@
                 GenericNewProgressId,
                 GenericRelatedTutorialId
             );
-            SetUpAddCourseEnrolProcessFakes(groupCourse, reusableDelegateDetails.CentreId);
+            SetUpAddCourseEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.AddCourseToGroup(
@@ -586,8 +573,7 @@
                 8,
                 1,
                 true,
-                1,
-                reusableDelegateDetails.CentreId
+                1
             );
 
             // Then
