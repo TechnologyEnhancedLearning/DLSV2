@@ -117,9 +117,9 @@
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
 
         // Export Self Assessment
-        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId);
+        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId);
 
-        IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId);
+        IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId, int candidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -297,14 +297,14 @@
             selfAssessmentDataService.LogAssetLaunch(candidateId, selfAssessmentId, learningAsset);
         }
 
-        public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId)
+        public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId);
+            return selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, candidateId);
         }
 
-        public IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId)
+        public IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId, int candidateId)
         {
-            return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId);
+            return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, candidateId);
         }
 
         public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)
