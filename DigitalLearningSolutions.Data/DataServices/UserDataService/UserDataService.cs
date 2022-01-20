@@ -54,8 +54,9 @@
             string surname,
             string email,
             byte[]? profileImage,
-            int[] ids
-        );
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
+            int[] ids);
 
         void UpdateDelegate(
             int delegateId,

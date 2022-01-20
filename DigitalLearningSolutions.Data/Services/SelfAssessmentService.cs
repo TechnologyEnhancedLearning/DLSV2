@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
 
     public interface ISelfAssessmentService
     {
@@ -114,6 +115,11 @@
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
 
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
+
+        // Export Self Assessment
+        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId);
+
+        IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId, int candidateId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -289,6 +295,16 @@
         public void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset)
         {
             selfAssessmentDataService.LogAssetLaunch(candidateId, selfAssessmentId, learningAsset);
+        }
+
+        public CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId)
+        {
+            return selfAssessmentDataService.GetCandidateAssessmentExportSummary(candidateAssessmentId, candidateId);
+        }
+
+        public IEnumerable<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(int candidateAssessmentId, int candidateId)
+        {
+            return selfAssessmentDataService.GetCandidateAssessmentExportDetails(candidateAssessmentId, candidateId);
         }
 
         public bool CanDelegateAccessSelfAssessment(int delegateId, int selfAssessmentId)

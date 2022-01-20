@@ -194,6 +194,8 @@
                 firstName,
                 surname,
                 email,
+                null,
+                true,
                 profileImage
             );
         }

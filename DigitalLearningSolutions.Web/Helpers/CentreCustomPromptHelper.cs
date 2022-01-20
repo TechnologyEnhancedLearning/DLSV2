@@ -1,13 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class CentreCustomPromptHelper
     {
