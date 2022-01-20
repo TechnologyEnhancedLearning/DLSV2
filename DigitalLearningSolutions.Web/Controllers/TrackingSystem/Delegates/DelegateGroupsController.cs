@@ -326,7 +326,7 @@
         [HttpGet]
         [Route("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
-        public IActionResult EditGroupName(int groupId)
+        public IActionResult EditGroupName(int groupId, int? returnPage)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
@@ -336,7 +336,7 @@
                 return NotFound();
             }
 
-            var model = new EditGroupNameViewModel(group?.GroupLabel!);
+            var model = new EditGroupNameViewModel(group.GroupLabel!, returnPage);
             return View(model);
         }
 
