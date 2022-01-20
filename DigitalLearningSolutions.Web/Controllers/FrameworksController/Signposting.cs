@@ -296,6 +296,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 return RedirectToAction("CompareSelfAssessmentResult", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/RemoveResource")]
+        public IActionResult RemoveResourceLink(int frameworkId, int frameworkCompetencyId, int frameworkCompetencyGroupId, int competencyLearningResourceId)
+        {
+            frameworkService.DeleteCompetencyLearningResource(competencyLearningResourceId, GetAdminId());
+            return RedirectToAction("EditCompetencyLearningResources", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
+        }
+
         private CompetencyResourceSignpostingViewModel GetSignpostingResourceParameters(int frameworkId, int frameworkCompetencyId)
         {            
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
@@ -319,7 +326,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ).ToList()
             };
             return model;
-        }
+        }        
 
         private async Task GetResourcesFromLearningHubApiAsync(CompetencyResourceSignpostingViewModel model)
         {
