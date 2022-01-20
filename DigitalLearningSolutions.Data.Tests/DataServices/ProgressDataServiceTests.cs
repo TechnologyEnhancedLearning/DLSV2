@@ -275,5 +275,29 @@
             var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
             updatedProgressRecord.Completed.Should().Be(completionDate);
         }
+
+        [Test]
+        public void UnlockCourseProgress_updates_progress_record()
+        {
+            // Given
+            const int progressId = 280244;
+            var statusBeforeUnlock = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.UnlockProgress(progressId);
+                var statusAfterUnlocked = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+                // Then
+                statusBeforeUnlock.Should().BeTrue();
+                statusAfterUnlocked.Should().BeFalse();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }
