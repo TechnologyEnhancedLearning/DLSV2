@@ -18,8 +18,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
     public partial class FrameworksController
     {
-        private static IConfiguration SignpostingConfiguration { get; set; }
-
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting")]
         public IActionResult EditCompetencyLearningResources(int frameworkId, int frameworkCompetencyGroupId, int frameworkCompetencyId)
         {
@@ -30,19 +28,28 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource")]
         public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, string searchText, int page = 1)
         {
-            var response = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
+            var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             if (frameworkCompetencyGroupId.HasValue)
             {
                 var competency = frameworkService.GetFrameworkCompetencyById(frameworkCompetencyId);
-                response.NameOfCompetency = competency?.Name ?? "";
+                model.NameOfCompetency = competency?.Name ?? "";
             }
             if (searchText?.Trim().Length > 1)
             {
-                response.Page = page; 
-                response.SearchText = searchText;
-                await GetResourcesFromLearningHubApiAsync(response);
+                model.Page = page; 
+                model.SearchText = searchText;
+                try
+                {
+                    var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                    model.SearchResult = await this.learningHubApiClient.SearchResource(model.SearchText ?? String.Empty, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
+                    model.LearningHubApiError = model.SearchResult == null;
+                }
+                catch (Exception)
+                {
+                    model.LearningHubApiError = true;
+                }
             }
-            return View("Developer/AddCompetencyLearningResources", response);
+            return View("Developer/AddCompetencyLearningResources", model);
         }
 
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/Summary")]
@@ -319,30 +326,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ).ToList()
             };
             return model;
-        }
-
-        private async Task GetResourcesFromLearningHubApiAsync(CompetencyResourceSignpostingViewModel model)
-        {
-            try
-            {
-                var httpClient = new HttpClient();
-                var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                var configuration = SignpostingConfiguration ?? (new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.Development.json")
-                    .AddUserSecrets(typeof(Program).Assembly, true)
-                    .AddEnvironmentVariables(environmentName)
-                    .Build());
-                var apiClient = new LearningHubApiClient(httpClient, configuration);
-                var offset = (int?)((model.Page - 1) * CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                model.SearchResult = await apiClient.SearchResource(model.SearchText ?? String.Empty, offset, CompetencyResourceSignpostingViewModel.ItemsPerPage);
-                model.LearningHubApiError = model.SearchResult == null;
-                SignpostingConfiguration = configuration;
-            }
-            catch (Exception)
-            {
-                model.LearningHubApiError = true;
-            }
         }
     }
 }
