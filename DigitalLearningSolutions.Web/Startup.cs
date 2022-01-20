@@ -122,6 +122,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/Configuration/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Signposting/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
@@ -186,6 +187,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
+            services.AddScoped<ILearningHubLinkService, LearningHubLinkService>();
             services.AddScoped<ILearningHubResourceService, LearningHubResourceService>();
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
@@ -248,6 +250,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
+            services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

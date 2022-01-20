@@ -9,10 +9,17 @@
 
     public class LearningHubSsoSecurityServiceTests
     {
-        private IConfiguration Config { get; set; } = null!;
         private const int TestTolerance = 3;
         private const int TestIterations = 1000;
         private const int TestLength = 3;
+        private IConfiguration Config { get; set; } = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            var clockService = A.Fake<IClockService>();
+            A.CallTo(() => clockService.UtcNow).Returns(new DateTime(2021, 12, 9, 8, 30, 45));
+        }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -121,7 +128,10 @@
         }
 
         [Test]
-        public void VerifyHash_returns_true_for_hashed_created_within_tolerance_time([Range(-TestTolerance, TestTolerance, 1)] int delay)
+        public void VerifyHash_returns_true_for_hashed_created_within_tolerance_time(
+            [Range(-TestTolerance, TestTolerance, 1)]
+            int delay
+        )
         {
             // Given
             var now = DateTime.UtcNow;
@@ -138,7 +148,10 @@
         }
 
         [Test]
-        public void VerifyHash_returns_false_for_hashes_created_outside_tolerance_time([Values(-(TestTolerance+1), TestTolerance+1)] int delay)
+        public void VerifyHash_returns_false_for_hashes_created_outside_tolerance_time(
+            [Values(-(TestTolerance + 1), TestTolerance + 1)]
+            int delay
+        )
         {
             // Given
             var now = DateTime.UtcNow;
@@ -153,7 +166,7 @@
             // Then
             result.Should().BeFalse();
         }
-
+        
         private class BinaryClockService : IClockService
         {
             public BinaryClockService(DateTime firstResult, DateTime secondResult)

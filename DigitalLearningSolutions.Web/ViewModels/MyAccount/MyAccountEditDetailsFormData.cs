@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
@@ -33,6 +34,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer4 = delegateUser?.Answer4;
             Answer5 = delegateUser?.Answer5;
             Answer6 = delegateUser?.Answer6;
+
+            ProfessionalRegistrationNumber = delegateUser?.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber =
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
+                    delegateUser?.HasBeenPromptedForPrn,
+                    delegateUser?.ProfessionalRegistrationNumber
+                );
         }
 
         protected MyAccountEditDetailsFormData(MyAccountEditDetailsFormData formData)
@@ -50,6 +58,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             Answer4 = formData.Answer4;
             Answer5 = formData.Answer5;
             Answer6 = formData.Answer6;
+            HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
         }
 
         [Required(ErrorMessage = "Enter your current password")]
@@ -62,5 +72,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
+
+        public string? ProfessionalRegistrationNumber { get; set; }
+
+        public bool? HasProfessionalRegistrationNumber { get; set; }
     }
 }

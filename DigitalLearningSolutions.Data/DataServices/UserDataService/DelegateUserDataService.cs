@@ -191,7 +191,14 @@
             return users;
         }
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids)
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
+            int[] ids)
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -199,9 +206,11 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             EmailAddress = @email,
-                            ProfileImage = @profileImage
+                            ProfileImage = @profileImage,
+                            ProfessionalRegistrationNumber = @professionalRegNumber,
+                            HasBeenPromptedForPrn = @hasBeenPromptedForPrn
                         WHERE CandidateID in @ids",
-                new { firstName, surname, email, profileImage, ids }
+                new { firstName, surname, email, profileImage, ids, professionalRegNumber, hasBeenPromptedForPrn }
             );
         }
 
@@ -397,16 +406,6 @@
             );
         }
 
-        public int? GetDelegateUserLearningHubAuthId(int delegateId)
-        {
-            return connection.Query<int?>(
-                @"SELECT LearningHubAuthId
-                    FROM Candidates
-                    WHERE CandidateID = @delegateId",
-                new { delegateId }
-            ).Single();
-        }
-
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
         {
             connection.Execute(
@@ -448,6 +447,26 @@
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.AliasID = @aliasId",
                 new { aliasId }
+            );
+        }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            ).Single();
+        }
+
+        public void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET LearningHubAuthId = @learningHubAuthId
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, learningHubAuthId }
             );
         }
     }
