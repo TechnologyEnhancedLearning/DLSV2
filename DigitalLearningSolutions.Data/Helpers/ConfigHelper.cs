@@ -8,11 +8,14 @@
         public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
-        public const string LearningHubAuthApiClientCode = "LearningHubAuthAPIClientCode";
-        public const string LearningHubAuthApiBaseUrl = "LearningHubAuthAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
 
-        private const string LearningHubSsoSectionKey = "LearningHubSSO";
+        public const string LearningHubAuthApiBaseUrl = "BaseUrl";
+        public const string LearningHubAuthApiLoginEndpoint = "LoginEndpoint";
+        public const string LearningHubAuthApiLinkingEndpoint = "LinkingEndpoint";
+        public const string LearningHubAuthApiClientCode = "ClientCode";
+
+        public const string LearningHubSsoSectionKey = "LearningHubSSO";
         private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
         private const string LearningHubSsoIterationsKey = "HashIterations";
         private const string LearningHubSsoByteLengthKey = "ByteLength";
@@ -40,12 +43,22 @@
 
         public static string GetLearningHubAuthApiBaseUrl(this IConfiguration config)
         {
-            return config[LearningHubAuthApiBaseUrl];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthApiBaseUrl}"];
         }
 
         public static string GetLearningHubAuthApiClientCode(this IConfiguration config)
         {
-            return config[LearningHubAuthApiClientCode];
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthApiClientCode}"];
+        }
+
+        public static string GetLearningHubAuthApiLoginEndpoint(this IConfiguration config)
+        {
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthApiLoginEndpoint}"];
+        }
+
+        public static string GetLearningHubAuthApiLinkingEndpoint(this IConfiguration config)
+        {
+            return config[$"{LearningHubSsoSectionKey}:{LearningHubAuthApiLinkingEndpoint}"];
         }
 
         public static bool IsSignpostingUsed(this IConfiguration config)
