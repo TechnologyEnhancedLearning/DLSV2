@@ -70,6 +70,8 @@
         [Test]
         public void Trying_to_send_unlock_request_sends_email()
         {
+            A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
+                .Returns(true);
             // When
             notificationService.SendUnlockRequest(1);
 
