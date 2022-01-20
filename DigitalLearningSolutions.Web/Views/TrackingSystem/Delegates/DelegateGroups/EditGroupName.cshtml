@@ -18,6 +18,7 @@
 
     <h1 class="nhsuk-heading-xl">Edit group name</h1>
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditGroupName">
+      <input type="hidden" asp-for="ReturnPage" />
 
       <vc:text-input asp-for="@nameof(Model.GroupName)"
                      label="Group name"
