@@ -204,7 +204,7 @@
                         FROM aspProgress AS ap
                         INNER JOIN Tutorials AS t ON t.TutorialID = ap.TutorialID
                         WHERE ap.ProgressID = @progressId
-                        AND ap.TutorialID = @tutorialId OR t.OriginalTutorialID = @tutorialId",
+                        AND (ap.TutorialID = @tutorialId OR t.OriginalTutorialID = @tutorialId)",
                 new { progressId, tutorialId, myScore }
             );
 
