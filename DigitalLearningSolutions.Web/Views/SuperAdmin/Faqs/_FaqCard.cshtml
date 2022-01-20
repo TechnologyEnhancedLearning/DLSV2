@@ -4,12 +4,12 @@
     <div class="nhsuk-details__text">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-quarter">
-          <div class="tag">
+          <div class="nhsuk-tag tag card-tag--grey">
             @Model.TargetGroup
           </div>
         </div>
         <div class="nhsuk-grid-column-one-quarter">
-          <div class="tag">
+          <div class="nhsuk-tag tag card-tag--grey">
             @Model.Published
           </div>
         </div>
@@ -40,12 +40,6 @@
       </div>
 
       <div>
-        <a class="nhsuk-button nhsuk-button--danger"
-           role="button">
-          Delete
-        </a>
-      </div>
-      <div>
         <a class="nhsuk-button nhsuk-button"
            role="button">
           Edit
@@ -53,6 +47,10 @@
         <a class="nhsuk-button nhsuk-button--secondary"
            role="button">
           View on separate page
+        </a>
+        <a class="nhsuk-button nhsuk-button--danger"
+          role="button">
+          Deactivate
         </a>
       </div>
     </div>

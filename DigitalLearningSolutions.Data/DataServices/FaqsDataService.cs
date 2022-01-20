@@ -10,7 +10,7 @@
     {
         Faq? GetFaqById(int faqId);
 
-        IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
+        //IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
 
         IEnumerable<Faq> GetAllFaqs();
     }
@@ -44,15 +44,15 @@
             ).SingleOrDefault();
         }
 
-        public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
-        {
-            return connection.Query<Faq>(
-                @$"{FaqsSql}
-                WHERE TargetGroup = @targetGroup
-                AND Published = 1",
-                new { targetGroup }
-            );
-        }
+        // public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
+        // {
+        //     return connection.Query<Faq>(
+        //         @$"{FaqsSql}
+        //         WHERE TargetGroup = @targetGroup
+        //         AND Published = 1",
+        //         new { targetGroup }
+        //     );
+        // }
 
         public IEnumerable<Faq> GetAllFaqs()
         {

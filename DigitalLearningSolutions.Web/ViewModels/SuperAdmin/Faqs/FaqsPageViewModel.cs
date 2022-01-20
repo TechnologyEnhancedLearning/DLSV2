@@ -6,10 +6,10 @@
 
     public class FaqsPageViewModel
     {
-        public FaqsPageViewModel(IEnumerable<SearchableFaqModel> faqs, SuperAdminSystemPage currentPage)
+        public FaqsPageViewModel(IEnumerable<SearchableFaqModel> faqs)
         {
             Faqs = faqs.Select(f => new SearchableFaqViewModel(f));
-            CurrentPage = currentPage;
+            CurrentPage = SuperAdminSystemPage.FAQs;
         }
 
         public IEnumerable<SearchableFaqViewModel> Faqs { get; set; }

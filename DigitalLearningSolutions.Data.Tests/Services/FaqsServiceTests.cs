@@ -116,9 +116,12 @@
             const int expectedTargetGroup = 3;
             var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All().With(f => f.Published = true)
                 .And(f => f.TargetGroup = 3).Build();
+            var unexpectedFaqs = Builder<Faq>.CreateListOfSize(5).All()
+                .With(f => f.TargetGroup != 3).Build();
+            var dataServiceFaqs = expectedFaqs.Concat(unexpectedFaqs);
 
-            A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(expectedTargetGroup))
-                .Returns(expectedFaqs);
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(dataServiceFaqs);
 
             // When
             var result = faqsService.GetPublishedFaqsForTargetGroup(expectedTargetGroup).ToList();
@@ -129,7 +132,7 @@
                 result.Should().HaveCount(5);
                 result.Should().BeEquivalentTo(expectedFaqs);
 
-                A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(expectedTargetGroup))
+                A.CallTo(() => faqDataService.GetAllFaqs())
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -140,7 +143,7 @@
             // Given
             const int targetGroup = 5;
 
-            A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(targetGroup))
+            A.CallTo(() => faqDataService.GetAllFaqs())
                 .Returns(new List<Faq>());
 
             // When
@@ -151,7 +154,7 @@
             {
                 result.Should().BeEmpty();
 
-                A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(targetGroup))
+                A.CallTo(() => faqDataService.GetAllFaqs())
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -169,13 +172,13 @@
             var result = faqsService.GetAllFaqs();
 
             //Then
-            result.Count().Should().Be(10);
+            result.Should().Equal(expectedFaqs);
         }
 
         [Test]
         public void GetAll_returns_null_when_data_service_returns_null()
         {
-            IEnumerable<Faq> emptyList = Array.Empty<Faq>();
+            var emptyList = Enumerable.Empty<Faq>();
 
             A.CallTo(() => faqDataService.GetAllFaqs())
                 .Returns(emptyList);

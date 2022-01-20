@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Support;
 
@@ -36,7 +37,9 @@
 
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
-            return faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
+            return faqsDataService.GetAllFaqs()
+                .Where(f => f.TargetGroup == targetGroup)
+                .Where(f => f.Published);
         }
 
         public IEnumerable<Faq> GetAllFaqs()

@@ -60,34 +60,6 @@
         }
 
         [Test]
-        public void GetPublishedFaqsForTargetGroup_returns_only_published_faqs_for_target_group()
-        {
-            // Given
-            const int targetGroup = 2;
-            const int expectedGroupTwoFaqId = 33;
-
-            // When
-            var result = faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup).ToList();
-
-            // Then
-            result.Should().OnlyContain(f => f.TargetGroup == targetGroup && f.Published);
-            result.Should().Contain(f => f.FaqId == expectedGroupTwoFaqId);
-        }
-
-        [Test]
-        public void GetPublishedFaqsForTargetGroup_returns_empty_list_when_no_faqs_for_target_group()
-        {
-            // Given
-            const int targetGroup = 15;
-
-            // When
-            var result = faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
-
-            // Then
-            result.Should().BeEmpty();
-        }
-
-        [Test]
         public void GetAllFaqs_returns_expected_information()
         {
             //When

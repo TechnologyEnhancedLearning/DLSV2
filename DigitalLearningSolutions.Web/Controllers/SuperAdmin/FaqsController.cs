@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
                 .Select(f => new SearchableFaqModel(f))
                 .Take(10);
 
-            var model = new FaqsPageViewModel(faqs, SuperAdminSystemPage.FAQs);
+            var model = new FaqsPageViewModel(faqs);
 
             return View("SuperAdminFaqs", model);
         }
