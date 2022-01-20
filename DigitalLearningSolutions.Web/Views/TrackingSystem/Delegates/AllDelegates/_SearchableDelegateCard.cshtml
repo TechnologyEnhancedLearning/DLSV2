@@ -70,7 +70,8 @@
          asp-controller="SetDelegatePassword"
          asp-action="Index"
          asp-route-delegateId="@Model.DelegateInfo.Id"
-         asp-route-isFromViewDelegatePage="false" >
+         asp-route-isFromViewDelegatePage="false"
+         asp-route-returnPage="@Model.Page" >
         Set password
       </a>
     </div>

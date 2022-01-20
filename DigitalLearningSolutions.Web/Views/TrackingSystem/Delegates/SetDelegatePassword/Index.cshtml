@@ -45,7 +45,8 @@
       var routeData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeData" />
     } else {
-      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" />
+      var routeData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
+      <vc:cancel-link asp-controller="AllDelegates" asp-action="Index" asp-all-route-data="@routeData" />
     }
 
   </div>
