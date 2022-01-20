@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.MyAccount;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -131,6 +130,13 @@
                 );
             }
 
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                formData.HasProfessionalRegistrationNumber,
+                formData.ProfessionalRegistrationNumber,
+                userDelegateId.HasValue
+            );
+
             if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);
@@ -139,7 +145,7 @@
             if (!userService.NewEmailAddressIsValid(formData.Email!, userAdminId, userDelegateId, User.GetCentreId()))
             {
                 ModelState.AddModelError(
-                    nameof(EditDetailsFormData.Email),
+                    nameof(MyAccountEditDetailsFormData.Email),
                     "A user with this email address is already registered at this centre"
                 );
                 return ReturnToEditDetailsViewWithErrors(formData, dlsSubApplication, userDelegateId);

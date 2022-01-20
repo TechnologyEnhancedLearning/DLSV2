@@ -9,13 +9,16 @@
             string firstName,
             string surname,
             string email,
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
             byte[]? profileImage
         ) : base(firstName, surname, email)
         {
             AdminId = adminId;
             DelegateId = delegateId;
             Password = password;
-
+            ProfessionalRegistrationNumber = professionalRegNumber;
+            HasBeenPromptedForPrn = hasBeenPromptedForPrn;
             ProfileImage = profileImage;
         }
 
@@ -23,5 +26,7 @@
         public int? DelegateId { get; set; }
         public string Password { get; set; }
         public byte[]? ProfileImage { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool HasBeenPromptedForPrn { get; set; }
     }
 }

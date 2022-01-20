@@ -20,6 +20,10 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
+                formData.HasProfessionalRegistrationNumber == true
+                    ? formData.ProfessionalRegistrationNumber
+                    : null,
+                formData.HasProfessionalRegistrationNumber.HasValue,
                 formData.ProfileImage
             );
 
@@ -53,15 +57,15 @@
             );
 
             var centreAnswersData = new CentreAnswersData(
-                    centreId,
-                    formData.JobGroupId!.Value,
-                    formData.Answer1,
-                    formData.Answer2,
-                    formData.Answer3,
-                    formData.Answer4,
-                    formData.Answer5,
-                    formData.Answer6
-                );
+                centreId,
+                formData.JobGroupId!.Value,
+                formData.Answer1,
+                formData.Answer2,
+                formData.Answer3,
+                formData.Answer4,
+                formData.Answer5,
+                formData.Answer6
+            );
             return (accountDetailsData, centreAnswersData);
         }
     }

@@ -34,7 +34,8 @@
             string? aliasId = null,
             bool active = true,
             bool hasBeenPromptedForPrn = false,
-            string? professionalRegistrationNumber = null
+            string? professionalRegistrationNumber = null,
+            bool hasDismissedLhLoginWarning = false
         )
         {
             dateRegistered ??= DateTime.Parse("2010-09-22 06:52:09.080");
@@ -63,7 +64,8 @@
                 AliasId = aliasId,
                 Active = active,
                 HasBeenPromptedForPrn = hasBeenPromptedForPrn,
-                ProfessionalRegistrationNumber = professionalRegistrationNumber
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
+                HasDismissedLhLoginWarning = hasDismissedLhLoginWarning,
             };
         }
 
@@ -121,7 +123,7 @@
                 IsTrainer = isTrainer,
                 IsFrameworkDeveloper = isFrameworkDeveloper,
                 ImportOnly = importOnly,
-                FailedLoginCount = failedLoginCount
+                FailedLoginCount = failedLoginCount,
             };
         }
 
@@ -192,6 +194,8 @@
                 firstName,
                 surname,
                 email,
+                null,
+                true,
                 profileImage
             );
         }
