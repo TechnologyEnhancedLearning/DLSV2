@@ -271,7 +271,11 @@
             return requirementAdjusters.Where(ra => ra > 0).Sum();
         }
 
-        private decimal CalculateRoleRequirementValue(int competencyId, int selfAssessmentId, SelfAssessmentResult? latestConfidenceResult)
+        private decimal CalculateRoleRequirementValue(
+            int competencyId,
+            int selfAssessmentId,
+            SelfAssessmentResult? latestConfidenceResult
+        )
         {
             if (latestConfidenceResult == null)
             {
