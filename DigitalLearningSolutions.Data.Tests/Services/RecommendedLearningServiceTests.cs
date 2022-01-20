@@ -284,7 +284,7 @@
                 )
             ).Returns(questionParameters);
 
-            var expectedResource = GetExpectedResource(true, false, LearningLogId, 175);
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, 100);
 
             // When
             var result =
@@ -336,17 +336,20 @@
             )
         {
             // Given
+            const int confidenceResult = 5;
             GivenResourceForSelfAssessmentIsReturnedByLearningHubApi();
             GivenGetLearningLogItemsReturnsAnItem();
             GivenQuestionParametersAreReturned(true, true, 1, 10);
-            GivenSelfAssessmentHasResultsForFirstCompetency(5, 5);
+            GivenSelfAssessmentHasResultsForFirstCompetency(5, confidenceResult);
 
             var roleRequirement = Builder<CompetencyAssessmentQuestionRoleRequirement>.CreateNew()
                 .With(rr => rr.LevelRag = levelRag).Build();
             A.CallTo(
                 () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     CompetencyId,
-                    SelfAssessmentId
+                    SelfAssessmentId,
+                    CompetencyAssessmentQuestionId,
+                    confidenceResult
                 )
             ).Returns(roleRequirement);
 
@@ -363,7 +366,9 @@
             A.CallTo(
                 () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     CompetencyId,
-                    SelfAssessmentId
+                    SelfAssessmentId,
+                    CompetencyAssessmentQuestionId,
+                    confidenceResult
                 )
             ).MustHaveHappenedOnceExactly();
         }
@@ -398,6 +403,8 @@
             A.CallTo(
                 () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     A<int>._,
+                    A<int>._,
+                    A<int>._,
                     A<int>._
                 )
             ).MustNotHaveHappened();
@@ -430,6 +437,8 @@
             A.CallTo(
                 () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     A<int>._,
+                    A<int>._,
+                        A<int>._,
                     A<int>._
                 )
             ).MustNotHaveHappened();
@@ -464,7 +473,7 @@
                 )
             ).Returns(questionParameters);
 
-            var expectedResource = GetExpectedResource(true, false, LearningLogId, 175);
+            var expectedResource = GetExpectedResource(true, false, LearningLogId, 100);
 
             // When
             var result =

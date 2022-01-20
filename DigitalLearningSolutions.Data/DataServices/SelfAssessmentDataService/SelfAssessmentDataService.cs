@@ -52,7 +52,9 @@
 
         CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
             int competencyId,
-            int selfAssessmentId
+            int selfAssessmentId,
+            int assessmentQuestionId,
+            int result
         );
 
         IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(

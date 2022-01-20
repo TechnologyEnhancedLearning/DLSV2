@@ -163,8 +163,10 @@
                     )
                     .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
 
-                if (competencyResourceAssessmentQuestionParametersForClr.MinResultMatch <= latestConfidenceResult?.Result &&
-                    latestConfidenceResult.Result <= competencyResourceAssessmentQuestionParametersForClr.MaxResultMatch)
+                if (competencyResourceAssessmentQuestionParametersForClr.MinResultMatch <=
+                    latestConfidenceResult?.Result &&
+                    latestConfidenceResult.Result <=
+                    competencyResourceAssessmentQuestionParametersForClr.MaxResultMatch)
                 {
                     return true;
                 }
@@ -224,21 +226,43 @@
                     break;
                 }
 
+                var delegateResults = selfAssessmentDataService
+                    .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                        delegateId,
+                        selfAssessmentId,
+                        competencyLearningResource.CompetencyId
+                    ).ToList();
+
+                var latestConfidenceResult = delegateResults
+                    .Where(
+                        dr => dr.AssessmentQuestionId ==
+                              competencyResourceAssessmentQuestionParametersForClr.AssessmentQuestionId
+                    )
+                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
+
+                var latestRelevanceResult = delegateResults
+                    .Where(
+                        dr => dr.AssessmentQuestionId ==
+                              competencyResourceAssessmentQuestionParametersForClr.RelevanceAssessmentQuestionId
+                    )
+                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
+
                 if (competencyResourceAssessmentQuestionParametersForClr.CompareToRoleRequirements)
                 {
                     requirementAdjusters.Add(
-                        CalculateRoleRequirementValue(competencyLearningResource.CompetencyId, selfAssessmentId)
+                        CalculateRoleRequirementValue(
+                            competencyLearningResource.CompetencyId,
+                            selfAssessmentId,
+                            latestConfidenceResult
+                        )
                     );
                 }
                 else
                 {
                     requirementAdjusters.Add(
                         CalculateRelConValue(
-                            competencyLearningResource
-                                .CompetencyId,
-                            selfAssessmentId,
-                            delegateId,
-                            competencyResourceAssessmentQuestionParametersForClr
+                            latestConfidenceResult,
+                            latestRelevanceResult
                         )
                     );
                 }
@@ -247,44 +271,29 @@
             return requirementAdjusters.Where(ra => ra > 0).Sum();
         }
 
-        private decimal CalculateRoleRequirementValue(int competencyId, int selfAssessmentId)
+        private decimal CalculateRoleRequirementValue(int competencyId, int selfAssessmentId, SelfAssessmentResult? latestConfidenceResult)
         {
+            if (latestConfidenceResult == null)
+            {
+                return 0;
+            }
+
             var competencyAssessmentQuestionRoleRequirement =
                 selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     competencyId,
-                    selfAssessmentId
+                    selfAssessmentId,
+                    latestConfidenceResult.AssessmentQuestionId,
+                    latestConfidenceResult.Result
                 );
 
             return (3 - competencyAssessmentQuestionRoleRequirement?.LevelRag) * 25 ?? 0;
         }
 
         private decimal CalculateRelConValue(
-            int competencyId,
-            int selfAssessmentId,
-            int delegateId,
-            CompetencyResourceAssessmentQuestionParameter competencyResourceAssessmentQuestionParameter
+            SelfAssessmentResult? latestConfidenceResult,
+            SelfAssessmentResult? latestRelevanceResult
         )
         {
-            var delegateResults = selfAssessmentDataService
-                .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                    delegateId,
-                    selfAssessmentId,
-                    competencyId
-                ).ToList();
-
-            var latestConfidenceResult = delegateResults
-                .Where(
-                    dr => dr.AssessmentQuestionId == competencyResourceAssessmentQuestionParameter.AssessmentQuestionId
-                )
-                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
-            var latestRelevanceResult = delegateResults
-                .Where(
-                    dr => dr.AssessmentQuestionId ==
-                          competencyResourceAssessmentQuestionParameter.RelevanceAssessmentQuestionId
-                )
-                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
             if (latestConfidenceResult != null && latestRelevanceResult != null)
             {
                 return (latestRelevanceResult.Result - latestConfidenceResult.Result) * 10;
