@@ -81,34 +81,22 @@
                     new JsonSerializerSettings
                     {
                         MissingMemberHandling = MissingMemberHandling.Error,
-                        NullValueHandling = NullValueHandling.Include,
-                        DefaultValueHandling = DefaultValueHandling.Include,
                     }
                 );
 
-                try
+                foreach (var diagOutcome in diagnosticOutcomes)
                 {
-                    foreach (var diagOutcome in diagnosticOutcomes)
-                    {
-                        progressService.UpdateDiagnosticScore(
-                            progressId.Value,
-                            diagOutcome.TutorialId,
-                            diagOutcome.MyScore
-                        );
-                    }
-                }
-                catch (Exception e)
-                {
-                    logger.LogWarning(
-                        $"Updating diagnostic score failed. Error: {e}"
+                    progressService.UpdateDiagnosticScore(
+                        progressId.Value,
+                        diagOutcome.TutorialId,
+                        diagOutcome.MyScore
                     );
-                    return TrackerEndpointResponse.StoreDiagnosticScoreException;
                 }
             }
             catch (Exception e)
             {
                 logger.LogWarning(
-                    $"Deserializing JSON failed: {e}"
+                    $"Updating diagnostic score failed. Error: {e}"
                 );
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }

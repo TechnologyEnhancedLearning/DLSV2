@@ -179,10 +179,8 @@
             ).MustHaveHappenedOnceExactly();
         }
 
-        [Test]
+        [TestCase(1, null)]
         [TestCase(null, "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
-        [TestCase(1, null)]
-        [TestCase(1, null)]
         [TestCase(1, "[{'unexpectedkey':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         [TestCase(1, "[{'tutorialid':999999999999999999,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         [TestCase(1, "[{'tutorialid':x,'myscore':4},{'tutorialid':424,'myscore':3}]")]
