@@ -64,8 +64,8 @@
             }
 
             var baseUrl = refactoredTrackingSystemEnabled
-                ? $"{configuration.GetAppRootPath()}/TrackingSystem/Delegates/CourseDelegates"
-                : $"{configuration.GetCurrentSystemBaseUrl()}/Tracking/";
+                ? $"{baseUrlConfigOption}/TrackingSystem/Delegates/CourseDelegates"
+                : $"{baseUrlConfigOption}/CourseDelegates";
 
             var unlockUrl = new UriBuilder(baseUrl)
             {
