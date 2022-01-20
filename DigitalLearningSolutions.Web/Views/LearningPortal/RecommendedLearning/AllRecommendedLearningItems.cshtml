@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
+@model AllRecommendedLearningItemsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var resource in Model.RecommendedResources) {
+  <partial name="_SearchableRecommendedResourceCard" model="resource" />
+}
+</body>
+</html>
