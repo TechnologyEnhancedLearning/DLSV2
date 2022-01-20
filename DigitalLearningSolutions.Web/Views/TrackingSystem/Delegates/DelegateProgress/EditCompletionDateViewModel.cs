@@ -1,3 +1,4 @@
+// QQ fix line endings before merge
 namespace DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -9,8 +10,9 @@ namespace DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegatePr
         public EditCompletionDateViewModel(
             int progressId,
             DelegateProgressAccessRoute accessedVia,
-            DelegateCourseInfo info
-        ) : base(info)
+            DelegateCourseInfo info,
+            int? returnPage
+        ) : base(info, returnPage)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

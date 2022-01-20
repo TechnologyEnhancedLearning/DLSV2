@@ -8,8 +8,9 @@
         public EditCompleteByDateViewModel(
             int progressId,
             DelegateProgressAccessRoute accessedVia,
-            DelegateCourseInfo info
-        ) : base(info)
+            DelegateCourseInfo info,
+            int? returnPage
+        ) : base(info, returnPage)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;

@@ -14,8 +14,9 @@
             int progressId,
             DelegateProgressAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors,
-            DelegateCourseInfo info
-        ) : base(info)
+            DelegateCourseInfo info,
+            int? returnPage
+        ) : base(info, returnPage)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;
