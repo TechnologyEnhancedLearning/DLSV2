@@ -46,9 +46,10 @@
         public string AddedByFilter => nameof(Group.AddedByAdminId) + FilteringHelper.Separator +
                                        nameof(Group.AddedByAdminId) +
                                        FilteringHelper.Separator + AddedByAdminId;
+
         public string LinkedFieldFilter => nameof(Group.LinkedToField) + FilteringHelper.Separator +
-                                       nameof(Group.LinkedToField) +
-                                       FilteringHelper.Separator + LinkedToField;
+                                           nameof(Group.LinkedToField) +
+                                           FilteringHelper.Separator + LinkedToField;
 
         public string ShouldAddNewRegistrantsToGroup { get; set; }
 

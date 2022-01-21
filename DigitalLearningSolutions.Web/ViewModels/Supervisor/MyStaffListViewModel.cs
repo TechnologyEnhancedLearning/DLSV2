@@ -1,4 +1,5 @@
 ﻿// QQ fix line endings before merge
+
 namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -6,6 +7,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using System.Collections.Generic;
+
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
         public MyStaffListViewModel(
@@ -19,22 +21,24 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
         {
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
-           supervisorDelegateDetailViewModels.AsQueryable(),
-           sortBy,
-           sortDirection
-       );
+                supervisorDelegateDetailViewModels.AsQueryable(),
+                sortBy,
+                sortDirection
+            );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString).ToList();
             MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(searchedItems);
             SuperviseDelegateDetailViewModels = paginatedItems;
-
         }
+
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
+
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
-       {
+        {
             DefaultSortByOptions.Name
         };
+
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;

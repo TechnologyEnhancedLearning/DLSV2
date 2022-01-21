@@ -1,4 +1,5 @@
 ﻿// QQ fix line endings before merge
+
 namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
     using System.ComponentModel.DataAnnotations;

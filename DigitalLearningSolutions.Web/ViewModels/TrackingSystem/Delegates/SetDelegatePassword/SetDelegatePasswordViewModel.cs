@@ -7,7 +7,12 @@
     {
         public SetDelegatePasswordViewModel() { }
 
-        public SetDelegatePasswordViewModel(string name, int delegateId, int? returnPage, bool isFromViewDelegatePage = false)
+        public SetDelegatePasswordViewModel(
+            string name,
+            int delegateId,
+            int? returnPage,
+            bool isFromViewDelegatePage = false
+        )
         {
             Name = name;
             DelegateId = delegateId;

@@ -1,12 +1,16 @@
 ﻿// QQ fix line endings before merge
+
 namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     using System;
+
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
-        public SupervisorDelegateDetail() {}
+        public SupervisorDelegateDetail() { }
 
-        public SupervisorDelegateDetail(SupervisorDelegateDetail supervisorDelegateDetail): base(supervisorDelegateDetail)
+        public SupervisorDelegateDetail(SupervisorDelegateDetail supervisorDelegateDetail) : base(
+            supervisorDelegateDetail
+        )
         {
             CandidateNumber = supervisorDelegateDetail.CandidateNumber;
             JobGroupName = supervisorDelegateDetail.JobGroupName;
@@ -27,6 +31,7 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
             CandidateAssessmentCount = supervisorDelegateDetail.CandidateAssessmentCount;
             InviteHash = supervisorDelegateDetail.InviteHash;
         }
+
         public string CandidateNumber { get; set; }
         public string? JobGroupName { get; set; }
         public string? CustomPrompt1 { get; set; }

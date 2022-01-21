@@ -40,7 +40,12 @@
                 return View("NoEmail");
             }
 
-            var model = new SetDelegatePasswordViewModel(delegateUser.FullName, delegateId, returnPage, isFromViewDelegatePage);
+            var model = new SetDelegatePasswordViewModel(
+                delegateUser.FullName,
+                delegateId,
+                returnPage,
+                isFromViewDelegatePage
+            );
 
             return View(model);
         }

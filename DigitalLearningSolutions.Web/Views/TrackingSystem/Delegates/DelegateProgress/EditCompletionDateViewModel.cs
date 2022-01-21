@@ -1,4 +1,5 @@
 // QQ fix line endings before merge
+
 namespace DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;

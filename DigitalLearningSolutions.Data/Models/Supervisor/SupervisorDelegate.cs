@@ -1,13 +1,12 @@
 ﻿// QQ fix line endings before merge
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     public class SupervisorDelegate : BaseSearchableItem
     {
-        public SupervisorDelegate() {}
+        public SupervisorDelegate() { }
 
         public SupervisorDelegate(SupervisorDelegate supervisorDelegate)
         {
@@ -26,6 +25,7 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
             LastName = supervisorDelegate.LastName;
             SearchableNameOverrideForFuzzySharp = supervisorDelegate.SearchableNameOverrideForFuzzySharp;
         }
+
         public int ID { get; set; }
         public string SupervisorEmail { get; set; }
         public int? SupervisorAdminID { get; set; }

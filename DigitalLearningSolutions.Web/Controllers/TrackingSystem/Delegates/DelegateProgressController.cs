@@ -62,7 +62,10 @@
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
-            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId);
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(
+                centreId,
+                delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId
+            );
 
             var model = new EditSupervisorViewModel(
                 progressId,
@@ -96,7 +99,11 @@
 
         [HttpGet]
         [Route("EditCompleteByDate")]
-        public IActionResult EditCompleteByDate(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
+        public IActionResult EditCompleteByDate(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia,
+            int? returnPage
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -125,7 +132,9 @@
                 return View(model);
             }
 
-            var completeByDate = formData.Year != null ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value) : (DateTime?)null;
+            var completeByDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
 
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
@@ -134,7 +143,11 @@
 
         [HttpGet]
         [Route("EditCompletionDate")]
-        public IActionResult EditCompletionDate(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
+        public IActionResult EditCompletionDate(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia,
+            int? returnPage
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =

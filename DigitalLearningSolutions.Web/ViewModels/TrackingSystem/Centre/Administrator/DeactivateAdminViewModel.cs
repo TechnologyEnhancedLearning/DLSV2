@@ -19,6 +19,7 @@
 
         [BooleanMustBeTrue(ErrorMessage = "You must confirm before deactivating this account")]
         public bool Confirm { get; set; }
+
         public int? ReturnPage { get; set; }
     }
 }

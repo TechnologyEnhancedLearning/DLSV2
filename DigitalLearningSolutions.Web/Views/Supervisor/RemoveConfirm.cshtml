@@ -9,9 +9,11 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
   ViewData["HeaderPathName"] = "My Staff";
 }
+
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading">Confirm Remove Staff Member</h1>
@@ -31,7 +33,7 @@
       Remove
     </a>
     <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList" asp-route-returnPage="@Model.Page">
-     Cancel
+      Cancel
     </a>
   </div>
 </div>

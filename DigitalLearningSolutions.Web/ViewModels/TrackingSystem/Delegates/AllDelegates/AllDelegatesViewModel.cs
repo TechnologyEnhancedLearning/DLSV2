@@ -19,7 +19,16 @@
             string sortDirection,
             string? filterBy,
             int? itemsPerPage
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, searchLabel: "Search delegates")
+        ) : base(
+            searchString,
+            page,
+            true,
+            sortBy,
+            sortDirection,
+            filterBy,
+            itemsPerPage ?? DefaultItemsPerPage,
+            searchLabel: "Search delegates"
+        )
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 delegateUserCards.AsQueryable(),

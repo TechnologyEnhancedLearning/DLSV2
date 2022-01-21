@@ -118,7 +118,7 @@ export class SearchSortFilterAndPaginate {
   }
 
   static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
-  Promise<ISearchableData | undefined> {
+    Promise<ISearchableData | undefined> {
     return SearchSortFilterAndPaginate.fetchAllSearchableElements(route)
       .then((response): ISearchableData | undefined => {
         if (response === null) {
@@ -214,7 +214,7 @@ export class SearchSortFilterAndPaginate {
     return newResultCountMessage;
   }
 
-  private static scrollToTop() : void {
+  private static scrollToTop(): void {
     window.scrollTo(0, 0);
   }
 

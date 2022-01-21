@@ -41,7 +41,10 @@
 
         public IEnumerable<SelectListItem> Supervisors { get; set; }
 
-        private static IEnumerable<SelectListItem> PopulateSupervisors(int? supervisorId, IEnumerable<AdminUser> supervisors)
+        private static IEnumerable<SelectListItem> PopulateSupervisors(
+            int? supervisorId,
+            IEnumerable<AdminUser> supervisors
+        )
         {
             var supervisorIdNames = supervisors.Select(s => (s.Id, s.FullName));
             return SelectListHelper.MapOptionsToSelectListItems(

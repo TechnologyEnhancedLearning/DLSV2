@@ -1,4 +1,5 @@
 ﻿// QQ fix line endings before merge
+
 namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -11,9 +12,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
         public readonly IEnumerable<SupervisorDelegateDetailViewModel> SupervisorDelegateDetailViewModels;
         public readonly CentreCustomPrompts CentreCustomPrompts;
 
-        public AllStaffListViewModel(IEnumerable<SupervisorDelegateDetail> supervisorDelegates, CentreCustomPrompts centreCustomPrompts)
+        public AllStaffListViewModel(
+            IEnumerable<SupervisorDelegateDetail> supervisorDelegates,
+            CentreCustomPrompts centreCustomPrompts
+        )
         {
-            SupervisorDelegateDetailViewModels = supervisorDelegates.Select(supervisor => new SupervisorDelegateDetailViewModel(supervisor, 1));
+            SupervisorDelegateDetailViewModels =
+                supervisorDelegates.Select(supervisor => new SupervisorDelegateDetailViewModel(supervisor, 1));
             CentreCustomPrompts = centreCustomPrompts;
         }
     }

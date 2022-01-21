@@ -4,12 +4,15 @@
 
     public class SupervisorDelegateDetailViewModel : SupervisorDelegateDetail
     {
-        public SupervisorDelegateDetailViewModel() {}
+        public SupervisorDelegateDetailViewModel() { }
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, int? page) : base(supervisorDelegateDetail)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, int? page) : base(
+            supervisorDelegateDetail
+        )
         {
             Page = page;
         }
+
         public int? Page { get; set; }
     }
 }
