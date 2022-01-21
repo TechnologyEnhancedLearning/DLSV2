@@ -81,7 +81,7 @@ export class SearchSortFilterAndPaginate {
   }
 
   private onItemsPerPageUpdated(searchableData: ISearchableData): void {
-    this.page = 1;
+    this.updatePageNumber(1, searchableData);
     this.searchSortAndPaginate(searchableData);
   }
 
