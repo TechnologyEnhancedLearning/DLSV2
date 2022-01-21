@@ -28,7 +28,7 @@
             this.learningHubSsoSecurityService = learningHubSsoSecurityService;
         }
 
-        private string AuthEndpoint => config.GetLearningHubAuthApiBaseUrl();
+        private string AuthBaseUrl => config.GetLearningHubAuthApiBaseUrl();
         private string ClientCode => config.GetLearningHubAuthApiClientCode();
 
         public string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int delegateAuthId)
@@ -38,19 +38,19 @@
                 ComposeLoginQueryString(ClientCode, delegateAuthId, idHash, resourceUrl);
 
             var loginEndpoint = config.GetLearningHubAuthApiLoginEndpoint();
-            return AuthEndpoint + loginEndpoint + loginQueryString;
+
+            return AuthBaseUrl + loginEndpoint + loginQueryString;
         }
 
         public string GetLinkingUrlForResource(int resourceReferenceId)
         {
             var state = ComposeCreateUserState(resourceReferenceId);
             var stateHash = learningHubSsoSecurityService.GenerateHash(state);
-
             var createUserQueryString = ComposeCreateUserQueryString(ClientCode, state, stateHash);
 
             var linkingEndpoint = config.GetLearningHubAuthApiLinkingEndpoint();
 
-            return AuthEndpoint + linkingEndpoint + createUserQueryString;
+            return AuthBaseUrl + linkingEndpoint + createUserQueryString;
         }
 
         private string ComposeCreateUserState(int resourceReferenceId)
@@ -66,7 +66,6 @@
         )
         {
             var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
-
             return $"?clientcode={clientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={encodedUrl}";
         }
 

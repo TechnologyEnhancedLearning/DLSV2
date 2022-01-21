@@ -12,12 +12,11 @@
     public class LearningHubAuthApiUrlServiceTests
     {
         private LearningHubAuthApiUrlService service = null!;
-        private IGuidService guidService = null!;
 
         [SetUp]
         public void SetUp()
         {
-            guidService = A.Fake<IGuidService>();
+            var guidService = A.Fake<IGuidService>();
             var securityService = A.Fake<ILearningHubSsoSecurityService>();
             var config = A.Fake<IConfiguration>();
 

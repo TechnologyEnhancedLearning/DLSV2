@@ -31,7 +31,6 @@
 
         public string? GetLearningHubResourceLinkById(int learningResourceReferenceId)
         {
-
             return connection.Query<string?>(
                 @"SELECT ResourceLink
                     FROM LearningResourceReferences
