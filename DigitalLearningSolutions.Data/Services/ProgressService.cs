@@ -12,6 +12,8 @@
         void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
 
         void UpdateCompletionDate(int progressId, DateTime? completionDate);
+
+        void UnlockProgress(int progressId);
     }
 
     public class ProgressService : IProgressService
@@ -76,6 +78,11 @@
             }
 
             progressDataService.SetCompletionDate(progressId, date);
+        }
+
+        public void UnlockProgress(int progressId)
+        {
+            progressDataService.UnlockProgress(progressId);
         }
     }
 }
