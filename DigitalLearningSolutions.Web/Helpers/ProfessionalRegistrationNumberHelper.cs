@@ -55,7 +55,7 @@
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
+                    "Invalid professional registration number format - Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
                 );
             }
         }

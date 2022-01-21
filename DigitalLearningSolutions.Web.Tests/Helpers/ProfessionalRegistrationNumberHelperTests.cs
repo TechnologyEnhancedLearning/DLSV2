@@ -115,15 +115,15 @@
         [TestCase("0123456789-0123456789", "Professional registration number must be between 5 and 20 characters")]
         [TestCase(
             "01234_",
-            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
+            "Invalid professional registration number format - Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
         )]
         [TestCase(
             "01234 ",
-            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
+            "Invalid professional registration number format - Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
         )]
         [TestCase(
             "01234$",
-            "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
+            "Invalid professional registration number format - Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
         )]
         public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(
             string prn,
