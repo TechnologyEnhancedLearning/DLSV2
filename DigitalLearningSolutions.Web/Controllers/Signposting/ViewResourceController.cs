@@ -1,19 +1,16 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
-    using System.Web;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.UseSignposting)]
     public class ViewResourceController : Controller
     {
-        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
         private readonly ILearningHubAuthApiUrlService learningHubAuthApiUrlService;
+        private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
 
         private readonly IUserService userService;
 
