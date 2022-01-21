@@ -1,18 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System;
     using System.Collections.Generic;
-    using System.Net.Http;
+    using System.Net;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
-    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningHubResourceServiceTests
@@ -21,18 +20,15 @@
         private ILearningHubApiClient learningHubApiClient = null!;
         private LearningHubResourceService learningHubResourceService = null!;
         private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
-        private ILogger<LearningHubResourceService> logger = null!;
 
         [SetUp]
         public void SetUp()
         {
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
-            logger = A.Fake<ILogger<LearningHubResourceService>>();
             learningHubResourceService = new LearningHubResourceService(
                 learningHubApiClient,
-                learningResourceReferenceDataService,
-                logger
+                learningResourceReferenceDataService
             );
         }
 
@@ -69,7 +65,7 @@
             // Given
             var resource = GenerateGenericResource(SingleResourceReferenceId);
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(SingleResourceReferenceId))
-                .Throws<HttpRequestException>();
+                .Throws(new LearningHubResponseException("exception", HttpStatusCode.Unauthorized));
             A.CallTo(
                 () => learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
                     A<IEnumerable<int>>._
@@ -156,7 +152,7 @@
             };
 
             A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .Throws<HttpRequestException>();
+                .Throws(new LearningHubResponseException("exception", HttpStatusCode.Unauthorized));
             A.CallTo(
                 () => learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
                     A<IEnumerable<int>>._

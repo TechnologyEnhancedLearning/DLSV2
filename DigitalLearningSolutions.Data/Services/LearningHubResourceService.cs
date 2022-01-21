@@ -2,12 +2,12 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Http;
+    using System.Net;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using Microsoft.Extensions.Logging;
 
     public interface ILearningHubResourceService
     {
@@ -25,17 +25,14 @@
     {
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
-        private readonly ILogger<LearningHubResourceService> logger;
 
         public LearningHubResourceService(
             ILearningHubApiClient learningHubApiClient,
-            ILearningResourceReferenceDataService learningResourceReferenceDataService,
-            ILogger<LearningHubResourceService> logger
+            ILearningResourceReferenceDataService learningResourceReferenceDataService
         )
         {
             this.learningHubApiClient = learningHubApiClient;
             this.learningResourceReferenceDataService = learningResourceReferenceDataService;
-            this.logger = logger;
         }
 
         public async Task<(ResourceReferenceWithResourceDetails? resource, bool sourcedFromFallbackData)>
@@ -45,16 +42,15 @@
         {
             try
             {
-                // TODO HEEDLS-747: tackle different response codes rather than catching all exceptions
                 var upToDateResourceDetails = await learningHubApiClient.GetResourceByReferenceId(resourceReferenceId);
                 return (upToDateResourceDetails, false);
             }
-            catch (HttpRequestException e)
+            catch (LearningHubResponseException e)
             {
-                logger.LogWarning(
-                    $"Call to Learning Hub Open API failed when trying to call /Resource/{resourceReferenceId} endpoint. " +
-                    $"Using fall-back data instead. Exception: {e.Message}"
-                );
+                if (e.HttpStatusCode == HttpStatusCode.NotFound)
+                {
+                    return (null, false);
+                }
 
                 var fallBackResourceDetails =
                     learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
@@ -72,18 +68,12 @@
         {
             try
             {
-                // TODO HEEDLS-747: tackle different response codes rather than catching all exceptions
                 var upToDateResourceDetails =
                     await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceReferenceIds);
                 return (upToDateResourceDetails, false);
             }
-            catch (HttpRequestException e)
+            catch (LearningHubResponseException)
             {
-                logger.LogWarning(
-                    "Call to Learning Hub Open API failed when trying to call /Resource/Bulk endpoint. " +
-                    $"Using fall-back data instead. Exception: {e.Message}"
-                );
-
                 var fallBackResources =
                     learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds)
                         .ToList();
