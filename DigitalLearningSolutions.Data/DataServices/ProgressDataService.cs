@@ -214,7 +214,7 @@
                     "Not updating diagnostic score as db update failed. " +
                     $"Progress id: {progressId}, tutorial Id: {tutorialId}, myScore: {myScore}"
                 );
-                throw new Exception();
+                throw new Exception("No aspProgress records were affected when updating diagnostic score");
             }
         }
 

@@ -88,7 +88,7 @@
                 {
                     if (diagOutcome.TutorialId == 0)
                     {
-                        throw new Exception();
+                        throw new Exception("Zero is not a valid TutorialId");
                     }
 
                     progressService.UpdateDiagnosticScore(
