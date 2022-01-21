@@ -4,5 +4,6 @@
     {
         GetObjectiveArray,
         GetObjectiveArrayCc,
+        StoreDiagnosticJson,
     }
 }

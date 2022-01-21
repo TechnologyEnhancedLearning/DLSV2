@@ -2,23 +2,29 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.Tracker;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class TrackerActionServiceTests
     {
         private ITutorialContentDataService dataService = null!;
+        private ILogger<TrackerActionService> logger = null!;
+        private IProgressService progressService = null!;
         private ITrackerActionService trackerActionService = null!;
 
         [SetUp]
         public void Setup()
         {
             dataService = A.Fake<ITutorialContentDataService>();
+            progressService = A.Fake<IProgressService>();
+            logger = A.Fake<ILogger<TrackerActionService>>();
 
-            trackerActionService = new TrackerActionService(dataService);
+            trackerActionService = new TrackerActionService(dataService, progressService, logger);
         }
 
         [Test]
@@ -133,6 +139,69 @@
                     A<int>._,
                     A<int>._,
                     A<bool>._
+                )
+            ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void StoreDiagnosticJson_returns_success_response_if_successful()
+        {
+            // Given
+            const int progressId = 1;
+            const string diagnosticOutcome = "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]";
+
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            var result = trackerActionService.StoreDiagnosticJson(progressId, diagnosticOutcome);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.Success);
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    1,
+                    424,
+                    3
+                )
+            ).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    1,
+                    425,
+                    4
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [TestCase(1, null)]
+        [TestCase(null, "[{'tutorialid':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'unexpectedkey':425,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':999999999999999999,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':x,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':425,'myscore':x},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':0,'myscore':4},{'tutorialid':424,'myscore':3}]")]
+        public void
+            StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_error_when_deserializing_json_or_updating_score(
+                int? progressId,
+                string? diagnosticOutcome
+            )
+        {
+            // When
+            var result = trackerActionService.StoreDiagnosticJson(progressId, diagnosticOutcome);
+
+            // Then
+            result.Should().Be(TrackerEndpointResponse.StoreDiagnosticScoreException);
+            A.CallTo(
+                () => progressService.UpdateDiagnosticScore(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._
                 )
             ).MustNotHaveHappened();
         }

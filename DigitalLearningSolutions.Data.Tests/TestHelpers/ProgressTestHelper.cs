@@ -47,10 +47,23 @@
             ).Single();
         }
 
+        public DiagnosticScore GetDiagnosticInfoByAspProgressId(int aspProgressId)
+        {
+            return connection.QueryFirstOrDefault<DiagnosticScore>(
+                @"SELECT DiagHigh,
+                            DiagLow,
+                            DiagLast,
+                            DiagAttempts
+                    FROM aspProgress
+                    WHERE aspProgressId = @aspProgressId",
+                new { aspProgressId }
+            );
+        }
+
         public bool GetCourseProgressLockedStatusByProgressId(int progressId)
         {
             return connection.Query<bool>(
-                @"SELECT PLLocked 
+                @"SELECT PLLocked
                     FROM Progress
                     WHERE ProgressId = @ProgressId",
                 new { progressId }
