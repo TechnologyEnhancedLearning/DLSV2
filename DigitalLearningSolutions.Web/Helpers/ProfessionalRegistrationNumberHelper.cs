@@ -30,14 +30,14 @@
             {
                 modelState.AddModelError(
                     "HasProfessionalRegistrationNumber",
-                    "Select your professional registration number status."
+                    "Select your professional registration number status"
                 );
                 return;
             }
 
             if (string.IsNullOrEmpty(prn))
             {
-                modelState.AddModelError("ProfessionalRegistrationNumber", "Enter professional registration number.");
+                modelState.AddModelError("ProfessionalRegistrationNumber", "Enter professional registration number");
                 return;
             }
 
@@ -45,7 +45,7 @@
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Professional registration number must be between 5 and 20 characters."
+                    "Professional registration number must be between 5 and 20 characters"
                 );
             }
 
@@ -55,7 +55,7 @@
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed."
+                    "Invalid professional registration number format. Only alphanumeric (a-z, A-Z and 0-9) and hyphens (-) allowed"
                 );
             }
         }
