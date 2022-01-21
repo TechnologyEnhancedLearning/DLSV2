@@ -21,6 +21,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateFormat);
             Completed = info.Completed?.ToString(DateHelper.StandardDateFormat);
             Evaluated = info.Evaluated?.ToString(DateHelper.StandardDateFormat);
+            IsProgressLocked = info.IsProgressLocked;
             EnrolmentMethod = info.EnrolmentMethodId switch
             {
                 1 => "Self enrolled",
@@ -64,6 +65,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public double PassRate { get; set; }
+        public bool IsProgressLocked { get; set; }
 
         public string? Supervisor
         {

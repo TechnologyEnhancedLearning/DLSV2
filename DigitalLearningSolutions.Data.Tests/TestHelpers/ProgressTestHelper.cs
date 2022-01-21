@@ -33,7 +33,7 @@
                 Completed = completed,
                 RemovedDate = removedDate,
                 SupervisorAdminId = supervisorAdminId,
-                CompleteByDate = completeByDate
+                CompleteByDate = completeByDate,
             };
         }
 
@@ -44,6 +44,16 @@
                     FROM aspProgress
                     WHERE aspProgressId = @aspProgressId",
                 new { aspProgressId }
+            ).Single();
+        }
+
+        public bool GetCourseProgressLockedStatusByProgressId(int progressId)
+        {
+            return connection.Query<bool>(
+                @"SELECT PLLocked 
+                    FROM Progress
+                    WHERE ProgressId = @ProgressId",
+                new { progressId }
             ).Single();
         }
     }

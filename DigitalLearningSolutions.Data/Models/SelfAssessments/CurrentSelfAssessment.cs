@@ -3,6 +3,7 @@
     using System;
     public class CurrentSelfAssessment : SelfAssessment
     {
+        public int CandidateAssessmentId { get; set; }
         public string? UserBookmark { get; set; }
         public bool UnprocessedUpdates { get; set; }
         public int LaunchCount { get; set; }

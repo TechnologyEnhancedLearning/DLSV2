@@ -22,6 +22,7 @@
                         CA.StartedDate,
                         CA.LastAccessed,
                         CA.CompleteByDate,
+                        CA.ID AS CandidateAssessmentId,
                         CA.UserBookmark,
                         CA.UnprocessedUpdates,
                         CA.LaunchCount,
@@ -38,6 +39,7 @@
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
+                        CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate",
                 new { candidateId }
             );
@@ -61,6 +63,7 @@
                         CA.StartedDate,
                         CA.LastAccessed,
                         CA.CompleteByDate,
+                        CA.ID AS CandidateAssessmentId,
                         CA.UserBookmark,
                         CA.UnprocessedUpdates,
                         CA.LaunchCount,
@@ -105,7 +108,8 @@
                         CA.SelfAssessmentID, SA.Name, SA.Description,
                         SA.DescriptionLabel, SA.QuestionLabel,
                         SA.IncludesSignposting, SA.SignOffRequestorStatement, COALESCE(SA.Vocabulary, 'Capability'),
-                        CA.StartedDate, CA.LastAccessed, CA.CompleteByDate, CA.UserBookmark, CA.UnprocessedUpdates,
+                        CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
+                        CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview, SA.EnforceRoleRequirementsForSignOff",
                 new { candidateId, selfAssessmentId }

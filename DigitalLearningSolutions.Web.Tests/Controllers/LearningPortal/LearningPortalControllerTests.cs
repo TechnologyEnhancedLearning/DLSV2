@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
         private INotificationService notificationService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
         private ISupervisorService supervisorService = null!;
+        private ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService = null!;
 
         [SetUp]
         public void SetUp()
@@ -41,6 +42,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
             supervisorService = A.Fake<ISupervisorService>();
             notificationService = A.Fake<INotificationService>();
             frameworkNotificationService = A.Fake<IFrameworkNotificationService>();
+            candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
             var logger = A.Fake<ILogger<LearningPortalController>>();
             config = A.Fake<IConfiguration>();
             filteredApiHelperService = A.Fake<IFilteredApiHelperService>();
@@ -66,7 +68,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.LearningPortal
                 frameworkNotificationService,
                 logger,
                 config,
-                actionPlanService
+                actionPlanService,
+                candidateAssessmentDownloadFileService
             )
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },

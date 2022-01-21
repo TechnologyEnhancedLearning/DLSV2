@@ -148,6 +148,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.Answer1,
                 pr.Answer2,
                 pr.Answer3,
+                pr.PLLocked as IsProgressLocked,
                 ca.CandidateID AS DelegateId,
                 ca.FirstName AS DelegateFirstName,
                 ca.LastName AS DelegateLastName,

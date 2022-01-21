@@ -27,6 +27,7 @@
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
         void ClearAspProgressVerificationRequest(int progressId);
         void SetCompletionDate(int progressId, DateTime? completeByDate);
+        void UnlockProgress(int progressId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -182,6 +183,16 @@
                     $"Progress id: {progressId}, completion date: {completionDate}"
                 );
             }
+        }
+
+        public void UnlockProgress(int progressId)
+        {
+            connection.Execute(
+                @"UPDATE Progress SET
+                        PLLocked = 0
+                    WHERE ProgressID = @progressId",
+                new { progressId }
+            );
         }
     }
 }
