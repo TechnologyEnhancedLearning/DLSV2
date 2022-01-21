@@ -185,6 +185,7 @@
         [TestCase(1, "[{'tutorialid':999999999999999999,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         [TestCase(1, "[{'tutorialid':x,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         [TestCase(1, "[{'tutorialid':425,'myscore':x},{'tutorialid':424,'myscore':3}]")]
+        [TestCase(1, "[{'tutorialid':0,'myscore':4},{'tutorialid':424,'myscore':3}]")]
         public void
             StoreDiagnosticJson_returns_StoreDiagnosticScoreException_if_error_when_deserializing_json_or_updating_score(
                 int? progressId,

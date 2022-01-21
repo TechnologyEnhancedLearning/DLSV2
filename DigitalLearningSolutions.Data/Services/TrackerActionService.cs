@@ -86,6 +86,11 @@
 
                 foreach (var diagOutcome in diagnosticOutcomes)
                 {
+                    if (diagOutcome.TutorialId == 0)
+                    {
+                        throw new Exception();
+                    }
+
                     progressService.UpdateDiagnosticScore(
                         progressId.Value,
                         diagOutcome.TutorialId,
