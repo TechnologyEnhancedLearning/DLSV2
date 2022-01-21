@@ -1,14 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
-@using DigitalLearningSolutions.Web.Helpers
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @model EditCourseSectionFormData
-
-@{
-  var selectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.SelectAllDiagnosticAction : EditCourseSectionHelper.SelectAllDiagnosticAction;
-  var deselectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.DeselectAllDiagnosticAction : EditCourseSectionHelper.DeselectAllDiagnosticAction;
-}
 
 <div class="nhsuk-grid-column-one-half">
   <h2 class="nhsuk-heading-l nhsuk-u-margin-bottom-1">Diagnostic</h2>
@@ -18,12 +10,12 @@
     <div class="nhsuk-grid-column-full">
       <button name="action"
               class="nhsuk-search__submit select-all-button"
-              value="@selectAllAction">
+              value="@EditCourseSectionHelper.SelectAllDiagnosticAction">
         Select all
       </button>
       <button name="action"
               class="nhsuk-search__submit deselect-all-button"
-              value="@deselectAllAction">
+              value="@EditCourseSectionHelper.DeselectAllDiagnosticAction">
         Deselect all
       </button>
     </div>

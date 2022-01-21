@@ -22,12 +22,7 @@
     [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     public class CourseContentController : Controller
     {
-        public const string SelectAllDiagnosticAction = "diagnostic-select-all";
-        public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
-        public const string SelectAllLearningAction = "learning-select-all";
-        public const string DeselectAllLearningAction = "learning-deselect-all";
         public const string SaveAction = "save";
-
         private readonly ICourseDataService courseDataService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;

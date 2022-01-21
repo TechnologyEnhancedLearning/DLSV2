@@ -32,7 +32,6 @@
     {
         private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
-
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
@@ -330,6 +329,7 @@
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
             using var transaction = new TransactionScope();
+
             var centreId = User.GetCentreId();
             var customisationId = courseService.CreateNewCentreCourse(
                 centreId,
@@ -358,6 +358,7 @@
             {
                 tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
             }
+            transaction.Complete();
 
             TempData.Clear();
             TempData.Add("customisationId", customisationId);

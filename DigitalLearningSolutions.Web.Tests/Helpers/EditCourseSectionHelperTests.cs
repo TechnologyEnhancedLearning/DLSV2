@@ -21,7 +21,7 @@
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
                 formData,
-                CourseContentController.SelectAllLearningAction
+                EditCourseSectionHelper.SelectAllLearningAction
             );
 
             // Then
@@ -41,7 +41,7 @@
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
                 formData,
-                CourseContentController.SelectAllDiagnosticAction
+                EditCourseSectionHelper.SelectAllDiagnosticAction
             );
 
             // Then
@@ -61,7 +61,7 @@
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
                 formData,
-                CourseContentController.DeselectAllLearningAction
+                EditCourseSectionHelper.DeselectAllLearningAction
             );
 
             // Then
@@ -81,7 +81,7 @@
             // When
             var result = EditCourseSectionHelper.ProcessBulkSelect(
                 formData,
-                CourseContentController.DeselectAllDiagnosticAction
+                EditCourseSectionHelper.DeselectAllDiagnosticAction
             );
 
             // Then
