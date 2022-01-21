@@ -10,6 +10,7 @@
     public interface IProgressDataService
     {
         IEnumerable<Progress> GetDelegateProgressForCourse(int delegateId, int customisationId);
+
         void UpdateProgressSupervisorAndCompleteByDate(int progressId, int supervisorAdminId, DateTime? completeByDate);
 
         int CreateNewDelegateProgress(
@@ -24,9 +25,15 @@
         );
 
         void CreateNewAspProgress(int tutorialId, int progressId);
+
         void InsertNewAspProgressRecordsForTutorialIfNoneExist(int tutorialId, int customisationId);
+
         void ClearAspProgressVerificationRequest(int progressId);
+
         void SetCompletionDate(int progressId, DateTime? completeByDate);
+
+        void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
+
         void UnlockProgress(int progressId);
     }
 
@@ -182,6 +189,32 @@
                     "Not setting current course completion date as db update failed. " +
                     $"Progress id: {progressId}, completion date: {completionDate}"
                 );
+            }
+        }
+
+        public void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE ap
+                        SET ap.DiagHigh = IIF(@myScore > DiagHigh, @myScore, DiagHigh),
+                            ap.DiagLow = CASE WHEN ap.DiagAttempts = 0 THEN @myScore
+                                ELSE IIF(@myScore > DiagLow, DiagLow, @myScore) END,
+                            ap.DiagLast = @myScore,
+                            ap.DiagAttempts = DiagAttempts + 1
+                        FROM aspProgress AS ap
+                        INNER JOIN Tutorials AS t ON t.TutorialID = ap.TutorialID
+                        WHERE ap.ProgressID = @progressId
+                        AND (ap.TutorialID = @tutorialId OR t.OriginalTutorialID = @tutorialId)",
+                new { progressId, tutorialId, myScore }
+            );
+
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating diagnostic score as db update failed. " +
+                    $"Progress id: {progressId}, tutorial Id: {tutorialId}, myScore: {myScore}"
+                );
+                throw new Exception("No aspProgress records were affected when updating diagnostic score");
             }
         }
 

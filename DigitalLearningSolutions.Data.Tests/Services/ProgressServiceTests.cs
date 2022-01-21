@@ -171,5 +171,23 @@
                 () => courseDataService.SetCompleteByDate(A<int>._, A<int>._, A<DateTime?>._)
             ).MustNotHaveHappened();
         }
+
+        [Test]
+        public void UpdateDiagnosticScore_calls_data_service()
+        {
+            // Given
+            const int progressId = 1;
+            const int tutorialId = 1;
+            const int myScore = 1;
+            A.CallTo(() => progressDataService.UpdateDiagnosticScore(A<int>._, A<int>._, A<int>._))
+                .DoesNothing();
+
+            // When
+            progressService.UpdateDiagnosticScore(progressId, tutorialId, myScore);
+
+            // Then
+            A.CallTo(() => progressDataService.UpdateDiagnosticScore(progressId, tutorialId, myScore))
+                .MustHaveHappened();
+        }
     }
 }
