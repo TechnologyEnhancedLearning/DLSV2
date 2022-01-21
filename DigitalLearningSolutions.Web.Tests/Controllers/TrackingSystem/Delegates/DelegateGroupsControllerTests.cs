@@ -334,7 +334,7 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId);
+            var result = delegateGroupsController.DeleteGroup(groupId, null);
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -353,7 +353,7 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId);
+            var result = delegateGroupsController.DeleteGroup(groupId, null);
 
             // Then
             result.Should().BeRedirectToActionResult()
@@ -370,7 +370,7 @@
             const int groupId = 1;
 
             // When
-            var result = delegateGroupsController.DeleteGroup(groupId);
+            var result = delegateGroupsController.DeleteGroup(groupId, null);
 
             // Then
             A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, false)).MustHaveHappenedOnceExactly();
@@ -538,7 +538,7 @@
                 .Returns(new Group { LinkedToField = 1 });
 
             // When
-            var result = delegateGroupsController.EditGroupName(1);
+            var result = delegateGroupsController.EditGroupName(1, null);
 
             // Them
             A.CallTo(() => groupsService.GetGroupAtCentreById(1, 2)).MustHaveHappened();
