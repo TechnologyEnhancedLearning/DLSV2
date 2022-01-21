@@ -212,6 +212,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
+            services.AddScoped<ILearningHubAuthApiUrlService, LearningHubAuthApiUrlService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)

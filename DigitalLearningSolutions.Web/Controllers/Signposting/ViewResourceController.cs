@@ -3,10 +3,12 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.UseSignposting)]
+    [Authorize(Policy = CustomPolicies.UserOnly)]
     public class ViewResourceController : Controller
     {
         private readonly ILearningHubAuthApiUrlService learningHubAuthApiUrlService;
