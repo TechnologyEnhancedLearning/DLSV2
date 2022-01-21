@@ -73,8 +73,7 @@
             // When
             var result =
                 (await recommendedLearningService.GetRecommendedLearningForSelfAssessment(SelfAssessmentId, DelegateId))
-                .recommendedResources
-                .ToList();
+                .recommendedResources.ToList();
 
             // Then
             result.Should().HaveCount(1);
