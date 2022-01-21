@@ -70,7 +70,7 @@
             var result = await controller.LaunchLearningResource(ResourceReferenceId);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("Index").WithControllerName("ViewResource")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustNotHaveHappened();
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._)).MustNotHaveHappened();
