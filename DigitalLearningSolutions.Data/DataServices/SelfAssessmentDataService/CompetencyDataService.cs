@@ -537,7 +537,7 @@
                     FROM CompetencyAssessmentQuestionRoleRequirements
                     WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId
                         AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @levelValue",
-                new { selfAssessmentId, competencyId, assessmentQuestionId, result = levelValue }
+                new { selfAssessmentId, competencyId, assessmentQuestionId, levelValue }
             );
         }
 
