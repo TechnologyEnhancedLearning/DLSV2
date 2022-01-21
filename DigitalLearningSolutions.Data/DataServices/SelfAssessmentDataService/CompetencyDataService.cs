@@ -523,7 +523,7 @@
             int competencyId,
             int selfAssessmentId,
             int assessmentQuestionId,
-            int result
+            int levelValue
         )
         {
             return connection.QuerySingleOrDefault<CompetencyAssessmentQuestionRoleRequirement>(
@@ -536,8 +536,8 @@
                         LevelRAG
                     FROM CompetencyAssessmentQuestionRoleRequirements
                     WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId
-                        AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @result",
-                new { selfAssessmentId, competencyId, assessmentQuestionId, result }
+                        AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @levelValue",
+                new { selfAssessmentId, competencyId, assessmentQuestionId, result = levelValue }
             );
         }
 

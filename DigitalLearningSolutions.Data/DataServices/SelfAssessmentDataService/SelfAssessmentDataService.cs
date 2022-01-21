@@ -54,7 +54,7 @@
             int competencyId,
             int selfAssessmentId,
             int assessmentQuestionId,
-            int result
+            int levelValue
         );
 
         IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
