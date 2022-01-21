@@ -49,17 +49,19 @@
            role="button"
            asp-controller="Administrator"
            asp-action="EditAdminRoles"
-           asp-route-adminId="@Model.Id">
+           asp-route-adminId="@Model.Id"
+           asp-route-returnPage="@Model.ReturnPage">
           Manage roles
         </a>
       }
-      @if (!Model.IsCentreManager) { 
+      @if (!Model.IsCentreManager) {
         <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
            role="button"
            aria-label="Deactivate admin account"
            asp-controller="Administrator"
            asp-action="DeactivateAdmin"
-           asp-route-adminId="@Model.Id">
+           asp-route-adminId="@Model.Id"
+           asp-route-returnPage="@Model.ReturnPage">
           Deactivate admin account
         </a>
       }

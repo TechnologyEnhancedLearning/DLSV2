@@ -12,7 +12,7 @@
 
         public AllAdminsViewModel(IEnumerable<AdminUser> adminUsers, IEnumerable<string> categories)
         {
-            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au));
+            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, 1));
 
             Filters = new[]
             {

@@ -17,13 +17,15 @@
             AdminUser user,
             int centreId,
             IEnumerable<Category> categories,
-            CentreContractAdminUsage numberOfAdmins
+            CentreContractAdminUsage numberOfAdmins,
+            int? returnPage
         ) : base(user, centreId)
         {
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
+            ReturnPage = returnPage;
 
             if (user.IsCmsAdministrator)
             {
@@ -46,6 +48,8 @@
 
             SetUpCheckboxesAndRadioButtons(user, numberOfAdmins);
         }
+
+        public int? ReturnPage { get; set; }
 
         private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
         {
