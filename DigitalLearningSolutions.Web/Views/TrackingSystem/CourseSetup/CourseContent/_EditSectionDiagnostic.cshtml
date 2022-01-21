@@ -1,12 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @model EditCourseSectionFormData
 
 @{
   var selectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.SelectAllDiagnosticAction : CourseSetupController.SelectAllDiagnosticAction;
+    CourseContentController.SelectAllDiagnosticAction : EditCourseSectionHelper.SelectAllDiagnosticAction;
   var deselectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.DeselectAllDiagnosticAction : CourseSetupController.DeselectAllDiagnosticAction;
+    CourseContentController.DeselectAllDiagnosticAction : EditCourseSectionHelper.DeselectAllDiagnosticAction;
 }
 
 <div class="nhsuk-grid-column-one-half">

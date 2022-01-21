@@ -111,17 +111,54 @@
             var sectionTwo = new Section(2, "Second Section");
             var sections = new List<Section> { sectionOne, sectionTwo };
 
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
+            var tutorials = new List<Tutorial> { tutorial };
+
             A.CallTo(
                 () => sectionContentDataService.GetSectionsForApplication(1)
             ).Returns(sections);
 
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(A<int>._)
+            ).Returns(tutorials);
+
             // When
-            var result = sectionService.GetSectionsForApplication(1);
+            var result = sectionService.GetSectionsWithTutorialsForApplication(1);
 
             // Then
             A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeEquivalentTo(sections);
+        }
+
+        [Test]
+        public void GetSectionsForApplication_returns_only_sections_with_tutorials()
+        {
+            // Given
+            var sectionOne = new Section(1, "Section");
+            var sectionTwo = new Section(2, "Second Section");
+            var sections = new List<Section> { sectionOne, sectionTwo };
+
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
+            var tutorials = new List<Tutorial> { tutorial };
+
+            A.CallTo(
+                () => sectionContentDataService.GetSectionsForApplication(1)
+            ).Returns(sections);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(1)
+            ).Returns(tutorials);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(2)
+            ).Returns(new List<Tutorial>());
+
+            // When
+            var result = sectionService.GetSectionsWithTutorialsForApplication(1);
+
+            // Then
+            result.Count().Should().Be(1);
         }
     }
 }

@@ -11,7 +11,7 @@
 
         Section? GetSectionAndTutorialsBySectionIdForCustomisation(int customisationId, int sectionId);
 
-        IEnumerable<Section> GetSectionsForApplication(int applicationId);
+        IEnumerable<Section> GetSectionsWithTutorialsForApplication(int applicationId);
     }
 
     public class SectionService : ISectionService
@@ -56,9 +56,10 @@
             return section;
         }
 
-        public IEnumerable<Section> GetSectionsForApplication(int applicationId)
+        public IEnumerable<Section> GetSectionsWithTutorialsForApplication(int applicationId)
         {
-            return sectionContentDataService.GetSectionsForApplication(applicationId);
+            var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
+            return sections.Where(s => tutorialContentDataService.GetTutorialsForSection(s.SectionId).Any());
         }
     }
 }

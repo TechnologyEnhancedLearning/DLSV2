@@ -3,14 +3,16 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models;
 
     public class SetCourseContentViewModel
     {
         public SetCourseContentViewModel() { }
 
-        public SetCourseContentViewModel(IEnumerable<SelectSectionViewModel> availableSections)
+        public SetCourseContentViewModel(IEnumerable<Section> availableSections)
         {
-            AvailableSections = availableSections;
+            AvailableSections = availableSections.Select(section => new SelectSectionViewModel(section, false))
+                .ToList();
             IncludeAllSections = true;
             SelectedSectionIds = null;
         }

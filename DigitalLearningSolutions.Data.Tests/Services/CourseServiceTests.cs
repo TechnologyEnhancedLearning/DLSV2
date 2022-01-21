@@ -422,7 +422,8 @@
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress> {
+                new List<Progress>
+                {
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
@@ -563,6 +564,32 @@
             A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeEquivalentTo(applicationOptions);
+        }
+
+        [Test]
+        public void GetApplicationOptionsAlphabeticalListForCentre_filters_by_topic_if_topic_given()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            const int topicId = 1;
+
+            var applicationOne = new ApplicationDetails { CourseTopicId = 1 };
+            var applicationTwo = new ApplicationDetails { CourseTopicId = 1 };
+            var applicationThree = new ApplicationDetails { CourseTopicId = 2 };
+
+            var applicationOptions = new List<ApplicationDetails>
+                { applicationOne, applicationTwo, applicationThree };
+            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(applicationOptions);
+
+            // When
+            var result = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId, topicId)
+                .ToList();
+
+            // Then
+            result.All(s => s.CourseTopicId == 1).Should().BeTrue();
+            result.Count.Should().Be(2);
         }
 
         [Test]

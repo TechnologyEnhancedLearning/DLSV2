@@ -174,6 +174,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseContentService, CourseContentService>();
             services.AddScoped<ICourseDelegatesService, CourseDelegatesService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseTopicsService, CourseTopicsService>();
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();

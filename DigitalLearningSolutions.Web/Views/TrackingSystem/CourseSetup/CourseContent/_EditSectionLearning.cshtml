@@ -1,12 +1,13 @@
 ﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @model EditCourseSectionFormData
 
 @{
   var selectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.SelectAllLearningAction : CourseSetupController.SelectAllLearningAction;
+    CourseContentController.SelectAllLearningAction : EditCourseSectionHelper.SelectAllLearningAction;
   var deselectAllAction = Model is EditCourseSectionViewModel ?
-    CourseContentController.DeselectAllLearningAction : CourseSetupController.DeselectAllLearningAction;
+    CourseContentController.DeselectAllLearningAction : EditCourseSectionHelper.DeselectAllLearningAction;
 }
 
 <div class="nhsuk-grid-column-one-half tutorial-learning-column">
@@ -29,8 +30,7 @@
   </div>
 
   <div class="nhsuk-checkboxes">
-    @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i)))
-    {
+    @foreach (var (tutorial, tutIndex) in Model.Tutorials.Select((t, i) => (t, i))) {
       <div class="nhsuk-checkboxes__item">
         <input class="nhsuk-checkboxes__input learning-checkbox"
                type="checkbox"

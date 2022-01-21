@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
@@ -84,6 +85,7 @@
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private ICourseTopicsService courseTopicsService = null!;
 
         [SetUp]
         public void Setup()
@@ -93,6 +95,7 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
+            courseTopicsService = A.Fake<ICourseTopicsService>();
 
             A.CallTo(() => courseService.GetCentreSpecificCourseStatistics(A<int>._, A<int>._)).Returns(courses);
             A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
@@ -100,7 +103,7 @@
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
 
             A.CallTo(
-                () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._)
+                () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
             ).Returns(applicationOptions);
 
             httpRequest = A.Fake<HttpRequest>();
@@ -111,7 +114,8 @@
                     courseCategoryDataService,
                     courseTopicsDataService,
                     tutorialService,
-                    sectionService
+                    sectionService,
+                    courseTopicsService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -127,7 +131,8 @@
                     courseCategoryDataService,
                     courseTopicsDataService,
                     tutorialService,
-                    sectionService
+                    sectionService,
+                    courseTopicsService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -385,7 +390,7 @@
             SetAddNewCentreCourseTempData(application);
 
             A.CallTo(
-                () => sectionService.GetSectionsForApplication(1)
+                () => sectionService.GetSectionsWithTutorialsForApplication(1)
             ).Returns(new List<Section>());
 
             // When

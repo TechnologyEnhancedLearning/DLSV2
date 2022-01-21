@@ -52,7 +52,8 @@
 
         public IEnumerable<ApplicationDetails> GetApplicationOptionsAlphabeticalListForCentre(
             int centreId,
-            int? categoryId
+            int? categoryId,
+            int? topicId = null
         );
 
         public bool DoesCourseNameExistAtCentre(
@@ -237,15 +238,6 @@
             return orderedCourses.Select(c => (c.CustomisationId, c.CourseName));
         }
 
-        public IEnumerable<ApplicationDetails> GetApplicationOptionsAlphabeticalListForCentre(
-            int centreId,
-            int? categoryId
-        )
-        {
-            var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
-            return activeApplications.OrderBy(a => a.ApplicationName);
-        }
-
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
             int centreId,
@@ -378,6 +370,18 @@
                 hideInLearnerPortal,
                 notificationEmails
             );
+        }
+
+        public IEnumerable<ApplicationDetails>
+            GetApplicationOptionsAlphabeticalListForCentre(
+                int centreId,
+                int? categoryId,
+                int? topicId = null
+            )
+        {
+            var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
+            var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
+            return filteredApplications.OrderBy(a => a.ApplicationName);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

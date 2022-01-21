@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
@@ -31,15 +31,12 @@
     public class CourseSetupController : Controller
     {
         private const string CourseFilterCookieName = "CourseFilter";
-        public const string SelectAllDiagnosticAction = "diagnostic-select-all";
-        public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
-        public const string SelectAllLearningAction = "learning-select-all";
-        public const string DeselectAllLearningAction = "learning-deselect-all";
         public const string SaveAction = "save";
 
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
+        private readonly ICourseTopicsService courseTopicsService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
@@ -48,7 +45,8 @@
             ICourseCategoriesDataService courseCategoriesDataService,
             ICourseTopicsDataService courseTopicsDataService,
             ITutorialService tutorialService,
-            ISectionService sectionService
+            ISectionService sectionService,
+            ICourseTopicsService courseTopicsService
         )
         {
             this.courseService = courseService;
@@ -56,6 +54,7 @@
             this.courseTopicsDataService = courseTopicsDataService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
+            this.courseTopicsService = courseTopicsService;
         }
 
         [Route("{page=1:int}")]
@@ -241,7 +240,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            if (!sectionService.GetSectionsForApplication(data!.Application!.ApplicationId).Any())
+            if (!sectionService.GetSectionsWithTutorialsForApplication(data!.Application!.ApplicationId).Any())
             {
                 return RedirectToAction("Summary");
             }
@@ -262,13 +261,7 @@
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
                 model.SelectAllSections();
-                var availableSections = model.AvailableSections.Select(
-                    (s, index) =>
-                    {
-                        var tutorials = tutorialService.GetTutorialsForSection(s.Id);
-                        return new SetSectionContentViewModel(s, index, data!.Application!.DiagAssess, tutorials);
-                    }
-                );
+                var availableSections = GetSectionModelsWithAllContentEnabled(model, data.Application.DiagAssess);
                 data!.SetSectionContentModels = availableSections.ToList();
             }
 
@@ -336,48 +329,42 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            try
-            {
-                var centreId = User.GetCentreId();
-                var customisationId = courseService.CreateNewCentreCourse(
-                    centreId,
-                    data!.Application!.ApplicationId,
-                    data.SetCourseDetailsModel!.CustomisationName ?? string.Empty,
-                    data.SetCourseDetailsModel.Password,
-                    data.SetCourseOptionsModel!.AllowSelfEnrolment,
-                    int.Parse(data.SetCourseDetailsModel.TutCompletionThreshold!),
-                    data.SetCourseDetailsModel.PostLearningAssessment,
-                    int.Parse(data.SetCourseDetailsModel.DiagCompletionThreshold!),
-                    data.SetCourseOptionsModel.DiagnosticObjectiveSelection,
-                    data.SetCourseOptionsModel.HideInLearningPortal,
-                    data.SetCourseDetailsModel.NotificationEmails
+            using var transaction = new TransactionScope();
+            var centreId = User.GetCentreId();
+            var customisationId = courseService.CreateNewCentreCourse(
+                centreId,
+                data!.Application!.ApplicationId,
+                data.SetCourseDetailsModel!.CustomisationName ?? string.Empty,
+                data.SetCourseDetailsModel.Password,
+                data.SetCourseOptionsModel!.AllowSelfEnrolment,
+                int.Parse(data.SetCourseDetailsModel.TutCompletionThreshold!),
+                data.SetCourseDetailsModel.PostLearningAssessment,
+                int.Parse(data.SetCourseDetailsModel.DiagCompletionThreshold!),
+                data.SetCourseOptionsModel.DiagnosticObjectiveSelection,
+                data.SetCourseOptionsModel.HideInLearningPortal,
+                data.SetCourseDetailsModel.NotificationEmails
+            );
+
+            var tutorials = data.GetTutorialsFromSections()
+                .Select(
+                    tm => new Tutorial(
+                        tm.TutorialId,
+                        tm.TutorialName,
+                        tm.LearningEnabled,
+                        tm.DiagnosticEnabled
+                    )
                 );
-
-                var tutorials = data.GetTutorialsFromSections()
-                    .Select(
-                        tm => new Tutorial(
-                            tm.TutorialId,
-                            tm.TutorialName,
-                            tm.LearningEnabled,
-                            tm.DiagnosticEnabled
-                        )
-                    );
-                if (data.SetSectionContentModels != null)
-                {
-                    tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
-                }
-
-                TempData.Clear();
-                TempData.Add("customisationId", customisationId);
-                TempData.Add("applicationName", data.Application!.ApplicationName);
-                TempData.Add("customisationName", data.SetCourseDetailsModel!.CustomisationName);
-
-                return RedirectToAction("Confirmation");
-            }
-            catch (Exception)
+            if (data.SetSectionContentModels != null)
             {
-                return null;
+                tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
             }
+
+            TempData.Clear();
+            TempData.Add("customisationId", customisationId);
+            TempData.Add("applicationName", data.Application!.ApplicationName);
+            TempData.Add("customisationName", data.SetCourseDetailsModel!.CustomisationName);
+
+            return RedirectToAction("Confirmation");
         }
 
         [HttpGet]
@@ -407,12 +394,10 @@
             var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
 
             var orderedApplications = courseService
-                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter)
-                .ToList();
-            var filteredApplications = orderedApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
-            var applicationOptions = filteredApplications.Select(a => (a.ApplicationId, a.ApplicationName));
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter, topicId)
+                .Select(a => (a.ApplicationId, a.ApplicationName));
 
-            return SelectListHelper.MapOptionsToSelectListItems(applicationOptions, selectedId);
+            return SelectListHelper.MapOptionsToSelectListItems(orderedApplications, selectedId);
         }
 
         private IEnumerable<SelectListItem>? GetTopicOptionsSelectListOrNull(int? selectedId)
@@ -423,8 +408,7 @@
             }
 
             var centreId = User.GetCentreId();
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId)
-                .Where(c => c.Active)
+            var topics = courseTopicsService.GetActiveTopicsAvailableAtCentre(centreId)
                 .Select(c => (c.CourseTopicID, c.CourseTopic));
             return SelectListHelper.MapOptionsToSelectListItems(topics, selectedId);
         }
@@ -436,14 +420,28 @@
                 return data.SetCourseContentModel;
             }
 
-            var sections =
-                sectionService.GetSectionsForApplication(data!.Application!.ApplicationId);
-            var sectionsWithTutorials =
-                sections.Where(s => tutorialService.GetTutorialsForSection(s.SectionId).Count() != 0);
-            var sectionModels = sectionsWithTutorials.Select(section => new SelectSectionViewModel(section, false))
-                .ToList();
+            var sections = sectionService.GetSectionsWithTutorialsForApplication(data!.Application!.ApplicationId);
+            return new SetCourseContentViewModel(sections);
+        }
 
-            return new SetCourseContentViewModel(sectionModels);
+        private IEnumerable<SetSectionContentViewModel> GetSectionModelsWithAllContentEnabled(
+            SetCourseContentViewModel model,
+            bool diagAssess
+        )
+        {
+            return model.AvailableSections.Select(
+                (s, index) =>
+                {
+                    var tutorials = tutorialService.GetTutorialsForSection(s.Id).ToList();
+                    foreach (var tutorial in tutorials)
+                    {
+                        tutorial.Status = true;
+                        tutorial.DiagStatus = diagAssess;
+                    }
+
+                    return new SetSectionContentViewModel(s, index, diagAssess, tutorials);
+                }
+            );
         }
 
         private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)
