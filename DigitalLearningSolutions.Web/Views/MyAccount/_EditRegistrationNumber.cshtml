@@ -4,26 +4,28 @@
 @model MyAccountEditDetailsViewModel
 
 @{
-  var errorHasOccurred = false;
-  if (ViewData.ModelState.TryGetValue(nameof(Model.HasProfessionalRegistrationNumber), out var modelState)) {
-    errorHasOccurred = modelState.ValidationState != ModelValidationState.Valid;
-  }
-
+  var hasPrnErrorHasOccurred =
+    ViewData.ModelState.GetFieldValidationState(nameof(Model.HasProfessionalRegistrationNumber)) == ModelValidationState.Invalid;
+  var professionalRegNumberErrorHasOccurred =
+    ViewData.ModelState.GetFieldValidationState(nameof(Model.ProfessionalRegistrationNumber)) == ModelValidationState.Invalid;
   var optionYesSelected = Model.HasProfessionalRegistrationNumber == true;
   var optionNoSelected = Model.HasProfessionalRegistrationNumber == false;
   const string professionalRegConditionalId = "professional-reg-conditional-Id";
 }
 
-<div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
+<div class="nhsuk-form-group @(hasPrnErrorHasOccurred ? "nhsuk-form-group--error" : "")">
   <fieldset class="nhsuk-fieldset" aria-describedby="professional-registration-hint">
 
     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-      <div class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
+      <div class="nhsuk-label">
         Do you have a Professional Registration Number?
+      </div>
+      <div class="nhsuk-hint nhsuk-u-margin-bottom-0" id="professional-registration-hint">
+        You should have a professional registration number if you are a health professional registered with a professional body such as the NMC, GMC or GDC.
       </div>
     </legend>
 
-    @if (errorHasOccurred) {
+    @if (hasPrnErrorHasOccurred) {
       <span class="nhsuk-error-message" id="no-selection-error">
         <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.HasProfessionalRegistrationNumber)].Errors[0].ErrorMessage
       </span>
@@ -54,13 +56,15 @@
           Yes
         </label>
       </div>
-      <div class="nhsuk-radios__conditional @(optionYesSelected ? " " : " nhsuk-radios__conditional--hidden")" id="@professionalRegConditionalId">
+      <div
+        class="nhsuk-radios__conditional @(optionYesSelected ? " " : " nhsuk-radios__conditional--hidden") @(professionalRegNumberErrorHasOccurred ? "form-group-wrapper--error" : "")"
+        id="@professionalRegConditionalId">
         <vc:text-input asp-for="@nameof(Model.ProfessionalRegistrationNumber)"
                        label="Professional Registration Number"
                        populate-with-current-value="true"
                        type="text"
                        spell-check="false"
-                       hint-text="You should have a professional registration number if you are a health professional registered with a professional body such as the NMC, GMC or GDC."
+                       hint-text=""
                        autocomplete="off"
                        css-class="nhsuk-u-width-one-half" />
       </div>
