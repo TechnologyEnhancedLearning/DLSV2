@@ -6,7 +6,7 @@
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {
-        public SearchableAdminViewModel(AdminUser adminUser, int? returnPage)
+        public SearchableAdminViewModel(AdminUser adminUser, int? page)
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
@@ -15,7 +15,7 @@
             IsLocked = adminUser.IsLocked;
             IsCentreManager = adminUser.IsCentreManager;
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
-            ReturnPage = returnPage;
+            Page = page;
         }
 
         public int Id { get; set; }
@@ -34,6 +34,6 @@
 
         public bool IsCentreManager { get; set; }
 
-        public int? ReturnPage { get; set; }
+        public int? Page { get; set; }
     }
 }

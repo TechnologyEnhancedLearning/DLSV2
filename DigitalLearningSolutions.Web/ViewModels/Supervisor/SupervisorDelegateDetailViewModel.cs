@@ -6,10 +6,10 @@
     {
         public SupervisorDelegateDetailViewModel() {}
 
-        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, int? returnPage) : base(supervisorDelegateDetail)
+        public SupervisorDelegateDetailViewModel(SupervisorDelegateDetail supervisorDelegateDetail, int? page) : base(supervisorDelegateDetail)
         {
-            ReturnPage = returnPage;
+            Page = page;
         }
-        public int? ReturnPage { get; set; }
+        public int? Page { get; set; }
     }
 }

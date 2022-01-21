@@ -13,7 +13,7 @@
         public DelegateProgressViewModel(
             DelegateProgressAccessRoute accessedVia,
             DelegateCourseDetails details,
-            int? returnPage
+            int? page
         ) : base(details)
         {
             AccessedVia = accessedVia;
@@ -42,7 +42,7 @@
                         )
                 )
                 .ToList();
-            ReturnPage = returnPage;
+            Page = page;
         }
 
         public DelegateProgressAccessRoute AccessedVia { get; set; }
@@ -89,6 +89,6 @@
             }
         }
 
-        public int? ReturnPage { get; set; }
+        public int? Page { get; set; }
     }
 }

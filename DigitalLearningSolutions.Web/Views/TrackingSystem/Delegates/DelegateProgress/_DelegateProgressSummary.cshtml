@@ -17,7 +17,7 @@
          asp-action="EditSupervisor"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.ReturnPage" >
+         asp-route-returnPage="@Model.Page" >
         Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
       </a>
     </dd>
@@ -43,7 +43,7 @@
          asp-action="EditCompleteByDate"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.ReturnPage" >
+         asp-route-returnPage="@Model.Page" >
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
@@ -69,7 +69,7 @@
          asp-action="EditCompletionDate"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates"
-         asp-route-returnPage="@Model.ReturnPage" >
+         asp-route-returnPage="@Model.Page" >
         Edit
       </a>
     </dd>

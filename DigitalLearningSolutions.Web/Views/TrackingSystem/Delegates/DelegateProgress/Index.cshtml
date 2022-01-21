@@ -10,7 +10,7 @@
 
     if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
       routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
-      routeParamsForBackLink.Add("page", Model.ReturnPage.ToString());
+      routeParamsForBackLink.Add("page", Model.Page.ToString());
     } else {
       routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
     }

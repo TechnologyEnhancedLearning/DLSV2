@@ -91,7 +91,7 @@
       <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
          asp-action="@(Model.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")"
          asp-route-supervisorDelegateId="@Model.ID"
-         asp-route-returnPage="@Model.ReturnPage">
+         asp-route-returnPage="@Model.Page">
         Remove staff member
       </a>
 
@@ -100,7 +100,7 @@
   </details>
   @if (Model.Confirmed != null)
   {
-    
+
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
            aria-describedby="@Model.ID-name"
            asp-controller="Supervisor"
@@ -111,7 +111,7 @@
   }
   else if (Model.AddedByDelegate)
   {
-    
+
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
            aria-describedby="@Model.ID-name"
            asp-controller="Supervisor"
