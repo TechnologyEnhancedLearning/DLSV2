@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
+﻿// QQ fix line endings before merge
+namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;
@@ -40,8 +41,11 @@
             var centreId = GetCentreId();
             var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
+                supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
+            );
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            var model = new MyStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts, searchString, sortBy, sortDirection, page);
+            var model = new MyStaffListViewModel(supervisorDelegateDetailViewModels, centreCustomPrompts, searchString, sortBy, sortDirection, page);
             return View("MyStaffList", model);
         }
         [HttpPost]
@@ -98,10 +102,11 @@
             return RedirectToAction("MyStaffList");
         }
         [Route("/Supervisor/Staff/{supervisorDelegateId}/Remove")]
-        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
+        public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId, int? returnPage)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            return View("RemoveConfirm", superviseDelegate);
+            var model = new SupervisorDelegateDetailViewModel(superviseDelegate, returnPage);
+            return View("RemoveConfirm", model);
         }
         public IActionResult RemoveSupervisorDelegate(int supervisorDelegateId)
         {

@@ -1,5 +1,6 @@
-﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
-@model SupervisorDelegateDetail;
+﻿@{/* QQ Fix line endings before merge */}
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@model SupervisorDelegateDetailViewModel;
 <div class="searchable-element nhsuk-panel" id="@Model.ID-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
@@ -87,7 +88,10 @@
         <partial name="Shared/_StaffDetails" model="Model" />
       }
       </div>
-      <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" asp-action="@(Model.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")" asp-route-supervisorDelegateId="@Model.ID">
+      <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
+         asp-action="@(Model.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")"
+         asp-route-supervisorDelegateId="@Model.ID"
+         asp-route-returnPage="@Model.ReturnPage">
         Remove staff member
       </a>
 

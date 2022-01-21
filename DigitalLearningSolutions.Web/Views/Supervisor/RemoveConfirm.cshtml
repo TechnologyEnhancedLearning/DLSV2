@@ -1,6 +1,7 @@
-﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+﻿@{/* QQ Fix line endings before merge */}
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @using Microsoft.Extensions.Configuration
-@model SupervisorDelegateDetail;
+@model SupervisorDelegateDetailViewModel;
 @inject IConfiguration Configuration;
 @{
   ViewData["Application"] = "Supervisor";
@@ -29,7 +30,7 @@
     <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate" asp-route-supervisorDelegateId="@Model.ID">
       Remove
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList">
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList" asp-route-returnPage="@Model.ReturnPage">
      Cancel
     </a>
   </div>

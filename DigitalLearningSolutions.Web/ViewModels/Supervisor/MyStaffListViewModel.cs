@@ -1,7 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿// QQ fix line endings before merge
+namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
-    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;
     using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -9,7 +9,7 @@
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
         public MyStaffListViewModel(
-            IEnumerable<SupervisorDelegateDetail> supervisorDelegateDetails,
+            IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
             CentreCustomPrompts centreCustomPrompts,
             string? searchString,
             string sortBy,
@@ -19,7 +19,7 @@
         {
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
-           supervisorDelegateDetails.AsQueryable(),
+           supervisorDelegateDetailViewModels.AsQueryable(),
            sortBy,
            sortDirection
        );
@@ -27,16 +27,16 @@
             MatchingSearchResults = searchedItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(searchedItems);
-            SuperviseDelegateDetails = paginatedItems;
+            SuperviseDelegateDetailViewModels = paginatedItems;
 
         }
-        public IEnumerable<SupervisorDelegateDetail> SuperviseDelegateDetails { get; set; }
+        public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
        {
             DefaultSortByOptions.Name
         };
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
 
-        public override bool NoDataFound => !SuperviseDelegateDetails.Any() && NoSearchOrFilter;
+        public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
     }
 }

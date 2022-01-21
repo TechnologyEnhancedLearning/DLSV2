@@ -1,4 +1,5 @@
-﻿using System;
+﻿// QQ fix line endings before merge
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,25 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     public class SupervisorDelegate : BaseSearchableItem
     {
+        public SupervisorDelegate() {}
+
+        public SupervisorDelegate(SupervisorDelegate supervisorDelegate)
+        {
+            ID = supervisorDelegate.ID;
+            SupervisorEmail = supervisorDelegate.SupervisorEmail;
+            SupervisorAdminID = supervisorDelegate.SupervisorAdminID;
+            CentreId = supervisorDelegate.CentreId;
+            DelegateEmail = supervisorDelegate.DelegateEmail;
+            CandidateID = supervisorDelegate.CandidateID;
+            Added = supervisorDelegate.Added;
+            AddedByDelegate = supervisorDelegate.AddedByDelegate;
+            NotificationSent = supervisorDelegate.NotificationSent;
+            Confirmed = supervisorDelegate.Confirmed;
+            Removed = supervisorDelegate.Removed;
+            FirstName = supervisorDelegate.FirstName;
+            LastName = supervisorDelegate.LastName;
+            SearchableNameOverrideForFuzzySharp = supervisorDelegate.SearchableNameOverrideForFuzzySharp;
+        }
         public int ID { get; set; }
         public string SupervisorEmail { get; set; }
         public int? SupervisorAdminID { get; set; }

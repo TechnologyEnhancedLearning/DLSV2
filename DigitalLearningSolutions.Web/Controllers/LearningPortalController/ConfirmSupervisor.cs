@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
+﻿// QQ fix line endings before merge
+namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@
             }
             return RedirectToAction("Current");
         }
-        public IActionResult RejecttSupervisorDelegateInvite(int supervisorDelegateId)
+        public IActionResult RejectSupervisorDelegateInvite(int supervisorDelegateId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
             if (supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, candidateId, 0))
