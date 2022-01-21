@@ -39,6 +39,7 @@
                 ProgressId = 18395,
                 RemovedDate = null,
                 Completed = null,
+                CustomisationId = 1,
                 AllAttempts = 0,
                 AttemptsPassed = 0
             };
