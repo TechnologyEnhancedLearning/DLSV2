@@ -6,8 +6,8 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -17,6 +17,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
@@ -59,7 +60,7 @@
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
-
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/RecommendedLearning/{page:int=1}")]
         public async Task<IActionResult> RecommendedLearning(
             int selfAssessmentId,
@@ -80,16 +81,15 @@
             return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId, page, searchString);
         }
 
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AllRecommendedLearningItems")]
         public async Task<IActionResult> AllRecommendedLearningItems(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var recommendedResources = configuration.IsSignpostingUsed()
-                ? await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
-                    selfAssessmentId,
-                    candidateId
-                )
-                : new List<RecommendedResource>();
+            var recommendedResources = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
+                selfAssessmentId,
+                candidateId
+            );
 
             var model = new AllRecommendedLearningItemsViewModel(recommendedResources, selfAssessmentId);
             return View("AllRecommendedLearningItems", model);
