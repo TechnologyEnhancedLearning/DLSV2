@@ -80,7 +80,7 @@
 
             var resource = new ResourceReferenceWithResourceDetails { Title = resourceName, Link = resourceLink };
             A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(learningHubResourceId))
-                .Returns(new LearningResourceReferenceWithResourceDetails(resource, true));
+                .Returns((resource, true));
 
             var resourceCompetencies = new[] { 1, 2, 3, 4, 5, 6, 7, 8 };
             A.CallTo(
@@ -270,7 +270,7 @@
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
-                .Returns(new BulkLearningResourceReferences(bulkReturnedItems, false));
+                .Returns((bulkReturnedItems, false));
 
             // When
             var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
@@ -597,7 +597,7 @@
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
-                .Returns(new BulkLearningResourceReferences(bulkReturnedItems, false));
+                .Returns((bulkReturnedItems, false));
         }
 
         private void AssertThatActionPlanResourceIdsAndTitlesAreCorrect(

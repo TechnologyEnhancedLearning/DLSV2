@@ -1,22 +1,24 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
     using Microsoft.Extensions.Logging;
 
     public interface ILearningHubResourceService
     {
-        Task<LearningResourceReferenceWithResourceDetails?> GetResourceByReferenceId(int resourceReferenceId);
-
-        Task<BulkLearningResourceReferences> GetBulkResourcesByReferenceIds(
-            IList<int> resourceReferenceIds
+        Task<(ResourceReferenceWithResourceDetails? resource, bool sourcedFromFallbackData)> GetResourceByReferenceId(
+            int resourceReferenceId
         );
+
+        Task<(BulkResourceReferences bulkResourceReferences, bool sourcedFromFallbackData)>
+            GetBulkResourcesByReferenceIds(
+                IList<int> resourceReferenceIds
+            );
     }
 
     public class LearningHubResourceService : ILearningHubResourceService
@@ -36,17 +38,18 @@
             this.logger = logger;
         }
 
-        public async Task<LearningResourceReferenceWithResourceDetails?> GetResourceByReferenceId(
-            int resourceReferenceId
-        )
+        public async Task<(ResourceReferenceWithResourceDetails? resource, bool sourcedFromFallbackData)>
+            GetResourceByReferenceId(
+                int resourceReferenceId
+            )
         {
             try
             {
                 // TODO HEEDLS-747: tackle different response codes rather than catching all exceptions
                 var upToDateResourceDetails = await learningHubApiClient.GetResourceByReferenceId(resourceReferenceId);
-                return new LearningResourceReferenceWithResourceDetails(upToDateResourceDetails, false);
+                return (upToDateResourceDetails, false);
             }
-            catch (Exception e)
+            catch (HttpRequestException e)
             {
                 logger.LogWarning(
                     $"Call to Learning Hub Open API failed when trying to call /Resource/{resourceReferenceId} endpoint. " +
@@ -58,27 +61,23 @@
                         new[] { resourceReferenceId }
                     ).SingleOrDefault();
 
-                return fallBackResourceDetails == null
-                    ? null
-                    : new LearningResourceReferenceWithResourceDetails(
-                        fallBackResourceDetails,
-                        true
-                    );
+                return (fallBackResourceDetails, true);
             }
         }
 
-        public async Task<BulkLearningResourceReferences> GetBulkResourcesByReferenceIds(
-            IList<int> resourceReferenceIds
-        )
+        public async Task<(BulkResourceReferences bulkResourceReferences, bool sourcedFromFallbackData)>
+            GetBulkResourcesByReferenceIds(
+                IList<int> resourceReferenceIds
+            )
         {
             try
             {
                 // TODO HEEDLS-747: tackle different response codes rather than catching all exceptions
                 var upToDateResourceDetails =
                     await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceReferenceIds);
-                return new BulkLearningResourceReferences(upToDateResourceDetails, false);
+                return (upToDateResourceDetails, false);
             }
-            catch (Exception e)
+            catch (HttpRequestException e)
             {
                 logger.LogWarning(
                     "Call to Learning Hub Open API failed when trying to call /Resource/Bulk endpoint. " +
@@ -92,11 +91,11 @@
                 var bulkResourceReferences = new BulkResourceReferences
                 {
                     ResourceReferences = fallBackResources,
-                    UnmatchedResourceReferenceIds = resourceReferenceIds.Where(
-                        refId => fallBackResources.All(resource => resource.RefId != refId)
+                    UnmatchedResourceReferenceIds = resourceReferenceIds.Except(
+                        fallBackResources.Select(r => r.RefId)
                     ).ToList(),
                 };
-                return new BulkLearningResourceReferences(bulkResourceReferences, true);
+                return (bulkResourceReferences, true);
             }
         }
     }

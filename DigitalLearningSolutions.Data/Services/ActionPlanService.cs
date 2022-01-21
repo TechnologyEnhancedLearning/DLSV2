@@ -85,7 +85,7 @@
             var addedDate = clockService.UtcNow;
 
             var resource = (await learningHubResourceService.GetResourceByReferenceId(learningHubResourceReferenceId))
-                ?.ResourceReferenceWithResourceDetails;
+                .resource;
 
             if (resource == null)
             {
@@ -147,8 +147,8 @@
                     learningLogItem.LearningHubResourceReferenceId!.Value
                 );
 
-            return response != null
-                ? new ActionPlanResource(learningLogItem, response.ResourceReferenceWithResourceDetails)
+            return response.resource != null
+                ? new ActionPlanResource(learningLogItem, response.resource)
                 : null;
         }
 
@@ -233,7 +233,7 @@
                 .Select(i => i.LearningHubResourceReferenceId!.Value).Distinct().ToList();
             var bulkResponse = await learningHubResourceService.GetBulkResourcesByReferenceIds(resourceIds);
             var matchingLearningLogItems = learningLogItemsWithResourceReferencesIds.Where(
-                i => !bulkResponse.BulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
+                i => !bulkResponse.bulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
                     i.LearningHubResourceReferenceId!.Value
                 )
             );
@@ -241,13 +241,13 @@
             var actionPlanResources = matchingLearningLogItems.Select(
                 learningLogItem =>
                 {
-                    var matchingResource = bulkResponse.BulkResourceReferences.ResourceReferences.Single(
+                    var matchingResource = bulkResponse.bulkResourceReferences.ResourceReferences.Single(
                         resource => resource.RefId == learningLogItem.LearningHubResourceReferenceId
                     );
                     return new ActionPlanResource(learningLogItem, matchingResource);
                 }
             ).Where(r => r != null);
-            return (actionPlanResources, bulkResponse.SourcedFromFallbackData);
+            return (actionPlanResources, bulkResponse.sourcedFromFallbackData);
         }
     }
 }

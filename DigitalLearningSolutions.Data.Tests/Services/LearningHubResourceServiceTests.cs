@@ -2,12 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
@@ -48,8 +50,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.ResourceReferenceWithResourceDetails.Should().BeEquivalentTo(resource);
-                result.SourcedFromFallbackData.Should().BeFalse();
+                result.resource.Should().BeEquivalentTo(resource);
+                result.sourcedFromFallbackData.Should().BeFalse();
                 A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(SingleResourceReferenceId))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(
@@ -67,7 +69,7 @@
             // Given
             var resource = GenerateGenericResource(SingleResourceReferenceId);
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(SingleResourceReferenceId))
-                .Throws<Exception>();
+                .Throws<HttpRequestException>();
             A.CallTo(
                 () => learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
                     A<IEnumerable<int>>._
@@ -80,8 +82,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.ResourceReferenceWithResourceDetails.Should().BeEquivalentTo(resource);
-                result.SourcedFromFallbackData.Should().BeTrue();
+                result.resource.Should().BeEquivalentTo(resource);
+                result.sourcedFromFallbackData.Should().BeTrue();
                 A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._))
                     .MustHaveHappenedOnceExactly();
                 A.CallTo(
@@ -119,8 +121,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.BulkResourceReferences.Should().BeEquivalentTo(bulkResources);
-                result.SourcedFromFallbackData.Should().BeFalse();
+                result.bulkResourceReferences.Should().BeEquivalentTo(bulkResources);
+                result.sourcedFromFallbackData.Should().BeFalse();
                 A.CallTo(
                         () => learningHubApiClient.GetBulkResourcesByReferenceIds(
                             A<IEnumerable<int>>.That.IsSameSequenceAs(resourceReferenceIdsToRetrieve)
@@ -154,7 +156,7 @@
             };
 
             A.CallTo(() => learningHubApiClient.GetBulkResourcesByReferenceIds(A<IEnumerable<int>>._))
-                .Throws<Exception>();
+                .Throws<HttpRequestException>();
             A.CallTo(
                 () => learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
                     A<IEnumerable<int>>._
@@ -168,8 +170,8 @@
             // Then
             using (new AssertionScope())
             {
-                result.BulkResourceReferences.Should().BeEquivalentTo(bulkResources);
-                result.SourcedFromFallbackData.Should().BeTrue();
+                result.bulkResourceReferences.Should().BeEquivalentTo(bulkResources);
+                result.sourcedFromFallbackData.Should().BeTrue();
                 A.CallTo(
                         () => learningHubApiClient.GetBulkResourcesByReferenceIds(
                             A<IEnumerable<int>>.That.IsSameSequenceAs(resourceReferenceIdsToRetrieve)
@@ -185,26 +187,23 @@
             }
         }
 
-        private ResourceReferenceWithResourceDetails GenerateGenericResource(int resourceReferenceId)
+        private static ResourceReferenceWithResourceDetails GenerateGenericResource(int resourceReferenceId)
         {
-            var catalogue = new Catalogue
-            {
-                Id = 10,
-                Name = "Catalogue",
-                IsRestricted = false,
-            };
+            var catalogue = Builder<Catalogue>.CreateNew()
+                .With(c => c.Id = 10)
+                .And(c => c.Name = "Catalogue")
+                .And(c => c.IsRestricted = false).Build();
 
-            return new ResourceReferenceWithResourceDetails
-            {
-                RefId = resourceReferenceId,
-                ResourceId = 1,
-                Title = "Title",
-                Description = "Description",
-                Link = "Link",
-                ResourceType = "Resource Type",
-                Rating = 3,
-                Catalogue = catalogue,
-            };
+            return Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = resourceReferenceId)
+                .And(r => r.ResourceId = 1)
+                .And(r => r.Title = "Title")
+                .And(r => r.Description = "Description")
+                .And(r => r.Link = "Link")
+                .And(r => r.ResourceType = "Resource Type")
+                .And(r => r.Rating = 3)
+                .And(r => r.Catalogue = catalogue)
+                .Build();
         }
     }
 }

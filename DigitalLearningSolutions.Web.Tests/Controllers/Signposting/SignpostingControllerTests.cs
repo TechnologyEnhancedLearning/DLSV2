@@ -2,7 +2,6 @@
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
-    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers;
@@ -34,7 +33,7 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser(DelegateId));
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(DelegateId)).Returns(false);
             A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(ResourceReferenceId))
-                .Returns(new LearningResourceReferenceWithResourceDetails(new ResourceReferenceWithResourceDetails(), false));
+                .Returns((new ResourceReferenceWithResourceDetails(), false));
 
             controller = new SignpostingController(
                 userService,

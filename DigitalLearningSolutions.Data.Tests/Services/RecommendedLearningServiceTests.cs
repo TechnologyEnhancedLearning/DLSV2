@@ -575,7 +575,7 @@
             };
 
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
-                .Returns(new BulkLearningResourceReferences(clientResponse, false));
+                .Returns((clientResponse, false));
         }
 
         private void GivenGetLearningLogItemsReturnsAnItem()

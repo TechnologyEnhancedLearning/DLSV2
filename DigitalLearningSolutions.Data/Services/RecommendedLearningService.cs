@@ -69,7 +69,7 @@
 
             var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
 
-            var recommendedResources = resources.BulkResourceReferences.ResourceReferences.Select(
+            var recommendedResources = resources.bulkResourceReferences.ResourceReferences.Select(
                 rr => GetPopulatedRecommendedResource(
                     selfAssessmentId,
                     delegateId,
@@ -80,7 +80,7 @@
                 )
             );
 
-            return (recommendedResources.WhereNotNull(), resources.SourcedFromFallbackData);
+            return (recommendedResources.WhereNotNull(), resources.sourcedFromFallbackData);
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(
