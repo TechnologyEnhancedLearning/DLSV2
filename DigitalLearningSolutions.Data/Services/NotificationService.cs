@@ -65,7 +65,7 @@
 
             var baseUrl = refactoredTrackingSystemEnabled
                 ? $"{baseUrlConfigOption}/TrackingSystem/Delegates/CourseDelegates"
-                : $"{baseUrlConfigOption}/CourseDelegates";
+                : $"{baseUrlConfigOption}/Tracking/CourseDelegates";
 
             var unlockUrl = new UriBuilder(baseUrl)
             {

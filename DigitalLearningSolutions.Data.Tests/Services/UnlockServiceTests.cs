@@ -47,9 +47,9 @@
                 featureManager
             );
 
-            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("https://new-tracking-system.com/");
+            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("https://new-tracking-system.com");
             A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName])
-                .Returns("https://old-tracking-system.com/");
+                .Returns("https://old-tracking-system.com");
         }
 
         [Test]
@@ -109,7 +109,7 @@
             //Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://old-tracking-system.com/");
+            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://old-tracking-system.com");
             //When
             notificationService.SendUnlockRequest(1);
 
@@ -117,7 +117,7 @@
             A.CallTo(
                     () =>
                         emailService.SendEmail(
-                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/"))
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/Tracking/CourseDelegates"))
                         )
                 )
                 .MustHaveHappened();
@@ -129,7 +129,7 @@
             //Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://new-tracking-system.com/");
+            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://new-tracking-system.com");
             //When
             notificationService.SendUnlockRequest(1);
 
@@ -137,7 +137,7 @@
             A.CallTo(
                     () =>
                         emailService.SendEmail(
-                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/"))
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/CourseDelegates"))
                         )
                 )
                 .MustHaveHappened();
