@@ -10,7 +10,7 @@
     {
         IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
 
-        IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId);
+        IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyId(int competencyId);
 
         IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds);
         int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, int competencyID, int adminId);
@@ -31,12 +31,12 @@
                 @"SELECT
                         CompetencyID
                     FROM CompetencyLearningResources
-                    WHERE LearningResourceReferenceID = @learningResourceReferenceId",
+                    WHERE LearningResourceReferenceID = @learningResourceReferenceId AND RemovedDate IS NULL",
                 new { learningResourceReferenceId }
             );
         }
 
-        public IEnumerable<CompetencyLearningResource> GetCompetencyLearningResourcesByCompetencyId(int competencyId)
+        public IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyId(int competencyId)
         {
             return connection.Query<CompetencyLearningResource>(
                 @"SELECT
@@ -47,7 +47,7 @@
                         lrr.ResourceRefID AS LearningHubResourceReferenceId
                     FROM CompetencyLearningResources AS clr
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = clr.LearningResourceReferenceID
-                    WHERE CompetencyID = @competencyId",
+                    WHERE CompetencyID = @competencyId AND clr.RemovedDate IS NULL",
                 new { competencyId }
             );
         }
