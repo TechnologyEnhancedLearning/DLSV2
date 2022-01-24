@@ -17,7 +17,7 @@
             QText = faq.QText;
             TargetGroup = Enumeration.GetAll<FaqsTargetGroup>()
                 .Where(x => x.Id == faq.TargetGroup)
-                .Select(x => x.Name).First();
+                .Select(x => x.DisplayName).First();
             Weighting = faq.Weighting;
         }
 

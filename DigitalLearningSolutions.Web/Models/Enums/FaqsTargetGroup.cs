@@ -4,14 +4,19 @@ namespace DigitalLearningSolutions.Web.Models.Enums
 
     public class FaqsTargetGroup : Enumeration
     {
-        public static readonly FaqsTargetGroup TrackingSystem = new FaqsTargetGroup(0, "Tracking System");
+        public static readonly FaqsTargetGroup TrackingSystem = new FaqsTargetGroup(0, nameof(TrackingSystem), "Tracking System");
 
-        public static readonly FaqsTargetGroup ProspectiveCentre = new FaqsTargetGroup(1, "Prospective Centre");
+        public static readonly FaqsTargetGroup ProspectiveCentre = new FaqsTargetGroup(1, nameof(ProspectiveCentre), "Prospective Centre");
 
-        public static readonly FaqsTargetGroup Learners = new FaqsTargetGroup(2, "Learners");
+        public static readonly FaqsTargetGroup Learners = new FaqsTargetGroup(2, nameof(Learners), "Learners");
 
-        public static readonly FaqsTargetGroup Frameworks = new FaqsTargetGroup(2, "Frameworks");
+        public static readonly FaqsTargetGroup Frameworks = new FaqsTargetGroup(3, nameof(Frameworks), "Frameworks");
 
-        private FaqsTargetGroup(int id, string name) : base(id, name) { }
+        public readonly string DisplayName;
+
+        private FaqsTargetGroup(int id, string name, string displayName) : base(id, name)
+        {
+            DisplayName = displayName;
+        }
     }
 }
