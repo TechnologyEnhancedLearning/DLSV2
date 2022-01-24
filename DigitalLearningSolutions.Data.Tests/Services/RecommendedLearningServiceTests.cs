@@ -438,7 +438,7 @@
                 () => selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     A<int>._,
                     A<int>._,
-                        A<int>._,
+                    A<int>._,
                     A<int>._
                 )
             ).MustNotHaveHappened();
