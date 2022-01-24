@@ -53,8 +53,8 @@
 
             var baseUrlConfigOption = refactoredTrackingSystemEnabled
                 ? configuration.GetAppRootPath()
-                : configService.GetConfigValue(ConfigHelper.CurrentSystemBaseUrlName);
-            if (baseUrlConfigOption == null)
+                : configuration.GetCurrentSystemBaseUrl();
+            if (string.IsNullOrEmpty(baseUrlConfigOption))
             {
                 throw new ConfigValueMissingException(
                     configService.GetConfigValueMissingExceptionMessage(
