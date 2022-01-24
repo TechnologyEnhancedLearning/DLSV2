@@ -36,7 +36,8 @@
         public async Task GetResourceByReferenceId_returns_API_data_if_retrieved()
         {
             // Given
-            var resource = GenerateGenericResource(SingleResourceReferenceId);
+            var resource = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = SingleResourceReferenceId).Build();
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(SingleResourceReferenceId))
                 .Returns(resource);
 
@@ -63,7 +64,8 @@
         public async Task GetResourceByReferenceId_returns_fallback_data_if_API_throws_exception()
         {
             // Given
-            var resource = GenerateGenericResource(SingleResourceReferenceId);
+            var resource = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = SingleResourceReferenceId).Build();
             A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(SingleResourceReferenceId))
                 .Throws(new LearningHubResponseException("exception", HttpStatusCode.Unauthorized));
             A.CallTo(
@@ -95,8 +97,10 @@
         public async Task GetBulkResourcesByReferenceIds_returns_API_data_if_retrieved()
         {
             // Given
-            var resource1 = GenerateGenericResource(1);
-            var resource2 = GenerateGenericResource(2);
+            var resource1 = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = 1).Build();
+            var resource2 = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = 2).Build();
             var resourceReferenceIdsToRetrieve = new[] { 1, 2, 3 };
             var bulkResources = new BulkResourceReferences
             {
@@ -138,8 +142,10 @@
         public async Task GetBulkResourcesByReferenceIds_returns_fallback_data_if_API_throws_exception()
         {
             // Given
-            var resource1 = GenerateGenericResource(1);
-            var resource2 = GenerateGenericResource(2);
+            var resource1 = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = 1).Build();
+            var resource2 = Builder<ResourceReferenceWithResourceDetails>.CreateNew()
+                .With(r => r.RefId = 2).Build();
             var resourceReferenceIdsToRetrieve = new[] { 1, 2, 3 };
             var bulkResources = new BulkResourceReferences
             {
@@ -181,25 +187,6 @@
                     )
                     .MustHaveHappenedOnceExactly();
             }
-        }
-
-        private static ResourceReferenceWithResourceDetails GenerateGenericResource(int resourceReferenceId)
-        {
-            var catalogue = Builder<Catalogue>.CreateNew()
-                .With(c => c.Id = 10)
-                .And(c => c.Name = "Catalogue")
-                .And(c => c.IsRestricted = false).Build();
-
-            return Builder<ResourceReferenceWithResourceDetails>.CreateNew()
-                .With(r => r.RefId = resourceReferenceId)
-                .And(r => r.ResourceId = 1)
-                .And(r => r.Title = "Title")
-                .And(r => r.Description = "Description")
-                .And(r => r.Link = "Link")
-                .And(r => r.ResourceType = "Resource Type")
-                .And(r => r.Rating = 3)
-                .And(r => r.Catalogue = catalogue)
-                .Build();
         }
     }
 }

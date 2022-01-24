@@ -55,14 +55,14 @@
         {
             var queryString = GetSearchQueryString(text, offset, limit, resourceTypes);
 
-            var response = await GetAsyncAndProcessResult($"/Resource/Search?{queryString}");
+            var response = await GetStringAsync($"/Resource/Search?{queryString}");
             var result = JsonConvert.DeserializeObject<ResourceSearchResult>(response);
             return result;
         }
 
         public async Task<ResourceReferenceWithResourceDetails> GetResourceByReferenceId(int resourceReferenceId)
         {
-            var response = await GetAsyncAndProcessResult($"/Resource/{resourceReferenceId}");
+            var response = await GetStringAsync($"/Resource/{resourceReferenceId}");
             var result = JsonConvert.DeserializeObject<ResourceReferenceWithResourceDetails>(response);
             return result;
         }
@@ -75,7 +75,7 @@
                 resourceReferenceIds.Select(id => GetQueryString("resourceReferenceIds", id.ToString()));
             var queryString = string.Join("&", referenceIdQueryStrings);
 
-            var response = await GetAsyncAndProcessResult($"/Resource/Bulk?{queryString}");
+            var response = await GetStringAsync($"/Resource/Bulk?{queryString}");
             var result = JsonConvert.DeserializeObject<BulkResourceReferences>(response);
             return result;
         }
@@ -109,16 +109,19 @@
             return string.IsNullOrEmpty(value) ? "" : $"{key}={value}";
         }
 
-        private async Task<string?> GetAsyncAndProcessResult(string requestUri)
+        private async Task<string?> GetStringAsync(string requestUri)
         {
             var response = await client.GetAsync(requestUri);
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadAsStringAsync();
             }
 
             var message =
-                $"Learning Hub Open Api call failed. Status code {response.StatusCode.GetHashCode()} ({response.StatusCode}) when trying {requestUri}";
+                "Learning Hub Open Api call failed, attempting to use fallback data. " +
+                $"Status code {(int)response.StatusCode} ({response.ReasonPhrase}) " +
+                $"when trying {requestUri}";
             logger.LogWarning(message);
             throw new LearningHubResponseException(message, response.StatusCode);
         }
