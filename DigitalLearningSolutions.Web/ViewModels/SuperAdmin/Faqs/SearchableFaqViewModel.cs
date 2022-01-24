@@ -15,9 +15,9 @@
             Published = faq.Published ? "Published" : "Unpublished";
             QAnchor = faq.QAnchor;
             QText = faq.QText;
-            TargetGroup = Enumeration.GetAll<DlsSubApplication>()
+            TargetGroup = Enumeration.GetAll<FaqsTargetGroup>()
                 .Where(x => x.Id == faq.TargetGroup)
-                .Select(x => x.HeaderExtension).First();
+                .Select(x => x.Name).First();
             Weighting = faq.Weighting;
         }
 

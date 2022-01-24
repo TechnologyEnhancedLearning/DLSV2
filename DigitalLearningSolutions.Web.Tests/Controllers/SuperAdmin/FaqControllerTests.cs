@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             .TheNext(1).With(f => f.FaqId = 2).With(f => f.CreatedDate = DateTime.Parse("2022, 01, 21"))
             .TheNext(1).With(f => f.CreatedDate = DateTime.Parse("2022, 01, 10"))
             .TheFirst(5).With(f => f.TargetGroup = 0)
+            .TheNext(7).With(f => f.TargetGroup = 1)
             .TheRest().With(f => f.TargetGroup = 3).Build();
 
         private FaqsController controller = null!;
