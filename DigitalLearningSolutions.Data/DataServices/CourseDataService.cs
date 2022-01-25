@@ -482,7 +482,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE ap.ArchivedDate IS NULL
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
-                                    WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID ))",
+                                    WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID))",
                 new { centreId, categoryId }
             );
         }
