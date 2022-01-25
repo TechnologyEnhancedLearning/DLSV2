@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CourseTopicsServiceTests
@@ -37,9 +38,12 @@
             var result = courseTopicsService.GetActiveTopicsAvailableAtCentre(centreId);
 
             // Then
-            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeEquivalentTo(topics);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(topics);
+            }
         }
 
         [Test]
@@ -58,8 +62,7 @@
                 .ToList();
 
             // Then
-            result.All(t => t.Active).Should().BeTrue();
-            result.Count.Should().Be(1);
+            result.Should().ContainSingle(t => t.Active == true);
         }
     }
 }

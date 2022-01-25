@@ -77,19 +77,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
 
-        int CreateNewCentreCourse(
-            int centreId,
-            int applicationId,
-            string customisationName,
-            string? password,
-            bool selfRegister,
-            int tutCompletionThreshold,
-            bool isAssessed,
-            int diagCompletionThreshold,
-            bool diagObjSelect,
-            bool hideInLearnerPortal,
-            string? notificationEmails
-        );
+        int CreateNewCentreCourse(Customisation customisation);
     }
 
     public class CourseDataService : ICourseDataService
@@ -493,7 +481,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
                     WHERE ap.ArchivedDate IS NULL
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (CentreID = @centreID))",
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
+                                    WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID ))",
                 new { centreId, categoryId }
             );
         }
@@ -675,19 +664,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             ).FirstOrDefault();
         }
 
-        public int CreateNewCentreCourse(
-            int centreId,
-            int applicationId,
-            string customisationName,
-            string? password,
-            bool selfRegister,
-            int tutCompletionThreshold,
-            bool isAssessed,
-            int diagCompletionThreshold,
-            bool diagObjSelect,
-            bool hideInLearnerPortal,
-            string? notificationEmails
-        )
+        public int CreateNewCentreCourse(Customisation customisation)
         {
             var customisationId = connection.QuerySingle<int>(
                 @"INSERT INTO Customisations(
@@ -707,22 +684,31 @@ namespace DigitalLearningSolutions.Data.DataServices
                     OUTPUT Inserted.CustomisationID
                     VALUES
                         (1,
-                        @centreId,
-                        @applicationId,
+                        @CentreId,
+                        @ApplicationId,
                         1,
-                        @customisationName,
-                        @password,
-                        @selfRegister,
-                        @tutCompletionThreshold,
-                        @isAssessed,
-                        @diagCompletionThreshold,
-                        @diagObjSelect,
-                        @hideInLearnerPortal,
-                        @notificationEmails)",
+                        @CustomisationName,
+                        @Password,
+                        @SelfRegister,
+                        @TutCompletionThreshold,
+                        @IsAssessed,
+                        @DiagCompletionThreshold,
+                        @DiagObjSelect,
+                        @HideInLearnerPortal,
+                        @NotificationEmails)",
                 new
                 {
-                    centreId, applicationId, customisationName, password, selfRegister, tutCompletionThreshold,
-                    isAssessed, diagCompletionThreshold, diagObjSelect, hideInLearnerPortal, notificationEmails,
+                    customisation.CentreId,
+                    customisation.ApplicationId,
+                    customisation.CustomisationName,
+                    customisation.Password,
+                    customisation.SelfRegister,
+                    customisation.TutCompletionThreshold,
+                    customisation.IsAssessed,
+                    customisation.DiagCompletionThreshold,
+                    customisation.DiagObjSelect,
+                    customisation.HideInLearnerPortal,
+                    customisation.NotificationEmails,
                 }
             );
 

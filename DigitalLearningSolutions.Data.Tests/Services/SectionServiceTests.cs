@@ -104,7 +104,7 @@
         }
 
         [Test]
-        public void GetSectionsForApplication_calls_data_service()
+        public void GetSectionsForApplication_calls_data_services_and_returns_expected_sections()
         {
             // Given
             var sectionOne = new Section(1, "Section");
@@ -126,9 +126,18 @@
             var result = sectionService.GetSectionsWithTutorialsForApplication(1);
 
             // Then
-            A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeEquivalentTo(sections);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(1)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(2)
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(sections);
+            }
         }
 
         [Test]

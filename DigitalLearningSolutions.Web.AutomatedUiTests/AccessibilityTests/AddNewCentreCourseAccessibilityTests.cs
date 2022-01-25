@@ -23,7 +23,7 @@
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
             ValidatePageHeading("Add new centre course");
             var selectCoursePageResult = new AxeBuilder(Driver).Analyze();
-            Driver.SelectDropdownItemValue("ApplicationId", "731");
+            Driver.SelectDropdownItemValue("ApplicationId", "206");
             Driver.ClickButtonByText("Next");
 
             ValidatePageHeading("Set course details");
@@ -37,7 +37,7 @@
             ValidatePageHeading("Set course content");
             var setCourseContentPageResult = new AxeBuilder(Driver).Analyze();
             Driver.FindElement(By.Id("ChooseSections")).Click();
-            Driver.SetCheckboxState("section-2596", true);
+            Driver.SetCheckboxState("section-671", true);
             Driver.SubmitForm();
 
             ValidatePageHeading("Set section content");

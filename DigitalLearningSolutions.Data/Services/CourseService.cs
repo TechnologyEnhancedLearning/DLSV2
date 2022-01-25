@@ -83,19 +83,7 @@
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
-        int CreateNewCentreCourse(
-            int centreId,
-            int applicationId,
-            string customisationName,
-            string? password,
-            bool selfRegister,
-            int tutCompletionThreshold,
-            bool isAssessed,
-            int diagCompletionThreshold,
-            bool diagObjSelect,
-            bool hideInLearnerPortal,
-            string? notificationEmails
-        );
+        int CreateNewCentreCourse(Customisation customisation);
     }
 
     public class CourseService : ICourseService
@@ -344,32 +332,10 @@
         }
 
         public int CreateNewCentreCourse(
-            int centreId,
-            int applicationId,
-            string customisationName,
-            string? password,
-            bool selfRegister,
-            int tutCompletionThreshold,
-            bool isAssessed,
-            int diagCompletionThreshold,
-            bool diagObjSelect,
-            bool hideInLearnerPortal,
-            string? notificationEmails
+            Customisation customisation
         )
         {
-            return courseDataService.CreateNewCentreCourse(
-                centreId,
-                applicationId,
-                customisationName,
-                password,
-                selfRegister,
-                tutCompletionThreshold,
-                isAssessed,
-                diagCompletionThreshold,
-                diagObjSelect,
-                hideInLearnerPortal,
-                notificationEmails
-            );
+            return courseDataService.CreateNewCentreCourse(customisation);
         }
 
         public IEnumerable<ApplicationDetails>

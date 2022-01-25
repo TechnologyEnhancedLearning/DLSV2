@@ -1,12 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class EditCourseSectionHelperTests
@@ -25,10 +24,11 @@
             );
 
             // Then
-            result.Should().BeNull();
-            formData.Tutorials
-                .All(t => t.LearningEnabled)
-                .Should().BeTrue();
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                formData.Tutorials.Should().OnlyContain(t => t.LearningEnabled);
+            }
         }
 
         [Test]
@@ -45,10 +45,11 @@
             );
 
             // Then
-            result.Should().BeNull();
-            formData.Tutorials
-                .All(t => t.DiagnosticEnabled)
-                .Should().BeTrue();
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                formData.Tutorials.Should().OnlyContain(t => t.DiagnosticEnabled);
+            }
         }
 
         [Test]
@@ -65,10 +66,11 @@
             );
 
             // Then
-            result.Should().BeNull();
-            formData.Tutorials
-                .All(t => !t.LearningEnabled)
-                .Should().BeTrue();
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                formData.Tutorials.Should().OnlyContain(t => t.LearningEnabled == false);
+            }
         }
 
         [Test]
@@ -85,10 +87,11 @@
             );
 
             // Then
-            result.Should().BeNull();
-            formData.Tutorials
-                .All(t => !t.DiagnosticEnabled)
-                .Should().BeTrue();
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                formData.Tutorials.Should().OnlyContain(t => t.DiagnosticEnabled == false);
+            }
         }
 
         [Test]

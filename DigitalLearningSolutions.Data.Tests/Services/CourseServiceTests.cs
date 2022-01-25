@@ -12,6 +12,7 @@
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CourseServiceTests
@@ -561,9 +562,12 @@
             var result = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
 
             // Then
-            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeEquivalentTo(applicationOptions);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(applicationOptions);
+            }
         }
 
         [Test]
@@ -588,8 +592,11 @@
                 .ToList();
 
             // Then
-            result.All(s => s.CourseTopicId == 1).Should().BeTrue();
-            result.Count.Should().Be(2);
+            using (new AssertionScope())
+            {
+                result.Should().OnlyContain(a => a.CourseTopicId == 1);
+                result.Count.Should().Be(2);
+            }
         }
 
         [Test]
@@ -780,24 +787,7 @@
             const bool hideInLearnerPortal = false;
             const string notificationEmails = "hello@test.com";
 
-            A.CallTo(
-                () => courseDataService.CreateNewCentreCourse(
-                    centreId,
-                    applicationId,
-                    customisationName,
-                    password,
-                    selfRegister,
-                    tutCompletionThreshold,
-                    isAssessed,
-                    diagCompletionThreshold,
-                    diagObjSelect,
-                    hideInLearnerPortal,
-                    notificationEmails
-                )
-            ).Returns(123);
-
-            // When
-            var result = courseService.CreateNewCentreCourse(
+            var customisation = new Customisation(
                 centreId,
                 applicationId,
                 customisationName,
@@ -811,23 +801,21 @@
                 notificationEmails
             );
 
-            // Then
-            result.Should().Be(123);
             A.CallTo(
-                () => courseDataService.CreateNewCentreCourse(
-                    centreId,
-                    applicationId,
-                    customisationName,
-                    password,
-                    selfRegister,
-                    tutCompletionThreshold,
-                    isAssessed,
-                    diagCompletionThreshold,
-                    diagObjSelect,
-                    hideInLearnerPortal,
-                    notificationEmails
-                )
-            ).MustHaveHappenedOnceExactly();
+                () => courseDataService.CreateNewCentreCourse(customisation)
+            ).Returns(123);
+
+            // When
+            var result = courseService.CreateNewCentreCourse(customisation);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().Be(123);
+                A.CallTo(
+                    () => courseDataService.CreateNewCentreCourse(customisation)
+                ).MustHaveHappenedOnceExactly();
+            }
         }
     }
 }

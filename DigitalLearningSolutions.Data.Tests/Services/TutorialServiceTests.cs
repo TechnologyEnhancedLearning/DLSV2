@@ -61,13 +61,15 @@
                         )
                     )
                     .MustHaveHappened(2, Times.Exactly);
-                A.CallTo(() => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._))
+                A.CallTo(
+                        () => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._)
+                    )
                     .MustHaveHappened(2, Times.Exactly);
             }
         }
 
         [Test]
-        public void GetTutorialsForSection_calls_data_service()
+        public void GetTutorialsForSection_calls_data_service_and_returns_expected_tutorials()
         {
             // Given
             var tutorialOne = new Tutorial(1, "Test", true, true);
@@ -82,9 +84,12 @@
             var result = tutorialService.GetTutorialsForSection(1);
 
             // Then
-            A.CallTo(() => tutorialContentDataService.GetTutorialsForSection(1))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeEquivalentTo(tutorials);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => tutorialContentDataService.GetTutorialsForSection(1))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(tutorials);
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Common;
@@ -17,6 +16,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -81,11 +81,11 @@
         private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
         private ICourseTopicsDataService courseTopicsDataService = null!;
+        private ICourseTopicsService courseTopicsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
-        private ICourseTopicsService courseTopicsService = null!;
 
         [SetUp]
         public void Setup()
@@ -121,8 +121,6 @@
                 .WithMockUser(true, 101)
                 .WithMockTempData();
 
-            httpRequest = A.Fake<HttpRequest>();
-            httpResponse = A.Fake<HttpResponse>();
             const string cookieName = "CourseFilter";
             const string cookieValue = "Status|Active|false";
 
@@ -176,9 +174,12 @@
             var result = controllerWithCookies.Index(filterBy: filterBy);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("CourseFilter")).MustHaveHappened();
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Delete("CourseFilter")).MustHaveHappened();
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                    .BeNull();
+            }
         }
 
         [Test]
@@ -194,10 +195,13 @@
             var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -211,10 +215,13 @@
             var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -235,8 +242,11 @@
             var result = controller.AddCourseNew();
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>().Should().NotBeNull();
-            result.Should().BeRedirectToActionResult().WithActionName("SelectCourse");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>().Should().NotBeNull();
+                result.Should().BeRedirectToActionResult().WithActionName("SelectCourse");
+            }
         }
 
         [Test]
@@ -250,13 +260,16 @@
             var result = controller.SelectCourse(model);
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.Application.Should()
-                .BeEquivalentTo(application);
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should().BeNull();
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should().BeNull();
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should().BeNull();
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should().BeNull();
-            result.Should().BeRedirectToActionResult().WithActionName("SetCourseDetails");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.Application.Should()
+                    .BeEquivalentTo(application);
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should().BeNull();
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should().BeNull();
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should().BeNull();
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should().BeNull();
+                result.Should().BeRedirectToActionResult().WithActionName("SetCourseDetails");
+            }
         }
 
         [Test]
@@ -270,9 +283,12 @@
             var result = controller.SelectCourse(model);
 
             // Then
-            result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
-            controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("Select a course");
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<SelectCourseViewModel>();
+                controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
+                    .Be("Select a course");
+            }
         }
 
         [Test]
@@ -295,9 +311,12 @@
             var result = controller.SetCourseDetails(formData);
 
             // Then
-            result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("Course name must be unique, including any additions");
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
+                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                    .Be("Course name must be unique, including any additions");
+            }
         }
 
         [Test]
@@ -320,9 +339,12 @@
             var result = controller.SetCourseDetails(model);
 
             // Then
-            result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
-            controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("A course with no add on already exists");
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
+                controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
+                    .Be("A course with no add on already exists");
+            }
         }
 
         [Test]
@@ -364,8 +386,12 @@
             var result = controller.SetCourseDetails(model);
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should().BeEquivalentTo(model);
-            result.Should().BeRedirectToActionResult().WithActionName("SetCourseOptions");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseDetailsModel.Should()
+                    .BeEquivalentTo(model);
+                result.Should().BeRedirectToActionResult().WithActionName("SetCourseOptions");
+            }
         }
 
         [Test]
@@ -379,8 +405,12 @@
             var result = controller.SetCourseOptions(model);
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should().BeEquivalentTo(model);
-            result.Should().BeRedirectToActionResult().WithActionName("SetCourseContent");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseOptionsModel.Should()
+                    .BeEquivalentTo(model);
+                result.Should().BeRedirectToActionResult().WithActionName("SetCourseContent");
+            }
         }
 
         [Test]
@@ -421,8 +451,12 @@
             var result = controller.SetCourseContent(model);
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should().BeEquivalentTo(model);
-            result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetCourseContentModel.Should()
+                    .BeEquivalentTo(model);
+                result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            }
         }
 
         [Test]
@@ -443,9 +477,12 @@
             var result = controller.SetCourseContent(model);
 
             // Then
-            result.Should().BeViewResult().ModelAs<SetCourseContentViewModel>();
-            controller.ModelState["SelectedSectionIds"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("test message");
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().ModelAs<SetCourseContentViewModel>();
+                controller.ModelState["SelectedSectionIds"].Errors[0].ErrorMessage.Should()
+                    .Be("test message");
+            }
         }
 
         [Test]
@@ -519,9 +556,12 @@
             var result = controller.SetSectionContent(model, "save");
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
-                .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
-            result.Should().BeRedirectToActionResult().WithActionName("SetSectionContent");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
+                    .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
+                result.Should().BeRedirectToActionResult().WithActionName("SetSectionContent");
+            }
         }
 
         [Test]
@@ -545,9 +585,12 @@
             var result = controller.SetSectionContent(model, "save");
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
-                .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
-            result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should()
+                    .BeEquivalentTo(new List<SetSectionContentViewModel> { model });
+                result.Should().BeRedirectToActionResult().WithActionName("Summary");
+            }
         }
 
         [Test]
@@ -582,19 +625,7 @@
             );
 
             A.CallTo(
-                () => courseService.CreateNewCentreCourse(
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<string>._,
-                    A<bool>._,
-                    A<int>._,
-                    A<bool>._,
-                    A<int>._,
-                    A<bool>._,
-                    A<bool>._,
-                    A<string>._
-                )
+                () => courseService.CreateNewCentreCourse(A<Customisation>._)
             ).Returns(1);
 
             A.CallTo(
@@ -605,11 +636,14 @@
             var result = controller.Summary(model);
 
             // Then
-            controller.TempData.Peek<AddNewCentreCourseData>().Should().BeNull();
-            controller.TempData.Peek("customisationId").Should().Be(1);
-            controller.TempData.Peek("applicationName").Should().Be(applicationName);
-            controller.TempData.Peek("customisationName").Should().Be(customisationName);
-            result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+            using (new AssertionScope())
+            {
+                controller.TempData.Peek<AddNewCentreCourseData>().Should().BeNull();
+                controller.TempData.Peek("customisationId").Should().Be(1);
+                controller.TempData.Peek("applicationName").Should().Be(applicationName);
+                controller.TempData.Peek("customisationName").Should().Be(customisationName);
+                result.Should().BeRedirectToActionResult().WithActionName("Confirmation");
+            }
         }
 
         private static SetCourseDetailsViewModel GetSetCourseDetailsViewModel(

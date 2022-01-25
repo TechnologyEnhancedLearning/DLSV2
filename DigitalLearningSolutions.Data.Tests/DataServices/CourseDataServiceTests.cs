@@ -480,10 +480,6 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             const int centreId = 101;
             int? categoryId = null;
 
-            // When
-            var result = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId).ToList();
-
-            // Then
             var expectedFirstApplication = new ApplicationDetails
             {
                 ApplicationId = 1,
@@ -495,8 +491,15 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 CourseTopic = "Microsoft Office",
             };
 
-            result.Should().HaveCount(423);
-            result.First().Should().BeEquivalentTo(expectedFirstApplication);
+            // When
+            var result = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(65);
+                result.First().Should().BeEquivalentTo(expectedFirstApplication);
+            }
         }
 
         [Test]
@@ -884,8 +887,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 const string notificationEmails = "hello@test.com";
                 int? categoryId = null;
 
-                // When
-                var customisationId = courseDataService.CreateNewCentreCourse(
+                var customisation = new Customisation(
                     centreId,
                     applicationId,
                     customisationName,
@@ -898,6 +900,9 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                     hideInLearnerPortal,
                     notificationEmails
                 );
+
+                // When
+                var customisationId = courseDataService.CreateNewCentreCourse(customisation);
 
                 var courseDetails = courseDataService.GetCourseDetailsFilteredByCategory(
                     customisationId,
