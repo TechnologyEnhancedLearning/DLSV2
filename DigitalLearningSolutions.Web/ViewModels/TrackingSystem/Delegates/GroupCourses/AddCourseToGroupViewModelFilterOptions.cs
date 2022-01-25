@@ -15,7 +15,8 @@
             return test.Select(
                 c => new FilterOptionViewModel(
                     c,
-                    nameof(CourseAssessmentDetails.CategoryName) + FilteringHelper.Separator + nameof(CourseAssessmentDetails.CategoryName) +
+                    nameof(CourseAssessmentDetails.CategoryName) + FilteringHelper.Separator +
+                    nameof(CourseAssessmentDetails.CategoryName) +
                     FilteringHelper.Separator + c,
                     FilterStatus.Default
                 )
@@ -27,7 +28,8 @@
             return topics.Distinct().Select(
                 c => new FilterOptionViewModel(
                     c,
-                    nameof(CourseAssessmentDetails.CourseTopic) + FilteringHelper.Separator + nameof(CourseAssessmentDetails.CourseTopic) +
+                    nameof(CourseAssessmentDetails.CourseTopic) + FilteringHelper.Separator +
+                    nameof(CourseAssessmentDetails.CourseTopic) +
                     FilteringHelper.Separator + c,
                     FilterStatus.Default
                 )

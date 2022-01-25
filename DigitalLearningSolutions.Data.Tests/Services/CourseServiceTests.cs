@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
@@ -20,12 +21,12 @@
         private const int CentreId = 2;
         private const int AdminCategoryId = 0;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
         private ICourseDataService courseDataService = null!;
         private CourseService courseService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
-        private ICourseCategoriesDataService courseCategoriesDataService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -775,6 +776,36 @@
             // Then
             result.Should().HaveCount(4);
             result.Should().NotContain(c => c.CustomisationId == 2);
+        }
+
+        [Test]
+        public void GetCategoriesForCentreAndCentrallyManagedCourses_returns_expected_categories()
+        {
+            // Given
+            const string categoryName = "Category";
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+                .Returns(new List<Category> { new Category { CourseCategoryID = 1, CategoryName = categoryName } });
+
+            // When
+            var result = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(1);
+
+            // Then
+            result.Single().Should().Be(categoryName);
+        }
+
+        [Test]
+        public void GetTopicsForCentreAndCentrallyManagedCourses_returns_expected_categories()
+        {
+            // Given
+            const string topicName = "Topic";
+            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._))
+                .Returns(new List<Topic> { new Topic { CourseTopicID = 1, CourseTopic = topicName } });
+
+            // When
+            var result = courseService.GetTopicsForCentreAndCentrallyManagedCourses(1);
+
+            // Then
+            result.Single().Should().Be(topicName);
         }
 
         [Test]

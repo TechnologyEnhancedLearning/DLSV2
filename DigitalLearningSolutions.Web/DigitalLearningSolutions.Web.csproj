@@ -53,11 +53,7 @@
     <None Remove="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.9" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="3.2.9" />
@@ -119,6 +115,7 @@
     <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\support\faqs.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />

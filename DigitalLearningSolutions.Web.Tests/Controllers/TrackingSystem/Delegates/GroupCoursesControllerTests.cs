@@ -10,6 +10,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Http;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -20,6 +21,8 @@
         private GroupCoursesController groupCoursesController = null!;
         private IGroupsService groupsService = null!;
         private IUserService userService = null!;
+        private HttpRequest httpRequest = null!;
+        private HttpResponse httpResponse = null!;
 
         [SetUp]
         public void Setup()
@@ -30,12 +33,17 @@
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
 
+            httpRequest = A.Fake<HttpRequest>();
+            httpResponse = A.Fake<HttpResponse>();
+            const string cookieName = "GroupAddCourseFilter";
+            const string cookieValue = "CategoryName|CategoryName|Category";
+
             groupCoursesController = new GroupCoursesController(
                     userService,
                     courseService,
                     groupsService
                 )
-                .WithDefaultContext()
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
@@ -59,6 +67,81 @@
                 result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
                     .Be(DelegateGroupPage.Courses);
             }
+        }
+
+        [Test]
+        public void AddCourseToGroupSelectCourse_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        {
+            // When
+            var result = groupCoursesController.AddCourseToGroupSelectCourse(1);
+
+            // Then
+            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                .Be("CategoryName|CategoryName|Category");
+        }
+
+        [Test]
+        public void AddCourseToGroupSelectCourse_with_query_parameters_uses_query_parameter_value_for_filterBy()
+        {
+            // Given
+            const string filterBy = "CategoryName|CategoryName|Category";
+            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+
+            // When
+            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy);
+
+            // Then
+            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                .Be(filterBy);
+        }
+
+        [Test]
+        public void AddCourseToGroupSelectCourse_with_CLEAR_filterBy_query_parameter_removes_cookie()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+
+            // When
+            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Delete("GroupAddCourseFilter")).MustHaveHappened();
+            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                .BeNull();
+        }
+
+        [Test]
+        public void AddCourseToGroupSelectCourse_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        {
+            // Given
+            const string? filterBy = null;
+            const string? newFilterValue = "CategoryName|CategoryName|Category";
+
+            // When
+            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
+        }
+
+        [Test]
+        public void AddCourseToGroupSelectCourse_with_CLEAR_filterBy_and_new_filter_value_query_parameter_sets_cookie()
+        {
+            // Given
+            const string? filterBy = "CLEAR";
+            const string? newFilterValue = "CategoryName|CategoryName|Category";
+
+            // When
+            var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
+
+            // Then
+            A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                .MustHaveHappened();
+            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                .Be(newFilterValue);
         }
 
         [Test]
