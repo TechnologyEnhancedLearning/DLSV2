@@ -24,6 +24,8 @@
         private CourseService courseService = null!;
         private IGroupsDataService groupsDataService = null!;
         private IProgressDataService progressDataService = null!;
+        private ICourseCategoriesDataService courseCategoriesDataService = null!;
+        private ICourseTopicsDataService courseTopicsDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -34,11 +36,15 @@
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             progressDataService = A.Fake<IProgressDataService>();
             groupsDataService = A.Fake<IGroupsDataService>();
+            courseCategoriesDataService = A.Fake<ICourseCategoriesDataService>();
+            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = new CourseService(
                 courseDataService,
                 courseAdminFieldsService,
                 progressDataService,
-                groupsDataService
+                groupsDataService,
+                courseCategoriesDataService,
+                courseTopicsDataService
             );
         }
 

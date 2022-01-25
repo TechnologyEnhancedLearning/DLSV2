@@ -19,6 +19,7 @@
     [Route("TrackingSystem/Delegates/Groups/{groupId:int}/Courses")]
     public class GroupCoursesController : Controller
     {
+        private const string GroupAddCourseFilterCookieName = "GroupAddCourseFilter";
         private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
         private readonly IUserService userService;
@@ -84,20 +85,61 @@
             return RedirectToAction(nameof(Index), new { groupId });
         }
 
-        [HttpGet("Add/SelectCourse")]
-        public IActionResult AddCourseToGroupSelectCourse(int groupId)
+        [HttpGet"Add/SelectCourse/{page:int=1}")]
+        public IActionResult AddCourseToGroupSelectCourse(
+            int groupId,
+            string? searchString = null,
+            string? filterBy = null,
+            string? filterValue = null,
+            int page = 1
+        )
+        {
+            filterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                GroupAddCourseFilterCookieName
+            );
+
+            var centreId = User.GetCentreId();
+
+            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+            var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
+
+            var groupName = groupsService.GetGroupName(groupId, centreId);
+
+            var model = new AddCourseToGroupCoursesViewModel(
+                courses,
+                categories,
+                topics,
+                adminCategoryFilter,
+                groupId,
+                groupName!,
+                searchString,
+                filterBy,
+                page
+            );
+
+            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, filterBy);
+
+            return View(model);
+        }
+
+        [Route("AddCourseToGroupSelectCourseAllCourses")]
+        public IActionResult AddCourseToGroupSelectCourseAllCourses(int groupId)
         {
             var centreId = User.GetCentreId();
 
             var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
 
             var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
-
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-
-            var model = new AddCourseToGroupCoursesViewModel(courses, groupId, groupName!);
-
-            return View(model);
+            var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
+            var model = new AddCourseToGroupCoursesAllCoursesViewModel(courses, categories, topics, groupId);
+            return View("AddCourseToGroupSelectCourseAllCourses", model);
         }
 
         [HttpGet("Add/{customisationId:int}")]

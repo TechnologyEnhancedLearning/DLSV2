@@ -1,0 +1,22 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
+@model AddCourseToGroupCoursesAllCoursesViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var course in Model.Courses) {
+  <partial name="_SearchableCourseCard" model="course" />
+}
+@foreach (var filter in Model.Filters) {
+  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+}
+</body>
+</html>
