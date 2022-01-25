@@ -25,7 +25,7 @@
         }
 
         [Test]
-        public void GetCompetencyIdsByLearningHubResourceReference_returns_expected_ids_from_active_records_only()
+        public void GetCompetencyIdsLinkedToResource_returns_expected_ids_from_active_records_only()
         {
             using var transaction = new TransactionScope();
             try
@@ -36,7 +36,7 @@
                 testHelper.InsertCompetencyLearningResource(7, 7, 2, 7, DateTime.UtcNow, 7);
 
                 // When
-                var result = service.GetCompetencyIdsByLearningResourceReferenceId(2);
+                var result = service.GetCompetencyIdsLinkedToResource(2);
 
                 // Then
                 result.Should().BeEquivalentTo(expectedIds);

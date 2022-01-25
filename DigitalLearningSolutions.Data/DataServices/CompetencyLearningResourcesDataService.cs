@@ -8,7 +8,7 @@
 
     public interface ICompetencyLearningResourcesDataService
     {
-        IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId);
+        IEnumerable<int> GetCompetencyIdsLinkedToResource(int learningResourceReferenceId);
 
         IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyId(int competencyId);
 
@@ -25,7 +25,7 @@
             this.connection = connection;
         }
 
-        public IEnumerable<int> GetCompetencyIdsByLearningResourceReferenceId(int learningResourceReferenceId)
+        public IEnumerable<int> GetCompetencyIdsLinkedToResource(int learningResourceReferenceId)
         {
             return connection.Query<int>(
                 @"SELECT
