@@ -100,7 +100,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Updating diagnostic score failed.");
+                logger.LogError(ex, "Updating diagnostic score failed");
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
 
