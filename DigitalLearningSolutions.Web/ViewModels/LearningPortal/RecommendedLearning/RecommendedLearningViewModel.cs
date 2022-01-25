@@ -13,6 +13,7 @@
         public RecommendedLearningViewModel(
             SelfAssessment selfAssessment,
             IEnumerable<RecommendedResource> recommendedResources,
+            bool resourcesSourcedFromFallbackData,
             string? searchString,
             int page
         ) : base(
@@ -25,6 +26,7 @@
             searchLabel: "Search resources"
         )
         {
+            ResourcesSourcedFromFallbackData = resourcesSourcedFromFallbackData;
             SelfAssessment = selfAssessment;
 
             var searchedItems = GenericSearchHelper.SearchItems(recommendedResources, SearchString);
@@ -46,6 +48,8 @@
         public SelfAssessment SelfAssessment { get; set; }
 
         public IEnumerable<SearchableRecommendedResourceViewModel> RecommendedResources { get; set; }
+
+        public bool ResourcesSourcedFromFallbackData { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = Array.Empty<(string, string)>();
 

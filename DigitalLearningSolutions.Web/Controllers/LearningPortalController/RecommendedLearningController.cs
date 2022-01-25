@@ -86,7 +86,7 @@
         public async Task<IActionResult> AllRecommendedLearningItems(int selfAssessmentId)
         {
             var candidateId = User.GetCandidateIdKnownNotNull();
-            var recommendedResources = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
+            var (recommendedResources, _) = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
                 selfAssessmentId,
                 candidateId
             );
@@ -276,10 +276,10 @@
         )
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var recommendedResources =
+            var (recommendedResources, sourcedFromFallbackData) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
-            var model = new RecommendedLearningViewModel(assessment, recommendedResources, searchString, page);
+            var model = new RecommendedLearningViewModel(assessment, recommendedResources, sourcedFromFallbackData, searchString, page);
             return View("RecommendedLearning", model);
         }
     }

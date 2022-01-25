@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.Extensions;
@@ -13,36 +12,38 @@
 
     public interface IRecommendedLearningService
     {
-        Task<IEnumerable<RecommendedResource>> GetRecommendedLearningForSelfAssessment(
-            int selfAssessmentId,
-            int delegateId
-        );
+        Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+            GetRecommendedLearningForSelfAssessment(
+                int selfAssessmentId,
+                int delegateId
+            );
     }
 
     public class RecommendedLearningService : IRecommendedLearningService
     {
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
-        private readonly ILearningHubApiClient learningHubApiClient;
+        private readonly ILearningHubResourceService learningHubResourceService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         public RecommendedLearningService(
             ISelfAssessmentDataService selfAssessmentDataService,
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
-            ILearningHubApiClient learningHubApiClient,
+            ILearningHubResourceService learningHubResourceService,
             ILearningLogItemsDataService learningLogItemsDataService
         )
         {
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
-            this.learningHubApiClient = learningHubApiClient;
+            this.learningHubResourceService = learningHubResourceService;
             this.learningLogItemsDataService = learningLogItemsDataService;
         }
 
-        public async Task<IEnumerable<RecommendedResource>> GetRecommendedLearningForSelfAssessment(
-            int selfAssessmentId,
-            int delegateId
-        )
+        public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+            GetRecommendedLearningForSelfAssessment(
+                int selfAssessmentId,
+                int delegateId
+            )
         {
             var competencyIds = selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
 
@@ -61,13 +62,14 @@
             ).Distinct().ToDictionary(x => x.LearningHubResourceReferenceId, x => x.LearningResourceReferenceId);
 
             var uniqueLearningHubReferenceIds = competencyLearningResources
-                .Select(clr => clr.LearningHubResourceReferenceId).Distinct();
+                .Select(clr => clr.LearningHubResourceReferenceId).Distinct().ToList();
 
-            var resources = await learningHubApiClient.GetBulkResourcesByReferenceIds(uniqueLearningHubReferenceIds);
+            var resources =
+                await learningHubResourceService.GetBulkResourcesByReferenceIds(uniqueLearningHubReferenceIds);
 
             var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
 
-            var recommendedResources = resources.ResourceReferences.Select(
+            var recommendedResources = resources.bulkResourceReferences.ResourceReferences.Select(
                 rr => GetPopulatedRecommendedResource(
                     selfAssessmentId,
                     delegateId,
@@ -78,7 +80,7 @@
                 )
             );
 
-            return recommendedResources.WhereNotNull();
+            return (recommendedResources.WhereNotNull(), resources.sourcedFromFallbackData);
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(

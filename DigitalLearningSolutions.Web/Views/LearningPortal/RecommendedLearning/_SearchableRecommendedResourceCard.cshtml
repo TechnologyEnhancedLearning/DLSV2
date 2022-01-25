@@ -18,12 +18,16 @@
       <div class="card-filter-tag">
         <strong class="nhsuk-tag nhsuk-tag--blue">@Model.Rating</strong>
       </div>
-      <div class="card-filter-tag">
-        <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
-      </div>
-      <div class="card-filter-tag">
-        <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
-      </div>
+      @if (!string.IsNullOrWhiteSpace(Model.ResourceType)) {
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
+        </div>
+      }
+      @if (!string.IsNullOrWhiteSpace(Model.CatalogueName)) {
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
+        </div>
+      }
       @if (Model.IsInActionPlan) {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--blue">Already in action plan</strong>

@@ -12,15 +12,25 @@
             this.connection = connection;
         }
 
-        public void InsertLearningResourceReference(int id, int resourceRefId, int adminId, string resourceName)
+        public void InsertLearningResourceReference(
+            int id,
+            int resourceRefId,
+            int adminId,
+            string resourceName,
+            string? link = null,
+            string? description = null,
+            string? resourceType = null,
+            string? catalogue = null,
+            decimal? rating = 0
+        )
         {
             connection.Execute(
                 @"SET IDENTITY_INSERT dbo.LearningResourceReferences ON
                     INSERT INTO LearningResourceReferences
-                    (ID, ResourceRefID, OriginalResourceName, AdminId)
-                    VALUES (@id, @resourceRefId, @resourceName, @adminId)
+                    (ID, ResourceRefID, OriginalResourceName, AdminId, ResourceLink, OriginalDescription, OriginalResourceType, OriginalCatalogueName, OriginalRating)
+                    VALUES (@id, @resourceRefId, @resourceName, @adminId, @link, @description, @resourceType, @catalogue, @rating)
                     SET IDENTITY_INSERT dbo.LearningResourceReferences OFF",
-                new { id, resourceRefId, resourceName, adminId }
+                new { id, resourceRefId, resourceName, adminId, link, description, resourceType, catalogue, rating }
             );
         }
 

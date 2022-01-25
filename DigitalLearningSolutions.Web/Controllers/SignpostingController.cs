@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,17 +15,17 @@
     public class SignpostingController : Controller
     {
         private readonly IActionPlanService actionPlanService;
-        private readonly ILearningHubApiClient learningHubApiClient;
+        private readonly ILearningHubResourceService learningHubResourceService;
         private readonly IUserService userService;
 
         public SignpostingController(
             IUserService userService,
-            ILearningHubApiClient learningHubApiClient,
+            ILearningHubResourceService learningHubResourceService,
             IActionPlanService actionPlanService
         )
         {
             this.userService = userService;
-            this.learningHubApiClient = learningHubApiClient;
+            this.learningHubResourceService = learningHubResourceService;
             this.actionPlanService = actionPlanService;
         }
 
@@ -51,10 +50,17 @@
                 return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
             }
 
-            // TODO: HEEDLS-707 - handle case where resource reference Id does not match any resource
-            var resource = await learningHubApiClient.GetResourceByReferenceId(resourceReferenceId);
+            var (resource, _) =
+                await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
+
+            if (resource == null)
+            {
+                return NotFound();
+            }
+
             var learningHubAccountIsLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
 
+            // TODO in HEEDLS-744 add warning to user about out of date data
             var model = new LearningHubLoginWarningViewModel(resource, learningHubAccountIsLinked);
 
             return View("LearningHubLoginWarning", model);
