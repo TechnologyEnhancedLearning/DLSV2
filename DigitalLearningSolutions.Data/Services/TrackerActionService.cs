@@ -98,11 +98,9 @@
                     );
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                logger.LogWarning(
-                    $"Updating diagnostic score failed. Error: {e}"
-                );
+                logger.LogError(ex, "Updating diagnostic score failed");
                 return TrackerEndpointResponse.StoreDiagnosticScoreException;
             }
 
