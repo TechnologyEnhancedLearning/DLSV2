@@ -27,14 +27,11 @@
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     @if (Model.ResourcesSourcedFromFallbackData) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+      <div class="nhsuk-u-margin-bottom-4">
+        <partial name="Signposting/_FallbackDataUsedWarning" />
+      </div>
     }
 
-    <div id="searchable-elements">
-      @foreach (var resource in Model.RecommendedResources) {
-        <partial name="_SearchableRecommendedResourceCard" model="resource" />
-      }
-    </div>
     <partial name="SearchablePage/_Search" model="Model" />
     <span id="selfAssessmentID" class="display-none">@Model.SelfAssessment.Id</span>
     <input type="hidden" id="select-sort-by" value="@Model.SortBy" />
