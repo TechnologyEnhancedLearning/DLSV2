@@ -1,4 +1,4 @@
-﻿import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
+import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 
 const currentGroupHidden = <HTMLInputElement>document.getElementById('current-group-id');
 const groupId = currentGroupHidden?.value.trim();
