@@ -10,18 +10,14 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class GroupCoursesControllerTests
     {
         private ICourseService courseService = null!;
-
         private GroupCoursesController groupCoursesController = null!;
         private IGroupsService groupsService = null!;
-        private HttpRequest httpRequest = null!;
-        private HttpResponse httpResponse = null!;
         private IUserService userService = null!;
 
         [SetUp]
@@ -33,17 +29,12 @@
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
 
-            httpRequest = A.Fake<HttpRequest>();
-            httpResponse = A.Fake<HttpResponse>();
-            const string cookieName = "DelegateGroupsFilter";
-            const string cookieValue = "LinkedToField|LinkedToField|0";
-
             groupCoursesController = new GroupCoursesController(
                     userService,
                     courseService,
                     groupsService
                 )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithDefaultContext()
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();

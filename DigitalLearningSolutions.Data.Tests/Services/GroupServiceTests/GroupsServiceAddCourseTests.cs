@@ -281,7 +281,7 @@
             groupsService.AddCourseToGroup(
                 reusableGroupCourse.GroupId,
                 reusableGroupCourse.CustomisationId,
-                8,
+                0,
                 adminId,
                 true,
                 adminId
@@ -330,7 +330,7 @@
             groupsService.AddCourseToGroup(
                 groupCourse.GroupId,
                 groupCourse.CustomisationId,
-                8,
+                completeWithinMonths,
                 adminId,
                 true,
                 adminId

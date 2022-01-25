@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 @model AddCourseConfirmationViewModel
 
 @{
@@ -7,6 +8,10 @@
   var routeParamsForActionLink = new Dictionary<string, string> {
     { "groupId", Model.GroupId.ToString() },
   };
+  var pluralitySuffix = DisplayStringHelper.GetPluralitySuffix(Model.CompleteWithinMonths);
+  var courseDeadlineString = Model.CompleteWithinMonths > 0
+    ? $"{Model.CompleteWithinMonths} month{pluralitySuffix} to complete the course from the date of enrolment."
+    : "no deadline to complete the course.";
 }
 
 <div class="nhsuk-grid-row">
@@ -17,9 +22,7 @@
 
     <p>The delegates subsequently added to the group will be enrolled on this course automatically</p>
 
-    @if (Model.CompleteWithinMonths > 0) {
-      <p>All delegates enrolled on the course because they belong to this group will have @Model.CompleteWithinMonths months to complete the course from the date of enrolment.</p>
-    }
+    <p>All delegates enrolled on the course because they belong to this group will have @courseDeadlineString</p>
 
     <vc:action-link asp-controller="GroupCourses" asp-action="Index" link-text="@actionLinkText" asp-all-route-data="@routeParamsForActionLink" />
   </div>
