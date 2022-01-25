@@ -119,7 +119,7 @@
             }
 
             var message =
-                "Learning Hub Open Api call failed, attempting to use fallback data. " +
+                "Learning Hub Open Api call failed. " +
                 $"Status code {(int)response.StatusCode} ({response.ReasonPhrase}) " +
                 $"when trying {requestUri}";
             logger.LogWarning(message);

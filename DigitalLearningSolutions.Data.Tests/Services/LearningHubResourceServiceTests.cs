@@ -12,6 +12,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningHubResourceServiceTests
@@ -20,15 +21,18 @@
         private ILearningHubApiClient learningHubApiClient = null!;
         private LearningHubResourceService learningHubResourceService = null!;
         private ILearningResourceReferenceDataService learningResourceReferenceDataService = null!;
+        private ILogger<ILearningHubResourceService> logger = null!;
 
         [SetUp]
         public void SetUp()
         {
             learningHubApiClient = A.Fake<ILearningHubApiClient>();
             learningResourceReferenceDataService = A.Fake<ILearningResourceReferenceDataService>();
+            logger = A.Fake<ILogger<ILearningHubResourceService>>();
             learningHubResourceService = new LearningHubResourceService(
                 learningHubApiClient,
-                learningResourceReferenceDataService
+                learningResourceReferenceDataService,
+                logger
             );
         }
 
