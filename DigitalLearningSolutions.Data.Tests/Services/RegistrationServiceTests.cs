@@ -407,7 +407,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                             A<int>._,
                             prn,
                             true
-                            )
+                        )
                 )
                 .MustHaveHappenedOnceExactly();
             Assert.That(approved);
