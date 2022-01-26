@@ -63,7 +63,7 @@
                 userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, true);
             }
 
-            return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
+            return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
         }
     }
 }

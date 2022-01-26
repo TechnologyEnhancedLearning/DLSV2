@@ -306,7 +306,7 @@
 
             // Then
             url.Should().Be(
-                $"www.example.com/to-the-past?clientCode=test&state={sessionReferenceId}_refId:{referenceId}&hash=hash_brown"
+                $"www.example.com/to-the-past?clientCode=test&state={sessionReferenceId}_refId%3a{referenceId}&hash=hash_brown"
             );
         }
     }
