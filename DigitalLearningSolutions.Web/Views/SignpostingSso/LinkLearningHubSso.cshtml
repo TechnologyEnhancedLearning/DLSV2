@@ -26,9 +26,6 @@
     <p>You will now be able to view the resources directly.</p>
     @if (Model.ShowResourceLink)
     {
-      /*
-        TODO: HEEDLS-678 -> Ensure link below is accurate or updated if not.
-      */
       <p><vc:action-link asp-controller="Signposting" asp-action="ViewResource" asp-all-route-data="@actionLinkRouteData" link-text="Continue to resource" /></p>
     }
   </div>

@@ -7,7 +7,7 @@
     public interface ILearningResourceReferenceDataService
     {
         int GetLearningHubResourceReferenceById(int learningResourceReferenceId);
-        string? GetLearningHubResourceLinkById(int learningResourceReferenceId);
+        string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId);
     }
 
     public class LearningResourceReferenceDataService : ILearningResourceReferenceDataService
@@ -29,12 +29,12 @@
             ).Single();
         }
 
-        public string? GetLearningHubResourceLinkById(int learningResourceReferenceId)
+        public string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId)
         {
             return connection.Query<string?>(
                 @"SELECT ResourceLink
                     FROM LearningResourceReferences
-                    WHERE ID = @learningResourceReferenceId",
+                    WHERE ResourceRefID = @learningResourceReferenceId",
                 new { learningResourceReferenceId }
             ).Single();
         }

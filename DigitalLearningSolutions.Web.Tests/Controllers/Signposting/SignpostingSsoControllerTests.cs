@@ -17,14 +17,23 @@
     {
         private SignpostingSsoController controller = null!;
         private ILearningHubLinkService learningHubLinkService = null!;
+        private ILearningResourceReferenceService learningResourceReferenceService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             learningHubLinkService = A.Fake<ILearningHubLinkService>();
+            learningResourceReferenceService = A.Fake<ILearningResourceReferenceService>();
+            userService = A.Fake<IUserService>();
 
-            controller = new SignpostingSsoController(learningHubLinkService)
+            controller = new SignpostingSsoController(
+                    learningHubLinkService,
+                    learningResourceReferenceService,
+                    userService
+                )
                 .WithDefaultContext()
+                .WithMockSessionData(new Dictionary<string, string>())
                 .WithMockUser(true);
 
             A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._)).Returns(true);
@@ -170,6 +179,62 @@
                 A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public void ViewResource_returns_redirect_to_login_result_when_user_linked()
+        {
+            // Given
+            var authId = 1;
+            var resourceUrl = "De/Humani/Corporis/Fabrica";
+
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(authId);
+            A.CallTo(() => learningResourceReferenceService.GetLearningHubResourceLinkByResourceRefId(5))
+                .Returns(resourceUrl);
+            A.CallTo(() => learningHubLinkService.GetLoginUrlForDelegateAuthIdAndResourceUrl(resourceUrl, authId))
+                .Returns("www.example.com/login");
+
+            // When
+            var result = controller.ViewResource(5);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(
+                "www.example.com/login"
+            );
+        }
+
+        [Test]
+        public void
+            ViewResource_returns_not_found_result_when_user_linked_but_no_relevant_resource_entry()
+        {
+            // Given
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(1);
+            A.CallTo(() => learningResourceReferenceService.GetLearningHubResourceLinkByResourceRefId(5))
+                .Returns(null);
+
+            // When
+            var result = controller.ViewResource(5);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void ViewResource_returns_redirect_result_to_create_user_when_user_not_linked()
+        {
+            // Given
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(null);
+            A.CallTo(() => learningHubLinkService.GetLinkingUrlForResource(5, A<string>._)).Returns("www.example.com/link");
+
+            // When
+            var result = controller.ViewResource(5);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(
+                "www.example.com/link"
+            );
+            A.CallTo(() => controller.HttpContext.Session.Set(LinkLearningHubRequest.SessionIdentifierKey, A<byte[]>._))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

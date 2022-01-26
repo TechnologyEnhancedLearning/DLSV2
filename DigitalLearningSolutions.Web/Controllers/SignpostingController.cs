@@ -41,7 +41,7 @@
 
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
-                return RedirectToAction("Index", "ViewResource", new { resourceReferenceId });
+                return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
             }
 
             // TODO: HEEDLS-707 - handle case where resource reference Id does not match any resource
