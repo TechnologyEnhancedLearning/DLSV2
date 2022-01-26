@@ -56,8 +56,7 @@
             return View(model);
         }
 
-        [HttpPost]
-        [Route("ViewResource/{resourceReferenceId}")]
+        [HttpGet("ViewResource/{resourceReferenceId}")]
         public IActionResult ViewResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
