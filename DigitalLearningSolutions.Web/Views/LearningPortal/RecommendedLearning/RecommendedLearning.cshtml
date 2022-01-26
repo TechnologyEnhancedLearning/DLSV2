@@ -26,10 +26,37 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <div id="searchable-elements">
-      @foreach (var resource in Model.RecommendedResources) {
-        <partial name="_SearchableRecommendedResourceCard" model="resource" />
-      }
-    </div>
+    @if (Model.ResourcesSourcedFromFallbackData) {
+      <div class="nhsuk-u-margin-bottom-4">
+        <partial name="Signposting/_FallbackDataUsedWarning" />
+      </div>
+    }
+
+    <partial name="SearchablePage/_Search" model="Model" />
+    <span id="selfAssessmentID" class="display-none">@Model.SelfAssessment.Id</span>
+    <input type="hidden" id="select-sort-by" value="@Model.SortBy" />
+    <input type="hidden" id="select-sort-direction" value="@Model.SortDirection" />
+
+    @if (Model.NoDataFound) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No resources found.</b>
+      </p>
+    } else {
+      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
+      <div id="searchable-elements">
+        @foreach (var resource in Model.RecommendedResources) {
+          <partial name="_SearchableRecommendedResourceCard" model="resource" />
+        }
+      </div>
+    }
+    @if (Model.TotalPages > 1) {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
+
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/learningPortal/recommendedLearning.js")" asp-append-version="true"></script>
+}

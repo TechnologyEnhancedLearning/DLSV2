@@ -13,6 +13,7 @@ using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Models;
+using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
@@ -73,7 +74,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult ConfirmAddCompetencyLearningResourceSummary(CompetencyResourceSummaryViewModel model)
         {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(model.FrameworkCompetencyId.Value);
-            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, frameworkCompetency.CompetencyID, GetAdminId());
+            string plainTextDescription = SignpostingHelper.DisplayText(model.Description);
+            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.Catalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
             return RedirectToAction("StartSignpostingParametersSession", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, competencyLearningResourceId });
         }
 

@@ -16,8 +16,11 @@
 
     public partial class LearningPortalControllerTests
     {
-        [Test]
-        public async Task Completed_action_should_return_view_result()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Completed_action_should_return_view_result_with_correct_resource_source_flag(
+            bool resourcesSourcedFromFallbackData
+        )
         {
             // Given
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
@@ -32,7 +35,7 @@
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
-                .Returns(completedActionPlanResources);
+                .Returns((completedActionPlanResources, resourcesSourcedFromFallbackData));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -42,6 +45,7 @@
             var expectedModel = new CompletedPageViewModel(
                 completedCourses,
                 mappedActionPlanResources,
+                resourcesSourcedFromFallbackData,
                 config,
                 null,
                 "Completed",
@@ -130,7 +134,7 @@
         {
             A.CallTo(() => courseDataService.GetCompletedCourses(A<int>._)).Returns(new List<CompletedCourse>());
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(A<int>._))
-                .Returns(new List<ActionPlanResource>());
+                .Returns((new List<ActionPlanResource>(), false));
             A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }

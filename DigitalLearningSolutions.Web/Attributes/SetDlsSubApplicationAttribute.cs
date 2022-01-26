@@ -8,8 +8,8 @@
     using Microsoft.AspNetCore.Mvc.Filters;
 
     /// <summary>
-    /// Sets a controller/action to be within the specified DlsSubApplication
-    /// or, if no DlsSubApplication is specified, attempts to read it from the action parameters
+    ///     Sets a controller/action to be within the specified DlsSubApplication
+    ///     or, if no DlsSubApplication is specified, attempts to read it from the action parameters
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class SetDlsSubApplicationAttribute : Attribute, IActionFilter
@@ -41,7 +41,9 @@
                 var dlsSubApplicationParameterName = context.ActionDescriptor.Parameters
                     .FirstOrDefault(x => x.ParameterType == typeof(DlsSubApplication))?.Name;
                 controller.ViewData[LayoutViewDataKeys.DlsSubApplication] =
-                    context.ActionArguments[dlsSubApplicationParameterName!];
+                    context.ActionArguments.ContainsKey(dlsSubApplicationParameterName)
+                        ? context.ActionArguments[dlsSubApplicationParameterName]
+                        : null;
             }
         }
     }

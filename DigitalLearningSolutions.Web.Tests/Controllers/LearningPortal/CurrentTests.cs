@@ -20,8 +20,11 @@
 
     public partial class LearningPortalControllerTests
     {
-        [Test]
-        public async Task Current_action_should_return_view_result()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Current_action_should_return_view_result_with_correct_resource_source_flag(
+            bool resourcesSourcedFromFallbackData
+        )
         {
             // Given
             var currentCourses = new[]
@@ -40,7 +43,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
-                .Returns(actionPlanResources);
+                .Returns((actionPlanResources, resourcesSourcedFromFallbackData));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
@@ -55,6 +58,7 @@
                 "Descending",
                 selfAssessments,
                 actionPlanResources,
+                resourcesSourcedFromFallbackData,
                 bannerText,
                 1
             );
@@ -87,7 +91,8 @@
             await controller.Current();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -115,7 +120,8 @@
             await controller.AllCurrentItems();
 
             // Then
-            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
+                .MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -413,7 +419,7 @@
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(A<int>._))
                 .Returns(new List<CurrentSelfAssessment>());
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(A<int>._))
-                .Returns(new List<ActionPlanResource>());
+                .Returns((new List<ActionPlanResource>(), false));
             A.CallTo(() => centresDataService.GetBannerText(A<int>._)).Returns("bannerText");
         }
     }
