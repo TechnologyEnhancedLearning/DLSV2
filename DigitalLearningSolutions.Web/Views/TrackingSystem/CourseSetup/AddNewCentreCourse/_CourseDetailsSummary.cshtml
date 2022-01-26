@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model SummaryViewModel
 
-
 <div class="nhsuk-summary-list__row">
   <dt class="nhsuk-summary-list__key">
     Course
@@ -54,6 +53,25 @@
   <dd class="nhsuk-summary-list__actions">
     <a asp-action="SetCourseDetails">
       Change<span class="nhsuk-u-visually-hidden"> notification email</span>
+    </a>
+  </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Completion criteria
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @if (Model.PostLearningAssessment) {
+      <p>Post learning assessment</p>
+    } else {
+      <p>Required learning percentage: @(Model.RequiredLearningPercentage)%</p>
+      <p>Required diagnostic percentage: @(Model.RequiredDiagnosticPercentage)%</p>
+    }
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseDetails">
+      Change<span class="nhsuk-u-visually-hidden"> completion criteria</span>
     </a>
   </dd>
 </div>

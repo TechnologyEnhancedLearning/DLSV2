@@ -600,19 +600,14 @@
             var applicationName = application.ApplicationName;
             var customisationName = GetSetCourseDetailsViewModel().CustomisationName;
 
-            var model = new SummaryViewModel(
-                applicationName,
-                customisationName!,
-                "password",
-                "email@test",
+            var tutorial = new Tutorial(1, "Tutorial name", true, true);
+            var section = new Section(1, "Section name");
+            var selectSectionViewModel = new SelectSectionViewModel(section, true);
+            var sectionModel = new SetSectionContentViewModel(
+                selectSectionViewModel,
+                0,
                 true,
-                true,
-                true,
-                true,
-                false,
-                false,
-                17,
-                25
+                new List<Tutorial> { tutorial }
             );
 
             var setCourseOptionsModel = new EditCourseOptionsFormData(true, true, true);
@@ -621,7 +616,7 @@
                 GetSetCourseDetailsViewModel(),
                 setCourseOptionsModel,
                 new SetCourseContentViewModel(),
-                new List<SetSectionContentViewModel>()
+                new List<SetSectionContentViewModel> { sectionModel }
             );
 
             A.CallTo(
@@ -633,11 +628,17 @@
             ).DoesNothing();
 
             // When
-            var result = controller.Summary(model);
+            var result = controller.CreateNewCentreCourse();
 
             // Then
             using (new AssertionScope())
             {
+                A.CallTo(
+                    () => courseService.CreateNewCentreCourse(A<Customisation>._)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialService.UpdateTutorialsStatuses(A<IEnumerable<Tutorial>>._, A<int>._)
+                ).MustHaveHappenedOnceExactly();
                 controller.TempData.Peek<AddNewCentreCourseData>().Should().BeNull();
                 controller.TempData.Peek("customisationId").Should().Be(1);
                 controller.TempData.Peek("applicationName").Should().Be(applicationName);

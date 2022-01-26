@@ -15,6 +15,9 @@
             CustomisationName = data.SetCourseDetailsModel.CustomisationName ?? string.Empty;
             Password = data.SetCourseDetailsModel.Password;
             NotificationEmails = data.SetCourseDetailsModel.NotificationEmails;
+            PostLearningAssessment = data.SetCourseDetailsModel.IsAssessed;
+            RequiredLearningPercentage = data.SetCourseDetailsModel.TutCompletionThreshold;
+            RequiredDiagnosticPercentage = data.SetCourseDetailsModel.DiagCompletionThreshold;
             AllowSelfEnrolment = data.SetCourseOptionsModel!.AllowSelfEnrolment;
             HideInLearningPortal = data.SetCourseOptionsModel.HideInLearningPortal;
             DiagAssess = data.Application!.DiagAssess;
@@ -25,39 +28,13 @@
             NumberOfDiagnostic = GetNumberOfDiagnostic(data);
         }
 
-        public SummaryViewModel(
-            string applicationName,
-            string customisationName,
-            string? password,
-            string? notificationEmails,
-            bool allowSelfEnrolment,
-            bool hideInLearningPortal,
-            bool diagAssess,
-            bool diagnosticObjectiveSelection,
-            bool noContent,
-            bool includeAllSections,
-            int numberOfLearning,
-            int numberOfDiagnostic
-        )
-        {
-            ApplicationName = applicationName;
-            CustomisationName = customisationName;
-            Password = password;
-            NotificationEmails = notificationEmails;
-            AllowSelfEnrolment = allowSelfEnrolment;
-            HideInLearningPortal = hideInLearningPortal;
-            DiagAssess = diagAssess;
-            DiagnosticObjectiveSelection = diagnosticObjectiveSelection;
-            NoContent = noContent;
-            IncludeAllSections = includeAllSections;
-            NumberOfLearning = numberOfLearning;
-            NumberOfDiagnostic = numberOfDiagnostic;
-        }
-
         public string ApplicationName { get; set; }
         public string CustomisationName { get; set; }
         public string? Password { get; set; }
         public string? NotificationEmails { get; set; }
+        public bool PostLearningAssessment { get; set; }
+        public string? RequiredLearningPercentage { get; set; }
+        public string? RequiredDiagnosticPercentage { get; set; }
         public bool AllowSelfEnrolment { get; set; }
         public bool HideInLearningPortal { get; set; }
         public bool DiagAssess { get; set; }

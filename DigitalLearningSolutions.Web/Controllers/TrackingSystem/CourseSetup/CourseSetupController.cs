@@ -261,6 +261,8 @@
                 return View("AddNewCentreCourse/SetCourseContent", model);
             }
 
+            // TODO: reset SetSelectedIds somewhere, on the post if SetSectionContentModels exists?
+
             data!.SetCourseContentModel = model;
             TempData.Set(data);
 
@@ -312,7 +314,7 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost("AddCourse/Summary")]
-        public IActionResult? Summary(SummaryViewModel model)
+        public IActionResult? CreateNewCentreCourse()
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
@@ -452,7 +454,7 @@
                 data.SetCourseDetailsModel.Password,
                 data.SetCourseOptionsModel!.AllowSelfEnrolment,
                 int.Parse(data.SetCourseDetailsModel.TutCompletionThreshold!),
-                data.SetCourseDetailsModel.PostLearningAssessment,
+                data.SetCourseDetailsModel.IsAssessed,
                 int.Parse(data.SetCourseDetailsModel.DiagCompletionThreshold!),
                 data.SetCourseOptionsModel.DiagnosticObjectiveSelection,
                 data.SetCourseOptionsModel.HideInLearningPortal,
