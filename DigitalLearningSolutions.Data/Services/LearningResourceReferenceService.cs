@@ -11,14 +11,18 @@
     {
         private readonly ILearningResourceReferenceDataService learningResourceReferenceDataService;
 
-        public LearningResourceReferenceService(ILearningResourceReferenceDataService learningResourceReferenceDataService)
+        public LearningResourceReferenceService(
+            ILearningResourceReferenceDataService learningResourceReferenceDataService
+        )
         {
             this.learningResourceReferenceDataService = learningResourceReferenceDataService;
         }
 
         public string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId)
         {
-            return learningResourceReferenceDataService.GetLearningHubResourceLinkByResourceRefId(learningResourceReferenceId);
+            return learningResourceReferenceDataService.GetLearningHubResourceLinkByResourceRefId(
+                learningResourceReferenceId
+            );
         }
     }
 }

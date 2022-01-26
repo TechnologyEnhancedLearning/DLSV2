@@ -7,6 +7,7 @@
     public interface ILearningResourceReferenceDataService
     {
         int GetLearningHubResourceReferenceById(int learningResourceReferenceId);
+
         string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId);
     }
 

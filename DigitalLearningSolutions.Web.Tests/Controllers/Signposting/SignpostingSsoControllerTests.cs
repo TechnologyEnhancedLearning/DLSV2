@@ -224,7 +224,8 @@
         {
             // Given
             A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(null);
-            A.CallTo(() => learningHubLinkService.GetLinkingUrlForResource(5, A<string>._)).Returns("www.example.com/link");
+            A.CallTo(() => learningHubLinkService.GetLinkingUrlForResource(5, A<string>._))
+                .Returns("www.example.com/link");
 
             // When
             var result = controller.ViewResource(5);

@@ -30,9 +30,6 @@
         private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
         private readonly IUserDataService userDataService;
 
-        private string AuthBaseUrl => config.GetLearningHubAuthApiBaseUrl();
-        private string ClientCode => config.GetLearningHubAuthApiClientCode();
-
         public LearningHubLinkService(
             ILearningHubSsoSecurityService learningHubSsoSecurityService,
             IUserDataService userDataService,
@@ -43,6 +40,9 @@
             this.userDataService = userDataService;
             this.config = config;
         }
+
+        private string AuthBaseUrl => config.GetLearningHubAuthApiBaseUrl();
+        private string ClientCode => config.GetLearningHubAuthApiClientCode();
 
         public bool IsLearningHubAccountLinked(int delegateId)
         {
