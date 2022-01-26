@@ -359,10 +359,10 @@
 
         [Test]
         public void
-            AddCourseToGroup_keeps_existing_supervisor_when_updating_progress_when_course_supervisor_id_is_not_null()
+            AddCourseToGroup_keeps_existing_supervisor_when_updating_progress()
         {
             // Given
-            const int adminId = 1;
+            const int adminId = 4;
             const int supervisorId = 12;
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: supervisorId);
             SetupEnrolProcessFakes(
@@ -389,7 +389,7 @@
                 A.CallTo(
                     () => progressDataService.UpdateProgressSupervisorAndCompleteByDate(
                         reusableProgressRecord.ProgressId,
-                        adminId,
+                        reusableProgressRecord.SupervisorAdminId,
                         A<DateTime?>._
                     )
                 ).MustHaveHappened();
