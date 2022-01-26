@@ -1667,7 +1667,8 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
         public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId)
         {
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
-                $@"SELECT clr.ID AS CompetencyLearningResourceID, lrr.OriginalResourceName, p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, 
+                $@"SELECT clr.ID AS CompetencyLearningResourceID, lrr.ResourceRefID AS ResourceRefId, lrr.OriginalResourceName, lrr.OriginalResourceType,
+                    p.Essential, q.Question, p.MinResultMatch, p.MaxResultMatch, lrr.OriginalRating,
                     CASE 
 	                    WHEN p.CompareToRoleRequirements = 1 THEN 'Role requirements'  
 	                    WHEN p.RelevanceAssessmentQuestionID IS NOT NULL THEN raq.Question

@@ -13,6 +13,7 @@ using DigitalLearningSolutions.Web.Extensions;
 using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.Models;
+using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
@@ -317,22 +318,44 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyId)
             {
                 NameOfCompetency = frameworkCompetency.Name,
-                CompetencyResourceLinks = parameters.Select(p =>
-                    new SignpostingCardViewModel()
-                    {
-                        AssessmentQuestionId = p.AssessmentQuestionId,
-                        CompetencyLearningResourceId = p.CompetencyLearningResourceId,
-                        Name = p.OriginalResourceName,
-                        AssessmentQuestion = p.Question,
-                        MinimumResultMatch = p.MinResultMatch,
-                        MaximumResultMatch = p.MaxResultMatch,
-                        CompareResultTo = p.CompareResultTo,
-                        Essential = p.Essential,
-                        ParameterHasNotBeenSet = p.IsNew
-                    }
-                ).ToList()
             };
+            var learningHubApiReferences = GetBulkResourcesByReferenceIds(model, parameters);
+            var learningHubApiResourcesByRefId = learningHubApiReferences?.ResourceReferences?.ToDictionary(k => k.RefId, v => v);
+            model.CompetencyResourceLinks = (from p in parameters
+                let resource = !model.LearningHubApiError && learningHubApiResourcesByRefId.Keys.Contains(p.ResourceRefId) ? learningHubApiResourcesByRefId[p.ResourceRefId] : null
+                select new SignpostingCardViewModel()
+                {
+                    AssessmentQuestionId = p.AssessmentQuestionId,
+                    CompetencyLearningResourceId = p.CompetencyLearningResourceId,
+                    Name = p.OriginalResourceName,
+                    AssessmentQuestion = p.Question,
+                    MinimumResultMatch = p.MinResultMatch,
+                    MaximumResultMatch = p.MaxResultMatch,
+                    CompareResultTo = p.CompareResultTo,
+                    Essential = p.Essential,
+                    ParameterHasNotBeenSet = p.IsNew,
+                    Description = resource?.Description,
+                    Catalogue = resource?.Catalogue?.Name,
+                    ResourceType = resource?.ResourceType ?? p.OriginalResourceType,
+                    Rating = resource?.Rating ?? p.OriginalRating,
+                    UnmatchedResource = learningHubApiReferences?.UnmatchedResourceReferenceIds?.Contains(p.ResourceRefId) ?? false
+                }
+            ).ToList();
             return model;
+        }
+
+        private BulkResourceReferences GetBulkResourcesByReferenceIds(CompetencyResourceSignpostingViewModel model, IEnumerable<CompetencyResourceAssessmentQuestionParameter> parameters)
+        {
+            var resourceRefIds = parameters.Select(p => p.ResourceRefId);
+            try
+            {
+                return this.learningHubApiClient.GetBulkResourcesByReferenceIds(resourceRefIds).Result;
+            }
+            catch
+            {
+                model.LearningHubApiError = true;
+                return null;
+            }
         }
     }
 }
