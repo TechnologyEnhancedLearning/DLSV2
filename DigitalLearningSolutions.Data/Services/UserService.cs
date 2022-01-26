@@ -16,7 +16,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
-        DelegateUser? GetDelegateUserById(int id);
+        DelegateUser? GetDelegateUserById(int delegateId);
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
@@ -64,6 +64,10 @@ namespace DigitalLearningSolutions.Data.Services
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
 
         IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId);
+
+        bool DelegateUserLearningHubAccountIsLinked(int delegateId);
+
+        void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
     }
 
     public class UserService : IUserService
@@ -194,6 +198,8 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.Surname,
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
+                    myAccountDetailsData.ProfessionalRegistrationNumber,
+                    myAccountDetailsData.HasBeenPromptedForPrn,
                     delegateIds
                 );
 
@@ -391,6 +397,21 @@ namespace DigitalLearningSolutions.Data.Services
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
                 .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+        }
+
+        public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
+        {
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
+        }
+
+        public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
+        {
+            userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
+        }
+
+        public DelegateUser? GetDelegateUserById(int delegateId)
+        {
+            return userDataService.GetDelegateUserById(delegateId);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

@@ -18,6 +18,9 @@
         public string? AliasId { get; set; }
         public bool HasBeenPromptedForPrn { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
+        public bool HasDismissedLhLoginWarning { get; set; }
+
+        public override string[] SearchableContent => new []{ SearchableName, CandidateNumber };
 
         public override UserReference ToUserReference()
         {

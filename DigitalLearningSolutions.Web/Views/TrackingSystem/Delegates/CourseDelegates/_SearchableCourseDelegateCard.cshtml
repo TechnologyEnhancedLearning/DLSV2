@@ -58,7 +58,7 @@
           <dt class="nhsuk-summary-list__key">
             Removed date
           </dt>
-          <partial name="_SummaryFieldValue" model="Model.RemovedDate" />
+          <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -67,6 +67,12 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
             @Model.PassRate%
           </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Progress locked
+          </dt>
+          <partial name="_SummaryBooleanField" model="Model.Locked" />
         </div>
       </dl>
 
@@ -79,7 +85,13 @@
         View progress
       </a>
       @if (Model.Locked) {
-        <a class="nhsuk-button nhsuk-button--secondary expander-card__button" role="button">
+        <a class="nhsuk-button nhsuk-button--secondary expander-card__button"
+           role="button"
+           asp-controller="DelegateProgress"
+           asp-action="UnlockProgress"
+           asp-route-progressId="@Model.ProgressId"
+           asp-route-customisationId="@Model.CustomisationId"
+           asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
           Unlock progress
         </a>
       }

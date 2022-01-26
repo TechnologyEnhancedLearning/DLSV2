@@ -122,6 +122,7 @@ namespace DigitalLearningSolutions.Web
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Centre/Configuration/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/Delegates/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/TrackingSystem/CourseSetup/{1}/{0}.cshtml");
+                        options.ViewLocationFormats.Add("/Views/Signposting/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/SuperAdmin/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/Support/{1}/{0}.cshtml");
                         options.ViewLocationFormats.Add("/Views/LearningPortal/{1}/{0}.cshtml");
@@ -180,11 +181,16 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentService, DiagnosticAssessmentService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IEvaluationSummaryService, EvaluationSummaryService>();
+            services.AddScoped<IFaqsService, FaqsService>();
             services.AddScoped<IFrameworkNotificationService, FrameworkNotificationService>();
             services.AddScoped<IFrameworkService, FrameworkService>();
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
+            services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
             services.AddScoped<IJobGroupsService, JobGroupsService>();
+            services.AddScoped<ILearningHubLinkService, LearningHubLinkService>();
+            services.AddScoped<ILearningHubResourceService, LearningHubResourceService>();
+            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
             services.AddScoped<INotificationPreferencesService, NotificationPreferencesService>();
@@ -207,9 +213,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ITutorialService, TutorialService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserVerificationService, UserVerificationService>();
-            services.AddScoped<IGroupsService, GroupsService>();
-            services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
-            services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
@@ -226,6 +229,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IDiagnosticAssessmentDataService, DiagnosticAssessmentDataService>();
             services.AddScoped<IEmailDataService, EmailDataService>();
             services.AddScoped<IEvaluationSummaryDataService, EvaluationSummaryDataService>();
+            services.AddScoped<IFaqsDataService, FaqsDataService>();
             services.AddScoped<IGroupsDataService, GroupsDataService>();
             services.AddScoped<IJobGroupsDataService, JobGroupsDataService>();
             services.AddScoped<ILearningLogItemsDataService, LearningLogItemsDataService>();
@@ -247,6 +251,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
+            services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

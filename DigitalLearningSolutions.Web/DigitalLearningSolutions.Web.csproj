@@ -30,6 +30,7 @@
     <None Remove="Scripts\learningMenu\fullscreen.ts" />
     <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
+    <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
     <None Remove="Scripts\nhsuk.ts" />
@@ -42,6 +43,7 @@
     <None Remove="Scripts\supervisor\assessmentVerify.ts" />
     <None Remove="Scripts\supervisor\staffList.ts" />
     <None Remove="Scripts\supervisor\verify.ts" />
+    <None Remove="Scripts\support\faqs.ts" />
     <None Remove="Scripts\trackingSystem\allDelegates.ts" />
     <None Remove="Scripts\trackingSystem\centreCourseSetup.ts" />
     <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
@@ -93,6 +95,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\dlscommon.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\recommendedLearning.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
@@ -110,6 +113,7 @@
     <TypeScriptCompile Include="Scripts\supervisor\assessmentVerify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\verify.ts" />
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
+    <TypeScriptCompile Include="Scripts\support\faqs.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />

@@ -519,6 +519,52 @@
             ).ToList();
         }
 
+        public CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
+            int competencyId,
+            int selfAssessmentId,
+            int assessmentQuestionId,
+            int levelValue
+        )
+        {
+            return connection.QuerySingleOrDefault<CompetencyAssessmentQuestionRoleRequirement>(
+                @"SELECT
+                        ID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        LevelValue,
+                        LevelRAG
+                    FROM CompetencyAssessmentQuestionRoleRequirements
+                    WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId
+                        AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @levelValue",
+                new { selfAssessmentId, competencyId, assessmentQuestionId, levelValue }
+            );
+        }
+
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+            int delegateId,
+            int selfAssessmentId,
+            int competencyId
+        )
+        {
+            return connection.Query<SelfAssessmentResult>(
+                @"SELECT
+                        ID,
+                        CandidateID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        Result,
+                        DateTime,
+                        SupportingComments
+                    FROM SelfAssessmentResults
+                    WHERE CompetencyID = @competencyId
+                        AND SelfAssessmentID = @selfAssessmentId
+                        AND CandidateID = @delegateId",
+                new { selfAssessmentId, delegateId, competencyId }
+            );
+        }
+
         private static string PrintResult(
             int competencyId,
             int selfAssessmentId,

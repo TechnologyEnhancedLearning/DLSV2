@@ -4,14 +4,11 @@ using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 {
-    public class CompetencyResourceSignpostingViewModel
+    public class CompetencyResourceSignpostingViewModel : BaseSignpostingViewModel
     {
         public const int ItemsPerPage = 10;
         public string NameOfCompetency { get; set; }
         public string Title { get; set; }
-        public int FrameworkId { get; set; }
-        public int? FrameworkCompetencyId { get; set; }
-        public int? FrameworkCompetencyGroupId { get; set; }
         public List<SignpostingCardViewModel> CompetencyResourceLinks { get; set; }
         public IEnumerable<SearchableCompetencyViewModel> Delegates { get; set; }
         public string SearchText { get; set; }
@@ -38,7 +35,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             return new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
         }
 
-        public CompetencyResourceSignpostingViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId)
+        public CompetencyResourceSignpostingViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
         {
             FrameworkId = frameworkId;
             FrameworkCompetencyId = frameworkCompetencyId;

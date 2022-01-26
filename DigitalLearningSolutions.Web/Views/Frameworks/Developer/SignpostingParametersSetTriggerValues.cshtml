@@ -1,0 +1,79 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+@model CompetencyLearningResourceSignpostingParametersViewModel
+@{
+    var addOrEdit = Model.AssessmentQuestionParameter.IsNew ? "Add" : "Edit";
+    var question = Model.Questions.Count() <= 1 ? Model.Questions.FirstOrDefault() : Model.SelectedQuestion; 
+    ViewData["Title"] = $"{addOrEdit} Signposting Parameters";
+    ViewData["Application"] = "Framework Service";
+}
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Signposting</a></li>
+        <li class="nhsuk-breadcrumb__item">Parameters</li>
+      </ol>
+      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">Back to Signposting</a></p>
+    </div>
+  </nav>
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<partial name="Developer/_SignpostingParametersHeader" model="Model" />
+
+<h2>Choose trigger range for - @question.Question</h2>
+<label class="nhsuk-label nhsuk-u-margin-bottom-4">Choose the minimum and maximum responses that will trigger signposting of this learning resource</label>
+<form method="post" asp-controller="Frameworks">
+  <div class="nhsuk-form-group">
+    @if (question.AssessmentQuestionInputTypeID == 2)
+    {
+      <partial name="Developer/_SignpostingQuestionSlider" model="Model.AssessmentQuestionParameter" />
+    }
+    else
+    {
+      foreach (var levelDescriptor in Model.AssessmentQuestionLevelDescriptors.Where(d => !string.IsNullOrEmpty(d.LevelLabel)))
+      {
+        bool isChecked = levelDescriptor.LevelValue == Model.AssessmentQuestionParameter.MinResultMatch || levelDescriptor.LevelValue == Model.AssessmentQuestionParameter.MaxResultMatch;
+        <div class="nhsuk-checkboxes__item">
+          <input class="nhsuk-checkboxes__input" name="selectedLevelValues" type="checkbox"
+                 value="@levelDescriptor.LevelValue" @(isChecked ? "checked" : string.Empty)>
+          <label class="nhsuk-label nhsuk-checkboxes__label">
+            @levelDescriptor.LevelLabel
+          </label>
+        </div>
+      }
+    }
+  </div>
+  <div class="nhsuk-u-margin-top-5">
+    <a asp-action="EditSignpostingParameters"
+       asp-route-frameworkId="@Model.FrameworkId"
+       asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId"
+       asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId"
+       asp-route-competencyLearningResourceId="@Model.AssessmentQuestionParameter?.CompetencyLearningResourceId" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-2">
+      Back
+    </a>
+    <button asp-action="SignpostingParametersSetTriggerValuesNext" class="nhsuk-button nhsuk-u-margin-right-1" type="submit">
+      Next
+    </button>
+  </div>
+  @Html.HiddenFor(m => m.FrameworkId)
+  @Html.HiddenFor(m => m.FrameworkCompetencyGroupId)
+  @Html.HiddenFor(m => m.FrameworkCompetencyId)
+</form>
+
+<div class="nhsuk-back-link nhsuk-u-margin-left-1">
+  <a class="nhsuk-back-link__link" asp-action="EditCompetencyLearningResources" asp-route-frameworkId="@Model.FrameworkId" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/frameworks/signposting.js")" asp-append-version="true"></script>
+}

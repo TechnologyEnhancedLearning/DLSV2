@@ -145,9 +145,10 @@
                 const string firstName = "TestFirstName";
                 const string lastName = "TestLastName";
                 const string email = "test@email.com";
+                const string professionalRegNumber = "test-1234";
 
                 // When
-                userDataService.UpdateDelegateUsers(firstName, lastName, email, null, new[] { 2, 3 });
+                userDataService.UpdateDelegateUsers(firstName, lastName, email, null, professionalRegNumber, true, new[] { 2, 3 });
                 var updatedUser = userDataService.GetDelegateUserById(2)!;
                 var secondUpdatedUser = userDataService.GetDelegateUserById(3)!;
 
@@ -420,6 +421,7 @@
         }
 
         [Test]
+
         public void GetDelegatesNotRegisteredForGroupByGroupId_returns_expected_number_of_delegates()
         {
             // When
@@ -427,6 +429,53 @@
 
             // Then
             result.Should().HaveCount(106);
+        }
+
+        [Test]
+        public void SetDelegateUserLearningHubAuthId_correctly_sets_delegates_learningHubAuthId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int delegateId = 3;
+            const int learningHubAuthId = 1234;
+
+            // When
+            userDataService.SetDelegateUserLearningHubAuthId(delegateId, learningHubAuthId);
+
+            // Then
+            var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+
+            result.Should().NotBeNull()
+                .And.Subject.Should().Be(learningHubAuthId);
+        }
+
+        [Test]
+        public void GetDelegateUserLearningHubAuthId_returns_null_delegate_learningHubAuthId()
+        {
+            using var transaction = new TransactionScope();
+
+            // Given
+            const int delegateId = 3;
+
+            // When
+            var result = userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void UpdateDelegateLhLoginWarningDismissalStatus_changes_delegate_dismissal_status()
+        {
+            using var transaction = new TransactionScope();
+
+            // When
+            userDataService.UpdateDelegateLhLoginWarningDismissalStatus(2, true);
+
+            // Then
+            var updatedUser = userDataService.GetDelegateUserById(2)!;
+            updatedUser.HasDismissedLhLoginWarning.Should().BeTrue();
         }
     }
 }

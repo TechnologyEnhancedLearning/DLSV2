@@ -16,11 +16,18 @@
   <div class="nhsuk-u-padding-left-4 nhsuk-u-margin-bottom-3">
     <div class="tags">
       <div class="card-filter-tag">
-        <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
+        <strong class="nhsuk-tag nhsuk-tag--blue">@Model.Rating</strong>
       </div>
-      <div class="card-filter-tag">
-        <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
-      </div>
+      @if (!string.IsNullOrWhiteSpace(Model.ResourceType)) {
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@Model.ResourceType</strong>
+        </div>
+      }
+      @if (!string.IsNullOrWhiteSpace(Model.CatalogueName)) {
+        <div class="card-filter-tag">
+          <strong class="nhsuk-tag nhsuk-tag--grey">@Model.CatalogueName</strong>
+        </div>
+      }
       @if (Model.IsInActionPlan) {
         <div class="card-filter-tag">
           <strong class="nhsuk-tag nhsuk-tag--blue">Already in action plan</strong>
@@ -42,20 +49,14 @@
          asp-route-resourceReferenceId="@Model.LearningResourceReferenceId">
         Add to action plan
       </a>
-
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-         role="button"
-         href="@Model.ResourceLink">
-        Preview resource
-      </a>
-    } else {
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-         role="button"
-         asp-controller="LearningPortal"
-         asp-action="LaunchLearningResource"
-         asp-route-learningLogItemId="@Model.LearningLogItemId">
-        Preview resource
-      </a>
     }
+    
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
+       role="button"
+       asp-controller="Signposting"
+       asp-action="LaunchLearningResource"
+       asp-route-resourceReferenceId="@Model.LearningHubReferenceId">
+      Preview resource
+    </a>
   </div>
 </div>

@@ -275,5 +275,86 @@
             var updatedProgressRecord = progressRecords.First(p => p.ProgressId == progressId);
             updatedProgressRecord.Completed.Should().Be(completionDate);
         }
+
+        [Test]
+        [TestCase(0, 7, 0)]
+        [TestCase(3, 7, 3)]
+        [TestCase(4, 7, 4)]
+        [TestCase(5, 7, 4)]
+        [TestCase(7, 7, 4)]
+        [TestCase(10, 10, 4)]
+        public void UpdateDiagnosticScore_should_update_db(int myScore, int diagHigh, int diagLow)
+        {
+            // Given
+            const int aspProgressId = 159709;
+            const int progressId = 40771;
+            const int tutorialId = 321;
+
+            using var transaction = new TransactionScope();
+
+            // When
+            progressDataService.UpdateDiagnosticScore(
+                progressId,
+                tutorialId,
+                myScore
+            );
+            var diagnosticInfo = progressTestHelper.GetDiagnosticInfoByAspProgressId(aspProgressId);
+
+            // Then
+            diagnosticInfo.DiagHigh.Should().Be(diagHigh);
+            diagnosticInfo.DiagLow.Should().Be(diagLow);
+            diagnosticInfo.DiagLast.Should().Be(myScore);
+            diagnosticInfo.DiagAttempts.Should().Be(5);
+        }
+
+        [Test]
+        public void UpdateDiagnosticScore_should_update_DiagLow_when_DiagAttempts_is_zero()
+        {
+            // Given
+            const int aspProgressId = 100;
+            const int progressId = 15913;
+            const int tutorialId = 90;
+            const int myScore = 3;
+
+            using var transaction = new TransactionScope();
+
+            // When
+            progressDataService.UpdateDiagnosticScore(
+                progressId,
+                tutorialId,
+                myScore
+            );
+            var diagnosticInfo = progressTestHelper.GetDiagnosticInfoByAspProgressId(aspProgressId);
+
+            // Then
+            diagnosticInfo.DiagHigh.Should().Be(myScore);
+            diagnosticInfo.DiagLow.Should().Be(myScore);
+            diagnosticInfo.DiagLast.Should().Be(myScore);
+            diagnosticInfo.DiagAttempts.Should().Be(1);
+        }
+
+        [Test]
+        public void UnlockCourseProgress_updates_progress_record()
+        {
+            // Given
+            const int progressId = 280244;
+            var statusBeforeUnlock = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                progressDataService.UnlockProgress(progressId);
+                var statusAfterUnlocked = progressTestHelper.GetCourseProgressLockedStatusByProgressId(progressId);
+
+                // Then
+                statusBeforeUnlock.Should().BeTrue();
+                statusAfterUnlocked.Should().BeFalse();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
     }
 }

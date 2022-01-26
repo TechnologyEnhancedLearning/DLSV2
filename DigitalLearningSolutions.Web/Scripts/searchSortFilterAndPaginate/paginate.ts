@@ -1,35 +1,43 @@
 import { ISearchableElement } from './searchSortFilterAndPaginate';
 
-export const ITEMS_PER_PAGE = 10;
+export const ITEMS_PER_PAGE_DEFAULT = 10;
 
 export function setUpPagination(
   onNextPressed: VoidFunction,
   onPreviousPressed: VoidFunction,
+  onItemsPerPageUpdated: VoidFunction,
 ): void {
   const previousButton = getPreviousButton();
   const nextButton = getNextButton();
+  const itemsPerPageSelect = getItemsPerPageSelect();
   if (previousButton === null || nextButton === null) {
     return;
   }
 
-  previousButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    onPreviousPressed();
-  });
-  nextButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    onNextPressed();
-  });
+  previousButton.addEventListener('click',
+    (event) => {
+      event.preventDefault();
+      onPreviousPressed();
+    });
+  nextButton.addEventListener('click',
+    (event) => {
+      event.preventDefault();
+      onNextPressed();
+    });
+  if (itemsPerPageSelect !== null) {
+    itemsPerPageSelect.addEventListener('change', onItemsPerPageUpdated);
+  }
 }
 
 export function paginateResults(
   results: ISearchableElement[],
   page: number,
-  totalPages: number,
 ): ISearchableElement[] {
+  const itemsPerPage = getItemsPerPageValue();
+  const totalPages = Math.ceil(results.length / itemsPerPage);
   updatePageNumber(page, totalPages);
   updatePageButtonVisibility(page, totalPages);
-  return results.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  return results.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 }
 
 function updatePageNumber(page: number, totalPages: number) {
@@ -60,6 +68,13 @@ function updatePageButtonVisibility(page: number, totalPages: number) {
   paginationContainer.hidden = totalPages === 1;
 }
 
+function getItemsPerPageValue() {
+  const itemsPerPageSelect = getItemsPerPageSelect();
+  return itemsPerPageSelect !== null
+    ? parseInt((itemsPerPageSelect as HTMLSelectElement).value, 10)
+    : ITEMS_PER_PAGE_DEFAULT;
+}
+
 function getPreviousButton() {
   return document.getElementsByClassName('nhsuk-pagination__link--prev').item(0);
 }
@@ -68,14 +83,18 @@ function getNextButton() {
   return document.getElementsByClassName('nhsuk-pagination__link--next').item(0);
 }
 
+function getItemsPerPageSelect() {
+  return document.getElementById('items-per-page-select');
+}
+
 function getPreviousButtonDisplayContainer() {
-  return <HTMLLIElement>document.getElementsByClassName('nhsuk-pagination-item--previous').item(0);
+  return document.getElementsByClassName('nhsuk-pagination-item--previous').item(0) as HTMLLIElement;
 }
 
 function getNextButtonDisplayContainer() {
-  return <HTMLLIElement>document.getElementsByClassName('nhsuk-pagination-item--next').item(0);
+  return document.getElementsByClassName('nhsuk-pagination-item--next').item(0) as HTMLLIElement;
 }
 
 function getPaginationDisplayContainer() {
-  return <HTMLLIElement>document.getElementsByClassName('nhsuk-pagination').item(0);
+  return document.getElementsByClassName('nhsuk-pagination').item(0) as HTMLLIElement;
 }

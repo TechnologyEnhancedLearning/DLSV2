@@ -34,7 +34,7 @@
             var result = trackerService.ProcessQuery(query);
 
             // Then
-            result.Should().Be(TrackerEndpointErrorResponse.NullAction);
+            result.Should().Be(TrackerEndpointResponse.NullAction);
         }
 
         [Test]
@@ -47,7 +47,7 @@
             var result = trackerService.ProcessQuery(query);
 
             // Then
-            result.Should().Be(TrackerEndpointErrorResponse.InvalidAction);
+            result.Should().Be(TrackerEndpointResponse.InvalidAction);
         }
 
         [Test]
@@ -123,7 +123,8 @@
             // Given
             var query = new TrackerEndpointQueryParams
             {
-                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2, IsPostLearning = isPostLearningValue,
+                Action = "GetObjectiveArrayCc", CustomisationId = 1, SectionId = 2,
+                IsPostLearning = isPostLearningValue,
             };
 
             // When

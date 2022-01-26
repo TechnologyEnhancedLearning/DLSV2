@@ -35,7 +35,7 @@
                 var availableActivitiesResult = new AxeBuilder(Driver).Analyze();
 
                 Driver.Navigate().GoToUrl(BaseUrl + completeByUrl);
-                ValidatePageHeading("Enter a completion date for Excel 2013 for the Workplace - Testing");
+                ValidatePageHeading("Enter a complete by date for Excel 2013 for the Workplace - Testing");
                 var completeByResult = new AxeBuilder(Driver).Analyze();
 
                 //Then

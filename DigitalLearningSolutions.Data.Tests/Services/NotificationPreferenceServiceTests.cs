@@ -5,7 +5,6 @@ namespace DigitalLearningSolutions.Data.Tests.Services
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
-    using Microsoft.AspNetCore.Razor.Language;
     using NUnit.Framework;
 
     public class NotificationPreferenceServiceTests

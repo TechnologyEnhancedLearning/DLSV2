@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Frameworks
 {
+    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.FrameworksController;
@@ -21,6 +22,7 @@
         private IFrameworkNotificationService frameworkNotificationService;
         private IImportCompetenciesFromFileService importCompetenciesFromFileService;
         private ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
+        private ILearningHubApiClient learningHubApiClient;
         private const string BaseUrl = "https://www.dls.nhs.uk";
         private const int CentreId = 101;
         private const int AdminId = 1;
@@ -36,6 +38,7 @@
             config = A.Fake<IConfiguration>();
             importCompetenciesFromFileService = A.Fake<IImportCompetenciesFromFileService>();
             competencyLearningResourcesDataService = A.Fake<ICompetencyLearningResourcesDataService>();
+            learningHubApiClient = A.Fake<ILearningHubApiClient>();
 
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
@@ -51,7 +54,8 @@
                 frameworkNotificationService,
                 logger,
                 importCompetenciesFromFileService,
-                competencyLearningResourcesDataService
+                competencyLearningResourcesDataService,
+                learningHubApiClient
             )
             {
                 ControllerContext = new ControllerContext() { HttpContext = new DefaultHttpContext { User = user } }

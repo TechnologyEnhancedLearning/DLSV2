@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [Theory]
         [InlineData("/MyAccount", "My account")]
         [InlineData("/MyAccount/EditDetails", "Edit details")]
+        [InlineData("/Signposting/LaunchLearningResource/3", "View resource \"Test image resource\"")]
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
@@ -106,8 +107,9 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
         [InlineData("/ChangePassword", "Change password")]
         [InlineData("/TrackingSystem/Support", "Support")]
-        [InlineData("/SuperAdmin/Centres", "Centres")]
+        [InlineData("/TrackingSystem/Support/FAQs/7", "FAQS")]
         [InlineData("/TrackingSystem/Resources", "Resources")]
+        [InlineData("/SuperAdmin/Centres", "Centres")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

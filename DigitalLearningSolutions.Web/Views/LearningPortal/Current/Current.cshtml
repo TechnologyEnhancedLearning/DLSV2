@@ -24,6 +24,10 @@
       <h2 class="page-subheading word-break">@Model.BannerText</h2>
     }
 
+    @if (Model.ResourcesSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     @if (Model.NoDataFound) {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>You are not enrolled on anything.</b> View <a asp-action="Available">Available activities</a>.
