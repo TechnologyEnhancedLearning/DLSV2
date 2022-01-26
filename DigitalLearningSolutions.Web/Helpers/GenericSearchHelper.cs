@@ -40,7 +40,7 @@
                 searchString,
                 matchCutOffScore,
                 stripStopWords,
-                ScorerCache.Get<PartialTokenSetScorer>()
+                ScorerCache.Get<TokenSetScorer>()
             );
         }
 
