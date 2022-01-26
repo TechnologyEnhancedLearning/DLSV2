@@ -157,22 +157,16 @@
                 return null;
             }
 
-            if (courseValidationDetails.CentreId != centreId && !courseValidationDetails.AllCentres)
-            {
-                return false;
-            }
-
             if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
             {
                 return false;
             }
 
-            if (courseValidationDetails.AllCentres && !courseValidationDetails.CentreHasApplication)
-            {
-                return false;
-            }
+            var centreIdMatches = courseValidationDetails.CentreId == centreId;
+            var allCentresCourseWithApplication =
+                courseValidationDetails.AllCentres && courseValidationDetails.CentreHasApplication;
 
-            return true;
+            return centreIdMatches || allCentresCourseWithApplication;
         }
 
         public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)
