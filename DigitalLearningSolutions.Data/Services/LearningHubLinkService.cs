@@ -112,12 +112,12 @@
         )
         {
             var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
-            return $"?clientcode={clientCode}&userid={learningHubAuthId}&hash={idHash}&endclientUrl={encodedUrl}";
+            return $"?clientCode={clientCode}&userId={learningHubAuthId}&hash={idHash}&endClientUrl={encodedUrl}";
         }
 
         private static string ComposeCreateUserQueryString(string clientCode, string state, string stateHash)
         {
-            return $"?clientcode={clientCode}&state={state}&hash={stateHash}";
+            return $"?clientCode={clientCode}&state={state}&hash={stateHash}";
         }
 
         private void ValidateLearningHubUserId(LinkLearningHubRequest linkLearningHubRequest)
