@@ -290,7 +290,7 @@
 
             // Then
             url.Should().Be(
-                $"www.example.com/insert-log?clientcode=test&userid={authId}&hash=hash_brown&endclientUrl={HttpUtility.UrlEncode(resourceUrl)}"
+                $"www.example.com/insert-log?clientCode=test&userId={authId}&hash=hash_brown&endClientUrl={HttpUtility.UrlEncode(resourceUrl)}"
             );
         }
 
@@ -306,7 +306,7 @@
 
             // Then
             url.Should().Be(
-                $"www.example.com/to-the-past?clientcode=test&state={sessionReferenceId}_refId:{referenceId}&hash=hash_brown"
+                $"www.example.com/to-the-past?clientCode=test&state={sessionReferenceId}_refId:{referenceId}&hash=hash_brown"
             );
         }
     }
