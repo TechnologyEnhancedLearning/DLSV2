@@ -343,7 +343,7 @@
             {
                 result.Should().BeViewResult().ModelAs<SetCourseDetailsViewModel>();
                 controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
-                    .Be("A course with no add on already exists");
+                    .Be("A course with no add-on already exists");
             }
         }
 
@@ -420,7 +420,7 @@
             SetAddNewCentreCourseTempData(application);
 
             A.CallTo(
-                () => sectionService.GetSectionsWithTutorialsForApplication(1)
+                () => sectionService.GetSectionsThatHaveTutorialsForApplication(1)
             ).Returns(new List<Section>());
 
             // When
@@ -434,9 +434,9 @@
         public void SetCourseContent_post_updates_temp_data_and_redirects_to_summary_if_IncludeAllSections_is_selected()
         {
             // Given
-            var sectionModel = new SelectSectionViewModel(1, "Test name", false);
+            var section = new Section(1, "Test name");
             var model = new SetCourseContentViewModel(
-                new List<SelectSectionViewModel> { sectionModel },
+                new List<Section> { section },
                 true,
                 new List<int> { 1 }
             );
@@ -464,8 +464,8 @@
             SaveCourseContent_does_not_redirect_with_invalid_model()
         {
             // Given
-            var sectionModel = new SelectSectionViewModel(1, "Test name", false);
-            var model = new SetCourseContentViewModel(new List<SelectSectionViewModel> { sectionModel }, false, null);
+            var sectionModel = new Section(1, "Test name");
+            var model = new SetCourseContentViewModel(new List<Section> { sectionModel }, false, null);
             controller.ModelState.AddModelError("SelectedSectionIds", "test message");
             SetAddNewCentreCourseTempData();
 
@@ -490,10 +490,10 @@
             SetSectionContent_get_redirects_to_next_section_if_section_has_no_tutorials_and_there_is_another_section()
         {
             // Given
-            var selectSectionModel1 = new SelectSectionViewModel(1, "Test name 1", true);
-            var selectSectionModel2 = new SelectSectionViewModel(2, "Test name 2", true);
+            var section1 = new Section(1, "Test name 1");
+            var section2 = new Section(2, "Test name 2");
             var setCourseContentModel = new SetCourseContentViewModel(
-                new List<SelectSectionViewModel> { selectSectionModel1, selectSectionModel2 },
+                new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
@@ -515,9 +515,9 @@
             SetSectionContent_get_redirects_to_summary_if_section_has_no_tutorials_and_there_are_no_sections_left()
         {
             // Given
-            var selectSectionModel = new SelectSectionViewModel(1, "Test name 1", true);
+            var section = new Section(1, "Test name 1");
             var setCourseContentModel = new SetCourseContentViewModel(
-                new List<SelectSectionViewModel> { selectSectionModel },
+                new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
@@ -538,11 +538,11 @@
         public void SetSectionContent_post_updates_temp_data_and_redirects_to_next_section_if_there_is_one()
         {
             // Given
-            var selectSectionModel1 = new SelectSectionViewModel(1, "Test name 1", true);
-            var selectSectionModel2 = new SelectSectionViewModel(2, "Test name 2", true);
-            var model = new SetSectionContentViewModel(selectSectionModel1, 0, true);
+            var section1 = new Section(1, "Test name 1");
+            var section2 = new Section(2, "Test name 2");
+            var model = new SetSectionContentViewModel(section1, 0, true);
             var setCourseContentModel = new SetCourseContentViewModel(
-                new List<SelectSectionViewModel> { selectSectionModel1, selectSectionModel2 },
+                new List<Section> { section1, section2 },
                 false,
                 new List<int> { 1, 2 }
             );
@@ -568,10 +568,10 @@
         public void SetSectionContent_post_updates_temp_data_and_redirects_to_summary_if_no_sections_left()
         {
             // Given
-            var selectSectionModel = new SelectSectionViewModel(1, "Test name", true);
-            var model = new SetSectionContentViewModel(selectSectionModel, 0, true);
+            var section = new Section(1, "Test name");
+            var model = new SetSectionContentViewModel(section, 0, true);
             var setCourseContentModel = new SetCourseContentViewModel(
-                new List<SelectSectionViewModel> { selectSectionModel },
+                new List<Section> { section },
                 false,
                 new List<int> { 1 }
             );
@@ -602,9 +602,8 @@
 
             var tutorial = new Tutorial(1, "Tutorial name", true, true);
             var section = new Section(1, "Section name");
-            var selectSectionViewModel = new SelectSectionViewModel(section, true);
             var sectionModel = new SetSectionContentViewModel(
-                selectSectionViewModel,
+                section,
                 0,
                 true,
                 new List<Tutorial> { tutorial }

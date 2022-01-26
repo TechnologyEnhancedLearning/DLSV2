@@ -11,14 +11,13 @@
 
         public SetCourseContentViewModel(IEnumerable<Section> availableSections)
         {
-            AvailableSections = availableSections.Select(section => new SelectSectionViewModel(section, false))
-                .ToList();
+            AvailableSections = availableSections;
             IncludeAllSections = true;
             SelectedSectionIds = null;
         }
 
         public SetCourseContentViewModel(
-            IEnumerable<SelectSectionViewModel> availableSections,
+            IEnumerable<Section> availableSections,
             bool includeAllSections,
             IEnumerable<int>? selectedSectionIds
         )
@@ -30,19 +29,19 @@
 
         public bool IncludeAllSections { get; set; }
 
-        public IEnumerable<SelectSectionViewModel> AvailableSections { get; set; }
+        public IEnumerable<Section> AvailableSections { get; set; }
 
         [Required(ErrorMessage = "You must select at least one section")]
         public IEnumerable<int>? SelectedSectionIds { get; set; }
 
-        public IEnumerable<SelectSectionViewModel> GetSelectedSections()
+        public IEnumerable<Section> GetSelectedSections()
         {
-            return AvailableSections.Where(section => SelectedSectionIds!.Contains(section.Id)).ToList();
+            return AvailableSections.Where(section => SelectedSectionIds!.Contains(section.SectionId)).ToList();
         }
 
         public void SelectAllSections()
         {
-            SelectedSectionIds = AvailableSections.Select(s => s.Id);
+            SelectedSectionIds = AvailableSections.Select(s => s.SectionId);
         }
     }
 }

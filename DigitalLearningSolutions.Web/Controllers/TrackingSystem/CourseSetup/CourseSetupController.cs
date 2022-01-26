@@ -232,7 +232,7 @@
         {
             var data = TempData.Peek<AddNewCentreCourseData>();
 
-            if (!sectionService.GetSectionsWithTutorialsForApplication(data!.Application!.ApplicationId).Any())
+            if (!sectionService.GetSectionsThatHaveTutorialsForApplication(data!.Application!.ApplicationId).Any())
             {
                 return RedirectToAction("Summary");
             }
@@ -252,8 +252,12 @@
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
                 model.SelectAllSections();
-                var availableSections = GetSectionModelsWithAllContentEnabled(model, data!.Application!.DiagAssess);
-                data!.SetSectionContentModels = availableSections.ToList();
+                data!.SetSectionContentModels =
+                    GetSectionModelsWithAllContentEnabled(model, data!.Application!.DiagAssess).ToList();
+            }
+            else
+            {
+                data!.SetSectionContentModels = null;
             }
 
             if (!ModelState.IsValid)
@@ -261,9 +265,7 @@
                 return View("AddNewCentreCourse/SetCourseContent", model);
             }
 
-            // TODO: reset SetSelectedIds somewhere, on the post if SetSectionContentModels exists?
-
-            data!.SetCourseContentModel = model;
+            data.SetCourseContentModel = model;
             TempData.Set(data);
 
             return RedirectToAction(model.IncludeAllSections ? "Summary" : "SetSectionContent");
@@ -276,13 +278,17 @@
             var data = TempData.Peek<AddNewCentreCourseData>();
 
             var section = data!.SetCourseContentModel!.GetSelectedSections().ElementAt(sectionIndex);
-            var tutorials = tutorialService.GetTutorialsForSection(section.Id).ToList();
+            var tutorials = tutorialService.GetTutorialsForSection(section.SectionId).ToList();
+
+            if (!tutorials.Any())
+            {
+                return RedirectToNextSectionOrSummary(sectionIndex, data.SetCourseContentModel);
+            }
+
             var showDiagnostic = data.Application!.DiagAssess;
             var model = new SetSectionContentViewModel(section, sectionIndex, showDiagnostic, tutorials);
 
-            return !tutorials.Any()
-                ? RedirectToNextSectionOrSummary(model.Index, data.SetCourseContentModel)
-                : View("AddNewCentreCourse/SetSectionContent", model);
+            return View("AddNewCentreCourse/SetSectionContent", model);
         }
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
@@ -324,17 +330,17 @@
 
             var customisationId = courseService.CreateNewCentreCourse(customisation);
 
-            var tutorials = data.GetTutorialsFromSections()
-                .Select(
-                    tm => new Tutorial(
-                        tm.TutorialId,
-                        tm.TutorialName,
-                        tm.LearningEnabled,
-                        tm.DiagnosticEnabled
-                    )
-                );
             if (data.SetSectionContentModels != null)
             {
+                var tutorials = data.GetTutorialsFromSections()
+                    .Select(
+                        tm => new Tutorial(
+                            tm.TutorialId,
+                            tm.TutorialName,
+                            tm.LearningEnabled,
+                            tm.DiagnosticEnabled
+                        )
+                    );
                 tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
             }
 
@@ -394,7 +400,7 @@
 
         private SetCourseContentViewModel GetSetCourseContentModel(AddNewCentreCourseData data)
         {
-            var sections = sectionService.GetSectionsWithTutorialsForApplication(data!.Application!.ApplicationId);
+            var sections = sectionService.GetSectionsThatHaveTutorialsForApplication(data!.Application!.ApplicationId);
             return new SetCourseContentViewModel(sections);
         }
 
@@ -403,19 +409,20 @@
             bool diagAssess
         )
         {
-            return model.AvailableSections.Select(
-                (s, index) =>
-                {
-                    var tutorials = tutorialService.GetTutorialsForSection(s.Id).ToList();
-                    foreach (var tutorial in tutorials)
+            return model.GetSelectedSections()
+                .Select(
+                    (s, index) =>
                     {
-                        tutorial.Status = true;
-                        tutorial.DiagStatus = diagAssess;
-                    }
+                        var tutorials = tutorialService.GetTutorialsForSection(s.SectionId).ToList();
+                        foreach (var tutorial in tutorials)
+                        {
+                            tutorial.Status = true;
+                            tutorial.DiagStatus = diagAssess;
+                        }
 
-                    return new SetSectionContentViewModel(s, index, diagAssess, tutorials);
-                }
-            );
+                        return new SetSectionContentViewModel(s, index, diagAssess, tutorials);
+                    }
+                );
         }
 
         private IActionResult SaveSectionAndRedirect(SetSectionContentViewModel model)

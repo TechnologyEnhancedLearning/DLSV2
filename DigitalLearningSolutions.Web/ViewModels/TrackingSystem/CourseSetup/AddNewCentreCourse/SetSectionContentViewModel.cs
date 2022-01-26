@@ -9,21 +9,21 @@
     {
         public SetSectionContentViewModel() { }
 
-        public SetSectionContentViewModel(SelectSectionViewModel section, int index, bool showDiagnostic)
+        public SetSectionContentViewModel(Section section, int index, bool showDiagnostic)
         {
-            SectionName = section.Name;
+            SectionName = section.SectionName;
             Index = index;
             ShowDiagnostic = showDiagnostic;
         }
 
         public SetSectionContentViewModel(
-            SelectSectionViewModel section,
+            Section section,
             int index,
             bool showDiagnostic,
             IEnumerable<Tutorial> tutorials
         )
         {
-            SectionName = section.Name;
+            SectionName = section.SectionName;
             Index = index;
             ShowDiagnostic = showDiagnostic;
             Tutorials = tutorials.Select(t => new CourseTutorialViewModel(t));

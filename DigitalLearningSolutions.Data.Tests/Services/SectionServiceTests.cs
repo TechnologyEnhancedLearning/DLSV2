@@ -104,7 +104,7 @@
         }
 
         [Test]
-        public void GetSectionsForApplication_calls_data_services_and_returns_expected_sections()
+        public void GetSectionsThatHaveTutorialsForApplication_calls_data_services_and_returns_expected_sections()
         {
             // Given
             var sectionOne = new Section(1, "Section");
@@ -123,7 +123,7 @@
             ).Returns(tutorials);
 
             // When
-            var result = sectionService.GetSectionsWithTutorialsForApplication(1);
+            var result = sectionService.GetSectionsThatHaveTutorialsForApplication(1);
 
             // Then
             using (new AssertionScope())
@@ -141,7 +141,7 @@
         }
 
         [Test]
-        public void GetSectionsForApplication_returns_only_sections_with_tutorials()
+        public void GetSectionsThatHaveTutorialsForApplication_returns_only_sections_with_tutorials()
         {
             // Given
             var sectionOne = new Section(1, "Section");
@@ -164,7 +164,7 @@
             ).Returns(new List<Tutorial>());
 
             // When
-            var result = sectionService.GetSectionsWithTutorialsForApplication(1);
+            var result = sectionService.GetSectionsThatHaveTutorialsForApplication(1);
 
             // Then
             result.Count().Should().Be(1);

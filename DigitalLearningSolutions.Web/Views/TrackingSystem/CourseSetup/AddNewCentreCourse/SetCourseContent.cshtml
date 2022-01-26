@@ -12,10 +12,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.AvailableSections),
-                                                   nameof(Model.SelectedSectionIds),
-                                                   nameof(Model.IncludeAllSections) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.AvailableSections), nameof(Model.SelectedSectionIds), nameof(Model.IncludeAllSections) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Set course content</h1>
@@ -54,17 +51,18 @@
             <div class="@selectSectionsCss" id="@chooseSectionsId">
               <div class="nhsuk-checkboxes">
                 @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i))) {
-                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Id)}")" value="@sectionModel.Id" />
-                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Name)}")" value="@sectionModel.Name" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionId)}")" value="@sectionModel.SectionId" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionName)}")" value="@sectionModel.SectionName" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Tutorials)}")" value="@sectionModel.Tutorials" />
                   <div class="nhsuk-checkboxes__item">
                     <input class="nhsuk-checkboxes__input"
                            type="checkbox"
                            name="SelectedSectionIds"
-                           id="section-@sectionModel.Id"
-                           checked="@(Model.SelectedSectionIds?.Contains(sectionModel.Id) ?? false)"
-                           value="@sectionModel.Id" />
-                    <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.Id">
-                      @sectionModel.Name
+                           id="section-@sectionModel.SectionId"
+                           checked="@(Model.SelectedSectionIds?.Contains(sectionModel.SectionId) ?? false)"
+                           value="@sectionModel.SectionId" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.SectionId">
+                      @sectionModel.SectionName
                     </label>
                   </div>
                 }

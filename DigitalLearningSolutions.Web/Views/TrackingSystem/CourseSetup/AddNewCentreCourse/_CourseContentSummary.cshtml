@@ -18,8 +18,10 @@
     }
   </dd>
   <dd class="nhsuk-summary-list__actions">
-    <a asp-action="SetCourseContent">
-      Change<span class="nhsuk-u-visually-hidden"> course content</span>
-    </a>
+    @if (!Model.NoContent) {
+      <a asp-action="SetCourseContent">
+        Change<span class="nhsuk-u-visually-hidden"> course content</span>
+      </a>
+    }
   </dd>
 </div>

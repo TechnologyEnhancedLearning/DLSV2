@@ -23,9 +23,9 @@
             DiagAssess = data.Application!.DiagAssess;
             DiagnosticObjectiveSelection = data.SetCourseOptionsModel.DiagnosticObjectiveSelection;
             NoContent = data.SetSectionContentModels == null || !data.GetTutorialsFromSections().Any();
-            IncludeAllSections = data.SetCourseContentModel!.IncludeAllSections;
-            NumberOfLearning = GetNumberOfLearning(data);
-            NumberOfDiagnostic = GetNumberOfDiagnostic(data);
+            IncludeAllSections = !NoContent && data.SetCourseContentModel!.IncludeAllSections;
+            NumberOfLearning = NoContent ? 0 : GetNumberOfLearning(data);
+            NumberOfDiagnostic = NoContent ? 0 : GetNumberOfDiagnostic(data);
         }
 
         public string ApplicationName { get; set; }

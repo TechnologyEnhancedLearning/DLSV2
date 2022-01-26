@@ -430,7 +430,7 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
             controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("A course with no add on already exists");
+                .BeEquivalentTo("A course with no add-on already exists");
         }
 
         [Test]

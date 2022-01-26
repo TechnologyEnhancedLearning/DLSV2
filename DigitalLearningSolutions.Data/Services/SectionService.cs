@@ -11,7 +11,7 @@
 
         Section? GetSectionAndTutorialsBySectionIdForCustomisation(int customisationId, int sectionId);
 
-        List<Section> GetSectionsWithTutorialsForApplication(int applicationId);
+        List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId);
     }
 
     public class SectionService : ISectionService
@@ -56,7 +56,7 @@
             return section;
         }
 
-        public List<Section> GetSectionsWithTutorialsForApplication(int applicationId)
+        public List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId)
         {
             var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
             return sections.Where(section => tutorialContentDataService.GetTutorialsForSection(section.SectionId).Any())
