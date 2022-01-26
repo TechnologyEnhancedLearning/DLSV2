@@ -187,9 +187,9 @@
                 courseService,
                 centreId
             );
-            CourseDetailsValidator.ValidatePassword(model, ModelState);
-            CourseDetailsValidator.ValidateEmail(model, ModelState);
-            CourseDetailsValidator.ValidateCompletionCriteria(model, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnPasswordIfUnselected(model, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnEmailIfUnselected(model, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnOtherCompletionCriteriaIfUnselected(model, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -252,7 +252,7 @@
             {
                 ModelState.ClearErrorsOnField(nameof(model.SelectedSectionIds));
                 model.SelectAllSections();
-                var availableSections = GetSectionModelsWithAllContentEnabled(model, data.Application.DiagAssess);
+                var availableSections = GetSectionModelsWithAllContentEnabled(model, data!.Application!.DiagAssess);
                 data!.SetSectionContentModels = availableSections.ToList();
             }
 
@@ -318,7 +318,7 @@
 
             using var transaction = new TransactionScope();
 
-            var customisation = GetCustomisationFromTempData(data);
+            var customisation = GetCustomisationFromTempData(data!);
 
             var customisationId = courseService.CreateNewCentreCourse(customisation);
 
@@ -392,11 +392,6 @@
 
         private SetCourseContentViewModel GetSetCourseContentModel(AddNewCentreCourseData data)
         {
-            if (data.SetCourseContentModel != null)
-            {
-                return data.SetCourseContentModel;
-            }
-
             var sections = sectionService.GetSectionsWithTutorialsForApplication(data!.Application!.ApplicationId);
             return new SetCourseContentViewModel(sections);
         }

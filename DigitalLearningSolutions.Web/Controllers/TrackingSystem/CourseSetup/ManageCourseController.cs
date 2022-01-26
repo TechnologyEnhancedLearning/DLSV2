@@ -210,9 +210,9 @@
                 centreId,
                 customisationId
             );
-            CourseDetailsValidator.ValidatePassword(formData, ModelState);
-            CourseDetailsValidator.ValidateEmail(formData, ModelState);
-            CourseDetailsValidator.ValidateCompletionCriteria(formData, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnPasswordIfUnselected(formData, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnEmailIfUnselected(formData, ModelState);
+            CourseDetailsValidator.ResetValueAndClearErrorsOnOtherCompletionCriteriaIfUnselected(formData, ModelState);
 
             if (!ModelState.IsValid)
             {
@@ -227,7 +227,7 @@
 
             courseService.UpdateCourseDetails(
                 customisationId,
-                formData.CustomisationName,
+                formData.CustomisationName!,
                 formData.Password!,
                 formData.NotificationEmails!,
                 formData.IsAssessed,

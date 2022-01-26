@@ -16,16 +16,19 @@
         )
         {
             formData.ConvertCustomisationNameToEmptyStringIfNull();
-            if (string.IsNullOrEmpty(formData.CustomisationName) && courseService.DoesCourseNameExistAtCentre(
+
+            var courseExistsAtCentre = courseService.DoesCourseNameExistAtCentre(
                 formData.CustomisationName!,
                 centreId,
                 formData.ApplicationId,
                 customisationId
-            ))
+            );
+
+            if (string.IsNullOrEmpty(formData.CustomisationName) && courseExistsAtCentre)
             {
                 modelState.AddModelError(
                     nameof(formData.CustomisationName),
-                    "A course with no add on already exists"
+                    "A course with no add-on already exists"
                 );
             }
             else if (string.IsNullOrEmpty(formData.CustomisationName))
@@ -39,12 +42,7 @@
                     "Course name must be 250 characters or fewer, including any additions"
                 );
             }
-            else if (courseService.DoesCourseNameExistAtCentre(
-                formData.CustomisationName,
-                centreId,
-                formData.ApplicationId,
-                customisationId
-            ))
+            else if (courseExistsAtCentre)
             {
                 modelState.AddModelError(
                     nameof(formData.CustomisationName),
@@ -53,7 +51,10 @@
             }
         }
 
-        public static void ValidatePassword(EditCourseDetailsFormData formData, ModelStateDictionary modelState)
+        public static void ResetValueAndClearErrorsOnPasswordIfUnselected(
+            EditCourseDetailsFormData formData,
+            ModelStateDictionary modelState
+        )
         {
             if (formData.PasswordProtected)
             {
@@ -68,7 +69,10 @@
             formData.Password = null;
         }
 
-        public static void ValidateEmail(EditCourseDetailsFormData formData, ModelStateDictionary modelState)
+        public static void ResetValueAndClearErrorsOnEmailIfUnselected(
+            EditCourseDetailsFormData formData,
+            ModelStateDictionary modelState
+        )
         {
             if (formData.ReceiveNotificationEmails)
             {
@@ -83,7 +87,7 @@
             formData.NotificationEmails = null;
         }
 
-        public static void ValidateCompletionCriteria(
+        public static void ResetValueAndClearErrorsOnOtherCompletionCriteriaIfUnselected(
             EditCourseDetailsFormData formData,
             ModelStateDictionary modelState
         )
