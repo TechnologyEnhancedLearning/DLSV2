@@ -103,7 +103,7 @@
             // Then
             A.CallTo(() => userService.UpdateDelegateLhLoginWarningDismissalStatus(DelegateId, true))
                 .MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("SignpostingSso")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
         }
 
@@ -122,7 +122,7 @@
             // Then
             A.CallTo(() => userService.UpdateDelegateLhLoginWarningDismissalStatus(A<int>._, A<bool>._))
                 .MustNotHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("SignpostingSso")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
         }
     }
