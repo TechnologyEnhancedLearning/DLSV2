@@ -211,7 +211,7 @@
                 .With(clr => clr.LearningHubResourceReferenceId = LearningHubResourceReferenceId)
                 .And(clr => clr.LearningResourceReferenceId = LearningResourceReferenceId).Build();
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourcesByCompetencyId(A<int>._)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(A<int>._)
             ).Returns(competencyLearningResources);
 
             GivenLearningHubApiReturnsResources(0);
@@ -535,7 +535,7 @@
             };
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
             ).Returns(new List<CompetencyLearningResource> { competencyLearningResource });
         }
 
@@ -558,7 +558,7 @@
                 .Build();
 
             A.CallTo(
-                () => competencyLearningResourcesDataService.GetCompetencyLearningResourcesByCompetencyId(CompetencyId)
+                () => competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(CompetencyId)
             ).Returns(competencyLearningResources);
         }
 

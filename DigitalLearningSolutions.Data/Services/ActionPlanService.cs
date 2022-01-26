@@ -72,7 +72,7 @@
                 learningResourceReferenceDataService.GetLearningHubResourceReferenceById(learningResourceReferenceId);
 
             var competenciesForResource =
-                competencyLearningResourcesDataService.GetCompetencyIdsByLearningResourceReferenceId(
+                competencyLearningResourcesDataService.GetCompetencyIdsLinkedToResource(
                     learningResourceReferenceId
                 );
 

@@ -51,7 +51,7 @@
             foreach (var competencyId in competencyIds)
             {
                 var learningHubResourceReferencesForCompetency =
-                    competencyLearningResourcesDataService.GetCompetencyLearningResourcesByCompetencyId(
+                    competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
                         competencyId
                     );
                 competencyLearningResources.AddRange(learningHubResourceReferencesForCompetency);

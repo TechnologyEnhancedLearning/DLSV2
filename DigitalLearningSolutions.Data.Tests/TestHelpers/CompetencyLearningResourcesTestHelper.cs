@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
@@ -38,17 +39,19 @@
             int id,
             int competencyId,
             int learningResourceReferenceId,
-            int adminId
+            int adminId,
+            DateTime? removedDate = null,
+            int? removedByAdminId = null
         )
         {
             return connection.QuerySingle<int>(
                 @"SET IDENTITY_INSERT dbo.CompetencyLearningResources ON
                     INSERT INTO CompetencyLearningResources
-                    (ID, CompetencyId, LearningResourceReferenceID, AdminId)
+                    (ID, CompetencyId, LearningResourceReferenceID, AdminId, RemovedDate, RemovedByAdminId)
                     OUTPUT Inserted.ID
-                    VALUES (@id, @competencyId, @learningResourceReferenceId, @adminId)
+                    VALUES (@id, @competencyId, @learningResourceReferenceId, @adminId, @removedDate, @removedByAdminId)
                     SET IDENTITY_INSERT dbo.CompetencyLearningResources OFF",
-                new { id, competencyId, learningResourceReferenceId, adminId }
+                new { id, competencyId, learningResourceReferenceId, adminId, removedDate, removedByAdminId }
             );
         }
 
