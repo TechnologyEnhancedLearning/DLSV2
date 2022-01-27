@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
 } from './filter';
-import { search, setUpSearch } from './search';
+import { getQuery, search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
 import { paginateResults, setUpPagination } from './paginate';
 import getPathForEndpoint from '../common';
@@ -254,10 +254,16 @@ export class SearchSortFilterAndPaginate {
   }
 
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
+    const setReturnPage = !this.searchEnabled || getQuery().length === 0;
+
     _.forEach(searchableData.searchableElements, (searchableElement) => {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
         const params = new URLSearchParams(anchor.search);
-        params.set('returnPage', this.page.toString());
+        if (setReturnPage) {
+          params.set('returnPage', this.page.toString());
+        } else {
+          params.delete('returnPage');
+        }
         // eslint-disable-next-line no-param-reassign
         anchor.search = `?${params.toString()}`;
       });
