@@ -1,12 +1,19 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
+    using System.Collections.Generic;
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
 
     public interface ILearningResourceReferenceDataService
     {
         int GetLearningHubResourceReferenceById(int learningResourceReferenceId);
+
+        public IEnumerable<ResourceReferenceWithResourceDetails> GetResourceReferenceDetailsByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
+        );
     }
 
     public class LearningResourceReferenceDataService : ILearningResourceReferenceDataService
@@ -26,6 +33,30 @@
                     WHERE ID = @learningResourceReferenceId",
                 new { learningResourceReferenceId }
             ).Single();
+        }
+
+        public IEnumerable<ResourceReferenceWithResourceDetails> GetResourceReferenceDetailsByReferenceIds(
+            IEnumerable<int> resourceReferenceIds
+        )
+        {
+            var results = connection.Query<LearningResourceReference>(
+                @"SELECT
+                        ID,
+                        ResourceRefID,
+                        AdminID,
+                        Added,
+                        OriginalResourceName,
+                        ResourceLink,
+                        OriginalDescription,
+                        OriginalResourceType,
+                        OriginalCatalogueName,
+                        OriginalRating
+                    FROM LearningResourceReferences
+                    WHERE ResourceRefID IN @resourceReferenceIds",
+                new { resourceReferenceIds }
+            );
+
+            return results.Select(r => r.MapToResourceReferenceWithResourceDetails());
         }
     }
 }

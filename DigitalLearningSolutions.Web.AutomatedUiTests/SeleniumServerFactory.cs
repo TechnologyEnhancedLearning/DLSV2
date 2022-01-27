@@ -31,7 +31,11 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
             RootUri = host.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First();
 
             // Fake Server to satisfy the return type
-            return new TestServer(new WebHostBuilder().UseStartup<TStartup>().UseSerilog());
+            return new TestServer(new WebHostBuilder()
+                .UseStartup<TStartup>()
+                .UseSerilog()
+                .ConfigureAppConfiguration(configBuilder => { configBuilder.AddConfiguration(GetConfigForUiTests()); }
+                    ));
         }
 
         protected sealed override IWebHostBuilder CreateWebHostBuilder()
@@ -70,6 +74,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.SIT.json")
                 .AddEnvironmentVariables("DlsRefactor_")
+                .AddUserSecrets(typeof(Startup).Assembly)
                 .Build();
         }
     }

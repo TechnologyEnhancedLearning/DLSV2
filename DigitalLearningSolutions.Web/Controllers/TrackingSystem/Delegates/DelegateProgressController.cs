@@ -24,18 +24,21 @@
     public class DelegateProgressController : Controller
     {
         private readonly ICourseService courseService;
+        private readonly INotificationService notificationService;
         private readonly IProgressService progressService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
-            IProgressService progressService
+            IProgressService progressService,
+            INotificationService notificationService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
+            this.notificationService = notificationService;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
@@ -178,6 +181,23 @@
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
+        [HttpGet]
+        [Route("UnlockProgress")]
+        public IActionResult UnlockProgress(
+            int progressId,
+            int customisationId,
+            int delegateId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            progressService.UnlockProgress(progressId);
 
+            if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
+            {
+                return RedirectToAction("Index", "CourseDelegates", new { customisationId });
+            }
+
+            return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
     }
 }

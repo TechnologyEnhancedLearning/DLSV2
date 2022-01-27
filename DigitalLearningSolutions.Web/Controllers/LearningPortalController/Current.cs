@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
@@ -33,7 +32,8 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var (learningResources, sourcedFromFallbackData) =
+                await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -41,6 +41,7 @@
                 sortDirection,
                 selfAssessments,
                 learningResources,
+                sourcedFromFallbackData,
                 bannerText,
                 page
             );
@@ -53,7 +54,7 @@
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -162,23 +163,6 @@
             return View("Current/UnlockCurrentCourse");
         }
 
-        [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
-        [Route("/LearningPortal/Current/LaunchLearningResource/{learningLogItemId}")]
-        public async Task<IActionResult> LaunchLearningResource(int learningLogItemId)
-        {
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            var learningResourceLink =
-                await actionPlanService.GetLearningResourceLinkAndUpdateLastAccessedDate(learningLogItemId, delegateId);
-
-            if (string.IsNullOrWhiteSpace(learningResourceLink))
-            {
-                return NotFound();
-            }
-
-            // TODO: HEEDLS-678 redirect user to new LH forwarding endpoint.
-            return Redirect(learningResourceLink);
-        }
-
         [HttpGet]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
@@ -186,6 +170,12 @@
         public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
         {
             var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null)
+            {
+                return NotFound();
+            }
+
             var model = new MarkActionPlanResourceAsCompleteViewModel(learningLogItemId, actionPlanResource!.Name);
             return View("Current/MarkActionPlanResourceAsComplete", model);
         }
@@ -218,6 +208,11 @@
         public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId)
         {
             var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null)
+            {
+                return NotFound();
+            }
 
             var model = new EditCompleteByDateViewModel(
                 learningLogItemId,
@@ -259,6 +254,12 @@
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
             var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null)
+            {
+                return NotFound();
+            }
+
             var model = new RemoveActionPlanResourceViewModel(actionPlanResource!.Id, actionPlanResource.Name);
             return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }
@@ -272,13 +273,19 @@
             return RedirectToAction("Current");
         }
 
-        private async Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResourcesIfSignpostingEnabled(
-            int delegateId
-        )
+        private async Task<(IEnumerable<ActionPlanResource>, bool sourcedFromFallbackData)>
+            GetIncompleteActionPlanResourcesIfSignpostingEnabled(
+                int delegateId
+            )
         {
-            return config.IsSignpostingUsed()
-                ? await actionPlanService.GetIncompleteActionPlanResources(delegateId)
-                : new List<ActionPlanResource>();
+            if (!config.IsSignpostingUsed())
+            {
+                return (new List<ActionPlanResource>(), false);
+            }
+
+            var (resources, sourcedFromFallbackData) =
+                await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            return (resources, sourcedFromFallbackData);
         }
     }
 }

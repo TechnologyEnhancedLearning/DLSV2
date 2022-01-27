@@ -113,6 +113,13 @@
           <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Progress locked
+          </dt>
+         <partial name="_SummaryBooleanField" model="@Model.IsProgressLocked" />
+        </div>
+
         @if (Model.IsAssessed) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
@@ -167,6 +174,18 @@
           asp-route-delegateId="@Model.DelegateId"
           asp-route-customisationId="@Model.CustomisationId">
           Remove
+        </a>
+      }
+
+      @if (Model.IsProgressLocked) {
+        <a class="nhsuk-button nhsuk-button--secondary"
+           role="button"
+           asp-controller="DelegateProgress"
+           asp-route-progressId="@Model.ProgressId"
+           asp-route-delegateId="@Model.DelegateId"
+           asp-action="UnlockProgress"
+           asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
+          Unlock progress
         </a>
       }
     </div>

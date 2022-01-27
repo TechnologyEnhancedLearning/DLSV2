@@ -2,6 +2,7 @@
 @using DigitalLearningSolutions.Data.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using Microsoft.Extensions.Configuration
+@using DigitalLearningSolutions.Web.Helpers;
 @model SelfAssessmentOverviewViewModel
 
 @{
@@ -46,6 +47,15 @@
     Request @Model.SelfAssessment.Vocabulary.ToLower() verification
   </a>
 }
+<feature name="@(FeatureFlags.CandidateAssessmentExcelExport)">
+<a class="nhsuk-button nhsuk-button--secondary"
+   asp-route-candidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"
+   asp-route-vocabulary="@Model.VocabPlural()"
+   asp-action="ExportCandidateAssessment"
+   role="button">
+  Export to Excel
+</a>
+</feature>
 @if (Model.CompetencyGroups.Any()) {
   foreach (var competencyGroup in Model.CompetencyGroups) {
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">

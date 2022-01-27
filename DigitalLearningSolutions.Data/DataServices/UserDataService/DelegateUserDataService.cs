@@ -35,7 +35,8 @@
                         cd.JobGroupID,
                         jg.JobGroupName,
                         cd.HasBeenPromptedForPrn,
-                        cd.ProfessionalRegistrationNumber
+                        cd.ProfessionalRegistrationNumber,
+                        cd.HasDismissedLhLoginWarning
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
@@ -190,7 +191,15 @@
             return users;
         }
 
-        public void UpdateDelegateUsers(string firstName, string surname, string email, byte[]? profileImage, int[] ids)
+        public void UpdateDelegateUsers(
+            string firstName,
+            string surname,
+            string email,
+            byte[]? profileImage,
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
+            int[] ids
+        )
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -198,9 +207,11 @@
                             FirstName = @firstName,
                             LastName = @surname,
                             EmailAddress = @email,
-                            ProfileImage = @profileImage
+                            ProfileImage = @profileImage,
+                            ProfessionalRegistrationNumber = @professionalRegNumber,
+                            HasBeenPromptedForPrn = @hasBeenPromptedForPrn
                         WHERE CandidateID in @ids",
-                new { firstName, surname, email, profileImage, ids }
+                new { firstName, surname, email, profileImage, ids, professionalRegNumber, hasBeenPromptedForPrn }
             );
         }
 
@@ -344,19 +355,19 @@
             connection.Execute(
                 @"UPDATE Candidates
                     SET
-				        FirstName = @firstName,
-				        LastName = @lastName,
-				        JobGroupID = @jobGroupId,
-				        Active = @active,
-				        Answer1 = @answer1,
-				        Answer2 = @answer2,
-				        Answer3 = @answer3,
-				        Answer4 = @answer4,
-				        Answer5 = @answer5,
-				        Answer6 = @answer6,
-				        AliasID = @aliasId,
-				        EmailAddress = @emailAddress
-		            WHERE CandidateID = @delegateId",
+                        FirstName = @firstName,
+                        LastName = @lastName,
+                        JobGroupID = @jobGroupId,
+                        Active = @active,
+                        Answer1 = @answer1,
+                        Answer2 = @answer2,
+                        Answer3 = @answer3,
+                        Answer4 = @answer4,
+                        Answer5 = @answer5,
+                        Answer6 = @answer6,
+                        AliasID = @aliasId,
+                        EmailAddress = @emailAddress
+                    WHERE CandidateID = @delegateId",
                 new
                 {
                     delegateId,
@@ -396,6 +407,16 @@
             );
         }
 
+        public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET HasDismissedLhLoginWarning = @status
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, status }
+            );
+        }
+
         public IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId)
         {
             return connection.Query<DelegateUser>(
@@ -427,6 +448,42 @@
                     INNER JOIN JobGroups AS jg ON jg.JobGroupID = cd.JobGroupID
                     WHERE cd.AliasID = @aliasId",
                 new { aliasId }
+            );
+        }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return connection.Query<int?>(
+                @"SELECT LearningHubAuthId
+                    FROM Candidates
+                    WHERE CandidateID = @delegateId",
+                new { delegateId }
+            ).Single();
+        }
+
+        public void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId)
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET LearningHubAuthId = @learningHubAuthId
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, learningHubAuthId }
+            );
+        }
+
+        public void UpdateDelegateProfessionalRegistrationNumber(
+            int delegateId,
+            string? professionalRegistrationNumber,
+            bool hasBeenPromptedForPrn
+        )
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET
+                        ProfessionalRegistrationNumber = @professionalRegistrationNumber,
+                        HasBeenPromptedForPrn = @hasBeenPromptedForPrn
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, professionalRegistrationNumber, hasBeenPromptedForPrn }
             );
         }
     }

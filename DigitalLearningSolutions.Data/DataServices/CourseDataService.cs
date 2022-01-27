@@ -39,15 +39,15 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         IEnumerable<CourseAssessmentDetails> GetCoursesAvailableToCentreByCategory(int centreId, int? categoryId);
 
+        IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId);
+
         IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId);
 
-        bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId);
-
         bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         );
 
         void UpdateLearningPathwayDefaultsForCourse(
@@ -76,6 +76,8 @@ namespace DigitalLearningSolutions.Data.DataServices
         CourseOptions? GetCourseOptionsFilteredByCategory(int customisationId, int centreId, int? categoryId);
 
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
+
+        int CreateNewCentreCourse(Customisation customisation);
     }
 
     public class CourseDataService : ICourseDataService
@@ -148,6 +150,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                 pr.Answer1,
                 pr.Answer2,
                 pr.Answer3,
+                pr.PLLocked as IsProgressLocked,
                 ca.CandidateID AS DelegateId,
                 ca.FirstName AS DelegateFirstName,
                 ca.LastName AS DelegateLastName,
@@ -237,25 +240,27 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         public void EnrolOnSelfAssessment(int selfAssessmentId, int candidateId)
         {
-            int enrolmentExists = (int)connection.ExecuteScalar(
-               @"SELECT COALESCE
+            var enrolmentExists = (int)connection.ExecuteScalar(
+                @"SELECT COALESCE
                  ((SELECT ID
                   FROM    CandidateAssessments
                   WHERE (SelfAssessmentID = @selfAssessmentId) AND (CandidateID = @candidateId) AND (RemovedDate IS NULL) AND (CompletedDate IS NULL)), 0) AS ID",
-               new { selfAssessmentId, candidateId });
+                new { selfAssessmentId, candidateId }
+            );
 
             if (enrolmentExists == 0)
             {
                 enrolmentExists = connection.Execute(
-                @"INSERT INTO [dbo].[CandidateAssessments]
+                    @"INSERT INTO [dbo].[CandidateAssessments]
                            ([CandidateID]
                            ,[SelfAssessmentID])
                      VALUES
                            (@candidateId,
                            @selfAssessmentId)",
-                new { selfAssessmentId, candidateId }
-            );
+                    new { selfAssessmentId, candidateId }
+                );
             }
+
             if (enrolmentExists < 1)
             {
                 logger.LogWarning(
@@ -460,6 +465,28 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
+        public IEnumerable<ApplicationDetails> GetApplicationsAvailableToCentreByCategory(int centreId, int? categoryId)
+        {
+            return connection.Query<ApplicationDetails>(
+                @"SELECT
+                        ap.ApplicationID,
+                        ap.ApplicationName,
+                        ap.PLAssess,
+                        ap.DiagAssess,
+                        ap.CourseTopicID,
+                        cc.CategoryName,
+                        ct.CourseTopic
+                    FROM Applications AS ap
+                    INNER JOIN CourseCategories AS cc ON ap.CourseCategoryId = cc.CourseCategoryId
+                    INNER JOIN CourseTopics AS ct ON ap.CourseTopicId = ct.CourseTopicId
+                    WHERE ap.ArchivedDate IS NULL
+                        AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications
+                                    WHERE (CentreID = @centreID AND ApplicationID = ap.ApplicationID))",
+                new { centreId, categoryId }
+            );
+        }
+
         public IEnumerable<Course> GetCoursesEverUsedAtCentreByCategory(int centreId, int? categoryId)
         {
             return connection.Query<Course>(
@@ -481,28 +508,11 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
         }
 
-        public bool DoesCourseExistAtCentre(int customisationId, int centreId, int? categoryId)
-        {
-            return connection.ExecuteScalar<bool>(
-                @"SELECT CASE WHEN EXISTS (
-                        SELECT *
-                        FROM Customisations AS c
-                        JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                        WHERE CustomisationID = @customisationId
-                        AND c.CentreID = @centreId
-                        AND (a.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    )
-                    THEN CAST(1 AS BIT)
-                    ELSE CAST(0 AS BIT) END",
-                new { customisationId, centreId, categoryId }
-            );
-        }
-
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         )
         {
             return connection.ExecuteScalar<bool>(
@@ -515,7 +525,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND [CustomisationID] != @customisationId)
                     THEN CAST(1 AS BIT)
                     ELSE CAST(0 AS BIT) END",
-                new { customisationId, customisationName, centreId, applicationId }
+                new { customisationName, centreId, applicationId, customisationId }
             );
         }
 
@@ -652,6 +662,57 @@ namespace DigitalLearningSolutions.Data.DataServices
                         AND cu.CustomisationID = @customisationId",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
+        }
+
+        public int CreateNewCentreCourse(Customisation customisation)
+        {
+            var customisationId = connection.QuerySingle<int>(
+                @"INSERT INTO Customisations(
+                        CurrentVersion,
+                        CentreID,
+                        ApplicationID,
+                        Active,
+                        CustomisationName,
+                        Password,
+                        SelfRegister,
+                        TutCompletionThreshold,
+                        IsAssessed,
+                        DiagCompletionThreshold,
+                        DiagObjSelect,
+                        HideInLearnerPortal,
+                        NotificationEmails)
+                    OUTPUT Inserted.CustomisationID
+                    VALUES
+                        (1,
+                        @CentreId,
+                        @ApplicationId,
+                        1,
+                        @CustomisationName,
+                        @Password,
+                        @SelfRegister,
+                        @TutCompletionThreshold,
+                        @IsAssessed,
+                        @DiagCompletionThreshold,
+                        @DiagObjSelect,
+                        @HideInLearnerPortal,
+                        @NotificationEmails)",
+                new
+                {
+                    customisation.CentreId,
+                    customisation.ApplicationId,
+                    customisation.CustomisationName,
+                    customisation.Password,
+                    customisation.SelfRegister,
+                    customisation.TutCompletionThreshold,
+                    customisation.IsAssessed,
+                    customisation.DiagCompletionThreshold,
+                    customisation.DiagObjSelect,
+                    customisation.HideInLearnerPortal,
+                    customisation.NotificationEmails,
+                }
+            );
+
+            return customisationId;
         }
     }
 }

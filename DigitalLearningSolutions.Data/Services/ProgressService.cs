@@ -12,6 +12,10 @@
         void UpdateCompleteByDate(int progressId, DateTime? completeByDate);
 
         void UpdateCompletionDate(int progressId, DateTime? completionDate);
+
+        void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
+
+        void UnlockProgress(int progressId);
     }
 
     public class ProgressService : IProgressService
@@ -76,6 +80,16 @@
             }
 
             progressDataService.SetCompletionDate(progressId, date);
+        }
+
+        public void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore)
+        {
+            progressDataService.UpdateDiagnosticScore(progressId, tutorialId, myScore);
+        }
+
+        public void UnlockProgress(int progressId)
+        {
+            progressDataService.UnlockProgress(progressId);
         }
     }
 }

@@ -3,45 +3,47 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
     public interface IRecommendedLearningService
     {
-        Task<IEnumerable<RecommendedResource>> GetRecommendedLearningForSelfAssessment(
-            int selfAssessmentId,
-            int delegateId
-        );
+        Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+            GetRecommendedLearningForSelfAssessment(
+                int selfAssessmentId,
+                int delegateId
+            );
     }
 
     public class RecommendedLearningService : IRecommendedLearningService
     {
         private readonly ICompetencyLearningResourcesDataService competencyLearningResourcesDataService;
-        private readonly ILearningHubApiClient learningHubApiClient;
+        private readonly ILearningHubResourceService learningHubResourceService;
         private readonly ILearningLogItemsDataService learningLogItemsDataService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
 
         public RecommendedLearningService(
             ISelfAssessmentDataService selfAssessmentDataService,
             ICompetencyLearningResourcesDataService competencyLearningResourcesDataService,
-            ILearningHubApiClient learningHubApiClient,
+            ILearningHubResourceService learningHubResourceService,
             ILearningLogItemsDataService learningLogItemsDataService
         )
         {
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.competencyLearningResourcesDataService = competencyLearningResourcesDataService;
-            this.learningHubApiClient = learningHubApiClient;
+            this.learningHubResourceService = learningHubResourceService;
             this.learningLogItemsDataService = learningLogItemsDataService;
         }
 
-        public async Task<IEnumerable<RecommendedResource>> GetRecommendedLearningForSelfAssessment(
-            int selfAssessmentId,
-            int delegateId
-        )
+        public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+            GetRecommendedLearningForSelfAssessment(
+                int selfAssessmentId,
+                int delegateId
+            )
         {
             var competencyIds = selfAssessmentDataService.GetCompetencyIdsForSelfAssessment(selfAssessmentId);
 
@@ -49,7 +51,7 @@
             foreach (var competencyId in competencyIds)
             {
                 var learningHubResourceReferencesForCompetency =
-                    competencyLearningResourcesDataService.GetCompetencyLearningResourcesByCompetencyId(
+                    competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyId(
                         competencyId
                     );
                 competencyLearningResources.AddRange(learningHubResourceReferencesForCompetency);
@@ -60,47 +62,129 @@
             ).Distinct().ToDictionary(x => x.LearningHubResourceReferenceId, x => x.LearningResourceReferenceId);
 
             var uniqueLearningHubReferenceIds = competencyLearningResources
-                .Select(clr => clr.LearningHubResourceReferenceId).Distinct();
+                .Select(clr => clr.LearningHubResourceReferenceId).Distinct().ToList();
 
-            var resources = await learningHubApiClient.GetBulkResourcesByReferenceIds(uniqueLearningHubReferenceIds);
+            var resources =
+                await learningHubResourceService.GetBulkResourcesByReferenceIds(uniqueLearningHubReferenceIds);
 
             var delegateLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId);
 
-            var recommendedResources = resources.ResourceReferences.Select(
-                rr =>
-                {
-                    var learningLogItemsForResource = delegateLearningLogItems.Where(
-                        ll => ll.ArchivedDate == null && ll.LearningHubResourceReferenceId == rr.RefId
-                    ).ToList();
-                    var incompleteLearningLogItem =
-                        learningLogItemsForResource.SingleOrDefault(ll => ll.CompletedDate == null);
-                    return new RecommendedResource(
-                        resourceReferences[rr.RefId],
-                        rr,
-                        incompleteLearningLogItem,
-                        learningLogItemsForResource.Any(ll => ll.CompletedDate != null),
-                        CalculateRecommendedLearningScore(rr, competencyLearningResources, selfAssessmentId, delegateId)
-                    );
-                }
+            var recommendedResources = resources.bulkResourceReferences.ResourceReferences.Select(
+                rr => GetPopulatedRecommendedResource(
+                    selfAssessmentId,
+                    delegateId,
+                    resourceReferences[rr.RefId],
+                    delegateLearningLogItems,
+                    rr,
+                    competencyLearningResources
+                )
             );
 
-            return recommendedResources;
+            return (recommendedResources.WhereNotNull(), resources.sourcedFromFallbackData);
         }
 
-        private decimal CalculateRecommendedLearningScore(
-            ResourceReferenceWithResourceDetails resource,
-            List<CompetencyLearningResource> competencyLearningResources,
+        private RecommendedResource? GetPopulatedRecommendedResource(
+            int selfAssessmentId,
+            int delegateId,
+            int learningHubResourceReferenceId,
+            IEnumerable<LearningLogItem> delegateLearningLogItems,
+            ResourceReferenceWithResourceDetails rr,
+            List<CompetencyLearningResource> competencyLearningResources
+        )
+        {
+            var learningLogItemsForResource = delegateLearningLogItems.Where(
+                ll => ll.ArchivedDate == null && ll.LearningHubResourceReferenceId == rr.RefId
+            ).ToList();
+            var incompleteLearningLogItem =
+                learningLogItemsForResource.SingleOrDefault(ll => ll.CompletedDate == null);
+
+            var clrsForResource =
+                competencyLearningResources.Where(clr => clr.LearningHubResourceReferenceId == rr.RefId)
+                    .ToList();
+
+            var competencyResourceAssessmentQuestionParameters =
+                competencyLearningResourcesDataService
+                    .GetCompetencyResourceAssessmentQuestionParameters(clrsForResource.Select(clr => clr.Id))
+                    .ToList();
+
+            if (!AreDelegateAnswersWithinRangeToDisplayResource(
+                clrsForResource,
+                competencyResourceAssessmentQuestionParameters,
+                selfAssessmentId,
+                delegateId
+            ))
+            {
+                return null;
+            }
+
+            return new RecommendedResource(
+                learningHubResourceReferenceId,
+                rr,
+                incompleteLearningLogItem,
+                learningLogItemsForResource.Any(ll => ll.CompletedDate != null),
+                CalculateRecommendedLearningScore(
+                    rr,
+                    clrsForResource,
+                    competencyResourceAssessmentQuestionParameters,
+                    selfAssessmentId,
+                    delegateId
+                )
+            );
+        }
+
+        private bool AreDelegateAnswersWithinRangeToDisplayResource(
+            List<CompetencyLearningResource> clrsForResource,
+            List<CompetencyResourceAssessmentQuestionParameter> competencyResourceAssessmentQuestionParameters,
             int selfAssessmentId,
             int delegateId
         )
         {
-            var clrsForResource =
-                competencyLearningResources.Where(clr => clr.LearningHubResourceReferenceId == resource.RefId).ToList();
+            foreach (var competencyLearningResource in clrsForResource)
+            {
+                var delegateResults = selfAssessmentDataService
+                    .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                        delegateId,
+                        selfAssessmentId,
+                        competencyLearningResource.CompetencyId
+                    ).ToList();
 
-            var competencyResourceAssessmentQuestionParameters =
-                competencyLearningResourcesDataService
-                    .GetCompetencyResourceAssessmentQuestionParameters(clrsForResource.Select(clr => clr.Id)).ToList();
+                var competencyResourceAssessmentQuestionParametersForClr =
+                    competencyResourceAssessmentQuestionParameters.SingleOrDefault(
+                        qp => qp.CompetencyLearningResourceId == competencyLearningResource.Id
+                    );
 
+                if (competencyResourceAssessmentQuestionParametersForClr == null)
+                {
+                    return true;
+                }
+
+                var latestConfidenceResult = delegateResults
+                    .Where(
+                        dr => dr.AssessmentQuestionId ==
+                              competencyResourceAssessmentQuestionParametersForClr.AssessmentQuestionId
+                    )
+                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
+
+                if (competencyResourceAssessmentQuestionParametersForClr.MinResultMatch <=
+                    latestConfidenceResult?.Result &&
+                    latestConfidenceResult.Result <=
+                    competencyResourceAssessmentQuestionParametersForClr.MaxResultMatch)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private decimal CalculateRecommendedLearningScore(
+            ResourceReferenceWithResourceDetails resource,
+            List<CompetencyLearningResource> clrsForResource,
+            List<CompetencyResourceAssessmentQuestionParameter> competencyResourceAssessmentQuestionParameters,
+            int selfAssessmentId,
+            int delegateId
+        )
+        {
             var essentialnessValue = CalculateEssentialnessValue(competencyResourceAssessmentQuestionParameters);
 
             var learningHubRating = resource.Rating;
@@ -134,31 +218,53 @@
 
             foreach (var competencyLearningResource in competencyLearningResources)
             {
-                var competencyResourceAssessmentQuestionParameterForClr =
+                var competencyResourceAssessmentQuestionParametersForClr =
                     competencyResourceAssessmentQuestionParameters.SingleOrDefault(
                         c => c.CompetencyLearningResourceId == competencyLearningResource.Id
                     );
 
-                if (competencyResourceAssessmentQuestionParameterForClr == null)
+                if (competencyResourceAssessmentQuestionParametersForClr == null)
                 {
                     break;
                 }
 
-                if (competencyResourceAssessmentQuestionParameterForClr.CompareToRoleRequirements)
+                var delegateResults = selfAssessmentDataService
+                    .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+                        delegateId,
+                        selfAssessmentId,
+                        competencyLearningResource.CompetencyId
+                    ).ToList();
+
+                var latestConfidenceResult = delegateResults
+                    .Where(
+                        dr => dr.AssessmentQuestionId ==
+                              competencyResourceAssessmentQuestionParametersForClr.AssessmentQuestionId
+                    )
+                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
+
+                var latestRelevanceResult = delegateResults
+                    .Where(
+                        dr => dr.AssessmentQuestionId ==
+                              competencyResourceAssessmentQuestionParametersForClr.RelevanceAssessmentQuestionId
+                    )
+                    .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
+
+                if (competencyResourceAssessmentQuestionParametersForClr.CompareToRoleRequirements)
                 {
                     requirementAdjusters.Add(
-                        CalculateRoleRequirementValue(competencyLearningResource.CompetencyId, selfAssessmentId)
+                        CalculateRoleRequirementValue(
+                            competencyLearningResource.CompetencyId,
+                            selfAssessmentId,
+                            latestConfidenceResult
+                        )
                     );
                 }
                 else
                 {
                     requirementAdjusters.Add(
                         CalculateRelConValue(
-                            competencyLearningResource
-                                .CompetencyId,
-                            selfAssessmentId,
-                            delegateId,
-                            competencyResourceAssessmentQuestionParameterForClr
+                            latestConfidenceResult,
+                            latestRelevanceResult
                         )
                     );
                 }
@@ -167,44 +273,33 @@
             return requirementAdjusters.Where(ra => ra > 0).Sum();
         }
 
-        private decimal CalculateRoleRequirementValue(int competencyId, int selfAssessmentId)
+        private decimal CalculateRoleRequirementValue(
+            int competencyId,
+            int selfAssessmentId,
+            SelfAssessmentResult? latestConfidenceResult
+        )
         {
+            if (latestConfidenceResult == null)
+            {
+                return 0;
+            }
+
             var competencyAssessmentQuestionRoleRequirement =
                 selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(
                     competencyId,
-                    selfAssessmentId
+                    selfAssessmentId,
+                    latestConfidenceResult.AssessmentQuestionId,
+                    latestConfidenceResult.Result
                 );
 
             return (3 - competencyAssessmentQuestionRoleRequirement?.LevelRag) * 25 ?? 0;
         }
 
         private decimal CalculateRelConValue(
-            int competencyId,
-            int selfAssessmentId,
-            int delegateId,
-            CompetencyResourceAssessmentQuestionParameter competencyResourceAssessmentQuestionParameter
+            SelfAssessmentResult? latestConfidenceResult,
+            SelfAssessmentResult? latestRelevanceResult
         )
         {
-            var delegateResults = selfAssessmentDataService
-                .GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
-                    delegateId,
-                    selfAssessmentId,
-                    competencyId
-                ).ToList();
-
-            var latestConfidenceResult = delegateResults
-                .Where(
-                    dr => dr.AssessmentQuestionId == competencyResourceAssessmentQuestionParameter.AssessmentQuestionId
-                )
-                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
-            var latestRelevanceResult = delegateResults
-                .Where(
-                    dr => dr.AssessmentQuestionId ==
-                          competencyResourceAssessmentQuestionParameter.RelevanceAssessmentQuestionId
-                )
-                .OrderByDescending(dr => dr.DateTime).FirstOrDefault();
-
             if (latestConfidenceResult != null && latestRelevanceResult != null)
             {
                 return (latestRelevanceResult.Result - latestConfidenceResult.Result) * 10;

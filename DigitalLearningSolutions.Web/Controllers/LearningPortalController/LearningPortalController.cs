@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
         private readonly INotificationService notificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly ISupervisorService supervisorService;
+        private readonly ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService;
 
         public LearningPortalController(
             ICentresDataService centresDataService,
@@ -33,7 +34,8 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             IFrameworkNotificationService frameworkNotificationService,
             ILogger<LearningPortalController> logger,
             IConfiguration config,
-            IActionPlanService actionPlanService
+            IActionPlanService actionPlanService,
+            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService
         )
         {
             this.centresDataService = centresDataService;
@@ -45,6 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
             this.logger = logger;
             this.config = config;
             this.actionPlanService = actionPlanService;
+            this.candidateAssessmentDownloadFileService = candidateAssessmentDownloadFileService;
         }
 
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]

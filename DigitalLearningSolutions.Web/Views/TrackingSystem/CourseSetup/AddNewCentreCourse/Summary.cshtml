@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SummaryViewModel
+
+@{
+  ViewData["Title"] = "Add new centre course - Summary";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+
+    <div class="nhsuk-u-margin-bottom-8">
+      <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+    </div>
+
+    <dl class="nhsuk-summary-list">
+      <partial name="../AddNewCentreCourse/_CourseDetailsSummary" model="Model" />
+      <partial name="../AddNewCentreCourse/_CourseOptionsSummary" model="Model" />
+      <partial name="../AddNewCentreCourse/_CourseContentSummary" model="Model" />
+    </dl>
+
+    <form method="post" asp-action="CreateNewCentreCourse">
+      <button class="nhsuk-button" type="submit">Create new course</button>
+    </form>
+
+    <vc:cancel-link asp-controller="CourseSetup" asp-action="Index" />
+  </div>
+</div>

@@ -73,7 +73,7 @@
             var results = Process.ExtractAll(
                 (T)query,
                 items,
-                item => item.SearchableName.ToLower(),
+                item => string.Join(" ", item.SearchableContent.Where(s => s != null)).ToLower(),
                 ratioScorer,
                 matchCutOffScore
             );

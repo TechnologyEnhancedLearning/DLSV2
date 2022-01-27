@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.Shared.Faqs
+namespace DigitalLearningSolutions.Web.ViewModels.Support.Faqs
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
@@ -32,9 +32,12 @@
 
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ??
-                   $"{QText} {DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(AHtml, " ")}";
+            get => SearchableNameOverrideForFuzzySharp ?? QText;
             set => SearchableNameOverrideForFuzzySharp = value;
         }
+
+        public string SearchableFaqAnswer => DisplayStringHelper.ReplaceNonAlphaNumericSpaceChars(AHtml, " ")!;
+
+        public override string?[] SearchableContent => new [] { SearchableName, SearchableFaqAnswer };
     }
 }
