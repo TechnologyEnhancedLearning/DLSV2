@@ -22,12 +22,7 @@
     [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
     public class CourseContentController : Controller
     {
-        public const string SelectAllDiagnosticAction = "diagnostic-select-all";
-        public const string DeselectAllDiagnosticAction = "diagnostic-deselect-all";
-        public const string SelectAllLearningAction = "learning-select-all";
-        public const string DeselectAllLearningAction = "learning-deselect-all";
         public const string SaveAction = "save";
-
         private readonly ICourseDataService courseDataService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
@@ -104,9 +99,19 @@
             string action
         )
         {
-            return action == SaveAction
-                ? EditSave(formData, customisationId)
-                : ProcessBulkSelect(formData, customisationId, action);
+            if (action == SaveAction)
+            {
+                return EditSave(formData, customisationId);
+            }
+
+            var bulkSelectResult = EditCourseSectionHelper.ProcessBulkSelect(formData, action);
+            if (bulkSelectResult != null)
+            {
+                return bulkSelectResult;
+            }
+
+            var viewModel = new EditCourseSectionViewModel(formData, customisationId);
+            return View(viewModel);
         }
 
         private IActionResult EditSave(EditCourseSectionFormData formData, int customisationId)
@@ -118,66 +123,6 @@
             tutorialService.UpdateTutorialsStatuses(tutorials, customisationId);
 
             return RedirectToAction("Index", new { customisationId });
-        }
-
-        private IActionResult ProcessBulkSelect(
-            EditCourseSectionFormData formData,
-            int customisationId,
-            string action
-        )
-        {
-            switch (action)
-            {
-                case SelectAllDiagnosticAction:
-                    SelectAllDiagnostics(formData);
-                    break;
-                case DeselectAllDiagnosticAction:
-                    DeselectAllDiagnostics(formData);
-                    break;
-                case SelectAllLearningAction:
-                    SelectAllLearning(formData);
-                    break;
-                case DeselectAllLearningAction:
-                    DeselectAllLearning(formData);
-                    break;
-                default:
-                    return new StatusCodeResult(400);
-            }
-
-            var viewModel = new EditCourseSectionViewModel(formData, customisationId);
-            return View(viewModel);
-        }
-
-        private static void SelectAllDiagnostics(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.DiagnosticEnabled = true;
-            }
-        }
-
-        private static void DeselectAllDiagnostics(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.DiagnosticEnabled = false;
-            }
-        }
-
-        private static void SelectAllLearning(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.LearningEnabled = true;
-            }
-        }
-
-        private static void DeselectAllLearning(EditCourseSectionFormData model)
-        {
-            foreach (var tutorial in model.Tutorials)
-            {
-                tutorial.LearningEnabled = false;
-            }
         }
     }
 }

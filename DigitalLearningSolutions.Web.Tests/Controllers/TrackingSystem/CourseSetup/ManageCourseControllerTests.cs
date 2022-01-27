@@ -370,9 +370,9 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "Name",
                     101,
+                    1,
                     1
                 )
             ).Returns(true);
@@ -402,13 +402,13 @@
             SaveCourseDetails_correctly_adds_model_error_if_application_already_exists_with_blank_customisation_name()
         {
             // Given
-            var model = GetEditCourseDetailsViewModel(customisationName: "");
+            var model = GetEditCourseDetailsViewModel(customisationName: string.Empty);
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "",
                     101,
+                    1,
                     1
                 )
             ).Returns(true);
@@ -430,7 +430,7 @@
             ).MustNotHaveHappened();
             result.Should().BeViewResult().ModelAs<EditCourseDetailsViewModel>();
             controller.ModelState["CustomisationName"].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo("A course with no add on already exists");
+                .BeEquivalentTo("A course with no add-on already exists");
         }
 
         [Test]
@@ -446,9 +446,9 @@
 
             A.CallTo(
                 () => courseService.DoesCourseNameExistAtCentre(
-                    1,
                     "Name",
                     101,
+                    1,
                     1
                 )
             ).Returns(false);

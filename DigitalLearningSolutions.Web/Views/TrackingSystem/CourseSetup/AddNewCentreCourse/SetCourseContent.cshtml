@@ -1,0 +1,82 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SetCourseContentViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Set course content" : "Set course content";
+  const string chooseSectionsId = "conditional-choose-sections";
+  var selectSectionsCss = "nhsuk-radios__conditional"
+                          + (Model.IncludeAllSections ? " nhsuk-radios__conditional--hidden" : "");
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.AvailableSections), nameof(Model.SelectedSectionIds), nameof(Model.IncludeAllSections) })" />
+    }
+
+    <h1 class="nhsuk-heading-xl">Set course content</h1>
+
+    <form method="post" novalidate asp-action="SetCourseContent">
+
+      <div class="nhsuk-form-group">
+        <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
+
+          <div class="nhsuk-radios nhsuk-radios--conditional">
+
+            <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
+              <input class="nhsuk-radios__input"
+                     id="IncludeAllSections"
+                     asp-for="IncludeAllSections"
+                     type="radio"
+                     value="true">
+              <label class="nhsuk-label nhsuk-radios__label" for="IncludeAllSections">
+                Include all course content
+              </label>
+            </div>
+
+            <div class="nhsuk-radios__item">
+              <input class="nhsuk-radios__input"
+                     id="ChooseSections"
+                     asp-for="IncludeAllSections"
+                     aria-controls="@chooseSectionsId"
+                     aria-expanded="@(!Model.IncludeAllSections)"
+                     type="radio"
+                     value="false">
+              <label class="nhsuk-label nhsuk-radios__label" for="ChooseSections">
+                Choose sections to include
+              </label>
+            </div>
+
+            <div class="@selectSectionsCss" id="@chooseSectionsId">
+              <div class="nhsuk-checkboxes">
+                @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i))) {
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionId)}")" value="@sectionModel.SectionId" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionName)}")" value="@sectionModel.SectionName" />
+                  <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.Tutorials)}")" value="@sectionModel.Tutorials" />
+                  <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           type="checkbox"
+                           name="SelectedSectionIds"
+                           id="section-@sectionModel.SectionId"
+                           checked="@(Model.SelectedSectionIds?.Contains(sectionModel.SectionId) ?? false)"
+                           value="@sectionModel.SectionId" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label word-break" for="section-@sectionModel.SectionId">
+                      @sectionModel.SectionName
+                    </label>
+                  </div>
+                }
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="nhsuk-button" type="submit">Next</button>
+
+    </form>
+
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseOptions" link-text="Go back" />
+  </div>
+</div>
