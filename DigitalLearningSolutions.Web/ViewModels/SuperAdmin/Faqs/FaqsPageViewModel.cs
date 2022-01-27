@@ -4,7 +4,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
-    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
 
     public class FaqsPageViewModel
     {

@@ -6,7 +6,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
-    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;

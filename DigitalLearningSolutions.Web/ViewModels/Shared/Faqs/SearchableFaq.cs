@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.Support.Faqs
+namespace DigitalLearningSolutions.Web.ViewModels.Shared.Faqs
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
