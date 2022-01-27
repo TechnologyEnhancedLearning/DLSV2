@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
@@ -176,7 +175,7 @@
         }
 
         [Test]
-        public void GetAll_returns_null_when_data_service_returns_null()
+        public void GetAll_returns_empty_when_data_service_returns_null()
         {
             var emptyList = Enumerable.Empty<Faq>();
 

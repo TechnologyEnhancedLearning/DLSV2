@@ -16,13 +16,10 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     public class FaqControllerTests
     {
         private readonly IEnumerable<Faq> faqs = Builder<Faq>.CreateListOfSize(12)
-            .All().With(f => f.Published = true)
-            .TheFirst(1).With(f => f.FaqId = 1).With(f => f.Weighting = 40).With(f => f.CreatedDate = DateTime.Parse("2021, 01, 03"))
-            .TheNext(1).With(f => f.FaqId = 2).With(f => f.CreatedDate = DateTime.Parse("2022, 01, 21"))
-            .TheNext(1).With(f => f.CreatedDate = DateTime.Parse("2022, 01, 10"))
-            .TheFirst(5).With(f => f.TargetGroup = 0)
-            .TheNext(7).With(f => f.TargetGroup = 1)
-            .TheRest().With(f => f.TargetGroup = 3).Build();
+            .TheFirst(1).With(f => f.Weighting = 40)
+            .TheNext(1).With(f => f.CreatedDate = DateTime.Now.AddYears(2))
+            .TheFirst(1).With(f => f.TargetGroup = 0)
+            .TheRest().With(f => f.TargetGroup = 2).Build();
 
         private FaqsController controller = null!;
 
@@ -31,7 +28,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [SetUp]
         public void Setup()
         {
-
             faqService = A.Fake<IFaqsService>();
             controller = new FaqsController(faqService);
             A.CallTo(() => faqService.GetAllFaqs())
@@ -41,7 +37,6 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [Test]
         public void Faqs_page_should_return_expected_Faqs_view_page()
         {
-
             //When
             var results = controller.Index();
 
@@ -50,29 +45,9 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         }
 
         [Test]
-        public void Faqs_page_returns_expected_results()
-        {
-            //Given
-             A.CallTo(() => faqService.GetAllFaqs())
-                 .Returns(faqs.Take(1));
-
-            //When
-            var results = controller.Index();
-
-            //Then
-            results.Should().BeViewResult().WithViewName("SuperAdminFaqs")
-                .Model.Should().BeOfType<FaqsPageViewModel>()
-                .Subject.Faqs.First().Should().Match<SearchableFaqViewModel>(f => f.FaqId == 1 && f.Weighting == 40);
-        }
-
-        [Test]
         public void Faqs_are_returned_ordered_by_most_recent_first()
         {
-            //Given
-            A.CallTo(() => faqService.GetAllFaqs())
-                .Returns(faqs.Take(3));
-
-            //When
+           //When
             var results = controller.Index();
 
             //Then
@@ -91,7 +66,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             //Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs")
                 .Model.Should().BeOfType<FaqsPageViewModel>()
-                .Subject.Faqs.Count().Should().Be(10);
+                .Subject.Faqs.Should().HaveCount(10);
         }
     }
 }
