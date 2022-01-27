@@ -101,7 +101,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
-            Assert.That(approved);
+            approved.Should().BeTrue();
         }
 
         [Test]
@@ -410,7 +410,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappenedOnceExactly();
-            Assert.That(approved);
+            approved.Should().BeTrue();
         }
 
         [Test]

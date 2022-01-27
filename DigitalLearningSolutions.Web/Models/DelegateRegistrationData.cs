@@ -34,7 +34,7 @@
             Answer4 = model.Answer4;
             Answer5 = model.Answer5;
             Answer6 = model.Answer6;
-            ProfessionalRegistrationNumber = model.ProfessionalRegistrationNumber;
+            ProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber == true ? model.ProfessionalRegistrationNumber : null;
             HasProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber;
         }
 
