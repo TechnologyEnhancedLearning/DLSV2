@@ -28,7 +28,8 @@
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser, page));
+            var returnPage = string.IsNullOrEmpty(searchString) ? 1 : page;
+            Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser, returnPage));
 
             Filters = new[]
             {

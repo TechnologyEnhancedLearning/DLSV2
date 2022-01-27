@@ -42,11 +42,12 @@
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var returnPage = string.IsNullOrEmpty(searchString) ? 1 : page;
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, page);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, returnPage);
                 }
             );
 
