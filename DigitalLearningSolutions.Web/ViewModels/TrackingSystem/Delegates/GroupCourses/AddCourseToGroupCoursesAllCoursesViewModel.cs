@@ -15,21 +15,11 @@
             int groupId
         )
         {
-            Courses = courses.Select(c => new SearchableCourseViewModel(c, groupId));
+            var courseList = courses.ToList();
+            Courses = courseList.Select(c => new SearchableCourseViewModel(c, groupId));
 
-            Filters = new[]
-            {
-                new FilterViewModel(
-                    nameof(CourseAssessmentDetails.CategoryName),
-                    "Category",
-                    AddCourseToGroupViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterViewModel(
-                    nameof(CourseAssessmentDetails.CourseTopic),
-                    "Topic",
-                    AddCourseToGroupViewModelFilterOptions.GetTopicOptions(topics)
-                ),
-            }.SelectAppliedFilterViewModels();
+            Filters = AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
+                .SelectAppliedFilterViewModels();
         }
 
         public IEnumerable<SearchableCourseViewModel> Courses { get; set; }

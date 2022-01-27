@@ -16,9 +16,7 @@
 
     <partial name="SearchablePage/_Search" model="Model" />
 
-    @if (Model.AdminCategoryFilter == null) {
-      <partial name="SearchablePage/_Filters" model="Model" />
-    }
+    <partial name="SearchablePage/_Filters" model="Model" />
 
     <input type="hidden" asp-for="GroupId" id="current-group-id" />
     <input type="hidden" asp-for="AdminCategoryFilter" id="current-admin-category-id" />

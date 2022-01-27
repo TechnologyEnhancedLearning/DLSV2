@@ -24,7 +24,8 @@
             GroupName = groupName;
             AdminCategoryFilter = adminCategoryFilter;
 
-            var searchedCourses = GenericSearchHelper.SearchItems(courses, SearchString);
+            var courseList = courses.ToList();
+            var searchedCourses = GenericSearchHelper.SearchItems(courseList, SearchString);
             var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterBy).ToList();
             var sortedCourses = GenericSortingHelper.SortAllItems(
                 filteredCourses.AsQueryable(),
@@ -37,19 +38,9 @@
 
             Courses = coursesToShow.Select(c => new SearchableCourseViewModel(c, groupId));
 
-            Filters = new[]
-            {
-                new FilterViewModel(
-                    nameof(CourseAssessmentDetails.CategoryName),
-                    "Category",
-                    AddCourseToGroupViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterViewModel(
-                    nameof(CourseAssessmentDetails.CourseTopic),
-                    "Topic",
-                    AddCourseToGroupViewModelFilterOptions.GetTopicOptions(topics)
-                ),
-            };
+            Filters = adminCategoryFilter == null
+                ? AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
+                : AddCourseToGroupViewModelFilterOptions.GetSingleCategoryFilters(courseList);
         }
 
         public int GroupId { get; set; }
