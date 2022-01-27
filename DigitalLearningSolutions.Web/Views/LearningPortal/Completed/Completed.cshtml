@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @model CompletedPageViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/completed.css")" asp-append-version="true">
@@ -15,7 +17,9 @@
     }
 
     @if (!Model.ApiIsAccessible) {
-      <partial name="Signposting/_ApiIsNotAccessibleWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-2"
+        text="@FallbackDataUsedWarningText.ResourceDetails" />
     }
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />

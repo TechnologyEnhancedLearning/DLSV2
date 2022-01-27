@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model RemoveActionPlanResourceViewModel
 
 @{
@@ -7,7 +9,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l word-break">
+    <h1 id="form-heading" class="nhsuk-heading-xl word-break">
       Are you sure you want to remove @Model.Name?
     </h1>
 
@@ -17,7 +19,9 @@
     }
 
     @if (Model.ResourceSourcedFromFallbackData) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-4"
+        text="@FallbackDataUsedWarningText.ResourceName" />
     }
 
     <p>

@@ -1,4 +1,6 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model MarkActionPlanResourceAsCompleteViewModel
 
 @{
@@ -24,7 +26,9 @@
     }
 
     @if (Model.ResourceSourcedFromFallbackData) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-4"
+        text="@FallbackDataUsedWarningText.ResourceName" />
     }
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
@@ -36,7 +40,7 @@
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
-                     css-class="nhsuk-u-margin-bottom-4"
+                     css-class="nhsuk-u-margin-bottom-2"
                      hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>

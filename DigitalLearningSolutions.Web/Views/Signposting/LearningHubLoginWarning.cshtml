@@ -1,4 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.Signposting
 @model LearningHubLoginWarningViewModel
 
@@ -13,7 +15,9 @@
     <h1 class="nhsuk-heading-xl">View resource "@Model.ResourceTitle"</h1>
 
     @if (Model.ResourceSourcedFromFallbackData) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+        text="@FallbackDataUsedWarningText.ResourceName" />
     }
 
     @if (!Model.LearningHubAccountLinked) {

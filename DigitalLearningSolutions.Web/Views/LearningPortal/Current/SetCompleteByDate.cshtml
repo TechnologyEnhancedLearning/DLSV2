@@ -1,5 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.Controllers.LearningPortalController
+@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model EditCompleteByDateViewModel
@@ -28,7 +29,9 @@
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
     @if (Model.Type is LearningItemType.Resource && Model.ResourceSourcedFromFallbackData == true) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-4"
+        text="@FallbackDataUsedWarningText.ResourceName" />
     }
 
     <form asp-action="@action"
@@ -45,7 +48,7 @@
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
-                     css-class=""
+                     css-class="nhsuk-u-margin-bottom-2"
                      hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit" role="button">Save changes</button>
