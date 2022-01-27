@@ -47,14 +47,6 @@ pipeline {
                 bat "dotnet test DigitalLearningSolutions.Web.IntegrationTests"
             }
         }
-        stage('Automated UI Tests') {
-            environment {
-               DlsRefactor_ConnectionStrings__DefaultConnection = credentials('ci-db-connection-string')
-           }
-            steps {
-                bat "dotnet test DigitalLearningSolutions.Web.AutomatedUiTests"
-            }
-        }
         stage('TS Tests') {
             steps {
                 dir ("DigitalLearningSolutions.Web/") {
