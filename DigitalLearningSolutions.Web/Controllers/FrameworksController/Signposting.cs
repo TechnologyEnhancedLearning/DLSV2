@@ -201,8 +201,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (!session.TriggerValuesConfirmed)
             {
-                session.AssessmentQuestionParameter.MinResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion.MinValue;
-                session.AssessmentQuestionParameter.MaxResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion.MaxValue;
+                session.AssessmentQuestionParameter.MinResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion?.MinValue ?? 0;
+                session.AssessmentQuestionParameter.MaxResultMatch = session.AssessmentQuestionParameter.AssessmentQuestion?.MaxValue ?? 0;
             }
             TempData.Set(session);
             return ViewFromSession("Developer/AddSignpostingParametersSummary", frameworkId, frameworkCompetencyId, frameworkCompetencyId);
