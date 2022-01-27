@@ -27,6 +27,10 @@
 
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
+    @if (Model.Type is LearningItemType.Resource && Model.ResourceSourcedFromFallbackData == true) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     <form asp-action="@action"
           class="nhsuk-u-margin-bottom-3"
           method="post"

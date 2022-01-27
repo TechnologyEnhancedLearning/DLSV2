@@ -5,12 +5,14 @@
         public MarkActionPlanResourceAsCompleteViewModel(
             int learningLogItemId,
             bool absentInLearningHub,
-            string resourceName
+            string resourceName,
+            bool resourceSourcedFromFallbackData
         )
         {
             LearningLogItemId = learningLogItemId;
             AbsentInLearningHub = absentInLearningHub;
             ResourceName = resourceName;
+            ResourceSourcedFromFallbackData = resourceSourcedFromFallbackData;
         }
 
         public MarkActionPlanResourceAsCompleteViewModel(

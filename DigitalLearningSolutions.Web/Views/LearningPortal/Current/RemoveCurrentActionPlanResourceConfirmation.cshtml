@@ -16,6 +16,10 @@
                      text="This resource has been removed from the Learning Hub so its details may be out of date." />
     }
 
+    @if (Model.ResourceSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     <p>
       Are you sure that you wish to remove this resource from your action plan?
     </p>

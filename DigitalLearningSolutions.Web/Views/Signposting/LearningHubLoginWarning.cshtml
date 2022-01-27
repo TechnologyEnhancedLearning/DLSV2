@@ -12,6 +12,10 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">View resource "@Model.ResourceTitle"</h1>
 
+    @if (Model.ResourceSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     @if (!Model.LearningHubAccountLinked) {
       <div class="nhsuk-inset-text nhsuk-u-margin-bottom-4">
         <span class="nhsuk-u-visually-hidden">Information: </span>

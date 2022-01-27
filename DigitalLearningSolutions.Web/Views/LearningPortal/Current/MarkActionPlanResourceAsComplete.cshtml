@@ -23,6 +23,10 @@
                      text="This resource has been removed from the Learning Hub so its details may be out of date." />
     }
 
+    @if (Model.ResourceSourcedFromFallbackData) {
+      <partial name="Signposting/_FallbackDataUsedWarning" />
+    }
+
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="ResourceName" />
       <input type="hidden" asp-for="AbsentInLearningHub" />

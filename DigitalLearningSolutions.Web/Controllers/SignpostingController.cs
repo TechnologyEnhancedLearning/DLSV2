@@ -50,7 +50,7 @@
                 return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
             }
 
-            var (resource, _) =
+            var (resource, sourcedFromFallbackData) =
                 await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
 
             if (resource == null)
@@ -60,8 +60,11 @@
 
             var learningHubAccountIsLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
 
-            // TODO in HEEDLS-744 add warning to user about out of date data
-            var model = new LearningHubLoginWarningViewModel(resource, learningHubAccountIsLinked);
+            var model = new LearningHubLoginWarningViewModel(
+                resource,
+                learningHubAccountIsLinked,
+                sourcedFromFallbackData
+            );
 
             return View("LearningHubLoginWarning", model);
         }
