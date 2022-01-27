@@ -9,11 +9,11 @@
 
     public class FaqsPageViewModel : BaseSearchablePageViewModel, ISupportViewModel
     {
-        // A MatchCutOffScore of 65 is being used here rather than the default 80.
+        // A MatchCutOffScore of 60 is being used here rather than the default 80.
         // The default Fuzzy Search configuration does not reliably bring back expected FAQs.
-        // Through trial and error a combination of the TokenSetScorer ratio scorer
+        // Through trial and error a combination of the PartialTokenSetScorer ratio scorer
         // and this cut off score bring back reliable results comparable to the JS search.
-        private const int MatchCutOffScore = 65;
+        private const int MatchCutOffScore = 60;
         private const string FaqSortBy = "Weighting,FaqId";
 
         public FaqsPageViewModel(
