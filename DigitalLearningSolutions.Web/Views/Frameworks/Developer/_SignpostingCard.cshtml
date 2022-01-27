@@ -7,7 +7,7 @@
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-      @Model.Name @(!String.IsNullOrEmpty(Model.Catalogue) ? $"[{Model.Catalogue}]" : "")
+      @Model.Name @(!String.IsNullOrEmpty(Model.Catalogue) ? $"({Model.Catalogue})" : "")
     </span>
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0">

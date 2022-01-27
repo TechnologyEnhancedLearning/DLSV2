@@ -336,13 +336,14 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             };
             var learningHubApiReferences = GetBulkResourcesByReferenceIds(model, parameters);
             var learningHubApiResourcesByRefId = learningHubApiReferences?.ResourceReferences?.ToDictionary(k => k.RefId, v => v);
-            model.CompetencyResourceLinks = (from p in parameters
+            model.CompetencyResourceLinks = (
+                from p in parameters
                 let resource = !model.LearningHubApiError && learningHubApiResourcesByRefId.Keys.Contains(p.ResourceRefId) ? learningHubApiResourcesByRefId[p.ResourceRefId] : null
                 select new SignpostingCardViewModel()
                 {
                     AssessmentQuestionId = p.AssessmentQuestionId,
                     CompetencyLearningResourceId = p.CompetencyLearningResourceId,
-                    Name = p.OriginalResourceName,
+                    Name = resource?.Title ?? p.OriginalResourceName,
                     AssessmentQuestion = p.Question,
                     MinimumResultMatch = p.MinResultMatch,
                     MaximumResultMatch = p.MaxResultMatch,
@@ -354,8 +355,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     ResourceType = resource?.ResourceType ?? p.OriginalResourceType,
                     Rating = resource?.Rating ?? p.OriginalRating,
                     UnmatchedResource = learningHubApiReferences?.UnmatchedResourceReferenceIds?.Contains(p.ResourceRefId) ?? false
-                }
-            ).ToList();
+                }).ToList();
             return model;
         }
 
