@@ -24,16 +24,19 @@
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-margin-bottom-4">
         <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
-
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-one-quarter">
-            <div class="nhsuk-u-font-weight-bold">
-              <p>Created</p>
-              <p>Weighting</p>
-            </div>
+            <p class="nhsuk-u-font-weight-bold">Created</p>
           </div>
           <div class="nhsuk-grid-column-one-quarter">
             <p>@Model.CreatedDate</p>
+          </div>
+        </div>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-quarter">
+            <p class="nhsuk-u-font-weight-bold">Weighting</p>
+          </div>
+          <div class="nhsuk-grid-column-one-quarter">
             <p>@Model.Weighting</p>
           </div>
         </div>
@@ -49,7 +52,7 @@
           View on separate page
         </a>
         <a class="nhsuk-button nhsuk-button--danger"
-          role="button">
+           role="button">
           Deactivate
         </a>
       </div>

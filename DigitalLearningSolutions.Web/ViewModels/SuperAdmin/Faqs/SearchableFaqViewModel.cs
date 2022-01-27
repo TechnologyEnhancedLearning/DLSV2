@@ -4,10 +4,12 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
 
     public class SearchableFaqViewModel : BaseFilterableViewModel
     {
-        public SearchableFaqViewModel(SearchableFaqModel faq)
+        public SearchableFaqViewModel(SearchableFaq faq)
         {
             FaqId = faq.FaqId;
             AHtml = faq.AHtml;

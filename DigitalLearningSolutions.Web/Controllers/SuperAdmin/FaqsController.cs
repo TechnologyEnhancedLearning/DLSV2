@@ -5,10 +5,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using FaqsPageViewModel = DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs.FaqsPageViewModel;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
@@ -27,7 +29,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
         {
             var faqs = faqsService.GetAllFaqs()
                 .OrderByDescending(f => f.CreatedDate)
-                .Select(f => new SearchableFaqModel(f))
+                .Select(f => new SearchableFaq(f))
                 .Take(10);
 
             var model = new FaqsPageViewModel(faqs);

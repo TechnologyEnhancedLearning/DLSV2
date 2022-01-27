@@ -5,10 +5,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.SuperAdmin;
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
-    using DocumentFormat.OpenXml.Office2010.Excel;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;

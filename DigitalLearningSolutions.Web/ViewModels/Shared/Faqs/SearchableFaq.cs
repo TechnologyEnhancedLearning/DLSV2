@@ -1,15 +1,15 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Shared.Faqs
 {
     using System;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Web.Helpers;
 
-    public class SearchableFaqModel : BaseSearchableItem
+    public class SearchableFaq : BaseSearchableItem
     {
-        public SearchableFaqModel() { }
+        public SearchableFaq() { }
 
-        public SearchableFaqModel(Faq model)
+        public SearchableFaq(Faq model)
         {
             FaqId = model.FaqId;
             AHtml = model.AHtml;
