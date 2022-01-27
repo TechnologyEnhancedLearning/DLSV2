@@ -199,5 +199,12 @@
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
+
+        [HttpGet("DetailedProgress")]
+        public IActionResult ViewDetailedProgress()
+        {
+            var model = new DetailedCourseProgressViewModel();
+            return View(model);
+        }
     }
 }

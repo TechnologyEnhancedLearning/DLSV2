@@ -35,6 +35,12 @@
         void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
 
         void UnlockProgress(int progressId);
+
+        DetailedCourseProgress GetDetailedCourseProgressData();
+
+        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse();
+
+        IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection();
     }
 
     public class ProgressDataService : IProgressDataService

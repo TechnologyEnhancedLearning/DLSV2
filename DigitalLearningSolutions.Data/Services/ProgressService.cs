@@ -4,6 +4,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface IProgressService
     {
@@ -16,6 +17,8 @@
         void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
 
         void UnlockProgress(int progressId);
+
+        DetailedCourseProgress GetDetailedCourseProgress();
     }
 
     public class ProgressService : IProgressService
@@ -90,6 +93,11 @@
         public void UnlockProgress(int progressId)
         {
             progressDataService.UnlockProgress(progressId);
+        }
+
+        public DetailedCourseProgress GetDetailedCourseProgress()
+        {
+            throw new NotImplementedException();
         }
     }
 }
