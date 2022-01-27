@@ -359,6 +359,8 @@
                     true
                 );
             }
+
+            transaction.Complete();
         }
 
         private void EnrolDelegateOnGroupCourse(
