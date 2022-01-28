@@ -1,5 +1,8 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
+@using DigitalLearningSolutions.Data.Helpers
 @using DigitalLearningSolutions.Web.Extensions
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
 
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Welcome)">
   <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
@@ -13,12 +16,14 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">
-  <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
-    Pricing
-    <partial name="_NhsChevronRight" />
-  </a>
-</li>
+@if (configuration.IsPricingPageUsed()) {
+  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">
+    <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
+      Pricing
+      <partial name="_NhsChevronRight" />
+    </a>
+  </li>
+}
 @if (User.Identity.IsAuthenticated) {
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
     <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index">
