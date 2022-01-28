@@ -44,7 +44,7 @@
             Minimum result match
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.MinimumResultMatch
+            @Model.GetLevelLabel(Model.MinimumResultMatch)
           </dd>
         </div>
         <div class="nhsuk-summary-list__row">
@@ -52,7 +52,7 @@
             Maximum result match
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.MaximumResultMatch
+            @Model.GetLevelLabel(Model.MaximumResultMatch)
           </dd>
         </div>
       }

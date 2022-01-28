@@ -326,6 +326,15 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         CompetencyLearningResourceId = p.CompetencyLearningResourceId,
                         Name = p.OriginalResourceName,
                         AssessmentQuestion = p.Question,
+                        AssessmentQuestionLevelDescriptors = p.AssessmentQuestionId.HasValue && p.AssessmentQuestionInputTypeId != 2 ?
+                            frameworkService.GetLevelDescriptorsForAssessmentQuestionId(
+                                p.AssessmentQuestionId.Value,
+                                GetAdminId(),
+                                p.AssessmentQuestionMinValue,
+                                p.AssessmentQuestionMaxValue,
+                                p.AssessmentQuestionMinValue == 0).ToList()
+                            : null,
+                        AssessmentQuestionInputTypeId = p.AssessmentQuestionInputTypeId,
                         MinimumResultMatch = p.MinResultMatch,
                         MaximumResultMatch = p.MaxResultMatch,
                         CompareResultTo = p.CompareResultTo,
