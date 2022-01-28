@@ -41,8 +41,12 @@
       <input type="hidden" asp-for="Name" />
       <input type="hidden" asp-for="Type" />
       @if (Equals(Model.Type, LearningItemType.Course)) {
-        <input name="progressId" type="hidden" value="@Model.ProgressId" />
+        <input type="hidden" asp-for="@Model.ProgressId" />
       }
+      @if (Equals(Model.Type, LearningItemType.Resource)) {
+        <input type="hidden" asp-for="@Model.ResourceSourcedFromFallbackData" />
+      }
+
       <vc:date-input id="complete-by-date"
                      label="Complete by date"
                      day-id="Day"

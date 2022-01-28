@@ -37,6 +37,5 @@
         }
 
         public int Id { get; set; }
-        public bool? ResourceSourcedFromFallbackData { get; set; }
     }
 }

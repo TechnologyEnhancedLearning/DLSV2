@@ -16,6 +16,7 @@
             Month = formData.Month;
             Year = formData.Year;
             Type = formData.Type;
+            ResourceSourcedFromFallbackData = formData.ResourceSourcedFromFallbackData;
             ProgressId = progressId;
         }
 
@@ -25,6 +26,7 @@
         public int? Year { get; set; }
         public LearningItemType Type { get; set; }
         public int? ProgressId { get; set; }
+        public bool? ResourceSourcedFromFallbackData { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

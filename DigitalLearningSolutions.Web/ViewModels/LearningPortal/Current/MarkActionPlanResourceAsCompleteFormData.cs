@@ -8,13 +8,16 @@
     {
         public MarkActionPlanResourceAsCompleteFormData() { }
 
-        protected MarkActionPlanResourceAsCompleteFormData(MarkActionPlanResourceAsCompleteFormData formData)
+        protected MarkActionPlanResourceAsCompleteFormData(
+            MarkActionPlanResourceAsCompleteFormData formData
+        )
         {
             ResourceName = formData.ResourceName;
             AbsentInLearningHub = formData.AbsentInLearningHub;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
+            ResourceSourcedFromFallbackData = formData.ResourceSourcedFromFallbackData;
         }
 
         public string ResourceName { get; set; }
