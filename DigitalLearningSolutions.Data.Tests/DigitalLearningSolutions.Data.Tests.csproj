@@ -10,7 +10,6 @@
   <ItemGroup>
     <None Remove="TestData\ActivityDataDownloadTest.xlsx" />
     <None Remove="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx" />
-    <None Remove="TestData\CourseDelegateExportCurrentDownloadTest.xlsx" />
     <None Remove="TestData\DelegateUploadTest.xlsx" />
   </ItemGroup>
 
