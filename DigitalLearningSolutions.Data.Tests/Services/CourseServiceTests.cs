@@ -346,6 +346,29 @@
         }
 
         [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
         public void VerifyAdminUserCanViewCourse_should_return_false_with_incorrect_categoryID()
         {
             // Given
@@ -524,22 +547,6 @@
             // then
             A.CallTo(() => courseDataService.RemoveCurrentCourse(1, 1, RemovalMethod.RemovedByAdmin))
                 .MustNotHaveHappened();
-        }
-
-        [Test]
-        public void VerifyAdminUserCanAccessCourse_should_return_null_when_course_does_not_exist()
-        {
-            // Given
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
-                .Returns(null);
-
-            // When
-            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
-
-            // Then
-            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeNull();
         }
 
         [Test]
