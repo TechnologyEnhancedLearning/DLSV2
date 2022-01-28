@@ -8,10 +8,10 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
+    using ConfigValueMissingException = DigitalLearningSolutions.Data.Exceptions.ConfigValueMissingException;
 
     public class UnlockServiceTests
     {
-        private IConfigService configService = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
         private IFeatureManager featureManager = null!;
@@ -23,7 +23,6 @@
         {
             configuration = A.Fake<IConfiguration>();
             notificationDataService = A.Fake<INotificationDataService>();
-            configService = A.Fake<IConfigService>();
             emailService = A.Fake<IEmailService>();
             featureManager = A.Fake<IFeatureManager>();
 
@@ -42,7 +41,6 @@
             notificationService = new NotificationService(
                 configuration,
                 notificationDataService,
-                configService,
                 emailService,
                 featureManager
             );
@@ -109,7 +107,6 @@
             //Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://old-tracking-system.com");
             //When
             notificationService.SendUnlockRequest(1);
 
@@ -129,7 +126,6 @@
             //Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://new-tracking-system.com");
             //When
             notificationService.SendUnlockRequest(1);
 

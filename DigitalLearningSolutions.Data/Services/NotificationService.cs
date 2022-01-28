@@ -16,7 +16,6 @@
 
     public class NotificationService : INotificationService
     {
-        private readonly IConfigService configService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
         private readonly IFeatureManager featureManager;
@@ -25,14 +24,12 @@
         public NotificationService(
             IConfiguration configuration,
             INotificationDataService notificationDataService,
-            IConfigService configService,
             IEmailService emailService,
             IFeatureManager featureManager
         )
         {
             this.configuration = configuration;
             this.notificationDataService = notificationDataService;
-            this.configService = configService;
             this.emailService = emailService;
             this.featureManager = featureManager;
         }
@@ -56,10 +53,9 @@
                 : configuration.GetCurrentSystemBaseUrl();
             if (string.IsNullOrEmpty(baseUrlConfigOption))
             {
-                throw new ConfigValueMissingException(
-                    configService.GetConfigValueMissingExceptionMessage(
-                        refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl"
-                    )
+                var missingConfigValue = refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl";
+                throw new Exceptions.ConfigValueMissingException(
+            $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null"
                 );
             }
 
