@@ -2,9 +2,9 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 {
     using System;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using FizzWare.NBuilder;
@@ -13,10 +13,10 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
 
     public class CurrentPageViewModelTests
     {
-        private CurrentPageViewModel model = null!;
-        private CurrentCourse[] currentCourses = null!;
-        private SelfAssessment[] selfAssessments = null!;
         private ActionPlanResource[] actionPlanResources = null!;
+        private CurrentCourse[] currentCourses = null!;
+        private CurrentPageViewModel model = null!;
+        private SelfAssessment[] selfAssessments = null!;
 
         [SetUp]
         public void SetUp()
@@ -78,13 +78,13 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 {
                     Id = 1,
                     Name = "Self Assessment 1",
-                    Description = "Self Assessment 1 Description"
+                    Description = "Self Assessment 1 Description",
                 },
                 new SelfAssessment
                 {
                     Id = 1,
                     Name = "Self Assessment 2",
-                    Description = "Self Assessment 2 Description"
+                    Description = "Self Assessment 2 Description",
                 },
             };
             actionPlanResources = Builder<ActionPlanResource>.CreateListOfSize(2).Build().ToArray();
@@ -96,6 +96,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Ascending",
                 selfAssessments,
                 actionPlanResources,
+                false,
                 null,
                 1
             );
@@ -163,7 +164,8 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
             int expectedPasses,
             int expectedSections,
             bool expectedIsSupervisor,
-            bool expectedIsGroup)
+            bool expectedIsGroup
+        )
         {
             var course = model.CurrentActivities.ElementAt(index) as CurrentCourseViewModel;
             course!.Id.Should().Be(expectedId);
@@ -211,6 +213,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Ascending",
                 selfAssessments,
                 actionPlanResources,
+                false,
                 null,
                 1
             );
@@ -250,6 +253,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Ascending",
                 selfAssessments,
                 actionPlanResources,
+                false,
                 null,
                 2
             );
@@ -287,6 +291,7 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Ascending",
                 selfAssessments,
                 actionPlanResources,
+                false,
                 null,
                 1
             );

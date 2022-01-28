@@ -31,36 +31,49 @@
         {
             if (string.IsNullOrWhiteSpace(query.Action))
             {
-                return TrackerEndpointErrorResponse.NullAction;
+                return TrackerEndpointResponse.NullAction;
             }
 
             try
             {
                 if (Enum.TryParse<TrackerEndpointAction>(query.Action, true, out var action))
                 {
-                    ITrackerEndpointDataModel? actionDataResult = action switch
+                    if (action == TrackerEndpointAction.GetObjectiveArray)
                     {
-                        TrackerEndpointAction.GetObjectiveArray => trackerActionService.GetObjectiveArray(
+                        var result = trackerActionService.GetObjectiveArray(
                             query.CustomisationId,
                             query.SectionId
-                        ),
-                        TrackerEndpointAction.GetObjectiveArrayCc => trackerActionService.GetObjectiveArrayCc(
+                        );
+                        return ConvertToJsonString(result);
+                    }
+
+                    if (action == TrackerEndpointAction.GetObjectiveArrayCc)
+                    {
+                        var result = trackerActionService.GetObjectiveArrayCc(
                             query.CustomisationId,
                             query.SectionId,
                             ConvertParamToNullableBoolean(query.IsPostLearning)
-                        ),
-                        _ => throw new ArgumentOutOfRangeException(),
-                    };
+                        );
+                        return ConvertToJsonString(result);
+                    }
 
-                    return ConvertToJsonString(actionDataResult);
+                    if (action == TrackerEndpointAction.StoreDiagnosticJson)
+                    {
+                        return trackerActionService.StoreDiagnosticJson(
+                            query.ProgressId,
+                            query.DiagnosticOutcome
+                        );
+                    }
+
+                    throw new ArgumentOutOfRangeException();
                 }
 
-                return TrackerEndpointErrorResponse.InvalidAction;
+                return TrackerEndpointResponse.InvalidAction;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error processing {query.Action}");
-                return TrackerEndpointErrorResponse.UnexpectedException;
+                return TrackerEndpointResponse.UnexpectedException;
             }
         }
 

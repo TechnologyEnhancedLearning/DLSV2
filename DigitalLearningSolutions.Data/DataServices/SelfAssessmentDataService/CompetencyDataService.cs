@@ -521,7 +521,9 @@
 
         public CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
             int competencyId,
-            int selfAssessmentId
+            int selfAssessmentId,
+            int assessmentQuestionId,
+            int levelValue
         )
         {
             return connection.QuerySingleOrDefault<CompetencyAssessmentQuestionRoleRequirement>(
@@ -533,8 +535,9 @@
                         LevelValue,
                         LevelRAG
                     FROM CompetencyAssessmentQuestionRoleRequirements
-                    WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId",
-                new { selfAssessmentId, competencyId }
+                    WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId
+                        AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @levelValue",
+                new { selfAssessmentId, competencyId, assessmentQuestionId, levelValue }
             );
         }
 

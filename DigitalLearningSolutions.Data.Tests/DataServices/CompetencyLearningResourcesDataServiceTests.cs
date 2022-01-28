@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
@@ -24,7 +25,7 @@
         }
 
         [Test]
-        public void GetCompetencyIdsByLearningHubResourceReference_returns_expected_ids()
+        public void GetCompetencyIdsLinkedToResource_returns_expected_ids_from_active_records_only()
         {
             using var transaction = new TransactionScope();
             try
@@ -32,9 +33,10 @@
                 // Given
                 var expectedIds = new[] { 1, 2, 3, 5, 6 };
                 InsertCompetencyLearningResources();
+                testHelper.InsertCompetencyLearningResource(7, 7, 2, 7, DateTime.UtcNow, 7);
 
                 // When
-                var result = service.GetCompetencyIdsByLearningResourceReferenceId(2);
+                var result = service.GetCompetencyIdsLinkedToResource(2);
 
                 // Then
                 result.Should().BeEquivalentTo(expectedIds);
@@ -46,12 +48,14 @@
         }
 
         [Test]
-        public void GetCompetencyLearningResourcesByCompetencyId_returns_expected_records()
+        public void GetActiveCompetencyLearningResourcesByCompetencyId_returns_expected_active_records()
         {
             using var transaction = new TransactionScope();
 
             // Given
             InsertCompetencyLearningResources();
+            testHelper.InsertCompetencyLearningResource(7, 1, 3, 7, DateTime.UtcNow, 7);
+
             var expectedItem = new CompetencyLearningResource
             {
                 Id = 1,
@@ -62,7 +66,7 @@
             };
 
             // When
-            var result = service.GetCompetencyLearningResourcesByCompetencyId(1).ToList();
+            var result = service.GetActiveCompetencyLearningResourcesByCompetencyId(1).ToList();
 
             // Then
             result.Should().HaveCount(1);

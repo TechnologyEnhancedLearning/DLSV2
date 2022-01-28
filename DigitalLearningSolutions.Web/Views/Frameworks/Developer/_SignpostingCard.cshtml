@@ -73,9 +73,14 @@
           asp-route-frameworkId="@parent.FrameworkId"
           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-competencyLearningResourceId="@(Model.CompetencyLearningResourceId?.ToString() ?? "")">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameters</a>
+          asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameters</a>
       <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
-      <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" asp-action="RemoveResourceLink">Remove resource link</a>
+      <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1"
+         asp-action="RemoveResourceLink"
+          asp-route-frameworkId="@parent.FrameworkId"
+          asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
+          asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
+         asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Remove resource link</a>
     </div>
   </div>
 </details>

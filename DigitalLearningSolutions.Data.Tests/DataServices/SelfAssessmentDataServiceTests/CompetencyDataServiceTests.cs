@@ -584,14 +584,14 @@
                     SelfAssessmentId = 1,
                     CompetencyId = 1,
                     AssessmentQuestionId = 1,
-                    LevelValue = 0,
+                    LevelValue = 1,
                     LevelRag = 1,
                 };
 
-                competencyTestHelper.InsertCompetencyAssessmentQuestionRoleRequirement(1, 1, 1, 1, 1);
+                competencyTestHelper.InsertCompetencyAssessmentQuestionRoleRequirement(1, 1, 1, 1, 1, 1);
 
                 // When
-                var result = selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(1, 1);
+                var result = selfAssessmentDataService.GetCompetencyAssessmentQuestionRoleRequirements(1, 1, 1, 1);
 
                 // Then
                 result.Should().BeEquivalentTo(expectedItem);

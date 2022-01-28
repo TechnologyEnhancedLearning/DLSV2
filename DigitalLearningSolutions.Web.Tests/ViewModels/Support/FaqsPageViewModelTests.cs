@@ -9,7 +9,7 @@
     using FluentAssertions;
     using NUnit.Framework;
 
-    public class FaqsViewModelTests
+    public class FaqsPageViewModelTests
     {
         private readonly IEnumerable<Faq> allFaqs = new List<Faq>
         {

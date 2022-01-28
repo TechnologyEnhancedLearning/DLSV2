@@ -26,11 +26,13 @@
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
-            var completedResources = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
+            var (completedLearningResources, sourcedFromFallbackData) =
+                await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
-                completedResources,
+                completedLearningResources,
+                sourcedFromFallbackData,
                 config,
                 searchString,
                 sortBy,
@@ -45,20 +47,22 @@
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
-            var completedLearningResources = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
+            var (completedLearningResources, _) = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
             var model = new AllCompletedItemsPageViewModel(completedCourses, completedLearningResources, config);
             return View("Completed/AllCompletedItems", model);
         }
 
-        private async Task<IEnumerable<CompletedActionPlanResource>> GetCompletedLearningResourcesIfSignpostingEnabled(
-            int delegateId
-        )
+        private async Task<(IEnumerable<CompletedActionPlanResource>, bool sourcedFromFallbackData)>
+            GetCompletedLearningResourcesIfSignpostingEnabled(int delegateId)
         {
-            return config.IsSignpostingUsed()
-                ? (await actionPlanService.GetCompletedActionPlanResources(delegateId)).Select(
-                    r => new CompletedActionPlanResource(r)
-                )
-                : new List<CompletedActionPlanResource>();
+            if (!config.IsSignpostingUsed())
+            {
+                return (new List<CompletedActionPlanResource>(), false);
+            }
+
+            var (resources, sourcedFromFallbackData) =
+                await actionPlanService.GetCompletedActionPlanResources(delegateId);
+            return (resources.Select(r => new CompletedActionPlanResource(r)), sourcedFromFallbackData);
         }
     }
 }

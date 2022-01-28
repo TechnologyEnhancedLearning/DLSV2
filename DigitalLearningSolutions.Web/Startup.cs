@@ -189,6 +189,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
             services.AddScoped<ILearningHubLinkService, LearningHubLinkService>();
+            services.AddScoped<ILearningHubResourceService, LearningHubResourceService>();
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<ILogoService, LogoService>();
@@ -251,6 +252,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISystemNotificationsDataService, SystemNotificationsDataService>();
             services.AddScoped<ITutorialContentDataService, TutorialContentDataService>();
             services.AddScoped<IUserDataService, UserDataService>();
+            services.AddScoped<ICandidateAssessmentDownloadFileService, CandidateAssessmentDownloadFileService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

@@ -46,6 +46,7 @@
         IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId);
         AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
         LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
+        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
         IEnumerable<LevelDescriptor> GetLevelDescriptorsForAssessmentQuestionId(int assessmentQuestionId, int adminId, int minValue, int maxValue, bool zeroBased);
         Models.SelfAssessments.Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
         //  Comments:
@@ -99,7 +100,7 @@
         void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
         void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting);
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
-        IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
+        void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -562,7 +563,7 @@ LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID 
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
                 @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
-                    ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID) AS CompetencyLearningResourcesCount
+                    ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
@@ -880,6 +881,38 @@ WHERE (fc.Id = @frameworkCompetencyId)",
                 }
             }
         }
+
+        public void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute($@"
+                IF EXISTS(
+	                    SELECT * FROM CompetencyLearningResources AS clr
+	                    WHERE clr.ID = @competencyLearningResourceId
+		                AND NOT EXISTS (SELECT * FROM LearningLogItems AS lli WHERE lli.LearningResourceReferenceID = clr.LearningResourceReferenceID)
+		                AND NOT EXISTS (SELECT * FROM CompetencyResourceAssessmentQuestionParameters AS p WHERE p.CompetencyLearningResourceID = clr.ID)
+	                    )
+	                BEGIN
+		                DELETE FROM CompetencyLearningResources
+		                WHERE ID = @competencyLearningResourceId
+	                END
+                ELSE
+	                BEGIN
+		                UPDATE CompetencyLearningResources
+		                SET RemovedDate = GETDATE(),
+			                RemovedByAdminID = @adminId
+		                WHERE ID = @competencyLearningResourceId
+	                END",
+                    new { competencyLearningResourceId, adminId }
+                );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not deleting competency learning resource as db update failed. " +
+                    $"competencyLearningResourceId: {competencyLearningResourceId}, adminId: {adminId}"
+                );
+            }
+        }
+
         public IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId)
         {
             return connection.Query<AssessmentQuestion>(
@@ -1651,7 +1684,7 @@ WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archive
                     LEFT JOIN CompetencyResourceAssessmentQuestionParameters AS p ON p.CompetencyLearningResourceID = clr.ID
                     LEFT JOIN AssessmentQuestions AS q ON p.AssessmentQuestionID = q.ID
                     LEFT JOIN AssessmentQuestions AS raq ON p.RelevanceAssessmentQuestionID = raq.ID
-                    WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId",
+                    WHERE fc.FrameworkID = @FrameworkId AND clr.CompetencyID = @CompetencyId AND clr.RemovedDate IS NULL",
                 new { frameworkId, competencyId });
         }
 

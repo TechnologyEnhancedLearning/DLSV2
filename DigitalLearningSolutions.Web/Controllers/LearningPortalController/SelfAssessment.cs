@@ -38,6 +38,7 @@
             return competencies;
         }
 
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
         public IActionResult SelfAssessment(int selfAssessmentId)
         {
@@ -208,6 +209,7 @@
             return View("SelfAssessments/SupervisorComments", model);
         }
 
+        [NoCaching]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(
@@ -1069,6 +1071,15 @@
                 SupervisorSignOffs = supervisorSignOffs,
             };
             return View("SelfAssessments/SignOffHistory", model);
+        }
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
+        {
+            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId());
+            return File(
+                content,
+                FileHelper.ExcelContentType,
+                $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx"
+            );
         }
     }
 }

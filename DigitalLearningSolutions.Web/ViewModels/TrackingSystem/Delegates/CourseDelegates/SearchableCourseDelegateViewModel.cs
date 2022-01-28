@@ -19,6 +19,7 @@
             CompleteBy = courseDelegate.CompleteByDate?.ToString(DateHelper.StandardDateAndTimeFormat);
             Completed = courseDelegate.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
             RemovedDate = courseDelegate.RemovedDate?.ToString(DateHelper.StandardDateAndTimeFormat);
+            CustomisationId = courseDelegate.CustomisationId;
             PassRate = courseDelegate.PassRate;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
         }
@@ -35,5 +36,6 @@
         public string? Completed { get; set; }
         public string? RemovedDate { get; set; }
         public double PassRate { get; set; }
+        public int CustomisationId { get; set; }
     }
 }

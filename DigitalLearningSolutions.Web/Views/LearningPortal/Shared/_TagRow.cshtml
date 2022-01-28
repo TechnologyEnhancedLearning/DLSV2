@@ -34,12 +34,16 @@
     <div class="card-filter-tag">
       <strong class="nhsuk-tag nhsuk-tag--blue">Learning resource</strong>
     </div>
-    <div class="card-filter-tag">
-      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.ResourceType</strong>
-    </div>
-    <div class="card-filter-tag">
-      <strong class="nhsuk-tag nhsuk-tag--grey">@resource.CatalogueName</strong>
-    </div>
+    @if (!string.IsNullOrWhiteSpace(resource.ResourceType)) {
+      <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--grey">@resource.ResourceType</strong>
+      </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(resource.CatalogueName)) {
+      <div class="card-filter-tag">
+        <strong class="nhsuk-tag nhsuk-tag--grey">@resource.CatalogueName</strong>
+      </div>
+    }
   }
   @if (Model.HasDiagnosticAssessment) {
     <div class="card-filter-tag">
