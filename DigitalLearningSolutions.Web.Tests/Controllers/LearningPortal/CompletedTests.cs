@@ -18,8 +18,8 @@
     {
         [TestCase(false)]
         [TestCase(true)]
-        public async Task Completed_action_should_return_view_result_with_correct_resource_source_flag(
-            bool resourcesSourcedFromFallbackData
+        public async Task Completed_action_should_return_view_result_with_correct_api_accessibility_flag(
+            bool apiIsAccessible
         )
         {
             // Given
@@ -35,7 +35,7 @@
             var bannerText = "bannerText";
             A.CallTo(() => courseDataService.GetCompletedCourses(CandidateId)).Returns(completedCourses);
             A.CallTo(() => actionPlanService.GetCompletedActionPlanResources(CandidateId))
-                .Returns((completedActionPlanResources, resourcesSourcedFromFallbackData));
+                .Returns((completedActionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
 
             // When
@@ -45,7 +45,8 @@
             var expectedModel = new CompletedPageViewModel(
                 completedCourses,
                 mappedActionPlanResources,
-                resourcesSourcedFromFallbackData,
+                apiIsAccessible,
+                true,
                 config,
                 null,
                 "Completed",

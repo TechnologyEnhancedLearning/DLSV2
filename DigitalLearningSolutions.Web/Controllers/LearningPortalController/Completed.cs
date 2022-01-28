@@ -26,13 +26,15 @@
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
-            var (completedLearningResources, sourcedFromFallbackData) =
+            var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
+            var someResourcesAreAbsentInLearningHub = completedLearningResources.Any(r => r.AbsentInLearningHub);
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
                 completedLearningResources,
-                sourcedFromFallbackData,
+                apiIsAccessible,
+                someResourcesAreAbsentInLearningHub,
                 config,
                 searchString,
                 sortBy,
@@ -52,7 +54,7 @@
             return View("Completed/AllCompletedItems", model);
         }
 
-        private async Task<(IEnumerable<CompletedActionPlanResource>, bool sourcedFromFallbackData)>
+        private async Task<(IList<CompletedActionPlanResource>, bool apiIsAccessible)>
             GetCompletedLearningResourcesIfSignpostingEnabled(int delegateId)
         {
             if (!config.IsSignpostingUsed())
@@ -60,9 +62,9 @@
                 return (new List<CompletedActionPlanResource>(), false);
             }
 
-            var (resources, sourcedFromFallbackData) =
+            var (resources, apiIsAccessible) =
                 await actionPlanService.GetCompletedActionPlanResources(delegateId);
-            return (resources.Select(r => new CompletedActionPlanResource(r)), sourcedFromFallbackData);
+            return (resources.Select(r => new CompletedActionPlanResource(r)).ToList(), apiIsAccessible);
         }
     }
 }

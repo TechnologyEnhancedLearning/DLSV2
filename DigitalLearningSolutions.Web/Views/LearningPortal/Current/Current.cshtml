@@ -24,8 +24,8 @@
       <h2 class="page-subheading word-break">@Model.BannerText</h2>
     }
 
-    @if (Model.ResourcesSourcedFromFallbackData) {
-      <partial name="Signposting/_FallbackDataUsedWarning" />
+    @if (!Model.ApiIsAccessible) {
+      <partial name="Signposting/_ApiIsNotAccessibleWarning" />
     }
 
     @if (Model.NoDataFound) {

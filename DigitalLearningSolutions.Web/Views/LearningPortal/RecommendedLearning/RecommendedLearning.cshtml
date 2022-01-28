@@ -26,9 +26,9 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    @if (Model.ResourcesSourcedFromFallbackData) {
+    @if (!Model.ApiIsAccessible) {
       <div class="nhsuk-u-margin-bottom-4">
-        <partial name="Signposting/_FallbackDataUsedWarning" />
+        <partial name="Signposting/_ApiIsNotAccessibleWarning" />
       </div>
     }
 

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Services;
@@ -60,6 +61,7 @@
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
+
         [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/RecommendedLearning/{page:int=1}")]
         public async Task<IActionResult> RecommendedLearning(
@@ -101,12 +103,27 @@
         public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+
             if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
             {
                 return NotFound();
             }
 
-            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
+            try
+            {
+                await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
+            }
+            catch (ResourceNotFoundException e)
+            {
+                if (!e.ApiIsAccessible)
+                {
+                    return NotFound();
+                }
+
+                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateId, selfAssessmentId);
+                var model = new ResourceRemovedViewModel(assessment!);
+                return View("ResourceRemovedErrorPage", model);
+            }
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
@@ -276,10 +293,16 @@
         )
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var (recommendedResources, sourcedFromFallbackData) =
+            var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
-            var model = new RecommendedLearningViewModel(assessment, recommendedResources, sourcedFromFallbackData, searchString, page);
+            var model = new RecommendedLearningViewModel(
+                assessment,
+                recommendedResources,
+                apiIsAccessible,
+                searchString,
+                page
+            );
             return View("RecommendedLearning", model);
         }
     }

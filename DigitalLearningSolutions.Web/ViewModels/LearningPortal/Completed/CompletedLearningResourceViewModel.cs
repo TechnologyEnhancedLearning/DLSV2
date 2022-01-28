@@ -11,6 +11,7 @@
             CatalogueName = resource.CatalogueName;
             ResourceType = resource.ResourceType;
             ResourceReferenceId = resource.ResourceReferenceId;
+            AbsentInLearningHub = resource.AbsentInLearningHub;
         }
 
         public string LaunchResourceLink { get; set; }
@@ -18,5 +19,6 @@
         public string CatalogueName { get; set; }
         public string ResourceType { get; set; }
         public int ResourceReferenceId { get; set; }
+        public bool AbsentInLearningHub { get; set; }
     }
 }

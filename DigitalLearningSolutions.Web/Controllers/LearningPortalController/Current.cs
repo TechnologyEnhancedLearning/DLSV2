@@ -32,8 +32,9 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var (learningResources, sourcedFromFallbackData) =
+            var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var someResourcesAreAbsentInLearningHub = learningResources.Any(r => r.AbsentInLearningHub);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -41,7 +42,8 @@
                 sortDirection,
                 selfAssessments,
                 learningResources,
-                sourcedFromFallbackData,
+                apiIsAccessible,
+                someResourcesAreAbsentInLearningHub,
                 bannerText,
                 page
             );
@@ -176,7 +178,11 @@
                 return NotFound();
             }
 
-            var model = new MarkActionPlanResourceAsCompleteViewModel(learningLogItemId, actionPlanResource!.Name);
+            var model = new MarkActionPlanResourceAsCompleteViewModel(
+                learningLogItemId,
+                actionPlanResource.AbsentInLearningHub,
+                actionPlanResource!.Name
+            );
             return View("Current/MarkActionPlanResourceAsComplete", model);
         }
 
@@ -209,7 +215,7 @@
         {
             var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
 
-            if (actionPlanResource == null)
+            if (actionPlanResource == null || actionPlanResource.AbsentInLearningHub)
             {
                 return NotFound();
             }
@@ -260,7 +266,11 @@
                 return NotFound();
             }
 
-            var model = new RemoveActionPlanResourceViewModel(actionPlanResource!.Id, actionPlanResource.Name);
+            var model = new RemoveActionPlanResourceViewModel(
+                actionPlanResource!.Id,
+                actionPlanResource.Name,
+                actionPlanResource.AbsentInLearningHub
+            );
             return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }
 
@@ -273,7 +283,7 @@
             return RedirectToAction("Current");
         }
 
-        private async Task<(IEnumerable<ActionPlanResource>, bool sourcedFromFallbackData)>
+        private async Task<(IList<ActionPlanResource>, bool apiIsAccessible)>
             GetIncompleteActionPlanResourcesIfSignpostingEnabled(
                 int delegateId
             )
@@ -283,9 +293,9 @@
                 return (new List<ActionPlanResource>(), false);
             }
 
-            var (resources, sourcedFromFallbackData) =
+            var (resources, apiIsAccessible) =
                 await actionPlanService.GetIncompleteActionPlanResources(delegateId);
-            return (resources, sourcedFromFallbackData);
+            return (resources.ToList(), apiIsAccessible);
         }
     }
 }

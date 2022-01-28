@@ -5,7 +5,9 @@
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? $"Error: Mark {Model.ResourceName} as complete" : $"Mark {Model.ResourceName} as complete";
   var exampleDate = DateTime.Today;
-  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
+  var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
+  };
 }
 
 <div class="nhsuk-grid-row">
@@ -16,8 +18,15 @@
 
     <h1 class="nhsuk-heading-xl word-break">Mark @Model.ResourceName as complete</h1>
 
+    @if (Model.AbsentInLearningHub) {
+      <vc:inset-text css-class="nhsuk-u-margin-bottom-4"
+                     text="This resource has been removed from the Learning Hub so its details may be out of date." />
+    }
+
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="ResourceName" />
+      <input type="hidden" asp-for="AbsentInLearningHub" />
+
       <vc:date-input id="completion-date"
                      label="Completion date"
                      day-id="Day"

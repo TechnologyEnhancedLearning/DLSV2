@@ -4,10 +4,12 @@
     {
         public MarkActionPlanResourceAsCompleteViewModel(
             int learningLogItemId,
+            bool absentInLearningHub,
             string resourceName
         )
         {
             LearningLogItemId = learningLogItemId;
+            AbsentInLearningHub = absentInLearningHub;
             ResourceName = resourceName;
         }
 

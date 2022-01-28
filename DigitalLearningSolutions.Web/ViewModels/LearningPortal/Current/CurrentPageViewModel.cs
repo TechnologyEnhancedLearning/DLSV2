@@ -21,12 +21,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             string sortDirection,
             IEnumerable<SelfAssessment> selfAssessments,
             IEnumerable<ActionPlanResource> actionPlanResources,
-            bool resourcesSourcedFromFallbackData,
+            bool apiIsAccessible,
+            bool someResourcesAreAbsentInLearningHub,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
         {
-            ResourcesSourcedFromFallbackData = resourcesSourcedFromFallbackData;
+            ApiIsAccessible = apiIsAccessible;
+            SomeResourcesAreAbsentInLearningHub = someResourcesAreAbsentInLearningHub;
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
@@ -57,7 +59,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 
         public IEnumerable<CurrentLearningItemViewModel> CurrentActivities { get; }
 
-        public bool ResourcesSourcedFromFallbackData { get; set; }
+        public bool ApiIsAccessible { get; set; }
+        public bool SomeResourcesAreAbsentInLearningHub { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
