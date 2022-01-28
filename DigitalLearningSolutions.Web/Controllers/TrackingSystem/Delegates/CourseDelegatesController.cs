@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -7,6 +8,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -22,12 +24,15 @@
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
         private readonly ICourseDelegatesService courseDelegatesService;
+        private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
 
         public CourseDelegatesController(
-            ICourseDelegatesService courseDelegatesService
+            ICourseDelegatesService courseDelegatesService,
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
+            this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
         }
 
         [Route("{page:int=1}")]
@@ -88,6 +93,20 @@
             var model = new AllCourseDelegatesViewModel(courseDelegates);
 
             return View(model);
+        }
+
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        [Route("DownloadCurrent/{customisationId:int}")]
+        public IActionResult DownloadCurrent(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(customisationId, centreId, adminCategoryId);
+            return File(
+                content,
+                FileHelper.ExcelContentType,
+                "Digital Learning Solutions Course Delegates.xlsx"
+            );
         }
     }
 }

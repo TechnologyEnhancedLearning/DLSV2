@@ -28,7 +28,11 @@
         <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
           Export all
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button"
+           asp-controller="CourseDelegates"
+           asp-action="DownloadCurrent"
+           asp-route-customisationId="@Model.CustomisationId"
+           role="button">
           Export current
         </a>
       </div>

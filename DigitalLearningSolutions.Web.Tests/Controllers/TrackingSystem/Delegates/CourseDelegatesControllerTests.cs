@@ -16,13 +16,15 @@
         private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
+        private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
 
         [SetUp]
         public void SetUp()
         {
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
+            courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
 
-            controller = new CourseDelegatesController(courseDelegatesService).WithDefaultContext()
+            controller = new CourseDelegatesController(courseDelegatesService, courseDelegatesDownloadFileService).WithDefaultContext()
                 .WithMockUser(true, UserCentreId);
         }
 
