@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Data;
     using System.IO;
     using System.Linq;
@@ -99,13 +98,11 @@
             dataTable.Columns.AddRange(
                 new[]
                 {
-                    new DataColumn("Delegate ID"), new DataColumn("Enrolled", typeof(DateTime)),
-                    new DataColumn("Last accessed", typeof(DateTime)), new DataColumn("Complete by", typeof(DateTime?)),
-                    new DataColumn("Completed date", typeof(DateTime?)), new DataColumn("Logins", typeof(int)),
-                    new DataColumn("Time (minutes)", typeof(int)), new DataColumn("Diagnostic score", typeof(int)),
-                    new DataColumn("Assessments passed", typeof(int)), new DataColumn("Pass rate", typeof(double)),
-                    new DataColumn("Active", typeof(bool)), new DataColumn("Removed date", typeof(DateTime?)),
-                    new DataColumn("Locked", typeof(bool)),
+                    new DataColumn("Delegate ID"), new DataColumn("Enrolled"), new DataColumn("Last accessed"),
+                    new DataColumn("Complete by"), new DataColumn("Completed date"), new DataColumn("Logins"),
+                    new DataColumn("Time (minutes)"), new DataColumn("Diagnostic score"),
+                    new DataColumn("Assessments passed"), new DataColumn("Pass rate"), new DataColumn("Active"),
+                    new DataColumn("Removed date"), new DataColumn("Locked"),
                 }
             );
 
