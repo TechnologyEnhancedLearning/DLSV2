@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     [Route("TrackingSystem/Delegates/Groups/{groupId:int}/Delegates")]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
     public class GroupDelegatesController : Controller
     {
         private const string AddGroupDelegateCookieName = "AddGroupDelegateFilter";
@@ -44,14 +46,9 @@
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            if (groupName == null)
-            {
-                return NotFound();
-            }
-
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
-            var model = new GroupDelegatesViewModel(groupId, groupName, groupDelegates, page);
+            var model = new GroupDelegatesViewModel(groupId, groupName!, groupDelegates, page);
 
             return View(model);
         }
@@ -94,36 +91,15 @@
         }
 
         [HttpPost("Add/{delegateId:int}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult AddDelegate(int groupId, int delegateId)
         {
             var delegateUser = userService.GetDelegateUserById(delegateId);
-            if (delegateUser == null)
-            {
-                return NotFound();
-            }
-
             var adminId = User.GetAdminId();
 
-            var newDetails = new MyAccountDetailsData(
-                null,
-                delegateUser.Id,
-                string.Empty,
-                delegateUser.FirstName!,
-                delegateUser.LastName!,
-                delegateUser.EmailAddress!,
-                null
-            );
-
-            groupsService.AddDelegateToGroup(
-                delegateUser!.Id,
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
                 groupId,
-                0
-            );
-
-            groupsService.EnrolDelegateOnGroupCourses(
                 delegateUser!,
-                newDetails,
-                groupId,
                 adminId
             );
 
@@ -200,12 +176,8 @@
                 return NotFound();
             }
 
-            if (!model.ConfirmRemovalFromGroup)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(
-                    nameof(RemoveGroupDelegateViewModel.ConfirmRemovalFromGroup),
-                    "You must confirm before removing this user from the group"
-                );
                 return View(model);
             }
 

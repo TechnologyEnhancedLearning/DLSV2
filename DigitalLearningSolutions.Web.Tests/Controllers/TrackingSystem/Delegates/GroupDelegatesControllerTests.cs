@@ -101,19 +101,6 @@
         }
 
         [Test]
-        public void Index_returns_not_found_with_incorrect_group_id_for_centre()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns(null);
-
-            // When
-            var result = groupDelegatesController.Index(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void Index_returns_view_result_with_correct_group_id_for_centre()
         {
             // Given
@@ -232,20 +219,10 @@
 
             A.CallTo(
                 () =>
-                    groupsService.AddDelegateToGroup(
-                        delegateUser.Id,
+                    groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(
                         A<int>._,
-                        0
-                    )
-            ).DoesNothing();
-
-            A.CallTo(
-                () =>
-                    groupsService.EnrolDelegateOnGroupCourses(
                         delegateUser,
-                        A<MyAccountDetailsData>._,
-                        A<int>._,
-                        1
+                        0
                     )
             ).DoesNothing();
 
@@ -254,20 +231,6 @@
 
             // Then
             result.Should().BeRedirectToActionResult().WithActionName(nameof(GroupDelegatesController.ConfirmDelegateAdded));
-        }
-
-        [Test]
-        public void AddDelegate_returns_not_found_with_an_incorrect_delegateId()
-        {
-            // Given
-            A.CallTo(() => userService.GetDelegateUserById(1))
-                .Returns(null);
-
-            // When
-            var result = groupDelegatesController.AddDelegate(2, 1);
-
-            // Then
-            result.Should().BeNotFoundResult();
         }
 
         [Test]
@@ -326,23 +289,6 @@
 
             // Them
             result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void RemoveGroupDelegate_should_return_view_if_unconfirmed()
-        {
-            // Given
-            var model = new RemoveGroupDelegateViewModel { ConfirmRemovalFromGroup = false };
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(1))
-                .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
-
-            // When
-            var result = groupDelegatesController.RemoveGroupDelegate(model, 1, 2);
-
-            // Then
-            result.Should().BeViewResult();
-            groupDelegatesController.ModelState.IsValid.Should().BeFalse();
         }
 
         [Test]

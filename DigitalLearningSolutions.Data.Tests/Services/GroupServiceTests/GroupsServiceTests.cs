@@ -356,6 +356,29 @@
             result.Should().Contain(otherCategoryCourse);
         }
 
+        [Test]
+        public void
+            AddDelegateToGroupAndEnrolOnGroupCourses_calls_AddDelegateToGroup_dataService_and_EnrolDelegateOnGroupCourses()
+        {
+            // Given
+            const int groupId = 1;
+            const int addedByAdminId = 2;
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser();
+            var dateTime = DateTime.UtcNow;
+
+            GivenCurrentTimeIs(dateTime);
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(new List<GroupCourse>());
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
+                .DoesNothing();
+
+            // When
+            groupsService.AddDelegateToGroupAndEnrolOnGroupCourses(groupId, delegateUser, addedByAdminId);
+
+            // Then
+            A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(2)).MustHaveHappenedOnceExactly();
+        }
+
         private void GivenCurrentTimeIs(DateTime validationTime)
         {
             A.CallTo(() => clockService.UtcNow).Returns(validationTime);

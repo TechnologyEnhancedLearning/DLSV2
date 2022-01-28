@@ -125,11 +125,6 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUser);
         }
 
-        public DelegateUser? GetDelegateUserById(int id)
-        {
-            return userDataService.GetDelegateUserById(id);
-        }
-
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
             return userDataService.GetDelegateUsersByEmailAddress(emailAddress);

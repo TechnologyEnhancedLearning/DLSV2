@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class RemoveGroupDelegateViewModel
@@ -21,6 +22,7 @@
 
         public string DelegateName { get; set; }
 
+        [BooleanMustBeTrue(ErrorMessage = "You must confirm before removing this user from the group")]
         public bool ConfirmRemovalFromGroup { get; set; }
 
         public bool RemoveStartedEnrolments { get; set; }

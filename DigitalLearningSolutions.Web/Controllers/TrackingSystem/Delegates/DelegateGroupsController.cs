@@ -115,15 +115,11 @@
 
         [Route("{groupId:int}/EditDescription")]
         [HttpGet]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditDescription(int groupId)
         {
             var centreId = User.GetCentreId();
             var group = groupsService.GetGroupAtCentreById(groupId, centreId);
-
-            if (group == null)
-            {
-                return NotFound();
-            }
 
             var model = new EditDelegateGroupDescriptionViewModel(group);
             return View(model);
@@ -131,6 +127,7 @@
 
         [Route("{groupId:int}/EditDescription")]
         [HttpPost]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
         {
             if (!ModelState.IsValid)
@@ -161,7 +158,7 @@
                 return NotFound();
             }
 
-            var model = new EditGroupNameViewModel(group?.GroupLabel!);
+            var model = new EditGroupNameViewModel(group.GroupLabel!);
             return View(model);
         }
 
@@ -243,6 +240,7 @@
         }
 
         [Route("{groupId:int}/Courses/{page:int=1}")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult GroupCourses(int groupId, int page = 1)
         {
             var centreId = User.GetCentreId();

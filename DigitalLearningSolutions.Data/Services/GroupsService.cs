@@ -17,7 +17,11 @@
     {
         int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
 
-        void AddDelegateToGroup(int delegateId, int groupId, int addedByFieldLink);
+        void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int groupId,
+            DelegateUser delegateUser,
+            int? addedByAdminId = null
+        );
 
         void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
@@ -255,9 +259,24 @@
             transaction.Complete();
         }
 
-        public void AddDelegateToGroup(int delegateId, int groupId, int addedByFieldLink)
+        public void AddDelegateToGroupAndEnrolOnGroupCourses(int groupId,
+            DelegateUser delegateUser,
+            int? addedByAdminId = null)
         {
-            groupsDataService.AddDelegateToGroup(delegateId, groupId, clockService.UtcNow, addedByFieldLink);
+            using var transaction = new TransactionScope();
+
+            groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
+
+            var accountDetailsData = new MyAccountDetailsData(delegateUser.Id, delegateUser.FirstName!, delegateUser.LastName, delegateUser.EmailAddress!);
+
+            EnrolDelegateOnGroupCourses(
+                delegateUser,
+                accountDetailsData,
+                groupId,
+                addedByAdminId
+            );
+
+            transaction.Complete();
         }
 
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
