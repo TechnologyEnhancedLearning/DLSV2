@@ -1,0 +1,47 @@
+﻿.course-dropdown {
+  border: 2px solid #4c6272;
+  border-right: 0;
+  border-radius: 0;
+  height: 52px;
+  float: left;
+  outline: none; }
+.course-dropdown:focus {
+  border: 4px solid #212b32;
+  box-shadow: 0 0 0 4px #ffeb3b;
+  margin-right: 4px; }
+.course-dropdown::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  display: none; }
+@media (min-width: 40.0625em) {
+  .course-dropdown {
+    height: 40px; } }
+
+.course-submit, .course-submit__dropdown {
+  float: left;
+  color: #ffffff;
+  min-width: 100px;
+  padding: 8px 4px; }
+.course-submit:hover, .course-submit__dropdown:hover {
+  background-color: #4c6272; }
+
+.nhsuk-search__submit {
+  background-color: #003d78; }
+.nhsuk-search__submit .nhsuk-icon__search {
+  fill: #ffffff; }
+.nhsuk-search__submit:hover {
+  background-color: #4c6272; }
+
+.course-dropdown-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%; }
+
+.course-dropdown {
+  display: flex;
+  flex: 1; }
+
+.course-submit__dropdown {
+  background-color: #003d78; }
+@media (min-width: 40.0625em) {
+  .course-submit__dropdown {
+    width: 20%; } }
