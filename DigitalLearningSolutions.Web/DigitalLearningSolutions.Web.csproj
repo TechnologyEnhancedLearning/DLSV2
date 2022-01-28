@@ -123,7 +123,7 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
-
+    
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />

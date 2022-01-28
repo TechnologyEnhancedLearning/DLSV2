@@ -198,7 +198,8 @@
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids)
+            int[] ids
+        )
         {
             connection.Execute(
                 @"UPDATE Candidates
@@ -354,19 +355,19 @@
             connection.Execute(
                 @"UPDATE Candidates
                     SET
-				        FirstName = @firstName,
-				        LastName = @lastName,
-				        JobGroupID = @jobGroupId,
-				        Active = @active,
-				        Answer1 = @answer1,
-				        Answer2 = @answer2,
-				        Answer3 = @answer3,
-				        Answer4 = @answer4,
-				        Answer5 = @answer5,
-				        Answer6 = @answer6,
-				        AliasID = @aliasId,
-				        EmailAddress = @emailAddress
-		            WHERE CandidateID = @delegateId",
+                        FirstName = @firstName,
+                        LastName = @lastName,
+                        JobGroupID = @jobGroupId,
+                        Active = @active,
+                        Answer1 = @answer1,
+                        Answer2 = @answer2,
+                        Answer3 = @answer3,
+                        Answer4 = @answer4,
+                        Answer5 = @answer5,
+                        Answer6 = @answer6,
+                        AliasID = @aliasId,
+                        EmailAddress = @emailAddress
+                    WHERE CandidateID = @delegateId",
                 new
                 {
                     delegateId,
@@ -467,6 +468,22 @@
                     SET LearningHubAuthId = @learningHubAuthId
                     WHERE CandidateID = @delegateId",
                 new { delegateId, learningHubAuthId }
+            );
+        }
+
+        public void UpdateDelegateProfessionalRegistrationNumber(
+            int delegateId,
+            string? professionalRegistrationNumber,
+            bool hasBeenPromptedForPrn
+        )
+        {
+            connection.Execute(
+                @"UPDATE Candidates
+                    SET
+                        ProfessionalRegistrationNumber = @professionalRegistrationNumber,
+                        HasBeenPromptedForPrn = @hasBeenPromptedForPrn
+                    WHERE CandidateID = @delegateId",
+                new { delegateId, professionalRegistrationNumber, hasBeenPromptedForPrn }
             );
         }
     }

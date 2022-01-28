@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Data.Services
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
@@ -21,6 +20,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            string? professionalRegistrationNumber,
             int? inviteId = null
         );
 
@@ -37,12 +37,12 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
+        private readonly ILogger<RegistrationService> logger;
         private readonly IPasswordDataService passwordDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IRegistrationDataService registrationDataService;
         private readonly ISupervisorDelegateService supervisorDelegateService;
         private readonly IUserDataService userDataService;
-        private readonly ILogger<RegistrationService> logger;
 
         public RegistrationService(
             IRegistrationDataService registrationDataService,
@@ -74,6 +74,7 @@ namespace DigitalLearningSolutions.Data.Services
             DelegateRegistrationModel delegateRegistrationModel,
             string userIp,
             bool refactoredTrackingSystemEnabled,
+            string? professionalRegistrationNumber,
             int? supervisorDelegateId = null
         )
         {
@@ -104,6 +105,12 @@ namespace DigitalLearningSolutions.Data.Services
                 delegateRegistrationModel.Centre
             )!;
 
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                delegateUser.Id,
+                professionalRegistrationNumber,
+                true
+            );
+
             if (supervisorDelegateRecordIdsMatchingDelegate.Any())
             {
                 supervisorDelegateService.AddDelegateIdToSupervisorDelegateRecords(
@@ -115,7 +122,10 @@ namespace DigitalLearningSolutions.Data.Services
             if (foundRecordForSupervisorDelegateId)
             {
                 supervisorDelegateService.ConfirmSupervisorDelegateRecord(supervisorDelegateId!.Value);
-                frameworkNotificationService.SendSupervisorDelegateAcceptance(supervisorDelegateId!.Value, delegateUser.Id);
+                frameworkNotificationService.SendSupervisorDelegateAcceptance(
+                    supervisorDelegateId!.Value,
+                    delegateUser.Id
+                );
             }
 
             if (!delegateRegistrationModel.Approved)
@@ -202,7 +212,10 @@ namespace DigitalLearningSolutions.Data.Services
                 string.IsNullOrWhiteSpace(delegateUser.FirstName) ||
                 string.IsNullOrWhiteSpace(delegateUser.Password))
             {
-                throw new AdminCreationFailedException("Delegate missing first name, email or password", AdminCreationError.UnexpectedError);
+                throw new AdminCreationFailedException(
+                    "Delegate missing first name, email or password",
+                    AdminCreationError.UnexpectedError
+                );
             }
 
             var adminUser = userDataService.GetAdminUserByEmailAddress(delegateUser.EmailAddress);
@@ -287,7 +300,10 @@ namespace DigitalLearningSolutions.Data.Services
                 throw new DelegateCreationFailedException(failureIfAny);
             }
 
-            passwordDataService.SetPasswordByCandidateNumber(candidateNumberOrErrorCode, delegateRegistrationModel.PasswordHash!);
+            passwordDataService.SetPasswordByCandidateNumber(
+                candidateNumberOrErrorCode,
+                delegateRegistrationModel.PasswordHash!
+            );
         }
 
         private Email GenerateApprovalEmail(
@@ -314,7 +330,7 @@ namespace DigitalLearningSolutions.Data.Services
                                 <p>A learner, {learnerFirstName} {learnerLastName}, has registered against your Digital Learning Solutions centre and requires approval before they can access courses.</p>
                                 <p>To approve or reject their registration please follow this link: <a href=""{approvalUrl}"">{approvalUrl}</a></p>
                                 <p>Please don't reply to this email as it has been automatically generated.</p>
-                            </body>"
+                            </body>",
             };
 
             return new Email(emailSubject, body, emailAddress);

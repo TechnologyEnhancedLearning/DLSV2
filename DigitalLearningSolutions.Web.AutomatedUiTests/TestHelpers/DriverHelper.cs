@@ -52,5 +52,11 @@
             var selectPromptForm = driver.FindElement(By.TagName("form"));
             selectPromptForm.Submit();
         }
+
+        public static void SelectRadioOptionById(this IWebDriver driver, string radioId)
+        {
+            var radioInput = driver.FindElement(By.Id(radioId));
+            radioInput.Click();
+        }
     }
 }

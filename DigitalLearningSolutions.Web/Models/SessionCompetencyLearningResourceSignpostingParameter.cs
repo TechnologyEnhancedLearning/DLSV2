@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.Models
     public class SessionCompetencyLearningResourceSignpostingParameter
     {
         public Guid Id { get; set; }
-        public LearningResourceReference LearningResourceReference { get; set; }
+        public string ResourceName { get; set; }
         public List<AssessmentQuestion> Questions { get; set; }
         public AssessmentQuestion SelectedQuestion { get; set; }
         public int SelectedQuestionRoleRequirements { get; set; }
@@ -25,11 +25,11 @@ namespace DigitalLearningSolutions.Web.Models
         public SessionCompetencyLearningResourceSignpostingParameter()
         {
         }
-        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, LearningResourceReference resource, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
+        public SessionCompetencyLearningResourceSignpostingParameter(string cookieName, IRequestCookieCollection requestCookies, IResponseCookies responseCookies, FrameworkCompetency frameworkCompetency, string resourceName, List<AssessmentQuestion> questions, AssessmentQuestion selectedQuestion, CompareAssessmentQuestionType selectedCompareQuestionType, CompetencyResourceAssessmentQuestionParameter assessmentQuestionParameter)
         {
             var options = new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) };
             FrameworkCompetency = frameworkCompetency;
-            LearningResourceReference = resource;
+            ResourceName = resourceName;
             Questions = questions;
             AssessmentQuestionParameter = assessmentQuestionParameter;
             SelectedQuestion = selectedQuestion;

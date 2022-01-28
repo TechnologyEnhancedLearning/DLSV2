@@ -26,11 +26,14 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    @if (!Model.ApiIsAccessible) {
-      <div class="nhsuk-u-margin-bottom-4">
+    <div class="nhsuk-u-margin-bottom-4">
+      @if (!Model.ApiIsAccessible) {
         <partial name="Signposting/_ApiIsNotAccessibleWarning" />
-      </div>
-    }
+      }
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+        text="Please note that you will only be logged into Learning Hub automatically if you navigate to resources via Digital Learning Solutions." />
+    </div>
 
     <partial name="SearchablePage/_Search" model="Model" />
     <span id="selfAssessmentID" class="display-none">@Model.SelfAssessment.Id</span>
