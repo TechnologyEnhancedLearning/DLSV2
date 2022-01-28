@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Logging;
@@ -36,11 +37,11 @@
 
         void UnlockProgress(int progressId);
 
-        DetailedCourseProgress GetDetailedCourseProgressData();
+        int? GetDiagnosticScore(int progressId);
 
-        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse();
+        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse(int progressId);
 
-        IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection();
+        IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -231,6 +232,71 @@
                         PLLocked = 0
                     WHERE ProgressID = @progressId",
                 new { progressId }
+            );
+        }
+
+        public int? GetDiagnosticScore(int progressId)
+        {
+            return connection.Query<int?>(
+                @"SELECT DiagnosticScore FROM Progress WHERE ProgressID = @progressId",
+                new { progressId }
+            ).Single();
+        }
+
+        public IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse(int progressId)
+        {
+            return connection.Query<DetailedSectionProgress>(
+                @"SELECT
+                        s.SectionName,
+                        (SUM(asp1.TutStat) * 100) / (COUNT(t.TutorialID) * 2) AS Completion,
+                        SUM(asp1.TutTime) AS TotalTime,
+                        s.AverageSectionMins AS AverageTime,
+                        (s.PLAssessPath IS NOT NULL AND cu.IsAssessed IS 1) AS PostLearningAssessment,
+                        COALESCE (MAX(ISNULL(aa.Score, 0)), 0) AS Outcome,
+                        (SELECT COUNT(AssessAttemptID) AS PLAttempts
+                            FROM AssessAttempts AS aa
+                            WHERE (ProgressID = @ProgressID) AND (SectionNumber = s.SectionNumber)) AS Attempts,
+                        MAX(ISNULL(CAST(ct.Status AS BIT), 0)) AS Passed,
+                    FROM
+                        aspProgress AS asp1
+                        INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID
+                        INNER JOIN Sections AS s
+                        INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
+                        INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID ON asp1.TutorialID = t.TutorialID
+                        INNER JOIN Customisations AS cu ON p.CustomisationID = cu.CustomisationID
+                        LEFT OUTER JOIN AssessAttempts AS aa ON p.ProgressID = aa.ProgressID AND s.SectionNumber = aa.SectionNumber
+                    WHERE
+                        (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @ProgressID) AND (s.ArchivedDate IS NULL)
+                        AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
+                    ",
+                new { progressId }
+            );
+        }
+
+        public IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId)
+        {
+            return connection.Query<DetailedTutorialProgress>(
+                @"SELECT
+                        t.TutorialName,
+                        ts.Status AS TutorialStatus,
+                        ap.TutTime AS TimeTaken,
+                        CASE WHEN t.OverrideTutorialMins > 0 THEN t.OverrideTutorialMins ELSE t.AverageTutMins END AS AvgTime,
+                        CASE WHEN (ap.DiagAttempts > 0 AND ct.DiagStatus = 1) THEN ap.DiagLast ELSE NULL END AS DiagnosticScore,
+                        t.DiagAssessOutOf AS PossibleScore
+                    FROM
+                        Progress AS p
+                        INNER JOIN Tutorials AS t
+                        INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID
+                        INNER JOIN Customisations AS c ON ct.CustomisationID = c.CustomisationID ON p.CustomisationID = c.CustomisationID AND p.CustomisationID = ct.CustomisationID
+                        INNER JOIN TutStatus AS ts ON 
+                        INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
+                    WHERE (t.SectionID = @SectionID)
+                        AND (p.ProgressID = @ProgressID)
+                        AND (ct.Status = 1)
+                        AND (c.Active = 1)
+                        AND (t.ArchivedDate IS NULL)
+                    ",
+                new { progressId, sectionId }
             );
         }
     }
