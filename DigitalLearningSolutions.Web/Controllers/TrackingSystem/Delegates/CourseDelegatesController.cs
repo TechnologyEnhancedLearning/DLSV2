@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
@@ -23,8 +22,8 @@
     public class CourseDelegatesController : Controller
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
-        private readonly ICourseDelegatesService courseDelegatesService;
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
+        private readonly ICourseDelegatesService courseDelegatesService;
 
         public CourseDelegatesController(
             ICourseDelegatesService courseDelegatesService,
@@ -101,7 +100,11 @@
         {
             var centreId = User.GetCentreId();
             var adminCategoryId = User.GetAdminCourseCategoryFilter();
-            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(customisationId, centreId, adminCategoryId);
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
+                customisationId,
+                centreId,
+                adminCategoryId
+            );
             return File(
                 content,
                 FileHelper.ExcelContentType,
