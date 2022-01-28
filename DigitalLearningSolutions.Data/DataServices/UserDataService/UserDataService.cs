@@ -56,7 +56,8 @@
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids);
+            int[] ids
+        );
 
         void UpdateDelegate(
             int delegateId,
@@ -118,8 +119,14 @@
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
         void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
-        
+
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
+
+        void UpdateDelegateProfessionalRegistrationNumber(
+            int delegateId,
+            string? professionalRegistrationNumber,
+            bool hasBeenPromptedForPrn
+        );
     }
 
     public partial class UserDataService : IUserDataService

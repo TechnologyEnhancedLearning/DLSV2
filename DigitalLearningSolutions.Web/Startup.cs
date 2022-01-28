@@ -174,6 +174,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICourseContentService, CourseContentService>();
             services.AddScoped<ICourseDelegatesService, CourseDelegatesService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseTopicsService, CourseTopicsService>();
             services.AddScoped<ICryptoService, CryptoService>();
             services.AddScoped<IDelegateApprovalsService, DelegateApprovalsService>();
             services.AddScoped<IDelegateDownloadFileService, DelegateDownloadFileService>();
@@ -282,6 +283,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<RedirectEmptySessionData<AddAdminFieldData>>();
             services.AddScoped<RedirectEmptySessionData<WelcomeEmailSentViewModel>>();
             services.AddScoped<RedirectEmptySessionData<EditLearningPathwayDefaultsData>>();
+            services.AddScoped<RedirectEmptySessionData<AddNewCentreCourseData>>();
             services.AddScoped<VerifyAdminUserCanManageCourse>();
             services.AddScoped<VerifyAdminUserCanViewCourse>();
             services.AddScoped<VerifyAdminUserCanAccessGroup>();
@@ -292,6 +294,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyDelegateCanAccessActionPlanResource>();
             services.AddScoped<VerifyDelegateProgressAccessedViaValidRoute>();
             services.AddScoped<VerifyDelegateUserCanAccessSelfAssessment>();
+            services.AddScoped<AddNewCentreCourseData>();
         }
 
         public void Configure(IApplicationBuilder app, IMigrationRunner migrationRunner, IFeatureManager featureManager)

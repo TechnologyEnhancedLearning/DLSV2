@@ -8,7 +8,10 @@
     public interface ISectionService
     {
         IEnumerable<Section> GetSectionsAndTutorialsForCustomisation(int customisationId, int applicationId);
+
         Section? GetSectionAndTutorialsBySectionIdForCustomisation(int customisationId, int sectionId);
+
+        List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId);
     }
 
     public class SectionService : ISectionService
@@ -27,12 +30,12 @@
 
         public IEnumerable<Section> GetSectionsAndTutorialsForCustomisation(int customisationId, int applicationId)
         {
-            var sections = sectionContentDataService.GetSectionsByApplicationId(applicationId);
+            var sections = sectionContentDataService.GetSectionsForApplication(applicationId);
             var sectionsWithTutorials = sections.Select(
                 s => new Section(
                     s.SectionId,
                     s.SectionName,
-                    tutorialContentDataService.GetTutorialsBySectionId(s.SectionId, customisationId)
+                    tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(s.SectionId, customisationId)
                 )
             );
 
@@ -48,8 +51,16 @@
                 return null;
             }
 
-            section.Tutorials = tutorialContentDataService.GetTutorialsBySectionId(sectionId, customisationId);
+            section.Tutorials =
+                tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(sectionId, customisationId);
             return section;
+        }
+
+        public List<Section> GetSectionsThatHaveTutorialsForApplication(int applicationId)
+        {
+            var sections = sectionContentDataService.GetSectionsForApplication(applicationId).ToList();
+            return sections.Where(section => tutorialContentDataService.GetTutorialsForSection(section.SectionId).Any())
+                .ToList();
         }
     }
 }

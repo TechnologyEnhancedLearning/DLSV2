@@ -8,6 +8,8 @@
     public interface ITutorialService
     {
         void UpdateTutorialsStatuses(IEnumerable<Tutorial> tutorials, int customisationId);
+
+        public IEnumerable<Tutorial> GetTutorialsForSection(int sectionId);
     }
 
     public class TutorialService : ITutorialService
@@ -37,10 +39,18 @@
                     tutorial.Status!.Value
                 );
 
-                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(tutorial.TutorialId, customisationId);
+                progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(
+                    tutorial.TutorialId,
+                    customisationId
+                );
             }
 
             transaction.Complete();
+        }
+
+        public IEnumerable<Tutorial> GetTutorialsForSection(int sectionId)
+        {
+            return tutorialContentDataService.GetTutorialsForSection(sectionId);
         }
     }
 }
