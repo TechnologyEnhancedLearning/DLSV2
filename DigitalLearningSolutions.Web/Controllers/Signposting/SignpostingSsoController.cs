@@ -21,7 +21,6 @@
     {
         private readonly ILearningHubLinkService learningHubLinkService;
         private readonly ILearningResourceReferenceService learningResourceReferenceService;
-
         private readonly IUserService userService;
 
         public SignpostingSsoController(

@@ -282,7 +282,7 @@
         public void GetLoginUrlForDelegateAuthIdAndResourceUrl_returns_expected_value()
         {
             // Given
-            const string? resourceUrl = "De/Humani/Corporis/Fabrica";
+            const string resourceUrl = "De/Humani/Corporis/Fabrica";
             const int authId = 2;
 
             // When
