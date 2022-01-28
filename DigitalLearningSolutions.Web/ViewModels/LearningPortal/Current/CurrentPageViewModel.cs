@@ -22,13 +22,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             IEnumerable<SelfAssessment> selfAssessments,
             IEnumerable<ActionPlanResource> actionPlanResources,
             bool apiIsAccessible,
-            bool someResourcesAreAbsentInLearningHub,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
         {
             ApiIsAccessible = apiIsAccessible;
-            SomeResourcesAreAbsentInLearningHub = someResourcesAreAbsentInLearningHub;
             BannerText = bannerText;
             var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
             allItems.AddRange(selfAssessments);
@@ -60,7 +58,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public IEnumerable<CurrentLearningItemViewModel> CurrentActivities { get; }
 
         public bool ApiIsAccessible { get; set; }
-        public bool SomeResourcesAreAbsentInLearningHub { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

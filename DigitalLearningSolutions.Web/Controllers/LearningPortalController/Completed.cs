@@ -28,13 +28,11 @@
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
             var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
-            var someResourcesAreAbsentInLearningHub = completedLearningResources.Any(r => r.AbsentInLearningHub);
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
                 completedLearningResources,
                 apiIsAccessible,
-                someResourcesAreAbsentInLearningHub,
                 config,
                 searchString,
                 sortBy,

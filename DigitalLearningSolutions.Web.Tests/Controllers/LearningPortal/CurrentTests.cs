@@ -59,7 +59,6 @@
                 selfAssessments,
                 actionPlanResources,
                 apiIsAccessible,
-                true,
                 bannerText,
                 1
             );

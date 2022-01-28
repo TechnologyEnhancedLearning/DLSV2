@@ -34,7 +34,6 @@
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
-            var someResourcesAreAbsentInLearningHub = learningResources.Any(r => r.AbsentInLearningHub);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -43,7 +42,6 @@
                 selfAssessments,
                 learningResources,
                 apiIsAccessible,
-                someResourcesAreAbsentInLearningHub,
                 bannerText,
                 page
             );

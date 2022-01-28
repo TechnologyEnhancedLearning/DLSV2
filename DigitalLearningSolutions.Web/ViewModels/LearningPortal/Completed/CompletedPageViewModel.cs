@@ -17,7 +17,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             IEnumerable<CompletedCourse> completedCourses,
             IEnumerable<CompletedActionPlanResource> completedResources,
             bool apiIsAccessible,
-            bool someResourcesAreAbsentInLearningHub,
             IConfiguration config,
             string? searchString,
             string sortBy,
@@ -27,7 +26,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your completed courses")
         {
             ApiIsAccessible = apiIsAccessible;
-            SomeResourcesAreAbsentInLearningHub = someResourcesAreAbsentInLearningHub;
             BannerText = bannerText;
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
             allItems.AddRange(completedResources);
@@ -56,8 +54,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         public IEnumerable<CompletedLearningItemViewModel> CompletedActivities { get; }
 
         public bool ApiIsAccessible { get; set; }
-
-        public bool SomeResourcesAreAbsentInLearningHub { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
