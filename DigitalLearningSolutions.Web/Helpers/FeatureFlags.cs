@@ -8,6 +8,6 @@
         public const string RefactoredSuperAdminInterface = "RefactoredSuperAdminInterface";
         public const string CandidateAssessmentExcelExport = "CandidateAssessmentExcelExport";
         public const string UseSignposting = "UseSignposting";
-        public const string PricingPage = "PricingPage";
+        public const string PricingPageEnabled = "PricingPageEnabled";
     }
 }

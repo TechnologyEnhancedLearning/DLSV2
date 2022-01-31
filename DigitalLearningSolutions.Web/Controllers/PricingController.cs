@@ -7,7 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
 
-    [FeatureGate(FeatureFlags.PricingPage)]
+    [FeatureGate(FeatureFlags.PricingPageEnabled)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.Pricing))]
     public class PricingController : Controller

@@ -9,7 +9,7 @@
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
-        public const string PricingPage = "FeatureManagement:PricingPage";
+        private const string PricingPageEnabled = "FeatureManagement:PricingPageEnabled";
 
         private const string LearningHubSsoSectionKey = "LearningHubSSO";
         private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
@@ -42,9 +42,9 @@
             return bool.Parse(config[UseSignposting]);
         }
 
-        public static bool IsPricingPageUsed(this IConfiguration config)
+        public static bool IsPricingPageEnabled(this IConfiguration config)
         {
-            return bool.Parse(config[PricingPage]);
+            return bool.Parse(config[PricingPageEnabled]);
         }
 
         public static int GetLearningHubSsoHashTolerance(this IConfiguration config)

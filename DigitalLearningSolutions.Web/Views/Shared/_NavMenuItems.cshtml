@@ -16,7 +16,7 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-@if (configuration.IsPricingPageUsed()) {
+@if (configuration.IsPricingPageEnabled()) {
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Pricing)">
     <a class="nhsuk-header__navigation-link" asp-controller="Pricing" asp-action="Index">
       Pricing
