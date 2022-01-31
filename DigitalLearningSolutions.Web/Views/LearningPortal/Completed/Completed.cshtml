@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @model CompletedPageViewModel
@@ -19,7 +19,7 @@
     @if (!Model.ApiIsAccessible) {
       <vc:inset-text
         css-class="nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4"
-        text="@FallbackDataUsedWarningText.ResourceDetails" />
+        text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
     }
 
     <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />

@@ -2,12 +2,12 @@
 {
     public class RemoveActionPlanResourceViewModel
     {
-        public RemoveActionPlanResourceViewModel(int learningLogItemId, string name, bool absentInLearningHub, bool resourceSourcedFromFallbackData)
+        public RemoveActionPlanResourceViewModel(int learningLogItemId, string name, bool absentInLearningHub, bool apiIsAccessible)
         {
             LearningLogItemId = learningLogItemId;
             Name = name;
             AbsentInLearningHub = absentInLearningHub;
-            ResourceSourcedFromFallbackData = resourceSourcedFromFallbackData;
+            ApiIsAccessible = apiIsAccessible;
         }
 
         public int LearningLogItemId { get; set; }
@@ -16,6 +16,6 @@
 
         public bool AbsentInLearningHub { get; set; }
 
-        public bool ResourceSourcedFromFallbackData { get; set; }
+        public bool ApiIsAccessible { get; set; }
     }
 }

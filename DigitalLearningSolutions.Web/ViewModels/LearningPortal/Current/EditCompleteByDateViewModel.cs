@@ -13,7 +13,7 @@
             LearningItemType type,
             DateTime? completeByDate,
             int? progressId = null,
-            bool? resourceSourcedFromFallbackData = null
+            bool? apiIsAccessible = null
         )
         {
             Id = id;
@@ -23,7 +23,7 @@
             Month = completeByDate?.Month;
             Year = completeByDate?.Year;
             ProgressId = progressId;
-            ResourceSourcedFromFallbackData = resourceSourcedFromFallbackData;
+            ApiIsAccessible = apiIsAccessible;
         }
 
         public EditCompleteByDateViewModel(

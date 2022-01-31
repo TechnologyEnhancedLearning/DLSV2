@@ -6,13 +6,13 @@
             int learningLogItemId,
             bool absentInLearningHub,
             string resourceName,
-            bool resourceSourcedFromFallbackData
+            bool apiIsAccessible
         )
         {
             LearningLogItemId = learningLogItemId;
             AbsentInLearningHub = absentInLearningHub;
             ResourceName = resourceName;
-            ResourceSourcedFromFallbackData = resourceSourcedFromFallbackData;
+            ApiIsAccessible = apiIsAccessible;
         }
 
         public MarkActionPlanResourceAsCompleteViewModel(

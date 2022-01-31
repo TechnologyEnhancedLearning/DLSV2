@@ -50,7 +50,7 @@
                 return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
             }
 
-            var (resource, sourcedFromFallbackData) =
+            var (resource, apiIsAccessible) =
                 await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
 
             if (resource == null)
@@ -63,7 +63,7 @@
             var model = new LearningHubLoginWarningViewModel(
                 resource,
                 learningHubAccountIsLinked,
-                sourcedFromFallbackData
+                apiIsAccessible
             );
 
             return View("LearningHubLoginWarning", model);

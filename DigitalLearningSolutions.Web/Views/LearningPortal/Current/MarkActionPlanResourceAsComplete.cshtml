@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model MarkActionPlanResourceAsCompleteViewModel
@@ -22,19 +22,19 @@
 
     @if (Model.AbsentInLearningHub) {
       <vc:inset-text css-class="nhsuk-u-margin-bottom-4"
-                     text="This resource has been removed from the Learning Hub so its details may be out of date." />
+                     text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
     }
 
-    @if (Model.ResourceSourcedFromFallbackData) {
+    @if (!Model.ApiIsAccessible) {
       <vc:inset-text
         css-class="nhsuk-u-margin-bottom-4"
-        text="@FallbackDataUsedWarningText.ResourceName" />
+        text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate>
       <input type="hidden" asp-for="ResourceName" />
       <input type="hidden" asp-for="AbsentInLearningHub" />
-      <input type="hidden" asp-for="ResourceSourcedFromFallbackData" />
+      <input type="hidden" asp-for="ApiIsAccessible" />
 
       <vc:date-input id="completion-date"
                      label="Completion date"

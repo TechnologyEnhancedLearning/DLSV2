@@ -169,7 +169,7 @@
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
         public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
         {
-            var (actionPlanResource, sourcedFromFallbackData) =
+            var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
 
             if (actionPlanResource == null)
@@ -181,7 +181,7 @@
                 learningLogItemId,
                 actionPlanResource.AbsentInLearningHub,
                 actionPlanResource!.Name,
-                sourcedFromFallbackData
+                apiIsAccessible
             );
             return View("Current/MarkActionPlanResourceAsComplete", model);
         }
@@ -213,7 +213,7 @@
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
         public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId)
         {
-            var (actionPlanResource, sourcedFromFallbackData) =
+            var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
 
             if (actionPlanResource == null || actionPlanResource.AbsentInLearningHub)
@@ -226,7 +226,7 @@
                 actionPlanResource!.Name,
                 LearningItemType.Resource,
                 actionPlanResource.CompleteByDate,
-                resourceSourcedFromFallbackData: sourcedFromFallbackData
+                apiIsAccessible: apiIsAccessible
             );
 
             return View("Current/SetCompleteByDate", model);
@@ -261,7 +261,7 @@
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
-            var (actionPlanResource, sourcedFromFallbackData) =
+            var (actionPlanResource, apiIsAccessible) =
                 await actionPlanService.GetActionPlanResource(learningLogItemId);
 
             if (actionPlanResource == null)
@@ -273,7 +273,7 @@
                 actionPlanResource!.Id,
                 actionPlanResource.Name,
                 actionPlanResource.AbsentInLearningHub,
-                sourcedFromFallbackData
+                apiIsAccessible
             );
             return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }

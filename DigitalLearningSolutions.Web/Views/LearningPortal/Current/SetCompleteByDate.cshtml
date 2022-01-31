@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Web.Controllers.LearningPortalController
-@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @model EditCompleteByDateViewModel
@@ -28,10 +28,10 @@
 
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
-    @if (Model.Type is LearningItemType.Resource && Model.ResourceSourcedFromFallbackData == true) {
+    @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false) {
       <vc:inset-text
         css-class="nhsuk-u-margin-bottom-4"
-        text="@FallbackDataUsedWarningText.ResourceName" />
+        text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form asp-action="@action"
@@ -44,7 +44,7 @@
         <input type="hidden" asp-for="@Model.ProgressId" />
       }
       @if (Equals(Model.Type, LearningItemType.Resource)) {
-        <input type="hidden" asp-for="@Model.ResourceSourcedFromFallbackData" />
+        <input type="hidden" asp-for="@Model.ApiIsAccessible" />
       }
 
       <vc:date-input id="complete-by-date"
