@@ -10,10 +10,9 @@
         public FaqsPageViewModel(IEnumerable<SearchableFaq> faqs)
         {
             Faqs = faqs.Select(f => new SearchableFaqViewModel(f));
-            CurrentPage = SuperAdminSystemPage.FAQs;
         }
 
         public IEnumerable<SearchableFaqViewModel> Faqs { get; set; }
-        public SuperAdminSystemPage CurrentPage { get; set; }
+        public SuperAdminSystemPage CurrentPage => SuperAdminSystemPage.FAQs;
     }
 }

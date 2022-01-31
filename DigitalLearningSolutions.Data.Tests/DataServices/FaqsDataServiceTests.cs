@@ -62,11 +62,25 @@
         [Test]
         public void GetAllFaqs_returns_expected_information()
         {
-            //When
+            // When
+            var expectedFaq = new Faq
+            {
+                FaqId = 112,
+                TargetGroup = 0,
+                Published = true,
+                AHtml =
+                    "No, existing learners will access the Learning Portal using their existing <strong>Delegate ID</strong>.&nbsp;",
+                QText = "Do our existing learners need to register to use the Learning Portal? ",
+                QAnchor = "LearningPortalRegister",
+                Weighting = 20,
+                CreatedDate = new DateTime(2017, 5, 9),
+            };
             var result = faqsDataService.GetAllFaqs();
 
-            //Then
+            // Then
             result.Count().Should().Be(121);
+            var returnedFaq = result.FirstOrDefault(x => x.FaqId == 112);
+            returnedFaq.Should().BeEquivalentTo(expectedFaq);
         }
     }
 }

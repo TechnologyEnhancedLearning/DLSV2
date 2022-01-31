@@ -4,12 +4,12 @@
     <div class="nhsuk-details__text">
       <div class="nhsuk-grid-row">
         <div class="nhsuk-grid-column-one-quarter">
-          <div class="nhsuk-tag tag card-tag--grey">
+          <div class="nhsuk-tag nhsuk-tag--grey">
             @Model.TargetGroup
           </div>
         </div>
         <div class="nhsuk-grid-column-one-quarter">
-          <div class="nhsuk-tag tag card-tag--grey">
+          <div class="nhsuk-tag nhsuk-tag--grey">
             @Model.Published
           </div>
         </div>
@@ -21,41 +21,45 @@
       </span>
     </summary>
 
-    <div class="nhsuk-details__text">
-      <div class="nhsuk-u-margin-bottom-4">
+
+      <div class="nhsuk-details__text">
         <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
-        <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-one-quarter">
-            <p class="nhsuk-u-font-weight-bold">Created</p>
-          </div>
-          <div class="nhsuk-grid-column-one-quarter">
-            <p>@Model.CreatedDate</p>
-          </div>
         </div>
-        <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-one-quarter">
-            <p class="nhsuk-u-font-weight-bold">Weighting</p>
-          </div>
-          <div class="nhsuk-grid-column-one-quarter">
-            <p>@Model.Weighting</p>
-          </div>
+    <div class="nhsuk-details__text">
+      <div class="nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Created
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CreatedDate
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Weighting
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Weighting
+          </dd>
         </div>
       </div>
 
       <div>
-        <a class="nhsuk-button nhsuk-button"
+        <a class="nhsuk-button nhsuk-u-margin-bottom-2"
            role="button">
           Edit
         </a>
-        <a class="nhsuk-button nhsuk-button--secondary"
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
            role="button">
           View on separate page
         </a>
-        <a class="nhsuk-button nhsuk-button--danger"
+        <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-bottom-2"
            role="button">
           Deactivate
         </a>
       </div>
     </div>
+
   </details>
 </div>

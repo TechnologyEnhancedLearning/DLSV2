@@ -38,8 +38,7 @@
         public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
         {
             return faqsDataService.GetAllFaqs()
-                .Where(f => f.TargetGroup == targetGroup)
-                .Where(f => f.Published);
+                .Where(f => f.TargetGroup == targetGroup && f.Published);
         }
 
         public IEnumerable<Faq> GetAllFaqs()

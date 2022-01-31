@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -113,10 +114,20 @@
         {
             // Given
             const int expectedTargetGroup = 3;
-            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All().With(f => f.Published = true)
+            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All()
+                .With(f => f.Published = true)
                 .And(f => f.TargetGroup = 3).Build();
-            var unexpectedFaqs = Builder<Faq>.CreateListOfSize(5).All()
-                .With(f => f.TargetGroup != 3).Build();
+            var unexpectedFaqs = Builder<Faq>.CreateListOfSize(6)
+                .TheFirst(2)
+                .With(f => f.TargetGroup != 3)
+                .With(f => f.Published = false)
+                .TheNext(2)
+                .With(f => f.TargetGroup = 3)
+                .With(f => f.Published = false)
+                .TheNext(2)
+                .With(f => f.TargetGroup != 3)
+                .With(f => f.Published = true)
+                .Build();
             var dataServiceFaqs = expectedFaqs.Concat(unexpectedFaqs);
 
             A.CallTo(() => faqDataService.GetAllFaqs())
@@ -161,22 +172,23 @@
         [Test]
         public void GetAllFaqs_calls_data_service_method_and_returns_expected_results()
         {
-            //Given
+            // Given
             var expectedFaqs = Builder<Faq>.CreateListOfSize(10)
                 .Build();
             A.CallTo(() => faqDataService.GetAllFaqs())
                 .Returns(expectedFaqs);
 
-            //When
+            // When
             var result = faqsService.GetAllFaqs();
 
-            //Then
+            // Then
             result.Should().Equal(expectedFaqs);
         }
 
         [Test]
         public void GetAll_returns_empty_when_data_service_returns_null()
         {
+            // Given
             var emptyList = Enumerable.Empty<Faq>();
 
             A.CallTo(() => faqDataService.GetAllFaqs())
