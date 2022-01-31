@@ -8,7 +8,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
-    using ConfigValueMissingException = DigitalLearningSolutions.Data.Exceptions.ConfigValueMissingException;
 
     public class UnlockServiceTests
     {

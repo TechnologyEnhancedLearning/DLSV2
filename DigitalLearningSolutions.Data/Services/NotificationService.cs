@@ -54,7 +54,7 @@
             if (string.IsNullOrEmpty(baseUrlConfigOption))
             {
                 var missingConfigValue = refactoredTrackingSystemEnabled ? "AppRootPath" : "CurrentSystemBaseUrl";
-                throw new Exceptions.ConfigValueMissingException(
+                throw new ConfigValueMissingException(
             $"Encountered an error while trying to send an email: The value of {missingConfigValue} is null"
                 );
             }
