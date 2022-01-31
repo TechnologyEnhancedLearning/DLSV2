@@ -22,11 +22,11 @@
     </summary>
 
 
-      <div class="nhsuk-details__text">
-        <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
-        </div>
     <div class="nhsuk-details__text">
-      <div class="nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+      <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
+    </div>
+    <div class="nhsuk-details__text">
+      <dl class="nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Created
@@ -43,7 +43,7 @@
             @Model.Weighting
           </dd>
         </div>
-      </div>
+      </dl>
 
       <div>
         <a class="nhsuk-button nhsuk-u-margin-bottom-2"
