@@ -3,7 +3,7 @@
 
 <div class="searchable-element nhsuk-panel" id="@Model.Id-card-lhr">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
-    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0">
+    <summary class="nhsuk-details__summary nhsuk-u-padding-top-0 nhsuk-u-padding-left-0 @(Model.AbsentInLearningHub ? "nhsuk-u-padding-bottom-0" : null)">
       <span class="nhsuk-details__summary-text searchable-element-title"
             id="@Model.Id-name-lhr"
             name="name"
@@ -12,7 +12,7 @@
         @Model.Name
       </span>
     </summary>
-    <div class="nhsuk-details__text">
+    <div class="nhsuk-details__text @(Model.AbsentInLearningHub ? "nhsuk-u-margin-top-4" : null)">
       <div class="nhsuk-grid-row">
         <partial name="Shared/_TagRow" model="@Model" />
       </div>
