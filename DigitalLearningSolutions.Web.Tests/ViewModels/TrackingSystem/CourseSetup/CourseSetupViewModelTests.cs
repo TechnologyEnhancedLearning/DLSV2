@@ -115,7 +115,7 @@
         }
 
         [Test]
-        public void CourseSetupViewModel_with_custom_items_per_page_should_to_return_the_specified_number_of_delegates()
+        public void CourseSetupViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
         {
             // When
             const int itemsPerPage = 12;
