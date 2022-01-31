@@ -10,6 +10,12 @@
     <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l word-break">
       Are you sure you want to remove @Model.Name?
     </h1>
+
+    @if (Model.AbsentInLearningHub) {
+      <vc:inset-text css-class="nhsuk-u-margin-bottom-4"
+                     text="This resource has been removed from the Learning Hub so its details may be out of date." />
+    }
+
     <p>
       Are you sure that you wish to remove this resource from your action plan?
     </p>

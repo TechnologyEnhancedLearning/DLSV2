@@ -20,6 +20,11 @@
           <partial name="Shared/_TagRow" model="@Model" />
         </div>
 
+        @if (Model.AbsentInLearningHub) {
+          <vc:inset-text css-class="nhsuk-u-margin-0"
+                         text="This resource has been removed from the Learning Hub so its details may be out of date. You should remove this resource from your action plan." />
+        }
+
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-3">
             @Html.Raw(Model.ResourceDescription)
@@ -48,16 +53,18 @@
     </div>
   </details>
 
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
-         aria-describedby="@Model.Id-name-lhr"
-         asp-controller="Signposting"
-         asp-action="LaunchLearningResource"
-         asp-route-resourceReferenceId="@Model.ResourceReferenceId"
-         role="button">
-        Launch learning resource
-      </a>
+  @if (!Model.AbsentInLearningHub) {
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
+           aria-describedby="@Model.Id-name-lhr"
+           asp-controller="Signposting"
+           asp-action="LaunchLearningResource"
+           asp-route-resourceReferenceId="@Model.ResourceReferenceId"
+           role="button">
+          Launch learning resource
+        </a>
+      </div>
     </div>
-  </div>
+  }
 </div>

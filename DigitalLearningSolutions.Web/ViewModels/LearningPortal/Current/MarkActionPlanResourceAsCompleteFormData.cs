@@ -11,12 +11,14 @@
         protected MarkActionPlanResourceAsCompleteFormData(MarkActionPlanResourceAsCompleteFormData formData)
         {
             ResourceName = formData.ResourceName;
+            AbsentInLearningHub = formData.AbsentInLearningHub;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
         }
 
         public string ResourceName { get; set; }
+        public bool AbsentInLearningHub { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }

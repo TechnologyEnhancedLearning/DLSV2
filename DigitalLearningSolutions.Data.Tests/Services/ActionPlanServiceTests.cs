@@ -162,7 +162,7 @@
 
             // Then
             result.resources.Should().BeEmpty();
-            result.SourcedFromFallbackData.Should().BeFalse();
+            result.apiIsAccessible.Should().BeTrue();
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
                 .MustNotHaveHappened();
         }
@@ -188,7 +188,7 @@
             var result = await actionPlanService.GetIncompleteActionPlanResources(delegateId);
 
             // Then
-            result.SourcedFromFallbackData.Should().BeFalse();
+            result.apiIsAccessible.Should().BeFalse();
             AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result.resources, learningResourceIds);
         }
 
@@ -212,7 +212,7 @@
 
             // Then
             result.resources.Should().BeEmpty();
-            result.SourcedFromFallbackData.Should().BeFalse();
+            result.apiIsAccessible.Should().BeTrue();
             A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
                 .MustNotHaveHappened();
         }
@@ -238,7 +238,7 @@
             var result = await actionPlanService.GetCompletedActionPlanResources(delegateId);
 
             // Then
-            result.SourcedFromFallbackData.Should().BeFalse();
+            result.apiIsAccessible.Should().BeFalse();
             AssertThatActionPlanResourceIdsAndTitlesAreCorrect(result.resources, learningResourceIds);
         }
 
@@ -269,7 +269,10 @@
                 ResourceReferences = matchedResources,
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
-            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+            A.CallTo(
+                    () => learningHubResourceService
+                        .GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(A<List<int>>._)
+                )
                 .Returns((bulkReturnedItems, false));
 
             // When
@@ -284,9 +287,10 @@
                 resultIdsAndTitles[1].Should().Be((5, "Title 26"));
                 resultIdsAndTitles[2].Should().Be((6, "Title 15"));
                 A.CallTo(
-                        () => learningHubResourceService.GetBulkResourcesByReferenceIds(
-                            A<List<int>>.That.IsSameSequenceAs(expectedLearningResourceIdsUsedInApiCall)
-                        )
+                        () => learningHubResourceService
+                            .GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(
+                                A<List<int>>.That.IsSameSequenceAs(expectedLearningResourceIdsUsedInApiCall)
+                            )
                     )
                     .MustHaveHappenedOnceExactly();
             }
@@ -596,7 +600,10 @@
                 ResourceReferences = matchedResources,
                 UnmatchedResourceReferenceIds = unmatchedResourceReferences,
             };
-            A.CallTo(() => learningHubResourceService.GetBulkResourcesByReferenceIds(A<List<int>>._))
+            A.CallTo(
+                    () => learningHubResourceService
+                        .GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(A<List<int>>._)
+                )
                 .Returns((bulkReturnedItems, false));
         }
 
@@ -613,9 +620,10 @@
                 resultIdsAndTitles[1].Should().Be((5, "Title 21"));
                 resultIdsAndTitles[2].Should().Be((6, "Title 33"));
                 A.CallTo(
-                        () => learningHubResourceService.GetBulkResourcesByReferenceIds(
-                            A<List<int>>.That.IsSameSequenceAs(learningResourceIds)
-                        )
+                        () => learningHubResourceService
+                            .GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(
+                                A<List<int>>.That.IsSameSequenceAs(learningResourceIds)
+                            )
                     )
                     .MustHaveHappenedOnceExactly();
             }
