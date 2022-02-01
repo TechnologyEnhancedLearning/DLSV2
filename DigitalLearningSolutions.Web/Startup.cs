@@ -167,7 +167,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<IClockService, ClockService>();
-            services.AddScoped<IGuidService, GuidService>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IConfigService, ConfigService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
