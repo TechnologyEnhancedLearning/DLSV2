@@ -40,17 +40,17 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             // When
             var results = controller.Index();
 
-            //Then
+            // Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs");
         }
 
         [Test]
         public void Faqs_are_returned_ordered_by_most_recent_first()
         {
-           //When
+            // When
             var results = controller.Index();
 
-            //Then
+            // Then
             results.Should().BeViewResult().WithViewName("SuperAdminFaqs")
                 .Model.Should().BeOfType<FaqsPageViewModel>()
                 .Subject.Faqs.First().Should().Match<SearchableFaqViewModel>(f => f.FaqId == 2);

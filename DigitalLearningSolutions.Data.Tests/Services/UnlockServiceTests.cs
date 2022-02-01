@@ -85,28 +85,28 @@
         [Test]
         public void Trying_to_send_unlock_makes_request_to_feature_manager_to_get_correct_url()
         {
-            //Given
+            // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
 
-            //When
+            // When
             notificationService.SendUnlockRequest(1);
 
-            //Then
+            // Then
             A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).MustHaveHappened();
         }
 
         [Test]
         public void Trying_to_send_unlock_request_send_email_with_correct_old_url()
         {
-            //Given
+            // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
             A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://old-tracking-system.com/");
-            //When
+            // When
             notificationService.SendUnlockRequest(1);
 
-            //Then
+            // Then
             A.CallTo(() =>
                     emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/")))
                 )
@@ -116,14 +116,14 @@
         [Test]
         public void trying_to_send_unlock_request_send_email_with_correct_new_url()
         {
-            //Given
+            // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
             A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://new-tracking-system.com/");
-            //When
+            // When
             notificationService.SendUnlockRequest(1);
 
-            //Then
+            // Then
             A.CallTo(() =>
                     emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/")))
                 )
