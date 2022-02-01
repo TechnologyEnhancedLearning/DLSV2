@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using DigitalLearningSolutions.Data.Models.Frameworks;
 
 namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
@@ -20,11 +21,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 
         public string GetLevelLabel(int value)
         {
-            int index = value - (LevelDescriptorsAreZeroBased ? 0 : 1);
-            bool isNotSlider = AssessmentQuestionInputTypeId != 2;
-            return AssessmentQuestionLevelDescriptors != null && isNotSlider ?
-                AssessmentQuestionLevelDescriptors[index].LevelLabel
-                :value.ToString();
+            string levelLabel = value.ToString();
+            if(AssessmentQuestionInputTypeId != 2)
+                levelLabel = AssessmentQuestionLevelDescriptors?.FirstOrDefault(d => d.LevelValue == value)?.LevelLabel;
+            return levelLabel;
         }
     }
 }
