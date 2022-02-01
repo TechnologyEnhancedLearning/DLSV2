@@ -85,7 +85,7 @@
             return RedirectToAction(nameof(Index), new { groupId });
         }
 
-        [HttpGet"Add/SelectCourse/{page:int=1}")]
+        [HttpGet("Add/SelectCourse/{page:int=1}")]
         public IActionResult AddCourseToGroupSelectCourse(
             int groupId,
             string? searchString = null,
