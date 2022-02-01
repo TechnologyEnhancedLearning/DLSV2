@@ -265,7 +265,7 @@ export class SearchSortFilterAndPaginate {
           params.delete('returnPage');
         }
         // eslint-disable-next-line no-param-reassign
-        anchor.search = `?${params.toString()}`;
+        anchor.search = params.toString();
       });
     });
   }
