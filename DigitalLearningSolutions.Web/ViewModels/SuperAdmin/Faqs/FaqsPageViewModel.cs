@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
 
     public class FaqsPageViewModel
     {

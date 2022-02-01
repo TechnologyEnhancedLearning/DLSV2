@@ -5,8 +5,8 @@
     using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
 
     public class FaqsPageViewModel : BaseSearchablePageViewModel, ISupportViewModel
     {

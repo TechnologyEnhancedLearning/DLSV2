@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
     using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
     using FluentAssertions;
     using NUnit.Framework;
