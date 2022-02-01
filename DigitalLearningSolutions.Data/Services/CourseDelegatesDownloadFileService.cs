@@ -16,6 +16,23 @@
 
     public class CourseDelegatesDownloadFileService : ICourseDelegatesDownloadFileService
     {
+        private const string LastName = "Last name";
+        private const string FirstName = "First name";
+        private const string Email = "Email";
+        private const string DelegateId = "Delegate ID";
+        private const string Enrolled = "Enrolled";
+        private const string LastAccessed = "Last accessed";
+        private const string CompleteBy = "Complete by";
+        private const string CompletedDate = "Completed date";
+        private const string Logins = "Logins";
+        private const string TimeMinutes = "Time (minutes)";
+        private const string DiagnosticScore = "Diagnostic score";
+        private const string AssessmentsPassed = "Assessments passed";
+        private const string PassRate = "Pass rate";
+        private const string Active = "Active";
+        private const string RemovedDate = "Removed date";
+        private const string Locked = "Locked";
+
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDataService courseDelegatesDataService;
         private readonly ICourseService courseService;
@@ -83,7 +100,7 @@
         )
         {
             dataTable.Columns.AddRange(
-                new[] { new DataColumn("Last name"), new DataColumn("First name"), new DataColumn("Email") }
+                new[] { new DataColumn(LastName), new DataColumn(FirstName), new DataColumn(Email) }
             );
 
             foreach (var prompt in customRegistrationPrompts.CustomPrompts)
@@ -98,11 +115,11 @@
             dataTable.Columns.AddRange(
                 new[]
                 {
-                    new DataColumn("Delegate ID"), new DataColumn("Enrolled"), new DataColumn("Last accessed"),
-                    new DataColumn("Complete by"), new DataColumn("Completed date"), new DataColumn("Logins"),
-                    new DataColumn("Time (minutes)"), new DataColumn("Diagnostic score"),
-                    new DataColumn("Assessments passed"), new DataColumn("Pass rate"), new DataColumn("Active"),
-                    new DataColumn("Removed date"), new DataColumn("Locked"),
+                    new DataColumn(DelegateId), new DataColumn(Enrolled), new DataColumn(LastAccessed),
+                    new DataColumn(CompleteBy), new DataColumn(CompletedDate), new DataColumn(Logins),
+                    new DataColumn(TimeMinutes), new DataColumn(DiagnosticScore),
+                    new DataColumn(AssessmentsPassed), new DataColumn(PassRate), new DataColumn(Active),
+                    new DataColumn(RemovedDate), new DataColumn(Locked),
                 }
             );
 
@@ -125,9 +142,9 @@
         {
             var row = dataTable.NewRow();
 
-            row["Last name"] = courseDelegate.LastName;
-            row["First name"] = courseDelegate.FirstName;
-            row["Email"] = courseDelegate.EmailAddress;
+            row[LastName] = courseDelegate.LastName;
+            row[FirstName] = courseDelegate.FirstName;
+            row[Email] = courseDelegate.EmailAddress;
 
             foreach (var prompt in customRegistrationPrompts.CustomPrompts)
             {
@@ -143,19 +160,19 @@
                 }
             }
 
-            row["Delegate ID"] = courseDelegate.CandidateNumber;
-            row["Enrolled"] = courseDelegate.Enrolled.Date;
-            row["Last accessed"] = courseDelegate.LastUpdated.Date;
-            row["Complete by"] = courseDelegate.CompleteByDate?.Date;
-            row["Completed date"] = courseDelegate.Completed?.Date;
-            row["Logins"] = courseDelegate.LoginCount;
-            row["Time (minutes)"] = courseDelegate.Duration;
-            row["Diagnostic score"] = courseDelegate.DiagnosticScore;
-            row["Assessments passed"] = courseDelegate.AttemptsPassed;
-            row["Pass rate"] = courseDelegate.PassRate;
-            row["Active"] = courseDelegate.Active;
-            row["Removed date"] = courseDelegate.RemovedDate?.Date;
-            row["Locked"] = courseDelegate.Locked;
+            row[DelegateId] = courseDelegate.CandidateNumber;
+            row[Enrolled] = courseDelegate.Enrolled.Date;
+            row[LastAccessed] = courseDelegate.LastUpdated.Date;
+            row[CompleteBy] = courseDelegate.CompleteByDate?.Date;
+            row[CompletedDate] = courseDelegate.Completed?.Date;
+            row[Logins] = courseDelegate.LoginCount;
+            row[TimeMinutes] = courseDelegate.Duration;
+            row[DiagnosticScore] = courseDelegate.DiagnosticScore;
+            row[AssessmentsPassed] = courseDelegate.AttemptsPassed;
+            row[PassRate] = courseDelegate.PassRate;
+            row[Active] = courseDelegate.Active;
+            row[RemovedDate] = courseDelegate.RemovedDate?.Date;
+            row[Locked] = courseDelegate.Locked;
 
             foreach (var prompt in adminFields.AdminFields)
             {

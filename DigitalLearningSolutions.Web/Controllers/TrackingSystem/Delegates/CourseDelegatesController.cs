@@ -105,10 +105,12 @@
                 centreId,
                 adminCategoryId
             );
+
+            const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
             return File(
                 content,
-                FileHelper.ExcelContentType,
-                "Digital Learning Solutions Course Delegates.xlsx"
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
             );
         }
     }
