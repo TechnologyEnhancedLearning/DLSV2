@@ -1,0 +1,45 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
+@model SearchableCourseViewModel
+
+<div class="searchable-element nhsuk-panel" id="@Model.CustomisationId-card">
+  <details class="nhsuk-details nhsuk-expander">
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text searchable-element-title" id="@Model.CustomisationId-name" name="name">
+        @Model.CourseName
+      </span>
+    </summary>
+    <div class="nhsuk-details__text">
+
+      <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
+
+      <dl class="nhsuk-summary-list details-list-with-button">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Category
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Category
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Topic
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Topic
+          </dd>
+        </div>
+      </dl>
+
+      <a class="nhsuk-button nhsuk-u-margin-bottom-1"
+         role="button"
+         aria-label="Add to group"
+         asp-controller="GroupCourses"
+         asp-action="AddCourseToGroup"
+         asp-route-groupId="@Model.GroupId"
+         asp-route-customisationId="@Model.CustomisationId">
+        Add to group
+      </a>
+    </div>
+  </details>
+</div>

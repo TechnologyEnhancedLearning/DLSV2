@@ -22,8 +22,8 @@
     {
         [TestCase(true)]
         [TestCase(false)]
-        public async Task Current_action_should_return_view_result_with_correct_resource_source_flag(
-            bool resourcesSourcedFromFallbackData
+        public async Task Current_action_should_return_view_result_with_correct_api_accessibility_flag(
+            bool apiIsAccessible
         )
         {
             // Given
@@ -43,7 +43,7 @@
             A.CallTo(() => courseDataService.GetCurrentCourses(CandidateId)).Returns(currentCourses);
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentsForCandidate(CandidateId)).Returns(selfAssessments);
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(CandidateId))
-                .Returns((actionPlanResources, resourcesSourcedFromFallbackData));
+                .Returns((actionPlanResources, apiIsAccessible));
             A.CallTo(() => centresDataService.GetBannerText(CentreId)).Returns(bannerText);
             A.CallTo(() => config[ConfigHelper.UseSignposting]).Returns("true");
 
@@ -58,7 +58,7 @@
                 "Descending",
                 selfAssessments,
                 actionPlanResources,
-                resourcesSourcedFromFallbackData,
+                apiIsAccessible,
                 bannerText,
                 1
             );

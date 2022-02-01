@@ -1348,7 +1348,7 @@
         public void GetSectionsByApplication_should_have_correct_results()
         {
             // When
-            var result = sectionContentDataService.GetSectionsByApplicationId(1).ToList();
+            var result = sectionContentDataService.GetSectionsForApplication(1).ToList();
 
             // Then
             using (new AssertionScope())

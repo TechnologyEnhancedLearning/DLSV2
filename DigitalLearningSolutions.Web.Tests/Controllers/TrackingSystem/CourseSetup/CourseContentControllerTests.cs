@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
@@ -10,9 +9,7 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent;
     using FakeItEasy;
-    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     internal class CourseContentControllerTests
@@ -95,90 +92,10 @@
                 .MustHaveHappened();
         }
 
-        [Test]
-        public void
-            EditSection_post_with_select_all_learning_action_returns_EditSection_page_with_all_learning_selected()
-        {
-            // Given
-            var postData = GetDefaultEditCourseSectionFormData();
-
-            // When
-            var result = controller.EditSection(postData, 1, CourseContentController.SelectAllLearningAction);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
-            result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials.All(t => t.LearningEnabled)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public void
-            EditSection_post_with_select_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_selected()
-        {
-            // Given
-            var postData = GetDefaultEditCourseSectionFormData();
-
-            // When
-            var result = controller.EditSection(postData, 1, CourseContentController.SelectAllDiagnosticAction);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
-            result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials.All(t => t.DiagnosticEnabled)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public void
-            EditSection_post_with_deselect_all_learning_action_returns_EditSection_page_with_all_learning_deselected()
-        {
-            // Given
-            var postData = GetDefaultEditCourseSectionFormData();
-
-            // When
-            var result = controller.EditSection(postData, 1, CourseContentController.DeselectAllLearningAction);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
-            result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials
-                .All(t => !t.LearningEnabled)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public void
-            EditSection_post_with_deselect_all_diagnostic_action_returns_EditSection_page_with_all_diagnostic_deselected()
-        {
-            // Given
-            var postData = GetDefaultEditCourseSectionFormData();
-
-            // When
-            var result = controller.EditSection(postData, 1, CourseContentController.DeselectAllDiagnosticAction);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<EditCourseSectionViewModel>();
-            result.As<ViewResult>().Model.As<EditCourseSectionViewModel>().Tutorials
-                .All(t => !t.DiagnosticEnabled)
-                .Should().BeTrue();
-        }
-
-        [Test]
-        public void EditSection_post_with_unexpected_action_returns_internal_server_error_response()
-        {
-            // Given
-            var postData = GetDefaultEditCourseSectionFormData();
-
-            // When
-            var result = controller.EditSection(postData, 1, "Incorrect string");
-
-            // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(400);
-        }
-
-        private EditCourseSectionFormData GetDefaultEditCourseSectionFormData()
+        private static EditCourseSectionFormData GetDefaultEditCourseSectionFormData()
         {
             return new EditCourseSectionFormData
             {
-                CourseName = "Course",
                 SectionName = "Section",
                 Tutorials = new List<CourseTutorialViewModel>
                 {
@@ -187,16 +104,16 @@
                         TutorialId = 1,
                         TutorialName = "Tutorial 1",
                         LearningEnabled = false,
-                        DiagnosticEnabled = true
+                        DiagnosticEnabled = true,
                     },
                     new CourseTutorialViewModel
                     {
                         TutorialId = 2,
                         TutorialName = "Tutorial 2",
                         LearningEnabled = true,
-                        DiagnosticEnabled = false
-                    }
-                }
+                        DiagnosticEnabled = false,
+                    },
+                },
             };
         }
     }

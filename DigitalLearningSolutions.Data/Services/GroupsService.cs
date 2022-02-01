@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -61,11 +62,21 @@
         IEnumerable<GroupCourse> GetGroupCoursesForCategory(int groupId, int centreId, int? categoryId);
 
         void UpdateGroupName(int groupId, int centreId, string groupName);
+
+        void AddCourseToGroup(
+            int groupId,
+            int customisationId,
+            int completeWithinMonths,
+            int addedByAdminId,
+            bool cohortLearners,
+            int? supervisorAdminId
+        );
     }
 
     public class GroupsService : IGroupsService
     {
-        private const string AddedByProcess = "AddDelegateToGroup_Refactor";
+        private const string AddDelegateToGroupAddedByProcess = "AddDelegateToGroup_Refactor";
+        private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly IClockService clockService;
@@ -75,6 +86,7 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
+        private readonly IUserDataService userDataService;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -84,7 +96,8 @@
             IJobGroupsDataService jobGroupsDataService,
             IProgressDataService progressDataService,
             IConfiguration configuration,
-            ICentreCustomPromptsService centreCustomPromptsService
+            ICentreCustomPromptsService centreCustomPromptsService,
+            IUserDataService userDataService
         )
         {
             this.groupsDataService = groupsDataService;
@@ -95,6 +108,7 @@
             this.progressDataService = progressDataService;
             this.configuration = configuration;
             this.centreCustomPromptsService = centreCustomPromptsService;
+            this.userDataService = userDataService;
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -159,63 +173,18 @@
         )
         {
             var groupCourses = GetUsableGroupCoursesForCentre(groupId, delegateAccountWithOldDetails.CentreId);
+            var fullName = newDetails.FirstName + " " + newDetails.Surname;
 
             foreach (var groupCourse in groupCourses)
             {
-                var completeByDate = groupCourse.CompleteWithinMonths != 0
-                    ? (DateTime?)clockService.UtcNow.AddMonths(groupCourse.CompleteWithinMonths)
-                    : null;
-
-                var candidateProgressOnCourse =
-                    progressDataService.GetDelegateProgressForCourse(
-                        delegateAccountWithOldDetails.Id,
-                        groupCourse.CustomisationId
-                    );
-                var existingRecordsToUpdate =
-                    candidateProgressOnCourse.Where(ProgressShouldBeUpdatedOnEnrolment).ToList();
-
-                if (existingRecordsToUpdate.Any())
-                {
-                    foreach (var progressRecord in existingRecordsToUpdate)
-                    {
-                        var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0
-                            ? groupCourse.SupervisorAdminId.Value
-                            : progressRecord.SupervisorAdminId;
-                        progressDataService.UpdateProgressSupervisorAndCompleteByDate(
-                            progressRecord.ProgressId,
-                            updatedSupervisorAdminId,
-                            completeByDate
-                        );
-                    }
-                }
-                else
-                {
-                    var newProgressId = progressDataService.CreateNewDelegateProgress(
-                        delegateAccountWithOldDetails.Id,
-                        groupCourse.CustomisationId,
-                        groupCourse.CurrentVersion,
-                        clockService.UtcNow,
-                        3,
-                        addedByAdminId,
-                        completeByDate,
-                        groupCourse.SupervisorAdminId ?? 0
-                    );
-
-                    var tutorialsForCourse =
-                        tutorialContentDataService.GetTutorialIdsForCourse(groupCourse.CustomisationId);
-
-                    foreach (var tutorial in tutorialsForCourse)
-                    {
-                        progressDataService.CreateNewAspProgress(tutorial, newProgressId);
-                    }
-                }
-
-                if (newDetails.Email != null)
-                {
-                    var fullName = newDetails.FirstName + " " + newDetails.Surname;
-                    var email = BuildEnrolmentEmail(newDetails.Email, fullName, groupCourse, completeByDate);
-                    emailService.ScheduleEmail(email, AddedByProcess);
-                }
+                EnrolDelegateOnGroupCourse(
+                    delegateAccountWithOldDetails.Id,
+                    newDetails.Email,
+                    fullName,
+                    addedByAdminId,
+                    groupCourse,
+                    false
+                );
             }
         }
 
@@ -355,6 +324,118 @@
             groupsDataService.UpdateGroupName(groupId, centreId, groupName);
         }
 
+        public void AddCourseToGroup(
+            int groupId,
+            int customisationId,
+            int completeWithinMonths,
+            int addedByAdminId,
+            bool cohortLearners,
+            int? supervisorAdminId
+        )
+        {
+            using var transaction = new TransactionScope();
+
+            var groupCustomisationId = groupsDataService.InsertGroupCustomisation(
+                groupId,
+                customisationId,
+                completeWithinMonths,
+                addedByAdminId,
+                cohortLearners,
+                supervisorAdminId
+            );
+
+            var groupDelegates = GetGroupDelegates(groupId);
+            var groupCourse = groupsDataService.GetGroupCourseById(groupCustomisationId)!;
+
+            foreach (var groupDelegate in groupDelegates)
+            {
+                var fullName = groupDelegate.FirstName + " " + groupDelegate.LastName;
+                EnrolDelegateOnGroupCourse(
+                    groupDelegate.DelegateId,
+                    groupDelegate.EmailAddress,
+                    fullName,
+                    addedByAdminId,
+                    groupCourse,
+                    true
+                );
+            }
+
+            transaction.Complete();
+        }
+
+        private void EnrolDelegateOnGroupCourse(
+            int delegateUserId,
+            string? delegateUserEmailAddress,
+            string delegateUserFullName,
+            int? addedByAdminId,
+            GroupCourse groupCourse,
+            bool isAddCourseToGroup
+        )
+        {
+            var completeByDate = groupCourse.CompleteWithinMonths != 0
+                ? (DateTime?)clockService.UtcNow.AddMonths(groupCourse.CompleteWithinMonths)
+                : null;
+
+            var candidateProgressOnCourse =
+                progressDataService.GetDelegateProgressForCourse(
+                    delegateUserId,
+                    groupCourse.CustomisationId
+                );
+            var existingRecordsToUpdate =
+                candidateProgressOnCourse.Where(
+                    p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
+                ).ToList();
+
+            if (existingRecordsToUpdate.Any())
+            {
+                foreach (var progressRecord in existingRecordsToUpdate)
+                {
+                    var updatedSupervisorAdminId = groupCourse.SupervisorAdminId > 0 && !isAddCourseToGroup
+                        ? groupCourse.SupervisorAdminId.Value
+                        : progressRecord.SupervisorAdminId;
+                    progressDataService.UpdateProgressSupervisorAndCompleteByDate(
+                        progressRecord.ProgressId,
+                        updatedSupervisorAdminId,
+                        completeByDate
+                    );
+                }
+            }
+            else
+            {
+                var newProgressId = progressDataService.CreateNewDelegateProgress(
+                    delegateUserId,
+                    groupCourse.CustomisationId,
+                    groupCourse.CurrentVersion,
+                    clockService.UtcNow,
+                    3,
+                    addedByAdminId,
+                    completeByDate,
+                    groupCourse.SupervisorAdminId ?? 0
+                );
+
+                var tutorialsForCourse =
+                    tutorialContentDataService.GetTutorialIdsForCourse(groupCourse.CustomisationId);
+
+                foreach (var tutorial in tutorialsForCourse)
+                {
+                    progressDataService.CreateNewAspProgress(tutorial, newProgressId);
+                }
+            }
+
+            if (delegateUserEmailAddress != null)
+            {
+                var email = BuildEnrolmentEmail(
+                    delegateUserEmailAddress,
+                    delegateUserFullName,
+                    groupCourse,
+                    completeByDate
+                );
+                var addedByProcess =
+                    isAddCourseToGroup ? AddCourseToGroupAddedByProcess : AddDelegateToGroupAddedByProcess;
+                emailService.ScheduleEmail(email, addedByProcess);
+            }
+        }
+
         private IEnumerable<Group> GetSynchronisedGroupsForCentre(int centreId)
         {
             return groupsDataService.GetGroupsForCentre(centreId)
@@ -366,8 +447,16 @@
             return groupLabel == answer || groupLabel == linkedFieldName + " - " + answer;
         }
 
-        private static bool ProgressShouldBeUpdatedOnEnrolment(Progress progress)
+        private static bool ProgressShouldBeUpdatedOnEnrolment(
+            Progress progress,
+            bool isAddCourseToGroup
+        )
         {
+            if (isAddCourseToGroup)
+            {
+                return progress.Completed == null && progress.RemovedDate == null && !progress.SystemRefreshed;
+            }
+
             return progress.Completed == null && progress.RemovedDate == null;
         }
 

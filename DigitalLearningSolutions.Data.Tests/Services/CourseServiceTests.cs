@@ -12,6 +12,7 @@
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CourseServiceTests
@@ -170,7 +171,7 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeTrue();
         }
 
@@ -183,7 +184,7 @@
             {
                 CentreId = 2,
                 CourseCategoryId = 2,
-                AllCentres = true,
+                AllCentres = false,
                 CentreHasApplication = true,
             };
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
@@ -194,12 +195,12 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void VerifyAdminUserCanManageCourse_should_return_false_with_incorrect_centre()
+        public void VerifyAdminUserCanManageCourse_should_return_false_with_all_centres_course_on_different_centre()
         {
             // Given
             var validationDetails = new CourseValidationDetails
@@ -217,8 +218,31 @@
 
             // Then
             A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
-                .MustHaveHappenedOnceExactly();
+                .MustHaveHappenedTwiceExactly();
             result.Should().BeFalse();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanManageCourse_should_return_true_with_all_centres_course_on_same_centre()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 2,
+                CourseCategoryId = 2,
+                AllCentres = true,
+                CentreHasApplication = true,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanManageCourse(1, 2, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 2))
+                .MustHaveHappenedTwiceExactly();
+            result.Should().BeTrue();
         }
 
         [Test]
@@ -308,6 +332,29 @@
                 CentreId = 1,
                 CourseCategoryId = 2,
                 AllCentres = false,
+                CentreHasApplication = false,
+            };
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
+                .Returns(validationDetails);
+
+            // When
+            var result = courseService.VerifyAdminUserCanViewCourse(1, 1, 2);
+
+            // Then
+            A.CallTo(() => courseDataService.GetCourseValidationDetails(1, 1))
+                .MustHaveHappenedOnceExactly();
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
+        {
+            // Given
+            var validationDetails = new CourseValidationDetails
+            {
+                CentreId = 1,
+                CourseCategoryId = 2,
+                AllCentres = true,
                 CentreHasApplication = false,
             };
             A.CallTo(() => courseDataService.GetCourseValidationDetails(A<int>._, A<int>._))
@@ -422,7 +469,8 @@
         {
             // Given
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(1, 1)).Returns(
-                new List<Progress> {
+                new List<Progress>
+                {
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = DateTime.UtcNow, RemovedDate = null },
                     new Progress { ProgressId = 1, Completed = null, RemovedDate = DateTime.UtcNow },
@@ -547,6 +595,57 @@
         }
 
         [Test]
+        public void GetApplicationOptionsAlphabeticalListForCentre_calls_data_service()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            var applicationOptions = new List<ApplicationDetails>();
+            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(applicationOptions);
+
+            // When
+            var result = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(applicationOptions);
+            }
+        }
+
+        [Test]
+        public void GetApplicationOptionsAlphabeticalListForCentre_filters_by_topic_if_topic_given()
+        {
+            // Given
+            const int categoryId = 1;
+            const int centreId = 1;
+            const int topicId = 1;
+
+            var applicationOne = new ApplicationDetails { CourseTopicId = 1 };
+            var applicationTwo = new ApplicationDetails { CourseTopicId = 1 };
+            var applicationThree = new ApplicationDetails { CourseTopicId = 2 };
+
+            var applicationOptions = new List<ApplicationDetails>
+                { applicationOne, applicationTwo, applicationThree };
+            A.CallTo(() => courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId))
+                .Returns(applicationOptions);
+
+            // When
+            var result = courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId, topicId)
+                .ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().OnlyContain(a => a.CourseTopicId == 1);
+                result.Count.Should().Be(2);
+            }
+        }
+
+        [Test]
         public void DoesCourseNameExistAtCentre_calls_data_service()
         {
             // Given
@@ -556,15 +655,15 @@
             const int applicationId = 1;
 
             // When
-            courseService.DoesCourseNameExistAtCentre(customisationId, customisationName, centreId, applicationId);
+            courseService.DoesCourseNameExistAtCentre(customisationName, centreId, applicationId, customisationId);
 
             // Then
             A.CallTo(
                     () => courseDataService.DoesCourseNameExistAtCentre(
-                        customisationId,
                         customisationName,
                         centreId,
-                        applicationId
+                        applicationId,
+                        customisationId
                     )
                 )
                 .MustHaveHappened();
@@ -716,6 +815,53 @@
             // Then
             result.Should().HaveCount(4);
             result.Should().NotContain(c => c.CustomisationId == 2);
+        }
+
+        [Test]
+        public void CreateNewCentreCourse_calls_data_service()
+        {
+            // Given
+            const int centreId = 2;
+            const int applicationId = 1;
+            const string customisationName = "Name";
+            const string password = "Password";
+            const bool selfRegister = false;
+            const int tutCompletionThreshold = 0;
+            const bool isAssessed = true;
+            const int diagCompletionThreshold = 0;
+            const bool diagObjSelect = false;
+            const bool hideInLearnerPortal = false;
+            const string notificationEmails = "hello@test.com";
+
+            var customisation = new Customisation(
+                centreId,
+                applicationId,
+                customisationName,
+                password,
+                selfRegister,
+                tutCompletionThreshold,
+                isAssessed,
+                diagCompletionThreshold,
+                diagObjSelect,
+                hideInLearnerPortal,
+                notificationEmails
+            );
+
+            A.CallTo(
+                () => courseDataService.CreateNewCentreCourse(customisation)
+            ).Returns(123);
+
+            // When
+            var result = courseService.CreateNewCentreCourse(customisation);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().Be(123);
+                A.CallTo(
+                    () => courseDataService.CreateNewCentreCourse(customisation)
+                ).MustHaveHappenedOnceExactly();
+            }
         }
     }
 }

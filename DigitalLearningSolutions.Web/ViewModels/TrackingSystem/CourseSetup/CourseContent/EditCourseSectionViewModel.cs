@@ -9,8 +9,9 @@
             string courseName,
             Section section,
             bool showDiagnostic
-        ) : base(section, courseName, showDiagnostic)
+        ) : base(section, showDiagnostic)
         {
+            CourseName = courseName;
             CustomisationId = customisationId;
         }
 
@@ -21,6 +22,8 @@
         {
             CustomisationId = customisationId;
         }
+
+        public string CourseName { get; set; }
 
         public int CustomisationId { get; set; }
     }

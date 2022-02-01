@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@using DigitalLearningSolutions.Web.Helpers;
 @model SignpostingCardViewModel
 @{
     var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
@@ -7,69 +8,89 @@
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-      @Model.Name
+      @Model.Name @(!String.IsNullOrEmpty(Model.Catalogue) ? $"({Model.Catalogue})" : "")
     </span>
   </summary>
   <div class="nhsuk-card__content nhsuk-u-padding-bottom-3 nhsuk-u-padding-top-0">
-  <div class="nhsuk-u-margin-bottom-4">
-    @if (Model.Essential)
+    @if (Model.UnmatchedResource)
     {
-      <div class="nhsuk-tag filter-tag nhsuk-u-margin-right-1">Essential</div>
+      <div class="nhsuk-grid-row nhsuk-details__text nhsuk-u-clear">
+        <div class="nhsuk-inset-text">
+          <span class="nhsuk-u-visually-hidden">Information: </span>
+          <p>
+            This resource has been removed from the Learning Hub. Please remove it from competency signposting and consider replacing it.
+          </p>
+        </div>
+      </div>
+    }
+    <div class="nhsuk-u-margin-bottom-4">
+      @if (Model.Essential)
+      {
+        <div class="nhsuk-tag filter-tag nhsuk-u-margin-right-1">Essential</div>
+      }
+      else
+      {
+        <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
+      }
+      @if (!String.IsNullOrEmpty(Model.ResourceType))
+      {
+          <strong class="nhsuk-tag nhsuk-tag--@(SignpostingHelper.DisplayTagColour(Model.ResourceType))">@Model.ResourceType</strong>
+      }
+      @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
+    </div>
+    @if (!String.IsNullOrEmpty(Model.Description))
+    {
+      <p>@SignpostingHelper.DisplayText(Model.Description)</p>
+    }
+    <h5 class="mnhsuk-u-margin-bottom-2">Rated @Model.Rating/5</h5>
+    @if (Model.ParameterHasNotBeenSet)
+    {
+      <h5>This resource has no signposting parameters set.</h5>
     }
     else
     {
-      <div class="nhsuk-tag nhsuk-tag--blue filter-tag nhsuk-u-margin-right-1">Recommended</div>
-    }
-    @*<div class="nhsuk-tag nhsuk-tag--grey centre-role-tag nhsuk-u-margin-right-1">Digital Learn</div> <!--Hidden for now-->*@
-  </div>
-  @if(Model.ParameterHasNotBeenSet)
-  {
-    <h5>This resource has no signposting parameters set.</h5>
-  }
-  else
-  {
-    <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
-    <dl class="nhsuk-summary-list">
-      @if(!String.IsNullOrEmpty(Model.AssessmentQuestion))
+      <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
+      <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Assessment Question
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.AssessmentQuestion
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Trigger @(displayLevelLabels ? "responses" : "range")
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @if (displayLevelLabels)
+          {
+            <label class="nhsuk-label">@Model.GetLevelLabel(Model.MinimumResultMatch)</label>
+            @if (Model.MinimumResultMatch != Model.MaximumResultMatch)
+            {
+              <label class="nhsuk-label">@Model.GetLevelLabel(Model.MaximumResultMatch)</label>
+            }
+          }
+          else
+          {
+            <label class="nhsuk-label">@Model.MinimumResultMatch to @Model.MaximumResultMatch</label>
+          }
+        </dd>
+      </div>
+      @if (!String.IsNullOrEmpty(Model.CompareResultTo))
       {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Assessment Question
+            Compare result to
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @Model.AssessmentQuestion
-          </dd>
-        </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Trigger @(displayLevelLabels ? "responses" : "range")
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @if (displayLevelLabels)
-            {
-              <label class="nhsuk-label">@Model.GetLevelLabel(Model.MinimumResultMatch)</label>
-              @if (Model.MinimumResultMatch != Model.MaximumResultMatch)
-              {
-                <label class="nhsuk-label">@Model.GetLevelLabel(Model.MaximumResultMatch)</label>
-              }
-            }
-            else
-            {
-              <label class="nhsuk-label">@Model.MinimumResultMatch to @Model.MaximumResultMatch</label>
-            }
+            @Model.CompareResultTo
           </dd>
         </div>
       }
-      <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-          Compare result to
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-          @Model.CompareResultTo
-        </dd>
-      </div>
-    </dl>
-  }
+      </dl>
+    }
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"

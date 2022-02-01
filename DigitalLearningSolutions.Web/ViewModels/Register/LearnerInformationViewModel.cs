@@ -6,7 +6,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public class LearnerInformationViewModel
+    public class LearnerInformationViewModel : IEditProfessionalRegistrationNumbers
     {
         public LearnerInformationViewModel() { }
 
@@ -23,6 +23,8 @@
             Answer4 = data.Answer4;
             Answer5 = data.Answer5;
             Answer6 = data.Answer6;
+            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         [Required(ErrorMessage = "Select a job group")]
@@ -43,5 +45,7 @@
         public IEnumerable<EditCustomFieldViewModel> CustomFields { get; set; } = new List<EditCustomFieldViewModel>();
 
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
     }
 }

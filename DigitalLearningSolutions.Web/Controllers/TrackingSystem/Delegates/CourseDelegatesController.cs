@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
@@ -21,13 +22,16 @@
     public class CourseDelegatesController : Controller
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
+        private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
 
         public CourseDelegatesController(
-            ICourseDelegatesService courseDelegatesService
+            ICourseDelegatesService courseDelegatesService,
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
+            this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
         }
 
         [Route("{page:int=1}")]
@@ -88,6 +92,26 @@
             var model = new AllCourseDelegatesViewModel(courseDelegates);
 
             return View(model);
+        }
+
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        [Route("DownloadCurrent/{customisationId:int}")]
+        public IActionResult DownloadCurrent(int customisationId)
+        {
+            var centreId = User.GetCentreId();
+            var adminCategoryId = User.GetAdminCourseCategoryFilter();
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
+                customisationId,
+                centreId,
+                adminCategoryId
+            );
+
+            const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

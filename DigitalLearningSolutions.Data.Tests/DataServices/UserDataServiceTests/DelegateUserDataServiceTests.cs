@@ -466,5 +466,23 @@
             var updatedUser = userDataService.GetDelegateUserById(2)!;
             updatedUser.HasDismissedLhLoginWarning.Should().BeTrue();
         }
+
+        [Test]
+        public void UpdateDelegateProfessionalRegistrationNumber_sets_ProfessionalRegistrationNumber()
+        {
+            // Given
+            const int delegateId = 2;
+            const string prn = "PRN123";
+
+            using var transaction = new TransactionScope();
+
+            // When
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(delegateId, prn, true);
+
+            // Then
+            var updatedUser = userDataService.GetDelegateUserById(delegateId)!;
+            updatedUser.ProfessionalRegistrationNumber.Should().Be(prn);
+            updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
+        }
     }
 }
