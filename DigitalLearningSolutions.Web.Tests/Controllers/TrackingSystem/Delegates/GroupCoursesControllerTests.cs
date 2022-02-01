@@ -10,6 +10,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
@@ -64,18 +65,21 @@
             var result = groupCoursesController.Index(1);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.GroupName.Should().Be("Group");
-            result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
-                .Be(DelegateGroupPage.Courses);
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().WithDefaultViewName();
+                result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.GroupName.Should().Be("Group");
+                result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
+                    .Be(DelegateGroupPage.Courses);
+            }
         }
 
         [Test]
         public void RemoveGroupCourse_with_invalid_model_returns_view_with_error()
         {
             // Given
-            var groupId = 1;
-            var groupCustomisationId = 25;
+            const int groupId = 1;
+            const int groupCustomisationId = 25;
             var model = new RemoveGroupCourseViewModel();
             groupCoursesController.ModelState.AddModelError("Confirm", "Is Invalid.");
 
@@ -83,18 +87,21 @@
             var result = groupCoursesController.RemoveGroupCourse(groupId, groupCustomisationId, model);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            groupCoursesController.ModelState.IsValid.Should().BeFalse();
-            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(A<int>._, A<int>._, A<bool>._))
-                .MustNotHaveHappened();
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().WithDefaultViewName();
+                groupCoursesController.ModelState.IsValid.Should().BeFalse();
+                A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(A<int>._, A<int>._, A<bool>._))
+                    .MustNotHaveHappened();
+            }
         }
 
         [Test]
         public void RemoveGroupCourse_with_valid_model_calls_remove_service_and_redirects()
         {
             // Given
-            var groupId = 1;
-            var groupCustomisationId = 25;
+            const int groupId = 1;
+            const int groupCustomisationId = 25;
             var model = new RemoveGroupCourseViewModel
             {
                 Confirm = true,
@@ -104,11 +111,14 @@
             var result = groupCoursesController.RemoveGroupCourse(groupId, groupCustomisationId, model);
 
             // Then
-            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, false))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult()
-                .WithActionName("Index")
-                .WithRouteValue("groupId", groupId);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, false))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeRedirectToActionResult()
+                    .WithActionName("Index")
+                    .WithRouteValue("groupId", groupId);
+            }
         }
 
         [Test]
@@ -129,9 +139,21 @@
             var result = groupCoursesController.AddCourseToGroup(formData, groupId, customisationId);
 
             // Then
-            A.CallTo(() => groupsService.AddCourseToGroup(A<int>._, A<int>._, A<int>._, A<int>._, A<bool>._, A<int?>._))
-                .MustNotHaveHappened();
-            result.Should().BeViewResult().WithDefaultViewName();
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => groupsService.AddCourseToGroup(
+                            A<int>._,
+                            A<int>._,
+                            A<int>._,
+                            A<int>._,
+                            A<bool>._,
+                            A<int?>._
+                        )
+                    )
+                    .MustNotHaveHappened();
+                result.Should().BeViewResult().WithDefaultViewName();
+            }
         }
 
         [Test]
@@ -151,18 +173,21 @@
             var result = groupCoursesController.AddCourseToGroup(formData, groupId, customisationId);
 
             // Then
-            A.CallTo(
-                    () => groupsService.AddCourseToGroup(
-                        groupId,
-                        customisationId,
-                        1,
-                        ControllerContextHelper.AdminId,
-                        formData.CohortLearners,
-                        formData.SupervisorId
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => groupsService.AddCourseToGroup(
+                            groupId,
+                            customisationId,
+                            1,
+                            ControllerContextHelper.AdminId,
+                            formData.CohortLearners,
+                            formData.SupervisorId
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeViewResult().WithViewName("AddCourseToGroupConfirmation");
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeViewResult().WithViewName("AddCourseToGroupConfirmation");
+            }
         }
     }
 }

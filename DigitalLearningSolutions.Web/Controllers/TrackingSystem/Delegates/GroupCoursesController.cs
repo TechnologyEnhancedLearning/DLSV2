@@ -15,6 +15,7 @@
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
+    [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
     [Route("TrackingSystem/Delegates/Groups/{groupId:int}/Courses")]
     public class GroupCoursesController : Controller
     {
@@ -39,22 +40,16 @@
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            if (groupName == null)
-            {
-                return NotFound();
-            }
-
             var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
-            var model = new GroupCoursesViewModel(groupId, groupName, groupCourses, page);
+            var model = new GroupCoursesViewModel(groupId, groupName!, groupCourses, page);
 
             return View(model);
         }
 
         [Route("{groupCustomisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
         public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId)
         {
@@ -72,7 +67,6 @@
         }
 
         [HttpPost("{groupCustomisationId:int}/Remove")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroupCourse))]
         public IActionResult RemoveGroupCourse(int groupId, int groupCustomisationId, RemoveGroupCourseViewModel model)
         {
@@ -90,9 +84,7 @@
             return RedirectToAction(nameof(Index), new { groupId });
         }
 
-        [HttpGet]
-        [Route("Add/SelectCourse")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [HttpGet("Add/SelectCourse")]
         public IActionResult AddCourseToGroupSelectCourse(int groupId)
         {
             var centreId = User.GetCentreId();
@@ -108,9 +100,7 @@
             return View(model);
         }
 
-        [HttpGet]
-        [Route("Add/{customisationId:int}")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [HttpGet("Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(int groupId, int customisationId)
         {
@@ -123,9 +113,7 @@
             return View(viewModel);
         }
 
-        [HttpPost]
-        [Route("Add/{customisationId:int}")]
-        [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
+        [HttpPost("Add/{customisationId:int}")]
         [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
         public IActionResult AddCourseToGroup(AddCourseFormData formData, int groupId, int customisationId)
         {

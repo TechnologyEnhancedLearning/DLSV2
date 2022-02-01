@@ -10,8 +10,8 @@
   };
   var pluralitySuffix = DisplayStringHelper.GetPluralitySuffix(Model.CompleteWithinMonths);
   var courseDeadlineString = Model.CompleteWithinMonths > 0
-    ? $"{Model.CompleteWithinMonths} month{pluralitySuffix} to complete the course from the date of enrolment."
-    : "no deadline to complete the course.";
+    ? $"All delegates enrolled on the course because they belong to this group will have {Model.CompleteWithinMonths} month{pluralitySuffix} to complete the course from the date of enrolment."
+    : "There is no deadline in which to complete the course for delegates that have been enrolled.";
 }
 
 <div class="nhsuk-grid-row">
@@ -20,9 +20,9 @@
 
     <p>The course @Model.CourseName has been added to the @Model.GroupName group.</p>
 
-    <p>The delegates subsequently added to the group will be enrolled on this course automatically</p>
+    <p>The delegates subsequently added to the group will be enrolled on this course automatically.</p>
 
-    <p>All delegates enrolled on the course because they belong to this group will have @courseDeadlineString</p>
+    <p>@courseDeadlineString</p>
 
     <vc:action-link asp-controller="GroupCourses" asp-action="Index" link-text="@actionLinkText" asp-all-route-data="@routeParamsForActionLink" />
   </div>
