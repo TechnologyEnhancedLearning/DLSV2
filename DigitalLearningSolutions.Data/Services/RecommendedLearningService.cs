@@ -12,7 +12,7 @@
 
     public interface IRecommendedLearningService
     {
-        Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+        Task<(IEnumerable<RecommendedResource> recommendedResources, bool apiIsAccessible)>
             GetRecommendedLearningForSelfAssessment(
                 int selfAssessmentId,
                 int delegateId
@@ -39,7 +39,7 @@
             this.learningLogItemsDataService = learningLogItemsDataService;
         }
 
-        public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool sourcedFromFallbackData)>
+        public async Task<(IEnumerable<RecommendedResource> recommendedResources, bool apiIsAccessible)>
             GetRecommendedLearningForSelfAssessment(
                 int selfAssessmentId,
                 int delegateId
@@ -80,7 +80,7 @@
                 )
             );
 
-            return (recommendedResources.WhereNotNull(), resources.sourcedFromFallbackData);
+            return (recommendedResources.WhereNotNull(), resources.apiIsAccessible);
         }
 
         private RecommendedResource? GetPopulatedRecommendedResource(

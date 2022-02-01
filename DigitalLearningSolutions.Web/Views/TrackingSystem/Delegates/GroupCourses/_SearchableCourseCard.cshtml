@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 @model SearchableCourseViewModel
 
 <div class="searchable-element nhsuk-panel" id="@Model.CustomisationId-card">
@@ -34,7 +34,7 @@
       <a class="nhsuk-button nhsuk-u-margin-bottom-1"
          role="button"
          aria-label="Add to group"
-         asp-controller="DelegateGroups"
+         asp-controller="GroupCourses"
          asp-action="AddCourseToGroup"
          asp-route-groupId="@Model.GroupId"
          asp-route-customisationId="@Model.CustomisationId">

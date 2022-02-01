@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -30,6 +31,8 @@
         private readonly MyAccountDetailsData reusableMyAccountDetailsData =
             UserTestHelper.GetDefaultAccountDetailsData();
 
+        private readonly GroupDelegate reusableGroupDelegate = GroupTestHelper.GetDefaultGroupDelegate(firstName: "newFirst", lastName: "newLast");
+
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
@@ -41,6 +44,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
+        private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -53,6 +57,7 @@
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            userDataService = A.Fake<IUserDataService>();
 
             A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
@@ -64,7 +69,8 @@
                 jobGroupsDataService,
                 progressDataService,
                 configuration,
-                centreCustomPromptsService
+                centreCustomPromptsService,
+                userDataService
             );
         }
 
@@ -472,14 +478,11 @@
         private void SetupEnrolProcessFakes(
             int newProgressId,
             int relatedTutorialId,
-            GroupCourse groupCourse,
             Progress? progress = null
         )
         {
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(
-                new List<GroupCourse> { groupCourse }
-            );
+
             var progressRecords = progress == null ? new List<Progress>() : new List<Progress> { progress };
             A.CallTo(() => progressDataService.GetDelegateProgressForCourse(A<int>._, A<int>._))
                 .Returns(progressRecords);
@@ -497,6 +500,33 @@
             ).Returns(newProgressId);
             A.CallTo(() => tutorialContentDataService.GetTutorialIdsForCourse(A<int>._))
                 .Returns(new List<int> { relatedTutorialId });
+        }
+
+        private void SetUpAddDelegateEnrolProcessFakes(GroupCourse groupCourse)
+        {
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(
+                new List<GroupCourse> { groupCourse }
+            );
+        }
+
+        private void SetUpAddCourseEnrolProcessFakes(GroupCourse groupCourse)
+        {
+            A.CallTo(
+                () => groupsDataService.InsertGroupCustomisation(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<int?>._
+                )
+            ).Returns(groupCourse.GroupCustomisationId);
+            
+            A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
+                .Returns(new List<GroupDelegate> { reusableGroupDelegate });
+
+            A.CallTo(() => groupsDataService.GetGroupCourseById(groupCourse.GroupCustomisationId))
+                .Returns(groupCourse);
         }
     }
 }

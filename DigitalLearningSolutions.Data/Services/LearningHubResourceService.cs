@@ -13,14 +13,21 @@
 
     public interface ILearningHubResourceService
     {
-        Task<(ResourceReferenceWithResourceDetails? resource, bool sourcedFromFallbackData)> GetResourceByReferenceId(
+        Task<(ResourceReferenceWithResourceDetails? resource, bool apiIsAccessible)> GetResourceByReferenceId(
             int resourceReferenceId
         );
 
-        Task<(BulkResourceReferences bulkResourceReferences, bool sourcedFromFallbackData)>
-            GetBulkResourcesByReferenceIds(
-                IList<int> resourceReferenceIds
+        Task<(ResourceReferenceWithResourceDetails? resource, bool apiIsAccessible)>
+            GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
+                int resourceReferenceId
             );
+
+        Task<(BulkResourceReferences bulkResourceReferences, bool apiIsAccessible)> GetBulkResourcesByReferenceIds(
+            IList<int> resourceReferenceIds
+        );
+
+        Task<(BulkResourceReferences bulkResourceReferences, bool apiIsAccessible)>
+            GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(IList<int> resourceReferenceIds);
     }
 
     public class LearningHubResourceService : ILearningHubResourceService
@@ -40,70 +47,113 @@
             this.logger = logger;
         }
 
-        public async Task<(ResourceReferenceWithResourceDetails? resource, bool sourcedFromFallbackData)>
-            GetResourceByReferenceId(
-                int resourceReferenceId
-            )
+        public async Task<(ResourceReferenceWithResourceDetails? resource, bool apiIsAccessible)>
+            GetResourceByReferenceId(int resourceReferenceId)
         {
             try
             {
                 var upToDateResourceDetails = await learningHubApiClient.GetResourceByReferenceId(resourceReferenceId);
-                return (upToDateResourceDetails, false);
+                return (upToDateResourceDetails, true);
             }
             catch (LearningHubResponseException e)
             {
                 if (e.HttpStatusCode == HttpStatusCode.NotFound)
                 {
-                    return (null, false);
+                    return (null, true);
                 }
 
-                logger.LogWarning(
-                    $"Attempting to use fallback data for single resource reference ID {resourceReferenceId}"
-                );
                 var fallBackResourceDetails =
-                    learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(
-                        new[] { resourceReferenceId }
-                    ).SingleOrDefault();
+                    GetFallbackDataForResourceReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
 
-                return (fallBackResourceDetails, true);
+                return (fallBackResourceDetails, false);
             }
         }
 
-        public async Task<(BulkResourceReferences bulkResourceReferences, bool sourcedFromFallbackData)>
+        public async Task<(ResourceReferenceWithResourceDetails? resource, bool apiIsAccessible)>
+            GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(int resourceReferenceId)
+        {
+            var (resource, apiIsAccessible) = await GetResourceByReferenceId(resourceReferenceId);
+
+            if (resource != null || !apiIsAccessible)
+            {
+                return (resource, apiIsAccessible);
+            }
+
+            var fallBackResourceDetails =
+                GetFallbackDataForResourceReferenceIds(new List<int> { resourceReferenceId }).SingleOrDefault();
+
+            if (fallBackResourceDetails != null)
+            {
+                fallBackResourceDetails.AbsentInLearningHub = true;
+            }
+
+            return (fallBackResourceDetails, true);
+        }
+
+        public async Task<(BulkResourceReferences bulkResourceReferences, bool apiIsAccessible)>
             GetBulkResourcesByReferenceIds(
                 IList<int> resourceReferenceIds
             )
         {
             try
             {
-                var upToDateResourceDetails =
+                var bulkApiResponse =
                     await learningHubApiClient.GetBulkResourcesByReferenceIds(resourceReferenceIds);
-                return (upToDateResourceDetails, false);
+                return (bulkApiResponse, true);
             }
             catch (LearningHubResponseException)
             {
-                logger.LogWarning(
-                    $"Attempting to use fallback data for resource references Ids: {DisplayListOfResourceReferenceIds(resourceReferenceIds)}"
-                );
-
-                var fallBackResources =
-                    learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds)
-                        .ToList();
+                var fallbackResources = GetFallbackDataForResourceReferenceIds(resourceReferenceIds).ToList();
 
                 var bulkResourceReferences = new BulkResourceReferences
                 {
-                    ResourceReferences = fallBackResources,
+                    ResourceReferences = fallbackResources,
                     UnmatchedResourceReferenceIds = resourceReferenceIds.Except(
-                        fallBackResources.Select(r => r.RefId)
+                        fallbackResources.Select(r => r.RefId)
                     ).ToList(),
                 };
-                return (bulkResourceReferences, true);
+                return (bulkResourceReferences, false);
             }
         }
 
-        private static string DisplayListOfResourceReferenceIds(IEnumerable<int> resourceReferenceIds)
+        public async Task<(BulkResourceReferences bulkResourceReferences, bool apiIsAccessible)>
+            GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(IList<int> resourceReferenceIds)
         {
-            return new StringBuilder().AppendJoin(", ", resourceReferenceIds.OrderBy(i => i)).ToString();
+            var (bulkResourceResponse, apiIsAccessible) =
+                await GetBulkResourcesByReferenceIds(resourceReferenceIds);
+
+            if (!bulkResourceResponse.UnmatchedResourceReferenceIds.Any() || !apiIsAccessible)
+            {
+                return (bulkResourceResponse, apiIsAccessible);
+            }
+
+            var deletedFallbackResources =
+                GetFallbackDataForResourceReferenceIds(bulkResourceResponse.UnmatchedResourceReferenceIds).ToList();
+
+            foreach (var resource in deletedFallbackResources)
+            {
+                resource.AbsentInLearningHub = true;
+            }
+
+            bulkResourceResponse.ResourceReferences.AddRange(deletedFallbackResources);
+            bulkResourceResponse.UnmatchedResourceReferenceIds = resourceReferenceIds.Except(
+                bulkResourceResponse.ResourceReferences.Select(r => r.RefId)
+            ).ToList();
+
+            return (bulkResourceResponse, true);
+        }
+
+        private IEnumerable<ResourceReferenceWithResourceDetails> GetFallbackDataForResourceReferenceIds(
+            IList<int> resourceReferenceIds
+        )
+        {
+            var commaSeparatedListOfIds =
+                new StringBuilder().AppendJoin(", ", resourceReferenceIds.OrderBy(i => i)).ToString();
+            logger.LogWarning(
+                $"Attempting to use fallback data for resource references Ids: {commaSeparatedListOfIds}"
+            );
+
+            return learningResourceReferenceDataService.GetResourceReferenceDetailsByReferenceIds(resourceReferenceIds);
         }
     }
 }

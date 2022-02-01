@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -65,36 +66,6 @@
                 .WithMockTempData();
         }
         
-        [Test]
-        public void GroupCourses_returns_not_found_with_incorrect_group_id_for_centre()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns(null);
-
-            // When
-            var result = delegateGroupsController.GroupCourses(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void GroupCourses_returns_view_result_with_correct_group_id_for_centre()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetUsableGroupCoursesForCentre(1, 2)).Returns(new List<GroupCourse>());
-
-            // When
-            var result = delegateGroupsController.GroupCourses(1);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.GroupName.Should().Be("Group");
-            result.As<ViewResult>().Model.As<GroupCoursesViewModel>().NavViewModel.CurrentPage.Should()
-                .Be(DelegateGroupPage.Courses);
-        }
-
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
         {
@@ -264,47 +235,6 @@
             // Then
             A.CallTo(() => groupsService.DeleteDelegateGroup(groupId, true)).MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("Index");
-        }
-
-        [Test]
-        public void RemoveGroupCourse_with_invalid_model_returns_view_with_error()
-        {
-            // Given
-            var groupId = 1;
-            var groupCustomisationId = 25;
-            var model = new RemoveGroupCourseViewModel();
-            delegateGroupsController.ModelState.AddModelError("Confirm", "Is Invalid.");
-
-            // When
-            var result = delegateGroupsController.RemoveGroupCourse(groupId, groupCustomisationId, model);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            delegateGroupsController.ModelState.IsValid.Should().BeFalse();
-            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(A<int>._, A<int>._, A<bool>._))
-                .MustNotHaveHappened();
-        }
-
-        [Test]
-        public void RemoveGroupCourse_with_valid_model_calls_remove_service_and_redirects()
-        {
-            // Given
-            var groupId = 1;
-            var groupCustomisationId = 25;
-            var model = new RemoveGroupCourseViewModel
-            {
-                Confirm = true,
-            };
-
-            // When
-            var result = delegateGroupsController.RemoveGroupCourse(groupId, groupCustomisationId, model);
-
-            // Then
-            A.CallTo(() => groupsService.RemoveGroupCourseAndRelatedProgress(groupCustomisationId, groupId, false))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult()
-                .WithActionName("GroupCourses")
-                .WithRouteValue("groupId", groupId);
         }
 
         [Test]

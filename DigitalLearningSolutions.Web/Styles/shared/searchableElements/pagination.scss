@@ -10,6 +10,8 @@
 }
 
 .pagination-button {
+  cursor: pointer;
+
   &--next {
     float: right;
     align-items: flex-start;
