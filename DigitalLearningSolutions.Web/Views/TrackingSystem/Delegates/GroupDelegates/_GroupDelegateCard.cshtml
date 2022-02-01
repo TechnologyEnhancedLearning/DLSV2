@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @model GroupDelegateViewModel
 
 <div class="nhsuk-panel word-break" id="@Model.GroupDelegateId-card">
@@ -36,8 +36,8 @@
 
       <a class="nhsuk-button delete-button nhsuk-u-margin-bottom-1"
          role="button"
-         asp-controller="DelegateGroups"
-         asp-action="RemoveGroupDelegates"
+         asp-controller="GroupDelegates"
+         asp-action="RemoveGroupDelegate"
          asp-route-groupId="@Model.GroupId"
          asp-route-delegateId="@Model.DelegateId">
         Remove from group

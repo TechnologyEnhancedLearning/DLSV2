@@ -22,6 +22,17 @@
             ProfileImage = profileImage;
         }
 
+        public MyAccountDetailsData(
+            int? delegateId,
+            string firstName,
+            string surname,
+            string email
+        ) : base(firstName, surname, email)
+        {
+            Password = string.Empty;
+            DelegateId = delegateId;
+        }
+        
         public int? AdminId { get; set; }
         public int? DelegateId { get; set; }
         public string Password { get; set; }

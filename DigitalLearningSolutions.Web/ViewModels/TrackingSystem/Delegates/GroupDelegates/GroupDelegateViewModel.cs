@@ -1,8 +1,7 @@
-﻿using DigitalLearningSolutions.Data.Models.DelegateGroups;
-
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
 
     public class GroupDelegateViewModel
     {

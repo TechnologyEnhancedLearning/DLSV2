@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FizzWare.NBuilder;
     using FluentAssertions;

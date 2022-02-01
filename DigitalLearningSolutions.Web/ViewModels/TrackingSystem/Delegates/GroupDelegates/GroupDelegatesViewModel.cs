@@ -1,10 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
     public class GroupDelegatesViewModel : BasePaginatedViewModel
     {

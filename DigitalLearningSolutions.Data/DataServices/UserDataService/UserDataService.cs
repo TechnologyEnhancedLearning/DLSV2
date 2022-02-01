@@ -95,6 +95,8 @@
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
+        List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
+
         void UpdateDelegateUserCentrePrompts(
             int id,
             int jobGroupId,

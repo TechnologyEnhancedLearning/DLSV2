@@ -1,7 +1,7 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateGroups
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;

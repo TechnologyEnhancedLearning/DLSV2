@@ -421,6 +421,17 @@
         }
 
         [Test]
+
+        public void GetDelegatesNotRegisteredForGroupByGroupId_returns_expected_number_of_delegates()
+        {
+            // When
+            var result = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(5, 101);
+
+            // Then
+            result.Should().HaveCount(106);
+        }
+
+        [Test]
         public void SetDelegateUserLearningHubAuthId_correctly_sets_delegates_learningHubAuthId()
         {
             using var transaction = new TransactionScope();
