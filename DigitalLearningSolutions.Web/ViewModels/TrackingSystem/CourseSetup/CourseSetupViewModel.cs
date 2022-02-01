@@ -18,7 +18,7 @@
             string? filterBy,
             int page,
             int? itemsPerPage
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, searchLabel: "Search courses")
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, "Search courses")
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 courses.AsQueryable(),
