@@ -294,8 +294,6 @@ namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
                 );
             }
 
-            ;
-
             return RedirectToAction(
                 "ReviewCompetencySelfAssessment",
                 "Supervisor",
