@@ -31,7 +31,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 
         public string GetLevelLabel(int value)
         {
-            return AssessmentQuestionLevelDescriptors[value].LevelLabel ?? value.ToString();
+            int index = value - (SelectedQuestion.MinValue == 0 ? 0 : 1);
+            return AssessmentQuestionLevelDescriptors[index].LevelLabel ?? value.ToString();
         }
 
     }

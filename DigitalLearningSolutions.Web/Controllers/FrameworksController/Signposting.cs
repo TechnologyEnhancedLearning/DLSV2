@@ -334,6 +334,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                                 p.AssessmentQuestionMaxValue,
                                 p.AssessmentQuestionMinValue == 0).ToList()
                             : null,
+                        LevelDescriptorsAreZeroBased = p.AssessmentQuestionMinValue == 0,
                         AssessmentQuestionInputTypeId = p.AssessmentQuestionInputTypeId,
                         MinimumResultMatch = p.MinResultMatch,
                         MaximumResultMatch = p.MaxResultMatch,

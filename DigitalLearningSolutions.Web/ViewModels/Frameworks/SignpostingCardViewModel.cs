@@ -10,6 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public string Name { get; set; }
         public string AssessmentQuestion { get; set; }
         public List<LevelDescriptor> AssessmentQuestionLevelDescriptors { get; set; }
+        public bool LevelDescriptorsAreZeroBased { get; set; }
         public int AssessmentQuestionInputTypeId { get; set; }
         public int MinimumResultMatch { get; set; }
         public int MaximumResultMatch { get; set; }
@@ -19,8 +20,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
 
         public string GetLevelLabel(int value)
         {
-            return AssessmentQuestionLevelDescriptors != null && AssessmentQuestionInputTypeId != 2 ?
-                AssessmentQuestionLevelDescriptors[value].LevelLabel
+            int index = value - (LevelDescriptorsAreZeroBased ? 0 : 1);
+            bool isNotSlider = AssessmentQuestionInputTypeId != 2;
+            return AssessmentQuestionLevelDescriptors != null && isNotSlider ?
+                AssessmentQuestionLevelDescriptors[index].LevelLabel
                 :value.ToString();
         }
     }
