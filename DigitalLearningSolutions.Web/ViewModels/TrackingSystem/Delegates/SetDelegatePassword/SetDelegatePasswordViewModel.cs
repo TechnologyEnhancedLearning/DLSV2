@@ -17,6 +17,7 @@
             Name = name;
             DelegateId = delegateId;
             IsFromViewDelegatePage = isFromViewDelegatePage;
+            ReturnPage = returnPage;
         }
 
         public string Name { get; set; }
