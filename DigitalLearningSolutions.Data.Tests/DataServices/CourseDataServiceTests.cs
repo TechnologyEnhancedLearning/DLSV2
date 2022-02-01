@@ -317,7 +317,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 LearningMinutes = "N/A",
             };
 
-            result.Should().HaveCount(260);
+            result.Should().HaveCount(256);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 
@@ -425,7 +425,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 IsAssessed = false,
             };
 
-            result.Should().HaveCount(260);
+            result.Should().HaveCount(256);
             result.First().Should().BeEquivalentTo(expectedFirstCourse);
         }
 
@@ -561,7 +561,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         }
 
         [Test]
-        public void GetCourseCentreAndCategory_returns_null_when_course_does_not_exist()
+        public void GetCourseValidationDetails_returns_null_when_course_does_not_exist()
         {
             // When
             var validationDetails = courseDataService.GetCourseValidationDetails(265, 101);

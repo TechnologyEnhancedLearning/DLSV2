@@ -140,19 +140,15 @@
 
         public bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId)
         {
+            var viewVerificationResult = VerifyAdminUserCanViewCourse(customisationId, centreId, categoryId);
+            if (viewVerificationResult != true)
+            {
+                return viewVerificationResult;
+            }
+
             var courseValidationDetails = courseDataService.GetCourseValidationDetails(customisationId, centreId);
 
-            if (courseValidationDetails == null)
-            {
-                return null;
-            }
-
-            if (courseValidationDetails.CentreId != centreId)
-            {
-                return false;
-            }
-
-            if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
+            if (courseValidationDetails!.AllCentres && courseValidationDetails.CentreId != centreId)
             {
                 return false;
             }
@@ -169,22 +165,16 @@
                 return null;
             }
 
-            if (courseValidationDetails.CentreId != centreId && !courseValidationDetails.AllCentres)
-            {
-                return false;
-            }
-
             if (categoryId != null && courseValidationDetails.CourseCategoryId != categoryId)
             {
                 return false;
             }
 
-            if (courseValidationDetails.AllCentres && !courseValidationDetails.CentreHasApplication)
-            {
-                return false;
-            }
+            var centreIdMatches = courseValidationDetails.CentreId == centreId;
+            var allCentresCourseWithApplication =
+                courseValidationDetails.AllCentres && courseValidationDetails.CentreHasApplication;
 
-            return true;
+            return centreIdMatches || allCentresCourseWithApplication;
         }
 
         public CourseDetails? GetCourseDetailsFilteredByCategory(int customisationId, int centreId, int? categoryId)

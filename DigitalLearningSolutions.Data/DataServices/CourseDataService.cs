@@ -277,7 +277,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         FROM Customisations AS c
                         JOIN Applications AS a on a.ApplicationID = c.ApplicationID
                         WHERE Active = 1 AND CentreID = @centreId
-                        AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)",
+	                    AND (a.CourseCategoryID = @adminCategoryId OR @adminCategoryId IS NULL)
+                        AND a.DefaultContentTypeID <> 4",
                 new { centreId, adminCategoryId }
             );
         }
@@ -312,7 +313,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND (cu.CentreID = @centreId OR (cu.AllCentres = 1 AND ca.Active = 1))
                         AND ca.CentreID = @centreId
-                        AND ap.ArchivedDate IS NULL",
+                        AND ap.ArchivedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -323,7 +325,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 $@"{SelectDelegateCourseInfoQuery}
                     WHERE pr.CandidateID = @delegateId
                         AND ap.ArchivedDate IS NULL
-                        AND pr.RemovedDate IS NULL",
+                        AND pr.RemovedDate IS NULL
+                        AND ap.DefaultContentTypeID <> 4",
                 new { delegateId }
             );
         }
@@ -400,7 +403,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
-                        AND cu.CustomisationID = @customisationId",
+                        AND cu.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
         }
@@ -460,7 +464,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE ap.ArchivedDate IS NULL
                         AND (c.CentreID = @centreId OR c.AllCentres = 1)
                         AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))
+                        AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -503,7 +508,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     WHERE cn.CentreID = @centreID
                     AND (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
-                    AND ap.ArchivedDate IS NULL",
+                    AND ap.ArchivedDate IS NULL
+                    AND ap.DefaultContentTypeID <> 4",
                 new { centreId, categoryId }
             );
         }
@@ -546,7 +552,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         END AS CentreHasApplication
                     FROM Customisations AS c
                     INNER JOIN Applications AS a on a.ApplicationID = c.ApplicationID
-                    WHERE CustomisationID = @customisationId",
+                    WHERE CustomisationID = @customisationId
+                        AND a.DefaultContentTypeID <> 4",
                 new { customisationId, centreId }
             );
         }
@@ -659,7 +666,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         (ap.CourseCategoryID = @categoryId OR @categoryId IS NULL)
                         AND cu.CentreID = @centreId
                         AND ap.ArchivedDate IS NULL
-                        AND cu.CustomisationID = @customisationId",
+                        AND cu.CustomisationID = @customisationId
+                        AND ap.DefaultContentTypeID <> 4",
                 new { customisationId, centreId, categoryId }
             ).FirstOrDefault();
         }
