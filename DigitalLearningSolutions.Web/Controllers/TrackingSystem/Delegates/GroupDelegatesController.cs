@@ -2,7 +2,6 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -107,18 +106,15 @@
         }
 
         [HttpGet("Add/{delegateId:int}/Confirmation")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult ConfirmDelegateAdded(int groupId, int delegateId)
         {
             var delegateUser = userService.GetDelegateUserById(delegateId);
-            if (delegateUser == null)
-            {
-                return NotFound();
-            }
 
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var model = new ConfirmDelegateAddedViewModel(delegateUser.FullName, groupName!, groupId);
+            var model = new ConfirmDelegateAddedViewModel(delegateUser!.FullName, groupName!, groupId);
             return View(model);
         }
 
@@ -140,9 +136,8 @@
             return View(model);
         }
 
-
-        [HttpGet]
-        [Route("{delegateId:int}/Remove")]
+        [HttpGet("{delegateId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult RemoveGroupDelegate(int groupId, int delegateId)
         {
             var centreId = User.GetCentreId();
@@ -150,32 +145,17 @@
             var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
             var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
 
-            if (groupName == null || delegateUser == null)
-            {
-                return NotFound();
-            }
-
             var progressId = groupsService.GetRelatedProgressIdForGroupDelegate(groupId, delegateId);
 
-            var model = new RemoveGroupDelegateViewModel(delegateUser, groupName, groupId, progressId);
+            var model = new RemoveGroupDelegateViewModel(delegateUser!, groupName!, groupId, progressId);
 
             return View(model);
         }
 
-        [HttpPost]
-        [Route("{delegateId:int}/Remove")]
+        [HttpPost("{delegateId:int}/Remove")]
+        [ServiceFilter(typeof(VerifyAdminUserCanAccessDelegateUser))]
         public IActionResult RemoveGroupDelegate(RemoveGroupDelegateViewModel model, int groupId, int delegateId)
         {
-            var centreId = User.GetCentreId();
-            var groupName = groupsService.GetGroupName(groupId, centreId);
-            var groupDelegates = groupsService.GetGroupDelegates(groupId).ToList();
-            var delegateUser = groupDelegates.SingleOrDefault(gd => gd.DelegateId == delegateId);
-
-            if (groupName == null || delegateUser == null)
-            {
-                return NotFound();
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(model);

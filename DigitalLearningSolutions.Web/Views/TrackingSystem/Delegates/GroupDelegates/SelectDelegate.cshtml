@@ -3,13 +3,12 @@
 @using Microsoft.Extensions.Configuration
 @model AddGroupDelegateViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/shared/cardWithButtons.css")" asp-append-version="true">
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/allDelegates.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/selectDelegate.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = $"Add delegate to {Model.GroupName} group";
   var routeParamsForGroupDelegates = new Dictionary<string, string> {
-    { "groupId", Model.GroupId.ToString() }
+    { "groupId", Model.GroupId.ToString() },
   };
 }
 
@@ -24,27 +23,22 @@
 
     <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
 
-    @if (Model.NoDataFound)
-    {
+    @if (Model.NoDataFound) {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No delegates found.</b>
       </p>
-    }
-    else
-    {
+    } else {
       <partial name="SearchablePage/_SearchResultsCount" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var delegateModel in Model.Delegates)
-        {
+        @foreach (var delegateModel in Model.Delegates) {
           <partial name="_AddGroupDelegateCard"
                    model="delegateModel"
-                   view-data="@(new ViewDataDictionary(ViewData) { { "groupId", @Model.GroupId } })" />
+                   view-data="@(new ViewDataDictionary(ViewData) { { "groupId", Model.GroupId } })" />
         }
       </div>
     }
-    @if (Model.TotalPages > 1)
-    {
+    @if (Model.TotalPages > 1) {
       <partial name="SearchablePage/_Pagination" model="Model" />
     }
 

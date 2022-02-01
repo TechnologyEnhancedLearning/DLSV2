@@ -88,15 +88,13 @@
             return View(model);
         }
         
-        [Route("Add")]
-        [HttpGet]
+        [HttpGet("Add")]
         public IActionResult AddDelegateGroup()
         {
             return View(new AddDelegateGroupViewModel());
         }
 
-        [Route("Add")]
-        [HttpPost]
+        [HttpPost("Add")]
         public IActionResult AddDelegateGroup(AddDelegateGroupViewModel model)
         {
             if (!ModelState.IsValid)
@@ -113,8 +111,7 @@
             return RedirectToAction("Index");
         }
 
-        [Route("{groupId:int}/EditDescription")]
-        [HttpGet]
+        [HttpGet("{groupId:int}/EditDescription")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditDescription(int groupId)
         {
@@ -125,8 +122,7 @@
             return View(model);
         }
 
-        [Route("{groupId:int}/EditDescription")]
-        [HttpPost]
+        [HttpPost("{groupId:int}/EditDescription")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditDescription(EditDelegateGroupDescriptionViewModel model, int groupId)
         {
@@ -145,9 +141,7 @@
             return RedirectToAction("Index");
         }
 
-        // TODO check this method is required here
-        [HttpGet]
-        [Route("{groupId:int}/EditGroupName")]
+        [HttpGet("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditGroupName(int groupId)
         {
@@ -163,9 +157,7 @@
             return View(model);
         }
 
-        // TODO check this method is required here
-        [HttpPost]
-        [Route("{groupId:int}/EditGroupName")]
+        [HttpPost("{groupId:int}/EditGroupName")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult EditGroupName(EditGroupNameViewModel model, int groupId)
         {
@@ -207,8 +199,7 @@
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        [Route("{groupId:int}/Delete/Confirm")]
+        [HttpGet("{groupId:int}/Delete/Confirm")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId)
         {
@@ -226,8 +217,7 @@
             return View(model);
         }
 
-        [HttpPost]
-        [Route("{groupId:int}/Delete/Confirm")]
+        [HttpPost("{groupId:int}/Delete/Confirm")]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessGroup))]
         public IActionResult ConfirmDeleteGroup(int groupId, ConfirmDeleteGroupViewModel model)
         {

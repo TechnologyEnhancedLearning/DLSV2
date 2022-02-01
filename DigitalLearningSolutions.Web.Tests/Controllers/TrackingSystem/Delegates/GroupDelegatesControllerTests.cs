@@ -13,6 +13,7 @@
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -57,14 +58,14 @@
             },
         };
 
-        private GroupDelegatesController groupDelegatesController = null!;
         private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+
+        private GroupDelegatesController groupDelegatesController = null!;
         private IGroupsService groupsService = null!;
-        private IJobGroupsService jobGroupsService = null!;
-        private IUserService userService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-
+        private IJobGroupsService jobGroupsService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
@@ -111,10 +112,13 @@
             var result = groupDelegatesController.Index(1);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName();
-            result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.GroupName.Should().Be("Group");
-            result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.CurrentPage.Should()
-                .Be(DelegateGroupPage.Delegates);
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().WithDefaultViewName();
+                result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.GroupName.Should().Be("Group");
+                result.As<ViewResult>().Model.As<GroupDelegatesViewModel>().NavViewModel.CurrentPage.Should()
+                    .Be(DelegateGroupPage.Delegates);
+            }
         }
 
         [Test]
@@ -136,7 +140,7 @@
             A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
 
             // When
-            var result = groupDelegatesController.SelectDelegate(groupId: 1, filterBy: filterBy);
+            var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy);
 
             // Then
             result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
@@ -153,9 +157,12 @@
             var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete(AddGroupDelegateFilterCookieName)).MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Delete(AddGroupDelegateFilterCookieName)).MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
+                    .BeNull();
+            }
         }
 
         [Test]
@@ -169,10 +176,19 @@
             var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append(AddGroupDelegateFilterCookieName, newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            AddGroupDelegateFilterCookieName,
+                            newFilterValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -186,10 +202,19 @@
             var result = groupDelegatesController.SelectDelegate(1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append(AddGroupDelegateFilterCookieName, newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => httpResponse.Cookies.Append(
+                            AddGroupDelegateFilterCookieName,
+                            newFilterValue,
+                            A<CookieOptions>._
+                        )
+                    )
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -230,73 +255,16 @@
             var result = groupDelegatesController.AddDelegate(2, 1);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName(nameof(GroupDelegatesController.ConfirmDelegateAdded));
+            result.Should().BeRedirectToActionResult()
+                .WithActionName(nameof(GroupDelegatesController.ConfirmDelegateAdded));
         }
-
-        [Test]
-        public void RemoveGroupDelegate_should_return_not_found_with_invalid_group_for_centre()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns(null);
-
-            // When
-            var result = groupDelegatesController.RemoveGroupDelegate(1, 2);
-
-            // Them
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void RemoveGroupDelegate_should_return_not_found_with_delegate_not_in_group()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
-
-            // When
-            var result = groupDelegatesController.RemoveGroupDelegate(1, 2);
-
-            // Them
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void RemoveGroupDelegatePost_should_return_not_found_with_invalid_group_for_centre()
-        {
-            // Given
-            var model = new RemoveGroupDelegateViewModel
-            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns(null);
-
-            // When
-            var result = groupDelegatesController.RemoveGroupDelegate(model, 1, 2);
-
-            // Them
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
-        public void RemoveGroupDelegatePost_should_return_not_found_with_delegate_not_in_group()
-        {
-            // Given
-            var model = new RemoveGroupDelegateViewModel
-            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
-            A.CallTo(() => groupsService.GetGroupDelegates(1)).Returns(new List<GroupDelegate>());
-
-            // When
-            var result = groupDelegatesController.RemoveGroupDelegate(model, 1, 2);
-
-            // Them
-            result.Should().BeNotFoundResult();
-        }
-
+        
         [Test]
         public void RemoveGroupDelegate_should_call_remove_progress_but_keep_started_enrolments_if_unchecked()
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = false };
 
             const int groupId = 44;
             const int delegateId = 3274;
@@ -312,10 +280,13 @@
             var result = groupDelegatesController.RemoveGroupDelegate(model, groupId, delegateId);
 
             // Then
-            A.CallTo(
-                () => groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments)
-            ).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => groupsService.RemoveDelegateFromGroup(groupId, delegateId, model.RemoveStartedEnrolments)
+                ).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
         }
 
         [Test]
@@ -323,7 +294,7 @@
         {
             // Given
             var model = new RemoveGroupDelegateViewModel
-            { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
+                { ConfirmRemovalFromGroup = true, RemoveStartedEnrolments = true };
             A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns("Group");
             A.CallTo(() => groupsService.GetGroupDelegates(1))
                 .Returns(new List<GroupDelegate> { new GroupDelegate { DelegateId = 2 } });
@@ -334,9 +305,12 @@
             var result = groupDelegatesController.RemoveGroupDelegate(model, 1, 2);
 
             // Then
-            A.CallTo(() => groupsService.RemoveDelegateFromGroup(1, 2, A<bool>._))
-                .MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            using (new AssertionScope())
+            {
+                A.CallTo(() => groupsService.RemoveDelegateFromGroup(1, 2, A<bool>._))
+                    .MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
         }
     }
 }
