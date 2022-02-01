@@ -42,19 +42,6 @@
         }
 
         [Test]
-        public void GroupCourses_Index_returns_not_found_with_incorrect_group_id_for_centre()
-        {
-            // Given
-            A.CallTo(() => groupsService.GetGroupName(1, 2)).Returns(null);
-
-            // When
-            var result = groupCoursesController.Index(1);
-
-            // Then
-            result.Should().BeNotFoundResult();
-        }
-
-        [Test]
         public void GroupCourses_Index_returns_view_result_with_correct_group_id_for_centre()
         {
             // Given
