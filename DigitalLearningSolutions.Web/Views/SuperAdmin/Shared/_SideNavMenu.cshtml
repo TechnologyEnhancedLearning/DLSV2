@@ -1,31 +1,30 @@
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
-@model FaqsPageViewModel
+@model SuperAdminSystemPage
 
 <h2 class="side-nav__heading">System</h2>
 <ul class="nhsuk-list side-nav__list">
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      link-text="Configuration"
-                     is-current-page="@(Model.CurrentPage == SuperAdminSystemPage.Configuration)" />
+                     is-current-page="@(Model == SuperAdminSystemPage.Configuration)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      link-text="Manage Lists"
-                     is-current-page="@(Model.CurrentPage == SuperAdminSystemPage.ManageLists)" />
+                     is-current-page="@(Model == SuperAdminSystemPage.ManageLists)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      link-text="Notifications"
-                     is-current-page="@(Model.CurrentPage == SuperAdminSystemPage.Notifications)" />
+                     is-current-page="@(Model == SuperAdminSystemPage.Notifications)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      link-text="Resources"
-                     is-current-page="@(Model.CurrentPage == SuperAdminSystemPage.Resources)" />
+                     is-current-page="@(Model == SuperAdminSystemPage.Resources)" />
 
   <vc:side-menu-link asp-action="Index"
                      asp-controller="Faqs"
                      link-text="FAQs"
-                     is-current-page="@(Model.CurrentPage == SuperAdminSystemPage.FAQs)" />
+                     is-current-page="@(Model == SuperAdminSystemPage.FAQs)" />
 </ul>

@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         [Test]
         public void Faqs_page_should_return_expected_Faqs_view_page()
         {
-            //When
+            // When
             var results = controller.Index();
 
             //Then
