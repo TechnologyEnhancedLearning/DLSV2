@@ -24,7 +24,9 @@
             int delegateId
         );
 
-        Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
+        Task<(ActionPlanResource? actionPlanResource, bool apiIsAccessible)> GetActionPlanResource(
+            int learningLogItemId
+        );
 
         void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateId);
 
@@ -145,18 +147,19 @@
             return await MapLearningLogItemsToActionPlanResources(completedLearningLogItems);
         }
 
-        public async Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId)
+        public async Task<(ActionPlanResource? actionPlanResource, bool apiIsAccessible)> GetActionPlanResource(
+            int learningLogItemId
+        )
         {
             var learningLogItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
-            var (resource, _) =
-                await learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
-                    learningLogItem.LearningHubResourceReferenceId!.Value
-                );
+            var (resource, apiIsAccessible) = await learningHubResourceService.GetResourceByReferenceId(
+                learningLogItem.LearningHubResourceReferenceId!.Value
+            );
 
             return resource != null
-                ? new ActionPlanResource(learningLogItem, resource)
-                : null;
+                ? (new ActionPlanResource(learningLogItem, resource), apiIsAccessible)
+                : (null, apiIsAccessible);
         }
 
         public void UpdateActionPlanResourcesLastAccessedDateIfPresent(

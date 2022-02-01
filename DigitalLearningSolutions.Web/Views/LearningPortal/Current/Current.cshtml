@@ -1,3 +1,4 @@
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using Microsoft.Extensions.Configuration
@@ -25,7 +26,9 @@
     }
 
     @if (!Model.ApiIsAccessible) {
-      <partial name="Signposting/_ApiIsNotAccessibleWarning" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4"
+        text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
     }
 
     @if (Model.NoDataFound) {
