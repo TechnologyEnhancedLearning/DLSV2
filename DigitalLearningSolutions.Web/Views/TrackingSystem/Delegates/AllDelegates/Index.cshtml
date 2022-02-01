@@ -38,22 +38,27 @@
       </div>
     </div>
 
-    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model"/>
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
 
-    @if (Model.NoDataFound) {
+    @if (Model.NoDataFound)
+    {
       <p class="nhsuk-u-margin-top-4" role="alert">
         <b>No delegates found.</b>
       </p>
-    } else {
-      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+    }
+    else
+    {
+      <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
 
       <div id="searchable-elements">
-        @foreach (var delegateModel in Model.Delegates) {
+        @foreach (var delegateModel in Model.Delegates)
+        {
           <partial name="_SearchableDelegateCard" model="delegateModel" />
         }
       </div>
     }
-    @if (Model.TotalPages > 1) {
+    @if (Model.TotalPages > 1)
+    {
       <partial name="SearchablePage/_Pagination" model="Model" />
     }
 

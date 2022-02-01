@@ -1,0 +1,46 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SummaryViewModel
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Allow self-enrolment
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.AllowSelfEnrolment ? "Yes" : "No")
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseOptions">
+      Change<span class="nhsuk-u-visually-hidden"> self-enrolment</span>
+    </a>
+  </dd>
+</div>
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Hide in Learning Portal
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @(Model.HideInLearningPortal ? "Yes" : "No")
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    <a asp-action="SetCourseOptions">
+      Change<span class="nhsuk-u-visually-hidden"> Learning Portal access</span>
+    </a>
+  </dd>
+</div>
+
+@if (Model.DiagAssess) {
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Allow diagnostic objective selection
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @(Model.DiagnosticObjectiveSelection ? "Yes" : "No")
+    </dd>
+    <dd class="nhsuk-summary-list__actions">
+      <a asp-action="SetCourseOptions">
+        Change<span class="nhsuk-u-visually-hidden"> diagnostic objective selection</span>
+      </a>
+    </dd>
+  </div>
+}

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
     using Microsoft.Extensions.Logging;
 
     public interface ISelfAssessmentDataService
@@ -52,7 +53,9 @@
 
         CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
             int competencyId,
-            int selfAssessmentId
+            int selfAssessmentId,
+            int assessmentQuestionId,
+            int levelValue
         );
 
         IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
@@ -127,6 +130,14 @@
         IEnumerable<Goal> GetFilteredGoalsForCandidateId(int candidateId, int selfAssessmentId);
 
         void LogAssetLaunch(int candidateId, int selfAssessmentId, LearningAsset learningAsset);
+
+        //Export Candidate Assessment
+        CandidateAssessmentExportSummary GetCandidateAssessmentExportSummary(int candidateAssessmentId, int candidateId);
+
+        List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
+            int candidateAssessmentId, int candidateId
+        );
+
     }
 
     public partial class SelfAssessmentDataService : ISelfAssessmentDataService

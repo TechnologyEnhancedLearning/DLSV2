@@ -164,6 +164,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                 ModelState
             );
 
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                model.HasProfessionalRegistrationNumber,
+                model.ProfessionalRegistrationNumber
+            );
+
             if (!ModelState.IsValid)
             {
                 PopulateLearnerInformationExtraFields(model, data);
@@ -243,6 +249,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
                         RegistrationMappingHelper.MapSelfRegistrationToDelegateRegistrationModel(data),
                         userIp,
                         refactoredTrackingSystemEnabled,
+                        data.ProfessionalRegistrationNumber,
                         data.SupervisorDelegateId
                     );
 

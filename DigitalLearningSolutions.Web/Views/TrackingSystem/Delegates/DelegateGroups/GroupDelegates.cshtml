@@ -10,13 +10,13 @@
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/groupDelegates.css")" asp-append-version="true">
 
 @section NavBreadcrumbs {
-  <partial name="_DelegateGroupBreadcrumbs" />
+  <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupBreadcrumbs.cshtml" />
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-one-quarter">
     <nav class="side-nav-menu" aria-label="Side navigation bar">
-      <partial name="_DelegateGroupsSideNavMenu" model="Model.NavViewModel" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupsSideNavMenu.cshtml" model="Model.NavViewModel" />
     </nav>
   </div>
 
@@ -53,7 +53,7 @@
     </form>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
-      <partial name="_DelegateGroupsSideNavMenu" model="Model.NavViewModel" />
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateGroupsSideNavMenu.cshtml" model="Model.NavViewModel" />
     </nav>
   </div>
 </div>

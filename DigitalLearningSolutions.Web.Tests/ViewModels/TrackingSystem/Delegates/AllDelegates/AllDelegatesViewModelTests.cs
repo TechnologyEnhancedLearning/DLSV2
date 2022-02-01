@@ -44,7 +44,9 @@
             new DelegateUserCard
                 { FirstName = "n", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard
-                { FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) }
+                { FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) },
+            new DelegateUserCard
+                { FirstName = "p", LastName = "Surname", Answer4 = "C 1" },
         };
 
         [Test]
@@ -59,6 +61,7 @@
                 null,
                 DelegateSortByOptions.Name.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
+                null,
                 null
             );
 
@@ -80,12 +83,35 @@
                 null,
                 DelegateSortByOptions.Name.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
+                null,
                 null
             );
 
             // Then
-            model.Delegates.Count().Should().Be(5);
+            model.Delegates.Count().Should().Be(6);
             model.Delegates.First().DelegateInfo.Name.Should().BeEquivalentTo("k Surname");
+        }
+
+        [Test]
+        public void All_delegates_should_default_to_returning_the_first_fifteen_delegates()
+        {
+            // When
+            var model = new AllDelegatesViewModel(
+                delegateUsers,
+                new List<(int, string)>(),
+                new List<CustomPrompt>(),
+                1,
+                null,
+                DelegateSortByOptions.Name.PropertyName,
+                BaseSearchablePageViewModel.Ascending,
+                null,
+                15
+            );
+
+            // Then
+            model.Delegates.Count().Should().Be(15);
+            model.Delegates.FirstOrDefault(delegateUser => delegateUser.DelegateInfo.Name == "p Surname").Should()
+                .BeNull();
         }
 
         [Test]
@@ -100,6 +126,7 @@
                 "purple",
                 DelegateSortByOptions.Name.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
+                null,
                 null
             );
 
@@ -121,6 +148,7 @@
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
                 BaseSearchablePageViewModel.Descending,
+                null,
                 null
             );
 
@@ -142,7 +170,8 @@
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
-                "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2"
+                "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2",
+                null
             );
 
             // Then
@@ -164,7 +193,8 @@
                 DelegateSortByOptions.RegistrationDate.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
                 "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
-                FilteringHelper.EmptyValue
+                FilteringHelper.EmptyValue,
+                null
             );
 
             // Then
@@ -196,6 +226,7 @@
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
                 BaseSearchablePageViewModel.Ascending,
+                null,
                 null
             );
 

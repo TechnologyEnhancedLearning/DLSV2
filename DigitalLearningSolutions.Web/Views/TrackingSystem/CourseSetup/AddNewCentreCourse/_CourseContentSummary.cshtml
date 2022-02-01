@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SummaryViewModel
+
+<div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    Course content
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @if (Model.NoContent) {
+      <p>No content</p>
+    } else if (Model.IncludeAllSections) {
+      <p>All content enabled</p>
+    } else {
+      <p>@(Model.NumberOfLearning == 0 ? "No" : Model.NumberOfLearning.ToString()) learning</p>
+      @if (Model.DiagAssess) {
+        <p>@(Model.NumberOfDiagnostic == 0 ? "No" : Model.NumberOfDiagnostic.ToString()) diagnostic</p>
+      }
+    }
+  </dd>
+  <dd class="nhsuk-summary-list__actions">
+    @if (!Model.NoContent) {
+      <a asp-action="SetCourseContent">
+        Change<span class="nhsuk-u-visually-hidden"> course content</span>
+      </a>
+    }
+  </dd>
+</div>

@@ -8,18 +8,24 @@
     {
         public MarkActionPlanResourceAsCompleteFormData() { }
 
-        protected MarkActionPlanResourceAsCompleteFormData(MarkActionPlanResourceAsCompleteFormData formData)
+        protected MarkActionPlanResourceAsCompleteFormData(
+            MarkActionPlanResourceAsCompleteFormData formData
+        )
         {
             ResourceName = formData.ResourceName;
+            AbsentInLearningHub = formData.AbsentInLearningHub;
             Day = formData.Day;
             Month = formData.Month;
             Year = formData.Year;
+            ApiIsAccessible = formData.ApiIsAccessible;
         }
 
         public string ResourceName { get; set; }
+        public bool AbsentInLearningHub { get; set; }
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
+        public bool ApiIsAccessible { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -1,0 +1,51 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Signposting
+@model LearningHubLoginWarningViewModel
+
+@{
+  ViewData[LayoutViewDataKeys.Title] = "Learning Hub Login Warning";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/signposting/loginWarning.css")" asp-append-version="true">
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">View resource "@Model.ResourceTitle"</h1>
+
+    <div class="nhsuk-u-margin-bottom-4">
+      @if (!Model.ApiIsAccessible) {
+        <vc:inset-text
+          css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+          text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+      }
+
+      @if (!Model.LearningHubAccountLinked) {
+        <vc:inset-text
+          css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+          text="@LearningHubWarningTextHelper.LinkAccount" />
+      }
+    </div>
+
+    <p>Please note that you will only be logged into Learning Hub automatically if you navigate to this resource via Digital Learning Solutions.</p>
+
+    <form class="nhsuk-u-margin-bottom-3"
+          method="post" novalidate
+          asp-action="LaunchLearningResource"
+          asp-controller="Signposting"
+          asp-route-resourceReferenceId="@Model.ResourceRefId">
+      <vc:single-checkbox asp-for="@nameof(Model.LearningHubLoginWarningDismissed)"
+                          label="Don't warn me again."
+                          hint-text="" />
+
+      <div class="nhsuk-action-link">
+        <button class="button-as-link launch-resource-button nhsuk-action-link__link" type="submit" role="link">
+          <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" width="36" height="36">
+            <path d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+          </svg>
+          <span class="nhsuk-action-link__text">Launch resource</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

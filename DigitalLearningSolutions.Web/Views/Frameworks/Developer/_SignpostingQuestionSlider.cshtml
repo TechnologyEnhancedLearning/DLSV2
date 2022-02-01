@@ -1,0 +1,50 @@
+﻿@using DigitalLearningSolutions.Data.Models.Frameworks
+@model CompetencyResourceAssessmentQuestionParameter
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
+
+<label>
+  <h3 class="nhsuk-u-margin-bottom-1">@Model.AssessmentQuestion.Question</h3>
+</label>
+<div class="nhsuk-hint">
+  Minimum
+</div>
+<div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
+  <div class="grid-column-85">
+    <input type="range"
+           id="MinResultMatch-input"
+           name="assessmentParameter.MinResultMatch"
+           min="@Model.AssessmentQuestion.MinValue"
+           max="@Model.AssessmentQuestion.MaxValue"
+           value="@Model.MinResultMatch"
+           step="1"
+           aria-valuemin="@Model.AssessmentQuestion.MinValue"
+           aria-valuemax="@Model.AssessmentQuestion.MaxValue"
+           aria-valuenow="@Model.MinResultMatch">
+  </div>
+  <div class="grid-column-15">
+    <span class="range-output" for="MinResultMatch-input">@Model.MinResultMatch</span>
+  </div>
+  <input hidden name="MinResultMatch" value="@Model.MinResultMatch" />
+</div>
+<div class="nhsuk-hint">
+  Maximum
+</div>
+<div class="nhsuk-grid-row range-input-row nhsuk-u-margin-bottom-5">
+  <div class="grid-column-85">
+    <input type="range"
+           id="MaxResultMatch-input"
+           name="assessmentParameter.MaxResultMatch"
+           min="@Model.AssessmentQuestion.MinValue"
+           max="@Model.AssessmentQuestion.MaxValue"
+           value="@Model.MaxResultMatch"
+           step="1"
+           aria-valuemin="@Model.AssessmentQuestion.MinValue"
+           aria-valuemax="@Model.AssessmentQuestion.MaxValue"
+           aria-valuenow="@Model.MaxResultMatch">
+  </div>
+  <div class="grid-column-15">
+    <span class="range-output" for="MaxResultMatch-input">@Model.MaxResultMatch</span>
+  </div>
+  <input hidden name="MaxResultMatch" value="@Model.MaxResultMatch" />
+</div>

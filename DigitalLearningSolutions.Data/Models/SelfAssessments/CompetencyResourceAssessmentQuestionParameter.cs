@@ -11,5 +11,9 @@
         public int? RelevanceAssessmentQuestionId { get; set; }
 
         public bool CompareToRoleRequirements { get; set; }
+
+        public int MinResultMatch { get; set; }
+
+        public int MaxResultMatch { get; set; }
     }
 }

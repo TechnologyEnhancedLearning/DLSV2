@@ -15,11 +15,15 @@
             ResourceType = resource.ResourceType;
             CatalogueName = resource.CatalogueName;
             ResourceLink = resource.ResourceLink;
+            ResourceReferenceId = resource.ResourceReferenceId;
+            AbsentInLearningHub = resource.AbsentInLearningHub;
         }
 
         public string ResourceDescription { get; set; }
         public string ResourceLink { get; set; }
         public string CatalogueName { get; set; }
         public string ResourceType { get; set; }
+        public int ResourceReferenceId { get; set; }
+        public bool AbsentInLearningHub { get; set; }
     }
 }

@@ -50,11 +50,17 @@
             int? categoryId
         );
 
+        public IEnumerable<ApplicationDetails> GetApplicationOptionsAlphabeticalListForCentre(
+            int centreId,
+            int? categoryId,
+            int? topicId = null
+        );
+
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         );
 
         public void UpdateCourseDetails(
@@ -76,6 +82,8 @@
         IEnumerable<CourseAssessmentDetails> GetEligibleCoursesToAddToGroup(int centreId, int? categoryId, int groupId);
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
+
+        int CreateNewCentreCourse(Customisation customisation);
     }
 
     public class CourseService : ICourseService
@@ -209,17 +217,17 @@
         }
 
         public bool DoesCourseNameExistAtCentre(
-            int customisationId,
             string customisationName,
             int centreId,
-            int applicationId
+            int applicationId,
+            int customisationId = 0
         )
         {
             return courseDataService.DoesCourseNameExistAtCentre(
-                customisationId,
                 customisationName,
                 centreId,
-                applicationId
+                applicationId,
+                customisationId
             );
         }
 
@@ -311,6 +319,25 @@
         public int? GetCourseCategoryId(int customisationId, int centreId)
         {
             return courseDataService.GetCourseValidationDetails(customisationId, centreId)?.CourseCategoryId;
+        }
+
+        public int CreateNewCentreCourse(
+            Customisation customisation
+        )
+        {
+            return courseDataService.CreateNewCentreCourse(customisation);
+        }
+
+        public IEnumerable<ApplicationDetails>
+            GetApplicationOptionsAlphabeticalListForCentre(
+                int centreId,
+                int? categoryId,
+                int? topicId = null
+            )
+        {
+            var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
+            var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
+            return filteredApplications.OrderBy(a => a.ApplicationName);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

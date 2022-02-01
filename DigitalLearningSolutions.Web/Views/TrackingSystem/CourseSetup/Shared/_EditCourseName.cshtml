@@ -1,0 +1,28 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditCourseDetailsFormData
+
+<input type="hidden" asp-for="ApplicationId" />
+<input type="hidden" asp-for="ApplicationName" />
+
+<div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
+
+  <div class="nhsuk-grid-column-one-half nhsuk-heading-s word-break">
+    <label class="nhsuk-u-font-weight-normal nhsuk-u-margin-bottom-0">
+      Course name
+    </label>
+    <div class="nhsuk-u-margin-top-1">
+      @Model.ApplicationName -
+    </div>
+  </div>
+  <div class="nhsuk-grid-column-one-half nhsuk-u-margin-top-1">
+    <vc:text-input asp-for="@nameof(Model.CustomisationName)"
+                   id="CustomisationNameSuffix"
+                   label="Add on to course name (optional)"
+                   populate-with-current-value="true"
+                   type="text"
+                   spell-check="true"
+                   autocomplete="off"
+                   hint-text=""
+                   css-class="nhsuk-u-width-three-quarters nhsuk-u-font-weight-normal" />
+  </div>
+</div>

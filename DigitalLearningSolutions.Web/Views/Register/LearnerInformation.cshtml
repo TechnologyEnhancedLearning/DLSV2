@@ -6,6 +6,8 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Register - Learner information" : "Register - Learner information";
 }
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/formElements.css")" asp-append-version="true">
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
@@ -16,45 +18,43 @@
                                                    nameof(Model.Answer3),
                                                    nameof(Model.Answer4),
                                                    nameof(Model.Answer5),
-                                                   nameof(Model.Answer6)
-                                                 })" />
+                                                   nameof(Model.Answer6) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Learner information</h1>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="LearnerInformation">
 
-      <vc:select-list
-        asp-for="JobGroup"
-        label="Job Group"
-        value="@Model.JobGroup?.ToString()"
-        hint-text=""
-        deselectable="false"
-        css-class="nhsuk-u-width-one-half"
-        default-option="Select a job group"
-        select-list-options="@Model.JobGroupOptions" />
+      <vc:select-list asp-for="JobGroup"
+                      label="Job Group"
+                      value="@Model.JobGroup?.ToString()"
+                      hint-text=""
+                      deselectable="false"
+                      css-class="nhsuk-u-width-one-half"
+                      default-option="Select a job group"
+                      select-list-options="@Model.JobGroupOptions" />
+
+      <partial name="_EditRegistrationNumber" model="@Model" />
 
       @foreach (var customField in Model.CustomFields) {
         if (customField.Options.Any()) {
-          <vc:select-list
-            asp-for="@("Answer" + customField.CustomFieldId)"
-            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
-            value="@customField.Answer"
-            hint-text=""
-            deselectable="@(!customField.Mandatory)"
-            css-class="nhsuk-u-width-one-half"
-            default-option="Select a @customField.CustomPrompt.ToLower()"
-            select-list-options="@customField.Options" />
+          <vc:select-list asp-for="@("Answer" + customField.CustomFieldId)"
+                          label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                          value="@customField.Answer"
+                          hint-text=""
+                          deselectable="@(!customField.Mandatory)"
+                          css-class="nhsuk-u-width-one-half"
+                          default-option="Select a @customField.CustomPrompt.ToLower()"
+                          select-list-options="@customField.Options" />
         } else {
-          <vc:text-input
-            asp-for="@("Answer" + customField.CustomFieldId)"
-            label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
-            populate-with-current-value="true"
-            type="text"
-            spell-check="false"
-            hint-text=""
-            autocomplete=""
-            css-class="nhsuk-u-width-one-half" />
+          <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
+                         label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+                         populate-with-current-value="true"
+                         type="text"
+                         spell-check="false"
+                         hint-text=""
+                         autocomplete=""
+                         css-class="nhsuk-u-width-one-half" />
         }
       }
 

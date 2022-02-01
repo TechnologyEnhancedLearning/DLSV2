@@ -78,7 +78,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId,
-                Email = duplicateUser.EmailAddress
+                Email = duplicateUser.EmailAddress,
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(false);
@@ -103,7 +103,7 @@
                 FirstName = "Test",
                 LastName = "User",
                 Centre = duplicateUser.CentreId + 1,
-                Email = duplicateUser.EmailAddress
+                Email = duplicateUser.EmailAddress,
             };
             A.CallTo(() => userService.IsDelegateEmailValidForCentre(model.Email!, model.Centre.Value))
                 .Returns(true);
@@ -176,6 +176,7 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
+                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -214,6 +215,7 @@
                             ),
                             IpAddress,
                             false,
+                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -239,6 +241,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -264,6 +267,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -289,6 +293,7 @@
                             A<DelegateRegistrationModel>._,
                             IpAddress,
                             false,
+                            null,
                             SupervisorDelegateId
                         )
                 )
@@ -307,6 +312,7 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
+                        A<string?>._,
                         A<int>._
                     )
                 )
@@ -335,6 +341,7 @@
                         A<DelegateRegistrationModel>._,
                         A<string>._,
                         A<bool>._,
+                        A<string?>._,
                         A<int>._
                     )
                 )

@@ -8,6 +8,7 @@
     public interface IUserDataService
     {
         AdminUser? GetAdminUserById(int id);
+
         List<AdminUser> GetAdminUsersByCentreId(int centreId);
 
         /// <summary>
@@ -18,8 +19,11 @@
         ///     This should not occur as Login is not an editable column.
         /// </exception>
         AdminUser? GetAdminUserByUsername(string username);
+
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+
         int GetNumberOfActiveAdminsAtCentre(int centreId);
+
         void UpdateAdminUser(string firstName, string surname, string email, byte[]? profileImage, int id);
 
         void UpdateAdminUserPermissions(
@@ -36,9 +40,13 @@
         void UpdateAdminUserFailedLoginCount(int adminId, int updatedCount);
 
         DelegateUser? GetDelegateUserById(int id);
+
         List<DelegateUser> GetDelegateUsersByUsername(string username);
+
         List<DelegateUser> GetAllDelegateUsersByUsername(string username);
+
         List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
+
         List<DelegateUser> GetUnapprovedDelegateUsersByCentreId(int centreId);
 
         void UpdateDelegateUsers(
@@ -46,6 +54,8 @@
             string surname,
             string email,
             byte[]? profileImage,
+            string? professionalRegNumber,
+            bool hasBeenPromptedForPrn,
             int[] ids
         );
 
@@ -66,15 +76,23 @@
         );
 
         void ApproveDelegateUsers(params int[] ids);
+
         void RemoveDelegateUser(int delegateId);
+
         int GetNumberOfApprovedDelegatesAtCentre(int centreId);
+
         DelegateUser? GetDelegateUserByAliasId(string aliasId, int centreId);
+
         DelegateUser? GetDelegateUserByCandidateNumber(string candidateNumber, int centreId);
+
         void DeactivateDelegateUser(int delegateId);
+
         IEnumerable<DelegateUser> GetDelegateUsersByAliasId(string aliasId);
+
         void UpdateDelegateAccountDetails(string firstName, string surname, string email, int[] ids);
 
         DelegateUserCard? GetDelegateUserCardById(int id);
+
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
         void UpdateDelegateUserCentrePrompts(
@@ -89,9 +107,24 @@
         );
 
         int GetDelegateCountWithAnswerForPrompt(int centreId, int promptNumber);
+
         void DeleteAllAnswersForPrompt(int centreId, int promptNumber);
+
         void DeactivateAdmin(int adminId);
+
         void ActivateDelegateUser(int delegateId);
+
+        int? GetDelegateUserLearningHubAuthId(int delegateId);
+
+        void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
+
+        void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
+
+        void UpdateDelegateProfessionalRegistrationNumber(
+            int delegateId,
+            string? professionalRegistrationNumber,
+            bool hasBeenPromptedForPrn
+        );
     }
 
     public partial class UserDataService : IUserDataService
