@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using FaqsPageViewModel = DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs.FaqsPageViewModel;
+    using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]

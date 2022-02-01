@@ -55,18 +55,5 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 .Model.Should().BeOfType<FaqsPageViewModel>()
                 .Subject.Faqs.First().Should().Match<SearchableFaqViewModel>(f => f.FaqId == 2);
         }
-
-
-        [Test]
-        public void Faqs_page_returns_10_results_even_if_more_are_returned_by_service_method()
-        {
-            //When
-            var results = controller.Index();
-
-            //Then
-            results.Should().BeViewResult().WithViewName("SuperAdminFaqs")
-                .Model.Should().BeOfType<FaqsPageViewModel>()
-                .Subject.Faqs.Should().HaveCount(10);
-        }
     }
 }

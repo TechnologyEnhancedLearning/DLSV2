@@ -116,16 +116,16 @@
             const int expectedTargetGroup = 3;
             var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All()
                 .With(f => f.Published = true)
-                .And(f => f.TargetGroup = 3).Build();
+                .And(f => f.TargetGroup = expectedTargetGroup).Build();
             var unexpectedFaqs = Builder<Faq>.CreateListOfSize(6)
                 .TheFirst(2)
-                .With(f => f.TargetGroup != 3)
+                .With(f => f.TargetGroup != expectedTargetGroup)
                 .With(f => f.Published = false)
                 .TheNext(2)
-                .With(f => f.TargetGroup = 3)
+                .With(f => f.TargetGroup = expectedTargetGroup)
                 .With(f => f.Published = false)
                 .TheNext(2)
-                .With(f => f.TargetGroup != 3)
+                .With(f => f.TargetGroup != expectedTargetGroup)
                 .With(f => f.Published = true)
                 .Build();
             var dataServiceFaqs = expectedFaqs.Concat(unexpectedFaqs);

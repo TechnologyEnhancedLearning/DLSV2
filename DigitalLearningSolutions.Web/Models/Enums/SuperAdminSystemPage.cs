@@ -4,7 +4,6 @@ namespace DigitalLearningSolutions.Web.Models.Enums
     {
         Configuration,
         ManageLists,
-        LandingContent,
         Notifications,
         Resources,
         FAQs

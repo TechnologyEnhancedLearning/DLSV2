@@ -2,7 +2,6 @@
 {
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Shared.Faqs;
-    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
     using FluentAssertions;
     using NUnit.Framework;
 

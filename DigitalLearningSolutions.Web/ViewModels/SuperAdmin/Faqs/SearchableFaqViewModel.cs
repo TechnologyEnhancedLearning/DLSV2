@@ -14,11 +14,8 @@
             AHtml = faq.AHtml;
             CreatedDate = faq.CreatedDate.ToShortDateString();
             Published = faq.Published ? "Published" : "Unpublished";
-            QAnchor = faq.QAnchor;
             QText = faq.QText;
-            TargetGroup = Enumeration.GetAll<FaqsTargetGroup>()
-                .Where(x => x.Id == faq.TargetGroup)
-                .Select(x => x.DisplayName).First();
+            TargetGroup = Enumeration.FromId<FaqsTargetGroup>(faq.TargetGroup).DisplayName;
             Weighting = faq.Weighting;
         }
 
@@ -26,7 +23,6 @@
         public string AHtml { get; set; }
         public string CreatedDate { get; set; }
         public string Published { get; set; }
-        public string QAnchor { get; set; }
         public string QText { get; set; }
         public string TargetGroup { get; set; }
         public int Weighting { get; set; }
