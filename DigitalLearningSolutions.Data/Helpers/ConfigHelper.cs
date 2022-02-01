@@ -9,7 +9,7 @@
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
         public const string UseSignposting = "FeatureManagement:UseSignposting";
-        private const string PricingPageEnabled = "FeatureManagement:PricingPageEnabled";
+        private const string PricingPageEnabled = "FeatureManagement:PricingPage";
 
         private const string LearningHubSsoSectionKey = "LearningHubSSO";
         private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
