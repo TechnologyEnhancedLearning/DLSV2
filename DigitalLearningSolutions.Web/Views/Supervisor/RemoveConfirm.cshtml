@@ -24,12 +24,12 @@
         </div>
       </div>
       <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-        @Model.FirstName @Model.LastName (@Model.DelegateEmail)
+        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName (@Model.SupervisorDelegateDetail.DelegateEmail)
       </div>
     </div>
-    <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
+    <p class="nhsuk-body-m">You are supervising @Model.SupervisorDelegateDetail.CandidateAssessmentCount profile assessments for this member of staff.</p>
     <p class="nhsuk-body-m">Are you sure that you wish to remove them from your staff list?</p>
-    <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate" asp-route-supervisorDelegateId="@Model.ID">
+    <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
       Remove
     </a>
     <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList" asp-route-returnPage="@Model.Page">
