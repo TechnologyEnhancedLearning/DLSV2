@@ -525,7 +525,7 @@
             A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
-            A.CallTo(() => groupsDataService.GetGroupCourseById(groupCourse.GroupCustomisationId))
+            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(groupCourse.GroupCustomisationId, centreId))
                 .Returns(groupCourse);
         }
     }

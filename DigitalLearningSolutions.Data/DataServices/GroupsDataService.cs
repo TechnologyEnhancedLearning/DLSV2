@@ -67,8 +67,6 @@
             bool cohortLearners,
             int? supervisorAdminId
         );
-
-        GroupCourse? GetGroupCourseById(int groupCustomisationId);
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -107,7 +105,13 @@
                     JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
                     LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
-                    WHERE ap.DefaultContentTypeID <> 4";
+                    WHERE ap.DefaultContentTypeID <> 4
+                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
+                        AND EXISTS (
+                            SELECT CentreApplicationID
+                            FROM CentreApplications
+                            WHERE (ApplicationID = c.ApplicationID)
+                                AND (CentreID = @centreID) AND (Active = 1))";
 
         private readonly IDbConnection connection;
 
@@ -170,9 +174,7 @@
         public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
-                @$"{GroupCourseSql}
-                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
-                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
+                @$"{GroupCourseSql}",
                 new { centreId }
             );
         }
@@ -180,16 +182,8 @@
         public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId)
         {
             return connection.Query<GroupCourse>(
-                @$"{GroupCourseSql} AND c.CentreId = @centreId AND gc.GroupCustomisationID = @groupCustomisationId",
-                new { groupCustomisationId, centreId }
-            ).FirstOrDefault();
-        }
-
-        public GroupCourse? GetGroupCourseById(int groupCustomisationId)
-        {
-            return connection.Query<GroupCourse>(
                 @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
-                new { groupCustomisationId }
+                new { groupCustomisationId, centreId }
             ).FirstOrDefault();
         }
 

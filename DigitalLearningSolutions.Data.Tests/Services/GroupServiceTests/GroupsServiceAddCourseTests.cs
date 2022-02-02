@@ -10,6 +10,8 @@
 
     public partial class GroupsServiceTests
     {
+        private const int centreId = 1;
+
         [Test]
         public void AddCourseToGroup_adds_new_group_customisations_record()
         {
@@ -26,7 +28,8 @@
                 completeWithinMonths,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -58,7 +61,8 @@
                 8,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -103,7 +107,8 @@
                 8,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -148,7 +153,8 @@
                 8,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -192,7 +198,8 @@
                 8,
                 adminId,
                 true,
-                null
+                null,
+                centreId
             );
 
             // Then
@@ -237,7 +244,8 @@
                 8,
                 adminId,
                 true,
-                supervisorId
+                supervisorId,
+                centreId
             );
 
             // Then
@@ -284,7 +292,8 @@
                 0,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -333,7 +342,8 @@
                 completeWithinMonths,
                 adminId,
                 true,
-                adminId
+                adminId,
+                centreId
             );
 
             // Then
@@ -379,7 +389,8 @@
                 8,
                 adminId,
                 true,
-                supervisorId
+                supervisorId,
+                centreId
             );
 
             // Then
@@ -416,7 +427,8 @@
                 8,
                 1,
                 true,
-                1
+                1,
+                centreId
             );
 
             // Then
@@ -455,7 +467,8 @@
                 8,
                 1,
                 true,
-                1
+                1,
+                centreId
             );
 
             // Then
@@ -489,7 +502,8 @@
                 8,
                 1,
                 true,
-                1
+                1,
+                centreId
             );
 
             // Then
@@ -525,7 +539,8 @@
                 0,
                 1,
                 true,
-                1
+                1,
+                centreId
             );
 
             // Then
@@ -573,7 +588,8 @@
                 8,
                 1,
                 true,
-                1
+                1,
+                centreId
             );
 
             // Then

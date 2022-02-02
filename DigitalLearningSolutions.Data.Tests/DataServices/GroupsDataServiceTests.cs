@@ -782,32 +782,6 @@
             }
         }
 
-        [Test]
-        public void GetGroupCourseById_returns_expected_course()
-        {
-            // Given
-            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
-            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
-                25,
-                103,
-                supervisorAdminId: 1,
-                completeWithinMonths: 0,
-                supervisorFirstName: "Kevin",
-                supervisorLastName: "Whittaker (Developer)",
-                addedToGroup: expectedDateTime
-            );
-
-            // When
-            var result = groupsDataService.GetGroupCourseById(25);
-
-            // Then
-            using (new AssertionScope())
-            {
-                result.Should().NotBeNull();
-                result.Should().BeEquivalentTo(expectedGroupCourse);
-            }
-        }
-
         private void AddDelegateToGroupWithSharedCourse()
         {
             connection.Execute(

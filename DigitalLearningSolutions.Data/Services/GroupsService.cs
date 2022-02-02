@@ -75,7 +75,8 @@
             int completeWithinMonths,
             int addedByAdminId,
             bool cohortLearners,
-            int? supervisorAdminId
+            int? supervisorAdminId,
+            int centreId
         );
     }
 
@@ -356,7 +357,8 @@
             int completeWithinMonths,
             int addedByAdminId,
             bool cohortLearners,
-            int? supervisorAdminId
+            int? supervisorAdminId,
+            int centreId
         )
         {
             using var transaction = new TransactionScope();
@@ -371,7 +373,7 @@
             );
 
             var groupDelegates = GetGroupDelegates(groupId);
-            var groupCourse = groupsDataService.GetGroupCourseById(groupCustomisationId)!;
+            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId)!;
 
             foreach (var groupDelegate in groupDelegates)
             {
