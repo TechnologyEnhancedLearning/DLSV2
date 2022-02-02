@@ -1,49 +1,52 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
-    using System.Configuration;
-    using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;
-    using DigitalLearningSolutions.Web.Helpers;
     using FakeItEasy;
     using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement;
     using NUnit.Framework;
-    using ConfigHelper = DigitalLearningSolutions.Data.Helpers.ConfigHelper;
 
     public class UnlockServiceTests
     {
         private IConfiguration configuration = null!;
-        private IConfigService configService = null!;
         private IEmailService emailService = null!;
+        private IFeatureManager featureManager = null!;
         private INotificationDataService notificationDataService = null!;
         private NotificationService notificationService = null!;
-        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
         {
             configuration = A.Fake<IConfiguration>();
             notificationDataService = A.Fake<INotificationDataService>();
-            configService = A.Fake<IConfigService>();
             emailService = A.Fake<IEmailService>();
             featureManager = A.Fake<IFeatureManager>();
 
-            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(new UnlockData
-            {
-                ContactEmail = "recipient@example.com",
-                ContactForename = "Forename",
-                CourseName = "Activity Name",
-                CustomisationId = 22,
-                DelegateEmail = "cc@example.com",
-                DelegateName = "Delegate Name"
-            });
+            A.CallTo(() => notificationDataService.GetUnlockData(A<int>._)).Returns(
+                new UnlockData
+                {
+                    ContactEmail = "recipient@example.com",
+                    ContactForename = "Forename",
+                    CourseName = "Activity Name",
+                    CustomisationId = 22,
+                    DelegateEmail = "cc@example.com",
+                    DelegateName = "Delegate Name",
+                }
+            );
 
-            notificationService = new NotificationService(configuration, notificationDataService, configService, emailService, featureManager);
+            notificationService = new NotificationService(
+                configuration,
+                notificationDataService,
+                emailService,
+                featureManager
+            );
 
-            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("https://new-tracking-system.com/");
-            A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName]).Returns("https://old-tracking-system.com/");
+            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("https://new-tracking-system.com");
+            A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName])
+                .Returns("https://old-tracking-system.com");
         }
 
         [Test]
@@ -61,7 +64,7 @@
         {
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync(A<string>._)).Returns(false);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns(null);
+            A.CallTo(() => configuration[ConfigHelper.CurrentSystemBaseUrlName]).Returns("");
 
             // Then
             Assert.ThrowsAsync<ConfigValueMissingException>(async () => await notificationService.SendUnlockRequest(1));
@@ -76,8 +79,9 @@
             notificationService.SendUnlockRequest(1);
 
             // Then
-            A.CallTo(() =>
-                    emailService.SendEmail(A<Email>._)
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(A<Email>._)
                 )
                 .MustHaveHappened();
         }
@@ -102,13 +106,17 @@
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(false);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://old-tracking-system.com/");
+
             // When
             notificationService.SendUnlockRequest(1);
 
-            // Then
-            A.CallTo(() =>
-                    emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/")))
+            //
+            //Then
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://old-tracking-system.com/Tracking/CourseDelegates"))
+                        )
                 )
                 .MustHaveHappened();
         }
@@ -119,13 +127,15 @@
             // Given
             A.CallTo(() => featureManager.IsEnabledAsync("RefactoredTrackingSystem"))
                 .Returns(true);
-            A.CallTo(() => configService.GetConfigValue(A<string>._)).Returns("https://new-tracking-system.com/");
             // When
             notificationService.SendUnlockRequest(1);
 
             // Then
-            A.CallTo(() =>
-                    emailService.SendEmail(A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/")))
+            A.CallTo(
+                    () =>
+                        emailService.SendEmail(
+                            A<Email>.That.Matches(e => e.Body.TextBody.Contains("https://new-tracking-system.com/TrackingSystem/Delegates/CourseDelegates"))
+                        )
                 )
                 .MustHaveHappened();
         }

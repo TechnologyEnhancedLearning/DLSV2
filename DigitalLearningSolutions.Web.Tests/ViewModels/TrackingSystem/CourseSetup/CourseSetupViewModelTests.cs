@@ -31,7 +31,7 @@
         };
 
         [Test]
-        public void CourseSetupViewModel_should_default_to_returning_the_first_page_worth_of_delegates()
+        public void CourseSetupViewModel_should_default_to_returning_the_first_ten_delegates()
         {
             // When
             var model = new CourseSetupViewModel(
@@ -42,7 +42,8 @@
                 nameof(CourseStatistics.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
-                1
+                1,
+                null
             );
 
             // Then
@@ -66,7 +67,8 @@
                 nameof(CourseStatistics.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
-                2
+                2,
+                null
             );
 
             // Then
@@ -103,12 +105,39 @@
                 nameof(CourseStatistics.SearchableName),
                 BaseSearchablePageViewModel.Ascending,
                 null,
-                2
+                2,
+                null
             );
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
             model.Courses.First().CourseName.Should().BeEquivalentTo("K");
+        }
+
+        [Test]
+        public void CourseSetupViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
+        {
+            // When
+            const int itemsPerPage = 12;
+            var model = new CourseSetupViewModel(
+                courses,
+                new List<string>(),
+                new List<string>(),
+                null,
+                nameof(CourseStatistics.SearchableName),
+                BaseSearchablePageViewModel.Ascending,
+                null,
+                1,
+                itemsPerPage
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                model.Courses.Count().Should().Be(itemsPerPage);
+                model.Courses.Any(c => c.CourseName == "M").Should()
+                    .BeFalse();
+            }
         }
     }
 }

@@ -20,6 +20,8 @@ namespace DigitalLearningSolutions.Data.Services
 
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
 
+        List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
+
         (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
@@ -126,6 +128,11 @@ namespace DigitalLearningSolutions.Data.Services
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress)
         {
             return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
+        }
+
+        public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
+        {
+            return userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(

@@ -1,11 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public interface IDelegateDownloadFileService
     {
@@ -63,7 +63,7 @@
                 }
             );
 
-            AddSheetToWorkbook(workbook, DelegatesSheetName, delegates);
+            ClosedXmlHelper.AddSheetToWorkbook(workbook, DelegatesSheetName, delegates, TableTheme);
         }
 
         private void PopulateJobGroupsSheet(IXLWorkbook workbook)
@@ -74,15 +74,7 @@
                     item => new { JobGroupID = item.id, JobGroupName = item.name }
                 );
 
-            AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups);
-        }
-
-        private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects)
-        {
-            var sheet = workbook.Worksheets.Add(sheetName);
-            var table = sheet.Cell(1, 1).InsertTable(dataObjects);
-            table.Theme = TableTheme;
-            sheet.Columns().AdjustToContents();
+           ClosedXmlHelper.AddSheetToWorkbook(workbook, JobGroupsSheetName, jobGroups, TableTheme);
         }
     }
 }
