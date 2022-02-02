@@ -42,7 +42,7 @@
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            var returnPage = searchString == null || string.IsNullOrEmpty(searchString.Trim()) ? page : 1;
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
