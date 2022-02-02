@@ -112,7 +112,8 @@
         )
         {
             var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
-            return $"?clientCode={clientCode}&userId={learningHubAuthId}&hash={idHash}&endClientUrl={encodedUrl}";
+            var encodedHash = HttpUtility.UrlEncode(idHash);
+            return $"?clientCode={clientCode}&userId={learningHubAuthId}&hash={encodedHash}&endClientUrl={encodedUrl}";
         }
 
         private static string ComposeCreateUserQueryString(string clientCode, string state, string stateHash)
