@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Web;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Signposting;
+    using Microsoft.Extensions.Configuration;
 
     public interface ILearningHubLinkService
     {
@@ -15,21 +18,31 @@
         bool IsLearningHubAccountLinked(int delegateId);
 
         void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId);
+
+        string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId);
+
+        string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId);
     }
 
     public class LearningHubLinkService : ILearningHubLinkService
     {
+        private readonly IConfiguration config;
         private readonly ILearningHubSsoSecurityService learningHubSsoSecurityService;
         private readonly IUserDataService userDataService;
 
         public LearningHubLinkService(
             ILearningHubSsoSecurityService learningHubSsoSecurityService,
-            IUserDataService userDataService
+            IUserDataService userDataService,
+            IConfiguration config
         )
         {
             this.learningHubSsoSecurityService = learningHubSsoSecurityService;
             this.userDataService = userDataService;
+            this.config = config;
         }
+
+        private string AuthBaseUrl => config.GetLearningHubAuthApiBaseUrl();
+        private string ClientCode => config.GetLearningHubAuthApiClientCode();
 
         public bool IsLearningHubAccountLinked(int delegateId)
         {
@@ -62,6 +75,52 @@
             var parsedState = ParseAccountLinkingRequest(linkLearningHubRequest, storedSessionIdentifier);
 
             return parsedState.resourceId;
+        }
+
+        public string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId)
+        {
+            var idHash = learningHubSsoSecurityService.GenerateHash(authId.ToString());
+            var loginQueryString =
+                ComposeLoginQueryString(ClientCode, authId, idHash, resourceUrl);
+
+            var loginEndpoint = config.GetLearningHubAuthApiLoginEndpoint();
+
+            return AuthBaseUrl + loginEndpoint + loginQueryString;
+        }
+
+        public string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId)
+        {
+            var state = ComposeCreateUserState(resourceReferenceId, sessionLinkingId);
+            var stateHash = learningHubSsoSecurityService.GenerateHash(state);
+            var createUserQueryString = ComposeCreateUserQueryString(ClientCode, state, stateHash);
+
+            var linkingEndpoint = config.GetLearningHubAuthApiLinkingEndpoint();
+
+            return AuthBaseUrl + linkingEndpoint + createUserQueryString;
+        }
+
+        private static string ComposeCreateUserState(int resourceReferenceId, string sessionLinkingId)
+        {
+            return $"{sessionLinkingId}_refId:{resourceReferenceId}";
+        }
+
+        private static string ComposeLoginQueryString(
+            string clientCode,
+            int? learningHubAuthId,
+            string idHash,
+            string resourceUrl
+        )
+        {
+            var encodedUrl = HttpUtility.UrlEncode(resourceUrl);
+            return $"?clientCode={clientCode}&userId={learningHubAuthId}&hash={idHash}&endClientUrl={encodedUrl}";
+        }
+
+        private static string ComposeCreateUserQueryString(string clientCode, string state, string stateHash)
+        {
+            var encodedState = HttpUtility.UrlEncode(state);
+            var encodedHash = HttpUtility.UrlEncode(stateHash);
+
+            return $"?clientCode={clientCode}&state={encodedState}&hash={encodedHash}";
         }
 
         private void ValidateLearningHubUserId(LinkLearningHubRequest linkLearningHubRequest)

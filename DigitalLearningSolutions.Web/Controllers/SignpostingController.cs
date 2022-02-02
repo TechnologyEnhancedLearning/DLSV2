@@ -29,13 +29,6 @@
             this.actionPlanService = actionPlanService;
         }
 
-        [Route("ViewResource/{resourceReferenceId:int}")]
-        public IActionResult ViewResource(int resourceReferenceId)
-        {
-            // TODO: HEEDLS-678 - configure this action to redirect to Learning Hub
-            return RedirectToAction("Current", "LearningPortal");
-        }
-
         [HttpGet]
         [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
@@ -47,7 +40,7 @@
 
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
-                return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
+                return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
             }
 
             var (resource, apiIsAccessible) =
@@ -79,7 +72,7 @@
                 userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, true);
             }
 
-            return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
+            return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
         }
     }
 }

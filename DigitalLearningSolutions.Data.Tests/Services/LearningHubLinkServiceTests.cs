@@ -1,12 +1,15 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Web;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class LearningHubLinkServiceTests
@@ -18,11 +21,28 @@
         [SetUp]
         public void Setup()
         {
+            var config = A.Fake<IConfiguration>();
             userDataService = A.Fake<IUserDataService>();
             learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
+
+            A.CallTo(() => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthBaseUrl}"])
+                .Returns("www.example.com");
+            A.CallTo(
+                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthClientCode}"]
+            ).Returns("test");
+            A.CallTo(
+                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLoginEndpoint}"]
+            ).Returns("/insert-log");
+            A.CallTo(
+                () => config[
+                    $"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLinkingEndpoint}"]
+            ).Returns("/to-the-past");
+
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", "invalid-hash")).Returns(false);
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("12345", "valid-hash")).Returns(true);
-            learningHubLinkService = new LearningHubLinkService(learningHubSsoSecurityService, userDataService);
+            A.CallTo(() => learningHubSsoSecurityService.GenerateHash(A<string>._)).Returns("hash_brown");
+
+            learningHubLinkService = new LearningHubLinkService(learningHubSsoSecurityService, userDataService, config);
         }
 
         [Test]
@@ -256,6 +276,38 @@
             // Then
             A.CallTo(() => userDataService.SetDelegateUserLearningHubAuthId(A<int>._, A<int>._))
                 .MustNotHaveHappened();
+        }
+
+        [Test]
+        public void GetLoginUrlForDelegateAuthIdAndResourceUrl_returns_expected_value()
+        {
+            // Given
+            const string resourceUrl = "De/Humani/Corporis/Fabrica";
+            const int authId = 2;
+
+            // When
+            var url = learningHubLinkService.GetLoginUrlForDelegateAuthIdAndResourceUrl(resourceUrl, authId);
+
+            // Then
+            url.Should().Be(
+                $"www.example.com/insert-log?clientCode=test&userId={authId}&hash=hash_brown&endClientUrl={HttpUtility.UrlEncode(resourceUrl)}"
+            );
+        }
+
+        [Test]
+        public void GetLinkingUrlForResource_returns_expected_value()
+        {
+            // Given
+            const int referenceId = 5;
+            const string sessionReferenceId = "abcdefghijklmnopqrstuvwxyz";
+
+            // When
+            var url = learningHubLinkService.GetLinkingUrlForResource(referenceId, sessionReferenceId);
+
+            // Then
+            url.Should().Be(
+                $"www.example.com/to-the-past?clientCode=test&state={sessionReferenceId}_refId%3a{referenceId}&hash=hash_brown"
+            );
         }
     }
 }
