@@ -170,7 +170,9 @@
         public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
-                $"{GroupCourseSql} AND c.CentreId = @centreId",
+                @$"{GroupCourseSql}
+                        AND (c.CentreID = @centreId OR c.AllCentres = 1)
+                        AND EXISTS (SELECT CentreApplicationID FROM CentreApplications WHERE (ApplicationID = c.ApplicationID) AND (CentreID = @centreID) AND (Active = 1))",
                 new { centreId }
             );
         }

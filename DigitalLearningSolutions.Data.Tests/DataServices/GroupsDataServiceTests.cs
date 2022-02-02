@@ -91,6 +91,8 @@
                 1,
                 2,
                 25,
+                26,
+                27,
                 28,
             };
 
@@ -100,7 +102,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(4);
+                result.Should().HaveCount(6);
                 result.Should().OnlyHaveUniqueItems();
                 result.Should().OnlyContain(c => expectedGroupCourseIds.Contains(c.GroupCustomisationId));
             }
