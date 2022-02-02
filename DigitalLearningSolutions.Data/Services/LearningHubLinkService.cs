@@ -91,7 +91,7 @@
         public string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId)
         {
             var state = ComposeCreateUserState(resourceReferenceId, sessionLinkingId);
-            var stateHash = HttpUtility.UrlEncode(learningHubSsoSecurityService.GenerateHash(state));
+            var stateHash = learningHubSsoSecurityService.GenerateHash(state);
             var createUserQueryString = ComposeCreateUserQueryString(ClientCode, state, stateHash);
 
             var linkingEndpoint = config.GetLearningHubAuthApiLinkingEndpoint();
@@ -101,7 +101,7 @@
 
         private string ComposeCreateUserState(int resourceReferenceId, string sessionLinkingId)
         {
-            return HttpUtility.UrlEncode($"{sessionLinkingId}_refId:{resourceReferenceId}");
+            return $"{sessionLinkingId}_refId:{resourceReferenceId}";
         }
 
         private static string ComposeLoginQueryString(
@@ -117,7 +117,10 @@
 
         private static string ComposeCreateUserQueryString(string clientCode, string state, string stateHash)
         {
-            return $"?clientCode={clientCode}&state={state}&hash={stateHash}";
+            var encodedState = HttpUtility.UrlEncode(state);
+            var encodedHash = HttpUtility.UrlEncode(stateHash);
+
+            return $"?clientCode={clientCode}&state={encodedState}&hash={encodedHash}";
         }
 
         private void ValidateLearningHubUserId(LinkLearningHubRequest linkLearningHubRequest)
