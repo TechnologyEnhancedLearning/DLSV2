@@ -57,6 +57,8 @@
             result.Should().BeEquivalentTo(expectedCustomerPrompts);
         }
 
+        // TODO: HEEDLS-510 Write tests for GetCustomPromptsThatHaveOptionsForCentreByCentreId
+
         [Test]
         public void GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreCustomPrompts()
         {

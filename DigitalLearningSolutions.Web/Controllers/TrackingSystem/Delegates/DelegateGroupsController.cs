@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -13,6 +14,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -26,19 +28,22 @@
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
+        private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
         public DelegateGroupsController(
             ICentreCustomPromptsService centreCustomPromptsService,
             IGroupsService groupsService,
             IUserService userService,
-            ICourseService courseService
+            ICourseService courseService,
+            IJobGroupsDataService jobGroupsDataService
         )
         {
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.groupsService = groupsService;
             this.userService = userService;
             this.courseService = courseService;
+            this.jobGroupsDataService = jobGroupsDataService;
         }
 
         [Route("{page=1:int}")]
@@ -232,10 +237,39 @@
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        [Route("Generate")]
+        public IActionResult GenerateGroups()
+        {
+            var registrationFieldOptions = GetRegistrationFieldOptionsSelectList();
+
+            var model = new GenerateGroupsViewModel(registrationFieldOptions);
+            return View(model);
+        }
+
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
+        }
+
+        private IEnumerable<SelectListItem> GetRegistrationFieldOptionsSelectList(int? selectedId = null)
+        {
+            // TODO: HEEDLS-510 Figure out how to make prompts and jobs into one select list with unique ids
+            // TODO: HEEDLS-510 Handle possibility of duplicate custom prompts
+            // TODO: HEEDLS-510 How should select list be ordered?
+            var centreId = User.GetCentreId();
+            var registrationFieldOptions = new List<(int id, string value)>();
+
+            var registrationPrompts = centreCustomPromptsService
+                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId)
+                .Select(cp => (cp.CustomPromptNumber, cp.CustomPromptText)).ToList<(int id, string name)>();
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+
+            registrationFieldOptions.AddRange(registrationPrompts);
+            registrationFieldOptions.AddRange(jobGroups);
+
+            return SelectListHelper.MapOptionsToSelectListItems(registrationFieldOptions, selectedId);
         }
     }
 }

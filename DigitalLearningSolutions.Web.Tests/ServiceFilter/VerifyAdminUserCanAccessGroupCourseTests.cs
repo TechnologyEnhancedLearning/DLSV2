@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ServiceFilter
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -27,7 +28,8 @@
                 A.Fake<ICentreCustomPromptsService>(),
                 A.Fake<IGroupsService>(),
                 A.Fake<IUserService>(),
-                A.Fake<ICourseService>()
+                A.Fake<ICourseService>(),
+                A.Fake<IJobGroupsDataService>()
             ).WithDefaultContext().WithMockUser(true);
             context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;
@@ -51,7 +53,8 @@
         public void Does_not_return_action_if_groupCourse_is_in_users_centre()
         {
             // Given
-            A.CallTo(() => groupsService.GetUsableGroupCourseForCentre(A<int>._, A<int>._, A<int>._)).Returns(new GroupCourse());
+            A.CallTo(() => groupsService.GetUsableGroupCourseForCentre(A<int>._, A<int>._, A<int>._))
+                .Returns(new GroupCourse());
 
             // When
             new VerifyAdminUserCanAccessGroupCourse(groupsService).OnActionExecuting(context);
