@@ -72,7 +72,7 @@
             }
 
             var (resource, _) = await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
-            var resourceUrl = resource.Link;
+            var resourceUrl = resource?.Link;
 
             if (string.IsNullOrEmpty(resourceUrl))
             {
