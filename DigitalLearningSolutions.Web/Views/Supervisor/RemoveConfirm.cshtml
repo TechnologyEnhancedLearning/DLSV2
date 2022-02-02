@@ -1,10 +1,11 @@
-﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @using Microsoft.Extensions.Configuration
-@model SupervisorDelegateDetail;
+@model SupervisorDelegateViewModel;
 @inject IConfiguration Configuration;
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Application"] = "Supervisor";
-  ViewData["Title"] = "My Staff - Confirm Remove";
+  ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "My Staff - Confirm Remove";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
   ViewData["HeaderPathName"] = "My Staff";
 }
@@ -13,6 +14,10 @@
 }
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ConfirmedRemove) })" />
+    }
     <h1 id="page-heading">Confirm Remove Staff Member</h1>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
@@ -27,28 +32,19 @@
     <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
     <form method="post" asp-controller="Supervisor">
       <div class="nhsuk-checkboxes__item">
-        <nhs-form-group nhs-validation-for="ConfirmedRemove">
-          @Html.CheckBoxFor(m => m.ConfirmedRemove, new { @class = "nhsuk-checkboxes__input", required = "required" })
-          <label for="ConfirmedRemove" class="nhsuk-label nhsuk-checkboxes__label nhsuk-label--m">
-            I am sure that I wish to remove @Model.FirstName @Model.LastName from my staff list
-            <label class="nhsuk-caption-m">
-              This action will remove the staff member from your staff list and you will no longer be able to review their self assessments.
-            </label>
-          </label>
-          <span asp-validation-for="ConfirmedRemove" class="text-danger"></span>
-        </nhs-form-group>
+          <vc:single-checkbox asp-for="@nameof(Model.ConfirmedRemove)"
+              label="I am sure that I wish to remove @Model.FirstName @Model.LastName from my staff list"
+              hint-text="This action will remove the staff member from your staff list and you will no longer be able to review their self assessments." />
       </div>
       <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate">
         Remove
       </button>
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList">
-        Cancel
-      </a>
-      @Html.HiddenFor(m => m.ID)
+      @Html.HiddenFor(m => m.Id)
+      @Html.HiddenFor(m => m.FirstName)
+      @Html.HiddenFor(m=> m.LastName)
+      @Html.HiddenFor(m=> m.DelegateEmail)
+      @Html.HiddenFor(m=> m.CandidateAssessmentCount)
     </form>
+    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" >Cancel</vc:cancel-link>
   </div>
 </div>
-
-@section scripts {
-  <script src="@Url.Content("~/js/supervisor/assessmentVerify.js")" asp-append-version="true"></script>
-}

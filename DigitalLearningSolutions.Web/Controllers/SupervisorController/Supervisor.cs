@@ -101,17 +101,21 @@
         public IActionResult RemoveSupervisorDelegateConfirm(int supervisorDelegateId)
         {
             var superviseDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            return View("RemoveConfirm", superviseDelegate);
+            return View("RemoveConfirm", new SupervisorDelegateViewModel(superviseDelegate));
         }
 
         [HttpPost]
-        public IActionResult RemoveSupervisorDelegate(SupervisorDelegateDetail supervisorDelegate)
+        public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-            if (supervisorDelegate.ConfirmedRemove)
+            if (ModelState.IsValid && supervisorDelegate.ConfirmedRemove)
             {
-                supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.ID, 0, GetAdminID());
+                supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminID());
+                return RedirectToAction("MyStaffList");
             }
-            return RedirectToAction("MyStaffList");
+            else
+            {
+                return View("RemoveConfirm", supervisorDelegate);
+            }            
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
         public string CandidateNumber { get; set; }
@@ -20,7 +21,6 @@
         public byte[]? ProfileImage { get; set; }
         public string? SupervisorName { get; set; }
         public int CandidateAssessmentCount { get; set; }
-        public bool ConfirmedRemove { get; set; }
         public Guid? InviteHash { get; set; }
     }
 }
