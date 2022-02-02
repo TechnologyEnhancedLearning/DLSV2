@@ -13,7 +13,6 @@
             this.connection = connection;
         }
 
-
         public void InsertLearningResourceReference(
             int id,
             int resourceRefId,

@@ -25,17 +25,17 @@
             userDataService = A.Fake<IUserDataService>();
             learningHubSsoSecurityService = A.Fake<ILearningHubSsoSecurityService>();
 
-            A.CallTo(() => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthApiBaseUrl}"])
+            A.CallTo(() => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthBaseUrl}"])
                 .Returns("www.example.com");
             A.CallTo(
-                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthApiClientCode}"]
+                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthClientCode}"]
             ).Returns("test");
             A.CallTo(
-                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthApiLoginEndpoint}"]
+                () => config[$"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLoginEndpoint}"]
             ).Returns("/insert-log");
             A.CallTo(
                 () => config[
-                    $"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthApiLinkingEndpoint}"]
+                    $"{ConfigHelper.LearningHubSsoSectionKey}:{ConfigHelper.LearningHubAuthLinkingEndpoint}"]
             ).Returns("/to-the-past");
 
             A.CallTo(() => learningHubSsoSecurityService.VerifyHash("56789", "invalid-hash")).Returns(false);

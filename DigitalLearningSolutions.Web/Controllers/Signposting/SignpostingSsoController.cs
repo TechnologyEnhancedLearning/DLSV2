@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
@@ -20,17 +21,17 @@
     public class SignpostingSsoController : Controller
     {
         private readonly ILearningHubLinkService learningHubLinkService;
-        private readonly ILearningResourceReferenceService learningResourceReferenceService;
+        private readonly ILearningHubResourceService learningHubResourceService;
         private readonly IUserService userService;
 
         public SignpostingSsoController(
             ILearningHubLinkService learningHubLinkService,
-            ILearningResourceReferenceService learningResourceReferenceService,
+            ILearningHubResourceService learningHubResourceService,
             IUserService userService
         )
         {
             this.learningHubLinkService = learningHubLinkService;
-            this.learningResourceReferenceService = learningResourceReferenceService;
+            this.learningHubResourceService = learningHubResourceService;
             this.userService = userService;
         }
 
@@ -56,7 +57,7 @@
         }
 
         [HttpGet("ViewResource/{resourceReferenceId}")]
-        public IActionResult ViewResource(int resourceReferenceId)
+        public async Task<IActionResult> ViewResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
             var learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
@@ -70,8 +71,8 @@
                 return Redirect(linkingUrl);
             }
 
-            var resourceUrl =
-                learningResourceReferenceService.GetLearningHubResourceLinkByResourceRefId(resourceReferenceId);
+            var (resource, _) = await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
+            var resourceUrl = resource.Link;
 
             if (string.IsNullOrEmpty(resourceUrl))
             {

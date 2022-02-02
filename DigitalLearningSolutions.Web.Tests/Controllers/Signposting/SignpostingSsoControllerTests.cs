@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
@@ -17,19 +19,19 @@
     {
         private SignpostingSsoController controller = null!;
         private ILearningHubLinkService learningHubLinkService = null!;
-        private ILearningResourceReferenceService learningResourceReferenceService = null!;
+        private ILearningHubResourceService learningHubResourceService = null!;
         private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             learningHubLinkService = A.Fake<ILearningHubLinkService>();
-            learningResourceReferenceService = A.Fake<ILearningResourceReferenceService>();
+            learningHubResourceService = A.Fake<ILearningHubResourceService>();
             userService = A.Fake<IUserService>();
 
             controller = new SignpostingSsoController(
                     learningHubLinkService,
-                    learningResourceReferenceService,
+                    learningHubResourceService,
                     userService
                 )
                 .WithDefaultContext()
@@ -182,20 +184,21 @@
         }
 
         [Test]
-        public void ViewResource_returns_redirect_to_login_result_when_user_linked()
+        public  async Task ViewResource_returns_redirect_to_login_result_when_user_linked()
         {
             // Given
             var authId = 1;
             var resourceUrl = "De/Humani/Corporis/Fabrica";
+            var resourceDetails = new ResourceReferenceWithResourceDetails{Link = resourceUrl};
 
             A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(authId);
-            A.CallTo(() => learningResourceReferenceService.GetLearningHubResourceLinkByResourceRefId(5))
-                .Returns(resourceUrl);
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(5))
+                .Returns((resourceDetails, false));
             A.CallTo(() => learningHubLinkService.GetLoginUrlForDelegateAuthIdAndResourceUrl(resourceUrl, authId))
                 .Returns("www.example.com/login");
 
             // When
-            var result = controller.ViewResource(5);
+            var result = await controller.ViewResource(5);
 
             // Then
             result.Should().BeRedirectResult().WithUrl(
@@ -204,23 +207,23 @@
         }
 
         [Test]
-        public void
+        public async Task
             ViewResource_returns_not_found_result_when_user_linked_but_no_relevant_resource_entry()
         {
             // Given
             A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(1);
-            A.CallTo(() => learningResourceReferenceService.GetLearningHubResourceLinkByResourceRefId(5))
-                .Returns(null);
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(5))
+                .Returns((null, true));
 
             // When
-            var result = controller.ViewResource(5);
+            var result = await controller.ViewResource(5);
 
             // Then
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void ViewResource_returns_redirect_result_to_create_user_when_user_not_linked()
+        public async Task ViewResource_returns_redirect_result_to_create_user_when_user_not_linked()
         {
             // Given
             A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(null);
@@ -228,7 +231,7 @@
                 .Returns("www.example.com/link");
 
             // When
-            var result = controller.ViewResource(5);
+            var result = await controller.ViewResource(5);
 
             // Then
             result.Should().BeRedirectResult().WithUrl(

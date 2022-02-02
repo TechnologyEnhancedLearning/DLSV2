@@ -11,8 +11,6 @@
     {
         int GetLearningHubResourceReferenceById(int learningResourceReferenceId);
 
-        string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId);
-
         public IEnumerable<ResourceReferenceWithResourceDetails> GetResourceReferenceDetailsByReferenceIds(
             IEnumerable<int> resourceReferenceIds
         );
@@ -33,16 +31,6 @@
                 @"SELECT ResourceRefID
                     FROM LearningResourceReferences
                     WHERE ID = @learningResourceReferenceId",
-                new { learningResourceReferenceId }
-            ).Single();
-        }
-
-        public string? GetLearningHubResourceLinkByResourceRefId(int learningResourceReferenceId)
-        {
-            return connection.Query<string?>(
-                @"SELECT ResourceLink
-                    FROM LearningResourceReferences
-                    WHERE ResourceRefID = @learningResourceReferenceId",
                 new { learningResourceReferenceId }
             ).Single();
         }

@@ -19,7 +19,7 @@
 
         void LinkLearningHubAccountIfNotLinked(int delegateId, int learningHubUserId);
 
-        string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int delegateAuthId);
+        string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId);
 
         string GetLinkingUrlForResource(int resourceReferenceId, string sessionLinkingId);
     }
@@ -77,11 +77,11 @@
             return parsedState.resourceId;
         }
 
-        public string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int delegateAuthId)
+        public string GetLoginUrlForDelegateAuthIdAndResourceUrl(string resourceUrl, int authId)
         {
-            var idHash = learningHubSsoSecurityService.GenerateHash(delegateAuthId.ToString());
+            var idHash = learningHubSsoSecurityService.GenerateHash(authId.ToString());
             var loginQueryString =
-                ComposeLoginQueryString(ClientCode, delegateAuthId, idHash, resourceUrl);
+                ComposeLoginQueryString(ClientCode, authId, idHash, resourceUrl);
 
             var loginEndpoint = config.GetLearningHubAuthApiLoginEndpoint();
 
@@ -99,7 +99,7 @@
             return AuthBaseUrl + linkingEndpoint + createUserQueryString;
         }
 
-        private string ComposeCreateUserState(int resourceReferenceId, string sessionLinkingId)
+        private static string ComposeCreateUserState(int resourceReferenceId, string sessionLinkingId)
         {
             return $"{sessionLinkingId}_refId:{resourceReferenceId}";
         }
