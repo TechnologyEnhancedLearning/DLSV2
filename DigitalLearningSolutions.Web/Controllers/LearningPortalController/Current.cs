@@ -34,6 +34,7 @@
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -42,6 +43,7 @@
                 selfAssessments,
                 learningResources,
                 apiIsAccessible,
+                isLearningHubAccountLinked,
                 bannerText,
                 page
             );
@@ -55,7 +57,13 @@
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
             var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
-            var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
+            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
+            var model = new AllCurrentItemsPageViewModel(
+                currentCourses,
+                selfAssessment,
+                learningResources,
+                isLearningHubAccountLinked
+            );
             return View("Current/AllCurrentItems", model);
         }
 

@@ -27,6 +27,7 @@
         private readonly IActionPlanService actionPlanService;
         private readonly IConfiguration configuration;
         private readonly IFilteredApiHelperService filteredApiHelperService;
+        private readonly ILearningHubLinkService learningHubLinkService;
         private readonly IRecommendedLearningService recommendedLearningService;
         private readonly ISelfAssessmentService selfAssessmentService;
 
@@ -35,7 +36,8 @@
             ISelfAssessmentService selfAssessmentService,
             IConfiguration configuration,
             IRecommendedLearningService recommendedLearningService,
-            IActionPlanService actionPlanService
+            IActionPlanService actionPlanService,
+            ILearningHubLinkService learningHubLinkService
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
@@ -43,6 +45,7 @@
             this.configuration = configuration;
             this.recommendedLearningService = recommendedLearningService;
             this.actionPlanService = actionPlanService;
+            this.learningHubLinkService = learningHubLinkService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
@@ -92,8 +95,13 @@
                 selfAssessmentId,
                 candidateId
             );
+            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(candidateId);
 
-            var model = new AllRecommendedLearningItemsViewModel(recommendedResources, selfAssessmentId);
+            var model = new AllRecommendedLearningItemsViewModel(
+                recommendedResources,
+                selfAssessmentId,
+                isLearningHubAccountLinked
+            );
             return View("AllRecommendedLearningItems", model);
         }
 
@@ -295,11 +303,13 @@
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
             var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
+            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(candidateId);
 
             var model = new RecommendedLearningViewModel(
                 assessment,
                 recommendedResources,
                 apiIsAccessible,
+                isLearningHubAccountLinked,
                 searchString,
                 page
             );

@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             IEnumerable<CompletedCourse> completedCourses,
             IEnumerable<CompletedActionPlanResource> completedResources,
             bool apiIsAccessible,
+            bool isLearningHubAccountLinked,
             IConfiguration config,
             string? searchString,
             string sortBy,
@@ -45,7 +46,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
                     return activity switch
                     {
                         CompletedCourse completedCourse => new CompletedCourseViewModel(completedCourse, config),
-                        _ => new CompletedLearningResourceViewModel((CompletedActionPlanResource)activity),
+                        _ => new CompletedLearningResourceViewModel(
+                            (CompletedActionPlanResource)activity,
+                            isLearningHubAccountLinked
+                        ),
                     };
                 }
             );

@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
             IEnumerable<SelfAssessment> selfAssessments,
             IEnumerable<ActionPlanResource> actionPlanResources,
             bool apiIsAccessible,
+            bool isLearningHubAccountLinked,
             string? bannerText,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your current courses")
@@ -49,7 +50,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
                     {
                         CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse),
                         SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment),
-                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity),
+                        _ => new CurrentLearningResourceViewModel(
+                            (ActionPlanResource)activity,
+                            isLearningHubAccountLinked
+                        ),
                     };
                 }
             );

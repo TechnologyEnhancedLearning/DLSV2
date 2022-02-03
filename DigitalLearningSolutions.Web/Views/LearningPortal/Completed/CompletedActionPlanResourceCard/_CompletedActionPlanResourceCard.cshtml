@@ -40,6 +40,7 @@
          asp-controller="Signposting"
          asp-action="LaunchLearningResource"
          asp-route-resourceReferenceId="@Model.ResourceReferenceId"
+         external-link-attributes="!@Model.IsLearningHubAccountLinked"
          role="button">
         Launch learning resource
       </a>

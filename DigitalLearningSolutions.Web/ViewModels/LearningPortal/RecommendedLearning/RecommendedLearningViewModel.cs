@@ -14,6 +14,7 @@
             SelfAssessment selfAssessment,
             IEnumerable<RecommendedResource> recommendedResources,
             bool apiIsAccessible,
+            bool isLearningHubAccountLnked,
             string? searchString,
             int page
         ) : base(
@@ -42,7 +43,9 @@
             var paginatedItems = GetItemsOnCurrentPage(sortedResources);
 
             RecommendedResources =
-                paginatedItems.Select(r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id));
+                paginatedItems.Select(
+                    r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id, isLearningHubAccountLnked)
+                );
         }
 
         public SelfAssessment SelfAssessment { get; set; }

@@ -9,5 +9,7 @@
         public const string ErrorClassToggle = "error-class-toggle";
 
         public const string ErrorOr = "error-or";
+
+        public const string ExternalLink = "external-link-attributes";
     }
 }

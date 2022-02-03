@@ -4,7 +4,11 @@
 
     public class SearchableRecommendedResourceViewModel
     {
-        public SearchableRecommendedResourceViewModel(RecommendedResource recommendedResource, int selfAssessmentId)
+        public SearchableRecommendedResourceViewModel(
+            RecommendedResource recommendedResource,
+            int selfAssessmentId,
+            bool isLearningHubAccountLinked
+        )
         {
             SelfAssessmentId = selfAssessmentId;
             LearningResourceReferenceId = recommendedResource.LearningResourceReferenceId;
@@ -18,6 +22,7 @@
             IsCompleted = recommendedResource.IsCompleted;
             LearningLogItemId = recommendedResource.LearningLogId;
             RecommendationScore = recommendedResource.RecommendationScore;
+            IsLearningHubAccountLinked = isLearningHubAccountLinked;
         }
 
         public int SelfAssessmentId { get; set; }
@@ -41,6 +46,8 @@
         public bool IsCompleted { get; set; }
 
         public int? LearningLogItemId { get; set; }
+
+        public bool IsLearningHubAccountLinked { get; set; }
 
         public decimal RecommendationScore { get; set; }
 

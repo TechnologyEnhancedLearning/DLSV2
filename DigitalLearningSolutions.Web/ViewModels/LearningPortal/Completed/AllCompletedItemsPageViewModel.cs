@@ -13,7 +13,8 @@
         public AllCompletedItemsPageViewModel(
             IEnumerable<CompletedCourse> completedCourses,
             IEnumerable<CompletedActionPlanResource> completedResource,
-            IConfiguration config
+            IConfiguration config,
+            bool isLearningHubAccountLinked
         )
         {
             CompletedActivities = completedCourses.Select(
@@ -22,7 +23,9 @@
             );
             foreach (var resource in completedResource)
             {
-                CompletedActivities = CompletedActivities.Append(new CompletedLearningResourceViewModel(resource));
+                CompletedActivities = CompletedActivities.Append(
+                    new CompletedLearningResourceViewModel(resource, isLearningHubAccountLinked)
+                );
             }
         }
     }

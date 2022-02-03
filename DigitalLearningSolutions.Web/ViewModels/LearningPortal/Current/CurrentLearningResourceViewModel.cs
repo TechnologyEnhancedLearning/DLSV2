@@ -4,7 +4,9 @@
 
     public class CurrentLearningResourceViewModel : CurrentLearningItemViewModel, ILearningResourceCardViewModel
     {
-        public CurrentLearningResourceViewModel(ActionPlanResource resource) : base(resource)
+        public CurrentLearningResourceViewModel(ActionPlanResource resource, bool isLearningHubAccountLinked) : base(
+            resource
+        )
         {
             LaunchResourceLink = resource.ResourceLink;
             ResourceDescription = resource.ResourceDescription;
@@ -12,13 +14,15 @@
             ResourceType = resource.ResourceType;
             AbsentInLearningHub = resource.AbsentInLearningHub;
             ResourceReferenceId = resource.ResourceReferenceId;
+            IsLearningHubAccountLinked = isLearningHubAccountLinked;
         }
 
+        public int ResourceReferenceId { get; set; }
+        public bool IsLearningHubAccountLinked { get; set; }
         public string LaunchResourceLink { get; set; }
         public string ResourceDescription { get; set; }
         public string CatalogueName { get; set; }
         public string ResourceType { get; set; }
         public bool AbsentInLearningHub { get; set; }
-        public int ResourceReferenceId { get; set; }
     }
 }

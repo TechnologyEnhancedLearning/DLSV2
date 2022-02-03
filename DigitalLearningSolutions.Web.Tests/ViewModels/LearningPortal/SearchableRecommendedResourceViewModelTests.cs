@@ -21,7 +21,7 @@
             var recommendedResource = new RecommendedResource { RecommendationScore = recommendationScore };
 
             // When
-            var result = new SearchableRecommendedResourceViewModel(recommendedResource, 1);
+            var result = new SearchableRecommendedResourceViewModel(recommendedResource, 1, true);
 
             // Then
             result.Rating.Should().BeEquivalentTo(expectedRating);
