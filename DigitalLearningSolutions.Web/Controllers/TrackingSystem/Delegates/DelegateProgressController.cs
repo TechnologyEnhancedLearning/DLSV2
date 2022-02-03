@@ -200,10 +200,15 @@
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
+        // TODO HEEDLS-567 decide how to get the candidate Id - from frontend or from progress record?
         [HttpGet("DetailedProgress")]
-        public IActionResult ViewDetailedProgress()
+        public IActionResult ViewDetailedProgress(int progressId, int candidateId)
         {
-            var model = new DetailedCourseProgressViewModel();
+            // TODO HEEDLS-567 handle absence of candidate data
+            var candidateData = userService.GetDelegateUserById(candidateId);
+            var progressData = progressService.GetDetailedCourseProgress(progressId);
+
+            var model = new DetailedCourseProgressViewModel(candidateData, progressData);
             return View(model);
         }
     }

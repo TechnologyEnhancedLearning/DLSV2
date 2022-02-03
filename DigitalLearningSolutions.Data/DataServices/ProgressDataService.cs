@@ -39,6 +39,7 @@
 
         int? GetDiagnosticScore(int progressId);
 
+        // TODO HEEDLS-567 rename this, it's not 'for course' exactly, but by progress
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
@@ -288,7 +289,7 @@
                         INNER JOIN Tutorials AS t
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID
                         INNER JOIN Customisations AS c ON ct.CustomisationID = c.CustomisationID ON p.CustomisationID = c.CustomisationID AND p.CustomisationID = ct.CustomisationID
-                        INNER JOIN TutStatus AS ts ON 
+                        INNER JOIN TutStatus AS ts ON
                         INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
                     WHERE (t.SectionID = @SectionID)
                         AND (p.ProgressID = @ProgressID)
