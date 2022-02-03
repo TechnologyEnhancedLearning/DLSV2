@@ -13,14 +13,13 @@
     </h1>
 
     @if (Model.AbsentInLearningHub) {
-      <vc:inset-text css-class="nhsuk-u-margin-bottom-4"
-                     text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
+      <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
+                                    text="@LearningHubWarningTextHelper.ResourceHasBeenRemoved" />
     }
 
     @if (!Model.ApiIsAccessible) {
-      <vc:inset-text
-        css-class="nhsuk-u-margin-bottom-4"
-        text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+      <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
+                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <p>
