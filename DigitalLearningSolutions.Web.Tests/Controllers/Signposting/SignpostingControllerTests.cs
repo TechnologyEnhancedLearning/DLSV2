@@ -84,7 +84,7 @@
             // Then
             result.Should().BeViewResult().WithViewName("LearningHubLoginWarning");
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(A<int>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(A<int>._)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
