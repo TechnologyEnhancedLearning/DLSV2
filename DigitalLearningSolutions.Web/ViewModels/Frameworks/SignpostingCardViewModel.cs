@@ -4,6 +4,7 @@
     {
         public int? AssessmentQuestionId { get; set; }
         public int? CompetencyLearningResourceId { get; set; }
+        public int? ResourceRefId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Catalogue { get; set; }
