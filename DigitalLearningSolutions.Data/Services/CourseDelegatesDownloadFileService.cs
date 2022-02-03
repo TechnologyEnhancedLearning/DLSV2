@@ -86,6 +86,8 @@
                 dataTable.AsEnumerable(),
                 XLTableTheme.None
             );
+
+            FormatWorksheetColumns(workbook, dataTable);
         }
 
         private static void SetUpDataTableColumns(
@@ -184,6 +186,33 @@
             }
 
             dataTable.Rows.Add(row);
+        }
+
+        private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
+        {
+            var dateColumns = new[] { Enrolled, LastAccessed, CompleteBy, CompletedDate, RemovedDate };
+            foreach (var columnName in dateColumns)
+            {
+                var columnIndex = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnIndex).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.DateTime);
+            }
+
+            var numberColumns = new[] { Logins, TimeMinutes, DiagnosticScore, AssessmentsPassed, PassRate };
+            foreach (var columnName in numberColumns)
+            {
+                var columnIndex = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnIndex).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.Number);
+            }
+
+            var boolColumns = new[] { Active, Locked };
+            foreach (var columnName in boolColumns)
+            {
+                var columnIndex = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnIndex).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.Boolean);
+            }
         }
     }
 }
