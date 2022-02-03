@@ -15,7 +15,6 @@
             DelegateEmail = delegateUser.EmailAddress;
             DelegateNumber = delegateUser.CandidateNumber;
             // TODO HEEDLS-567 what's up with the datetime properties
-            // TODO HEEDLS-567 what to do with this if it's null?
             DiagnosticScore = progress.DiagnosticScore;
 
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
@@ -27,7 +26,7 @@
         public DateTime LastAccess { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime CompleteBy { get; set; }
-        public int DiagnosticScore { get; set; }
+        public int? DiagnosticScore { get; set; }
 
         public IEnumerable<SectionProgressViewModel> Sections { get; set; }
     }
@@ -68,7 +67,6 @@
             TutorialStatus = tutorial.TutorialStatus;
             TimeTaken = tutorial.TimeTaken;
             AvgTime = tutorial.AvgTime;
-            // TODO HEEDLS-567 what to do with this if it's null?
             DiagnosticScore = tutorial.DiagnosticScore;
         }
 
@@ -76,6 +74,6 @@
         public string TutorialStatus { get; set; }
         public int TimeTaken { get; set; }
         public int AvgTime { get; set; }
-        public int DiagnosticScore { get; set; }
+        public int? DiagnosticScore { get; set; }
     }
 }

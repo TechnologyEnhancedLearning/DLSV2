@@ -204,8 +204,11 @@
         [HttpGet("DetailedProgress")]
         public IActionResult ViewDetailedProgress(int progressId, int candidateId)
         {
-            // TODO HEEDLS-567 handle absence of candidate data
             var candidateData = userService.GetDelegateUserById(candidateId);
+            if (candidateData == null)
+            {
+                return NotFound();
+            }
             var progressData = progressService.GetDetailedCourseProgress(progressId);
 
             var model = new DetailedCourseProgressViewModel(candidateData, progressData);
