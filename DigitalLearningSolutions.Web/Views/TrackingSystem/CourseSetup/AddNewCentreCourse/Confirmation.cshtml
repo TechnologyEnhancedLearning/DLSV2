@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model ConfirmationViewModel
 
 @{
@@ -8,12 +8,12 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">
+    <h1 class="nhsuk-heading-xl word-break">
       New course @Model.CustomisationName has been set up
     </h1>
 
     <p class="nhsuk-body-l">
-      Your new course has been successfully set up. Click links below to either view the new course or go back to all courses view.
+      Your new course has been successfully set up. Click the links below to either view the new course or go back to all courses view.
     </p>
 
     <vc:action-link asp-controller="ManageCourse" asp-action="Index" asp-all-route-data="@viewCourseRouteData" link-text="View course" />

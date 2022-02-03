@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
@@ -15,7 +15,7 @@
             int customisationId = 0
         )
         {
-            formData.ConvertCustomisationNameToEmptyStringIfNull();
+            formData.TrimCustomisationNameOrConvertToEmptyStringIfNull();
 
             var courseExistsAtCentre = courseService.DoesCourseNameExistAtCentre(
                 formData.CustomisationName!,

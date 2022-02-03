@@ -1,9 +1,10 @@
-﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model SetSectionContentViewModel
 
 @{
   ViewData["Title"] = "Set section content";
+  var backLinkRouteData = new Dictionary<string, string> { { "index", Model.Index.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -21,7 +22,14 @@
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Next</button>
     </form>
-
-    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />
+    @if (Model.Index == 0) {
+      <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />
+    } else {
+      <vc:back-link asp-controller="CourseSetup" asp-action="SetSectionContent" asp-all-route-data="@backLinkRouteData" link-text="Go back" />
+    }
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/editCourseContent.js")" asp-append-version="true"></script>
+}

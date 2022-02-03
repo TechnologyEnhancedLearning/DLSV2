@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
 @model SelectCourseViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/selectCourse.css")" asp-append-version="true">
@@ -31,7 +31,7 @@
                   deselectable="true"
                   default-option="Filter courses by topic"
                   aria-label="Choose topic">
-            <option value="" selected=@(Model.TopicId != null ? "" : "selected")>Select a topic</option>
+            <option value="" selected=@(Model.TopicId != null ? "" : "selected")>All topics</option>
           </select>
           <button class="nhsuk-search__submit course-submit" type="submit">
             Select
