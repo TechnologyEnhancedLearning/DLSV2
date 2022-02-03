@@ -1,0 +1,52 @@
+﻿@inject IConfiguration Configuration
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
+@using Microsoft.Extensions.Configuration
+@model AddGroupDelegateViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/selectDelegate.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = $"Add delegate to {Model.GroupName} group";
+  var routeParamsForGroupDelegates = new Dictionary<string, string> {
+    { "groupId", Model.GroupId.ToString() },
+  };
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-8">@ViewData["Title"]</h1>
+      </div>
+    </div>
+    <input id="selected-group-Id" type="hidden" asp-for="@Model.GroupId" />
+
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchAndFilter" model="Model" />
+
+    @if (Model.NoDataFound) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No delegates found.</b>
+      </p>
+    } else {
+      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
+      <div id="searchable-elements">
+        @foreach (var delegateModel in Model.Delegates) {
+          <partial name="_AddGroupDelegateCard"
+                   model="delegateModel"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "groupId", Model.GroupId } })" />
+        }
+      </div>
+    }
+    @if (Model.TotalPages > 1) {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
+
+    <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeParamsForGroupDelegates" />
+
+  </div>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/addGroupDelegate.js")" asp-append-version="true"></script>
+}

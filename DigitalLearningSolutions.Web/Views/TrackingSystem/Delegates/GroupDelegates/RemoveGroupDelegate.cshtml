@@ -1,7 +1,7 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @using Microsoft.Extensions.Configuration
-@model RemoveGroupDelegatesViewModel
+@model RemoveGroupDelegateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -38,7 +38,7 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveGroupDelegates">
+    <form class="nhsuk-u-margin-bottom-5" method="post" asp-action="RemoveGroupDelegate">
       <div class="nhsuk-form-group @confirmFormErrorClass">
         <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.ConfirmRemovalFromGroup))-error">
           @if (confirmError)
@@ -88,6 +88,6 @@
         { "groupId", Model.GroupId.ToString() }
       };
     }
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="GroupDelegates" asp-all-route-data="@routeData" />
+    <vc:cancel-link asp-controller="GroupDelegates" asp-action="Index" asp-all-route-data="@routeData" />
   </div>
 </div>

@@ -189,6 +189,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IGroupsService, GroupsService>();
             services.AddScoped<IImageResizeService, ImageResizeService>();
             services.AddScoped<IImportCompetenciesFromFileService, ImportCompetenciesFromFileService>();
+            services.AddScoped<IJobGroupsService, JobGroupsService>();
             services.AddScoped<ILearningHubLinkService, LearningHubLinkService>();
             services.AddScoped<ILearningHubResourceService, LearningHubResourceService>();
             services.AddScoped<ILearningHubSsoSecurityService, LearningHubSsoSecurityService>();

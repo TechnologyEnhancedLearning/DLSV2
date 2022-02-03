@@ -10,7 +10,7 @@
     {
         Faq? GetFaqById(int faqId);
 
-        IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup);
+        IEnumerable<Faq> GetAllFaqs();
     }
 
     public class FaqsDataService : IFaqsDataService
@@ -42,14 +42,9 @@
             ).SingleOrDefault();
         }
 
-        public IEnumerable<Faq> GetPublishedFaqsForTargetGroup(int targetGroup)
+        public IEnumerable<Faq> GetAllFaqs()
         {
-            return connection.Query<Faq>(
-                @$"{FaqsSql}
-                WHERE TargetGroup = @targetGroup
-                AND Published = 1",
-                new { targetGroup }
-            );
+            return connection.Query<Faq>($@"{FaqsSql}");
         }
     }
 }
