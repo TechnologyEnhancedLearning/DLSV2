@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
@@ -8,10 +8,12 @@
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
+    [FeatureGate(FeatureFlags.UseSignposting)]
     [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
-    [Route("Signposting")]
+    [Route("Signposting/LaunchLearningResource/{resourceReferenceId:int}")]
     public class SignpostingController : Controller
     {
         private readonly IActionPlanService actionPlanService;
@@ -30,7 +32,6 @@
         }
 
         [HttpGet]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -63,7 +64,6 @@
         }
 
         [HttpPost]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public IActionResult LaunchLearningResource(int resourceReferenceId, LearningHubLoginWarningViewModel model)
         {
             if (model.LearningHubLoginWarningDismissed)
