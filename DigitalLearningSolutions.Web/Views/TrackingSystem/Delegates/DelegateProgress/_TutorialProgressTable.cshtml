@@ -1,0 +1,56 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model IEnumerable<TutorialProgressViewModel>
+
+<details class="nhsuk-details">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Tutorials breakdown
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <table role="table" class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            Tutorial
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Status
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Time taken (mins)
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Avg time (mins)
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Diagnostic score
+          </th>
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+        @{
+          foreach (var tut in Model) {
+            <tr role="row">
+              <th role="columnheader" class="" scope="col">
+                @tut.TutorialName
+              </th>
+              <th role="columnheader" class="" scope="col">
+                @tut.TutorialStatus
+              </th>
+              <th role="columnheader" class="" scope="col">
+                @tut.TimeTaken
+              </th>
+              <th role="columnheader" class="" scope="col">
+                @tut.AvgTime
+              </th>
+              <th role="columnheader" class="" scope="col">
+                @tut.DiagnosticScore
+              </th>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</details>
