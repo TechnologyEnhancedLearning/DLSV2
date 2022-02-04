@@ -105,9 +105,12 @@
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("GroupAddCourseFilter")).MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                .BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Delete("GroupAddCourseFilter")).MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                    .BeNull();
+            }
         }
 
         [Test]
@@ -121,10 +124,13 @@
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -138,10 +144,13 @@
             var result = groupCoursesController.AddCourseToGroupSelectCourse(1, filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("GroupAddCourseFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<AddCourseToGroupCoursesViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]

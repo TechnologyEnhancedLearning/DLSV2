@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -18,7 +19,15 @@
             string? searchString,
             string? filterBy,
             int page
-        ) : base(searchString, page, true, filterBy: filterBy, searchLabel: "Search courses")
+        ) : base(
+            searchString,
+            page,
+            true,
+            nameof(CourseAssessmentDetails.CourseName),
+            Ascending,
+            filterBy,
+            searchLabel: "Search courses"
+        )
         {
             GroupId = groupId;
             GroupName = groupName;
@@ -26,15 +35,8 @@
 
             var courseList = courses.ToList();
             var searchedCourses = GenericSearchHelper.SearchItems(courseList, SearchString);
-            var filteredCourses = FilteringHelper.FilterItems(searchedCourses.AsQueryable(), filterBy).ToList();
-            var sortedCourses = GenericSortingHelper.SortAllItems(
-                filteredCourses.AsQueryable(),
-                nameof(CourseAssessmentDetails.CourseName),
-                Ascending
-            ).ToList();
-            MatchingSearchResults = sortedCourses.Count;
-            SetTotalPages();
-            var coursesToShow = GetItemsOnCurrentPage(sortedCourses);
+
+            var coursesToShow = SortFilterAndPaginate(searchedCourses);
 
             Courses = coursesToShow.Select(c => new SearchableCourseViewModel(c, groupId));
 
@@ -51,10 +53,7 @@
 
         public IEnumerable<SearchableCourseViewModel> Courses { get; set; }
 
-        public override IEnumerable<(string, string)> SortOptions { get; } = new[]
-        {
-            DefaultSortByOptions.Name,
-        };
+        public override IEnumerable<(string, string)> SortOptions { get; } = Array.Empty<(string, string)>();
 
         public override bool NoDataFound => !Courses.Any() && NoSearchOrFilter;
     }
