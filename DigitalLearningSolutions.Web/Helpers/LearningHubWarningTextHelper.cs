@@ -13,7 +13,8 @@
 
         public static string LinkAccount =>
             "The first time you view a resource, you will be taken to the Learning Hub to link your account, " +
-            "or create and link your account if you don't already have one. You will only have to do this once.";
+            "or create and link your account if you don't already have one. You will only have to do this once. " +
+            "Clicking Launch resource will start the linking process in a new tab.";
 
         public static string AutomaticLogin =>
             "Please note that you will only be logged into Learning Hub automatically if you navigate to resources via " +

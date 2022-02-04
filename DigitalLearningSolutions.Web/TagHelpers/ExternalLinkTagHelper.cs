@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Razor.TagHelpers;
 
     [HtmlTargetElement("A", Attributes = CustomAttribute.ExternalLink)]
+    [HtmlTargetElement("FORM", Attributes = CustomAttribute.ExternalLink)]
     public class ExternalLinkTagHelper : TagHelper
     {
         [HtmlAttributeName(CustomAttribute.ExternalLink)]

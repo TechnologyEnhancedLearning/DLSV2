@@ -30,6 +30,7 @@
 
     <form class="nhsuk-u-margin-bottom-3"
           method="post" novalidate
+          external-link-attributes="@(!Model.LearningHubAccountLinked)"
           asp-action="LaunchLearningResource"
           asp-controller="Signposting"
           asp-route-resourceReferenceId="@Model.ResourceRefId">

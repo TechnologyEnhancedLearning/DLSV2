@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
