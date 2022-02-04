@@ -221,7 +221,7 @@ export class SearchSortFilterAndPaginate {
   private updatePageNumber(pageNumber: number, searchableData: ISearchableData): void {
     this.page = pageNumber;
 
-    SearchSortFilterAndPaginate.fixPageNumber();
+    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     const newUrl = `${urlParts.slice(0, -1).join('/')}/${pageNumber.toString()}`;
@@ -231,14 +231,14 @@ export class SearchSortFilterAndPaginate {
   }
 
   private static getPageNumber(): number {
-    SearchSortFilterAndPaginate.fixPageNumber();
+    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     return parseInt(urlParts[urlParts.length - 1], 10);
   }
 
   /* Guarantees the last element of the path is a number with no trailing slashes */
-  private static fixPageNumber(): void {
+  private static ensurePageNumberSetInUrl(): void {
     const currentPath = window.location.pathname;
     const urlParts = currentPath.split('/');
     if (urlParts[urlParts.length - 1] === '') {
