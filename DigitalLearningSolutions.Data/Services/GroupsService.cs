@@ -18,6 +18,12 @@
     {
         int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
 
+        void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int groupId,
+            DelegateUser delegateUser,
+            int? addedByAdminId = null
+        );
+
         void SynchroniseUserChangesWithGroups(
             DelegateUser delegateAccountWithOldDetails,
             AccountDetailsData newDelegateDetails,
@@ -218,6 +224,26 @@
             groupsDataService.DeleteGroupDelegates(groupId);
             groupsDataService.DeleteGroupCustomisations(groupId);
             groupsDataService.DeleteGroup(groupId);
+
+            transaction.Complete();
+        }
+
+        public void AddDelegateToGroupAndEnrolOnGroupCourses(int groupId,
+            DelegateUser delegateUser,
+            int? addedByAdminId = null)
+        {
+            using var transaction = new TransactionScope();
+
+            groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
+
+            var accountDetailsData = new MyAccountDetailsData(delegateUser.Id, delegateUser.FirstName!, delegateUser.LastName, delegateUser.EmailAddress!);
+
+            EnrolDelegateOnGroupCourses(
+                delegateUser,
+                accountDetailsData,
+                groupId,
+                addedByAdminId
+            );
 
             transaction.Complete();
         }

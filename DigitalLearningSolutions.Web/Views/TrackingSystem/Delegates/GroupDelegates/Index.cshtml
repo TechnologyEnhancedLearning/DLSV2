@@ -1,5 +1,5 @@
 ﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 @using Microsoft.Extensions.Configuration
 @model GroupDelegatesViewModel
 
@@ -27,7 +27,11 @@
         <h1 id="page-heading" class="nhsuk-heading-xl">Group delegates</h1>
       </div>
       <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button heading-button" role="button">
+        <a class="nhsuk-button heading-button"
+           role="button"
+           asp-controller="GroupDelegates"
+           asp-action="SelectDelegate"
+           asp-route-groupId="@Model.GroupId">
           Add
         </a>
       </div>

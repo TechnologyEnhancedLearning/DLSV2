@@ -106,7 +106,8 @@
                     FROM GroupCustomisations AS gc
                     JOIN Customisations AS c ON c.CustomisationID = gc.CustomisationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = c.ApplicationID
-                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID";
+                    LEFT JOIN AdminUsers AS au ON au.AdminID = gc.SupervisorAdminID
+                    WHERE ap.DefaultContentTypeID <> 4";
 
         private readonly IDbConnection connection;
 
@@ -169,7 +170,7 @@
         public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
-                $"{GroupCourseSql} WHERE c.CentreId = @centreId",
+                $"{GroupCourseSql} AND c.CentreId = @centreId",
                 new { centreId }
             );
         }
@@ -177,7 +178,7 @@
         public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId)
         {
             return connection.Query<GroupCourse>(
-                @$"{GroupCourseSql} WHERE c.CentreId = @centreId AND gc.GroupCustomisationID = @groupCustomisationId",
+                @$"{GroupCourseSql} AND c.CentreId = @centreId AND gc.GroupCustomisationID = @groupCustomisationId",
                 new { groupCustomisationId, centreId }
             ).FirstOrDefault();
         }
@@ -185,7 +186,7 @@
         public GroupCourse? GetGroupCourseById(int groupCustomisationId)
         {
             return connection.Query<GroupCourse>(
-                @$"{GroupCourseSql} WHERE gc.GroupCustomisationID = @groupCustomisationId",
+                @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
                 new { groupCustomisationId }
             ).FirstOrDefault();
         }
