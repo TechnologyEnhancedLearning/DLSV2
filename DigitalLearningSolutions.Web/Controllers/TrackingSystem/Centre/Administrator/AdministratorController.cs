@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -104,7 +105,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(EditRolesViewModel model, int adminId)
+        public IActionResult EditAdminRoles(AdminRolesFormData model, int adminId)
         {
             userService.UpdateAdminUserPermissions(
                 adminId,

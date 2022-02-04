@@ -8,7 +8,7 @@
         private const string Yes = "Yes";
         private const string No = "No";
 
-        public SearchableDelegateGroupViewModel(Group group, int page)
+        public SearchableDelegateGroupViewModel(Group group, int? page)
         {
             Id = group.GroupId;
             Name = group.GroupLabel;
@@ -55,6 +55,6 @@
 
         public string ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
 
-        public int Page { get; set; }
+        public int? Page { get; set; }
     }
 }

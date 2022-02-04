@@ -49,8 +49,6 @@
             SetUpCheckboxesAndRadioButtons(user, numberOfAdmins);
         }
 
-        public int? ReturnPage { get; set; }
-
         private void SetUpCheckboxesAndRadioButtons(AdminUser user, CentreContractAdminUsage numberOfAdmins)
         {
             if (!numberOfAdmins.TrainersAtOrOverLimit || user.IsTrainer)
