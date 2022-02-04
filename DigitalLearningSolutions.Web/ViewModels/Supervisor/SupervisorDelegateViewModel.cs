@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
         public int CandidateAssessmentCount { get; set; }
         public string DelegateEmail { get; set; }
 
-        [BooleanMustBeTrue(ErrorMessage = "Confirm you wish to delete this staff member")]
+        [BooleanMustBeTrue(ErrorMessage = "Confirm you wish to remove this staff member")]
         public bool ConfirmedRemove { get; set; }
 
         public SupervisorDelegateViewModel(SupervisorDelegateDetail detail)
