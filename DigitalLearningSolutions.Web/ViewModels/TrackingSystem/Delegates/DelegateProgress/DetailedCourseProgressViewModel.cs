@@ -42,9 +42,9 @@
             PostLearningAssessment = section.PostLearningAssessment;
             Outcome = section.Outcome;
             Attempts = section.Attempts;
-            Passed = section.Passed;
+            Passed = section.Passed ? "Passed" : "Failed";
 
-            Tutorials = section.Tutorials.Select(t => new TutorialProgressViewModel(t));
+            Tutorials = section.Tutorials?.Select(t => new TutorialProgressViewModel(t)) ?? new List<TutorialProgressViewModel>();
         }
 
         public string SectionName { get; set; }
@@ -54,7 +54,7 @@
         public bool PostLearningAssessment { get; set; }
         public int? Outcome { get; set; }
         public int? Attempts { get; set; }
-        public bool Passed { get; set; }
+        public string Passed { get; set; }
 
         public IEnumerable<TutorialProgressViewModel> Tutorials { get; set; }
     }
@@ -67,13 +67,13 @@
             TutorialStatus = tutorial.TutorialStatus;
             TimeTaken = tutorial.TimeTaken;
             AvgTime = tutorial.AvgTime;
-            DiagnosticScore = tutorial.DiagnosticScore;
+            DiagnosticScore = tutorial.DiagnosticScore + "/5";
         }
 
         public string TutorialName { get; set; }
         public string TutorialStatus { get; set; }
         public int TimeTaken { get; set; }
         public int AvgTime { get; set; }
-        public int? DiagnosticScore { get; set; }
+        public string? DiagnosticScore { get; set; }
     }
 }

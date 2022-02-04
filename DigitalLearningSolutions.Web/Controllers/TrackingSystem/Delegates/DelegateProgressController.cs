@@ -202,7 +202,7 @@
 
         // TODO HEEDLS-567 decide how to get the candidate Id - from frontend or from progress record?
         [HttpGet("DetailedProgress")]
-        public IActionResult ViewDetailedProgress(int progressId, int candidateId)
+        public IActionResult DetailedProgress(int progressId, int candidateId)
         {
             var candidateData = userService.GetDelegateUserById(candidateId);
             if (candidateData == null)

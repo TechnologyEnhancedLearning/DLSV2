@@ -1,0 +1,32 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model DetailedCourseProgressViewModel
+
+@{
+  ViewData["Title"] = "Detailed progress";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content">
+        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
+        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
+        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
+        @*last access/etc?*@
+      </div>
+    </div>
+    <div class="nhsuk-grid-row nhsuk-inset-text">
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l">
+        Overall diagnostic score:
+      </div>
+      <div class="nhsuk-grid-column-three-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @Model.DiagnosticScore
+      </div>
+    </div>
+    @foreach (var section in Model.Sections) {
+      <partial name="_SectionProgress" model="section" />
+    }
+  </div>
+</div>
+
