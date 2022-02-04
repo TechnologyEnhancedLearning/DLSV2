@@ -76,7 +76,6 @@
                 completedCourses,
                 completedResources,
                 false,
-                false,
                 config,
                 null,
                 "Name",
@@ -179,7 +178,6 @@
                 courses,
                 completedResources,
                 false,
-                false,
                 config,
                 null,
                 "Name",
@@ -213,7 +211,6 @@
             model = new CompletedPageViewModel(
                 courses,
                 completedResources,
-                false,
                 false,
                 config,
                 null,

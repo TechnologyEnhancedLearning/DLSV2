@@ -24,7 +24,6 @@
         private IFilteredApiHelperService filteredApiHelperService = null!;
         private IRecommendedLearningService recommendedLearningService = null!;
         private ISelfAssessmentService selfAssessmentService = null!;
-        private ILearningHubLinkService learningHubLinkService = null!;
 
         [SetUp]
         public void Setup()
@@ -34,15 +33,13 @@
             configuration = A.Fake<IConfiguration>();
             recommendedLearningService = A.Fake<IRecommendedLearningService>();
             actionPlanService = A.Fake<IActionPlanService>();
-            learningHubLinkService = A.Fake<ILearningHubLinkService>();
 
             controller = new RecommendedLearningController(
                     filteredApiHelperService,
                     selfAssessmentService,
                     configuration,
                     recommendedLearningService,
-                    actionPlanService,
-                    learningHubLinkService
+                    actionPlanService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, delegateId: DelegateId);

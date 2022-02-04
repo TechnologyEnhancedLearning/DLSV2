@@ -46,7 +46,6 @@
                 completedCourses,
                 mappedActionPlanResources,
                 apiIsAccessible,
-                true,
                 config,
                 null,
                 "Completed",

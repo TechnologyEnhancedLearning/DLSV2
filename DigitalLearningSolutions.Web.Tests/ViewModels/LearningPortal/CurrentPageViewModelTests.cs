@@ -97,7 +97,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 selfAssessments,
                 actionPlanResources,
                 false,
-                false,
                 null,
                 1
             );
@@ -215,7 +214,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 selfAssessments,
                 actionPlanResources,
                 false,
-                false,
                 null,
                 1
             );
@@ -256,7 +254,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 selfAssessments,
                 actionPlanResources,
                 false,
-                false,
                 null,
                 2
             );
@@ -294,7 +291,6 @@ namespace DigitalLearningSolutions.Web.Tests.ViewModels.LearningPortal
                 "Ascending",
                 selfAssessments,
                 actionPlanResources,
-                false,
                 false,
                 null,
                 1

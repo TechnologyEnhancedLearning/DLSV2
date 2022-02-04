@@ -28,13 +28,11 @@
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
             var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
-            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
                 completedLearningResources,
                 apiIsAccessible,
-                isLearningHubAccountLinked,
                 config,
                 searchString,
                 sortBy,
@@ -50,13 +48,7 @@
             var delegateId = User.GetCandidateIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
             var (completedLearningResources, _) = await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
-            var isLearningHubAccountLinked = learningHubLinkService.IsLearningHubAccountLinked(delegateId);
-            var model = new AllCompletedItemsPageViewModel(
-                completedCourses,
-                completedLearningResources,
-                config,
-                isLearningHubAccountLinked
-            );
+            var model = new AllCompletedItemsPageViewModel(completedCourses, completedLearningResources, config);
             return View("Completed/AllCompletedItems", model);
         }
 

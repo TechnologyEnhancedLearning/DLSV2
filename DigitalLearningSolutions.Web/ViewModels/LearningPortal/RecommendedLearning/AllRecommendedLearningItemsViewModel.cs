@@ -6,15 +6,11 @@
 
     public class AllRecommendedLearningItemsViewModel
     {
-        public AllRecommendedLearningItemsViewModel(
-            IEnumerable<RecommendedResource> resources,
-            int selfAssessmentId,
-            bool isLearningHubAccountLinked
-        )
+        public AllRecommendedLearningItemsViewModel(IEnumerable<RecommendedResource> resources, int selfAssessmentId)
         {
             RecommendedResources =
                 resources.OrderByDescending(r => r.RecommendationScore).Select(
-                    r => new SearchableRecommendedResourceViewModel(r, selfAssessmentId, isLearningHubAccountLinked)
+                    r => new SearchableRecommendedResourceViewModel(r, selfAssessmentId)
                 );
         }
 
