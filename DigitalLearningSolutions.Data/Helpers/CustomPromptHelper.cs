@@ -24,5 +24,15 @@
         {
             return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
+
+        public static CustomPromptWithResponseCounts? PopulateCustomPromptWithResponseCounts(
+            int promptNumber,
+            string? prompt,
+            string? options,
+            bool mandatory
+        )
+        {
+            return prompt != null ? new CustomPromptWithResponseCounts(promptNumber, prompt, options, mandatory) : null;
+        }
     }
 }

@@ -63,7 +63,7 @@
             var expectedIdOrder = new List<int> { 1, 2 };
 
             // When
-            var resultIdOrder = courseService.GetCentreSpecificCourseStatistics(CentreId, AdminCategoryId)
+            var resultIdOrder = courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
                 .Select(r => r.CustomisationId).ToList();
 
             // Then

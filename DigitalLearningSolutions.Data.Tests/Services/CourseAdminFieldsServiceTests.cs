@@ -16,14 +16,16 @@
     {
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
+        private ICourseDataService courseDataService = null!;
         private ILogger<CourseAdminFieldsService> logger = null!;
 
         [SetUp]
         public void Setup()
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
+            courseDataService = A.Fake<ICourseDataService>();
             logger = A.Fake<ILogger<CourseAdminFieldsService>>();
-            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService, logger);
+            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService, courseDataService, logger);
         }
 
         [Test]

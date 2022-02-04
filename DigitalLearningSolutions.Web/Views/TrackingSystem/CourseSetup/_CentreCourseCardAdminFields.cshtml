@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@model SearchableCourseStatisticsViewModel
+
+<b>Admin fields and response summary</b>
+
+@foreach (var prompt in Model.AdminFieldWithResponseCounts) {
+  <dl class="nhsuk-summary-list">
+    <div class="nhsuk-summary-list__row">
+      <dt class="nhsuk-summary-list__key">
+        @prompt.CustomPromptText
+      </dt>
+      <dd class="nhsuk-summary-list__value">
+        @foreach (var responseCount in prompt.ResponseCounts) {
+          <p>@responseCount.Response @responseCount.Count</p>
+        }
+      </dd>
+    </div>
+  </dl>
+}

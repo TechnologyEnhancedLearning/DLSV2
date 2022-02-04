@@ -78,6 +78,11 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
 
         int CreateNewCentreCourse(Customisation customisation);
+
+        IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
+            int customisationId,
+            int centreId
+        );
     }
 
     public class CourseDataService : ICourseDataService
@@ -304,7 +309,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.HideInLearnerPortal,
                         cc.CategoryName,
                         ct.CourseTopic,
-                        cu.LearningTimeMins AS LearningMinutes
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
@@ -721,6 +727,27 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
 
             return customisationId;
+        }
+
+        public IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
+            int customisationId,
+            int centreId
+        )
+        {
+            return connection.Query<DelegateCourseAdminFieldAnswers>(
+                @"SELECT
+                        c.CandidateID AS DelegateId,
+                        p.Answer1 AS CourseAnswer1,
+                        p.Answer2 AS CourseAnswer2,
+                        p.Answer3 AS CourseAnswer3
+                    FROM Candidates AS c
+                    INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
+                    INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
+                    WHERE c.CentreID = @centreId
+                        AND p.CustomisationID = @customisationId
+                        AND RemovedDate IS NULL",
+                new { customisationId, centreId }
+            );
         }
     }
 }
