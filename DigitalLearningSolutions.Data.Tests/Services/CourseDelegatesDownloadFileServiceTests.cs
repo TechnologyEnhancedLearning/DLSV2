@@ -6,7 +6,6 @@
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -19,7 +18,6 @@
         private CourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDelegatesDataService courseDelegatesDataService = null!;
-        private ICourseService courseService = null!;
         private ICentreCustomPromptsService customPromptsService = null!;
 
         [SetUp]
@@ -27,11 +25,9 @@
         {
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDelegatesDataService = A.Fake<ICourseDelegatesDataService>();
-            courseService = A.Fake<ICourseService>();
             customPromptsService = A.Fake<ICentreCustomPromptsService>();
 
             courseDelegatesDownloadFileService = new CourseDelegatesDownloadFileService(
-                courseService,
                 courseDelegatesDataService,
                 courseAdminFieldsService,
                 customPromptsService
@@ -50,9 +46,6 @@
 
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId))
                 .Returns(courseDelegates);
-
-            A.CallTo(() => courseService.GetCourseDetailsFilteredByCategory(customisationId, centreId, null))
-                .Returns(new CourseDetails { CustomisationId = customisationId });
 
             var customPrompts = new List<CustomPrompt>
             {
@@ -73,7 +66,7 @@
                 .Returns(new CourseAdminFields(customisationId, adminFields));
 
             // When
-            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(customisationId, centreId, null);
+            var resultBytes = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(customisationId, centreId);
             using var resultsStream = new MemoryStream(resultBytes);
             using var resultWorkbook = new XLWorkbook(resultsStream);
 

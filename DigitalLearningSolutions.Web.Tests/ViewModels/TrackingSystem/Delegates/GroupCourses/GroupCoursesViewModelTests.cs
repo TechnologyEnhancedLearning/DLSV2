@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupCourses
+namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.GroupCourses
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
