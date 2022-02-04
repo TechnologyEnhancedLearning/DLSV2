@@ -1,0 +1,52 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model SectionProgressViewModel
+
+<div>
+  <div class="nhsuk-grid-column-full nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+    @Model.SectionName
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Completion
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.Completion
+    </dd>
+  </div>
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Learning Time
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.TotalTime min (average learning time is @Model.AverageTime min)
+    </dd>
+  </div>
+  @if (Model.PostLearningAssessment) {
+    @if (Model.Attempts.HasValue && Model.Attempts > 0) {
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Outcome
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Outcome
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Attempts
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @Model.Attempts
+        </dd>
+      </div>
+    } else {
+      <div class="nhsuk-summary-list__row">
+        Not attempted
+      </div>
+    }
+    <div class="nhsuk-summary-list__row">
+      @Model.Passed
+    </div>
+  }
+  <partial name="_TutorialProgressTable" model="Model.Tutorials" />
+</div>
