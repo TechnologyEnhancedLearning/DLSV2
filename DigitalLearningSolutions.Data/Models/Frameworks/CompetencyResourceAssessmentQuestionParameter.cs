@@ -8,6 +8,9 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
     {
         public int? AssessmentQuestionId { get; set; }
         public int ResourceRefId { get; set; }
+        public int AssessmentQuestionInputTypeId { get; set; }
+        public int AssessmentQuestionMinValue { get; set; }
+        public int AssessmentQuestionMaxValue { get; set; }
         public int CompetencyLearningResourceId { get; set; }
         public int MinResultMatch { get; set; }
         public int MaxResultMatch { get; set; }
