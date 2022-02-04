@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+namespace DigitalLearningSolutions.Web.Helpers
 {
     public static class LearningHubWarningTextHelper
     {
