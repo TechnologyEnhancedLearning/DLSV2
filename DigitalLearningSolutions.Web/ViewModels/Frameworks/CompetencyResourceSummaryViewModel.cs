@@ -37,15 +37,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
                 _Link = value;
             }
         }
-        public string Catalogue
+        public string[] Catalogues
         {
             get
             {
-                return Resource?.References?.FirstOrDefault()?.Catalogue?.Name ?? _Catalog;
-            }
-            set
-            {
-                _Catalog = value;
+                return Resource?.References?.Select(r => r.Catalogue.Name).ToArray() ?? new string[0];
             }
         }
         public string SelectedCatalogue { get; set; }
