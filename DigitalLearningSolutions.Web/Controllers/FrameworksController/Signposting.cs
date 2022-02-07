@@ -363,6 +363,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     Description = resource?.Description,
                     Catalogue = resource?.Catalogue?.Name,
                     ResourceType = resource?.ResourceType ?? p.OriginalResourceType,
+                    ResourceRefId = resource?.RefId ?? p.ResourceRefId,
                     Rating = resource?.Rating ?? p.OriginalRating,
                     UnmatchedResource = learningHubApiReferences?.UnmatchedResourceReferenceIds?.Contains(p.ResourceRefId) ?? false
                 }).ToList();

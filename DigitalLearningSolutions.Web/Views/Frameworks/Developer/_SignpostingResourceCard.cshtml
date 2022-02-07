@@ -36,9 +36,10 @@
                   @catalogue
                 </dt>
                 <dd class="nhsuk-summary-list__value">
-                  <button class="nhsuk-button nhsuk-button--secondary small-edit-button">
-                    Preview
-                  </button>
+                  <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1"
+                      asp-controller="SignpostingSso"
+                      asp-action="ViewResource"
+                      asp-route-resourceReferenceId="@Model.ReferenceId">Preview</a>
                   <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary" asp-route-SelectedCatalogue="@catalogue">
                     Select
                   </button>
