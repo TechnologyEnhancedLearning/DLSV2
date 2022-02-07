@@ -261,13 +261,13 @@
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCoursesForCentre(centreId)
+            return groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId);
         }
 
         public GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
         {
-            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId);
+            var groupCourse = groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId);
 
             if ((!groupCourse?.IsUsable ?? true) || groupCourse.GroupId != groupId)
             {
@@ -373,7 +373,7 @@
             );
 
             var groupDelegates = GetGroupDelegates(groupId);
-            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId)!;
+            var groupCourse = groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId)!;
 
             foreach (var groupDelegate in groupDelegates)
             {

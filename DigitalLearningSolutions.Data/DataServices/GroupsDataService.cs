@@ -13,9 +13,9 @@
 
         IEnumerable<GroupDelegate> GetGroupDelegates(int groupId);
 
-        IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId);
+        IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId);
 
-        GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId);
+        GroupCourse? GetGroupCourseIfVisibleToCentre(int groupCustomisationId, int centreId);
 
         string? GetGroupName(int groupId, int centreId);
 
@@ -171,7 +171,7 @@
             );
         }
 
-        public IEnumerable<GroupCourse> GetGroupCoursesForCentre(int centreId)
+        public IEnumerable<GroupCourse> GetGroupCoursesVisibleToCentre(int centreId)
         {
             return connection.Query<GroupCourse>(
                 @$"{GroupCourseSql}",
@@ -179,7 +179,7 @@
             );
         }
 
-        public GroupCourse? GetGroupCourseForCentre(int groupCustomisationId, int centreId)
+        public GroupCourse? GetGroupCourseIfVisibleToCentre(int groupCustomisationId, int centreId)
         {
             return connection.Query<GroupCourse>(
                 @$"{GroupCourseSql} AND gc.GroupCustomisationID = @groupCustomisationId",
