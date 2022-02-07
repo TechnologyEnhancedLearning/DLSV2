@@ -166,7 +166,7 @@
         public static readonly CourseDelegatesSortByOption CandidateNumber = new CourseDelegatesSortByOption(
             7,
             nameof(CandidateNumber),
-            "Candidate number",
+            "Delegate ID",
             nameof(CourseDelegate.CandidateNumber)
         );
 
