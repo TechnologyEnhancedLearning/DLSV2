@@ -39,11 +39,6 @@
 
             var delegateUser = userService.GetDelegateUserById(delegateId);
 
-            if (delegateUser!.HasDismissedLhLoginWarning)
-            {
-                return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
-            }
-
             var (resource, apiIsAccessible) =
                 await learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
                     resourceReferenceId
@@ -52,6 +47,11 @@
             if (resource == null || resource.AbsentInLearningHub)
             {
                 return NotFound();
+            }
+
+            if (delegateUser!.HasDismissedLhLoginWarning)
+            {
+                return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
             }
 
             var learningHubAccountIsLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
