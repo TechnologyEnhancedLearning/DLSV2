@@ -10,9 +10,18 @@
         @prompt.CustomPromptText
       </dt>
       <dd class="nhsuk-summary-list__value">
-        @foreach (var responseCount in prompt.ResponseCounts) {
-          <p>@responseCount.Response @responseCount.Count</p>
-        }
+        <dl class="nhsuk-summary-list">
+          @foreach (var responseCount in prompt.ResponseCounts) {
+            <div class="nhsuk-summary-list__row basic-summary-list__row">
+              <dt class="nhsuk-summary-list__key nhsuk-u-font-weight-normal">
+                @responseCount.Response
+              </dt>
+              <dd class="nhsuk-summary-list__value admin-field-count">
+                @responseCount.Count
+              </dd>
+            </div>
+          }
+        </dl>
       </dd>
     </div>
   </dl>
