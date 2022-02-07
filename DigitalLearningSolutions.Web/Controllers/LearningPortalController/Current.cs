@@ -15,6 +15,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.FeatureManagement.Mvc;
 
     public partial class LearningPortalController
     {
@@ -164,6 +165,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
@@ -187,6 +189,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
@@ -208,6 +211,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
@@ -233,6 +237,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
@@ -256,6 +261,7 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
@@ -279,6 +285,7 @@
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
