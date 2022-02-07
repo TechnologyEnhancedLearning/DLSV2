@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
@@ -33,6 +34,7 @@
         public bool Assessed { get; set; }
 
         public IEnumerable<CustomPromptWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
+        public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 
         public string CategoryFilter => nameof(CourseStatistics.CategoryName) + FilteringHelper.Separator +
                                         nameof(CourseStatistics.CategoryName) +
@@ -41,6 +43,11 @@
         public string TopicFilter => nameof(CourseStatistics.CourseTopic) + FilteringHelper.Separator +
                                      nameof(CourseStatistics.CourseTopic) +
                                      FilteringHelper.Separator + CourseTopic;
+
+        public string HasAdminFieldsFilter => nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
+                                              FilteringHelper.Separator +
+                                              nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
+                                              FilteringHelper.Separator + HasAdminFields.ToString().ToLowerInvariant();
 
         public string EmailHref => GenerateEmailHref();
 

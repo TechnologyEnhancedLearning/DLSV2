@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public class CourseStatisticsWithAdminFieldResponseCounts : CourseStatistics
@@ -32,5 +33,7 @@
         }
 
         public IEnumerable<CustomPromptWithResponseCounts> AdminFieldsWithResponses { get; set; }
+
+        public bool HasAdminFields => AdminFieldsWithResponses.Any();
     }
 }

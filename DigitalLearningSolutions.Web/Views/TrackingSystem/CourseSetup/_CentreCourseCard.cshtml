@@ -14,7 +14,8 @@
 
       <partial name="_CentreCourseCardDetails" model="@Model" />
 
-      @if (Model.AdminFieldWithResponseCounts.Any()) {
+      <input type="hidden" asp-for="HasAdminFields" data-filter-value="@Model.HasAdminFieldsFilter"/>
+      @if (Model.HasAdminFields) {
         <partial name="_CentreCourseCardAdminFields" model="@Model" />
       }
 
