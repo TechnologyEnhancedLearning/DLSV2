@@ -7,6 +7,7 @@
   Layout = "SelfAssessments/_Layout";
   ViewData["Title"] = "Self Assessment";
   ViewData["SelfAssessmentTitle"] = @Model.Name;
+  var bookmarkIsRelevant = !Model.UserBookmark.Contains($"/{Model.VocabPlural}");
 }
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">@Model.Name</li>
@@ -36,14 +37,13 @@
   {
     <div class="nhsuk-u-reading-width">@(Html.Raw(Model.Description))</div>
   }
-
+  
   @if (Model.LinearNavigation)
   {
-    var bookmarkIsRelevant = !Model.UserBookmark.Contains($"/{Model.VocabPlural}");
-    <a class="nhsuk-button @(Model.UserBookmark == null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
+    <a class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="SelfAssessmentOverview" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
     @if (Model.UserBookmark != null)
     {
-      if (!Model.UserBookmark.ToString().Contains("/" + Model.VocabPlural))
+      if (bookmarkIsRelevant)
         {
             <a class="nhsuk-button trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">
         Continue where I left off
@@ -59,7 +59,7 @@
   else
   {
     <a class="nhsuk-button trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural" asp-route-selfAssessmentId="@Model.Id">View @Model.VocabPlural</a>
-    @if (Model.UserBookmark != null && !Model.UserBookmark.ToString().Contains("/" + Model.VocabPlural))
+    @if (Model.UserBookmark != null && bookmarkIsRelevant)
     {
       <a class="nhsuk-button nhsuk-button--secondary trigger-loader" href="@Configuration["AppRootPath"]@Model.UserBookmark">Continue where I left off</a>
     }
