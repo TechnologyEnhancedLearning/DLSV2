@@ -63,7 +63,7 @@
             var expectedIdOrder = new List<int> { 1, 2 };
 
             // When
-            var resultIdOrder = courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
+            var resultIdOrder = courseService.GetCentreSpecificCourseStatistics(CentreId, AdminCategoryId)
                 .Select(r => r.CustomisationId).ToList();
 
             // Then
@@ -782,7 +782,7 @@
                 .Build();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
                 .Returns(new List<GroupCourse>());
 
             // When
@@ -806,7 +806,7 @@
             var groupCourse = new GroupCourse { CustomisationId = 2, Active = true, GroupId = 1 };
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
                 .Returns(new List<GroupCourse> { groupCourse });
 
             // When

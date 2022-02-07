@@ -83,7 +83,7 @@
         }
 
         [Test]
-        public void GetGroupCoursesVisibleToCentre_returns_expected_courses()
+        public void GetGroupCoursesForCentre_returns_expected_courses()
         {
             // Given
             var expectedGroupCourseIds = new List<int>
@@ -97,7 +97,7 @@
             };
 
             // When
-            var result = groupsDataService.GetGroupCoursesVisibleToCentre(101).ToList();
+            var result = groupsDataService.GetGroupCoursesForCentre(101).ToList();
 
             // Then
             using (new AssertionScope())
@@ -451,7 +451,7 @@
         }
 
         [Test]
-        public void GetGroupCourseIfVisibleToCentre_returns_expected_course()
+        public void GetGroupCourseForCentre_returns_expected_course()
         {
             // Given
             var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
@@ -466,7 +466,7 @@
             );
 
             // When
-            var result = groupsDataService.GetGroupCourseIfVisibleToCentre(25, 101);
+            var result = groupsDataService.GetGroupCourseForCentre(25, 101);
 
             // Then
             using (new AssertionScope())
@@ -769,7 +769,7 @@
                 true,
                 expectedGroupCourse.SupervisorAdminId
             );
-            var result = groupsDataService.GetGroupCourseIfVisibleToCentre(insertedId, 101);
+            var result = groupsDataService.GetGroupCourseForCentre(insertedId, 101);
 
             // Then
             using (new AssertionScope())
