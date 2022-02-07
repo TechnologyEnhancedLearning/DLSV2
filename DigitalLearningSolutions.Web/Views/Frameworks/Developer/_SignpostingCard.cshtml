@@ -2,7 +2,8 @@
 @using DigitalLearningSolutions.Web.Helpers;
 @model SignpostingCardViewModel
 @{
-  var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
+    var parent = (CompetencyResourceSignpostingViewModel)ViewData["parent"];
+    bool displayLevelLabels = Model.AssessmentQuestionInputTypeId != 2;
 }
 <details class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3">
   <summary class="nhsuk-details__summary">
@@ -50,29 +51,31 @@
     {
       <h4 class="nhsuk-u-margin-bottom-2">Signposting Parameters</h4>
       <dl class="nhsuk-summary-list">
-
-          <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Assessment Question
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.AssessmentQuestion
-          </dd>
-      </div>
-      <div class="nhsuk-summary-list__row">
+        <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Minimum result match
+          Assessment Question
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.MinimumResultMatch
+          @Model.AssessmentQuestion
         </dd>
       </div>
       <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-          Maximum result match
+          Trigger @(displayLevelLabels ? "responses" : "range")
         </dt>
         <dd class="nhsuk-summary-list__value">
-          @Model.MaximumResultMatch
+          @if (displayLevelLabels)
+          {
+            <label class="nhsuk-label">@Model.GetLevelLabel(Model.MinimumResultMatch)</label>
+            @if (Model.MinimumResultMatch != Model.MaximumResultMatch)
+            {
+              <label class="nhsuk-label">@Model.GetLevelLabel(Model.MaximumResultMatch)</label>
+            }
+          }
+          else
+          {
+            <label class="nhsuk-label">@Model.MinimumResultMatch to @Model.MaximumResultMatch</label>
+          }
         </dd>
       </div>
       @if (!String.IsNullOrEmpty(Model.CompareResultTo))
@@ -96,7 +99,10 @@
            asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
            asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
            asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameters</a>
-        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1"
+           asp-controller="SignpostingSso"
+           asp-action="ViewResource"
+           asp-route-resourceReferenceId="@Model.ResourceRefId">View resource</a>
         <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1"
            asp-action="RemoveResourceLink"
            asp-route-frameworkId="@parent.FrameworkId"
@@ -104,5 +110,5 @@
            asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
            asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Remove resource link</a>
       </div>
-    </div>
+      </div>
   </details>

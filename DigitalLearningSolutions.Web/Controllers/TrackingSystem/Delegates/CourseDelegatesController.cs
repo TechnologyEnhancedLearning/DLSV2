@@ -99,11 +99,9 @@
         public IActionResult DownloadCurrent(int customisationId)
         {
             var centreId = User.GetCentreId();
-            var adminCategoryId = User.GetAdminCourseCategoryFilter();
             var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
                 customisationId,
-                centreId,
-                adminCategoryId
+                centreId
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";

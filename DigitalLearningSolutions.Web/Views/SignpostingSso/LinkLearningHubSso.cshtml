@@ -6,7 +6,7 @@
     ViewData[LayoutViewDataKeys.Title] = "Recommended Learning Resources - Account linked";
     ViewData[LayoutViewDataKeys.Application] = "Recommended Learning Resources";
     ViewData[LayoutViewDataKeys.HeaderPrefix] = "";
-    var actionLinkRouteData = new Dictionary<string, string> { { "resourceId", Model.ResourceLinkId?.ToString() } };
+    var actionLinkRouteData = new Dictionary<string, string> { { "resourceReferenceId", Model.ResourceLinkId?.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -26,10 +26,7 @@
     <p>You will now be able to view the resources directly.</p>
     @if (Model.ShowResourceLink)
     {
-      /*
-        TODO: HEEDLS-678 -> Ensure link below is accurate or updated if not.
-      */
-      <p><vc:action-link asp-controller="Signposting" asp-action="ViewResource" asp-all-route-data="@actionLinkRouteData" link-text="Continue to resource" /></p>
+      <p><vc:action-link asp-controller="SignpostingSso" asp-action="ViewResource" asp-all-route-data="@actionLinkRouteData" link-text="Continue to resource" /></p>
     }
   </div>
 </div>

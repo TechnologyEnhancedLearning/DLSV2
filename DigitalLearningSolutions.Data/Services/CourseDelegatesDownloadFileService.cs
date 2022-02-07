@@ -11,7 +11,7 @@
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId, int? adminCategoryId);
+        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId);
     }
 
     public class CourseDelegatesDownloadFileService : ICourseDelegatesDownloadFileService
@@ -35,27 +35,24 @@
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDataService courseDelegatesDataService;
-        private readonly ICourseService courseService;
         private readonly ICentreCustomPromptsService customPromptsService;
 
         public CourseDelegatesDownloadFileService(
-            ICourseService courseService,
             ICourseDelegatesDataService courseDelegatesDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             ICentreCustomPromptsService customPromptsService
         )
         {
-            this.courseService = courseService;
             this.courseDelegatesDataService = courseDelegatesDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.customPromptsService = customPromptsService;
         }
 
-        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId, int? adminCategoryId)
+        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId)
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, adminCategoryId);
+            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId);
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -65,11 +62,9 @@
         private void PopulateCourseDelegatesSheetForCourse(
             IXLWorkbook workbook,
             int customisationId,
-            int centreId,
-            int? adminCategoryId
+            int centreId
         )
         {
-            var course = courseService.GetCourseDetailsFilteredByCategory(customisationId, centreId, adminCategoryId)!;
             var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
 
             var customRegistrationPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
@@ -87,10 +82,12 @@
 
             ClosedXmlHelper.AddSheetToWorkbook(
                 workbook,
-                $"Course {course.CustomisationId}",
+                $"Course {customisationId}",
                 dataTable.AsEnumerable(),
                 XLTableTheme.None
             );
+
+            FormatWorksheetColumns(workbook, dataTable);
         }
 
         private static void SetUpDataTableColumns(
@@ -189,6 +186,33 @@
             }
 
             dataTable.Rows.Add(row);
+        }
+
+        private static void FormatWorksheetColumns(IXLWorkbook workbook, DataTable dataTable)
+        {
+            var dateColumns = new[] { Enrolled, LastAccessed, CompleteBy, CompletedDate, RemovedDate };
+            foreach (var columnName in dateColumns)
+            {
+                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.DateTime);
+            }
+
+            var numberColumns = new[] { Logins, TimeMinutes, DiagnosticScore, AssessmentsPassed, PassRate };
+            foreach (var columnName in numberColumns)
+            {
+                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.Number);
+            }
+
+            var boolColumns = new[] { Active, Locked };
+            foreach (var columnName in boolColumns)
+            {
+                var columnNumber = dataTable.Columns.IndexOf(columnName) + 1;
+                workbook.Worksheet(1).Column(columnNumber).CellsUsed(c => c.Address.RowNumber != 1)
+                    .SetDataType(XLDataType.Boolean);
+            }
         }
     }
 }

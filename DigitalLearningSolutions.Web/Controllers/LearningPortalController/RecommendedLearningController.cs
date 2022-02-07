@@ -97,6 +97,7 @@
             return View("AllRecommendedLearningItems", model);
         }
 
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [Route(
             "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
         )]

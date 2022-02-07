@@ -99,7 +99,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
             "Edit completion date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
@@ -110,6 +111,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Support/FAQs/7", "FAQS")]
         [InlineData("/TrackingSystem/Resources", "Resources")]
         [InlineData("/SuperAdmin/Centres", "Centres")]
+        [InlineData("/SuperAdmin/Faqs", "FAQs")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

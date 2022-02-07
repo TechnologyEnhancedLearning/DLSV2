@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Controllers
+﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Services;
@@ -8,10 +8,12 @@
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
+    [FeatureGate(FeatureFlags.UseSignposting)]
     [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
-    [Route("Signposting")]
+    [Route("Signposting/LaunchLearningResource/{resourceReferenceId:int}")]
     public class SignpostingController : Controller
     {
         private readonly IActionPlanService actionPlanService;
@@ -29,15 +31,7 @@
             this.actionPlanService = actionPlanService;
         }
 
-        [Route("ViewResource/{resourceReferenceId:int}")]
-        public IActionResult ViewResource(int resourceReferenceId)
-        {
-            // TODO: HEEDLS-678 - configure this action to redirect to Learning Hub
-            return RedirectToAction("Current", "LearningPortal");
-        }
-
         [HttpGet]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -47,7 +41,7 @@
 
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
-                return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
+                return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
             }
 
             var (resource, apiIsAccessible) =
@@ -70,7 +64,6 @@
         }
 
         [HttpPost]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public IActionResult LaunchLearningResource(int resourceReferenceId, LearningHubLoginWarningViewModel model)
         {
             if (model.LearningHubLoginWarningDismissed)
@@ -79,7 +72,7 @@
                 userService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, true);
             }
 
-            return RedirectToAction("ViewResource", "Signposting", new { resourceReferenceId });
+            return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
         }
     }
 }

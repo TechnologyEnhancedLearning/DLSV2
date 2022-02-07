@@ -345,6 +345,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     CompetencyLearningResourceId = p.CompetencyLearningResourceId,
                     Name = resource?.Title ?? p.OriginalResourceName,
                     AssessmentQuestion = p.Question,
+                    AssessmentQuestionLevelDescriptors = p.AssessmentQuestionId.HasValue && p.AssessmentQuestionInputTypeId != 2 ?
+                            frameworkService.GetLevelDescriptorsForAssessmentQuestionId(
+                                p.AssessmentQuestionId.Value,
+                                GetAdminId(),
+                                p.AssessmentQuestionMinValue,
+                                p.AssessmentQuestionMaxValue,
+                                p.AssessmentQuestionMinValue == 0).ToList()
+                            : null,
+                    LevelDescriptorsAreZeroBased = p.AssessmentQuestionMinValue == 0,
+                    AssessmentQuestionInputTypeId = p.AssessmentQuestionInputTypeId,
                     MinimumResultMatch = p.MinResultMatch,
                     MaximumResultMatch = p.MaxResultMatch,
                     CompareResultTo = p.CompareResultTo,
@@ -353,6 +363,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     Description = resource?.Description,
                     Catalogue = resource?.Catalogue?.Name,
                     ResourceType = resource?.ResourceType ?? p.OriginalResourceType,
+                    ResourceRefId = resource?.RefId ?? p.ResourceRefId,
                     Rating = resource?.Rating ?? p.OriginalRating,
                     UnmatchedResource = learningHubApiReferences?.UnmatchedResourceReferenceIds?.Contains(p.ResourceRefId) ?? false
                 }).ToList();
