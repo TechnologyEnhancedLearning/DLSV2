@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(model.FrameworkCompetencyId.Value);
             string plainTextDescription = SignpostingHelper.DisplayText(model.Description);
-            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.Catalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
+            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.SelectedCatalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
             return RedirectToAction("StartSignpostingParametersSession", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, competencyLearningResourceId });
         }
 
@@ -363,6 +363,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     Description = resource?.Description,
                     Catalogue = resource?.Catalogue?.Name,
                     ResourceType = resource?.ResourceType ?? p.OriginalResourceType,
+                    ResourceRefId = resource?.RefId ?? p.ResourceRefId,
                     Rating = resource?.Rating ?? p.OriginalRating,
                     UnmatchedResource = learningHubApiReferences?.UnmatchedResourceReferenceIds?.Contains(p.ResourceRefId) ?? false
                 }).ToList();

@@ -8,10 +8,12 @@
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.FeatureManagement.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
+    [FeatureGate(FeatureFlags.UseSignposting)]
     [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
-    [Route("Signposting")]
+    [Route("Signposting/LaunchLearningResource/{resourceReferenceId:int}")]
     public class SignpostingController : Controller
     {
         private readonly IActionPlanService actionPlanService;
@@ -30,7 +32,6 @@
         }
 
         [HttpGet]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public async Task<IActionResult> LaunchLearningResource(int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
@@ -38,17 +39,19 @@
 
             var delegateUser = userService.GetDelegateUserById(delegateId);
 
+            var (resource, apiIsAccessible) =
+                await learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
+                    resourceReferenceId
+                );
+
+            if (resource == null || resource.AbsentInLearningHub)
+            {
+                return NotFound();
+            }
+
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
                 return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
-            }
-
-            var (resource, apiIsAccessible) =
-                await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
-
-            if (resource == null)
-            {
-                return NotFound();
             }
 
             var learningHubAccountIsLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);
@@ -63,7 +66,6 @@
         }
 
         [HttpPost]
-        [Route("LaunchLearningResource/{resourceReferenceId:int}")]
         public IActionResult LaunchLearningResource(int resourceReferenceId, LearningHubLoginWarningViewModel model)
         {
             if (model.LearningHubLoginWarningDismissed)
