@@ -10,7 +10,11 @@
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            );
 
         public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
 
@@ -112,10 +116,19 @@
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId)
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            )
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId);
+            return allCourses.Where(c => c.CentreId == centreId).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
         }
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
@@ -277,7 +290,7 @@
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
                 .Where(c => c.Active);
 
-            var groupCourseIds = groupsDataService.GetGroupCoursesForCentre(centreId)
+            var groupCourseIds = groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId)
                 .Select(gc => gc.CustomisationId);
 

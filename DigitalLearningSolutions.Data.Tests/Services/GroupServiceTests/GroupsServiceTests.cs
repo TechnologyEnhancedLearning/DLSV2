@@ -194,7 +194,7 @@
                 .TheFirst(10).With(g => g.GroupId = 1)
                 .TheLast(5).With(g => g.GroupId = 2)
                 .Build();
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId)).Returns(groupCourses);
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId)).Returns(groupCourses);
 
             // When
             var result = groupsService.GetUsableGroupCoursesForCentre(groupId, centreId).ToList();
@@ -321,7 +321,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(1)).Returns(
                 new[]
                 {
                     correctCategoryCourse,
@@ -346,7 +346,7 @@
                 2,
                 courseCategoryId: 255
             );
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(1)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(1)).Returns(
                 new[]
                 {
                     oneCategoryCourse,
@@ -373,7 +373,7 @@
             var dateTime = DateTime.UtcNow;
 
             GivenCurrentTimeIs(dateTime);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(new List<GroupCourse>());
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(A<int>._)).Returns(new List<GroupCourse>());
             A.CallTo(() => groupsDataService.AddDelegateToGroup(A<int>._, A<int>._, A<DateTime>._, A<int>._))
                 .DoesNothing();
 
@@ -382,7 +382,7 @@
 
             // Then
             A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(2)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(2)).MustHaveHappenedOnceExactly();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
@@ -504,7 +504,7 @@
 
         private void SetUpAddDelegateEnrolProcessFakes(GroupCourse groupCourse)
         {
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(A<int>._)).Returns(
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(A<int>._)).Returns(
                 new List<GroupCourse> { groupCourse }
             );
         }
@@ -525,7 +525,7 @@
             A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 
-            A.CallTo(() => groupsDataService.GetGroupCourseForCentre(groupCourse.GroupCustomisationId, centreId))
+            A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCourse.GroupCustomisationId, centreId))
                 .Returns(groupCourse);
         }
     }
