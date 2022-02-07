@@ -153,9 +153,10 @@
         {
             var learningLogItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
-            var (resource, apiIsAccessible) = await learningHubResourceService.GetResourceByReferenceId(
-                learningLogItem.LearningHubResourceReferenceId!.Value
-            );
+            var (resource, apiIsAccessible) = await learningHubResourceService
+                .GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
+                    learningLogItem.LearningHubResourceReferenceId!.Value
+                );
 
             return resource != null
                 ? (new ActionPlanResource(learningLogItem, resource), apiIsAccessible)

@@ -28,9 +28,8 @@
     <h1 class="nhsuk-heading-xl word-break">Enter a complete by date for @Model.Name</h1>
 
     @if (Model.Type is LearningItemType.Resource && Model.ApiIsAccessible == false) {
-      <vc:inset-text
-        css-class="nhsuk-u-margin-bottom-4"
-        text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+      <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4"
+                                    text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
     }
 
     <form asp-action="@action"

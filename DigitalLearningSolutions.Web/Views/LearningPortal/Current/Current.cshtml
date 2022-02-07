@@ -26,9 +26,8 @@
     }
 
     @if (!Model.ApiIsAccessible) {
-      <vc:inset-text
-        css-class="nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-4"
-        text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
+      <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4 nhsuk-u-margin-top-4"
+                                    text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
     }
 
     @if (Model.NoDataFound) {
