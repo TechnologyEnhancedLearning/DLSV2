@@ -10,6 +10,6 @@
 
         public const string ErrorOr = "error-or";
 
-        public const string ExternalLink = "external-link-attributes";
+        public const string UseExternalTabOpener = "use-external-tab-opener";
     }
 }
