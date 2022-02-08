@@ -354,7 +354,8 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
+        public void
+            VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
         {
             // Given
             var validationDetails = new CourseValidationDetails
@@ -829,26 +830,26 @@
         {
             // Given
             const string categoryName = "Category";
-            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
+            A.CallTo(() => courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(CentreId))
                 .Returns(new List<Category> { new Category { CourseCategoryID = 1, CategoryName = categoryName } });
 
             // When
-            var result = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(1);
+            var result = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(CentreId);
 
             // Then
             result.Single().Should().Be(categoryName);
         }
 
         [Test]
-        public void GetTopicsForCentreAndCentrallyManagedCourses_returns_expected_categories()
+        public void GetTopicsForCentreAndCentrallyManagedCourses_returns_expected_topics()
         {
             // Given
             const string topicName = "Topic";
-            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._))
+            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(CentreId))
                 .Returns(new List<Topic> { new Topic { CourseTopicID = 1, CourseTopic = topicName } });
 
             // When
-            var result = courseService.GetTopicsForCentreAndCentrallyManagedCourses(1);
+            var result = courseService.GetTopicsForCentreAndCentrallyManagedCourses(CentreId);
 
             // Then
             result.Single().Should().Be(topicName);

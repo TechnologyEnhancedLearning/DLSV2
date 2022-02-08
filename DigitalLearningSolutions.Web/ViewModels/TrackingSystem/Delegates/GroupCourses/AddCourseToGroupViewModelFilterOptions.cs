@@ -9,19 +9,22 @@
 
     public class AddCourseToGroupViewModelFilterOptions
     {
-        public static FilterViewModel[] GetAllCategoriesFilters(IEnumerable<string> categories, IEnumerable<string> topics)
+        public static FilterViewModel[] GetAllCategoriesFilters(
+            IEnumerable<string> categories,
+            IEnumerable<string> topics
+        )
         {
             return new[]
             {
                 new FilterViewModel(
                     nameof(CourseAssessmentDetails.CategoryName),
                     "Category",
-                    AddCourseToGroupViewModelFilterOptions.GetCategoryOptions(categories)
+                    GetCategoryOptions(categories)
                 ),
                 new FilterViewModel(
                     nameof(CourseAssessmentDetails.CourseTopic),
                     "Topic",
-                    AddCourseToGroupViewModelFilterOptions.GetTopicOptions(topics)
+                    GetTopicOptions(topics)
                 ),
             };
         }
@@ -34,15 +37,14 @@
                 new FilterViewModel(
                     nameof(CourseAssessmentDetails.CourseTopic),
                     "Topic",
-                    AddCourseToGroupViewModelFilterOptions.GetTopicOptions(topics)
+                    GetTopicOptions(topics)
                 ),
             };
         }
 
         private static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
         {
-            var test = categories.Distinct();
-            return test.Select(
+            return categories.Distinct().Select(
                 c => new FilterOptionViewModel(
                     c,
                     nameof(CourseAssessmentDetails.CategoryName) + FilteringHelper.Separator +
