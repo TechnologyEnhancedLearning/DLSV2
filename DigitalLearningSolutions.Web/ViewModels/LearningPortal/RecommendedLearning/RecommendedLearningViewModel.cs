@@ -43,7 +43,9 @@
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
 
             RecommendedResources =
-                paginatedItems.Select(r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id, returnPage));
+                paginatedItems.Select(
+                    r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id, returnPage)
+                );
         }
 
         public SelfAssessment SelfAssessment { get; set; }

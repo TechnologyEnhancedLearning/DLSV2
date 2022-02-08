@@ -101,7 +101,11 @@
         [Route(
             "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
         )]
-        public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId, int? returnPage)
+        public async Task<IActionResult> AddResourceToActionPlan(
+            int selfAssessmentId,
+            int resourceReferenceId,
+            int? returnPage
+        )
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
 

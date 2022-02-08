@@ -113,7 +113,8 @@
         }
 
         [Test]
-        public async Task AddResourceToActionPlan_adds_resource_and_returns_redirect_with_correct_return_page_when_resource_not_in_action_plan()
+        public async Task
+            AddResourceToActionPlan_adds_resource_and_returns_redirect_with_correct_return_page_when_resource_not_in_action_plan()
         {
             // Given
             const int resourceReferenceId = 1;

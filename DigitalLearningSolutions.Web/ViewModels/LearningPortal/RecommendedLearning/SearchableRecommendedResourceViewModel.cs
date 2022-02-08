@@ -4,7 +4,11 @@
 
     public class SearchableRecommendedResourceViewModel
     {
-        public SearchableRecommendedResourceViewModel(RecommendedResource recommendedResource, int selfAssessmentId, int returnPage)
+        public SearchableRecommendedResourceViewModel(
+            RecommendedResource recommendedResource,
+            int selfAssessmentId,
+            int returnPage
+        )
         {
             SelfAssessmentId = selfAssessmentId;
             LearningResourceReferenceId = recommendedResource.LearningResourceReferenceId;

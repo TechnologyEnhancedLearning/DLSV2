@@ -15,7 +15,10 @@
         [TestCase(40, "Recommended")]
         [TestCase(39.9, "Optional")]
         [TestCase(20, "Optional")]
-        public void Recommendation_Rating_string_gets_populated_with_the_expected_value(decimal recommendationScore, string expectedRating)
+        public void Recommendation_Rating_string_gets_populated_with_the_expected_value(
+            decimal recommendationScore,
+            string expectedRating
+        )
         {
             // Given
             var recommendedResource = new RecommendedResource { RecommendationScore = recommendationScore };
