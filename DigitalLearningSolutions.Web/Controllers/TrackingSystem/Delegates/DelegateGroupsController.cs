@@ -255,21 +255,34 @@
 
         private IEnumerable<SelectListItem> GetRegistrationFieldOptionsSelectList(int? selectedId = null)
         {
-            // TODO: HEEDLS-510 Figure out how to make prompts and jobs into one select list with unique ids
-            // TODO: HEEDLS-510 Handle possibility of duplicate custom prompts
-            // TODO: HEEDLS-510 How should select list be ordered?
-            var centreId = User.GetCentreId();
-            var registrationFieldOptions = new List<(int id, string value)>();
+            var registrationFieldOptions = GetCustomPromptOptions();
 
-            var registrationPrompts = centreCustomPromptsService
-                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId)
-                .Select(cp => (cp.CustomPromptNumber, cp.CustomPromptText)).ToList<(int id, string name)>();
-            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-
-            registrationFieldOptions.AddRange(registrationPrompts);
-            registrationFieldOptions.AddRange(jobGroups);
+            var jobGroupOption = (registrationFieldOptions.Last().id + 1, "Job group");
+            registrationFieldOptions.Add(jobGroupOption);
 
             return SelectListHelper.MapOptionsToSelectListItems(registrationFieldOptions, selectedId);
+        }
+
+        private List<(int id, string name)> GetCustomPromptOptions()
+        {
+            var centreId = User.GetCentreId();
+
+            var customPromptOptions = centreCustomPromptsService
+                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId)
+                .Select(cp => (cp.CustomPromptNumber, cp.CustomPromptText)).ToList<(int id, string name)>();
+
+            var customPromptNames = customPromptOptions.Select(r => r.name).ToList();
+
+            if (customPromptNames.Distinct().Count() == customPromptOptions.Count)
+            {
+                return customPromptOptions;
+            }
+
+            return customPromptOptions.Select(
+                cpo => customPromptNames.Count(cpn => cpn == cpo.name) > 1
+                    ? (cpo.id, $"{cpo.name} (Prompt {cpo.id})")
+                    : cpo
+            ).ToList<(int id, string name)>();
         }
     }
 }

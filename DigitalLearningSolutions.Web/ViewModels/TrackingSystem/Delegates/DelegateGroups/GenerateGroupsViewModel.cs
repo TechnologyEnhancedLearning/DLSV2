@@ -12,13 +12,10 @@
         public GenerateGroupsViewModel(IEnumerable<SelectListItem> registrationFieldOptions)
         {
             RegistrationFieldOptions = registrationFieldOptions;
-            SetUpCheckboxes();
         }
 
         [Required(ErrorMessage = "Select a registration field")]
         public int RegistrationFieldOptionId { get; set; }
-
-        public List<CheckboxListItemViewModel> Checkboxes { get; set; }
         public IEnumerable<SelectListItem> RegistrationFieldOptions { get; set; }
         public bool PrefixGroupName { get; set; }
         public bool AddExistingDelegates { get; set; }
@@ -26,40 +23,37 @@
         public bool SyncFieldChanges { get; set; }
         public bool SkipDuplicateNames { get; set; }
 
-        private void SetUpCheckboxes()
+        public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
-            Checkboxes = new List<CheckboxListItemViewModel>
-            {
-                new CheckboxListItemViewModel(
-                    nameof(PrefixGroupName),
-                    "Prefix group name with registration field name",
-                    null
-                ),
+            new CheckboxListItemViewModel(
+                nameof(PrefixGroupName),
+                "Prefix group name with registration field name",
+                null
+            ),
 
-                new CheckboxListItemViewModel(
-                    nameof(AddExistingDelegates),
-                    "Add existing delegates",
-                    "Add all existing delegates with the same answer to the registration field into one group"
-                ),
+            new CheckboxListItemViewModel(
+                nameof(AddExistingDelegates),
+                "Add existing delegates",
+                "Add all existing delegates with the same answer to the registration field into one group"
+            ),
 
-                new CheckboxListItemViewModel(
-                    nameof(AddNewRegistrants),
-                    "Add new registrants",
-                    "Add all new delegates to the group if they answer the field same as the other members in the group"
-                ),
+            new CheckboxListItemViewModel(
+                nameof(AddNewRegistrants),
+                "Add new registrants",
+                "Add all new delegates to the group if they answer the field same as the other members in the group"
+            ),
 
-                new CheckboxListItemViewModel(
-                    nameof(SyncFieldChanges),
-                    "Synchronise changes to registration info with group membership",
-                    "If a delegate changes their answer, they should be moved to the appropriate group"
-                ),
+            new CheckboxListItemViewModel(
+                nameof(SyncFieldChanges),
+                "Synchronise changes to registration info with group membership",
+                "If a delegate changes their answer, they should be moved to the appropriate group"
+            ),
 
-                new CheckboxListItemViewModel(
-                    nameof(SkipDuplicateNames),
-                    "Skip groups with duplicate group name",
-                    null
-                ),
-            };
-        }
+            new CheckboxListItemViewModel(
+                nameof(SkipDuplicateNames),
+                "Skip groups with duplicate group name",
+                null
+            ),
+        };
     }
 }
