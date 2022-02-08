@@ -21,7 +21,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
             .TheFirst(1).With(f => f.TargetGroup = 0)
             .TheRest().With(f => f.TargetGroup = 2).Build();
 
-        private FaqsController controller = null!;
+        private SuperAdminFaqsController controller = null!;
 
         private IFaqsService faqService = null!;
 
@@ -29,7 +29,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
         public void Setup()
         {
             faqService = A.Fake<IFaqsService>();
-            controller = new FaqsController(faqService);
+            controller = new SuperAdminFaqsController(faqService);
             A.CallTo(() => faqService.GetAllFaqs())
                 .Returns(faqs);
         }
