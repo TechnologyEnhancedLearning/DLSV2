@@ -114,6 +114,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 selectedQuestion: parameter.AssessmentQuestion,
                 selectedCompareQuestionType: questionType,
                 parameter);
+            TempData.Remove("CompetencyResourceSummaryViewModel");
+            TempData.Remove("CompetencyResourceLinks");
             TempData.Clear();
             TempData.Set(session);
 
