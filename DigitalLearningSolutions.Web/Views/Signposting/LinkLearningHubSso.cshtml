@@ -1,10 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.SignpostingSso
+@using DigitalLearningSolutions.Web.ViewModels.Signposting
 @model LinkLearningHubViewModel
 
 @{
-    ViewData[LayoutViewDataKeys.Title] = "Recommended Learning Resources - Account linked";
-    ViewData[LayoutViewDataKeys.Application] = "Recommended Learning Resources";
+    ViewData[LayoutViewDataKeys.Title] = "Learning Hub Account Linked";
+    ViewData[LayoutViewDataKeys.Application] = "Digital Learning Solutions Learning Portal";
     ViewData[LayoutViewDataKeys.HeaderPrefix] = "";
     var actionLinkRouteData = new Dictionary<string, string> { { "resourceReferenceId", Model.ResourceLinkId?.ToString() } };
 }
@@ -16,7 +16,7 @@
 
     @if (Model.ShowIsAlreadyLinkedWarning)
     {
-      <p>Your account is already linked with Learning Hub.</p>
+      <p>Your account is already linked with the Learning Hub.</p>
       <p>No change has been made.</p>
     }
     else
