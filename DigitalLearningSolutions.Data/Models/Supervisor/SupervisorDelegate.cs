@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
-    public class SupervisorDelegate : BaseSearchableItem
+    public class SupervisorDelegate
     {
         public int ID { get; set; }
         public string SupervisorEmail { get; set; }
@@ -19,11 +17,5 @@ namespace DigitalLearningSolutions.Data.Models.Supervisor
         public DateTime? Removed { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-
-        public override string SearchableName
-        {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName} {DelegateEmail}";
-            set => SearchableNameOverrideForFuzzySharp = value;
-        }
     }
 }

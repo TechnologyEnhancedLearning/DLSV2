@@ -29,7 +29,7 @@
                 delegateUser =>
                 {
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, page);
                 }
             );
 

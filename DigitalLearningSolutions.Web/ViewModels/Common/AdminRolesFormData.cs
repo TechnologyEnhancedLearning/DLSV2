@@ -20,6 +20,7 @@
         public bool IsContentCreator { get; set; }
         public ContentManagementRole ContentManagementRole { get; set; }
         public int LearningCategory { get; set; }
+        public int? ReturnPage { get; set; }
 
         public AdminRoles GetAdminRoles()
         {

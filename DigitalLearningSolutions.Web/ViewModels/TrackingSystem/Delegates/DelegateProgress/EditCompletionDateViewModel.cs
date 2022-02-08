@@ -1,11 +1,11 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Models.Enums;
 
-    public class EditCompleteByDateViewModel : EditCompleteByDateFormData
+    public class EditCompletionDateViewModel : EditCompletionDateFormData
     {
-        public EditCompleteByDateViewModel(
+        public EditCompletionDateViewModel(
             int progressId,
             DelegateProgressAccessRoute accessedVia,
             DelegateCourseInfo info,
@@ -16,8 +16,8 @@
             AccessedVia = accessedVia;
         }
 
-        public EditCompleteByDateViewModel(
-            EditCompleteByDateFormData formData,
+        public EditCompletionDateViewModel(
+            EditCompletionDateFormData formData,
             int progressId,
             DelegateProgressAccessRoute accessedVia
         ) : base(formData)

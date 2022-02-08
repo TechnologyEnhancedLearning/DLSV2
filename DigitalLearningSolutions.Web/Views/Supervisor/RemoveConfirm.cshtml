@@ -9,9 +9,11 @@
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
   ViewData["HeaderPathName"] = "My Staff";
 }
+
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
@@ -45,6 +47,6 @@
       @Html.HiddenFor(m=> m.DelegateEmail)
       @Html.HiddenFor(m=> m.CandidateAssessmentCount)
     </form>
-    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" >Cancel</vc:cancel-link>
+    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-route-returnPage="@Model.ReturnPage">Cancel</vc:cancel-link>
   </div>
 </div>

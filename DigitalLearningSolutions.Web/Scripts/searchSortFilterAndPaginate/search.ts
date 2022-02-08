@@ -31,7 +31,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
 
 export function getQuery(): string {
   const searchBox = getSearchBox();
-  return searchBox.value;
+  return searchBox.value.trim();
 }
 
 function getSearchBox(): HTMLInputElement {
