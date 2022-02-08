@@ -43,11 +43,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var hash2 = helper.GenerateHash(stateString);
+            var hash1 = service.GenerateHash(stateString);
+            var hash2 = service.GenerateHash(stateString);
 
             // Then
             hash1.Should().Be(hash2);
@@ -60,11 +60,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var hash2 = helper.GenerateHash(stateString);
+            var hash1 = service.GenerateHash(stateString);
+            var hash2 = service.GenerateHash(stateString);
 
             // Then
             hash1.Should().NotBe(hash2);
@@ -77,11 +77,11 @@
             var now = DateTime.UtcNow.Date;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddMilliseconds(999));
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var hash2 = helper.GenerateHash(stateString);
+            var hash1 = service.GenerateHash(stateString);
+            var hash2 = service.GenerateHash(stateString);
 
             // Then
             hash1.Should().Be(hash2);
@@ -95,11 +95,11 @@
             var stateString = "stateString";
             var differentStateString = "stateStrinh";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
-            var hash2 = helper.GenerateHash(differentStateString);
+            var hash1 = service.GenerateHash(stateString);
+            var hash2 = service.GenerateHash(differentStateString);
 
             // Then
             hash1.Should().NotBe(hash2);
@@ -112,7 +112,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             var alternateConfig = A.Fake<IConfiguration>();
 
@@ -124,7 +124,7 @@
             var helper2 = new LearningHubSsoSecurityService(clockService, alternateConfig, Logger);
 
             // When
-            var hash1 = helper.GenerateHash(stateString);
+            var hash1 = service.GenerateHash(stateString);
             var hash2 = helper2.GenerateHash(stateString);
 
             // Then
@@ -139,10 +139,10 @@
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
             A.CallTo(() => Config["LearningHubSSO:SecretKey"]).Returns("1234567");
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            Action action = () => helper.GenerateHash(stateString);
+            Action action = () => service.GenerateHash(stateString);
 
             // Then
             action.Should().Throw<CryptographicException>();
@@ -158,11 +158,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash = helper.GenerateHash(stateString);
-            var result = helper.VerifyHash(stateString, hash);
+            var hash = service.GenerateHash(stateString);
+            var result = service.VerifyHash(stateString, hash);
 
             // Then
             result.Should().BeTrue();
@@ -178,11 +178,11 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+            var service = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
-            var hash = helper.GenerateHash(stateString);
-            var result = helper.VerifyHash(stateString, hash);
+            var hash = service.GenerateHash(stateString);
+            var result = service.VerifyHash(stateString, hash);
 
             // Then
             result.Should().BeFalse();
