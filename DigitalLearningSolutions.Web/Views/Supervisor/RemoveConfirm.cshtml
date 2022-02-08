@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="nhsuk-grid-column-three-quarters nhsuk-heading-l nhsuk-u-font-weight-normal">
-        @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName (@Model.SupervisorDelegateDetail.DelegateEmail)
+        @Model.FirstName @Model.LastName (@Model.DelegateEmail)
       </div>
     </div>
     <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
@@ -48,6 +48,6 @@
       @Html.HiddenFor(m=> m.DelegateEmail)
       @Html.HiddenFor(m=> m.CandidateAssessmentCount)
     </form>
-    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-route-returnPage="@Model.Page">Cancel</vc:cancel-link>
+    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-route-returnPage="@Model.ReturnPage">Cancel</vc:cancel-link>
   </div>
 </div>
