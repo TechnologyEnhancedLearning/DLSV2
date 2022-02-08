@@ -49,7 +49,7 @@
                 nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
                 "true"
             ),
-            FilterStatus.Warning
+            FilterStatus.Default
         );
 
         public static readonly FilterOptionViewModel DoesNotHaveAdminFields = new FilterOptionViewModel(
@@ -59,7 +59,7 @@
                 nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
                 "false"
             ),
-            FilterStatus.Success
+            FilterStatus.Default
         );
     }
 }

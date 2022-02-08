@@ -933,5 +933,30 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetDelegateAnswersForCourseAdminFields_returns_expected_results()
+        {
+            // Given
+            const int customisationId = 1379;
+            const int centreId = 101;
+            var expectedResult = new DelegateCourseAdminFieldAnswers
+            {
+                DelegateId = 1,
+                Answer1 = null,
+                Answer2 = null,
+                Answer3 = null,
+            };
+
+            // When
+            var result = courseDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(7);
+                result.Should().ContainEquivalentOf(expectedResult);
+            }
+        }
     }
 }

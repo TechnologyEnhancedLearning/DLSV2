@@ -57,13 +57,15 @@
         }
 
         [Test]
-        public void GetCentreSpecificCourseStatistics_should_only_return_course_statistics_for_centre()
+        public void
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
         {
             // Given
             var expectedIdOrder = new List<int> { 1, 2 };
 
             // When
-            var resultIdOrder = courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
+            var resultIdOrder = courseService
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
                 .Select(r => r.CustomisationId).ToList();
 
             // Then
@@ -347,7 +349,8 @@
         }
 
         [Test]
-        public void VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
+        public void
+            VerifyAdminUserCanViewCourse_should_return_true_when_course_is_at_centre_and_all_centres_without_application()
         {
             // Given
             var validationDetails = new CourseValidationDetails
