@@ -5,6 +5,7 @@
     using System.Text;
     using DigitalLearningSolutions.Data.Helpers;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
 
     public interface ILearningHubSsoSecurityService
     {
@@ -20,17 +21,20 @@
         private readonly IClockService clockService;
         private readonly IConfiguration config;
 
-        public LearningHubSsoSecurityService(IClockService clockService, IConfiguration config)
+        private ILogger<ILearningHubSsoSecurityService> logger;
+
+        public LearningHubSsoSecurityService(IClockService clockService, IConfiguration config, ILogger<ILearningHubSsoSecurityService> logger)
         {
             this.clockService = clockService;
             this.config = config;
+            this.logger = logger;
         }
 
         public string GenerateHash(string state)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
+            var salt = GetSalt(encoder);
             var timedState = encoder.GetBytes(state + secondsSinceEpoch);
             return GetHash(timedState, salt);
         }
@@ -39,7 +43,7 @@
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
+            var salt = GetSalt(encoder);
             var toleranceInSec = config.GetLearningHubSsoHashTolerance();
 
             for (var counter = 0; counter <= toleranceInSec * 2; counter++)
@@ -54,6 +58,19 @@
             }
 
             return false;
+        }
+
+        private byte[] GetSalt(UTF8Encoding encoder)
+        {
+            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
+
+            if (salt.Length < 8)
+            {
+                logger.LogError("Secret key invalid. The secret key must have a length of at least 8 bytes.");
+                throw new CryptographicException();
+            }
+
+            return salt;
         }
 
         private string GetHash(byte[] input, byte[] salt)

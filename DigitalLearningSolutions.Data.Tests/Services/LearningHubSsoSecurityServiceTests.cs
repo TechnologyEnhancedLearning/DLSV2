@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Security.Cryptography;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public class LearningHubSsoSecurityServiceTests
@@ -13,23 +15,25 @@
         private const int TestIterations = 1000;
         private const int TestLength = 3;
         private IConfiguration Config { get; set; } = null!;
+        private ILogger<ILearningHubSsoSecurityService> Logger = null!;
 
         [SetUp]
         public void Setup()
         {
             var clockService = A.Fake<IClockService>();
             A.CallTo(() => clockService.UtcNow).Returns(new DateTime(2021, 12, 9, 8, 30, 45));
+            A.CallTo(() => Config["LearningHubSSO:SecretKey"]).Returns("where the wild rose blooms");
         }
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
+            Logger = A.Fake<ILogger<ILearningHubSsoSecurityService>>();
             Config = A.Fake<IConfiguration>();
 
             A.CallTo(() => Config["LearningHubSSO:ToleranceInSeconds"]).Returns(TestTolerance.ToString());
             A.CallTo(() => Config["LearningHubSSO:HashIterations"]).Returns(TestIterations.ToString());
             A.CallTo(() => Config["LearningHubSSO:ByteLength"]).Returns(TestLength.ToString());
-            A.CallTo(() => Config["LearningHubSSO:SecretKey"]).Returns("where the wild rose blooms");
         }
 
         [Test]
@@ -39,7 +43,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -56,7 +60,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -73,7 +77,7 @@
             var now = DateTime.UtcNow.Date;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddMilliseconds(999));
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -91,7 +95,7 @@
             var stateString = "stateString";
             var differentStateString = "stateStrinh";
             var clockService = new BinaryClockService(now, now.AddSeconds(1));
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -108,7 +112,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now);
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             var alternateConfig = A.Fake<IConfiguration>();
 
@@ -117,7 +121,7 @@
             A.CallTo(() => alternateConfig["LearningHubSSO:ByteLength"]).Returns(TestLength.ToString());
             A.CallTo(() => alternateConfig["LearningHubSSO:SecretKey"]).Returns("open sesame");
 
-            var helper2 = new LearningHubSsoSecurityService(clockService, alternateConfig);
+            var helper2 = new LearningHubSsoSecurityService(clockService, alternateConfig, Logger);
 
             // When
             var hash1 = helper.GenerateHash(stateString);
@@ -125,6 +129,23 @@
 
             // Then
             hash1.Should().NotBe(hash2);
+        }
+
+        [Test]
+        public void GenerateHash_throws_if_secret_key_too_short()
+        {
+            // Given
+            var now = DateTime.UtcNow;
+            var stateString = "stateString";
+            var clockService = new BinaryClockService(now, now);
+            A.CallTo(() => Config["LearningHubSSO:SecretKey"]).Returns("1234567");
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
+
+            // When
+            Action action = () => helper.GenerateHash(stateString);
+
+            // Then
+            action.Should().Throw<CryptographicException>();
         }
 
         [Test]
@@ -137,7 +158,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash = helper.GenerateHash(stateString);
@@ -157,7 +178,7 @@
             var now = DateTime.UtcNow;
             var stateString = "stateString";
             var clockService = new BinaryClockService(now, now.AddSeconds(delay));
-            var helper = new LearningHubSsoSecurityService(clockService, Config);
+            var helper = new LearningHubSsoSecurityService(clockService, Config, Logger);
 
             // When
             var hash = helper.GenerateHash(stateString);
@@ -166,7 +187,7 @@
             // Then
             result.Should().BeFalse();
         }
-        
+
         private class BinaryClockService : IClockService
         {
             public BinaryClockService(DateTime firstResult, DateTime secondResult)
