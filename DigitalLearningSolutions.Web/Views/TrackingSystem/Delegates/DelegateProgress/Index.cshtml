@@ -5,14 +5,19 @@
 @model DelegateProgressViewModel
 
 @{
-    ViewData["Title"] = "Delegate progress";
-    var routeParamsForBackLink = new Dictionary<string, string?>();
+  ViewData["Title"] = "Delegate progress";
+  var routeParamsForBackLink = new Dictionary<string, string?>();
 
-    if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
-      routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
-    } else {
-      routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
-    }
+  if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
+  } else {
+    routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
+  }
+
+  var routeParamsForDetailLink = new Dictionary<string, string?> {
+    { "progressId", Model.ProgressId.ToString() },
+    { "delegateId", Model.DelegateId.ToString() }
+  };
 }
 
 @section NavBreadcrumbs {
@@ -52,7 +57,7 @@
 
     <partial name="_DelegateProgressSummary" model="Model" />
 
-    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button">
+    <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button" asp-action="DetailedProgress" asp-all-route-data="@routeParamsForDetailLink">
       View detailed progress
     </a>
     <a class="nhsuk-button nhsuk-button--secondary" role="button">

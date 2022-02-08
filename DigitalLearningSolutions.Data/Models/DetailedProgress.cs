@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Data.Models
             Sections = sections;
         }
 
+        public int DelegateId { get; set; }
         public int? DiagnosticScore { get; set; }
         public IEnumerable<DetailedSectionProgress> Sections { get; set; }
     }
