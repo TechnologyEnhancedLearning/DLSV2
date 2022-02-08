@@ -113,9 +113,7 @@
           }
         </tbody>
       </table>
-      <div class="nhsuk-u-margin-top-4">
-      <vc:top-link top-element-id="maincontent" link-text="Top of page" />
-      </div>
+      
     }
   }
   @if (Model.SupervisorSignOffs.Any())
@@ -124,4 +122,10 @@
       <h3>Self Assessment Sign-off Status</h3>
       <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" />
     </div>
+  }
+  @if (Model.CompetencyGroups.Any())
+  {
+    <div class="nhsuk-u-margin-top-4">
+      <vc:top-link top-element-id="maincontent" link-text="Top of page" />
+      </div>
   }
