@@ -1,6 +1,4 @@
-﻿// QQ fix line endings before merge
-
-namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.Supervisor;

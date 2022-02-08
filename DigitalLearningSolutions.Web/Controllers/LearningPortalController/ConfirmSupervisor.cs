@@ -1,6 +1,4 @@
-﻿// QQ fix line endings before merge
-
-namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
+﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc;

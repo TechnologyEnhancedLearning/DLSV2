@@ -1,9 +1,6 @@
-﻿// QQ fix line endings before merge
-
-namespace DigitalLearningSolutions.Data.Models.Supervisor
+﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     using System;
-    using System.ComponentModel.DataAnnotations;
 
     public class SupervisorDelegateDetail : SupervisorDelegate
     {

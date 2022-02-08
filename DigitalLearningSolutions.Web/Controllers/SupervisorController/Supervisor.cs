@@ -1,6 +1,4 @@
-﻿// QQ fix line endings before merge
-
-namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
+﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Web.Helpers;

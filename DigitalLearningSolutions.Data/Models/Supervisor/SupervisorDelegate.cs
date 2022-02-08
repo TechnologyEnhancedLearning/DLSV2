@@ -1,6 +1,4 @@
-﻿// QQ fix line endings before merge
-
-using System;
+﻿using System;
 
 namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
