@@ -947,6 +947,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
                 Answer2 = null,
                 Answer3 = null,
             };
+            var expectedDelegateIds = new[] { 1, 33220, 66, 11, 32096, 23194, 59585 };
 
             // When
             var result = courseDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId).ToList();
@@ -956,6 +957,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
             {
                 result.Should().HaveCount(7);
                 result.Should().ContainEquivalentOf(expectedResult);
+                result.Select(x => x.DelegateId).Should().BeEquivalentTo(expectedDelegateIds);
             }
         }
     }

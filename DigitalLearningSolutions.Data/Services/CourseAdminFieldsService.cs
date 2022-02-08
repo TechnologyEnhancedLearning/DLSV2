@@ -145,9 +145,6 @@
             int centreId
         )
         {
-            const string blank = "blank";
-            const string notBlank = "not blank";
-
             var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId);
             var adminFields = PopulateCustomPromptWithResponseCountsListFromCourseCustomPromptsResult(result);
 
@@ -156,25 +153,26 @@
 
             foreach (var adminField in adminFields)
             {
-                adminField.ResponseCounts = GetResponseCountsForPrompt(adminField, allAnswers, notBlank, blank);
+                adminField.ResponseCounts = GetResponseCountsForPrompt(adminField, allAnswers);
             }
 
             return adminFields;
         }
 
-        private static IEnumerable<ResponseCounts> GetResponseCountsForPrompt(
+        private static IEnumerable<ResponseCount> GetResponseCountsForPrompt(
             CustomPrompt customPrompt,
-            IReadOnlyCollection<DelegateCourseAdminFieldAnswers> allAnswers,
-            string notBlank,
-            string blank
+            IReadOnlyCollection<DelegateCourseAdminFieldAnswers> allAnswers
         )
         {
-            var responseCounts = new List<ResponseCounts>();
+            const string blank = "blank";
+            const string notBlank = "not blank";
+
+            var responseCounts = new List<ResponseCount>();
             if (customPrompt.Options.Any())
             {
                 responseCounts.AddRange(
                     customPrompt.Options.Select(
-                        x => new ResponseCounts(
+                        x => new ResponseCount(
                             x,
                             allAnswers.Count(a => a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1] == x)
                         )
@@ -184,7 +182,7 @@
             else
             {
                 responseCounts.Add(
-                    new ResponseCounts(
+                    new ResponseCount(
                         notBlank,
                         allAnswers.Count(
                             a => !string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1])
@@ -194,7 +192,7 @@
             }
 
             responseCounts.Add(
-                new ResponseCounts(
+                new ResponseCount(
                     blank,
                     allAnswers.Count(
                         a => string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1])

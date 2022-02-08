@@ -1,8 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
-    public class ResponseCounts
+    public class ResponseCount
     {
-        public ResponseCounts(string response, int count)
+        public ResponseCount(string response, int count)
         {
             Response = response;
             Count = count;

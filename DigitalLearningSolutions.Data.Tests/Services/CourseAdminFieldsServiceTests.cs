@@ -246,10 +246,12 @@
             {
                 result.Should().HaveCount(1);
                 result.First().ResponseCounts.Should()
-                    .ContainEquivalentOf(new ResponseCounts("not blank", numberOfDelegatesWithAnswer));
-                result.First().ResponseCounts.Should()
-                    .ContainEquivalentOf(
-                        new ResponseCounts("blank", totalDelegatesCount - numberOfDelegatesWithAnswer)
+                    .BeEquivalentTo(
+                        new List<ResponseCount>
+                        {
+                            new ResponseCount("blank", totalDelegatesCount - numberOfDelegatesWithAnswer),
+                            new ResponseCount("not blank", numberOfDelegatesWithAnswer),
+                        }
                     );
             }
         }
@@ -292,15 +294,16 @@
             {
                 result.Should().HaveCount(1);
                 result.First().ResponseCounts.Should()
-                    .ContainEquivalentOf(new ResponseCounts("Answer", numberOfDelegatesWithAnswer));
-                result.First().ResponseCounts.Should()
-                    .ContainEquivalentOf(new ResponseCounts("Test", numberOfDelegatesWithTest));
-                result.First().ResponseCounts.Should()
-                    .ContainEquivalentOf(
-                        new ResponseCounts(
-                            "blank",
-                            totalDelegatesCount - numberOfDelegatesWithAnswer - numberOfDelegatesWithTest
-                        )
+                    .BeEquivalentTo(
+                        new List<ResponseCount>
+                        {
+                            new ResponseCount("Test", numberOfDelegatesWithTest),
+                            new ResponseCount("Answer", numberOfDelegatesWithAnswer),
+                            new ResponseCount(
+                                "blank",
+                                totalDelegatesCount - numberOfDelegatesWithAnswer - numberOfDelegatesWithTest
+                            ),
+                        }
                     );
             }
         }

@@ -742,7 +742,6 @@ namespace DigitalLearningSolutions.Data.DataServices
                         p.Answer3 AS CourseAnswer3
                     FROM Candidates AS c
                     INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
-                    INNER JOIN Customisations cu ON cu.CustomisationID = p.CustomisationID
                     WHERE c.CentreID = @centreId
                         AND p.CustomisationID = @customisationId
                         AND RemovedDate IS NULL",

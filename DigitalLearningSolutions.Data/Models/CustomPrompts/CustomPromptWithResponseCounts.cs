@@ -7,6 +7,6 @@
         public CustomPromptWithResponseCounts(int customPromptNumber, string text, string? options, bool mandatory) :
             base(customPromptNumber, text, options, mandatory) { }
 
-        public IEnumerable<ResponseCounts> ResponseCounts { get; set; }
+        public IEnumerable<ResponseCount> ResponseCounts { get; set; }
     }
 }
