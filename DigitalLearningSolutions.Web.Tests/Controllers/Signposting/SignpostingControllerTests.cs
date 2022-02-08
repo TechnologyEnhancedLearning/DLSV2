@@ -4,7 +4,7 @@
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.Signposting;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using FakeItEasy;
@@ -84,7 +84,7 @@
             // Then
             result.Should().BeViewResult().WithViewName("LearningHubLoginWarning");
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(A<int>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(A<int>._)).MustHaveHappenedOnceExactly();
         }
 
         [Test]

@@ -91,21 +91,24 @@
       }
       </dl>
     }
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"
-          asp-action="StartSignpostingParametersSession"
-          asp-route-frameworkId="@parent.FrameworkId"
-          asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
-          asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-          asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameters</a>
-      <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" asp-action="ViewResource" asp-route-SignpostingCardId="Model.Id">View resource</a>
-      <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1"
-         asp-action="RemoveResourceLink"
-          asp-route-frameworkId="@parent.FrameworkId"
-          asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
-          asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
-         asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Remove resource link</a>
-    </div>
-  </div>
-</details>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-full">
+        <a class="nhsuk-button small-edit-button nhsuk-u-margin-right-1"
+           asp-action="StartSignpostingParametersSession"
+           asp-route-frameworkId="@parent.FrameworkId"
+           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
+           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
+           asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">@(Model.ParameterHasNotBeenSet ? "Add" : "Manage") parameters</a>
+        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1"
+           asp-controller="SignpostingSso"
+           asp-action="ViewResource"
+           asp-route-resourceReferenceId="@Model.ResourceRefId">View resource</a>
+        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1"
+           asp-action="RemoveResourceLink"
+           asp-route-frameworkId="@parent.FrameworkId"
+           asp-route-frameworkCompetencyId="@parent.FrameworkCompetencyId"
+           asp-route-frameworkCompetencyGroupId="@parent.FrameworkCompetencyGroupId"
+           asp-route-competencyLearningResourceId="@Model.CompetencyLearningResourceId">Remove resource link</a>
+      </div>
+      </div>
+  </details>

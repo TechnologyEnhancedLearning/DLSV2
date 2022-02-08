@@ -21,30 +21,31 @@
     <div class="nhsuk-u-margin-left-1 nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-3">
       @Html.Raw(SignpostingHelper.DisplayText(Model.Description))
     </div>
-    @if (!String.IsNullOrEmpty(Model.Catalogue))
+    @if (Model.Catalogues.Count() > 0)
     {
+      <div class="nhsuk-u-font-weight-bold nhsuk-u-margin-left-1 nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2">
+        Catalogues
+      </div>
       <form method="post" role="search" asp-controller="Frameworks">
         <div class="nhsuk-card__content nhsuk-u-margin-1 nhsuk-u-padding-0">
           <dl class="nhsuk-summary-list">
-            <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key">
-                Catalogue
-              </dt>
-              <dd class="nhsuk-summary-list__value">
-                @Model.Catalogue
-              </dd>
-            </div>
-            <div class="nhsuk-summary-list__row">
-              <dt class="nhsuk-summary-list__key"></dt>
-              <dd class="nhsuk-summary-list__value">
-                <button class="nhsuk-button nhsuk-button--secondary small-edit-button">
-                  Preview
-                </button>
-                <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary">
-                  Select
-                </button>
-              </dd>
-            </div>
+            @foreach(var catalogue in Model.Catalogues)
+            {
+              <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key nhsuk-u-width-two-thirds">
+                  @catalogue
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                  <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1"
+                      asp-controller="SignpostingSso"
+                      asp-action="ViewResource"
+                      asp-route-resourceReferenceId="@Model.ReferenceId">Preview</a>
+                  <button class="nhsuk-button small-edit-button" asp-action="AddCompetencyLearningResourceSummary" asp-route-SelectedCatalogue="@catalogue">
+                    Select
+                  </button>
+                </dd>
+              </div>
+            }
           </dl>
         </div>
         @Html.HiddenFor(m => m.FrameworkId)
@@ -53,12 +54,10 @@
         @Html.Hidden("ReferenceId", Model.ReferenceId)
         @Html.Hidden("Resource.Title", Model.Resource?.Title)
         @Html.Hidden("Resource.ResourceType", Model.Resource?.ResourceType)
-        @Html.Hidden("SelectedCatalogue", Model.Catalogue)
         @Html.HiddenFor(m => m.Resource.Description)
         @Html.Hidden("NameOfCompetency", parent.NameOfCompetency)
         @Html.Hidden("SearchText", parent.SearchText)
         @Html.HiddenFor(m => m.Link)
-        @Html.HiddenFor(m => m.Catalogue)
         @Html.Hidden("Rating", Model.Resource?.Rating ?? 0)
       </form>
     }
