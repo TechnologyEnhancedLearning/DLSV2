@@ -89,6 +89,61 @@
                 GroupDescription = "Group description",
                 AdminUserId = 1,
                 CreatedDate = timeNow,
+                LinkedToField = 1,
+                SyncFieldChanges = true,
+                AddNewRegistrants = true,
+                PopulateExisting = true,
+            };
+
+            const int returnId = 1;
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(returnId);
+
+            // When
+            var result = groupsService.AddDelegateGroup(
+                groupDetails.CentreId,
+                groupDetails.GroupLabel,
+                groupDetails.GroupDescription,
+                groupDetails.AdminUserId,
+                groupDetails.LinkedToField,
+                groupDetails.SyncFieldChanges,
+                groupDetails.AddNewRegistrants,
+                groupDetails.PopulateExisting
+            );
+
+            // Then
+            result.Should().Be(returnId);
+            A.CallTo(
+                () => groupsDataService.AddDelegateGroup(
+                    A<GroupDetails>.That.Matches(
+                        gd =>
+                            gd.CentreId == groupDetails.CentreId &&
+                            gd.GroupLabel == groupDetails.GroupLabel &&
+                            gd.GroupDescription == groupDetails.GroupDescription &&
+                            gd.AdminUserId == groupDetails.AdminUserId &&
+                            gd.CreatedDate == groupDetails.CreatedDate &&
+                            gd.LinkedToField == groupDetails.LinkedToField &&
+                            gd.SyncFieldChanges == groupDetails.SyncFieldChanges &&
+                            gd.AddNewRegistrants == groupDetails.AddNewRegistrants &&
+                            gd.PopulateExisting == groupDetails.PopulateExisting
+                    )
+                )
+            ).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void AddDelegateGroup_sets_GroupDetails_correctly_without_optional_parameters()
+        {
+            // Given
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = 101,
+                GroupLabel = "Group name",
+                GroupDescription = "Group description",
+                AdminUserId = 1,
+                CreatedDate = timeNow,
                 LinkedToField = 0,
                 SyncFieldChanges = false,
                 AddNewRegistrants = false,
@@ -256,6 +311,22 @@
         }
 
         [Test]
+        public void GetGroupAtCentreByName_returns_expected_group()
+        {
+            // Given
+            const string groupName = "Social care - unspecified";
+            const int centreId = 1;
+            var group = GroupTestHelper.GetDefaultGroup();
+            A.CallTo(() => groupsDataService.GetGroupAtCentreByName(groupName, centreId)).Returns(group);
+
+            // When
+            var result = groupsService.GetGroupAtCentreByName(groupName, centreId);
+
+            // Then
+            result.Should().BeEquivalentTo(group);
+        }
+
+        [Test]
         public void UpdateGroupDescription_calls_expected_data_services()
         {
             // Given
@@ -384,6 +455,29 @@
             // Then
             A.CallTo(() => groupsDataService.AddDelegateToGroup(2, 1, dateTime, 0)).MustHaveHappenedOnceExactly();
             A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(2)).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void AddDelegatesWithMatchingAnswersToGroup_calls_data_service()
+        {
+            // Given
+            A.CallTo(
+                () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<string>._,
+                    A<int>._
+                )
+            ).DoesNothing();
+
+            // When
+            groupsService.AddDelegatesWithMatchingAnswersToGroup(1, 1, 1, "Test", 1);
+
+            // Then
+            A.CallTo(
+                () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(1, 1, 1, "Test", 1)
+            ).MustHaveHappenedOnceExactly();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
@@ -522,7 +616,7 @@
                     A<int?>._
                 )
             ).Returns(groupCourse.GroupCustomisationId);
-            
+
             A.CallTo(() => groupsDataService.GetGroupDelegates(A<int>._))
                 .Returns(new List<GroupDelegate> { reusableGroupDelegate });
 

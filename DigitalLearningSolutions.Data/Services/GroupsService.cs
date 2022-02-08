@@ -18,7 +18,16 @@
 
     public interface IGroupsService
     {
-        int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
+        public int AddDelegateGroup(
+            int centreId,
+            string groupLabel,
+            string? groupDescription,
+            int adminUserId,
+            int linkedToField = 0,
+            bool syncFieldChanges = false,
+            bool addNewRegistrants = false,
+            bool populateExisting = false
+        );
 
         void AddDelegateToGroupAndEnrolOnGroupCourses(
             int groupId,
@@ -51,6 +60,8 @@
 
         Group? GetGroupAtCentreById(int groupId, int centreId);
 
+        Group? GetGroupAtCentreByName(string groupName, int centreId);
+
         void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
 
         void RemoveDelegateFromGroup(
@@ -79,6 +90,14 @@
             bool cohortLearners,
             int? supervisorAdminId,
             int centreId
+        );
+
+        public void AddDelegatesWithMatchingAnswersToGroup(
+            int groupId,
+            int linkedToField,
+            int centreId,
+            string? option = null,
+            int? jobGroupId = null
         );
     }
 
@@ -118,6 +137,33 @@
             this.configuration = configuration;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.logger = logger;
+        }
+
+        public int AddDelegateGroup(
+            int centreId,
+            string groupLabel,
+            string? groupDescription,
+            int adminUserId,
+            int linkedToField = 0,
+            bool syncFieldChanges = false,
+            bool addNewRegistrants = false,
+            bool populateExisting = false
+        )
+        {
+            var groupDetails = new GroupDetails
+            {
+                CentreId = centreId,
+                GroupLabel = groupLabel,
+                GroupDescription = groupDescription,
+                AdminUserId = adminUserId,
+                CreatedDate = clockService.UtcNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = syncFieldChanges,
+                AddNewRegistrants = addNewRegistrants,
+                PopulateExisting = populateExisting,
+            };
+
+            return groupsDataService.AddDelegateGroup(groupDetails);
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -197,24 +243,6 @@
             }
         }
 
-        public int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId)
-        {
-            var groupDetails = new GroupDetails
-            {
-                CentreId = centreId,
-                GroupLabel = groupLabel,
-                GroupDescription = groupDescription,
-                AdminUserId = adminUserId,
-                CreatedDate = clockService.UtcNow,
-                LinkedToField = 0,
-                SyncFieldChanges = false,
-                AddNewRegistrants = false,
-                PopulateExisting = false,
-            };
-
-            return groupsDataService.AddDelegateGroup(groupDetails);
-        }
-
         public void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment)
         {
             using var transaction = new TransactionScope();
@@ -292,6 +320,11 @@
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return groupsDataService.GetGroupAtCentreById(groupId, centreId);
+        }
+
+        public Group? GetGroupAtCentreByName(string groupName, int centreId)
+        {
+            return groupsDataService.GetGroupAtCentreByName(groupName, centreId);
         }
 
         public void UpdateGroupDescription(int groupId, int centreId, string? groupDescription)
@@ -398,6 +431,23 @@
             }
 
             transaction.Complete();
+        }
+
+        public void AddDelegatesWithMatchingAnswersToGroup(
+            int groupId,
+            int linkedToField,
+            int centreId,
+            string? option = null,
+            int? jobGroupId = null
+        )
+        {
+            groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                groupId,
+                linkedToField,
+                centreId,
+                option,
+                jobGroupId
+            );
         }
 
         private void EnrolDelegateOnGroupCourse(

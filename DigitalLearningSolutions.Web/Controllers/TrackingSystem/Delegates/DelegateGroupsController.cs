@@ -247,6 +247,92 @@
             return View(model);
         }
 
+        [HttpPost]
+        [Route("Generate")]
+        public IActionResult GenerateGroups(GenerateGroupsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var adminId = User.GetAdminId();
+            var centreId = User.GetCentreId();
+            var isJobGroup = model.RegistrationFieldOptionId == 7;
+            var linkedToField = GetLinkedToFieldValue(model.RegistrationFieldOptionId);
+
+            if (isJobGroup)
+            {
+                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
+                foreach (var (jobGroupId, jobGroupName) in jobGroups)
+                {
+                    var groupName = model.PrefixGroupName ? $"Job group - {jobGroupName}" : jobGroupName;
+
+                    if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
+                    {
+                        break;
+                    }
+
+                    var groupId = groupsService.AddDelegateGroup(
+                        centreId,
+                        groupName,
+                        null,
+                        (int)adminId!,
+                        linkedToField,
+                        model.SyncFieldChanges,
+                        model.AddNewRegistrants,
+                        model.AddExistingDelegates
+                    );
+
+                    if (model.AddExistingDelegates)
+                    {
+                        groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                            groupId,
+                            linkedToField,
+                            centreId,
+                            jobGroupId: jobGroupId
+                        );
+                    }
+                }
+            }
+            else
+            {
+                var registrationPrompt = centreCustomPromptsService
+                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
+                        cp => cp.CustomPromptNumber == model.RegistrationFieldOptionId
+                    );
+                foreach (var option in registrationPrompt.Options)
+                {
+                    var groupName = model.PrefixGroupName
+                        ? $"{registrationPrompt.CustomPromptText} - {option}"
+                        : option;
+
+                    if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
+                    {
+                        break;
+                    }
+
+                    var groupId = groupsService.AddDelegateGroup(
+                        centreId,
+                        groupName,
+                        null,
+                        (int)adminId!,
+                        linkedToField,
+                        model.SyncFieldChanges,
+                        model.AddNewRegistrants,
+                        model.AddExistingDelegates
+                    );
+
+                    if (model.AddExistingDelegates)
+                    {
+                        groupsService.AddDelegatesWithMatchingAnswersToGroup(groupId, linkedToField, centreId, option);
+                    }
+                }
+            }
+
+            return RedirectToAction("Index");
+        }
+
         private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
             return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
@@ -257,7 +343,7 @@
         {
             var registrationFieldOptions = GetCustomPromptOptions();
 
-            var jobGroupOption = (registrationFieldOptions.Last().id + 1, "Job group");
+            var jobGroupOption = (7, "Job group");
             registrationFieldOptions.Add(jobGroupOption);
 
             return SelectListHelper.MapOptionsToSelectListItems(registrationFieldOptions, selectedId);
@@ -284,5 +370,19 @@
                     : cpo
             ).ToList<(int id, string name)>();
         }
+
+        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
+        {
+            return registrationFieldOptionId switch
+            {
+                4 => 5,
+                5 => 6,
+                6 => 7,
+                7 => 4,
+                _ => registrationFieldOptionId,
+            };
+        }
+
+        private void CreateNewGroup(bool isJobGroup) { }
     }
 }

@@ -715,6 +715,47 @@
         }
 
         [Test]
+        public void GetGroupAtCentreByName_returns_expected_group()
+        {
+            // Given
+            var expectedGroup = GroupTestHelper.GetDefaultGroup();
+            var groupName = expectedGroup.GroupLabel;
+
+            // When
+            var result = groupsDataService.GetGroupAtCentreByName(groupName, 101);
+
+            //Then
+            result.Should().BeEquivalentTo(expectedGroup);
+        }
+
+        [Test]
+        public void GetGroupAtCentreByName_returns_null_if_no_such_group_exists()
+        {
+            // Given
+            var expectedGroup = GroupTestHelper.GetDefaultGroup();
+
+            // When
+            var result = groupsDataService.GetGroupAtCentreByName("Group name that does not exist", 101);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
+        public void GetGroupAtCentreByName_returns_null_with_incorrect_centreId()
+        {
+            // Given
+            var expectedGroup = GroupTestHelper.GetDefaultGroup();
+            const int incorrectCentreId = 1;
+
+            // When
+            var result = groupsDataService.GetGroupAtCentreByName(expectedGroup.GroupLabel, incorrectCentreId);
+
+            // Then
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void UpdateGroupName_updates_record()
         {
             // Given
@@ -829,7 +870,7 @@
         private string? GetGroupDescriptionById(int groupId)
         {
             return connection.Query<string?>(
-                @"SELECT GroupDescription FROM Groups 
+                @"SELECT GroupDescription FROM Groups
                     WHERE GroupID = @groupId",
                 new { groupId }
             ).FirstOrDefault();
@@ -838,7 +879,7 @@
         private string? GetGroupNameById(int groupId)
         {
             return connection.Query<string?>(
-                @"SELECT GroupLabel FROM Groups 
+                @"SELECT GroupLabel FROM Groups
                     WHERE GroupID = @groupId",
                 new { groupId }
             ).FirstOrDefault();
