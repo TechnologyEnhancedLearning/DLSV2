@@ -13,6 +13,18 @@
     {
         private SqlConnection connection = null!;
         private FaqsDataService faqsDataService = null!;
+        private readonly Faq expectedFaq = new Faq
+        {
+            FaqId = 112,
+            TargetGroup = 0,
+            Published = true,
+            AHtml =
+                "No, existing learners will access the Learning Portal using their existing <strong>Delegate ID</strong>.&nbsp;",
+            QText = "Do our existing learners need to register to use the Learning Portal? ",
+            QAnchor = "LearningPortalRegister",
+            Weighting = 20,
+            CreatedDate = new DateTime(2017, 5, 9),
+        };
 
         [SetUp]
         public void Setup()
@@ -26,18 +38,7 @@
         {
             // Given
             const int faqId = 112;
-            var expectedFaq = new Faq
-            {
-                FaqId = 112,
-                TargetGroup = 0,
-                Published = true,
-                AHtml =
-                    "No, existing learners will access the Learning Portal using their existing <strong>Delegate ID</strong>.&nbsp;",
-                QText = "Do our existing learners need to register to use the Learning Portal? ",
-                QAnchor = "LearningPortalRegister",
-                Weighting = 20,
-                CreatedDate = new DateTime(2017, 5, 9),
-            };
+
 
             // When
             var result = faqsDataService.GetFaqById(faqId);
@@ -58,33 +59,18 @@
             // Then
             result.Should().BeNull();
         }
-        
-        [Test]
-        public void GetPublishedFaqsForTargetGroup_returns_only_published_faqs_for_target_group()
-        {
-            // Given
-            const int targetGroup = 2;
-            const int expectedGroupTwoFaqId = 33;
-
-            // When
-            var result = faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup).ToList();
-
-            // Then
-            result.Should().OnlyContain(f => f.TargetGroup == targetGroup && f.Published);
-            result.Should().Contain(f => f.FaqId == expectedGroupTwoFaqId);
-        }
 
         [Test]
-        public void GetPublishedFaqsForTargetGroup_returns_empty_list_when_no_faqs_for_target_group()
+        public void GetAllFaqs_returns_expected_information()
         {
-            // Given
-            const int targetGroup = 15;
-
             // When
-            var result = faqsDataService.GetPublishedFaqsForTargetGroup(targetGroup);
+            var result = faqsDataService.GetAllFaqs();
 
             // Then
-            result.Should().BeEmpty();
+            var resultList = result.ToList();
+            resultList.Count().Should().Be(121);
+            var returnedFaq = resultList.FirstOrDefault(x => x.FaqId == 112);
+            returnedFaq.Should().BeEquivalentTo(expectedFaq);
         }
     }
 }

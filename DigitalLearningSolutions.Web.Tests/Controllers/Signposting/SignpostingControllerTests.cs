@@ -1,11 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.Signposting
 {
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Controllers;
+    using DigitalLearningSolutions.Web.Controllers.Signposting;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using FakeItEasy;
@@ -18,14 +17,14 @@
         private const int ResourceReferenceId = 10;
         private IActionPlanService actionPlanService = null!;
         private SignpostingController controller = null!;
-        private ILearningHubApiClient learningHubApiClient = null!;
+        private ILearningHubResourceService learningHubResourceService = null!;
         private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
         {
             userService = A.Fake<IUserService>();
-            learningHubApiClient = A.Fake<ILearningHubApiClient>();
+            learningHubResourceService = A.Fake<ILearningHubResourceService>();
             actionPlanService = A.Fake<IActionPlanService>();
 
             A.CallTo(() => actionPlanService.UpdateActionPlanResourcesLastAccessedDateIfPresent(A<int>._, A<int>._))
@@ -33,12 +32,12 @@
             A.CallTo(() => userService.GetDelegateUserById(DelegateId))
                 .Returns(UserTestHelper.GetDefaultDelegateUser(DelegateId));
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(DelegateId)).Returns(false);
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(ResourceReferenceId))
-                .Returns(new ResourceReferenceWithResourceDetails());
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(ResourceReferenceId))
+                .Returns((new ResourceReferenceWithResourceDetails(), false));
 
             controller = new SignpostingController(
                 userService,
-                learningHubApiClient,
+                learningHubResourceService,
                 actionPlanService
             ).WithDefaultContext().WithMockUser(true, delegateId: DelegateId);
         }
@@ -70,10 +69,10 @@
             var result = await controller.LaunchLearningResource(ResourceReferenceId);
 
             // Then
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("SignpostingSso")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustNotHaveHappened();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._)).MustNotHaveHappened();
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(A<int>._)).MustNotHaveHappened();
         }
 
         [Test]
@@ -85,7 +84,7 @@
             // Then
             result.Should().BeViewResult().WithViewName("LearningHubLoginWarning");
             A.CallTo(() => userService.DelegateUserLearningHubAccountIsLinked(A<int>._)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => learningHubApiClient.GetResourceByReferenceId(A<int>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(A<int>._)).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -103,7 +102,7 @@
             // Then
             A.CallTo(() => userService.UpdateDelegateLhLoginWarningDismissalStatus(DelegateId, true))
                 .MustHaveHappenedOnceExactly();
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("SignpostingSso")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
         }
 
@@ -122,7 +121,7 @@
             // Then
             A.CallTo(() => userService.UpdateDelegateLhLoginWarningDismissalStatus(A<int>._, A<bool>._))
                 .MustNotHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("Signposting")
+            result.Should().BeRedirectToActionResult().WithActionName("ViewResource").WithControllerName("SignpostingSso")
                 .WithRouteValue("resourceReferenceId", ResourceReferenceId);
         }
     }

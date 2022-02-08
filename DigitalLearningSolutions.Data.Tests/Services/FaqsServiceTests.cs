@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Support;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
@@ -113,11 +114,24 @@
         {
             // Given
             const int expectedTargetGroup = 3;
-            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All().With(f => f.Published = true)
-                .And(f => f.TargetGroup = 3).Build();
+            var expectedFaqs = Builder<Faq>.CreateListOfSize(5).All()
+                .With(f => f.Published = true)
+                .And(f => f.TargetGroup = expectedTargetGroup).Build();
+            var unexpectedFaqs = Builder<Faq>.CreateListOfSize(6)
+                .TheFirst(2)
+                .With(f => f.TargetGroup != expectedTargetGroup)
+                .With(f => f.Published = false)
+                .TheNext(2)
+                .With(f => f.TargetGroup = expectedTargetGroup)
+                .With(f => f.Published = false)
+                .TheNext(2)
+                .With(f => f.TargetGroup != expectedTargetGroup)
+                .With(f => f.Published = true)
+                .Build();
+            var dataServiceFaqs = expectedFaqs.Concat(unexpectedFaqs);
 
-            A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(expectedTargetGroup))
-                .Returns(expectedFaqs);
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(dataServiceFaqs);
 
             // When
             var result = faqsService.GetPublishedFaqsForTargetGroup(expectedTargetGroup).ToList();
@@ -128,7 +142,7 @@
                 result.Should().HaveCount(5);
                 result.Should().BeEquivalentTo(expectedFaqs);
 
-                A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(expectedTargetGroup))
+                A.CallTo(() => faqDataService.GetAllFaqs())
                     .MustHaveHappenedOnceExactly();
             }
         }
@@ -139,7 +153,7 @@
             // Given
             const int targetGroup = 5;
 
-            A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(targetGroup))
+            A.CallTo(() => faqDataService.GetAllFaqs())
                 .Returns(new List<Faq>());
 
             // When
@@ -150,9 +164,43 @@
             {
                 result.Should().BeEmpty();
 
-                A.CallTo(() => faqDataService.GetPublishedFaqsForTargetGroup(targetGroup))
+                A.CallTo(() => faqDataService.GetAllFaqs())
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public void GetAllFaqs_calls_data_service_method_and_returns_expected_results()
+        {
+            // Given
+            var expectedFaqs = Builder<Faq>.CreateListOfSize(10)
+                .Build();
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(expectedFaqs);
+
+            // When
+            var result = faqsService.GetAllFaqs();
+
+            // Then
+            result.Should().Equal(expectedFaqs);
+        }
+
+        [Test]
+        public void GetAll_returns_empty_when_data_service_returns_null()
+        {
+            // Given
+            var emptyList = Enumerable.Empty<Faq>();
+
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .Returns(emptyList);
+
+            // When
+            var result = faqsService.GetAllFaqs();
+
+            // Then
+            result.Should().BeEmpty();
+            A.CallTo(() => faqDataService.GetAllFaqs())
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

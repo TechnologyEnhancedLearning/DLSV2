@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
+    using System;
     using Dapper;
     using Microsoft.Data.SqlClient;
 
@@ -12,15 +13,25 @@
             this.connection = connection;
         }
 
-        public void InsertLearningResourceReference(int id, int resourceRefId, int adminId, string resourceName)
+        public void InsertLearningResourceReference(
+            int id,
+            int resourceRefId,
+            int adminId,
+            string resourceName,
+            string? link = null,
+            string? description = null,
+            string? resourceType = null,
+            string? catalogue = null,
+            decimal? rating = 0
+        )
         {
             connection.Execute(
                 @"SET IDENTITY_INSERT dbo.LearningResourceReferences ON
                     INSERT INTO LearningResourceReferences
-                    (ID, ResourceRefID, OriginalResourceName, AdminId)
-                    VALUES (@id, @resourceRefId, @resourceName, @adminId)
+                    (ID, ResourceRefID, OriginalResourceName, AdminId, ResourceLink, OriginalDescription, OriginalResourceType, OriginalCatalogueName, OriginalRating)
+                    VALUES (@id, @resourceRefId, @resourceName, @adminId, @link, @description, @resourceType, @catalogue, @rating)
                     SET IDENTITY_INSERT dbo.LearningResourceReferences OFF",
-                new { id, resourceRefId, resourceName, adminId }
+                new { id, resourceRefId, resourceName, adminId, link, description, resourceType, catalogue, rating }
             );
         }
 
@@ -28,17 +39,19 @@
             int id,
             int competencyId,
             int learningResourceReferenceId,
-            int adminId
+            int adminId,
+            DateTime? removedDate = null,
+            int? removedByAdminId = null
         )
         {
             return connection.QuerySingle<int>(
                 @"SET IDENTITY_INSERT dbo.CompetencyLearningResources ON
                     INSERT INTO CompetencyLearningResources
-                    (ID, CompetencyId, LearningResourceReferenceID, AdminId)
+                    (ID, CompetencyId, LearningResourceReferenceID, AdminId, RemovedDate, RemovedByAdminId)
                     OUTPUT Inserted.ID
-                    VALUES (@id, @competencyId, @learningResourceReferenceId, @adminId)
+                    VALUES (@id, @competencyId, @learningResourceReferenceId, @adminId, @removedDate, @removedByAdminId)
                     SET IDENTITY_INSERT dbo.CompetencyLearningResources OFF",
-                new { id, competencyId, learningResourceReferenceId, adminId }
+                new { id, competencyId, learningResourceReferenceId, adminId, removedDate, removedByAdminId }
             );
         }
 

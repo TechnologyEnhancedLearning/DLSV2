@@ -15,6 +15,7 @@
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.FeatureManagement.Mvc;
 
     public partial class LearningPortalController
     {
@@ -32,7 +33,8 @@
             var bannerText = GetBannerText();
             var selfAssessments =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var (learningResources, apiIsAccessible) =
+                await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new CurrentPageViewModel(
                 currentCourses,
                 searchString,
@@ -40,6 +42,7 @@
                 sortDirection,
                 selfAssessments,
                 learningResources,
+                apiIsAccessible,
                 bannerText,
                 page
             );
@@ -52,7 +55,7 @@
             var currentCourses = courseDataService.GetCurrentCourses(delegateId);
             var selfAssessment =
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
-            var learningResources = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
+            var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
             return View("Current/AllCurrentItems", model);
         }
@@ -162,17 +165,31 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
         public async Task<IActionResult> MarkActionPlanResourceAsComplete(int learningLogItemId)
         {
-            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
-            var model = new MarkActionPlanResourceAsCompleteViewModel(learningLogItemId, actionPlanResource!.Name);
+            var (actionPlanResource, apiIsAccessible) =
+                await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null)
+            {
+                return NotFound();
+            }
+
+            var model = new MarkActionPlanResourceAsCompleteViewModel(
+                learningLogItemId,
+                actionPlanResource.AbsentInLearningHub,
+                actionPlanResource!.Name,
+                apiIsAccessible
+            );
             return View("Current/MarkActionPlanResourceAsComplete", model);
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/MarkAsComplete")]
@@ -194,24 +211,33 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
         public async Task<IActionResult> SetCurrentActionPlanResourceCompleteByDate(int learningLogItemId)
         {
-            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
+            var (actionPlanResource, apiIsAccessible) =
+                await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null || actionPlanResource.AbsentInLearningHub)
+            {
+                return NotFound();
+            }
 
             var model = new EditCompleteByDateViewModel(
                 learningLogItemId,
                 actionPlanResource!.Name,
                 LearningItemType.Resource,
-                actionPlanResource.CompleteByDate
+                actionPlanResource.CompleteByDate,
+                apiIsAccessible: apiIsAccessible
             );
 
             return View("Current/SetCompleteByDate", model);
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/CompleteBy")]
@@ -235,17 +261,31 @@
         }
 
         [HttpGet]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [SetDlsSubApplication(nameof(DlsSubApplication.LearningPortal))]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public async Task<IActionResult> RemoveResourceFromActionPlan(int learningLogItemId)
         {
-            var actionPlanResource = await actionPlanService.GetActionPlanResource(learningLogItemId);
-            var model = new RemoveActionPlanResourceViewModel(actionPlanResource!.Id, actionPlanResource.Name);
+            var (actionPlanResource, apiIsAccessible) =
+                await actionPlanService.GetActionPlanResource(learningLogItemId);
+
+            if (actionPlanResource == null)
+            {
+                return NotFound();
+            }
+
+            var model = new RemoveActionPlanResourceViewModel(
+                actionPlanResource!.Id,
+                actionPlanResource.Name,
+                actionPlanResource.AbsentInLearningHub,
+                apiIsAccessible
+            );
             return View("Current/RemoveCurrentActionPlanResourceConfirmation", model);
         }
 
         [HttpPost]
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [ServiceFilter(typeof(VerifyDelegateCanAccessActionPlanResource))]
         [Route("/LearningPortal/Current/ActionPlan/{learningLogItemId:int}/Remove")]
         public IActionResult RemoveResourceFromActionPlanPost(int learningLogItemId)
@@ -254,13 +294,19 @@
             return RedirectToAction("Current");
         }
 
-        private async Task<IEnumerable<ActionPlanResource>> GetIncompleteActionPlanResourcesIfSignpostingEnabled(
-            int delegateId
-        )
+        private async Task<(IList<ActionPlanResource>, bool apiIsAccessible)>
+            GetIncompleteActionPlanResourcesIfSignpostingEnabled(
+                int delegateId
+            )
         {
-            return config.IsSignpostingUsed()
-                ? await actionPlanService.GetIncompleteActionPlanResources(delegateId)
-                : new List<ActionPlanResource>();
+            if (!config.IsSignpostingUsed())
+            {
+                return (new List<ActionPlanResource>(), false);
+            }
+
+            var (resources, apiIsAccessible) =
+                await actionPlanService.GetIncompleteActionPlanResources(delegateId);
+            return (resources.ToList(), apiIsAccessible);
         }
     }
 }

@@ -30,6 +30,7 @@
     <None Remove="Scripts\learningMenu\fullscreen.ts" />
     <None Remove="Scripts\learningMenu\postLearningContentViewer.ts" />
     <None Remove="Scripts\learningPortal\dlscommon.ts" />
+    <None Remove="Scripts\learningPortal\recommendedLearning.ts" />
     <None Remove="Scripts\learningPortal\sortCourses.ts" />
     <None Remove="Scripts\learningPortal\verificationPickResults.ts" />
     <None Remove="Scripts\nhsuk.ts" />
@@ -94,6 +95,7 @@
     <TypeScriptCompile Include="Scripts\learningPortal\current.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\dlscommon.ts" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
+    <TypeScriptCompile Include="Scripts\learningPortal\recommendedLearning.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\selfAssessment.ts" />
     <TypeScriptCompile Include="Scripts\learningPortal\verificationPickResults.ts" />
     <TypeScriptCompile Include="Scripts\nhsuk.ts" />
@@ -121,7 +123,7 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
-
+    
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />

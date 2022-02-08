@@ -1,0 +1,23 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
+@model SelectDelegateAllItemsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var delegateUser in Model.Delegates) {
+  <partial name="_AddGroupDelegateCard" model="delegateUser"
+           view-data="@(new ViewDataDictionary(ViewData) { { "groupId", @Model.GroupId } })" />
+}
+@foreach (var filter in Model.Filters) {
+  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+}
+</body>
+</html>

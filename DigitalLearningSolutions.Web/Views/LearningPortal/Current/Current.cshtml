@@ -1,3 +1,4 @@
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using Microsoft.Extensions.Configuration
@@ -22,6 +23,11 @@
     <h1 id="page-heading">My Current Activities</h1>
     @if (Model.BannerText != null) {
       <h2 class="page-subheading word-break">@Model.BannerText</h2>
+    }
+
+    @if (!Model.ApiIsAccessible) {
+      <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4 nhsuk-u-margin-top-4"
+                                    text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
     }
 
     @if (Model.NoDataFound) {

@@ -137,14 +137,22 @@ namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
         {
             var superviseDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminID(), 0);
-            var model = new SupervisorDelegateDetailViewModel(superviseDelegate, returnPage);
+            var model = new SupervisorDelegateViewModel(superviseDelegate, returnPage);
             return View("RemoveConfirm", model);
         }
 
-        public IActionResult RemoveSupervisorDelegate(int supervisorDelegateId)
+        [HttpPost]
+        public IActionResult RemoveSupervisorDelegate(SupervisorDelegateViewModel supervisorDelegate)
         {
-            supervisorService.RemoveSupervisorDelegateById(supervisorDelegateId, 0, GetAdminID());
-            return RedirectToAction("MyStaffList");
+            if (ModelState.IsValid && supervisorDelegate.ConfirmedRemove)
+            {
+                supervisorService.RemoveSupervisorDelegateById(supervisorDelegate.Id, 0, GetAdminID());
+                return RedirectToAction("MyStaffList");
+            }
+            else
+            {
+                return View("RemoveConfirm", supervisorDelegate);
+            }
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessments")]

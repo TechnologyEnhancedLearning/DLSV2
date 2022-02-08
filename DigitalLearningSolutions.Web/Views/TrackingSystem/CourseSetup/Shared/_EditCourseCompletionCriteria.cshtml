@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditCourseDetailsFormData
+
+@{
+  const string completionCriteriaId = "conditional-completion-criteria";
+  var otherCompletionCriteriaCss = "nhsuk-radios__conditional"
+                                   + (!Model.IsAssessed ? "" : " nhsuk-radios__conditional--hidden");
+}
+<input type="hidden" asp-for="PostLearningAssessment" />
+<input type="hidden" asp-for="DiagAssess" />
+
+<h2 class="nhsuk-heading-s nhsuk-u-font-weight-normal">
+  Completion criteria
+</h2>
+
+<div class="nhsuk-form-group">
+  <fieldset class="nhsuk-fieldset">
+    <div class="nhsuk-radios nhsuk-radios--conditional">
+
+      @if (Model.PostLearningAssessment) {
+        <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
+          <input class="nhsuk-radios__input"
+                 id="PostLearningAssessmentRadio"
+                 asp-for="IsAssessed"
+                 type="radio"
+                 value="true">
+          <label class="nhsuk-label nhsuk-radios__label" for="PostLearningAssessmentRadio">
+            Post learning assessment
+          </label>
+        </div>
+
+        <div class="nhsuk-radios__item">
+          <input class="nhsuk-radios__input"
+                 id="OtherCompletionCriteria"
+                 asp-for="IsAssessed"
+                 type="radio"
+                 value="false"
+                 aria-controls="@completionCriteriaId"
+                 aria-expanded="@Model.IsAssessed.ToString()">
+          <label class="nhsuk-label nhsuk-radios__label" for="OtherCompletionCriteria">
+            Other completion criteria
+          </label>
+        </div>
+
+        <div class="@otherCompletionCriteriaCss" id="@completionCriteriaId">
+          <partial name="../Shared/_OtherCompletionCriteriaInputs" model="Model" />
+        </div>
+      } else {
+        <partial name="../Shared/_OtherCompletionCriteriaInputs" model="Model" />
+      }
+
+    </div>
+  </fieldset>
+</div>

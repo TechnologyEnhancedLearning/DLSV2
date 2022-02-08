@@ -47,14 +47,19 @@ namespace DigitalLearningSolutions.Data.DataServices
                         Registered,
                         Completed,
                         Evaluated
-                    FROM tActivityLog
-                        WHERE (LogDate >= @startDate
-                            AND (@endDate IS NULL OR LogDate <= @endDate)
-                            AND CentreID = @centreId
-                            AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
-                            AND (@customisationId IS NULL OR CustomisationID = @customisationId)
-                            AND (@courseCategoryId IS NULL OR CourseCategoryId = @courseCategoryId)
-                            AND (Registered = 1 OR Completed = 1 OR Evaluated = 1))",
+                    FROM tActivityLog AS al
+                    WHERE (LogDate >= @startDate
+                        AND (@endDate IS NULL OR LogDate <= @endDate)
+                        AND CentreID = @centreId
+                        AND (@jobGroupId IS NULL OR JobGroupID = @jobGroupId)
+                        AND (@customisationId IS NULL OR al.CustomisationID = @customisationId)
+                        AND (@courseCategoryId IS NULL OR al.CourseCategoryId = @courseCategoryId)
+                        AND (Registered = 1 OR Completed = 1 OR Evaluated = 1))
+                        AND EXISTS (
+                            SELECT ap.ApplicationID
+                            FROM Applications ap
+                            WHERE ap.ApplicationID = al.ApplicationID
+                            AND ap.DefaultContentTypeID <> 4)",
                 new
                 {
                     centreId,

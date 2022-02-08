@@ -4,9 +4,11 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.ServiceFilter;
@@ -16,6 +18,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.FeatureManagement.Mvc;
 
     [Authorize(Policy = CustomPolicies.UserOnly)]
     [ServiceFilter(typeof(VerifyDelegateUserCanAccessSelfAssessment))]
@@ -59,8 +62,13 @@
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
 
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/RecommendedLearning")]
-        public async Task<IActionResult> RecommendedLearning(int selfAssessmentId)
+        [NoCaching]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/RecommendedLearning/{page:int=1}")]
+        public async Task<IActionResult> RecommendedLearning(
+            int selfAssessmentId,
+            int page = 1,
+            string? searchString = null
+        )
         {
             if (!configuration.IsSignpostingUsed())
             {
@@ -68,25 +76,55 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/RecommendedLearning";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
-            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId);
+            return await ReturnSignpostingRecommendedLearningView(selfAssessmentId, candidateId, page, searchString);
         }
 
+        [FeatureGate(FeatureFlags.UseSignposting)]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AllRecommendedLearningItems")]
+        public async Task<IActionResult> AllRecommendedLearningItems(int selfAssessmentId)
+        {
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            var (recommendedResources, _) = await recommendedLearningService.GetRecommendedLearningForSelfAssessment(
+                selfAssessmentId,
+                candidateId
+            );
+
+            var model = new AllRecommendedLearningItemsViewModel(recommendedResources, selfAssessmentId);
+            return View("AllRecommendedLearningItems", model);
+        }
+
+        [FeatureGate(FeatureFlags.UseSignposting)]
         [Route(
             "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
         )]
         public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
+
             if (!actionPlanService.ResourceCanBeAddedToActionPlan(resourceReferenceId, delegateId))
             {
                 return NotFound();
             }
 
-            await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
+            try
+            {
+                await actionPlanService.AddResourceToActionPlan(resourceReferenceId, delegateId, selfAssessmentId);
+            }
+            catch (ResourceNotFoundException e)
+            {
+                if (!e.ApiIsAccessible)
+                {
+                    return NotFound();
+                }
+
+                var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateId, selfAssessmentId);
+                var model = new ResourceRemovedViewModel(assessment!);
+                return View("ResourceRemovedErrorPage", model);
+            }
 
             return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
         }
@@ -100,7 +138,7 @@
             }
 
             var candidateId = User.GetCandidateIdKnownNotNull();
-            string destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
+            var destUrl = $"/LearningPortal/SelfAssessment/{selfAssessmentId}/Filtered/Dashboard";
             selfAssessmentService.SetBookmark(selfAssessmentId, candidateId, destUrl);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, candidateId);
 
@@ -115,7 +153,7 @@
                 return NotFound();
             }
 
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/PlayList/" + playListId;
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/PlayList/" + playListId;
             selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var model = await filteredApiHelperService.GetPlayList<PlayList>(
@@ -134,8 +172,8 @@
                 return NotFound();
             }
 
-            string destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/LearningAsset/" +
-                             assetId;
+            var destUrl = "/LearningPortal/SelfAssessment/" + selfAssessmentId + "/Filtered/LearningAsset/" +
+                          assetId;
             selfAssessmentService.SetBookmark(selfAssessmentId, User.GetCandidateIdKnownNotNull(), destUrl);
             var filteredToken = await GetFilteredToken();
             var asset = await filteredApiHelperService.GetLearningAsset<LearningAsset>(
@@ -196,7 +234,7 @@
 
         private async Task<string> GetFilteredToken()
         {
-            string candidateNum = User.GetCandidateNumberKnownNotNull();
+            var candidateNum = User.GetCandidateNumberKnownNotNull();
             string? filteredToken = null;
             if (Request.Cookies.ContainsKey("filtered-" + candidateNum))
             {
@@ -207,7 +245,7 @@
             {
                 var accessToken = await filteredApiHelperService.GetUserAccessToken<AccessToken>(candidateNum);
                 filteredToken = accessToken.Jwt_access_token;
-                CookieOptions cookieOptions = new CookieOptions();
+                var cookieOptions = new CookieOptions();
                 cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddMinutes(15));
                 Response.Cookies.Append("filtered-" + candidateNum, filteredToken, cookieOptions);
             }
@@ -250,14 +288,22 @@
 
         private async Task<IActionResult> ReturnSignpostingRecommendedLearningView(
             int selfAssessmentId,
-            int candidateId
+            int candidateId,
+            int page,
+            string? searchString
         )
         {
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, selfAssessmentId)!;
-            var recommendedResources =
+            var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
-            var model = new RecommendedLearningViewModel(assessment, recommendedResources);
+            var model = new RecommendedLearningViewModel(
+                assessment,
+                recommendedResources,
+                apiIsAccessible,
+                searchString,
+                page
+            );
             return View("RecommendedLearning", model);
         }
     }

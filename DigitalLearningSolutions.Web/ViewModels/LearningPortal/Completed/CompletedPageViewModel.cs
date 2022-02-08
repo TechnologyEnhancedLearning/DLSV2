@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         public CompletedPageViewModel(
             IEnumerable<CompletedCourse> completedCourses,
             IEnumerable<CompletedActionPlanResource> completedResources,
+            bool apiIsAccessible,
             IConfiguration config,
             string? searchString,
             string sortBy,
@@ -24,6 +25,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search your completed courses")
         {
+            ApiIsAccessible = apiIsAccessible;
             BannerText = bannerText;
             var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
             allItems.AddRange(completedResources);
@@ -50,6 +52,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
         }
 
         public IEnumerable<CompletedLearningItemViewModel> CompletedActivities { get; }
+
+        public bool ApiIsAccessible { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

@@ -27,6 +27,21 @@
   </p>
 </div>
 <h2>Competency Resource Links</h2>
+@if (Model.LearningHubApiError)
+{
+  <div class="nhsuk-warning-callout">
+    <h3 class="nhsuk-warning-callout__label">
+      <span role="text">
+        <span class="nhsuk-u-visually-hidden">Learning Hub API Unavailable</span>
+        Learning Hub API Unavailable
+      </span>
+    </h3>
+    <p>
+      The Learning Hub cannot currently be reached. The information shown below may not be up-to-date.
+      You will not be able to add resources while the Learning Hub is unavailable.
+    </p>
+  </div>
+}
 @if (Model.CompetencyResourceLinks.Any())
 {
   foreach (var link in Model.CompetencyResourceLinks)
@@ -34,12 +49,12 @@
     <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})" />
   }
 }
-else if (!Model.CompetencyResourceLinks.Any())
+else
 {
   <p>No learning resources have been added to this competency.</p>
 }
 <div class="nhsuk-u-margin-top-5">
-  <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
+  <a class="nhsuk-button nhsuk-u-margin-bottom-4" @(Model.LearningHubApiError ? "disabled" : String.Empty) href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
     Add resource
   </a>
 </div>

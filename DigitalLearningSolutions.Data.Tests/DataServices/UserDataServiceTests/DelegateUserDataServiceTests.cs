@@ -421,6 +421,17 @@
         }
 
         [Test]
+
+        public void GetDelegatesNotRegisteredForGroupByGroupId_returns_expected_number_of_delegates()
+        {
+            // When
+            var result = userDataService.GetDelegatesNotRegisteredForGroupByGroupId(5, 101);
+
+            // Then
+            result.Should().HaveCount(106);
+        }
+
+        [Test]
         public void SetDelegateUserLearningHubAuthId_correctly_sets_delegates_learningHubAuthId()
         {
             using var transaction = new TransactionScope();
@@ -465,6 +476,24 @@
             // Then
             var updatedUser = userDataService.GetDelegateUserById(2)!;
             updatedUser.HasDismissedLhLoginWarning.Should().BeTrue();
+        }
+
+        [Test]
+        public void UpdateDelegateProfessionalRegistrationNumber_sets_ProfessionalRegistrationNumber()
+        {
+            // Given
+            const int delegateId = 2;
+            const string prn = "PRN123";
+
+            using var transaction = new TransactionScope();
+
+            // When
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(delegateId, prn, true);
+
+            // Then
+            var updatedUser = userDataService.GetDelegateUserById(delegateId)!;
+            updatedUser.ProfessionalRegistrationNumber.Should().Be(prn);
+            updatedUser.HasBeenPromptedForPrn.Should().BeTrue();
         }
     }
 }

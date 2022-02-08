@@ -90,10 +90,6 @@
             {
                 1,
                 2,
-                21,
-                22,
-                23,
-                24,
                 25,
                 28,
             };
@@ -104,7 +100,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(8);
+                result.Should().HaveCount(4);
                 result.Should().OnlyHaveUniqueItems();
                 result.Should().OnlyContain(c => expectedGroupCourseIds.Contains(c.GroupCustomisationId));
             }
@@ -743,6 +739,70 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void InsertGroupCustomisation_inserts_expected_record()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
+            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                25,
+                103,
+                supervisorAdminId: 1,
+                completeWithinMonths: 0,
+                supervisorFirstName: "Kevin",
+                supervisorLastName: "Whittaker (Developer)",
+                addedToGroup: expectedDateTime
+            );
+
+            using var transaction = new TransactionScope();
+            // When
+            var insertedId = groupsDataService.InsertGroupCustomisation(
+                expectedGroupCourse.GroupId,
+                expectedGroupCourse.CustomisationId,
+                expectedGroupCourse.CompleteWithinMonths,
+                1,
+                true,
+                expectedGroupCourse.SupervisorAdminId
+            );
+            var result = groupsDataService.GetGroupCourseForCentre(insertedId, 101);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(
+                    expectedGroupCourse,
+                    options => options.Excluding(gc => gc.GroupCustomisationId).Excluding(gc => gc.AddedToGroup)
+                );
+            }
+        }
+
+        [Test]
+        public void GetGroupCourseById_returns_expected_course()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
+            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                25,
+                103,
+                supervisorAdminId: 1,
+                completeWithinMonths: 0,
+                supervisorFirstName: "Kevin",
+                supervisorLastName: "Whittaker (Developer)",
+                addedToGroup: expectedDateTime
+            );
+
+            // When
+            var result = groupsDataService.GetGroupCourseById(25);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(expectedGroupCourse);
             }
         }
 

@@ -1,0 +1,11 @@
+﻿@using DigitalLearningSolutions.Data.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents
+@using Microsoft.Extensions.Configuration
+@model InsetTextViewModel
+@inject IConfiguration configuration
+
+@if (configuration.IsSignpostingUsed()) {
+  <vc:inset-text
+    css-class="@Model.CssClass"
+    text="@Model.Text" />
+}
