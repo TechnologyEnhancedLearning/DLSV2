@@ -201,8 +201,8 @@
         }
 
         // TODO HEEDLS-567 decide how to get the candidate Id - from frontend or from progress record? and these as route or query params?
-        [HttpGet("DetailedProgress/{delegateId}")]
-        public IActionResult DetailedProgress(int progressId, int delegateId)
+        [HttpGet("DetailedProgress/{delegateId:int}")]
+        public IActionResult DetailedProgress(int progressId, int delegateId, string accessedVia)
         {
             var progressData = progressService.GetDetailedCourseProgress(progressId);
             var candidateData = userService.GetDelegateUserById(delegateId);

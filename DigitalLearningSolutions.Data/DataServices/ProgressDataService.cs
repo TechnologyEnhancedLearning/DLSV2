@@ -248,16 +248,17 @@
         {
             return connection.Query<DetailedSectionProgress>(
                 @"SELECT
+                        s.SectionID,
                         s.SectionName,
                         (SUM(asp1.TutStat) * 100) / (COUNT(t.TutorialID) * 2) AS Completion,
                         SUM(asp1.TutTime) AS TotalTime,
                         s.AverageSectionMins AS AverageTime,
-                        (s.PLAssessPath IS NOT NULL AND cu.IsAssessed IS 1) AS PostLearningAssessment,
+                        CASE WHEN (s.PLAssessPath IS NOT NULL AND cu.IsAssessed = 1) THEN 1 ELSE 0 END AS PostLearningAssessment,
                         COALESCE (MAX(ISNULL(aa.Score, 0)), 0) AS Outcome,
                         (SELECT COUNT(AssessAttemptID) AS PLAttempts
                             FROM AssessAttempts AS aa
                             WHERE (ProgressID = @ProgressID) AND (SectionNumber = s.SectionNumber)) AS Attempts,
-                        MAX(ISNULL(CAST(ct.Status AS BIT), 0)) AS Passed,
+                        MAX(ISNULL(CAST(ct.Status AS INT), 0)) AS Passed
                     FROM
                         aspProgress AS asp1
                         INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID
@@ -269,7 +270,20 @@
                     WHERE
                         (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @ProgressID) AND (s.ArchivedDate IS NULL)
                         AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
-                    ",
+                    GROUP BY
+                        S.SectionID,
+                        S.ApplicationID,
+                             S.SectionNumber,
+                             S.SectionName,
+                             S.ConsolidationPath,
+                             S.DiagAssessPath,
+                             S.PLAssessPath,
+                             S.AverageSectionMins,
+                             cu.IsAssessed,
+                             p.CandidateID,
+                             p.CustomisationID,
+                             p.PLLocked
+                    ORDER BY S.SectionNumber",
                 new { progressId }
             );
         }
@@ -289,14 +303,13 @@
                         INNER JOIN Tutorials AS t
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID
                         INNER JOIN Customisations AS c ON ct.CustomisationID = c.CustomisationID ON p.CustomisationID = c.CustomisationID AND p.CustomisationID = ct.CustomisationID
-                        INNER JOIN TutStatus AS ts ON
+                        INNER JOIN TutStatus AS ts
                         INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
-                    WHERE (t.SectionID = @SectionID)
+                    WHERE (t.SectionID = @sectionID)
                         AND (p.ProgressID = @ProgressID)
                         AND (ct.Status = 1)
                         AND (c.Active = 1)
-                        AND (t.ArchivedDate IS NULL)
-                    ",
+                        AND (t.ArchivedDate IS NULL)",
                 new { progressId, sectionId }
             );
         }
