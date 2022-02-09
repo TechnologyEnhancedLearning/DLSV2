@@ -1,10 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
-    using System.Linq;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
-    using System.Collections.Generic;
 
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
@@ -34,7 +35,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DefaultSortByOptions.Name
+            DefaultSortByOptions.Name,
         };
 
         public CentreCustomPrompts CentreCustomPrompts { get; set; }

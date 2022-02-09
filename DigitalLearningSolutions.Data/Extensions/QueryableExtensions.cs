@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Extensions
+﻿namespace DigitalLearningSolutions.Data.Extensions
 {
     using System;
     using System.Linq;

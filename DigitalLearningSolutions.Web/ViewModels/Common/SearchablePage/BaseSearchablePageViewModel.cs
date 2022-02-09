@@ -2,16 +2,13 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public abstract class BaseSearchablePageViewModel : BasePaginatedViewModel
     {
-        public const string DefaultSortOption = "SearchableName";
-        public const string Descending = "Descending";
-        public const string Ascending = "Ascending";
-
         public readonly string? FilterBy;
 
         public readonly bool FilterEnabled;
@@ -24,8 +21,8 @@
             string? searchString,
             int page,
             bool filterEnabled,
-            string sortBy = DefaultSortOption,
-            string sortDirection = Ascending,
+            string sortBy = GenericSortingHelper.DefaultSortOption,
+            string sortDirection = GenericSortingHelper.Ascending,
             string? filterBy = null,
             int itemsPerPage = DefaultItemsPerPage,
             string? searchLabel = null,

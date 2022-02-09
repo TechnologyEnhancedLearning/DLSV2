@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -20,8 +21,8 @@
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
-                DefaultSortOption,
-                Ascending
+                GenericSortingHelper.DefaultSortOption,
+                GenericSortingHelper.Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
@@ -43,7 +44,7 @@
                     "AccountStatus",
                     "Account Status",
                     AdministratorsViewModelFilterOptions.AccountStatusOptions
-                )
+                ),
             };
         }
 
@@ -51,7 +52,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DefaultSortByOptions.Name
+            DefaultSortByOptions.Name,
         };
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }

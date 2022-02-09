@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -18,7 +19,16 @@
             string? filterBy,
             int page,
             int? itemsPerPage
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, "Search courses")
+        ) : base(
+            searchString,
+            page,
+            true,
+            sortBy,
+            sortDirection,
+            filterBy,
+            itemsPerPage ?? DefaultItemsPerPage,
+            "Search courses"
+        )
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 courses.AsQueryable(),
@@ -43,7 +53,7 @@
         {
             CourseSortByOptions.CourseName,
             CourseSortByOptions.TotalDelegates,
-            CourseSortByOptions.InProgress
+            CourseSortByOptions.InProgress,
         };
 
         public override bool NoDataFound => !Courses.Any() && NoSearchOrFilter;

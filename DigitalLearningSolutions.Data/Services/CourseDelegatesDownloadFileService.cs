@@ -11,7 +11,13 @@
 
     public interface ICourseDelegatesDownloadFileService
     {
-        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId);
+        public byte[] GetCourseDelegateDownloadFileForCourse(
+            int customisationId,
+            int centreId,
+            string? sortBy,
+            string sortDirection,
+            string? filterBy
+        );
     }
 
     public class CourseDelegatesDownloadFileService : ICourseDelegatesDownloadFileService
@@ -48,11 +54,17 @@
             this.customPromptsService = customPromptsService;
         }
 
-        public byte[] GetCourseDelegateDownloadFileForCourse(int customisationId, int centreId)
+        public byte[] GetCourseDelegateDownloadFileForCourse(
+            int customisationId,
+            int centreId,
+            string? sortBy,
+            string sortDirection,
+            string? filterBy
+        )
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId);
+            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, sortDirection, filterBy);
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -62,20 +74,33 @@
         private void PopulateCourseDelegatesSheetForCourse(
             IXLWorkbook workbook,
             int customisationId,
-            int centreId
+            int centreId,
+            string? sortBy,
+            string sortDirection,
+            string? filterBy
         )
         {
             var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
 
             var customRegistrationPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
-            var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId);
+            var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
+                .ToList();
+
+            var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterBy).ToList();
+            var sortedCourseDelegates = sortBy == null
+                ? GenericSortingHelper.SortAllItems(
+                    filteredCourseDelegates.AsQueryable(),
+                    sortBy,
+                    sortDirection
+                )
+                : courseDelegates.OrderBy(x => x.LastName);
 
             var dataTable = new DataTable();
 
             SetUpDataTableColumns(customRegistrationPrompts, adminFields, dataTable);
 
-            foreach (var courseDelegate in courseDelegates.OrderBy(x => x.LastName))
+            foreach (var courseDelegate in sortedCourseDelegates)
             {
                 AddDelegateToDataTable(dataTable, courseDelegate, customRegistrationPrompts, adminFields);
             }

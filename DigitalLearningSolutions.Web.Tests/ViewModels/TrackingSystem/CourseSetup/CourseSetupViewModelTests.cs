@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
@@ -27,7 +28,7 @@
             new CourseStatistics { ApplicationName = "L" },
             new CourseStatistics { ApplicationName = "M" },
             new CourseStatistics { ApplicationName = "N" },
-            new CourseStatistics { ApplicationName = "O" }
+            new CourseStatistics { ApplicationName = "O" },
         };
 
         [Test]
@@ -40,7 +41,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 null
@@ -65,7 +66,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -86,12 +87,12 @@
             var categories = new[]
             {
                 "Category 1",
-                "Category 2"
+                "Category 2",
             };
             var topics = new[]
             {
                 "Topic 1",
-                "Topic 2"
+                "Topic 2",
             };
 
             var expectedFilters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
@@ -103,7 +104,7 @@
                 topics,
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -125,7 +126,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 itemsPerPage

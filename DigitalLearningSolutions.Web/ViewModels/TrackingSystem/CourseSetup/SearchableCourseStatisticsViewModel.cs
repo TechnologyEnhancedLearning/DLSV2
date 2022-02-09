@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
     using System;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
 
     public class SearchableCourseStatisticsViewModel : BaseFilterableViewModel
     {

@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;

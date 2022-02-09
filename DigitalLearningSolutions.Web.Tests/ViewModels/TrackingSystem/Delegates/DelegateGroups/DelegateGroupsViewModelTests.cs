@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -28,7 +29,7 @@
             new Group { GroupLabel = "L", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
             new Group { GroupLabel = "M", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
             new Group { GroupLabel = "N", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "O", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" }
+            new Group { GroupLabel = "O", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
         };
 
         [Test]
@@ -39,14 +40,14 @@
                 new List<CustomPrompt>(),
                 null!,
                 nameof(Group.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1
             );
 
             using (new AssertionScope())
             {
-                model.DelegateGroups.Count().Should().Be(BaseSearchablePageViewModel.DefaultItemsPerPage);
+                model.DelegateGroups.Count().Should().Be(BasePaginatedViewModel.DefaultItemsPerPage);
                 model.DelegateGroups.Any(groupDelegate => groupDelegate.Name == "K").Should()
                     .BeFalse();
             }
@@ -60,13 +61,13 @@
                 new List<CustomPrompt>(),
                 null!,
                 nameof(Group.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2
             );
 
             var expectedFirstGroupDelegate =
-                groups.Skip(BaseSearchablePageViewModel.DefaultItemsPerPage).First();
+                groups.Skip(BasePaginatedViewModel.DefaultItemsPerPage).First();
 
             using (new AssertionScope())
             {
@@ -82,7 +83,7 @@
             var admins = new[]
             {
                 (1, "Test Admin"),
-                (2, "Test Person")
+                (2, "Test Person"),
             };
 
             var expectedFilters = new[]
@@ -96,7 +97,7 @@
                     nameof(Group.LinkedToField),
                     "Linked field",
                     DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<CustomPrompt>())
-                )
+                ),
             }.AsEnumerable();
 
             // When
@@ -105,7 +106,7 @@
                 new List<CustomPrompt>(),
                 "K",
                 nameof(Group.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2
             );
