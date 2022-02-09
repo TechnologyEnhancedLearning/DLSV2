@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -261,74 +262,28 @@
             var isJobGroup = model.RegistrationFieldOptionId == 7;
             var linkedToField = GetLinkedToFieldValue(model.RegistrationFieldOptionId);
 
-            if (isJobGroup)
+            var (newGroupNames, groupNamePrefix) = GetDetailsForGeneratingNewGroups(model, isJobGroup);
+
+            using var transaction = new TransactionScope();
+            foreach (var (newGroupId, newGroupName) in newGroupNames)
             {
-                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-                foreach (var (jobGroupId, jobGroupName) in jobGroups)
+                var groupName = model.PrefixGroupName ? $"{groupNamePrefix} - {newGroupName}" : newGroupName;
+
+                var groupId = CreateNewGroup(model, adminId, centreId, linkedToField, groupName);
+
+                if (model.AddExistingDelegates && groupId != null)
                 {
-                    var groupName = model.PrefixGroupName ? $"Job group - {jobGroupName}" : jobGroupName;
-
-                    if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
-                    {
-                        break;
-                    }
-
-                    var groupId = groupsService.AddDelegateGroup(
-                        centreId,
-                        groupName,
-                        null,
-                        (int)adminId!,
+                    groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                        (int)groupId,
                         linkedToField,
-                        model.SyncFieldChanges,
-                        model.AddNewRegistrants,
-                        model.AddExistingDelegates
+                        centreId,
+                        isJobGroup ? null : newGroupName,
+                        isJobGroup ? newGroupId : (int?)null
                     );
-
-                    if (model.AddExistingDelegates)
-                    {
-                        groupsService.AddDelegatesWithMatchingAnswersToGroup(
-                            groupId,
-                            linkedToField,
-                            centreId,
-                            jobGroupId: jobGroupId
-                        );
-                    }
                 }
             }
-            else
-            {
-                var registrationPrompt = centreCustomPromptsService
-                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
-                        cp => cp.CustomPromptNumber == model.RegistrationFieldOptionId
-                    );
-                foreach (var option in registrationPrompt.Options)
-                {
-                    var groupName = model.PrefixGroupName
-                        ? $"{registrationPrompt.CustomPromptText} - {option}"
-                        : option;
 
-                    if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
-                    {
-                        break;
-                    }
-
-                    var groupId = groupsService.AddDelegateGroup(
-                        centreId,
-                        groupName,
-                        null,
-                        (int)adminId!,
-                        linkedToField,
-                        model.SyncFieldChanges,
-                        model.AddNewRegistrants,
-                        model.AddExistingDelegates
-                    );
-
-                    if (model.AddExistingDelegates)
-                    {
-                        groupsService.AddDelegatesWithMatchingAnswersToGroup(groupId, linkedToField, centreId, option);
-                    }
-                }
-            }
+            transaction.Complete();
 
             return RedirectToAction("Index");
         }
@@ -383,6 +338,54 @@
             };
         }
 
-        private void CreateNewGroup(bool isJobGroup) { }
+        private (List<(int id, string name)>, string groupNamePrefix) GetDetailsForGeneratingNewGroups(
+            GenerateGroupsViewModel model,
+            bool isJobGroup
+        )
+        {
+            if (isJobGroup)
+            {
+                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+                var groupNamePrefix = "Job group";
+                return (jobGroups, groupNamePrefix);
+            }
+            else
+            {
+                var centreId = User.GetCentreId();
+                var registrationPrompt = centreCustomPromptsService
+                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
+                        cp => cp.CustomPromptNumber == model.RegistrationFieldOptionId
+                    );
+                var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
+                    .ToList<(int id, string name)>();
+                var groupNamePrefix = registrationPrompt.CustomPromptText;
+                return (customPromptOptions, groupNamePrefix);
+            }
+        }
+
+        private int? CreateNewGroup(
+            GenerateGroupsViewModel model,
+            int? adminId,
+            int centreId,
+            int linkedToField,
+            string groupName
+        )
+        {
+            if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
+            {
+                return null;
+            }
+
+            return groupsService.AddDelegateGroup(
+                centreId,
+                groupName,
+                null,
+                (int)adminId!,
+                linkedToField,
+                model.SyncFieldChanges,
+                model.AddNewRegistrants,
+                model.AddExistingDelegates
+            );
+        }
     }
 }

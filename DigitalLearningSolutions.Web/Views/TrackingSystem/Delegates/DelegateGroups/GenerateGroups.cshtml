@@ -17,6 +17,7 @@
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="GenerateGroups">
       <input type="hidden" asp-for="Checkboxes" />
+      <input type="hidden" asp-for="RegistrationFieldOptions" />
 
       <vc:select-list asp-for="@nameof(Model.RegistrationFieldOptionId)"
                       label="Registration field"
