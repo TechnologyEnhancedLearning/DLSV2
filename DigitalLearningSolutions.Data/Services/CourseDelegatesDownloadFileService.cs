@@ -88,7 +88,7 @@
                 .ToList();
 
             var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterBy).ToList();
-            var sortedCourseDelegates = sortBy == null
+            var sortedCourseDelegates = sortBy != null
                 ? GenericSortingHelper.SortAllItems(
                     filteredCourseDelegates.AsQueryable(),
                     sortBy,

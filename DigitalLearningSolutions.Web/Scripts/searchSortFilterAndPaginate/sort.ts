@@ -88,12 +88,12 @@ function parseDate(dateString: string): Date {
   return date.toString() === 'Invalid Date' ? new Date(0) : date;
 }
 
-function getSortBy(): string {
+export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
   return element?.value ?? 'Name';
 }
 
-function getSortDirection(): string {
+export function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
   return element?.value ?? 'Ascending';
 }
