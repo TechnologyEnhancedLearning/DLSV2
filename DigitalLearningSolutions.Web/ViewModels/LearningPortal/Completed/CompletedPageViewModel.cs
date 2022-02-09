@@ -6,7 +6,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.Extensions.Configuration;
 
