@@ -33,7 +33,7 @@
         public string GenerateHash(string state)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
-            var salt = GetSalt();
+            var salt = GetSecretKeyBytes();
 
             var encoder = new UTF8Encoding();
             var timedState = encoder.GetBytes(state + secondsSinceEpoch);
@@ -43,7 +43,7 @@
         public bool VerifyHash(string state, string hash)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
-            var salt = GetSalt();
+            var salt = GetSecretKeyBytes();
 
             var encoder = new UTF8Encoding();
             var toleranceInSec = config.GetLearningHubSsoHashTolerance();
@@ -61,18 +61,18 @@
             return false;
         }
 
-        private byte[] GetSalt()
+        private byte[] GetSecretKeyBytes()
         {
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
+            var secretKeyBytes = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
 
-            if (salt.Length < 8)
+            if (secretKeyBytes.Length < 8)
             {
                 logger.LogError("Secret key invalid. The secret key must have a length of at least 8 characters.");
                 throw new CryptographicException();
             }
 
-            return salt;
+            return secretKeyBytes;
         }
 
         private string GetHash(byte[] input, byte[] salt)
