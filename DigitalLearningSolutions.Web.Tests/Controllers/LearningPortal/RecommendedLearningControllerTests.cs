@@ -104,7 +104,7 @@
                 .Returns(false);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId);
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, 1);
 
             // Then
             result.Should().BeNotFoundResult();
@@ -113,7 +113,8 @@
         }
 
         [Test]
-        public async Task AddResourceToActionPlan_adds_resource_and_returns_redirect_when_resource_not_in_action_plan()
+        public async Task
+            AddResourceToActionPlan_adds_resource_and_returns_redirect_with_correct_return_page_when_resource_not_in_action_plan()
         {
             // Given
             const int resourceReferenceId = 1;
@@ -121,13 +122,13 @@
                 .Returns(true);
 
             // When
-            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId);
+            var result = await controller.AddResourceToActionPlan(SelfAssessmentId, resourceReferenceId, 3);
 
             // Then
             A.CallTo(() => actionPlanService.AddResourceToActionPlan(resourceReferenceId, DelegateId, SelfAssessmentId))
                 .MustHaveHappenedOnceExactly();
             result.Should().BeRedirectToActionResult().WithActionName("RecommendedLearning")
-                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId).WithRouteValue("page", 3);
         }
     }
 }
