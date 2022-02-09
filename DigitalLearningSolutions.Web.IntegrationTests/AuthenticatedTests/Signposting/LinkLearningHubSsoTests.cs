@@ -21,7 +21,7 @@
         }
 
         [Theory]
-        [InlineData(1, 1, "Your account is already linked with Learning Hub.")]
+        [InlineData(1, 1, "Your account is already linked with the Learning Hub.")]
         [InlineData(2, 2, "Your account has been linked with the Learning Hub.")]
         public async Task LinkAccountValidRequestShowsConfirmationPage(
             int delegateId,

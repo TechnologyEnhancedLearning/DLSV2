@@ -129,7 +129,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().BeViewResult().WithDefaultViewName();
+                result.Should().BeViewResult().WithViewName("../LinkLearningHubSso");
                 A.CallTo(
                         () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
                             A<LinkLearningHubRequest>._,
@@ -168,7 +168,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().BeViewResult().WithDefaultViewName();
+                result.Should().BeViewResult().WithViewName("../LinkLearningHubSso");
                 A.CallTo(
                         () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
                             A<LinkLearningHubRequest>._,
