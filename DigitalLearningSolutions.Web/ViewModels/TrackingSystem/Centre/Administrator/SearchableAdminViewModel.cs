@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -16,7 +17,7 @@
             EmailAddress = adminUser.EmailAddress;
             IsLocked = adminUser.IsLocked;
 
-            CanShowDeactivateAdminButton = LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
+            CanShowDeactivateAdminButton = UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
             Page = page;
@@ -36,24 +37,6 @@
 
         public bool IsLocked { get; set; }
 
-        public bool IsCentreManager { get; set; }
-
         public int? Page { get; set; }
-        private static bool LoggedInAdminCanDeactivateUser(AdminUser adminUser, AdminUser loggedInAdminUser)
-        {
-            if (loggedInAdminUser.IsUserAdmin)
-            {
-                return adminUser.Id != loggedInAdminUser.Id;
-            }
-
-            if (loggedInAdminUser.IsCentreManager)
-            {
-                return !adminUser.IsUserAdmin
-                       && !adminUser.IsCentreManager
-                       && adminUser.Id != loggedInAdminUser.Id;
-            }
-
-            return true;
-        }
     }
 }
