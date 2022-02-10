@@ -2,6 +2,7 @@
 {
     using System;
     using Castle.Core.Internal;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -608,6 +609,39 @@
                     null
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void AddCourseToGroup_with_invalid_customisation_for_centre_results_in_exception()
+        {
+            // Given
+            const int adminId = 1;
+            const int groupCustomisationId = 8;
+            A.CallTo(
+                () => groupsDataService.InsertGroupCustomisation(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<bool>._,
+                    A<int?>._
+                )
+            ).Returns(groupCustomisationId);
+            A.CallTo(() => groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId))
+                .Returns(null);
+
+            // Then
+            Assert.Throws<CourseNotFoundException>(
+                () => groupsService.AddCourseToGroup(
+                    1,
+                    1,
+                    0,
+                    adminId,
+                    true,
+                    adminId,
+                    centreId
+                )
+            );
         }
     }
 }

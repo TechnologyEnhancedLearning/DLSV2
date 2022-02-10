@@ -16,6 +16,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
     public partial class GroupsServiceTests
@@ -44,7 +45,7 @@
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IProgressDataService progressDataService = null!;
         private ITutorialContentDataService tutorialContentDataService = null!;
-        private IUserDataService userDataService = null!;
+        private ILogger<IGroupsService> logger = null!;
 
         [SetUp]
         public void Setup()
@@ -57,7 +58,7 @@
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
-            userDataService = A.Fake<IUserDataService>();
+            logger = A.Fake<ILogger<IGroupsService>>();
 
             A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
@@ -70,7 +71,7 @@
                 progressDataService,
                 configuration,
                 centreCustomPromptsService,
-                userDataService
+                logger
             );
         }
 
