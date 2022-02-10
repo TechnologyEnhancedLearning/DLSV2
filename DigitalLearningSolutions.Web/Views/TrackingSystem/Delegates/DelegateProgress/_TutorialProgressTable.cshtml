@@ -1,6 +1,10 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model IEnumerable<TutorialProgressViewModel>
 
+@{
+  var showDiagnosticColumn = Model.Any(t => !string.IsNullOrWhiteSpace(t.DiagnosticScore));
+}
+
 <details class="nhsuk-details">
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
@@ -23,9 +27,11 @@
           <th role="columnheader" class="" scope="col">
             Avg time (mins)
           </th>
-          <th role="columnheader" class="" scope="col">
-            Diagnostic score
-          </th>
+          @if (showDiagnosticColumn) {
+            <th role="columnheader" class="" scope="col">
+              Diagnostic score
+            </th>
+          }
         </tr>
       </thead>
       <tbody class="nhsuk-table__body">
@@ -44,9 +50,11 @@
               <th role="columnheader" class="" scope="col">
                 @tut.AvgTime
               </th>
-              <th role="columnheader" class="" scope="col">
-                @tut.DiagnosticScore
-              </th>
+              @if (showDiagnosticColumn) {
+                <th role="columnheader" class="" scope="col">
+                  @tut.DiagnosticScore
+                </th>
+              }
             </tr>
           }
         }

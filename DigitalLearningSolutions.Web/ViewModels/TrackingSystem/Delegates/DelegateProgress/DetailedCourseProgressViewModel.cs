@@ -67,7 +67,7 @@
             TutorialStatus = tutorial.TutorialStatus;
             TimeTaken = tutorial.TimeTaken;
             AvgTime = tutorial.AvgTime;
-            DiagnosticScore = tutorial.DiagnosticScore + "/5";
+            DiagnosticScore =  tutorial.DiagnosticScore.HasValue ? tutorial.DiagnosticScore + "/5" : null;
         }
 
         public string TutorialName { get; set; }

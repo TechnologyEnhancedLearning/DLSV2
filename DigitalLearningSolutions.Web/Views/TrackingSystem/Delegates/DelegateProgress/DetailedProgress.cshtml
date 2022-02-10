@@ -9,11 +9,34 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
     <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
-        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
-        <p class="nhsuk-card__description">Go to <a href="#">111.nhs.uk</a> or <a href="#">call 111</a></p>
-        @*last access/etc?*@
+      <div class="nhsuk-card__content basic-card-content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Name
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.DelegateName
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Email
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.DelegateEmail
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Delegate ID
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.DelegateNumber
+            </dd>
+          </div>
+          @*last access/etc?*@
+        </dl>
       </div>
     </div>
     <div class="nhsuk-grid-row nhsuk-inset-text">
