@@ -72,6 +72,8 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
     case 'FaqId':
       return parseInt(getElementText(searchableElement, 'faq-id'), 10);
+    case 'CandidateNumber':
+      return getElementText(searchableElement, 'delegate-id').toLocaleLowerCase();
     default:
       return '';
   }

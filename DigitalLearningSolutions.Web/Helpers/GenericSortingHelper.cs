@@ -163,6 +163,13 @@
             nameof(CourseDelegate.PassRate)
         );
 
+        public static readonly CourseDelegatesSortByOption DelegateId = new CourseDelegatesSortByOption(
+            7,
+            nameof(DelegateId),
+            "Delegate ID",
+            nameof(CourseDelegate.CandidateNumber)
+        );
+
         public readonly string DisplayText;
         public readonly string PropertyName;
 
