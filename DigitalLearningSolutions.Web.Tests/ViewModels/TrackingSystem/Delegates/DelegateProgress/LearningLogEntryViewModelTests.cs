@@ -10,7 +10,6 @@
     {
         [TestCase(1, "1")]
         [TestCase(null, "N/A")]
-
         public void LearningLogEntryViewModel_formats_LearningTime_correctly(int? learningTime, string expectedValue)
         {
             // Given
@@ -26,8 +25,10 @@
 
         [TestCase("Some assessment name", "Some assessment name")]
         [TestCase(null, "N/A")]
-
-        public void LearningLogEntryViewModel_formats_AssessmentTaken_correctly(string? assessmentTaken, string expectedValue)
+        public void LearningLogEntryViewModel_formats_AssessmentTaken_correctly(
+            string? assessmentTaken,
+            string expectedValue
+        )
         {
             // Given
             var learningLogEntry = Builder<LearningLogEntry>.CreateNew()
@@ -42,8 +43,10 @@
 
         [TestCase(1, "1")]
         [TestCase(null, "N/A")]
-
-        public void LearningLogEntryViewModel_formats_AssessmentScore_correctly(int? assessmentScore, string expectedValue)
+        public void LearningLogEntryViewModel_formats_AssessmentScore_correctly(
+            int? assessmentScore,
+            string expectedValue
+        )
         {
             // Given
             var learningLogEntry = Builder<LearningLogEntry>.CreateNew()
@@ -59,8 +62,10 @@
         [TestCase(true, "Pass")]
         [TestCase(false, "Fail")]
         [TestCase(null, "N/A")]
-
-        public void LearningLogEntryViewModel_formats_AssessmentStatus_correctly(bool? assessmentStatus, string expectedValue)
+        public void LearningLogEntryViewModel_formats_AssessmentStatus_correctly(
+            bool? assessmentStatus,
+            string expectedValue
+        )
         {
             // Given
             var learningLogEntry = Builder<LearningLogEntry>.CreateNew()
