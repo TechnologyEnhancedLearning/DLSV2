@@ -72,7 +72,7 @@
 
         GroupCourse? GetGroupCourseById(int groupCustomisationId);
 
-        public void AddDelegatesWithMatchingAnswersToGroup(
+        void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
             int linkedToField,
             int centreId,
@@ -452,7 +452,6 @@
             );
         }
 
-        // TODO: 510 - Add tests for this method
         public void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
             int linkedToField,

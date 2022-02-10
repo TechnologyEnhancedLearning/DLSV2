@@ -2,48 +2,11 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Threading;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
     public class GenerateGroupsViewModel
     {
-        public GenerateGroupsViewModel() { }
-
-        public GenerateGroupsViewModel(IEnumerable<SelectListItem> registrationFieldOptions)
-        {
-            RegistrationFieldOptions = registrationFieldOptions;
-        }
-
-        public GenerateGroupsViewModel(
-            IEnumerable<SelectListItem> registrationFieldOptions,
-            int registrationFieldOptionId,
-            bool prefixGroupName,
-            bool addExistingDelegates,
-            bool addNewRegistrants,
-            bool syncFieldChanges,
-            bool skipDuplicateNames
-        )
-        {
-            RegistrationFieldOptions = registrationFieldOptions;
-            RegistrationFieldOptionId = registrationFieldOptionId;
-            PrefixGroupName = prefixGroupName;
-            AddExistingDelegates = addExistingDelegates;
-            AddNewRegistrants = addNewRegistrants;
-            SyncFieldChanges = syncFieldChanges;
-            SkipDuplicateNames = skipDuplicateNames;
-
-        }
-
-        [Required(ErrorMessage = "Select a registration field")]
-        public int RegistrationFieldOptionId { get; set; }
-        public IEnumerable<SelectListItem> RegistrationFieldOptions { get; set; }
-        public bool PrefixGroupName { get; set; }
-        public bool AddExistingDelegates { get; set; }
-        public bool AddNewRegistrants { get; set; }
-        public bool SyncFieldChanges { get; set; }
-        public bool SkipDuplicateNames { get; set; }
-
         public List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
             new CheckboxListItemViewModel(
@@ -76,5 +39,46 @@
                 null
             ),
         };
+
+        public GenerateGroupsViewModel() { }
+
+        public GenerateGroupsViewModel(IEnumerable<SelectListItem> registrationFieldOptions)
+        {
+            RegistrationFieldOptions = registrationFieldOptions;
+            PrefixGroupName = false;
+            AddExistingDelegates = true;
+            AddNewRegistrants = true;
+            SyncFieldChanges = true;
+            SkipDuplicateNames = true;
+        }
+
+        public GenerateGroupsViewModel(
+            IEnumerable<SelectListItem> registrationFieldOptions,
+            int registrationFieldOptionId,
+            bool prefixGroupName,
+            bool addExistingDelegates,
+            bool addNewRegistrants,
+            bool syncFieldChanges,
+            bool skipDuplicateNames
+        )
+        {
+            RegistrationFieldOptions = registrationFieldOptions;
+            RegistrationFieldOptionId = registrationFieldOptionId;
+            PrefixGroupName = prefixGroupName;
+            AddExistingDelegates = addExistingDelegates;
+            AddNewRegistrants = addNewRegistrants;
+            SyncFieldChanges = syncFieldChanges;
+            SkipDuplicateNames = skipDuplicateNames;
+        }
+
+        [Required(ErrorMessage = "Select a registration field")]
+        public int? RegistrationFieldOptionId { get; set; }
+
+        public IEnumerable<SelectListItem> RegistrationFieldOptions { get; set; } = new List<SelectListItem>();
+        public bool PrefixGroupName { get; set; }
+        public bool AddExistingDelegates { get; set; }
+        public bool AddNewRegistrants { get; set; }
+        public bool SyncFieldChanges { get; set; }
+        public bool SkipDuplicateNames { get; set; }
     }
 }

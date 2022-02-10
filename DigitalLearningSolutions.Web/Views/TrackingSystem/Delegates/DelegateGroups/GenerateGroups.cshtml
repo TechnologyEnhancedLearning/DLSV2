@@ -14,11 +14,12 @@
     }
 
     <h1 class="nhsuk-heading-xl">Generate new delegate groups from registration field options</h1>
+  </div>
 
-    <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="GenerateGroups">
-      <input type="hidden" asp-for="Checkboxes" />
-      <input type="hidden" asp-for="RegistrationFieldOptions" />
+  <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="GenerateGroups">
+    <input type="hidden" asp-for="Checkboxes" />
 
+    <div class="nhsuk-grid-column-one-half">
       <vc:select-list asp-for="@nameof(Model.RegistrationFieldOptionId)"
                       label="Registration field"
                       value="@Model.RegistrationFieldOptionId.ToString()"
@@ -27,15 +28,19 @@
                       css-class="nhsuk-u-width-full nhsuk-u-margin-bottom-2"
                       default-option="Select a registration field"
                       select-list-options="@Model.RegistrationFieldOptions" />
+    </div>
 
+    <div class="nhsuk-grid-column-full">
       <vc:checkboxes label=""
                      populate-with-current-values="true"
                      checkboxes="@Model.Checkboxes"
                      hint-text="" />
 
       <button class="nhsuk-button" type="submit" value="save">Generate new groups</button>
-    </form>
+    </div>
+  </form>
 
+  <div class="nhsuk-grid-column-full">
     <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
   </div>
 </div>

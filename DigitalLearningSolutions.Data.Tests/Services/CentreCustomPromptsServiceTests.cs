@@ -40,7 +40,7 @@
             var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: null, mandatory: true);
             var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Department / team", null, true);
             var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
-            var expectedCustomerPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompts);
+            var expectedCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompts);
             A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29))
                 .Returns
                 (
@@ -54,10 +54,32 @@
             var result = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(29);
 
             // Then
-            result.Should().BeEquivalentTo(expectedCustomerPrompts);
+            result.Should().BeEquivalentTo(expectedCustomPrompts);
         }
 
-        // TODO: HEEDLS-510 Write tests for GetCustomPromptsThatHaveOptionsForCentreByCentreId
+        [Test]
+        public void GetCustomPromptsThatHaveOptionsForCentreByCentreId_only_returns_prompts_with_options()
+        {
+            // Given
+            const int centreId = 29;
+            var expectedPrompt = CustomPromptsTestHelper.GetDefaultCustomPrompt(
+                1,
+                "Group",
+                "Clinical\r\nNon-Clinical",
+                true
+            );
+            var customPrompts = new List<CustomPrompt> { expectedPrompt };
+            var expectedCustomPrompts =
+                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompts).CustomPrompts;
+            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
+                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
+
+            // When
+            var result = centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
+
+            // Then
+            result.Should().BeEquivalentTo(expectedCustomPrompts);
+        }
 
         [Test]
         public void GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreCustomPrompts()

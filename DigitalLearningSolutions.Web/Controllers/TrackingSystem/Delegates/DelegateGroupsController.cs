@@ -254,15 +254,16 @@
         {
             if (!ModelState.IsValid)
             {
+                model.RegistrationFieldOptions = GetRegistrationFieldOptionsSelectList(model.RegistrationFieldOptionId);
                 return View(model);
             }
 
             var adminId = User.GetAdminId();
             var centreId = User.GetCentreId();
             var isJobGroup = model.RegistrationFieldOptionId == 7;
-            var linkedToField = GetLinkedToFieldValue(model.RegistrationFieldOptionId);
+            var linkedToField = GetLinkedToFieldValue((int)model.RegistrationFieldOptionId!);
 
-            var (newGroupNames, groupNamePrefix) = GetDetailsForGeneratingNewGroups(model, isJobGroup);
+            var (newGroupNames, groupNamePrefix) = GetNewGroupNamesAndPrefix(model, isJobGroup);
 
             using var transaction = new TransactionScope();
             foreach (var (newGroupId, newGroupName) in newGroupNames)
@@ -338,7 +339,7 @@
             };
         }
 
-        private (List<(int id, string name)>, string groupNamePrefix) GetDetailsForGeneratingNewGroups(
+        private (List<(int id, string name)>, string groupNamePrefix) GetNewGroupNamesAndPrefix(
             GenerateGroupsViewModel model,
             bool isJobGroup
         )

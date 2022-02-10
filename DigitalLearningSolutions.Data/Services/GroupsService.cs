@@ -18,7 +18,7 @@
 
     public interface IGroupsService
     {
-        public int AddDelegateGroup(
+        int AddDelegateGroup(
             int centreId,
             string groupLabel,
             string? groupDescription,
@@ -92,7 +92,7 @@
             int centreId
         );
 
-        public void AddDelegatesWithMatchingAnswersToGroup(
+        void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
             int linkedToField,
             int centreId,
