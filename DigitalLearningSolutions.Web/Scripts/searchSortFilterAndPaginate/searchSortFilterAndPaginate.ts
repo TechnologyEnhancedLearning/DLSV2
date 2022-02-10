@@ -37,7 +37,7 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
   ) {
-    this.page = SearchSortFilterAndPaginate.getPageNumber();
+    this.page = paginationEnabled ? SearchSortFilterAndPaginate.getPageNumber() : 1;
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
@@ -189,6 +189,11 @@ export class SearchSortFilterAndPaginate {
 
   static updateResultCount(count: number): void {
     const resultCount = <HTMLSpanElement>document.getElementById('results-count');
+
+    if (resultCount === null) {
+      return;
+    }
+
     resultCount.hidden = false;
     resultCount.setAttribute('aria-hidden', 'false');
     const newResultCountMessage = this.getNewResultCountMessage(
@@ -219,6 +224,10 @@ export class SearchSortFilterAndPaginate {
   }
 
   private updatePageNumber(pageNumber: number, searchableData: ISearchableData): void {
+    if (this.paginationEnabled === false) {
+      return;
+    }
+
     this.page = pageNumber;
 
     SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();

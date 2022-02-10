@@ -15,7 +15,6 @@
     {
         private ICourseService courseService = null!;
         private DelegateProgressController delegateProgressController = null!;
-        private INotificationService notificationService = null!;
         private IProgressService progressService = null!;
         private IUserService userService = null!;
 
@@ -51,12 +50,10 @@
             courseService = A.Fake<ICourseService>();
             userService = A.Fake<IUserService>();
             progressService = A.Fake<IProgressService>();
-            notificationService = A.Fake<INotificationService>();
             delegateProgressController = new DelegateProgressController(
                     courseService,
                     userService,
-                    progressService,
-                    notificationService
+                    progressService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);

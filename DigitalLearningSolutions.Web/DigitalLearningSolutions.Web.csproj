@@ -50,6 +50,7 @@
     <None Remove="Scripts\trackingSystem\courseDelegates.ts" />
     <None Remove="Scripts\trackingSystem\editCourseContent.ts" />
     <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
+    <None Remove="Scripts\trackingSystem\learningLog.ts" />
     <None Remove="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
 
@@ -123,6 +124,7 @@
     <TypeScriptCompile Include="Scripts\trackingSystem\centreAdministrators.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\centreCourseSetup.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\delegateGroups.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\learningLog.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\reports.ts" />
   </ItemGroup>
     

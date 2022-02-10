@@ -1,0 +1,35 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@model (int customisationId, int progressId)
+
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link"
+           asp-controller="CourseDelegates"
+           asp-action="Index"
+           asp-route-customisationId="@Model.customisationId">
+          Course delegates
+        </a>
+      </li>
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link"
+           asp-controller="DelegateProgress"
+           asp-action="Index"
+           asp-route-progressId="@Model.progressId"
+           asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
+          Delegate progress
+        </a>
+      </li>
+    </ol>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink"
+         asp-controller="DelegateProgress"
+         asp-action="Index"
+         asp-route-progressId="@Model.progressId"
+         asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
+        Back to course delegates
+      </a>
+    </p>
+  </div>
+</nav>

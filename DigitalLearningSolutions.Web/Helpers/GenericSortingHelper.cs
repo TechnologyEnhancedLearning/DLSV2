@@ -200,4 +200,16 @@
         public static readonly (string DisplayText, string PropertyName) NumberOfCourses =
             ("Number of courses", nameof(Group.CoursesCount));
     }
+
+    public static class LearningLogSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) When =
+            ("When", nameof(LearningLogEntry.When));
+
+        public static readonly (string DisplayText, string PropertyName) Time =
+            ("Time", nameof(LearningLogEntry.LearningTime));
+
+        public static readonly (string DisplayText, string PropertyName) AssessmentScore =
+            ("Assessment score", nameof(LearningLogEntry.AssessmentScore));
+    }
 }
