@@ -849,6 +849,138 @@
             }
         }
 
+        [Test]
+        public void GetGroupCourseById_returns_expected_course()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
+            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                25,
+                103,
+                supervisorAdminId: 1,
+                completeWithinMonths: 0,
+                supervisorFirstName: "Kevin",
+                supervisorLastName: "Whittaker (Developer)",
+                addedToGroup: expectedDateTime
+            );
+
+            // When
+            var result = groupsDataService.GetGroupCourseById(25);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(expectedGroupCourse);
+            }
+        }
+
+        [Test]
+        public void AddDelegatesWithMatchingAnswersToGroup_adds_delegates_with_matching_answers_to_registration_prompt()
+        {
+            // Given
+            const int delegateId = 254480;
+            const int groupId = 100;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                    100,
+                    1,
+                    101,
+                    "Implementation and Business Change Manager",
+                    null
+                );
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+                // Then
+                groupDelegates.Count.Should().Be(1);
+                groupDelegates.First().DelegateId.Should().Be(delegateId);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void AddDelegatesWithMatchingAnswersToGroup_adds_delegates_with_matching_job_group()
+        {
+            // Given
+            const int delegateId = 254480;
+            const int groupId = 100;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 4, 101, null, 9);
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+                // Then
+                groupDelegates.Count.Should().Be(33);
+                groupDelegates.First().DelegateId.Should().Be(delegateId);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            AddDelegatesWithMatchingAnswersToGroup_does_not_add_delegates_to_group_if_delegate_has_matching_answer_to_different_prompt()
+        {
+            // Given
+            const int groupId = 100;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                    100,
+                    2,
+                    101,
+                    "Implementation and Business Change Manager",
+                    null
+                );
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+                // Then
+                groupDelegates.Count.Should().Be(0);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void
+            AddDelegatesWithMatchingAnswersToGroup_does_not_add_delegates_to_group_if_job_group_is_given_but_group_is_not_linked_to_job_group()
+        {
+            // Given
+            const int groupId = 100;
+
+            using var transaction = new TransactionScope();
+            try
+            {
+                // When
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 5, 101, null, 9);
+                var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
+
+                // Then
+                groupDelegates.Count.Should().Be(0);
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
         private void AddDelegateToGroupWithSharedCourse()
         {
             connection.Execute(

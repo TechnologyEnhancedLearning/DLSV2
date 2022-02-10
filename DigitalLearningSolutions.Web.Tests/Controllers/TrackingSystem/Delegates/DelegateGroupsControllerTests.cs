@@ -16,6 +16,7 @@
     using FluentAssertions.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
 
     public class DelegateGroupsControllerTests
@@ -342,6 +343,290 @@
                 .MustNotHaveHappened();
 
             result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void
+            GenerateGroups_should_call_services_and_redirect_after_successfully_generating_groups_from_custom_prompt()
+        {
+            // Given
+            const int centreId = 2;
+            const int adminId = 7;
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const int linkedToField = 1;
+            const string groupNamePrefix = "Role";
+
+            var customPromptSelectListItem = new SelectListItem(groupNamePrefix, "1");
+            var jobGroup = new SelectListItem("Job group", "2");
+            var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
+            var model = new GenerateGroupsViewModel(registrationFieldOptions, 1, false, true, true, true, true);
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).Returns(null);
+            A.CallTo(
+                () => groupsService.AddDelegateGroup(
+                    centreId,
+                    groupName,
+                    null,
+                    adminId,
+                    linkedToField,
+                    true,
+                    true,
+                    true
+                )
+            ).Returns(newGroupId);
+            A.CallTo(
+                () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                    newGroupId,
+                    linkedToField,
+                    centreId,
+                    groupName,
+                    null
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GenerateGroups(model);
+
+            // Them
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegateGroup(
+                        centreId,
+                        groupName,
+                        null,
+                        adminId,
+                        linkedToField,
+                        true,
+                        true,
+                        true
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        centreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            GenerateGroups_should_call_services_and_redirect_after_successfully_generating_groups_from_job_group()
+        {
+            // Given
+            const int centreId = 2;
+            const int adminId = 7;
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const int jobGroupId = 1;
+            const int linkedToField = 4;
+
+            var customPrompt = new SelectListItem("Role", "1");
+            var jobGroup = new SelectListItem("Job group", "2");
+            var registrationFieldOptions = new List<SelectListItem> { customPrompt, jobGroup };
+            var model = new GenerateGroupsViewModel(registrationFieldOptions, 7, false, true, true, true, true);
+
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
+                .Returns(new List<(int id, string name)> { (jobGroupId, groupName) });
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).Returns(null);
+            A.CallTo(
+                () => groupsService.AddDelegateGroup(
+                    centreId,
+                    groupName,
+                    null,
+                    adminId,
+                    linkedToField,
+                    true,
+                    true,
+                    true
+                )
+            ).Returns(newGroupId);
+            A.CallTo(
+                () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                    newGroupId,
+                    linkedToField,
+                    centreId,
+                    null,
+                    jobGroupId
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GenerateGroups(model);
+
+            // Them
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegateGroup(
+                        centreId,
+                        groupName,
+                        null,
+                        adminId,
+                        linkedToField,
+                        true,
+                        true,
+                        true
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        centreId,
+                        null,
+                        jobGroupId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            GenerateGroups_should_skip_groups_with_duplicate_names_if_appropriate()
+        {
+            // Given
+            const int centreId = 2;
+            const string groupName = "Manager";
+            const string groupNamePrefix = "Role";
+
+            var customPromptSelectListItem = new SelectListItem(groupNamePrefix, "1");
+            var jobGroup = new SelectListItem("Job group", "2");
+            var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
+            var model = new GenerateGroupsViewModel(registrationFieldOptions, 1, false, true, true, true, true);
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+            var existingGroup = new Group();
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).Returns(existingGroup);
+
+            // When
+            var result = delegateGroupsController.GenerateGroups(model);
+
+            // Them
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupName, centreId)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegateGroup(
+                        A<int>._,
+                        A<string>._,
+                        A<string?>._,
+                        A<int>._,
+                        A<int>._,
+                        A<bool>._,
+                        A<bool>._,
+                        A<bool>._
+                    )
+                )
+                .MustNotHaveHappened();
+            A.CallTo(
+                    () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<string?>._,
+                        A<int?>._
+                    )
+                )
+                .MustNotHaveHappened();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
+        }
+
+        [Test]
+        public void
+            GenerateGroups_should_prefix_group_name_correctly()
+        {
+            // Given
+            const int centreId = 2;
+            const int adminId = 7;
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const int linkedToField = 1;
+            const string groupNamePrefix = "Role";
+            const string groupNameWithPrefix = "Role - Manager";
+
+            var customPromptSelectListItem = new SelectListItem(groupNamePrefix, "1");
+            var jobGroup = new SelectListItem("Job group", "2");
+            var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
+            var model = new GenerateGroupsViewModel(registrationFieldOptions, 1, true, true, true, true, true);
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupNameWithPrefix, centreId)).Returns(null);
+            A.CallTo(
+                () => groupsService.AddDelegateGroup(
+                    centreId,
+                    groupNameWithPrefix,
+                    null,
+                    adminId,
+                    linkedToField,
+                    true,
+                    true,
+                    true
+                )
+            ).Returns(newGroupId);
+            A.CallTo(
+                () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                    newGroupId,
+                    linkedToField,
+                    centreId,
+                    groupName,
+                    null
+                )
+            ).DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GenerateGroups(model);
+
+            // Them
+            A.CallTo(() => groupsService.GetGroupAtCentreByName(groupNameWithPrefix, centreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegateGroup(
+                        centreId,
+                        groupNameWithPrefix,
+                        null,
+                        adminId,
+                        linkedToField,
+                        true,
+                        true,
+                        true
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        centreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
     }
 }

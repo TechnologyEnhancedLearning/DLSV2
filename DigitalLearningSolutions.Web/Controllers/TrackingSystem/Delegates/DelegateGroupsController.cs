@@ -346,7 +346,7 @@
             if (isJobGroup)
             {
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                var groupNamePrefix = "Job group";
+                const string groupNamePrefix = "Job group";
                 return (jobGroups, groupNamePrefix);
             }
             else

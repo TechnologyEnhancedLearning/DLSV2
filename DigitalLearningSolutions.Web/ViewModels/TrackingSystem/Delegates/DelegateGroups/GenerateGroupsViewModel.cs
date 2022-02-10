@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Threading;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -12,6 +13,26 @@
         public GenerateGroupsViewModel(IEnumerable<SelectListItem> registrationFieldOptions)
         {
             RegistrationFieldOptions = registrationFieldOptions;
+        }
+
+        public GenerateGroupsViewModel(
+            IEnumerable<SelectListItem> registrationFieldOptions,
+            int registrationFieldOptionId,
+            bool prefixGroupName,
+            bool addExistingDelegates,
+            bool addNewRegistrants,
+            bool syncFieldChanges,
+            bool skipDuplicateNames
+        )
+        {
+            RegistrationFieldOptions = registrationFieldOptions;
+            RegistrationFieldOptionId = registrationFieldOptionId;
+            PrefixGroupName = prefixGroupName;
+            AddExistingDelegates = addExistingDelegates;
+            AddNewRegistrants = addNewRegistrants;
+            SyncFieldChanges = syncFieldChanges;
+            SkipDuplicateNames = skipDuplicateNames;
+
         }
 
         [Required(ErrorMessage = "Select a registration field")]
