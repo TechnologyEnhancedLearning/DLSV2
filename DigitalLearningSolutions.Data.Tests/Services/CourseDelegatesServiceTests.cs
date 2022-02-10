@@ -114,7 +114,7 @@
                 .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
 
             // Then
-            Assert.Throws<CourseNotFoundException>(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+            Assert.Throws<CourseAccessDeniedException>(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
                 centreId,
                 categoryId,
                 customisationId

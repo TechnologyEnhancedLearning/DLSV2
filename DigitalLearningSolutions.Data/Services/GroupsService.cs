@@ -381,7 +381,7 @@
             {
                 transaction.Dispose();
                 logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
-                throw new CourseNotFoundException($"No course with customisationId {customisationId} available at centre {centreId}");
+                throw new CourseAccessDeniedException($"No course with customisationId {customisationId} available at centre {centreId}");
             }
 
             foreach (var groupDelegate in groupDelegates)

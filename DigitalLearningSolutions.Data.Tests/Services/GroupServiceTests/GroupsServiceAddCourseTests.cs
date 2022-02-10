@@ -631,7 +631,7 @@
                 .Returns(null);
 
             // Then
-            Assert.Throws<CourseNotFoundException>(
+            Assert.Throws<CourseAccessDeniedException>(
                 () => groupsService.AddCourseToGroup(
                     1,
                     1,
