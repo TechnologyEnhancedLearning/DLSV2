@@ -1,15 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
 
     public class SearchableCourseStatisticsViewModel : BaseFilterableViewModel
     {
-        public SearchableCourseStatisticsViewModel(CourseStatistics courseStatistics)
+        public SearchableCourseStatisticsViewModel(CourseStatisticsWithAdminFieldResponseCounts courseStatistics)
         {
             CustomisationId = courseStatistics.CustomisationId;
             DelegateCount = courseStatistics.DelegateCount;
@@ -19,6 +22,8 @@
             CourseTopic = courseStatistics.CourseTopic;
             LearningMinutes = courseStatistics.LearningMinutes;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseStatistics(courseStatistics);
+            Assessed = courseStatistics.IsAssessed;
+            AdminFieldWithResponseCounts = courseStatistics.AdminFieldsWithResponses;
         }
 
         public int CustomisationId { get; set; }
@@ -28,6 +33,10 @@
         public string CategoryName { get; set; }
         public string CourseTopic { get; set; }
         public string LearningMinutes { get; set; }
+        public bool Assessed { get; set; }
+
+        public IEnumerable<CustomPromptWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
+        public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 
         public string CategoryFilter => nameof(CourseStatistics.CategoryName) + FilteringHelper.Separator +
                                         nameof(CourseStatistics.CategoryName) +
@@ -36,6 +45,11 @@
         public string TopicFilter => nameof(CourseStatistics.CourseTopic) + FilteringHelper.Separator +
                                      nameof(CourseStatistics.CourseTopic) +
                                      FilteringHelper.Separator + CourseTopic;
+
+        public string HasAdminFieldsFilter => nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
+                                              FilteringHelper.Separator +
+                                              nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields) +
+                                              FilteringHelper.Separator + HasAdminFields.ToString().ToLowerInvariant();
 
         public string EmailHref => GenerateEmailHref();
 

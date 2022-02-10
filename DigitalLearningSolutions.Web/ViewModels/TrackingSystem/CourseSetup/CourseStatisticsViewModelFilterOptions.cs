@@ -22,6 +22,12 @@
             CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal,
         };
 
+        private static readonly IEnumerable<FilterOptionViewModel> CourseHasAdminFieldOptions = new[]
+        {
+            CourseHasAdminFieldsFilterOptions.HasAdminFields,
+            CourseHasAdminFieldsFilterOptions.DoesNotHaveAdminFields,
+        };
+
         public static IEnumerable<FilterViewModel> GetFilterOptions(
             IEnumerable<string> categories,
             IEnumerable<string> topics
@@ -44,6 +50,11 @@
                     nameof(CourseStatistics.HideInLearnerPortal),
                     "Visibility",
                     CourseVisibilityOptions
+                ),
+                new FilterViewModel(
+                    nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                    "Admin fields",
+                    CourseHasAdminFieldOptions
                 ),
             };
         }

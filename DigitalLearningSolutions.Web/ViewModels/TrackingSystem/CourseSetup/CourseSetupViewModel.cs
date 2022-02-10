@@ -9,7 +9,7 @@
     public class CourseSetupViewModel : BaseSearchablePageViewModel
     {
         public CourseSetupViewModel(
-            IEnumerable<CourseStatistics> courses,
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
             IEnumerable<string> categories,
             IEnumerable<string> topics,
             string? searchString,

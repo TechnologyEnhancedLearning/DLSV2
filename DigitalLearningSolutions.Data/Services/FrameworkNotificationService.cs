@@ -264,10 +264,10 @@ To access your role profile assessments, please visit {GetCurrentActivitiesUrl()
             string emailSubjectLine = $"{delegateSelfAssessment.SupervisorRoleTitle} Reviewed {competency.Vocabulary} - Digital Learning Solutions";
             var builder = new BodyBuilder();
             builder.TextBody = $@"Dear {supervisorDelegate.FirstName},
-                               {supervisorDelegate.SupervisorName} has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.
+                               {supervisorDelegate.SupervisorName} has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' ({competency.CompetencyGroup}) in the NHS Health Education England, Digital Learning Solutions platform.
                                {commentString}
                                To access your {delegateSelfAssessment.RoleName} profile assessment, please visit {selfAssessmentUrl}.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName}  has reviewed your self assessment against the {competency.Vocabulary} '{competency.Name}' ({competency.CompetencyGroup}) in the NHS Health Education England, Digital Learning Solutions platform.</p><p>{commentString}</p><p><a href='{selfAssessmentUrl}'>Click here</a> to access your  {delegateSelfAssessment.RoleName} profile assessment.</p></body>";
             emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
         }
 

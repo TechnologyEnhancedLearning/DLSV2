@@ -65,7 +65,7 @@
                         customisationId
                     );
             }
-            catch (CourseNotFoundException)
+            catch (CourseAccessDeniedException)
             {
                 return NotFound();
             }

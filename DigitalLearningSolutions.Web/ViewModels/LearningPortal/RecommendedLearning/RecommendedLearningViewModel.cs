@@ -40,9 +40,12 @@
             MatchingSearchResults = sortedResources.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(sortedResources);
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
 
             RecommendedResources =
-                paginatedItems.Select(r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id));
+                paginatedItems.Select(
+                    r => new SearchableRecommendedResourceViewModel(r, selfAssessment.Id, returnPage)
+                );
         }
 
         public SelfAssessment SelfAssessment { get; set; }

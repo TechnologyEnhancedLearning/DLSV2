@@ -8,7 +8,7 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.SignpostingSso;
+    using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -53,7 +53,7 @@
             learningHubLinkService.LinkLearningHubAccountIfNotLinked(delegateId, linkLearningHubRequest.UserId);
 
             var model = new LinkLearningHubViewModel(isAccountAlreadyLinked, learningHubResourcedId);
-            return View(model);
+            return View("../LinkLearningHubSso", model);
         }
 
         [HttpGet("ViewResource/{resourceReferenceId}")]

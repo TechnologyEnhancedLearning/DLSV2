@@ -176,7 +176,8 @@
                 completeWithinMonths,
                 User.GetAdminId()!.Value,
                 formData.CohortLearners,
-                formData.SupervisorId
+                formData.SupervisorId,
+                centreId
             );
 
             var confirmationViewModel = new AddCourseConfirmationViewModel(

@@ -90,6 +90,26 @@
             }
         );
 
+        private readonly FilterViewModel expectedHasAdminFieldsFilterViewModel = new FilterViewModel(
+            "HasAdminFields",
+            "Admin fields",
+            new[]
+            {
+                new FilterOptionViewModel(
+                    "Has admin fields",
+                    "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
+                    "true",
+                    FilterStatus.Default
+                ),
+                new FilterOptionViewModel(
+                    "Doesn't have admin fields",
+                    "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
+                    "false",
+                    FilterStatus.Default
+                )
+            }
+        );
+
         private readonly List<string> filterableCategories = new List<string> { "Category 1", "Category 2" };
 
         private readonly List<string> filterableTopics = new List<string> { "Topic 1", "Topic 2" };
@@ -109,6 +129,7 @@
                     expectedTopicsFilterViewModel,
                     expectedStatusFilterViewModel,
                     expectedVisibilityFilterViewModel,
+                    expectedHasAdminFieldsFilterViewModel
                 }
             );
         }
