@@ -48,7 +48,7 @@
         {
             // Given
             A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, 2))
-                .Throws<CourseNotFoundException>();
+                .Throws<CourseAccessDeniedException>();
 
             // When
             var result = controller.Index(2);

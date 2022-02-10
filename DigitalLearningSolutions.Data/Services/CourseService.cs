@@ -300,7 +300,7 @@
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
                 .Where(c => c.Active);
 
-            var groupCourseIds = groupsDataService.GetGroupCoursesForCentre(centreId)
+            var groupCourseIds = groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId)
                 .Select(gc => gc.CustomisationId);
 

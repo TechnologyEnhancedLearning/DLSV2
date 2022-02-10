@@ -792,7 +792,7 @@
                 .Build();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
                 .Returns(new List<GroupCourse>());
 
             // When
@@ -816,7 +816,7 @@
             var groupCourse = new GroupCourse { CustomisationId = 2, Active = true, GroupId = 1 };
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
                 .Returns(new List<GroupCourse> { groupCourse });
 
             // When
