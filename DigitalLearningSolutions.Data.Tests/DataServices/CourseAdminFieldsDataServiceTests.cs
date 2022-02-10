@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.DataServices
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
@@ -131,6 +133,40 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetDelegateAnswersForCourseAdminFields_returns_expected_results()
+        {
+            // Given
+            const int customisationId = 319;
+            const int centreId = 101;
+            var expectedResult = new List<DelegateCourseAdminFieldAnswers>
+            {
+                new DelegateCourseAdminFieldAnswers
+                {
+                    Answer1 = "s",
+                    Answer2 = "sss",
+                    Answer3 = "",
+                },
+                new DelegateCourseAdminFieldAnswers
+                {
+                    Answer1 = "uyuy",
+                    Answer2 = "hhjkh",
+                    Answer3 = "",
+                }
+            };
+
+            // When
+            var result = courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                .ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(2);
+                result.Should().BeEquivalentTo(expectedResult);
             }
         }
     }

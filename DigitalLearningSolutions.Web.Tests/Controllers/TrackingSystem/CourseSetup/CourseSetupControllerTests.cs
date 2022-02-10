@@ -55,9 +55,9 @@
             new Category { CategoryName = "Category 2" },
         };
 
-        private readonly List<CourseStatistics> courses = new List<CourseStatistics>
+        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
         {
-            new CourseStatistics
+            new CourseStatisticsWithAdminFieldResponseCounts
             {
                 ApplicationName = "Course",
                 CustomisationName = "Customisation",
@@ -97,7 +97,7 @@
             sectionService = A.Fake<ISectionService>();
             courseTopicsService = A.Fake<ICourseTopicsService>();
 
-            A.CallTo(() => courseService.GetCentreSpecificCourseStatistics(A<int>._, A<int>._)).Returns(courses);
+            A.CallTo(() => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)).Returns(courses);
             A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                 .Returns(categories);
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);

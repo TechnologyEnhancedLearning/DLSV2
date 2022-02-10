@@ -4,6 +4,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public interface ICourseAdminFieldsDataService
@@ -26,6 +27,11 @@
         int GetAnswerCountForCourseAdminField(int customisationId, int promptNumber);
 
         void DeleteAllAnswersForCourseAdminField(int customisationId, int promptNumber);
+
+        IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
+            int customisationId,
+            int centreId
+        );
     }
 
     public class CourseAdminFieldsDataService : ICourseAdminFieldsDataService
@@ -137,6 +143,26 @@
                         SET Answer{promptNumber} = NULL
                         WHERE CustomisationID = @customisationId",
                 new { customisationId }
+            );
+        }
+
+        public IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
+            int customisationId,
+            int centreId
+        )
+        {
+            return connection.Query<DelegateCourseAdminFieldAnswers>(
+                @"SELECT
+                        c.CandidateID AS DelegateId,
+                        p.Answer1 AS Answer1,
+                        p.Answer2 AS Answer2,
+                        p.Answer3 AS Answer3
+                    FROM Candidates AS c
+                    INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
+                    WHERE c.CentreID = @centreId
+                        AND p.CustomisationID = @customisationId
+                        AND RemovedDate IS NULL",
+                new { customisationId, centreId }
             );
         }
     }
