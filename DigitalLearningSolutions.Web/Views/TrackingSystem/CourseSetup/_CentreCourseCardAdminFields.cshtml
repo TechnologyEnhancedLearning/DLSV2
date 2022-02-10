@@ -3,8 +3,8 @@
 
 <b>Admin fields and response summary</b>
 
-@foreach (var prompt in Model.AdminFieldWithResponseCounts) {
-  <dl class="nhsuk-summary-list">
+<dl class="nhsuk-summary-list">
+  @foreach (var prompt in Model.AdminFieldWithResponseCounts) {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key nhsuk-u-font-weight-normal">
         @prompt.CustomPromptText
@@ -24,5 +24,5 @@
         </dl>
       </dd>
     </div>
-  </dl>
-}
+  }
+</dl>

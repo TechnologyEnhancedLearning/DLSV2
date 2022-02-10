@@ -25,7 +25,7 @@
             return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
 
-        public static CustomPromptWithResponseCounts? PopulateCustomPromptWithResponseCounts(
+        public static CustomPromptWithResponseCounts? GetBaseCustomPromptWithResponseCountsModel(
             int promptNumber,
             string? prompt,
             string? options,

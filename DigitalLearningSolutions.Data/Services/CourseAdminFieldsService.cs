@@ -41,18 +41,15 @@
     public class CourseAdminFieldsService : ICourseAdminFieldsService
     {
         private readonly ICourseAdminFieldsDataService courseAdminFieldsDataService;
-        private readonly ICourseDataService courseDataService;
         private readonly ILogger<CourseAdminFieldsService> logger;
 
         public CourseAdminFieldsService(
             ICourseAdminFieldsDataService courseAdminFieldsDataService,
-            ICourseDataService courseDataService,
             ILogger<CourseAdminFieldsService> logger
         )
         {
             this.courseAdminFieldsDataService = courseAdminFieldsDataService;
             this.logger = logger;
-            this.courseDataService = courseDataService;
         }
 
         public CourseAdminFields GetCustomPromptsForCourse(
@@ -146,9 +143,15 @@
         )
         {
             var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId);
-            var adminFields = PopulateCustomPromptWithResponseCountsListFromCourseCustomPromptsResult(result);
+            var adminFields = GetBaseCustomPromptWithResponseCountsModelsFromCourseCustomPromptsResult(result);
 
-            var allAnswers = courseDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+            if (!adminFields.Any())
+            {
+                return adminFields;
+            }
+
+            var allAnswers = courseAdminFieldsDataService
+                .GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
                 .ToList();
 
             foreach (var adminField in adminFields)
@@ -316,9 +319,10 @@
             return list;
         }
 
-        private static List<CustomPromptWithResponseCounts> PopulateCustomPromptWithResponseCountsListFromCourseCustomPromptsResult(
-            CourseAdminFieldsResult? result
-        )
+        private static List<CustomPromptWithResponseCounts>
+            GetBaseCustomPromptWithResponseCountsModelsFromCourseCustomPromptsResult(
+                CourseAdminFieldsResult? result
+            )
         {
             var list = new List<CustomPromptWithResponseCounts>();
 
@@ -327,7 +331,7 @@
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.PopulateCustomPromptWithResponseCounts(
+            var prompt1 = CustomPromptHelper.GetBaseCustomPromptWithResponseCountsModel(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -338,7 +342,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.PopulateCustomPromptWithResponseCounts(
+            var prompt2 = CustomPromptHelper.GetBaseCustomPromptWithResponseCountsModel(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -349,7 +353,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.PopulateCustomPromptWithResponseCounts(
+            var prompt3 = CustomPromptHelper.GetBaseCustomPromptWithResponseCountsModel(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,

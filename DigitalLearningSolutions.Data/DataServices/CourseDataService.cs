@@ -78,11 +78,6 @@ namespace DigitalLearningSolutions.Data.DataServices
         public CourseValidationDetails? GetCourseValidationDetails(int customisationId, int centreId);
 
         int CreateNewCentreCourse(Customisation customisation);
-
-        IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
-            int customisationId,
-            int centreId
-        );
     }
 
     public class CourseDataService : ICourseDataService
@@ -727,26 +722,6 @@ namespace DigitalLearningSolutions.Data.DataServices
             );
 
             return customisationId;
-        }
-
-        public IEnumerable<DelegateCourseAdminFieldAnswers> GetDelegateAnswersForCourseAdminFields(
-            int customisationId,
-            int centreId
-        )
-        {
-            return connection.Query<DelegateCourseAdminFieldAnswers>(
-                @"SELECT
-                        c.CandidateID AS DelegateId,
-                        p.Answer1 AS CourseAnswer1,
-                        p.Answer2 AS CourseAnswer2,
-                        p.Answer3 AS CourseAnswer3
-                    FROM Candidates AS c
-                    INNER JOIN Progress AS p ON p.CandidateID = c.CandidateID
-                    WHERE c.CentreID = @centreId
-                        AND p.CustomisationID = @customisationId
-                        AND RemovedDate IS NULL",
-                new { customisationId, centreId }
-            );
         }
     }
 }

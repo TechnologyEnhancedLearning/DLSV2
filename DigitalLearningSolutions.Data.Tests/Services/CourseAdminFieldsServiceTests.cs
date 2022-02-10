@@ -18,18 +18,15 @@
     {
         private ICourseAdminFieldsDataService courseAdminFieldsDataService = null!;
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
-        private ICourseDataService courseDataService = null!;
         private ILogger<CourseAdminFieldsService> logger = null!;
 
         [SetUp]
         public void Setup()
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
-            courseDataService = A.Fake<ICourseDataService>();
             logger = A.Fake<ILogger<CourseAdminFieldsService>>();
             courseAdminFieldsService = new CourseAdminFieldsService(
                 courseAdminFieldsDataService,
-                courseDataService,
                 logger
             );
         }
@@ -208,7 +205,13 @@
             var result = courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(customisationId, centreId);
 
             // Then
-            result.Should().BeEmpty();
+            using (new AssertionScope())
+            {
+                result.Should().BeEmpty();
+                A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                ).MustNotHaveHappened();
+            }
         }
 
         [Test]
@@ -234,7 +237,9 @@
                 .TheRest()
                 .With(a => a.Answer1 = null)
                 .Build();
-            A.CallTo(() => courseDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId))
+            A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                )
                 .Returns(delegateAnswers);
 
             // When
@@ -282,7 +287,9 @@
                 .TheRest()
                 .With(a => a.Answer1 = null)
                 .Build();
-            A.CallTo(() => courseDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId))
+            A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                )
                 .Returns(delegateAnswers);
 
             // When
