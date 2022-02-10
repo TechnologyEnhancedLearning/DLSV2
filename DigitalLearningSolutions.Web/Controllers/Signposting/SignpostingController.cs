@@ -39,17 +39,19 @@
 
             var delegateUser = userService.GetDelegateUserById(delegateId);
 
+            var (resource, apiIsAccessible) =
+                await learningHubResourceService.GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
+                    resourceReferenceId
+                );
+
+            if (resource == null || resource.AbsentInLearningHub)
+            {
+                return NotFound();
+            }
+
             if (delegateUser!.HasDismissedLhLoginWarning)
             {
                 return RedirectToAction("ViewResource", "SignpostingSso", new { resourceReferenceId });
-            }
-
-            var (resource, apiIsAccessible) =
-                await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
-
-            if (resource == null)
-            {
-                return NotFound();
             }
 
             var learningHubAccountIsLinked = userService.DelegateUserLearningHubAccountIsLinked(delegateId);

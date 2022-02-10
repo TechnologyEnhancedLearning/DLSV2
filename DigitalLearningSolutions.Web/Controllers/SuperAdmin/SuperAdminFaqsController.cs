@@ -1,6 +1,7 @@
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
 {
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -12,14 +13,15 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin
     using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs;
 
     [FeatureGate(FeatureFlags.RefactoredSuperAdminInterface)]
+    [SetSelectedTab(nameof(NavMenuTab.System))]
     [Authorize(Policy = CustomPolicies.UserSuperAdmin)]
-    [Route("SuperAdmin/Faqs")]
+    [Route("SuperAdmin/System/Faqs")]
     [SetDlsSubApplication(nameof(DlsSubApplication.SuperAdmin))]
-    public class FaqsController : Controller
+    public class SuperAdminFaqsController : Controller
     {
         private readonly IFaqsService faqsService;
 
-        public FaqsController(IFaqsService faqsService)
+        public SuperAdminFaqsController(IFaqsService faqsService)
         {
             this.faqsService = faqsService;
         }

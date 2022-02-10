@@ -10,7 +10,7 @@
     {
         public EditCompleteByDateFormData() { }
 
-        protected EditCompleteByDateFormData(DelegateCourseInfo info)
+        protected EditCompleteByDateFormData(DelegateCourseInfo info, int? returnPage)
         {
             DelegateId = info.DelegateId;
             Day = info.CompleteBy?.Day;
@@ -21,6 +21,7 @@
             DelegateName = info.DelegateFirstName == null
                 ? info.DelegateLastName
                 : $"{info.DelegateFirstName} {info.DelegateLastName}";
+            ReturnPage = returnPage;
         }
 
         protected EditCompleteByDateFormData(EditCompleteByDateFormData formData)
@@ -32,6 +33,7 @@
             CourseName = formData.CourseName;
             CustomisationId = formData.CustomisationId;
             DelegateName = formData.DelegateName;
+            ReturnPage = formData.ReturnPage;
         }
 
         public int? Day { get; set; }
@@ -41,6 +43,7 @@
         public string? DelegateName { get; set; }
         public int CustomisationId { get; set; }
         public string? CourseName { get; set; }
+        public int? ReturnPage { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

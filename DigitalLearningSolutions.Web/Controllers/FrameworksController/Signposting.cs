@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(model.FrameworkCompetencyId.Value);
             string plainTextDescription = SignpostingHelper.DisplayText(model.Description);
-            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.Catalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
+            int competencyLearningResourceId = competencyLearningResourcesDataService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.SelectedCatalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
             return RedirectToAction("StartSignpostingParametersSession", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, competencyLearningResourceId });
         }
 
@@ -114,6 +114,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 selectedQuestion: parameter.AssessmentQuestion,
                 selectedCompareQuestionType: questionType,
                 parameter);
+            TempData.Remove("CompetencyResourceSummaryViewModel");
+            TempData.Remove("CompetencyResourceLinks");
             TempData.Clear();
             TempData.Set(session);
 
@@ -227,6 +229,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var session = TempData.Peek<SessionCompetencyLearningResourceSignpostingParameter>();
             frameworkService.EditCompetencyResourceAssessmentQuestionParameter(session.AssessmentQuestionParameter);
+            TempData.Clear();
             return RedirectToAction("EditCompetencyLearningResources", "Frameworks", new { frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId });
         }
 

@@ -18,8 +18,8 @@
                      is-current-page="@(Model.CurrentPage == DelegateGroupPage.Delegates)"
                      asp-all-route-data="@routeData" />
 
-  <vc:side-menu-link asp-action="GroupCourses"
-                     asp-controller="DelegateGroups"
+  <vc:side-menu-link asp-action="Index"
+                     asp-controller="GroupCourses"
                      link-text="Courses"
                      is-current-page="@(Model.CurrentPage == DelegateGroupPage.Courses)"
                      asp-all-route-data="@routeData" />

@@ -7,10 +7,11 @@
     {
         public DeactivateAdminViewModel() { }
 
-        public DeactivateAdminViewModel(AdminUser user)
+        public DeactivateAdminViewModel(AdminUser user, int? returnPage)
         {
             FullName = user.FullName;
             EmailAddress = user.EmailAddress;
+            ReturnPage = returnPage;
         }
 
         public string FullName { get; set; }
@@ -18,5 +19,7 @@
 
         [BooleanMustBeTrue(ErrorMessage = "You must confirm before deactivating this account")]
         public bool Confirm { get; set; }
+
+        public int? ReturnPage { get; set; }
     }
 }

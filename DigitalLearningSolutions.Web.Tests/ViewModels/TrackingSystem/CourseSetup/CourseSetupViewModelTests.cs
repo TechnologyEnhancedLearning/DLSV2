@@ -11,23 +11,23 @@
 
     public class CourseSetupViewModelTests
     {
-        private readonly IEnumerable<CourseStatistics> courses = new List<CourseStatistics>
+        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
         {
-            new CourseStatistics { ApplicationName = "A" },
-            new CourseStatistics { ApplicationName = "B" },
-            new CourseStatistics { ApplicationName = "C" },
-            new CourseStatistics { ApplicationName = "D" },
-            new CourseStatistics { ApplicationName = "E" },
-            new CourseStatistics { ApplicationName = "F" },
-            new CourseStatistics { ApplicationName = "G" },
-            new CourseStatistics { ApplicationName = "H" },
-            new CourseStatistics { ApplicationName = "I" },
-            new CourseStatistics { ApplicationName = "J" },
-            new CourseStatistics { ApplicationName = "K" },
-            new CourseStatistics { ApplicationName = "L" },
-            new CourseStatistics { ApplicationName = "M" },
-            new CourseStatistics { ApplicationName = "N" },
-            new CourseStatistics { ApplicationName = "O" }
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" }
         };
 
         [Test]

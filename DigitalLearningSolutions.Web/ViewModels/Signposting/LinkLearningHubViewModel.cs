@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.SignpostingSso
+﻿namespace DigitalLearningSolutions.Web.ViewModels.Signposting
 {
     public class LinkLearningHubViewModel
     {

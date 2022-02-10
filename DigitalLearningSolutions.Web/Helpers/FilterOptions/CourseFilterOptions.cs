@@ -37,4 +37,29 @@
             FilterStatus.Success
         );
     }
+
+    public static class CourseHasAdminFieldsFilterOptions
+    {
+        private const string Group = "HasAdminFields";
+
+        public static readonly FilterOptionViewModel HasAdminFields = new FilterOptionViewModel(
+            "Has admin fields",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                "true"
+            ),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionViewModel DoesNotHaveAdminFields = new FilterOptionViewModel(
+            "Doesn't have admin fields",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                "false"
+            ),
+            FilterStatus.Default
+        );
+    }
 }

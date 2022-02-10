@@ -11,7 +11,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
@@ -90,7 +89,7 @@
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId)
+        public IActionResult EditAdminRoles(int adminId, int? returnPage)
         {
             var centreId = User.GetCentreId();
             var adminUser = userDataService.GetAdminUserById(adminId)!;
@@ -99,22 +98,22 @@
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins);
+            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins, returnPage);
             return View(model);
         }
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(AdminRolesFormData formData, int adminId)
+        public IActionResult EditAdminRoles(AdminRolesFormData model, int adminId)
         {
             userService.UpdateAdminUserPermissions(
                 adminId,
-                formData.GetAdminRoles(),
-                formData.LearningCategory
+                model.GetAdminRoles(),
+                model.LearningCategory
             );
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { page = model.ReturnPage });
         }
 
         [Route("{adminId:int}/UnlockAccount")]
@@ -130,10 +129,10 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId)
+        public IActionResult DeactivateAdmin(int adminId, int? returnPage)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
-            var model = new DeactivateAdminViewModel(adminUser!);
+            var model = new DeactivateAdminViewModel(adminUser!, returnPage);
             return View(model);
         }
 

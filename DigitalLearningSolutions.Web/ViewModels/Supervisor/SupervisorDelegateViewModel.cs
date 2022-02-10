@@ -11,17 +11,19 @@ namespace DigitalLearningSolutions.Web.ViewModels.Supervisor
         public string? LastName { get; set; }
         public int CandidateAssessmentCount { get; set; }
         public string DelegateEmail { get; set; }
+        public int? ReturnPage { get; set; }
 
         [BooleanMustBeTrue(ErrorMessage = "Confirm you wish to remove this staff member")]
         public bool ConfirmedRemove { get; set; }
 
-        public SupervisorDelegateViewModel(SupervisorDelegateDetail detail)
+        public SupervisorDelegateViewModel(SupervisorDelegateDetail detail, int? returnPage)
         {
             Id = detail.ID;
             FirstName = detail.FirstName;
             LastName = detail.LastName;
             DelegateEmail = detail.DelegateEmail;
             CandidateAssessmentCount = detail.CandidateAssessmentCount;
+            ReturnPage = returnPage;
         }
         public SupervisorDelegateViewModel()
         {

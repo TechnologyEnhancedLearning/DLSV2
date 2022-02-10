@@ -1,0 +1,56 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@model SearchableCourseStatisticsViewModel
+
+<dl class="nhsuk-summary-list">
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Category
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-filter-value="@Model.CategoryFilter">
+      @Model.CategoryName
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Topic
+    </dt>
+    <dd class="nhsuk-summary-list__value" data-filter-value="@Model.TopicFilter">
+      @Model.CourseTopic
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Assessed
+    </dt>
+    <partial name="_SummaryBooleanField" model="Model.Assessed" />
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Learning minutes
+    </dt>
+    <dd class="nhsuk-summary-list__value">
+      @Model.LearningMinutes
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      Total delegates
+    </dt>
+    <dd class="nhsuk-summary-list__value" name="delegate-count">
+      @Model.DelegateCount
+    </dd>
+  </div>
+
+  <div class="nhsuk-summary-list__row">
+    <dt class="nhsuk-summary-list__key">
+      In progress
+    </dt>
+    <dd class="nhsuk-summary-list__value" name="in-progress-count">
+      @Model.InProgressCount
+    </dd>
+  </div>
+</dl>

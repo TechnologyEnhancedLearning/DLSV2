@@ -14,12 +14,34 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl word-break">@ViewData["Title"]</h1>
 
-    <div id="searchable-elements">
-      @foreach (var course in Model.Courses) {
-        <partial name="_SearchableCourseCard" model="course" />
-      }
-    </div>
+    <partial name="SearchablePage/_Search" model="Model" />
+
+    <partial name="SearchablePage/_Filters" model="Model" />
+
+    <input type="hidden" asp-for="GroupId" id="current-group-id" />
+    <input type="hidden" asp-for="AdminCategoryFilter" id="current-admin-category-id" />
+
+    @if (Model.NoDataFound) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No courses found.</b>
+      </p>
+    } else {
+      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
+      <div id="searchable-elements">
+        @foreach (var course in Model.Courses) {
+          <partial name="_SearchableCourseCard" model="course" />
+        }
+      </div>
+    }
+    @if (Model.TotalPages > 1) {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
 
     <vc:cancel-link asp-controller="GroupCourses" asp-action="Index" asp-all-route-data="@routeParamsForBackLink" />
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/addCourseToGroupSelectCourse.js")" asp-append-version="true"></script>
+}

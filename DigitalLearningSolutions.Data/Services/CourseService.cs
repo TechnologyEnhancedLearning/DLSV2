@@ -10,7 +10,11 @@
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            );
 
         public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
 
@@ -83,6 +87,10 @@
 
         CourseNameInfo? GetCourseNameAndApplication(int customisationId);
 
+        IEnumerable<string> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId);
+
+        IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
+
         int CreateNewCentreCourse(Customisation customisation);
     }
 
@@ -92,18 +100,24 @@
         private readonly ICourseDataService courseDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
+        private readonly ICourseTopicsDataService courseTopicsDataService;
 
         public CourseService(
             ICourseDataService courseDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
             IProgressDataService progressDataService,
-            IGroupsDataService groupsDataService
+            IGroupsDataService groupsDataService,
+            ICourseCategoriesDataService courseCategoriesDataService,
+            ICourseTopicsDataService courseTopicsDataService
         )
         {
             this.courseDataService = courseDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.progressDataService = progressDataService;
             this.groupsDataService = groupsDataService;
+            this.courseCategoriesDataService = courseCategoriesDataService;
+            this.courseTopicsDataService = courseTopicsDataService;
         }
 
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId)
@@ -112,10 +126,19 @@
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId)
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            )
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId);
+            return allCourses.Where(c => c.CentreId == centreId).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
         }
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
@@ -289,6 +312,17 @@
         public CourseNameInfo? GetCourseNameAndApplication(int customisationId)
         {
             return courseDataService.GetCourseNameAndApplication(customisationId);
+        }
+
+        public IEnumerable<string> GetCategoriesForCentreAndCentrallyManagedCourses(int centreId)
+        {
+            return courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(c => c.CategoryName);
+        }
+
+        public IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId)
+        {
+            return courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
         }
 
         public void RemoveDelegateFromCourse(

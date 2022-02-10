@@ -24,6 +24,14 @@
 
         public string Category { get; }
 
+        public string CategoryFilter => nameof(CourseAssessmentDetails.CategoryName) + FilteringHelper.Separator +
+                                        nameof(CourseAssessmentDetails.CategoryName) +
+                                        FilteringHelper.Separator + Category;
+
         public string Topic { get; }
+
+        public string TopicFilter => nameof(CourseAssessmentDetails.CourseTopic) + FilteringHelper.Separator +
+                                        nameof(CourseAssessmentDetails.CourseTopic) +
+                                        FilteringHelper.Separator + Topic;
     }
 }

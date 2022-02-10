@@ -9,7 +9,7 @@
     public class AllCourseStatisticsViewModel : BaseJavaScriptFilterableViewModel
     {
         public AllCourseStatisticsViewModel(
-            IEnumerable<CourseStatistics> courses,
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
             IEnumerable<string> categories,
             IEnumerable<string> topics
         )

@@ -6,6 +6,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = $"{(errorHasOccurred ? "Error" : "")} Edit description for {Model.GroupName} group (optional)";
+  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -30,6 +31,6 @@
       <button class="nhsuk-button" type="submit" value="save">Save</button>
       <input type="hidden" asp-for="GroupName" />
     </form>
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

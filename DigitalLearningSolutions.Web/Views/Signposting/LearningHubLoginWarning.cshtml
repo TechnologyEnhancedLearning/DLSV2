@@ -14,9 +14,8 @@
 
     <div class="nhsuk-u-margin-bottom-4">
       @if (!Model.ApiIsAccessible) {
-        <vc:inset-text
-          css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
-          text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
+        <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+                                      text="@LearningHubWarningTextHelper.ResourceNameMayBeOutOfDate" />
       }
 
       @if (!Model.LearningHubAccountLinked) {
@@ -30,6 +29,7 @@
 
     <form class="nhsuk-u-margin-bottom-3"
           method="post" novalidate
+          use-external-tab-opener="@(!Model.LearningHubAccountLinked)"
           asp-action="LaunchLearningResource"
           asp-controller="Signposting"
           asp-route-resourceReferenceId="@Model.ResourceRefId">

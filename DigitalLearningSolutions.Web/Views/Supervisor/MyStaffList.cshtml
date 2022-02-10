@@ -26,7 +26,7 @@
 <h1>My Staff</h1>
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (Model.SuperviseDelegateDetails.Any() | Model.SearchString != null)
+    @if (Model.SuperviseDelegateDetailViewModels.Any() | Model.SearchString != null)
     {
       <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
         <div class="nhsuk-grid-row">
@@ -37,10 +37,10 @@
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
             <input type="hidden" id="select-sort-by" value="Name" />
             <input type="hidden" id="select-sort-direction" value="Ascending" />
-            @if (@Model.SuperviseDelegateDetails.Any())
+            @if (@Model.SuperviseDelegateDetailViewModels.Any())
             {
               <div id="searchable-elements">
-                @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetails)
+                @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels)
                 {
                   <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
                 }

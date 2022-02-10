@@ -19,7 +19,16 @@
             string sortDirection,
             string? filterBy,
             int? itemsPerPage
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, searchLabel: "Search delegates")
+        ) : base(
+            searchString,
+            page,
+            true,
+            sortBy,
+            sortDirection,
+            filterBy,
+            itemsPerPage ?? DefaultItemsPerPage,
+            searchLabel: "Search delegates"
+        )
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 delegateUserCards.AsQueryable(),
@@ -33,11 +42,12 @@
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, returnPage);
                 }
             );
 
