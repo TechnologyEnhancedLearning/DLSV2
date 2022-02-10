@@ -19,6 +19,8 @@
         public SummaryViewModel(DelegateRegistrationData data) : this((RegistrationData)data)
         {
             IsCentreSpecificRegistration = data.IsCentreSpecificRegistration;
+            ProfessionalRegistrationNumber = data.ProfessionalRegistrationNumber ?? "Not professionally registered";
+            HasProfessionalRegistrationNumber = data.HasProfessionalRegistrationNumber;
         }
 
         public string? FirstName { get; set; }
@@ -29,6 +31,8 @@
         public bool Terms { get; set; }
         public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
         public bool IsCentreSpecificRegistration { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

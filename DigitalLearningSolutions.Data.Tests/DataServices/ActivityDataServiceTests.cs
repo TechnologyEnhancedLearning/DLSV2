@@ -2,26 +2,34 @@
 {
     using System;
     using System.Linq;
+    using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
+    using Microsoft.Data.SqlClient;
     using NUnit.Framework;
 
     public class ActivityDataServiceTests
     {
+        private SqlConnection connection = null!;
         private IActivityDataService service = null!;
 
         [SetUp]
         public void Setup()
         {
-            var connection = ServiceTestHelper.GetDatabaseConnection();
+            connection = ServiceTestHelper.GetDatabaseConnection();
             service = new ActivityDataService(connection);
         }
 
         [Test]
         public void GetFilteredActivity_gets_expected_activity()
         {
+            using var transaction = new TransactionScope();
+            // given
+            connection.Execute("UPDATE Applications SET DefaultContentTypeID = 4 WHERE ApplicationID = 23");
+
             // when
             var result = service.GetFilteredActivity(
                     101,
@@ -37,7 +45,7 @@
             // then
             using (new AssertionScope())
             {
-                result.Count().Should().Be(13);
+                result.Count().Should().Be(9);
 
                 var first = result.First();
                 first.LogDate.Should().Be(DateTime.Parse("2014-01-08 11:04:35.753"));

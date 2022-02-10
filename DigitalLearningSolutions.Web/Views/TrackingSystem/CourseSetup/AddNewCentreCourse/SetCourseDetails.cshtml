@@ -1,0 +1,31 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SetCourseDetailsViewModel
+
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+  ViewData["Title"] = errorHasOccurred ? "Error: Set course details" : "Set course details";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred) {
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.CustomisationName),
+                                                   nameof(Model.Password),
+                                                   nameof(Model.NotificationEmails),
+                                                   nameof(Model.TutCompletionThreshold),
+                                                   nameof(Model.DiagCompletionThreshold) })" />
+    }
+    <h1 class="nhsuk-heading-xl">Set course details</h1>
+
+    <form method="post" novalidate asp-action="SetCourseDetails">
+
+      <partial name="../Shared/_EditCourseDetailsFormInputs" model="Model" />
+
+      <button class="nhsuk-button" type="submit">Next</button>
+
+    </form>
+
+    <vc:back-link asp-controller="CourseSetup" asp-action="SelectCourse" link-text="Go back" />
+  </div>
+</div>

@@ -14,8 +14,9 @@
             int progressId,
             DelegateProgressAccessRoute accessedVia,
             IEnumerable<AdminUser> supervisors,
-            DelegateCourseInfo info
-        ) : base(info)
+            DelegateCourseInfo info,
+            int? returnPage
+        ) : base(info, returnPage)
         {
             ProgressId = progressId;
             AccessedVia = accessedVia;
@@ -40,7 +41,10 @@
 
         public IEnumerable<SelectListItem> Supervisors { get; set; }
 
-        private static IEnumerable<SelectListItem> PopulateSupervisors(int? supervisorId, IEnumerable<AdminUser> supervisors)
+        private static IEnumerable<SelectListItem> PopulateSupervisors(
+            int? supervisorId,
+            IEnumerable<AdminUser> supervisors
+        )
         {
             var supervisorIdNames = supervisors.Select(s => (s.Id, s.FullName));
             return SelectListHelper.MapOptionsToSelectListItems(

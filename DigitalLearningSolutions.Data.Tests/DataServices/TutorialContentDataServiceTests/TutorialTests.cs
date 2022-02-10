@@ -13,10 +13,11 @@
         private const int SectionId = 74;
 
         [Test]
-        public void GetTutorialsBySectionId_returns_tutorials_correctly()
+        public void GetTutorialsBySectionIdAndCustomisationId_returns_tutorials_correctly()
         {
             // When
-            var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
+            var result = tutorialContentDataService
+                .GetTutorialsBySectionIdAndCustomisationId(SectionId, CustomisationId).ToList();
 
             // Then
             using (new AssertionScope())
@@ -26,6 +27,21 @@
                 result.First().TutorialName.Should().Be("View documents");
                 result.First().Status.Should().BeTrue();
                 result.First().DiagStatus.Should().BeTrue();
+            }
+        }
+
+        [Test]
+        public void GetTutorialsForSection_returns_tutorials_correctly()
+        {
+            // When
+            var result = tutorialContentDataService.GetTutorialsForSection(SectionId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(4);
+                result.First().TutorialId.Should().Be(49);
+                result.First().TutorialName.Should().Be("View documents");
             }
         }
 
@@ -57,7 +73,8 @@
                     false,
                     false
                 );
-                var result = tutorialContentDataService.GetTutorialsBySectionId(SectionId, CustomisationId).ToList();
+                var result = tutorialContentDataService
+                    .GetTutorialsBySectionIdAndCustomisationId(SectionId, CustomisationId).ToList();
 
                 using (new AssertionScope())
                 {
@@ -74,7 +91,8 @@
         }
 
         [Test]
-        public void UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial_when_one_does_not_exist()
+        public void
+            UpdateOrInsertCustomisationTutorialStatuses_inserts_new_CustomisationTutorial_when_one_does_not_exist()
         {
             // Given
             const int tutorialId = 12732;

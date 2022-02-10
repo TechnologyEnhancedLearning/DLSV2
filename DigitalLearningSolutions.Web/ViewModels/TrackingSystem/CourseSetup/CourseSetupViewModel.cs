@@ -9,15 +9,16 @@
     public class CourseSetupViewModel : BaseSearchablePageViewModel
     {
         public CourseSetupViewModel(
-            IEnumerable<CourseStatistics> courses,
+            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
             IEnumerable<string> categories,
             IEnumerable<string> topics,
             string? searchString,
             string sortBy,
             string sortDirection,
             string? filterBy,
-            int page
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, searchLabel: "Search courses")
+            int page,
+            int? itemsPerPage
+        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, "Search courses")
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 courses.AsQueryable(),

@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model CompetencyResourceSignpostingViewModel
 @{
-    ViewData["Title"] = "Competency Resource Signposting";
-    ViewData["Application"] = "Framework Service";
+  ViewData["Title"] = "Competency Resource Signposting";
+  ViewData["Application"] = "Framework Service";
 }
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
@@ -27,37 +27,43 @@
   </p>
 </div>
 <h2>Competency Resource Links</h2>
-
+@if (Model.LearningHubApiError)
+{
+  <div class="nhsuk-warning-callout">
+    <h3 class="nhsuk-warning-callout__label">
+      <span role="text">
+        <span class="nhsuk-u-visually-hidden">Learning Hub API Unavailable</span>
+        Learning Hub API Unavailable
+      </span>
+    </h3>
+    <p>
+      The Learning Hub cannot currently be reached. The information shown below may not be up-to-date.
+      You will not be able to add resources while the Learning Hub is unavailable.
+    </p>
+  </div>
+}
 @if (Model.CompetencyResourceLinks.Any())
 {
   foreach (var link in Model.CompetencyResourceLinks)
   {
-    <partial name="_SignpostingCard.cshtml" model="link" />
+    <partial name="_SignpostingCard.cshtml" model="link" view-data="@(new ViewDataDictionary(ViewData) {{"parent", Model}})" />
   }
-
-  <div class="nhsuk-u-margin-top-5">
-    <a class="nhsuk-button nhsuk-u-margin-bottom-4" href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
-      Add resource
-    </a>
-  </div>
-  <div class="nhsuk-back-link nhsuk-u-margin-left-1">
-    <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
-      <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-      </svg>
-      Cancel
-    </a>
-  </div>
-
 }
-else if (!Model.CompetencyResourceLinks.Any())
+else
 {
-  <div class="nhsuk-warning-callout callout-green">
-    <h3 class="nhsuk-warning-callout__label">
-      <span role="text">
-        This is an empty competency resource signposting.
-      </span>
-    </h3>
-  </div>
+  <p>No learning resources have been added to this competency.</p>
 }
+<div class="nhsuk-u-margin-top-5">
+  <a class="nhsuk-button nhsuk-u-margin-bottom-4" @(Model.LearningHubApiError ? "disabled" : String.Empty) href="@Url.Content($"~/Frameworks/{@Model.FrameworkId}/Competency/{@Model.FrameworkCompetencyId}/CompetencyGroup/{@Model.FrameworkCompetencyGroupId}/Signposting/AddResource")">
+    Add resource
+  </a>
+</div>
+<div class="nhsuk-back-link nhsuk-u-margin-left-1">
+  <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-fragment="fcgroup-@Model.FrameworkCompetencyGroupId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">
+    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+    </svg>
+    Cancel
+  </a>
+</div>
 

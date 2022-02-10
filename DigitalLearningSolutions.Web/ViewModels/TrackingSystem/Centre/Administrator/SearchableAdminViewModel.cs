@@ -8,7 +8,7 @@
     {
         public readonly bool CanShowDeactivateAdminButton;
 
-        public SearchableAdminViewModel(AdminUser adminUser, AdminUser loggedInAdminUser)
+        public SearchableAdminViewModel(AdminUser adminUser, AdminUser loggedInAdminUser, int? page)
         {
             Id = adminUser.Id;
             Name = adminUser.SearchableName;
@@ -19,6 +19,7 @@
             CanShowDeactivateAdminButton = LoggedInAdminCanDeactivateUser(adminUser, loggedInAdminUser);
 
             Tags = FilterableTagHelper.GetCurrentTagsForAdminUser(adminUser);
+            Page = page;
         }
 
         public int Id { get; set; }
@@ -35,6 +36,9 @@
 
         public bool IsLocked { get; set; }
 
+        public bool IsCentreManager { get; set; }
+
+        public int? Page { get; set; }
         private static bool LoggedInAdminCanDeactivateUser(AdminUser adminUser, AdminUser loggedInAdminUser)
         {
             if (loggedInAdminUser.IsUserAdmin)

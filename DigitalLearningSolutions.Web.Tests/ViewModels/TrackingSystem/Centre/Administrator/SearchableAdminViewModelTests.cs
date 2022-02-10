@@ -18,7 +18,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then
@@ -34,7 +35,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then
@@ -52,7 +54,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then
@@ -69,7 +72,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then
@@ -86,7 +90,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then
@@ -103,7 +108,8 @@
             // When
             var model = new SearchableAdminViewModel(
                 adminUser,
-                loggedInAdminUser
+                loggedInAdminUser,
+                1
             );
 
             // Then

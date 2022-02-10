@@ -271,7 +271,7 @@
                 $@"WITH {LatestAssessmentResults}
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables}
-                    WHERE (LAR.Requested IS NULL) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
+                    WHERE ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
                         OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0))
                     ORDER BY SAS.Ordering, CAQ.Ordering",
                 (competency, assessmentQuestion) =>
@@ -517,6 +517,52 @@
                     WHERE (CAOC.IncludedInSelfAssessment = 1)",
                 new { selfAssessmentId, candidateId }
             ).ToList();
+        }
+
+        public CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
+            int competencyId,
+            int selfAssessmentId,
+            int assessmentQuestionId,
+            int levelValue
+        )
+        {
+            return connection.QuerySingleOrDefault<CompetencyAssessmentQuestionRoleRequirement>(
+                @"SELECT
+                        ID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        LevelValue,
+                        LevelRAG
+                    FROM CompetencyAssessmentQuestionRoleRequirements
+                    WHERE CompetencyID = @competencyId AND SelfAssessmentID = @selfAssessmentId
+                        AND AssessmentQuestionID = @assessmentQuestionId AND LevelValue = @levelValue",
+                new { selfAssessmentId, competencyId, assessmentQuestionId, levelValue }
+            );
+        }
+
+        public IEnumerable<SelfAssessmentResult> GetSelfAssessmentResultsForDelegateSelfAssessmentCompetency(
+            int delegateId,
+            int selfAssessmentId,
+            int competencyId
+        )
+        {
+            return connection.Query<SelfAssessmentResult>(
+                @"SELECT
+                        ID,
+                        CandidateID,
+                        SelfAssessmentID,
+                        CompetencyID,
+                        AssessmentQuestionID,
+                        Result,
+                        DateTime,
+                        SupportingComments
+                    FROM SelfAssessmentResults
+                    WHERE CompetencyID = @competencyId
+                        AND SelfAssessmentID = @selfAssessmentId
+                        AND CandidateID = @delegateId",
+                new { selfAssessmentId, delegateId, competencyId }
+            );
         }
 
         private static string PrintResult(

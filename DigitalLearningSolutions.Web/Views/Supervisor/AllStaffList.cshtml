@@ -12,7 +12,7 @@
   <title></title>
 </head>
 <body>
-  @foreach (var supervisorDelegate in Model.SupervisorDelegateDetails)
+  @foreach (var supervisorDelegate in Model.SupervisorDelegateDetailViewModels)
   {
     <partial name="Shared/_StaffMemberCard" model="supervisorDelegate" />
   }

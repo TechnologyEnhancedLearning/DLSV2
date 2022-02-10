@@ -53,7 +53,7 @@
           Edit
         </a>
       </div>
-    } else if (currentLearningItemViewModel is CurrentLearningResourceViewModel) {
+    } else if (currentLearningItemViewModel is CurrentLearningResourceViewModel { AbsentInLearningHub: false }) {
       <div class="nhsuk-grid-column-one-half nhsuk-u-one-half">
         <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
            aria-describedby="@Model.Id-name"
@@ -81,9 +81,8 @@
     <hr class="nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-2" aria-hidden="true" />
 
     <p aria-describedby="@Model.Id-name @Model.Id-evaluated-title" name="evaluated-date">
-      @(completedCourseViewModel.EvaluatedDate == null ?
-        Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
-        Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
+    @(completedCourseViewModel.EvaluatedDate == null ?
+      Html.Raw("<span class='nhsuk-u-visually-hidden'>Not evaluated</span>-") :
+      Html.Raw($"{completedCourseViewModel.EvaluatedDate?.ToShortDateString()}"))
   </div>
 }
-

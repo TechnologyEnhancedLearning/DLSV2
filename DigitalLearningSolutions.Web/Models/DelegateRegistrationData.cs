@@ -22,6 +22,8 @@
         public string? Answer4 { get; set; }
         public string? Answer5 { get; set; }
         public string? Answer6 { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public bool? HasProfessionalRegistrationNumber { get; set; }
 
         public override void SetLearnerInformation(LearnerInformationViewModel model)
         {
@@ -32,6 +34,8 @@
             Answer4 = model.Answer4;
             Answer5 = model.Answer5;
             Answer6 = model.Answer6;
+            ProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber == true ? model.ProfessionalRegistrationNumber : null;
+            HasProfessionalRegistrationNumber = model.HasProfessionalRegistrationNumber;
         }
 
         public void ClearCustomPromptAnswers()

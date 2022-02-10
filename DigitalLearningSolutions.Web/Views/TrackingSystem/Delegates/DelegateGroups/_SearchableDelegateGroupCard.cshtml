@@ -19,7 +19,7 @@
 
           <dd class="nhsuk-summary-list__actions">
             @if (Model.LinkedToField == 0) {
-              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id">
+              <a asp-controller="DelegateGroups" asp-action="EditGroupName" asp-route-groupId="@Model.Id" asp-route-returnPage="@Model.Page">
                 Edit<span class="nhsuk-u-visually-hidden"> name</span>
               </a>
             }
@@ -32,7 +32,7 @@
           </dt>
           <partial name="_SummaryFieldValue" model="Model.Description" />
           <dd class="nhsuk-summary-list__actions">
-            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id">
+            <a asp-controller="DelegateGroups" asp-action="EditDescription" asp-route-groupId="@Model.Id" asp-route-returnPage="@Model.Page">
               Edit<span class="nhsuk-u-visually-hidden"> description</span>
             </a>
           </dd>
@@ -101,8 +101,8 @@
 
       <a class="nhsuk-button expander-card__button"
          role="button"
-         asp-controller="DelegateGroups"
-         asp-action="GroupDelegates"
+         asp-controller="GroupDelegates"
+         asp-action="Index"
          asp-route-groupId="@Model.Id"
          asp-route-page="1">
         View delegates
@@ -110,14 +110,19 @@
 
       <a class="nhsuk-button expander-card__button"
          role="button"
-         asp-controller="DelegateGroups"
-         asp-action="GroupCourses"
+         asp-controller="GroupCourses"
+         asp-action="Index"
          asp-route-groupId="@Model.Id"
          asp-route-page="1">
         View courses
       </a>
 
-      <a class="nhsuk-button delete-button expander-card__button" role="button" asp-action="DeleteGroup" asp-route-groupId="@Model.Id">
+      <a
+        class="nhsuk-button delete-button expander-card__button"
+        role="button"
+        asp-action="DeleteGroup"
+        asp-route-groupId="@Model.Id"
+        asp-route-returnPage="@Model.Page">
         Delete group
       </a>
     </div>

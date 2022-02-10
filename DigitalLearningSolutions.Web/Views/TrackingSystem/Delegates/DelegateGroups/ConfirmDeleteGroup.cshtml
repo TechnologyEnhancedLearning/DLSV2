@@ -1,6 +1,5 @@
 ﻿@inject IConfiguration Configuration;
 @using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 @using Microsoft.Extensions.Configuration
 @model ConfirmDeleteGroupViewModel
@@ -8,6 +7,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = "Groups - Delete group";
+  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -35,6 +35,7 @@
       <input type="hidden" asp-for="GroupLabel" />
       <input type="hidden" asp-for="DelegateCount" />
       <input type="hidden" asp-for="CourseCount" />
+      <input type="hidden" asp-for="ReturnPage" />
 
       <p>
         This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))
@@ -53,6 +54,6 @@
       <button class="nhsuk-button delete-button" type="submit">Delete group</button>
     </form>
 
-    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
+    <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

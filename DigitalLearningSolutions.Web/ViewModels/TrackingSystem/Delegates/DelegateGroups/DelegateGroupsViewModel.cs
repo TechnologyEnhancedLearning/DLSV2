@@ -29,7 +29,8 @@
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
+            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
 
             var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
 

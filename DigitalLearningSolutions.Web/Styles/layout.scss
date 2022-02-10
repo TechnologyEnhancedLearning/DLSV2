@@ -70,6 +70,17 @@ body:not(.js-enabled) {
   }
 }
 
+.nhsuk-header--transactional {
+  .nhsuk-header__link--service {
+    width: auto;
+    height: auto;
+
+    @include mq($from: large-desktop) {
+      display: flex;
+    }
+  }
+}
+
 .centre-brand-logo {
   float: right;
   max-width: 280px;

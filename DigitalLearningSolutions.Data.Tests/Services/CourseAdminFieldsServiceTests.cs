@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Logging;
@@ -23,7 +25,10 @@
         {
             courseAdminFieldsDataService = A.Fake<ICourseAdminFieldsDataService>();
             logger = A.Fake<ILogger<CourseAdminFieldsService>>();
-            courseAdminFieldsService = new CourseAdminFieldsService(courseAdminFieldsDataService, logger);
+            courseAdminFieldsService = new CourseAdminFieldsService(
+                courseAdminFieldsDataService,
+                logger
+            );
         }
 
         [Test]
@@ -185,6 +190,129 @@
             ).MustHaveHappened();
             A.CallTo(() => courseAdminFieldsDataService.DeleteAllAnswersForCourseAdminField(1, 1))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetCustomPromptsWithAnswerCountsForCourse_returns_empty_list_with_no_admin_fields()
+        {
+            // Given
+            const int customisationId = 1;
+            const int centreId = 1;
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(customisationId))
+                .Returns(new CourseAdminFieldsResult());
+
+            // When
+            var result = courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(customisationId, centreId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeEmpty();
+                A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                ).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetCustomPromptsWithAnswerCountsForCourse_counts_free_text_admin_fields_correctly()
+        {
+            // Given
+            const int customisationId = 1;
+            const int centreId = 1;
+            const int totalDelegatesCount = 10;
+            const int numberOfDelegatesWithAnswer = 3;
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(customisationId))
+                .Returns(
+                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                        "System Access Granted",
+                        null,
+                        null
+                    )
+                );
+
+            var delegateAnswers = Builder<DelegateCourseAdminFieldAnswers>.CreateListOfSize(totalDelegatesCount)
+                .TheFirst(numberOfDelegatesWithAnswer)
+                .With(a => a.Answer1 = "Answer")
+                .TheRest()
+                .With(a => a.Answer1 = null)
+                .Build();
+            A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                )
+                .Returns(delegateAnswers);
+
+            // When
+            var result = courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(customisationId, centreId)
+                .ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.First().ResponseCounts.Should()
+                    .BeEquivalentTo(
+                        new List<ResponseCount>
+                        {
+                            new ResponseCount("blank", totalDelegatesCount - numberOfDelegatesWithAnswer),
+                            new ResponseCount("not blank", numberOfDelegatesWithAnswer),
+                        }
+                    );
+            }
+        }
+
+        [Test]
+        public void GetCustomPromptsWithAnswerCountsForCourse_counts_configured_answers_admin_fields_correctly()
+        {
+            // Given
+            const int customisationId = 1;
+            const int centreId = 1;
+            const int totalDelegatesCount = 10;
+            const int numberOfDelegatesWithAnswer = 3;
+            const int numberOfDelegatesWithTest = 2;
+            A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(customisationId))
+                .Returns(
+                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                        "System Access Granted",
+                        "Test\r\nAnswer",
+                        null
+                    )
+                );
+
+            var delegateAnswers = Builder<DelegateCourseAdminFieldAnswers>.CreateListOfSize(totalDelegatesCount)
+                .TheFirst(numberOfDelegatesWithAnswer)
+                .With(a => a.Answer1 = "Answer")
+                .TheNext(numberOfDelegatesWithTest)
+                .With(a => a.Answer1 = "Test")
+                .TheRest()
+                .With(a => a.Answer1 = null)
+                .Build();
+            A.CallTo(
+                    () => courseAdminFieldsDataService.GetDelegateAnswersForCourseAdminFields(customisationId, centreId)
+                )
+                .Returns(delegateAnswers);
+
+            // When
+            var result = courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(customisationId, centreId)
+                .ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().HaveCount(1);
+                result.First().ResponseCounts.Should()
+                    .BeEquivalentTo(
+                        new List<ResponseCount>
+                        {
+                            new ResponseCount("Test", numberOfDelegatesWithTest),
+                            new ResponseCount("Answer", numberOfDelegatesWithAnswer),
+                            new ResponseCount(
+                                "blank",
+                                totalDelegatesCount - numberOfDelegatesWithAnswer - numberOfDelegatesWithTest
+                            ),
+                        }
+                    );
+            }
         }
     }
 }

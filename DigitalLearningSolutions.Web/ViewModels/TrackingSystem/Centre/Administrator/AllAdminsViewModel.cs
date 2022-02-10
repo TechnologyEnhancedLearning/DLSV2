@@ -15,7 +15,7 @@
             AdminUser loggedInAdminUser)
         
         {
-            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser));
+            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser, 1));
 
             Filters = new[]
             {

@@ -23,7 +23,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
   const searchEngine = new JsSearch.Search(['element', 'id']);
   searchEngine.searchIndex = new JsSearch.UnorderedSearchIndex();
   searchEngine.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
-  searchEngine.addIndex('title');
+  searchEngine.addIndex('searchableContent');
   searchEngine.addDocuments(searchableElements);
   const results = <ISearchableElement[]>searchEngine.search(query);
   return results;
@@ -31,7 +31,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
 
 export function getQuery(): string {
   const searchBox = getSearchBox();
-  return searchBox.value;
+  return searchBox.value.trim();
 }
 
 function getSearchBox(): HTMLInputElement {

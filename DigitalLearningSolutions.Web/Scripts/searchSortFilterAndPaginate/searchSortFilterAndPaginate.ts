@@ -1,15 +1,17 @@
 import Details from 'nhsuk-frontend/packages/components/details/details';
+import _ from 'lodash';
 import {
-  setUpFilter, filterSearchableElements, getFilterByValue, IAppliedFilterTag,
+  setUpFilter, filterSearchableElements, IAppliedFilterTag,
 } from './filter';
 import { getQuery, search, setUpSearch } from './search';
 import { setUpSort, sortSearchableElements } from './sort';
-import { ITEMS_PER_PAGE, paginateResults, setUpPagination } from './paginate';
+import { paginateResults, setUpPagination } from './paginate';
 import getPathForEndpoint from '../common';
 
 export interface ISearchableElement {
+  parentIndex: number;
   element: Element;
-  title: string;
+  searchableContent: string;
 }
 
 export interface ISearchableData {
@@ -26,56 +28,71 @@ export class SearchSortFilterAndPaginate {
 
   private readonly filterEnabled: boolean;
 
-  // Route proved should be a relative path with no leading /
-  constructor(route: string, searchEnabled: boolean, paginationEnabled: boolean, filterEnabled: boolean, filterCookieName = '') {
-    this.page = 1;
+  // Route provided should be a relative path with no leading /
+  constructor(
+    route: string,
+    searchEnabled: boolean,
+    paginationEnabled: boolean,
+    filterEnabled: boolean,
+    filterCookieName = '',
+    searchableElementClassSuffixes = ['title'],
+  ) {
+    this.page = SearchSortFilterAndPaginate.getPageNumber();
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
     this.filterEnabled = filterEnabled;
 
-    SearchSortFilterAndPaginate.getSearchableElements(route).then((searchableData) => {
-      if (searchableData === undefined) {
-        return;
-      }
+    SearchSortFilterAndPaginate.getSearchableElements(route, searchableElementClassSuffixes)
+      .then((searchableData) => {
+        if (searchableData === undefined) {
+          return;
+        }
 
-      if (filterEnabled) {
-        setUpFilter(() => this.onFilterUpdated(searchableData), filterCookieName);
-      }
-      if (searchEnabled) {
-        setUpSearch(() => this.onSearchUpdated(searchableData));
-      }
+        if (filterEnabled) {
+          setUpFilter(() => this.onFilterUpdated(searchableData), filterCookieName);
+        }
+        if (searchEnabled) {
+          setUpSearch(() => this.onSearchUpdated(searchableData));
+        }
 
-      setUpSort(() => this.searchSortAndPaginate(searchableData));
+        setUpSort(() => this.searchSortAndPaginate(searchableData));
 
-      if (paginationEnabled) {
-        setUpPagination(
-          () => this.onNextPagePressed(searchableData),
-          () => this.onPreviousPagePressed(searchableData),
-        );
-      }
-      this.searchSortAndPaginate(searchableData);
-    });
+        if (paginationEnabled) {
+          setUpPagination(
+            () => this.onNextPagePressed(searchableData),
+            () => this.onPreviousPagePressed(searchableData),
+            () => this.onItemsPerPageUpdated(searchableData),
+          );
+          this.updateSearchableElementLinks(searchableData);
+        }
+        this.searchSortAndPaginate(searchableData);
+      });
   }
 
   private onFilterUpdated(searchableData: ISearchableData): void {
-    this.page = 1;
+    this.updatePageNumber(1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
-    this.page = 1;
+    this.updatePageNumber(1, searchableData);
+    this.searchSortAndPaginate(searchableData);
+  }
+
+  private onItemsPerPageUpdated(searchableData: ISearchableData): void {
+    this.updatePageNumber(1, searchableData);
     this.searchSortAndPaginate(searchableData);
   }
 
   private onNextPagePressed(searchableData: ISearchableData): void {
-    this.page += 1;
+    this.updatePageNumber(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
-    this.page -= 1;
+    this.updatePageNumber(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
@@ -89,16 +106,19 @@ export class SearchSortFilterAndPaginate {
       : searchedElements;
     const sortedElements = sortSearchableElements(filteredElements);
 
-    SearchSortFilterAndPaginate.updateResultCount(sortedElements.length);
+    const sortedUniqueElements = _.uniqBy(sortedElements, 'parentIndex');
+    const resultCount = sortedUniqueElements.length;
+    SearchSortFilterAndPaginate
+      .updateResultCount(resultCount);
 
-    const totalPages = Math.ceil(sortedElements.length / ITEMS_PER_PAGE);
     const paginatedElements = this.paginationEnabled
-      ? paginateResults(sortedElements, this.page, totalPages)
-      : sortedElements;
+      ? paginateResults(sortedUniqueElements, this.page)
+      : sortedUniqueElements;
     SearchSortFilterAndPaginate.displaySearchableElements(paginatedElements);
   }
 
-  static getSearchableElements(route: string): Promise<ISearchableData | undefined> {
+  static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
+    Promise<ISearchableData | undefined> {
     return SearchSortFilterAndPaginate.fetchAllSearchableElements(route)
       .then((response): ISearchableData | undefined => {
         if (response === null) {
@@ -106,10 +126,18 @@ export class SearchSortFilterAndPaginate {
         }
 
         const elements = Array.from(response.getElementsByClassName('searchable-element'));
-        const searchableElements = elements.map((element) => ({
-          element,
-          title: SearchSortFilterAndPaginate.titleFromElement(element),
-        }));
+        const searchableElements = new Array<ISearchableElement>();
+
+        elements.forEach((element, index) => {
+          const searchableItems = searchableElementClassSuffixes
+            .map<ISearchableElement>((suffix: string) => ({
+              parentIndex: index,
+              element,
+              searchableContent: SearchSortFilterAndPaginate
+                .searchableContentFromElement(element, suffix),
+            }));
+          searchableElements.push(...searchableItems);
+        });
         const tags = Array.from(response.getElementsByClassName('filter-tag'));
         const possibleAppliedFilters = tags.map((element) => ({
           element,
@@ -137,9 +165,9 @@ export class SearchSortFilterAndPaginate {
     });
   }
 
-  static titleFromElement(element: Element): string {
-    const titleSpan = <HTMLSpanElement>element.getElementsByClassName('searchable-element-title')[0];
-    return titleSpan?.textContent ?? '';
+  static searchableContentFromElement(element: Element, classSuffix: string): string {
+    const searchableContentSpan = <HTMLSpanElement>element.getElementsByClassName(`searchable-element-${classSuffix}`)[0];
+    return searchableContentSpan?.textContent ?? '';
   }
 
   static filterValueFromElement(element: Element): string {
@@ -186,7 +214,59 @@ export class SearchSortFilterAndPaginate {
     return newResultCountMessage;
   }
 
-  private static scrollToTop() : void {
+  private static scrollToTop(): void {
     window.scrollTo(0, 0);
+  }
+
+  private updatePageNumber(pageNumber: number, searchableData: ISearchableData): void {
+    this.page = pageNumber;
+
+    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    const newUrl = `${urlParts.slice(0, -1).join('/')}/${pageNumber.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+
+    this.updateSearchableElementLinks(searchableData);
+  }
+
+  private static getPageNumber(): number {
+    SearchSortFilterAndPaginate.ensurePageNumberSetInUrl();
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    return parseInt(urlParts[urlParts.length - 1], 10);
+  }
+
+  /* Guarantees the last element of the path is a number with no trailing slashes */
+  private static ensurePageNumberSetInUrl(): void {
+    const currentPath = window.location.pathname;
+    const urlParts = currentPath.split('/');
+    if (urlParts[urlParts.length - 1] === '') {
+      urlParts.pop();
+    }
+
+    const pageNumber = parseInt(urlParts[urlParts.length - 1], 10);
+
+    if (Number.isNaN(pageNumber)) {
+      const newUrl = `${urlParts.join('/')}/1`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  }
+
+  private updateSearchableElementLinks(searchableData: ISearchableData): void {
+    const setReturnPage = !this.searchEnabled || getQuery().length === 0;
+
+    _.forEach(searchableData.searchableElements, (searchableElement) => {
+      _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
+        const params = new URLSearchParams(anchor.search);
+        if (setReturnPage) {
+          params.set('returnPage', this.page.toString());
+        } else {
+          params.delete('returnPage');
+        }
+        // eslint-disable-next-line no-param-reassign
+        anchor.search = params.toString();
+      });
+    });
   }
 }

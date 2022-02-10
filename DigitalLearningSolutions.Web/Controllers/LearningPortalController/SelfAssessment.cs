@@ -38,6 +38,7 @@
             return competencies;
         }
 
+        [NoCaching]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}")]
         public IActionResult SelfAssessment(int selfAssessmentId)
         {
@@ -208,6 +209,7 @@
             return View("SelfAssessments/SupervisorComments", model);
         }
 
+        [NoCaching]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/{competencyGroupId}")]
         [Route("LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}")]
         public IActionResult SelfAssessmentOverview(
@@ -558,6 +560,7 @@
         }
 
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
         public IActionResult SetSupervisorRole(SetSupervisorRoleViewModel model)
         {
             if (!ModelState.IsValid)
@@ -617,6 +620,7 @@
         }
 
         [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         public IActionResult SubmitSummary()
         {
             var sessionAddSupervisor = TempData.Peek<SessionAddSupervisor>();
@@ -648,9 +652,9 @@
             return RedirectToAction("ManageSupervisors", new { sessionAddSupervisor.SelfAssessmentID });
         }
 
-        public IActionResult RemoveSupervisor(int selfAssessmentId, int candidateAssessmentSupervisorId)
+        public IActionResult RemoveSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            supervisorService.RemoveCandidateAssessmentSupervisor(candidateAssessmentSupervisorId);
+            supervisorService.RemoveCandidateAssessmentSupervisor(selfAssessmentId, supervisorDelegateId);
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
         }
 
@@ -1067,6 +1071,16 @@
                 SupervisorSignOffs = supervisorSignOffs,
             };
             return View("SelfAssessments/SignOffHistory", model);
+        }
+        public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
+        {
+            var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId());
+            var fileName = $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

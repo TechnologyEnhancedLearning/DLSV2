@@ -37,9 +37,9 @@
             var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
             var sectionOne = new Section(1, "Section");
             var sectionTwo = new Section(2, "Second Section");
-            A.CallTo(() => sectionContentDataService.GetSectionsByApplicationId(1))
+            A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
                 .Returns(new List<Section> { sectionOne, sectionTwo });
-            A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionId(A<int>._, 1))
+            A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(A<int>._, 1))
                 .Returns(tutorials);
 
             // When
@@ -48,7 +48,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionId(A<int>._, 1))
+                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(A<int>._, 1))
                     .MustHaveHappenedTwiceExactly();
                 result.Count.Should().Be(2);
                 result.First().SectionId.Should().Be(1);
@@ -67,7 +67,7 @@
             var section = new Section(1, "Section");
             A.CallTo(() => sectionContentDataService.GetSectionById(1))
                 .Returns(section);
-            A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionId(A<int>._, 1))
+            A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(A<int>._, 1))
                 .Returns(tutorials);
 
             // When
@@ -76,7 +76,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionId(A<int>._, 1))
+                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(A<int>._, 1))
                     .MustHaveHappenedOnceExactly();
                 result?.SectionId.Should().Be(1);
                 result?.SectionName.Should().Be("Section");
@@ -98,9 +98,76 @@
             using (new AssertionScope())
             {
                 result.Should().BeNull();
-                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionId(A<int>._, 1))
+                A.CallTo(() => tutorialContentDataService.GetTutorialsBySectionIdAndCustomisationId(A<int>._, 1))
                     .MustNotHaveHappened();
             }
+        }
+
+        [Test]
+        public void GetSectionsThatHaveTutorialsForApplication_calls_data_services_and_returns_expected_sections()
+        {
+            // Given
+            var sectionOne = new Section(1, "Section");
+            var sectionTwo = new Section(2, "Second Section");
+            var sections = new List<Section> { sectionOne, sectionTwo };
+
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
+            var tutorials = new List<Tutorial> { tutorial };
+
+            A.CallTo(
+                () => sectionContentDataService.GetSectionsForApplication(1)
+            ).Returns(sections);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(A<int>._)
+            ).Returns(tutorials);
+
+            // When
+            var result = sectionService.GetSectionsThatHaveTutorialsForApplication(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => sectionContentDataService.GetSectionsForApplication(1))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(1)
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => tutorialContentDataService.GetTutorialsForSection(2)
+                ).MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(sections);
+            }
+        }
+
+        [Test]
+        public void GetSectionsThatHaveTutorialsForApplication_returns_only_sections_with_tutorials()
+        {
+            // Given
+            var sectionOne = new Section(1, "Section");
+            var sectionTwo = new Section(2, "Second Section");
+            var sections = new List<Section> { sectionOne, sectionTwo };
+
+            var tutorial = new Tutorial(1, "Tutorial", true, true);
+            var tutorials = new List<Tutorial> { tutorial };
+
+            A.CallTo(
+                () => sectionContentDataService.GetSectionsForApplication(1)
+            ).Returns(sections);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(1)
+            ).Returns(tutorials);
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(2)
+            ).Returns(new List<Tutorial>());
+
+            // When
+            var result = sectionService.GetSectionsThatHaveTutorialsForApplication(1);
+
+            // Then
+            result.Count().Should().Be(1);
         }
     }
 }

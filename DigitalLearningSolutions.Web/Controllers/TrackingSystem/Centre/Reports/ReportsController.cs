@@ -165,10 +165,11 @@
 
             var dataFile = activityService.GetActivityDataFileForCentre(centreId, filterData);
 
+            var fileName = $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 dataFile,
-                FileHelper.ExcelContentType,
-                $"Activity data for centre {centreId} downloaded {DateTime.Today:yyyy-MM-dd}.xlsx"
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
             );
         }
 
@@ -205,10 +206,11 @@
             );
 
             var content = evaluationSummaryService.GetEvaluationSummaryFileForCentre(centreId, filterData);
+            var fileName = $"DLS Evaluation Stats {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 content,
-                FileHelper.ExcelContentType,
-                $"DLS Evaluation Stats {DateTime.Today:yyyy-MM-dd}.xlsx"
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
             );
         }
 

@@ -16,7 +16,11 @@ namespace DigitalLearningSolutions.Data.Services
 
         (AdminUser? adminUser, DelegateUser? delegateUser) GetUsersById(int? adminId, int? delegateId);
 
+        DelegateUser? GetDelegateUserById(int delegateId);
+
         public List<DelegateUser> GetDelegateUsersByEmailAddress(string emailAddress);
+
+        List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
 
         (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
@@ -60,6 +64,12 @@ namespace DigitalLearningSolutions.Data.Services
         IEnumerable<AdminUser> GetSupervisorsAtCentre(int centreId);
 
         IEnumerable<AdminUser> GetSupervisorsAtCentreForCategory(int centreId, int categoryId);
+
+        bool DelegateUserLearningHubAccountIsLinked(int delegateId);
+
+        int? GetDelegateUserLearningHubAuthId(int delegateId);
+
+        void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
     }
 
     public class UserService : IUserService
@@ -122,6 +132,11 @@ namespace DigitalLearningSolutions.Data.Services
             return userDataService.GetDelegateUsersByEmailAddress(emailAddress);
         }
 
+        public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
+        {
+            return userDataService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
+        }
+
         public (AdminUser?, List<DelegateUser>) GetUsersWithActiveCentres(
             AdminUser? adminUser,
             List<DelegateUser> delegateUsers
@@ -180,6 +195,8 @@ namespace DigitalLearningSolutions.Data.Services
                     myAccountDetailsData.Surname,
                     myAccountDetailsData.Email,
                     myAccountDetailsData.ProfileImage,
+                    myAccountDetailsData.ProfessionalRegistrationNumber,
+                    myAccountDetailsData.HasBeenPromptedForPrn,
                     delegateIds
                 );
 
@@ -377,6 +394,26 @@ namespace DigitalLearningSolutions.Data.Services
         {
             return userDataService.GetAdminUsersByCentreId(centreId).Where(au => au.IsSupervisor)
                 .Where(au => au.CategoryId == categoryId || au.CategoryId == 0);
+        }
+
+        public bool DelegateUserLearningHubAccountIsLinked(int delegateId)
+        {
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId).HasValue;
+        }
+
+        public int? GetDelegateUserLearningHubAuthId(int delegateId)
+        {
+            return userDataService.GetDelegateUserLearningHubAuthId(delegateId);
+        }
+
+        public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
+        {
+            userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
+        }
+
+        public DelegateUser? GetDelegateUserById(int delegateId)
+        {
+            return userDataService.GetDelegateUserById(delegateId);
         }
 
         private static bool UserEmailHasChanged(User? user, string emailAddress)

@@ -49,7 +49,8 @@
            role="button"
            asp-controller="Administrator"
            asp-action="EditAdminRoles"
-           asp-route-adminId="@Model.Id">
+           asp-route-adminId="@Model.Id"
+           asp-route-returnPage="@Model.Page">
           Manage roles
         </a>
       }
@@ -59,7 +60,8 @@
            aria-label="Deactivate admin account"
            asp-controller="Administrator"
            asp-action="DeactivateAdmin"
-           asp-route-adminId="@Model.Id">
+           asp-route-adminId="@Model.Id"
+           asp-route-returnPage="@Model.Page">
           Deactivate admin account
         </a>
       }

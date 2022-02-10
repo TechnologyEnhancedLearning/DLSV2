@@ -5,6 +5,7 @@
     using System.Text;
     using DigitalLearningSolutions.Data.Helpers;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
 
     public interface ILearningHubSsoSecurityService
     {
@@ -20,17 +21,21 @@
         private readonly IClockService clockService;
         private readonly IConfiguration config;
 
-        public LearningHubSsoSecurityService(IClockService clockService, IConfiguration config)
+        private ILogger<ILearningHubSsoSecurityService> logger;
+
+        public LearningHubSsoSecurityService(IClockService clockService, IConfiguration config, ILogger<ILearningHubSsoSecurityService> logger)
         {
             this.clockService = clockService;
             this.config = config;
+            this.logger = logger;
         }
 
         public string GenerateHash(string state)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
+            var salt = GetSecretKeyBytes();
+
             var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
             var timedState = encoder.GetBytes(state + secondsSinceEpoch);
             return GetHash(timedState, salt);
         }
@@ -38,10 +43,10 @@
         public bool VerifyHash(string state, string hash)
         {
             var secondsSinceEpoch = GetSecondsSinceEpoch();
-            var encoder = new UTF8Encoding();
-            var salt = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
-            var toleranceInSec = config.GetLearningHubSsoHashTolerance();
+            var salt = GetSecretKeyBytes();
 
+            var encoder = new UTF8Encoding();
+            var toleranceInSec = config.GetLearningHubSsoHashTolerance();
             for (var counter = 0; counter <= toleranceInSec * 2; counter++)
             {
                 var step = counter > toleranceInSec ? counter - toleranceInSec : -1 * counter;
@@ -54,6 +59,20 @@
             }
 
             return false;
+        }
+
+        private byte[] GetSecretKeyBytes()
+        {
+            var encoder = new UTF8Encoding();
+            var secretKeyBytes = encoder.GetBytes(config.GetLearningHubSsoSecretKey());
+
+            if (secretKeyBytes.Length < 8)
+            {
+                logger.LogError("Secret key invalid. The secret key must have a length of at least 8 characters.");
+                throw new CryptographicException();
+            }
+
+            return secretKeyBytes;
         }
 
         private string GetHash(byte[] input, byte[] salt)

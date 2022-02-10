@@ -1,6 +1,6 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCompletionDateViewModel
 
@@ -15,12 +15,15 @@
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
     cancelLinkController = "DelegateProgress";
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
     cancelLinkController = "ViewDelegate";
   }
   var exampleDate = DateTime.Today;
+  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completion date" };
+
 }
 
 <div class="nhsuk-grid-row">
@@ -45,14 +48,14 @@
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="ReturnPage" />
       <vc:date-input id="completion-date"
                      label="Completion date"
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
                      css-class="nhsuk-u-margin-bottom-4"
-                     key="1"
-                     hint-text="For example, @exampleDate.Day @exampleDate.Month @exampleDate.Year. Leave the boxes blank to clear the completion date" />
+                     hint-text-lines="@hintTextLines" />
 
       <button class="nhsuk-button" type="submit">Save</button>
     </form>

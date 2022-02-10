@@ -1,6 +1,5 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
-@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
 @using Microsoft.Extensions.Configuration
 @model EditCourseSectionViewModel
@@ -37,19 +36,11 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="EditSection">
-      <div class="hidden-submit">
-        <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
-      </div>
-      <input type="hidden" asp-for="CourseName" />
-      <input type="hidden" asp-for="SectionName" />
 
-      <div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
-        <partial name="_EditSectionDiagnostic" model="Model"/>
-
-        <partial name="_EditSectionLearning" model="Model"/>
-      </div>
+      <partial name="_EditSectionContentFormInputs" model="Model" />
 
       <button name="action" class="nhsuk-button" type="submit" value="@CourseContentController.SaveAction">Save</button>
+
     </form>
 
     <vc:cancel-link asp-controller="CourseContent" asp-action="Index" asp-all-route-data="@cancelRouteData" />

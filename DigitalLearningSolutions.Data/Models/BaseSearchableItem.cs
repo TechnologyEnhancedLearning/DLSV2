@@ -13,5 +13,7 @@
         protected string? SearchableNameOverrideForFuzzySharp;
 
         public abstract string SearchableName { get; set; }
+
+        public virtual string?[] SearchableContent => new[] { SearchableName };
     }
 }
