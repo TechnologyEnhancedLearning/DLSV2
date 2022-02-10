@@ -40,7 +40,8 @@
                 new List<string>(),
                 null,
                 null,
-                1
+                1,
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             model.Admins.Count().Should().Be(10);
@@ -56,7 +57,8 @@
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             model.Admins.Count().Should().Be(5);
@@ -95,7 +97,8 @@
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                UserTestHelper.GetDefaultAdminUser()
             );
 
             // Then
