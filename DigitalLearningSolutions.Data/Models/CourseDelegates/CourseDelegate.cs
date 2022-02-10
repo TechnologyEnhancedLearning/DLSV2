@@ -21,7 +21,7 @@
         public int AttemptsPassed { get; set; }
         public int CustomisationId { get; set; }
 
-        public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
+        public string FullName => LastName + (string.IsNullOrEmpty(FirstName) ? "" : $", {FirstName}");
 
         public string TitleName => FullName + (string.IsNullOrEmpty(EmailAddress) ? "" : $" ({EmailAddress})");
 
