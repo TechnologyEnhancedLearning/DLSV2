@@ -238,8 +238,7 @@
             return RedirectToAction("Index");
         }
 
-        [HttpGet]
-        [Route("Generate")]
+        [HttpGet("Generate")]
         public IActionResult GenerateGroups()
         {
             var registrationFieldOptions = GetRegistrationFieldOptionsSelectList();
@@ -248,8 +247,7 @@
             return View(model);
         }
 
-        [HttpPost]
-        [Route("Generate")]
+        [HttpPost("Generate")]
         public IActionResult GenerateGroups(GenerateGroupsViewModel model)
         {
             if (!ModelState.IsValid)

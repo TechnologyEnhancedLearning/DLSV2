@@ -78,6 +78,8 @@
             var result = centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
 
             // Then
+            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
+                .MustHaveHappenedOnceExactly();
             result.Should().BeEquivalentTo(expectedCustomPrompts);
         }
 

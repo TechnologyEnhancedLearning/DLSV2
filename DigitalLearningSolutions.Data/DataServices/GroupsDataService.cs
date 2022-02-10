@@ -446,8 +446,8 @@
                         (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
                 new
                 {
-                    groupId, customisationId, completeWithinMonths, addedByAdminUserId, cohortLearners,
-                    supervisorAdminId,
+                    groupId, customisationId, completeWithinMonths,
+                    addedByAdminUserId, cohortLearners, supervisorAdminId,
                 }
             );
         }
