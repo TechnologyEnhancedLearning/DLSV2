@@ -20,7 +20,6 @@
         public DateTime? Verified { get; set; }
         public DateTime? Requested { get; set; }
         public bool? SignedOff { get; set; }
-        public SelfAssessmentResponseStatus? ResponseStatus { get; set; }
         public List<AssessmentQuestion> AssessmentQuestions { get; set; } = new List<AssessmentQuestion>();
     }
 }

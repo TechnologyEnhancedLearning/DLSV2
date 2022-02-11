@@ -253,7 +253,7 @@
             var optionalCompetencies = selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, candidateId);
             selfAssessmentService.UpdateLastAccessed(assessment.Id, candidateId);
             var supervisorSignOffs = selfAssessmentService.GetSupervisorSignOffsForCandidateAssessment(selfAssessmentId, candidateId);
-            var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId), searchModel);
+            var competencies = FilterCompetencies(selfAssessmentService.GetMostRecentResults(assessment.Id, candidateId).ToList(), searchModel);
 
             foreach (var competency in competencies)
             {
@@ -286,10 +286,10 @@
             return View("SelfAssessments/SelfAssessmentOverview", model);
         }
 
-        private List<Competency> FilterCompetencies(IEnumerable<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
+        private List<Competency> FilterCompetencies(List<Competency> competencies, SearchSelfAssessmentOvervieviewViewModel search)
         {
             var searchText = search?.SearchText?.Trim() ?? string.Empty;
-            var filteredCompetencies = competencies;
+            List<Competency> filteredCompetencies = null;
             if (searchText.Length > 0 || search.AppliedFilters.Count() > 0)
             {
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
@@ -297,13 +297,17 @@
                 filteredCompetencies = (from c in competencies
                         let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup.Contains(w, StringComparison.CurrentCultureIgnoreCase))
                         let searchTextMatchesDescription = wordsInSearchText.Any(w => c.Description.Contains(w, StringComparison.CurrentCultureIgnoreCase))
-                        let filterMatches = (filters.Contains(SelfAssessmentResponseStatus.NotYetResponded) && c.ResponseStatus == SelfAssessmentResponseStatus.NotYetResponded)
-                            || (filters.Contains(SelfAssessmentResponseStatus.SelfAssessed) && c.ResponseStatus == SelfAssessmentResponseStatus.SelfAssessed)
-                            || (filters.Contains(SelfAssessmentResponseStatus.NotYetResponded) && c.ResponseStatus == SelfAssessmentResponseStatus.Verified)
-                        where (searchTextMatchesGroup || searchTextMatchesDescription) && (filters.Count() == 0 || filterMatches)
-                        select c);
+                        let responseStatus = c.AssessmentQuestions.FirstOrDefault()?.ResultId == null ? SelfAssessmentResponseStatus.NotYetResponded
+                            : c.Verified != null ? SelfAssessmentResponseStatus.SelfAssessed
+                            : SelfAssessmentResponseStatus.Verified
+                        let filterMatches = (filters.Contains(SelfAssessmentResponseStatus.NotYetResponded) && responseStatus == SelfAssessmentResponseStatus.NotYetResponded)
+                            || (filters.Contains(SelfAssessmentResponseStatus.SelfAssessed) && responseStatus == SelfAssessmentResponseStatus.SelfAssessed)
+                            || (filters.Contains(SelfAssessmentResponseStatus.Verified) && responseStatus == SelfAssessmentResponseStatus.Verified)
+                        where ((wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesDescription)
+                                && (filters.Count() == 0 || filterMatches))
+                        select c).ToList();
             }
-            return filteredCompetencies.ToList();
+            return (filteredCompetencies ?? competencies);
         }
 
         [HttpPost]
