@@ -25,7 +25,12 @@
                     sv.Comments,
                     sv.SignedOff,
                     0 AS UserIsVerifier,
-                    COALESCE (rr.LevelRAG, 0) AS ResultRAG
+                    COALESCE (rr.LevelRAG, 0) AS ResultRAG,
+                    (CASE WHEN s.ID IS NULL THEN 0
+						WHEN sv.SignedOff <> 1 THEN 1
+						WHEN sv.SignedOff = 1 THEN 2
+						ELSE NULL
+					END) AS ResponseStatus
                 FROM SelfAssessmentResults s
                 INNER JOIN (
                     SELECT MAX(ID) as ID
@@ -211,7 +216,7 @@
         {
             var result = connection.Query<Competency, AssessmentQuestion, Competency>(
                 $@"WITH {LatestAssessmentResults}
-                    SELECT {CompetencyFields}
+                    SELECT {CompetencyFields}, ResponseStatus
                     FROM {CompetencyTables}
                     WHERE (CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)
                     ORDER BY SAS.Ordering, CAQ.Ordering",
