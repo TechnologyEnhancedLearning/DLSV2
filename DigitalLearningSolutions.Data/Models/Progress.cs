@@ -15,5 +15,6 @@
         public int CustomisationVersion { get; set; }
         public int EnrollmentMethodId { get; set; }
         public int EnrolledByAdminId { get; set; }
+        public int? DiagnosticScore { get; set; }
     }
 }

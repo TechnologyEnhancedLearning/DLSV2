@@ -1,8 +1,15 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DetailedCourseProgressViewModel
 
 @{
   ViewData["Title"] = "Detailed progress";
+  var routeParamsForBackLink = new Dictionary<string, string?> {
+    {"progressId", Model.ProgressId.ToString()},
+    {"accessedVia", Model.AccessedVia.ToString()},
+  };
 }
 
 <div class="nhsuk-grid-row">
@@ -51,5 +58,10 @@
       <partial name="_SectionProgress" model="section" />
     }
   </div>
+  <vc:back-link
+    link-text="Go back"
+    asp-controller="DelegateProgress"
+    asp-action="Index"
+    asp-all-route-data="@routeParamsForBackLink"/>
 </div>
 

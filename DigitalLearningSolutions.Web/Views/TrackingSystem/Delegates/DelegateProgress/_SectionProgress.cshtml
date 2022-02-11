@@ -46,7 +46,7 @@
         </div>
       }
       <div class="nhsuk-summary-list__row">
-        @Model.Passed
+        @(Model.Passed ? "Passed" : "Failed")
       </div>
     }
   </div>

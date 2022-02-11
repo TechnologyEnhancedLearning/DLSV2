@@ -200,18 +200,21 @@
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
         }
 
-        // TODO HEEDLS-567 decide how to get the candidate Id - from frontend or from progress record? and these as route or query params?
-        [HttpGet("DetailedProgress/{delegateId:int}")]
-        public IActionResult DetailedProgress(int progressId, int delegateId, string accessedVia)
+        [HttpGet("DetailedProgress")]
+        public IActionResult DetailedProgress(int progressId, DelegateProgressAccessRoute accessedVia)
         {
             var progressData = progressService.GetDetailedCourseProgress(progressId);
-            var candidateData = userService.GetDelegateUserById(delegateId);
+            if (progressData == null)
+            {
+                return NotFound();
+            }
+            var candidateData = userService.GetDelegateUserById(progressData.DelegateId);
             if (candidateData == null)
             {
                 return NotFound();
             }
 
-            var model = new DetailedCourseProgressViewModel(candidateData, progressData);
+            var model = new DetailedCourseProgressViewModel(candidateData, progressData, accessedVia);
             return View(model);
         }
     }

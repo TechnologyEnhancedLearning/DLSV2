@@ -6,12 +6,17 @@ namespace DigitalLearningSolutions.Data.Models
 {
     public class DetailedCourseProgress
     {
-        public DetailedCourseProgress(int? diagnosticScore, IEnumerable<DetailedSectionProgress> sections)
+        public DetailedCourseProgress(Progress? progress, IEnumerable<DetailedSectionProgress> sections)
         {
-            DiagnosticScore = diagnosticScore;
+            DiagnosticScore = progress.DiagnosticScore;
+            ProgressId = progress.ProgressId;
+            CustomisationId = progress.CustomisationId;
+            DelegateId = progress.CandidateId;
             Sections = sections;
         }
 
+        public int ProgressId { get; set; }
+        public int CustomisationId { get; set; }
         public int DelegateId { get; set; }
         public int? DiagnosticScore { get; set; }
         public IEnumerable<DetailedSectionProgress> Sections { get; set; }

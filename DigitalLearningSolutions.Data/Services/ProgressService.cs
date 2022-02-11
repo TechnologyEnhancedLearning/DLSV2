@@ -19,7 +19,7 @@
 
         void UnlockProgress(int progressId);
 
-        DetailedCourseProgress GetDetailedCourseProgress(int progressId);
+        DetailedCourseProgress? GetDetailedCourseProgress(int progressId);
     }
 
     public class ProgressService : IProgressService
@@ -96,18 +96,23 @@
             progressDataService.UnlockProgress(progressId);
         }
 
-        public DetailedCourseProgress GetDetailedCourseProgress(int progressId)
+        public DetailedCourseProgress? GetDetailedCourseProgress(int progressId)
         {
-            var overallDiagnosticScore = progressDataService.GetDiagnosticScore(progressId);
+            var progress = progressDataService.GetProgressByProgressId(progressId);
 
-            var sections = progressDataService.GetSectionProgressDataForCourse(progressId).ToList();
+            if (progress == null)
+            {
+                return null;
+            }
+
+            var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
             foreach (var section in sections)
             {
                 section.Tutorials =
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(overallDiagnosticScore, sections);
+            return new DetailedCourseProgress(progress, sections);
         }
     }
 }

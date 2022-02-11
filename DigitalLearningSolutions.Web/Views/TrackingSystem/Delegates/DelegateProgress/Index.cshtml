@@ -13,11 +13,6 @@
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
-
-  var routeParamsForDetailLink = new Dictionary<string, string?> {
-    { "progressId", Model.ProgressId.ToString() },
-    { "delegateId", Model.DelegateId.ToString() }
-  };
 }
 
 @section NavBreadcrumbs {
@@ -60,7 +55,6 @@
     <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2" role="button"
        asp-action="DetailedProgress"
        asp-route-progressId="@Model.ProgressId"
-       asp-route-delegateId="@Model.DelegateId"
        asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates">
       View detailed progress
     </a>

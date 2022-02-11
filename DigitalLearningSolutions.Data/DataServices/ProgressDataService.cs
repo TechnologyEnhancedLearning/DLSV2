@@ -37,10 +37,9 @@
 
         void UnlockProgress(int progressId);
 
-        int? GetDiagnosticScore(int progressId);
+        Progress? GetProgressByProgressId(int progressId);
 
-        // TODO HEEDLS-567 rename this, it's not 'for course' exactly, but by progress
-        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse(int progressId);
+        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
 
         IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
     }
@@ -73,7 +72,8 @@
                         EnrollmentMethodID,
                         EnrolledByAdminID,
                         SubmittedTime,
-                        CustomisationVersion
+                        CustomisationVersion,
+                        DiagnosticScore
                     FROM Progress
                     WHERE CandidateID = @delegateId
                         AND CustomisationID = @customisationId",
@@ -236,15 +236,29 @@
             );
         }
 
-        public int? GetDiagnosticScore(int progressId)
+        public Progress? GetProgressByProgressId(int progressId)
         {
-            return connection.Query<int?>(
-                @"SELECT DiagnosticScore FROM Progress WHERE ProgressID = @progressId",
+            return connection.Query<Progress>(
+                @"SELECT ProgressId,
+                        CandidateID,
+                        CustomisationID,
+                        Completed,
+                        RemovedDate,
+                        SystemRefreshed,
+                        SupervisorAdminID,
+                        CompleteByDate,
+                        EnrollmentMethodID,
+                        EnrolledByAdminID,
+                        SubmittedTime,
+                        CustomisationVersion,
+                        DiagnosticScore
+                    FROM Progress
+                    WHERE ProgressID = @progressId",
                 new { progressId }
-            ).Single();
+            ).SingleOrDefault();
         }
 
-        public IEnumerable<DetailedSectionProgress> GetSectionProgressDataForCourse(int progressId)
+        public IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId)
         {
             return connection.Query<DetailedSectionProgress>(
                 @"SELECT

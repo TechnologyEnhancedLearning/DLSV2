@@ -5,23 +5,34 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using DocumentFormat.OpenXml.Bibliography;
 
     public class DetailedCourseProgressViewModel
     {
-        public DetailedCourseProgressViewModel(DelegateUser delegateUser, DetailedCourseProgress progress)
+        public DetailedCourseProgressViewModel(DelegateUser delegateUser, DetailedCourseProgress progress, DelegateProgressAccessRoute accessedVia)
         {
+            AccessedVia = accessedVia;
+            ProgressId = progress.ProgressId;
+            DelegateId = delegateUser.Id;
+            CustomisationId = progress.CustomisationId;
+
             DelegateName = delegateUser.FullName;
             DelegateEmail = delegateUser.EmailAddress;
             DelegateNumber = delegateUser.CandidateNumber;
-            // TODO HEEDLS-567 what's up with the datetime properties
+            // TODO HEEDLS-567 add datetime properties (? double-check)
             DiagnosticScore = progress.DiagnosticScore;
 
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
         }
 
+        public DelegateProgressAccessRoute AccessedVia { get; set; }
+        public int ProgressId { get; set; }
+        public int DelegateId { get; set; }
+        public int CustomisationId { get; set; }
+
         public string DelegateName { get; set; }
-        public string DelegateEmail { get; set; }
+        public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
         public DateTime LastAccess { get; set; }
         public DateTime Enrolled { get; set; }
@@ -42,7 +53,7 @@
             PostLearningAssessment = section.PostLearningAssessment;
             Outcome = section.Outcome;
             Attempts = section.Attempts;
-            Passed = section.Passed ? "Passed" : "Failed";
+            Passed = section.Passed;
 
             Tutorials = section.Tutorials?.Select(t => new TutorialProgressViewModel(t)) ?? new List<TutorialProgressViewModel>();
         }
@@ -54,7 +65,7 @@
         public bool PostLearningAssessment { get; set; }
         public int? Outcome { get; set; }
         public int? Attempts { get; set; }
-        public string Passed { get; set; }
+        public bool Passed { get; set; }
 
         public IEnumerable<TutorialProgressViewModel> Tutorials { get; set; }
     }
@@ -67,13 +78,15 @@
             TutorialStatus = tutorial.TutorialStatus;
             TimeTaken = tutorial.TimeTaken;
             AvgTime = tutorial.AvgTime;
-            DiagnosticScore =  tutorial.DiagnosticScore.HasValue ? tutorial.DiagnosticScore + "/5" : null;
+            DiagnosticScore = tutorial.DiagnosticScore;
+            PossibleScore = tutorial.PossibleScore;
         }
 
         public string TutorialName { get; set; }
         public string TutorialStatus { get; set; }
         public int TimeTaken { get; set; }
         public int AvgTime { get; set; }
-        public string? DiagnosticScore { get; set; }
+        public int? DiagnosticScore { get; set; }
+        public int PossibleScore { get; set; }
     }
 }

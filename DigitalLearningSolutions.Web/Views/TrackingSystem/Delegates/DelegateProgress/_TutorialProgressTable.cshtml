@@ -2,7 +2,7 @@
 @model IEnumerable<TutorialProgressViewModel>
 
 @{
-  var showDiagnosticColumn = Model.Any(t => !string.IsNullOrWhiteSpace(t.DiagnosticScore));
+  var showDiagnosticColumn = Model.Any(t => t.DiagnosticScore.HasValue);
 }
 
 <details class="nhsuk-details">
@@ -52,7 +52,7 @@
               </th>
               @if (showDiagnosticColumn) {
                 <th role="columnheader" class="" scope="col">
-                  @tut.DiagnosticScore
+                  @tut.DiagnosticScore / @tut.PossibleScore
                 </th>
               }
             </tr>
