@@ -60,8 +60,6 @@
 
         Group? GetGroupAtCentreById(int groupId, int centreId);
 
-        Group? GetGroupAtCentreByName(string groupName, int centreId);
-
         void UpdateGroupDescription(int groupId, int centreId, string? groupDescription);
 
         void RemoveDelegateFromGroup(
@@ -91,6 +89,8 @@
             int? supervisorAdminId,
             int centreId
         );
+
+        void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
 
         void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
@@ -259,15 +259,22 @@
             transaction.Complete();
         }
 
-        public void AddDelegateToGroupAndEnrolOnGroupCourses(int groupId,
+        public void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int groupId,
             DelegateUser delegateUser,
-            int? addedByAdminId = null)
+            int? addedByAdminId = null
+        )
         {
             using var transaction = new TransactionScope();
 
             groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
 
-            var accountDetailsData = new MyAccountDetailsData(delegateUser.Id, delegateUser.FirstName!, delegateUser.LastName, delegateUser.EmailAddress!);
+            var accountDetailsData = new MyAccountDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!
+            );
 
             EnrolDelegateOnGroupCourses(
                 delegateUser,
@@ -320,11 +327,6 @@
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return groupsDataService.GetGroupAtCentreById(groupId, centreId);
-        }
-
-        public Group? GetGroupAtCentreByName(string groupName, int centreId)
-        {
-            return groupsDataService.GetGroupAtCentreByName(groupName, centreId);
         }
 
         public void UpdateGroupDescription(int groupId, int centreId, string? groupDescription)
@@ -428,6 +430,54 @@
                     groupCourse,
                     true
                 );
+            }
+
+            transaction.Complete();
+        }
+
+        public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
+        {
+            var isJobGroup = groupDetails.LinkedToField == 4;
+
+            (List<(int id, string name)> newGroupNames, string groupNamePrefix) = GetNewGroupNamesAndPrefix(
+                isJobGroup,
+                groupDetails.CentreId,
+                groupDetails.RegistrationFieldOptionId
+            );
+
+            var existingGroups = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+
+            using var transaction = new TransactionScope();
+            foreach (var (id, newGroupName) in newGroupNames)
+            {
+                var groupName = groupDetails.PrefixGroupName ? $"{groupNamePrefix} - {newGroupName}" : newGroupName;
+
+                if (groupDetails.SkipDuplicateNames && existingGroups.Contains(groupName))
+                {
+                    return;
+                }
+
+                var newGroupId = AddDelegateGroup(
+                    groupDetails.CentreId,
+                    groupName,
+                    null,
+                    groupDetails.AdminId,
+                    groupDetails.LinkedToField,
+                    groupDetails.SyncFieldChanges,
+                    groupDetails.AddNewRegistrants,
+                    groupDetails.AddExistingDelegates
+                );
+
+                if (groupDetails.AddExistingDelegates)
+                {
+                    AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        groupDetails.LinkedToField,
+                        groupDetails.CentreId,
+                        isJobGroup ? null : newGroupName,
+                        isJobGroup ? id : (int?)null
+                    );
+                }
             }
 
             transaction.Complete();
@@ -600,6 +650,31 @@
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);
+        }
+
+        private (List<(int id, string name)>, string groupNamePrefix) GetNewGroupNamesAndPrefix(
+            bool isJobGroup,
+            int centreId,
+            int registrationFieldOptionId
+        )
+        {
+            if (isJobGroup)
+            {
+                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+                const string groupNamePrefix = "Job group";
+                return (jobGroups, groupNamePrefix);
+            }
+            else
+            {
+                var registrationPrompt = centreCustomPromptsService
+                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
+                        cp => cp.CustomPromptNumber == registrationFieldOptionId
+                    );
+                var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
+                    .ToList<(int id, string name)>();
+                var groupNamePrefix = registrationPrompt.CustomPromptText;
+                return (customPromptOptions, groupNamePrefix);
+            }
         }
     }
 }

@@ -2,11 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -256,33 +256,21 @@
                 return View(model);
             }
 
-            var adminId = User.GetAdminId();
+            var adminId = (int)User.GetAdminId()!;
             var centreId = User.GetCentreId();
-            var isJobGroup = model.RegistrationFieldOptionId == 7;
-            var linkedToField = GetLinkedToFieldValue((int)model.RegistrationFieldOptionId!);
 
-            var (newGroupNames, groupNamePrefix) = GetNewGroupNamesAndPrefix(model, isJobGroup);
+            var groupDetails = new GroupGenerationDetails(
+                adminId,
+                centreId,
+                (int)model.RegistrationFieldOptionId!,
+                model.PrefixGroupName,
+                model.AddExistingDelegates,
+                model.AddNewRegistrants,
+                model.SyncFieldChanges,
+                model.SkipDuplicateNames
+            );
 
-            using var transaction = new TransactionScope();
-            foreach (var (newGroupId, newGroupName) in newGroupNames)
-            {
-                var groupName = model.PrefixGroupName ? $"{groupNamePrefix} - {newGroupName}" : newGroupName;
-
-                var groupId = CreateNewGroup(model, adminId, centreId, linkedToField, groupName);
-
-                if (model.AddExistingDelegates && groupId != null)
-                {
-                    groupsService.AddDelegatesWithMatchingAnswersToGroup(
-                        (int)groupId,
-                        linkedToField,
-                        centreId,
-                        isJobGroup ? null : newGroupName,
-                        isJobGroup ? newGroupId : (int?)null
-                    );
-                }
-            }
-
-            transaction.Complete();
+            groupsService.GenerateGroupsFromRegistrationField(groupDetails);
 
             return RedirectToAction("Index");
         }
@@ -323,68 +311,6 @@
                     ? (cpo.id, $"{cpo.name} (Prompt {cpo.id})")
                     : cpo
             ).ToList<(int id, string name)>();
-        }
-
-        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
-        {
-            return registrationFieldOptionId switch
-            {
-                4 => 5,
-                5 => 6,
-                6 => 7,
-                7 => 4,
-                _ => registrationFieldOptionId,
-            };
-        }
-
-        private (List<(int id, string name)>, string groupNamePrefix) GetNewGroupNamesAndPrefix(
-            GenerateGroupsViewModel model,
-            bool isJobGroup
-        )
-        {
-            if (isJobGroup)
-            {
-                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                const string groupNamePrefix = "Job group";
-                return (jobGroups, groupNamePrefix);
-            }
-            else
-            {
-                var centreId = User.GetCentreId();
-                var registrationPrompt = centreCustomPromptsService
-                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
-                        cp => cp.CustomPromptNumber == model.RegistrationFieldOptionId
-                    );
-                var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
-                    .ToList<(int id, string name)>();
-                var groupNamePrefix = registrationPrompt.CustomPromptText;
-                return (customPromptOptions, groupNamePrefix);
-            }
-        }
-
-        private int? CreateNewGroup(
-            GenerateGroupsViewModel model,
-            int? adminId,
-            int centreId,
-            int linkedToField,
-            string groupName
-        )
-        {
-            if (model.SkipDuplicateNames && groupsService.GetGroupAtCentreByName(groupName, centreId) != null)
-            {
-                return null;
-            }
-
-            return groupsService.AddDelegateGroup(
-                centreId,
-                groupName,
-                null,
-                (int)adminId!,
-                linkedToField,
-                model.SyncFieldChanges,
-                model.AddNewRegistrants,
-                model.AddExistingDelegates
-            );
         }
     }
 }
