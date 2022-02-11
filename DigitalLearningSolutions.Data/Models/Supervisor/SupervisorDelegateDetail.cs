@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
     using System;
+
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
         public string CandidateNumber { get; set; }

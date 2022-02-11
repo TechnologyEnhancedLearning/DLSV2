@@ -28,7 +28,7 @@
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group);
+            var result = new SearchableDelegateGroupViewModel(group, 3);
 
             // Then
             using (new AssertionScope())
@@ -43,6 +43,7 @@
                 result.LinkedField.Should().Be("None");
                 result.ShouldAddNewRegistrantsToGroup.Should().Be("No");
                 result.ChangesToRegistrationDetailsShouldChangeGroupMembership.Should().Be("No");
+                result.Page.Should().Be(3);
             }
         }
 
@@ -53,11 +54,11 @@
             var group = new Group
             {
                 ShouldAddNewRegistrantsToGroup = true,
-                ChangesToRegistrationDetailsShouldChangeGroupMembership = true
+                ChangesToRegistrationDetailsShouldChangeGroupMembership = true,
             };
 
             // When
-            var result = new SearchableDelegateGroupViewModel(group);
+            var result = new SearchableDelegateGroupViewModel(group, 3);
 
             // Then
             using (new AssertionScope())

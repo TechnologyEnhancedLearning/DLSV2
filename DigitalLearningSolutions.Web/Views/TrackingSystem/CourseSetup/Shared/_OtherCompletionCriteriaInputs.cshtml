@@ -1,0 +1,18 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+@model EditCourseDetailsFormData
+
+<vc:numeric-input asp-for="@nameof(Model.TutCompletionThreshold)"
+                  label="Required learning percentage"
+                  populate-with-current-value="true"
+                  type="text"
+                  hint-text=""
+                  css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+
+@if (Model.DiagAssess) {
+  <vc:numeric-input asp-for="@nameof(Model.DiagCompletionThreshold)"
+                    label="Required diagnostic percentage"
+                    populate-with-current-value="true"
+                    type="text"
+                    hint-text=""
+                    css-class="nhsuk-input--width-10 nhsuk-u-margin-bottom-2" />
+}

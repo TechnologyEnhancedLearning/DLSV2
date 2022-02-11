@@ -21,7 +21,9 @@ namespace DigitalLearningSolutions.Data.DataServices
 
         TutorialVideo? GetTutorialVideo(int customisationId, int sectionId, int tutorialId);
 
-        IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId);
+        IEnumerable<Tutorial> GetTutorialsBySectionIdAndCustomisationId(int sectionId, int customisationId);
+
+        IEnumerable<Tutorial> GetTutorialsForSection(int sectionId);
 
         IEnumerable<int> GetTutorialIdsForCourse(int customisationId);
 
@@ -303,10 +305,10 @@ namespace DigitalLearningSolutions.Data.DataServices
             }
         }
 
-        public IEnumerable<Tutorial> GetTutorialsBySectionId(int sectionId, int customisationId)
+        public IEnumerable<Tutorial> GetTutorialsBySectionIdAndCustomisationId(int sectionId, int customisationId)
         {
             return connection.Query<Tutorial>(
-                @"SELECT 
+                @"SELECT
                         tu.TutorialID,
                         tu.TutorialName,
                         ct.[Status],
@@ -317,6 +319,19 @@ namespace DigitalLearningSolutions.Data.DataServices
                     WHERE tu.SectionID = @sectionId
                     AND tu.ArchivedDate IS NULL",
                 new { sectionId, customisationId }
+            );
+        }
+
+        public IEnumerable<Tutorial> GetTutorialsForSection(int sectionId)
+        {
+            return connection.Query<Tutorial>(
+                @"SELECT
+                        tu.TutorialID,
+                        tu.TutorialName
+                    FROM dbo.Tutorials AS tu
+                    WHERE tu.SectionID = @sectionId
+                    AND tu.ArchivedDate IS NULL",
+                new { sectionId }
             );
         }
 
@@ -363,7 +378,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         )
         {
             return connection.Query<Objective>(
-                @"SELECT 
+                @"SELECT
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID
@@ -387,7 +402,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         )
         {
             return connection.Query<CcObjective>(
-                @"SELECT 
+                @"SELECT
                         CASE
                             WHEN tu.OriginalTutorialID > 0 THEN tu.OriginalTutorialID
                             ELSE tu.TutorialID

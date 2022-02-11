@@ -2,7 +2,6 @@
 @using DigitalLearningSolutions.Data.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using Microsoft.Extensions.Configuration
-@using DigitalLearningSolutions.Web.Helpers;
 @model SelfAssessmentOverviewViewModel
 
 @{
@@ -30,44 +29,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 <partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" />
-
-@if (Model.NumberOfOptionalCompetencies > 0)
-{
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
-     asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-     asp-route-vocabulary="@Model.VocabPlural()"
-     asp-action="ManageOptionalCompetencies"
-     role="button">
-    Manage optional @Model.VocabPlural().ToLower()
-  </a>
-}
-@if (Model.SelfAssessment.IsSupervised)
-{
-  <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
-     asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-     asp-action="StartRequestVerification"
-     role="button">
-    Request @Model.SelfAssessment.Vocabulary.ToLower() verification
-  </a>
-}
-<feature name="@(FeatureFlags.CandidateAssessmentExcelExport)">
-  <a class="nhsuk-button nhsuk-button--secondary"
-     asp-route-candidateAssessmentId="@Model.SelfAssessment.CandidateAssessmentId"
-     asp-route-vocabulary="@Model.VocabPlural()"
-     asp-action="ExportCandidateAssessment"
-     role="button">
-    Export to Excel
-  </a>
-</feature>
-@if(Model.SearchViewModel?.SearchText?.Trim().Length > 0)
-{
-  <p class="nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-0">
-    @{
-      var count = Model.CompetencyGroups.Count();
-    }
-    <span role="alert">@count matching @(count == 1 ? "result" : "results")</span>
-  </p>
-}
+<partial name="_OverviewActionButtons.cshtml" model=Model />
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
@@ -108,6 +70,7 @@
       }
     </div>
   }
+  <partial name="_OverviewActionButtons.cshtml" model=Model />
 }
 
 @if (Model.SelfAssessment.IncludesSignposting)

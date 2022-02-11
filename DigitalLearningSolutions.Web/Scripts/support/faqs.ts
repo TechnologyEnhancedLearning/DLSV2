@@ -13,6 +13,6 @@ import { SearchSortFilterAndPaginate } from '../searchSortFilterAndPaginate/sear
 }());
 
 function getDlsSubApplicationFromFaqUrl(): string {
-  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?$/);
+  const pathMatchResults = window.location.pathname.match(/^\/(?<SubApplication>\w+)\/Support\/FAQs#?/);
   return pathMatchResults?.groups?.SubApplication ?? '';
 }

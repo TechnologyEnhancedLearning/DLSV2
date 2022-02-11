@@ -1,0 +1,68 @@
+@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Faqs
+@model SearchableFaqViewModel
+
+<div class="searchable-element nhsuk-expander-group word-break" id="@Model.FaqId-card">
+
+  <details class="nhsuk-details nhsuk-expander">
+    <div class="nhsuk-details__text">
+      <div class="tags">
+        <div class="card-tag">
+          <div class="nhsuk-tag nhsuk-tag--grey">
+            @Model.TargetGroup
+          </div>
+        </div>
+        <div class="card-tag">
+          <div class="nhsuk-tag nhsuk-tag--grey">
+            @Model.Published
+          </div>
+        </div>
+      </div>
+    </div>
+    <summary class="nhsuk-details__summary">
+      <span class="nhsuk-details__summary-text" id="@Model.FaqId-name">
+        <span class="searchable-element-title" name="name">@Model.QText</span>
+      </span>
+    </summary>
+
+
+    <div class="nhsuk-details__text">
+      <span class="searchable-element-content">@Html.Raw(Model.AHtml)</span>
+    </div>
+    <div class="nhsuk-details__text">
+      <dl class="nhsuk-summary-list--no-border nhsuk-u-margin-bottom-4">
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Created
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.CreatedDate
+          </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Weighting
+          </dt>
+          <dd class="nhsuk-summary-list__value">
+            @Model.Weighting
+          </dd>
+        </div>
+      </dl>
+
+      <div>
+        <a class="nhsuk-button nhsuk-u-margin-bottom-2"
+           role="button">
+          Edit
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
+           role="button">
+          View on separate page
+        </a>
+        <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-bottom-2"
+           role="button">
+          Deactivate
+        </a>
+      </div>
+    </div>
+
+  </details>
+</div>

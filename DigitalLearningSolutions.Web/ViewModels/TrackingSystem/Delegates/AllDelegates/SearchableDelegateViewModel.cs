@@ -13,7 +13,8 @@
         public SearchableDelegateViewModel(
             DelegateUserCard delegateUser,
             IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
+            IEnumerable<CustomPrompt> promptsWithOptions,
+            int page
         )
         {
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
@@ -22,6 +23,7 @@
                 DelegateInfo.CustomFields,
                 promptsWithOptions
             );
+            Page = page;
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
@@ -33,5 +35,7 @@
         );
 
         public Dictionary<int, string> CustomPromptFilters { get; set; }
+
+        public int Page { get; set; }
     }
 }

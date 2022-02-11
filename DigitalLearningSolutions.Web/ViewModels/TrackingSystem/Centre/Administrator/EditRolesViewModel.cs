@@ -17,13 +17,15 @@
             AdminUser user,
             int centreId,
             IEnumerable<Category> categories,
-            CentreContractAdminUsage numberOfAdmins
+            CentreContractAdminUsage numberOfAdmins,
+            int? returnPage
         ) : base(user, centreId)
         {
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
+            ReturnPage = returnPage;
 
             if (user.IsCmsAdministrator)
             {

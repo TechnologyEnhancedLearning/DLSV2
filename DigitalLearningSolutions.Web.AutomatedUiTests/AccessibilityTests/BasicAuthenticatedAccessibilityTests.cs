@@ -54,19 +54,17 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/CourseSetup/10716/Manage/EditCourseOptions", "Edit course options")]
         [InlineData("/TrackingSystem/Delegates/All", "Delegates")]
         [InlineData("/TrackingSystem/Delegates/Groups", "Groups")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/EditDescription",
             "Edit description for Activities worker or coordinator group (optional)"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
+        [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
+        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates/Add/SelectDelegate", "Add delegate to Activities worker or coordinator group")]
         [InlineData(
-            "/TrackingSystem/Delegates/Groups/5/Delegates/Remove/245969",
+            "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
-        )]
-        [InlineData(
-            "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
-            "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
         )]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Courses", "Group courses")]
         [InlineData(
@@ -77,7 +75,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
             "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
         )]
-        [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
+            "Are you sure you would like to remove the course Practice Nurse Clinical Supervision - Demo from this group?"
+        )]
         [InlineData("/TrackingSystem/Delegates/3/View", "xxxx xxxxxx")]
         [InlineData("/TrackingSystem/Delegates/3/Edit", "Edit delegate details")]
         [InlineData("/TrackingSystem/Delegates/3/SetPassword", "Set delegate user password")]
@@ -98,7 +99,8 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompleteByDate",
             "Edit complete by date for Digital Literacy for the Workplace - CC Test"
         )]
-        [InlineData("/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
             "Edit completion date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
@@ -109,6 +111,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Support/FAQs/7", "FAQS")]
         [InlineData("/TrackingSystem/Resources", "Resources")]
         [InlineData("/SuperAdmin/Centres", "Centres")]
+        [InlineData("/SuperAdmin/System/Faqs", "FAQs")]
         public void Authenticated_page_has_no_accessibility_errors(string url, string pageTitle)
         {
             // when

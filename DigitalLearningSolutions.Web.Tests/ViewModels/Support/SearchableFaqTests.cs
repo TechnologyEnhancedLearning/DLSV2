@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Support
 {
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.ViewModels.Support.Faqs;
+    using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
     using FluentAssertions;
     using NUnit.Framework;
 

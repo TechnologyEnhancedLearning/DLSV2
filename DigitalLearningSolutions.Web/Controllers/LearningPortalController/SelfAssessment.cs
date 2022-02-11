@@ -1119,10 +1119,11 @@
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string vocabulary)
         {
             var content = candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(candidateAssessmentId, GetCandidateId());
+            var fileName = $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx";
             return File(
                 content,
-                FileHelper.ExcelContentType,
-                $"DLS {vocabulary} Assessment Export {DateTime.Today:yyyy-MM-dd}.xlsx"
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
             );
         }
     }

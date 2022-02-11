@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
-    using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -41,7 +40,7 @@
             this.notificationService = notificationService;
         }
 
-        public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
+        public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
         {
             var centreId = User.GetCentreId();
             var courseDelegatesData =
@@ -49,25 +48,30 @@
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
-                courseDelegatesData!
+                courseDelegatesData!,
+                returnPage
             );
             return View(model);
         }
 
         [HttpGet]
         [Route("EditSupervisor")]
-        public IActionResult EditSupervisor(int progressId, DelegateProgressAccessRoute accessedVia)
+        public IActionResult EditSupervisor(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId, centreId);
-            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId);
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(
+                centreId,
+                delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId
+            );
 
             var model = new EditSupervisorViewModel(
                 progressId,
                 accessedVia,
                 supervisors,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPage
             );
             return View(model);
         }
@@ -89,12 +93,16 @@
 
             progressService.UpdateSupervisor(progressId, formData.SupervisorId);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
         }
 
         [HttpGet]
         [Route("EditCompleteByDate")]
-        public IActionResult EditCompleteByDate(int progressId, DelegateProgressAccessRoute accessedVia)
+        public IActionResult EditCompleteByDate(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia,
+            int? returnPage
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -103,7 +111,8 @@
             var model = new EditCompleteByDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPage
             );
             return View(model);
         }
@@ -122,16 +131,22 @@
                 return View(model);
             }
 
-            var completeByDate = formData.Year != null ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value) : (DateTime?)null;
+            var completeByDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
 
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
         }
 
         [HttpGet]
         [Route("EditCompletionDate")]
-        public IActionResult EditCompletionDate(int progressId, DelegateProgressAccessRoute accessedVia)
+        public IActionResult EditCompletionDate(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia,
+            int? returnPage
+        )
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
@@ -140,7 +155,8 @@
             var model = new EditCompletionDateViewModel(
                 progressId,
                 accessedVia,
-                delegateCourseProgress!.DelegateCourseInfo
+                delegateCourseProgress!.DelegateCourseInfo,
+                returnPage
             );
             return View(model);
         }
@@ -164,18 +180,19 @@
                 : (DateTime?)null;
 
             progressService.UpdateCompletionDate(progressId, completionDate);
-            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia);
+            return RedirectToPreviousPage(formData.DelegateId, progressId, accessedVia, formData.ReturnPage);
         }
 
         private IActionResult RedirectToPreviousPage(
             int delegateId,
             int progressId,
-            DelegateProgressAccessRoute accessedVia
+            DelegateProgressAccessRoute accessedVia,
+            int? returnPage = 1
         )
         {
             if (accessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates))
             {
-                return RedirectToAction("Index", new { progressId, accessedVia });
+                return RedirectToAction("Index", new { progressId, accessedVia, returnPage });
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });

@@ -4,6 +4,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: " : "" + "Deactivate Admin Account";
+  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -37,9 +38,10 @@
       </div>
       <input type="hidden" asp-for="FullName" />
       <input type="hidden" asp-for="EmailAddress" />
+      <input type="hidden" asp-for="ReturnPage" />
       <button class="nhsuk-button delete-button nhsuk-button--secondary" type="submit">Deactivate account</button>
     </form>
 
-    <vc:cancel-link asp-controller="Administrator" asp-action="Index" />
+    <vc:cancel-link asp-controller="Administrator" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

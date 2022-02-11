@@ -2,6 +2,8 @@
 {
     public class Tutorial
     {
+        public Tutorial() { }
+
         public Tutorial(int tutorialId, string tutorialName, bool? status, bool? diagStatus)
         {
             TutorialId = tutorialId;

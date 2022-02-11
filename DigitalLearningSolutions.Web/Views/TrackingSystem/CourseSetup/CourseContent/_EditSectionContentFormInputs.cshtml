@@ -1,0 +1,19 @@
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseContent
+@model EditCourseSectionFormData
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseContent.css")" asp-append-version="true">
+
+<div class="hidden-submit">
+  <button name="action" class="nhsuk-button" value="@CourseContentController.SaveAction" aria-hidden="true" tabindex="-1">Save</button>
+</div>
+<input type="hidden" asp-for="SectionName" />
+<input type="hidden" asp-for="ShowDiagnostic" />
+
+<div class="nhsuk-grid-row  nhsuk-u-margin-bottom-4">
+  <div @(Model.ShowDiagnostic ? "" : "hidden")>
+    <partial name="../CourseContent/_EditSectionDiagnostic" model="Model" />
+  </div>
+
+  <partial name="../CourseContent/_EditSectionLearning" model="Model" />
+</div>

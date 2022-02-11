@@ -12,6 +12,7 @@
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
@@ -52,6 +53,7 @@
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="ReturnPage" />
       <vc:date-input id="complete-by-date"
                      label="Complete by date:"
                      day-id="Day"

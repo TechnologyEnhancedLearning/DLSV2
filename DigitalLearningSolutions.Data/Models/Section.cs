@@ -4,6 +4,11 @@
 
     public class Section
     {
+        public Section()
+        {
+            Tutorials = new List<Tutorial>();
+        }
+
         public Section(int sectionId, string sectionName)
         {
             SectionId = sectionId;

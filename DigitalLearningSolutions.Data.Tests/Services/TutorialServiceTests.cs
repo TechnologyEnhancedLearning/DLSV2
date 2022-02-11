@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
@@ -60,8 +61,34 @@
                         )
                     )
                     .MustHaveHappened(2, Times.Exactly);
-                A.CallTo(() => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._))
+                A.CallTo(
+                        () => progressDataService.InsertNewAspProgressRecordsForTutorialIfNoneExist(A<int>._, A<int>._)
+                    )
                     .MustHaveHappened(2, Times.Exactly);
+            }
+        }
+
+        [Test]
+        public void GetTutorialsForSection_calls_data_service_and_returns_expected_tutorials()
+        {
+            // Given
+            var tutorialOne = new Tutorial(1, "Test", true, true);
+            var tutorialTwo = new Tutorial(2, "Case", false, false);
+            var tutorials = new List<Tutorial> { tutorialOne, tutorialTwo };
+
+            A.CallTo(
+                () => tutorialContentDataService.GetTutorialsForSection(1)
+            ).Returns(tutorials);
+
+            // When
+            var result = tutorialService.GetTutorialsForSection(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => tutorialContentDataService.GetTutorialsForSection(1))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(tutorials);
             }
         }
     }
