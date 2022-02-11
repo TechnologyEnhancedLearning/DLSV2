@@ -300,11 +300,8 @@
                         let responseStatus = c.AssessmentQuestions.FirstOrDefault()?.ResultId == null ? SelfAssessmentResponseStatus.NotYetResponded
                             : c.Verified != null ? SelfAssessmentResponseStatus.SelfAssessed
                             : SelfAssessmentResponseStatus.Verified
-                        let filterMatches = (filters.Contains(SelfAssessmentResponseStatus.NotYetResponded) && responseStatus == SelfAssessmentResponseStatus.NotYetResponded)
-                            || (filters.Contains(SelfAssessmentResponseStatus.SelfAssessed) && responseStatus == SelfAssessmentResponseStatus.SelfAssessed)
-                            || (filters.Contains(SelfAssessmentResponseStatus.Verified) && responseStatus == SelfAssessmentResponseStatus.Verified)
                         where ((wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesDescription)
-                                && (filters.Count() == 0 || filterMatches))
+                                && (filters.Count() == 0 || filters.Contains(responseStatus)))
                         select c).ToList();
             }
             return (filteredCompetencies ?? competencies);
