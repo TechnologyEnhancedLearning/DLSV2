@@ -280,7 +280,7 @@
                 PreviousCompetencyNumber = Math.Max(competencies.Count(), 1),
                 NumberOfOptionalCompetencies = optionalCompetencies.Count(),
                 SupervisorSignOffs = supervisorSignOffs,
-                SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, searchModel.AppliedFilters)                
+                SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(searchModel?.SearchText, assessment.Id, vocabulary, searchModel?.AppliedFilters)                
             };
             ViewBag.SupervisorSelfAssessmentReview = assessment.SupervisorSelfAssessmentReview;
             return View("SelfAssessments/SelfAssessmentOverview", model);
@@ -290,7 +290,7 @@
         {
             var searchText = search?.SearchText?.Trim() ?? string.Empty;
             List<Competency> filteredCompetencies = null;
-            if (searchText.Length > 0 || search.AppliedFilters.Count() > 0)
+            if (searchText.Length > 0 || search?.AppliedFilters.Count() > 0)
             {
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
                 var filters = search.AppliedFilters.Select(f => Enum.Parse<SelfAssessmentResponseStatus>(f.FilterValue));

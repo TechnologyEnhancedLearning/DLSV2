@@ -298,6 +298,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = 2,
                 SupervisorSignOffs = supervisorSignOffs,
+                SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, null)
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);
@@ -357,6 +358,7 @@
                 CompetencyGroups = competencies.GroupBy(competency => competency.CompetencyGroup),
                 PreviousCompetencyNumber = 1,
                 SupervisorSignOffs = supervisorSignOffs,
+                SearchViewModel = new SearchSelfAssessmentOvervieviewViewModel(null, SelfAssessmentId, selfAssessment.Vocabulary, null)
             };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(CandidateId, SelfAssessmentId))
                 .Returns(selfAssessment);

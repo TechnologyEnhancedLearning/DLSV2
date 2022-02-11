@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
 
     public class Competency
     {
