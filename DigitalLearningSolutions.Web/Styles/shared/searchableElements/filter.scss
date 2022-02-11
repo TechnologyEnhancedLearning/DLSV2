@@ -14,6 +14,7 @@
 .filter-dropdown-selector {
   @extend .left-dropdown;
   display: none;
+  color: red !important;
 
   .js-enabled & {
     display: flex;
