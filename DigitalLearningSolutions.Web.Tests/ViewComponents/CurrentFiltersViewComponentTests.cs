@@ -44,7 +44,8 @@
                 searchString,
                 "CategoryName|CategoryName|Word╡Role|IsCentreAdmin|true",
                 1,
-                UserTestHelper.GetDefaultAdminUser()
+                UserTestHelper.GetDefaultAdminUser(),
+                null
             );
             var expectedAppliedFilters = new List<AppliedFilterViewModel>
             {
