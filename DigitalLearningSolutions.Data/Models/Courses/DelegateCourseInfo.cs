@@ -18,6 +18,7 @@
             int? supervisorAdminId,
             string? supervisorForename,
             string? supervisorSurname,
+            bool supervisorAdminActive,
             DateTime enrolled,
             DateTime lastUpdated,
             DateTime? completeBy,
@@ -28,6 +29,7 @@
             int? enrolledByAdminId,
             string? enrolledByForename,
             string? enrolledBySurname,
+            bool enrolledByAdminActive,
             int loginCount,
             int learningTime,
             int? diagnosticScore,
@@ -54,6 +56,7 @@
             SupervisorAdminId = supervisorAdminId;
             SupervisorForename = supervisorForename;
             SupervisorSurname = supervisorSurname;
+            SupervisorAdminActive = supervisorAdminActive;
             Enrolled = enrolled;
             LastUpdated = lastUpdated;
             CompleteBy = completeBy;
@@ -64,6 +67,7 @@
             EnrolledByAdminId = enrolledByAdminId;
             EnrolledByForename = enrolledByForename;
             EnrolledBySurname = enrolledBySurname;
+            EnrolledByAdminActive = enrolledByAdminActive;
             LoginCount = loginCount;
             LearningTime = learningTime;
             DiagnosticScore = diagnosticScore;
@@ -88,6 +92,7 @@
         public int? SupervisorAdminId { get; set; }
         public string? SupervisorForename { get; set; }
         public string? SupervisorSurname { get; set; }
+        public bool? SupervisorAdminActive { get; set; }
         public DateTime Enrolled { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime? CompleteBy { get; set; }
@@ -98,6 +103,7 @@
         public int? EnrolledByAdminId { get; set; }
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
+        public bool? EnrolledByAdminActive { get; set; }
         public int LoginCount { get; set; }
         public int LearningTime { get; set; }
         public int? DiagnosticScore { get; set; }

@@ -26,6 +26,7 @@
             EnrolledByAdminId = details.DelegateCourseInfo.EnrolledByAdminId;
             EnrolledByForename = details.DelegateCourseInfo.EnrolledByForename;
             EnrolledBySurname = details.DelegateCourseInfo.EnrolledBySurname;
+            IsEnrolledByAdminActive = details.DelegateCourseInfo.EnrolledByAdminActive;
             RemovedDate = details.DelegateCourseInfo.RemovedDate?.ToString(DateHelper.StandardDateFormat);
             DelegateId = details.DelegateCourseInfo.DelegateId;
             DelegateFirstName = details.DelegateCourseInfo.DelegateFirstName;
@@ -56,6 +57,7 @@
         public int? EnrolledByAdminId { get; set; }
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
+        public bool? IsEnrolledByAdminActive { get; set; }
         public int DelegateId { get; set; }
         public string? DelegateFirstName { get; set; }
         public string DelegateLastName { get; set; }
@@ -70,10 +72,10 @@
             string.IsNullOrWhiteSpace(DelegateEmail) ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
 
         public string? EnrolledByFullName =>
-            EnrolledByAdminId == null ? null : $"{EnrolledByForename} {EnrolledBySurname}";
+            EnrolledByAdminId == null ? (IsEnrolledByAdminActive == false ? "(Inactive)" : null) : $"{EnrolledByForename} {EnrolledBySurname}";
 
         public string SupervisorFullName =>
-            SupervisorAdminId == null ? "None" : $"{SupervisorForename} {SupervisorSurname}";
+            SupervisorAdminId == null ? (IsSupervisorActive == false ? "(Inactive)" : "None") : $"{SupervisorForename} {SupervisorSurname}";
 
         public new string EnrolmentMethod
         {

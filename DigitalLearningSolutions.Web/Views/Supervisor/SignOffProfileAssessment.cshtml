@@ -93,12 +93,16 @@
   <dt class="nhsuk-summary-list__key">
     Response verifiers
   </dt>
-  <dd class="nhsuk-summary-list__value">
-    @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries)
-      {
-    <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
-      }
-  </dd>
+    <dd class="nhsuk-summary-list__value">
+    @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries) {
+        if (candidateAssessmentSupervisorVerificationSummary.AdminActive) {
+          <span>@candidateAssessmentSupervisorVerificationSummary.Forename @candidateAssessmentSupervisorVerificationSummary.Surname (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span>
+        } else {
+          <span>(Inactive) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span><br />
+        }
+        <br />
+    }
+    </dd>
 
   </div>
   }

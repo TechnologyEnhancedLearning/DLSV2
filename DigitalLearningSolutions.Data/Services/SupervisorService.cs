@@ -717,7 +717,7 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
         public IEnumerable<CandidateAssessmentSupervisorVerificationSummary> GetCandidateAssessmentSupervisorVerificationSummaries(int candidateAssessmentId)
         {
             return connection.Query<CandidateAssessmentSupervisorVerificationSummary>(
-                @"SELECT ca1.ID, AdminUsers.Forename, AdminUsers.Surname, AdminUsers.Email, COUNT(sas1.CompetencyID) AS VerifiedCount
+                @"SELECT ca1.ID, AdminUsers.Forename, AdminUsers.Surname, AdminUsers.Email, AdminUsers.Active AS AdminActive, COUNT(sas1.CompetencyID) AS VerifiedCount
 FROM   SelfAssessmentResultSupervisorVerifications INNER JOIN
              SelfAssessmentResults AS sar1 ON SelfAssessmentResultSupervisorVerifications.SelfAssessmentResultId = sar1.ID INNER JOIN
              CandidateAssessmentSupervisors ON SelfAssessmentResultSupervisorVerifications.CandidateAssessmentSupervisorID = CandidateAssessmentSupervisors.ID INNER JOIN

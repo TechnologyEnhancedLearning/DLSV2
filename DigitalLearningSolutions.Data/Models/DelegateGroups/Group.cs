@@ -18,6 +18,8 @@
 
         public string AddedByLastName { get; set; }
 
+        public bool AddedByAdminActive { get; set; }
+
         public int LinkedToField { get; set; }
 
         public string LinkedToFieldName { get; set; }
@@ -26,7 +28,7 @@
 
         public bool ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
 
-        public string AddedByName => $"{AddedByFirstName} {AddedByLastName}";
+        public string AddedByName => AddedByAdminActive ? $"{AddedByFirstName} {AddedByLastName}" : "(Inactive)";
 
         public override string SearchableName
         {

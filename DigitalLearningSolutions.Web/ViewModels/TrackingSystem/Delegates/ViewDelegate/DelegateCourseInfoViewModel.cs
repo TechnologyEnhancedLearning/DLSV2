@@ -16,6 +16,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             CustomisationName = info.CustomisationName;
             SupervisorForename = info.SupervisorForename;
             SupervisorSurname = info.SupervisorSurname;
+            IsSupervisorActive = info.SupervisorAdminActive;
             Enrolled = info.Enrolled.ToString(DateHelper.StandardDateFormat);
             LastUpdated = info.LastUpdated.ToString(DateHelper.StandardDateFormat);
             CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateFormat);
@@ -50,6 +51,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public string CustomisationName { get; set; }
         public string? SupervisorForename { get; set; }
         public string? SupervisorSurname { get; set; }
+        public bool? IsSupervisorActive { get; set; }
         public string Enrolled { get; set; }
         public string LastUpdated { get; set; }
         public string? CompleteBy { get; set; }
@@ -74,7 +76,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
                 // SupervisorSurname is not nullable in db; will only be null if no supervisor
                 if (SupervisorSurname == null)
                 {
-                    return null;
+                    return IsSupervisorActive == false ? "(Inactive)" : null;
                 }
 
                 return (string.IsNullOrEmpty(SupervisorForename) ? "" : $"{SupervisorForename} ") + SupervisorSurname;

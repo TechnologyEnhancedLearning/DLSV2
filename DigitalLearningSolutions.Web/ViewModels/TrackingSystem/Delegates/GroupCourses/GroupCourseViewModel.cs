@@ -9,9 +9,9 @@
         {
             GroupCustomisationId = groupCourse.GroupCustomisationId;
             Name = groupCourse.CourseName;
-            Supervisor = groupCourse.SupervisorLastName != null
+            Supervisor = groupCourse.SupervisorAdminActive ? (groupCourse.SupervisorLastName != null
                 ? $"{groupCourse.SupervisorFirstName} {groupCourse.SupervisorLastName}"
-                : null;
+                : null) : "(Inactive)";
             IsMandatory = groupCourse.IsMandatory ? "Mandatory" : "Not mandatory";
             IsAssessed = groupCourse.IsAssessed ? "Assessed" : "Not assessed";
             AddedToGroup = groupCourse.AddedToGroup.ToString(DateHelper.StandardDateFormat);

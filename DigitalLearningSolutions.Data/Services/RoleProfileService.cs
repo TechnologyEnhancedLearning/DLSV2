@@ -5,9 +5,8 @@
     using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
-    using DigitalLearningSolutions.Data.Models.Common;
     using Microsoft.Extensions.Logging;
-    using DigitalLearningSolutions.Data.Models.Email;
+
     public interface IRoleProfileService
     {
         //GET DATA
@@ -49,9 +48,11 @@
                  (SELECT [Name]
                  FROM    SelfAssessments AS rp2
                  WHERE (ID = rp.ParentSelfAssessmentID)) AS ParentSelfAssessment, 
-                 (SELECT Forename + ' ' + Surname AS Expr1
+                 (SELECT CASE WHEN Active = 1 THEN Forename + ' ' + Surname ELSE '(Inactive)' END AS Expr1
                  FROM    AdminUsers
-                 WHERE (AdminID = rp.CreatedByAdminID)) AS Owner, rp.Archived, rp.LastEdit, 
+                 WHERE (AdminID = rp.CreatedByAdminID)) AS Owner,
+                 rp.Archived,
+                 rp.LastEdit, 
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
                  WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup, 
