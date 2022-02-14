@@ -44,7 +44,7 @@
                 var exceptionMessage =
                     $"No course with customisationId {customisationId} available at centre {centreId} within " +
                     $"{(categoryId.HasValue ? $"category {categoryId}" : "any category")}";
-                throw new CourseNotFoundException(exceptionMessage);
+                throw new CourseAccessDeniedException(exceptionMessage);
             }
 
             var activeCoursesAlphabetical = courses.Where(c => c.Active).OrderBy(c => c.CourseName);

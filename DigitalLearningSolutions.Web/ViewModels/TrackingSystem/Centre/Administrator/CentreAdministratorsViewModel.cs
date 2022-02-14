@@ -14,7 +14,8 @@
             IEnumerable<string> categories,
             string? searchString,
             string? filterBy,
-            int page
+            int page, 
+            AdminUser loggedInAdminUser
         ) : base(searchString, page, true, filterBy: filterBy, searchLabel: "Search administrators")
         {
             CentreId = centreId;
@@ -29,7 +30,7 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
-            Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser, returnPage));
+            Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser, loggedInAdminUser, returnPage));
 
             Filters = new[]
             {

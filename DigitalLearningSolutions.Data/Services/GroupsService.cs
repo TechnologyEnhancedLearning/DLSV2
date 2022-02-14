@@ -6,12 +6,14 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
     using MimeKit;
 
     public interface IGroupsService
@@ -75,7 +77,8 @@
             int completeWithinMonths,
             int addedByAdminId,
             bool cohortLearners,
-            int? supervisorAdminId
+            int? supervisorAdminId,
+            int centreId
         );
     }
 
@@ -92,7 +95,7 @@
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
-        private readonly IUserDataService userDataService;
+        private readonly ILogger<IGroupsService> logger;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -103,7 +106,7 @@
             IProgressDataService progressDataService,
             IConfiguration configuration,
             ICentreCustomPromptsService centreCustomPromptsService,
-            IUserDataService userDataService
+            ILogger<IGroupsService> logger
         )
         {
             this.groupsDataService = groupsDataService;
@@ -114,7 +117,7 @@
             this.progressDataService = progressDataService;
             this.configuration = configuration;
             this.centreCustomPromptsService = centreCustomPromptsService;
-            this.userDataService = userDataService;
+            this.logger = logger;
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -260,13 +263,13 @@
 
         public IEnumerable<GroupCourse> GetUsableGroupCoursesForCentre(int groupId, int centreId)
         {
-            return groupsDataService.GetGroupCoursesForCentre(centreId)
+            return groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId);
         }
 
         public GroupCourse? GetUsableGroupCourseForCentre(int groupCustomisationId, int groupId, int centreId)
         {
-            var groupCourse = groupsDataService.GetGroupCourseForCentre(groupCustomisationId, centreId);
+            var groupCourse = groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId);
 
             if ((!groupCourse?.IsUsable ?? true) || groupCourse.GroupId != groupId)
             {
@@ -356,7 +359,8 @@
             int completeWithinMonths,
             int addedByAdminId,
             bool cohortLearners,
-            int? supervisorAdminId
+            int? supervisorAdminId,
+            int centreId
         )
         {
             using var transaction = new TransactionScope();
@@ -371,7 +375,14 @@
             );
 
             var groupDelegates = GetGroupDelegates(groupId);
-            var groupCourse = groupsDataService.GetGroupCourseById(groupCustomisationId)!;
+            var groupCourse = groupsDataService.GetGroupCourseIfVisibleToCentre(groupCustomisationId, centreId);
+
+            if (groupCourse == null)
+            {
+                transaction.Dispose();
+                logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
+                throw new CourseAccessDeniedException($"No course with customisationId {customisationId} available at centre {centreId}");
+            }
 
             foreach (var groupDelegate in groupDelegates)
             {
