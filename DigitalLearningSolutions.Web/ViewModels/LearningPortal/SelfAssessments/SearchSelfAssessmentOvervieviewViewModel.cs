@@ -4,6 +4,7 @@ using System.Linq;
 using DigitalLearningSolutions.Data.Enums;
 using DigitalLearningSolutions.Web.Models.Enums;
 using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+using DigitalLearningSolutions.Web.Extensions;
 
 namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 {
@@ -45,9 +46,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
                     filterName: FilterBy,
                     filterOptions: new List<FilterOptionViewModel>
                     {
-                        new FilterOptionViewModel("Not yet responded", SelfAssessmentResponseStatus.NotYetResponded.ToString(), FilterStatus.Default),
-                        new FilterOptionViewModel("Self-assessed", SelfAssessmentResponseStatus.SelfAssessed.ToString(), FilterStatus.Warning),
-                        new FilterOptionViewModel("Verified", SelfAssessmentResponseStatus.Verified.ToString(), FilterStatus.Success)
+                        new FilterOptionViewModel(SelfAssessmentResponseStatus.NotYetResponded.GetDescription(), SelfAssessmentResponseStatus.NotYetResponded.ToString(), FilterStatus.Default),
+                        new FilterOptionViewModel(SelfAssessmentResponseStatus.SelfAssessed.GetDescription(), SelfAssessmentResponseStatus.SelfAssessed.ToString(), FilterStatus.Warning),
+                        new FilterOptionViewModel(SelfAssessmentResponseStatus.Verified.GetDescription(), SelfAssessmentResponseStatus.Verified.ToString(), FilterStatus.Success)
                     })
 
             };

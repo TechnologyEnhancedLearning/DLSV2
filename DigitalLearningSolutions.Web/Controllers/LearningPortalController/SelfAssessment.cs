@@ -227,7 +227,7 @@
                 string filterName = Enum.GetName(model.ResponseStatus.GetType(), model.ResponseStatus);
                 if (!model.AppliedFilters.Any(f => f.FilterValue == model.ResponseStatus.ToString()))
                 {
-                    model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus.ToString(), null, model.ResponseStatus.ToString()));
+                    model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus?.GetDescription(), null, model.ResponseStatus.ToString()));
                 }
             }
             return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, null, model);
@@ -295,8 +295,8 @@
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
                 var filters = search.AppliedFilters.Select(f => Enum.Parse<SelfAssessmentResponseStatus>(f.FilterValue));
                 filteredCompetencies = (from c in competencies
-                        let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup.Contains(w, StringComparison.CurrentCultureIgnoreCase))
-                        let searchTextMatchesDescription = wordsInSearchText.Any(w => c.Description.Contains(w, StringComparison.CurrentCultureIgnoreCase))
+                        let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                        let searchTextMatchesDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                         let responseStatus = c.AssessmentQuestions.FirstOrDefault()?.ResultId == null ? SelfAssessmentResponseStatus.NotYetResponded
                             : c.Verified != null ? SelfAssessmentResponseStatus.SelfAssessed
                             : SelfAssessmentResponseStatus.Verified
