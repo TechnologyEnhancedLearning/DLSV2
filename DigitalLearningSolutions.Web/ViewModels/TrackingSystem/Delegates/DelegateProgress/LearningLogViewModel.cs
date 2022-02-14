@@ -41,7 +41,7 @@
         public IEnumerable<LearningLogEntryViewModel> Entries { get; set; }
 
         public string DelegateFullName =>
-            DisplayStringHelper.GetFullNameDisplayString(DelegateLastName, DelegateFirstName);
+            DisplayStringHelper.GetDelegateNameString(DelegateFirstName, DelegateLastName);
 
         public string DelegateNameAndEmail =>
             string.IsNullOrWhiteSpace(DelegateEmail) ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
