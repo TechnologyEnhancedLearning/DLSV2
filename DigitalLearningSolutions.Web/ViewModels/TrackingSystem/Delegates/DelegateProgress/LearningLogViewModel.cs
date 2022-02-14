@@ -41,7 +41,7 @@
         public IEnumerable<LearningLogEntryViewModel> Entries { get; set; }
 
         public string DelegateFullName =>
-            DelegateFirstName == null ? DelegateLastName : $"{DelegateFirstName} {DelegateLastName}";
+            DisplayStringHelper.GetFullNameDisplayString(DelegateLastName, DelegateFirstName);
 
         public string DelegateNameAndEmail =>
             string.IsNullOrWhiteSpace(DelegateEmail) ? DelegateFullName : $"{DelegateFullName} ({DelegateEmail})";
@@ -49,7 +49,7 @@
         public override IEnumerable<(string, string)> SortOptions => new[]
         {
             LearningLogSortByOptions.When,
-            LearningLogSortByOptions.Time,
+            LearningLogSortByOptions.LearningTime,
             LearningLogSortByOptions.AssessmentScore,
         };
 

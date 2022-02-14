@@ -77,7 +77,7 @@ export function getSortValue(
     case 'When':
       return parseDate(getElementText(searchableElement, 'when'));
     case 'LearningTime':
-      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'time'));
+      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
     case 'AssessmentScore':
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
     default:

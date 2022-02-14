@@ -213,7 +213,7 @@
         public static readonly (string DisplayText, string PropertyName) When =
             ("When", nameof(LearningLogEntry.When));
 
-        public static readonly (string DisplayText, string PropertyName) Time =
+        public static readonly (string DisplayText, string PropertyName) LearningTime =
             ("Time", nameof(LearningLogEntry.LearningTime));
 
         public static readonly (string DisplayText, string PropertyName) AssessmentScore =

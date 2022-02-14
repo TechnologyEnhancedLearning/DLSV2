@@ -34,7 +34,7 @@
             // Do not include decimal place below GB
             var decimalPlaces = place <= 2 ? 0 : 1;
             var number = Math.Round(byteCount / Math.Pow(1024, place), decimalPlaces);
-            return (Math.Sign(byteCount) * number) + Units[place];
+            return Math.Sign(byteCount) * number + Units[place];
         }
 
         public static string? ConvertNumberToMonthsString(int numberOfMonths)
@@ -60,6 +60,11 @@
             }
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
+        }
+
+        public static string GetFullNameDisplayString(string lastName, string? firstName)
+        {
+            return string.IsNullOrWhiteSpace(firstName) ? lastName : $"{lastName}, {firstName}";
         }
     }
 }

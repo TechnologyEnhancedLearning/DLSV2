@@ -70,29 +70,29 @@ export class SearchSortFilterAndPaginate {
   }
 
   private onFilterUpdated(searchableData: ISearchableData): void {
-    this.updatePageNumber(1, searchableData);
+    this.updatePageNumberIfPaginationEnabled(1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onSearchUpdated(searchableData: ISearchableData): void {
-    this.updatePageNumber(1, searchableData);
+    this.updatePageNumberIfPaginationEnabled(1, searchableData);
     this.searchSortAndPaginate(searchableData);
   }
 
   private onItemsPerPageUpdated(searchableData: ISearchableData): void {
-    this.updatePageNumber(1, searchableData);
+    this.updatePageNumberIfPaginationEnabled(1, searchableData);
     this.searchSortAndPaginate(searchableData);
   }
 
   private onNextPagePressed(searchableData: ISearchableData): void {
-    this.updatePageNumber(this.page + 1, searchableData);
+    this.updatePageNumberIfPaginationEnabled(this.page + 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
 
   private onPreviousPagePressed(searchableData: ISearchableData): void {
-    this.updatePageNumber(this.page - 1, searchableData);
+    this.updatePageNumberIfPaginationEnabled(this.page - 1, searchableData);
     this.searchSortAndPaginate(searchableData);
     SearchSortFilterAndPaginate.scrollToTop();
   }
@@ -223,7 +223,10 @@ export class SearchSortFilterAndPaginate {
     window.scrollTo(0, 0);
   }
 
-  private updatePageNumber(pageNumber: number, searchableData: ISearchableData): void {
+  private updatePageNumberIfPaginationEnabled(
+    pageNumber: number,
+    searchableData: ISearchableData,
+  ): void {
     if (this.paginationEnabled === false) {
       return;
     }
