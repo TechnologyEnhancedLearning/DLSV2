@@ -16,7 +16,7 @@
             ),
 
             new CheckboxListItemViewModel(
-                nameof(AddExistingDelegates),
+                nameof(PopulateExisting),
                 "Add existing delegates",
                 "Add all existing delegates with the same answer to the registration field into one group"
             ),
@@ -46,7 +46,7 @@
         {
             RegistrationFieldOptions = registrationFieldOptions;
             PrefixGroupName = false;
-            AddExistingDelegates = true;
+            PopulateExisting = true;
             AddNewRegistrants = true;
             SyncFieldChanges = true;
             SkipDuplicateNames = true;
@@ -56,7 +56,7 @@
             IEnumerable<SelectListItem> registrationFieldOptions,
             int registrationFieldOptionId,
             bool prefixGroupName,
-            bool addExistingDelegates,
+            bool populateExisting,
             bool addNewRegistrants,
             bool syncFieldChanges,
             bool skipDuplicateNames
@@ -65,7 +65,7 @@
             RegistrationFieldOptions = registrationFieldOptions;
             RegistrationFieldOptionId = registrationFieldOptionId;
             PrefixGroupName = prefixGroupName;
-            AddExistingDelegates = addExistingDelegates;
+            PopulateExisting = populateExisting;
             AddNewRegistrants = addNewRegistrants;
             SyncFieldChanges = syncFieldChanges;
             SkipDuplicateNames = skipDuplicateNames;
@@ -76,7 +76,7 @@
 
         public IEnumerable<SelectListItem> RegistrationFieldOptions { get; set; } = new List<SelectListItem>();
         public bool PrefixGroupName { get; set; }
-        public bool AddExistingDelegates { get; set; }
+        public bool PopulateExisting { get; set; }
         public bool AddNewRegistrants { get; set; }
         public bool SyncFieldChanges { get; set; }
         public bool SkipDuplicateNames { get; set; }

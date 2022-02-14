@@ -7,7 +7,7 @@
             int centreId,
             int registrationFieldOptionId,
             bool prefixGroupName,
-            bool addExistingDelegates,
+            bool populateExisting,
             bool addNewRegistrants,
             bool syncFieldChanges,
             bool skipDuplicateNames
@@ -17,7 +17,7 @@
             CentreId = centreId;
             RegistrationFieldOptionId = registrationFieldOptionId;
             PrefixGroupName = prefixGroupName;
-            AddExistingDelegates = addExistingDelegates;
+            PopulateExisting = populateExisting;
             AddNewRegistrants = addNewRegistrants;
             SyncFieldChanges = syncFieldChanges;
             SkipDuplicateNames = skipDuplicateNames;
@@ -27,8 +27,7 @@
         public int CentreId { get; set; }
         public int RegistrationFieldOptionId { get; set; }
         public bool PrefixGroupName { get; set; }
-        // TODO: rename to PopulateExisting
-        public bool AddExistingDelegates { get; set; }
+        public bool PopulateExisting { get; set; }
         public bool AddNewRegistrants { get; set; }
         public bool SyncFieldChanges { get; set; }
         public bool SkipDuplicateNames { get; set; }

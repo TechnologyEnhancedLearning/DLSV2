@@ -264,7 +264,7 @@
                 centreId,
                 (int)model.RegistrationFieldOptionId!,
                 model.PrefixGroupName,
-                model.AddExistingDelegates,
+                model.PopulateExisting,
                 model.AddNewRegistrants,
                 model.SyncFieldChanges,
                 model.SkipDuplicateNames

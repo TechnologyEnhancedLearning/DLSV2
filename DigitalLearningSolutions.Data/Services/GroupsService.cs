@@ -456,10 +456,10 @@
                     linkedToField,
                     groupDetails.SyncFieldChanges,
                     groupDetails.AddNewRegistrants,
-                    groupDetails.AddExistingDelegates
+                    groupDetails.PopulateExisting
                 );
 
-                if (groupDetails.AddExistingDelegates)
+                if (groupDetails.PopulateExisting)
                 {
                     groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         newGroupId,

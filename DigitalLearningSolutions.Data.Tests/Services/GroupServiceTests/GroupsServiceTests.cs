@@ -472,7 +472,7 @@
                 LinkedToField = linkedToField,
                 SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
                 AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+                PopulateExisting = groupGenerationDetails.PopulateExisting,
             };
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
@@ -544,7 +544,7 @@
                 LinkedToField = linkedToField,
                 SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
                 AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+                PopulateExisting = groupGenerationDetails.PopulateExisting,
             };
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
@@ -607,7 +607,7 @@
                 LinkedToField = linkedToField,
                 SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
                 AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+                PopulateExisting = groupGenerationDetails.PopulateExisting,
             };
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
@@ -679,7 +679,7 @@
                 LinkedToField = linkedToField,
                 SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
                 AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+                PopulateExisting = groupGenerationDetails.PopulateExisting,
             };
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
