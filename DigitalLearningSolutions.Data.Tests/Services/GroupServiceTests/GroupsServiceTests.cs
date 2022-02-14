@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.User;
@@ -29,10 +30,11 @@
 
         private readonly GroupCourse reusableGroupCourse = GroupTestHelper.GetDefaultGroupCourse();
 
+        private readonly GroupDelegate reusableGroupDelegate =
+            GroupTestHelper.GetDefaultGroupDelegate(firstName: "newFirst", lastName: "newLast");
+
         private readonly MyAccountDetailsData reusableMyAccountDetailsData =
             UserTestHelper.GetDefaultAccountDetailsData();
-
-        private readonly GroupDelegate reusableGroupDelegate = GroupTestHelper.GetDefaultGroupDelegate(firstName: "newFirst", lastName: "newLast");
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
@@ -54,11 +56,15 @@
             clockService = A.Fake<IClockService>();
             tutorialContentDataService = A.Fake<ITutorialContentDataService>();
             emailService = A.Fake<IEmailService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
+
+            jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
+                JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
+            );
 
             A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
@@ -311,22 +317,6 @@
         }
 
         [Test]
-        public void GetGroupAtCentreByName_returns_expected_group()
-        {
-            // Given
-            const string groupName = "Social care - unspecified";
-            const int centreId = 1;
-            var group = GroupTestHelper.GetDefaultGroup();
-            A.CallTo(() => groupsDataService.GetGroupAtCentreByName(groupName, centreId)).Returns(group);
-
-            // When
-            var result = groupsService.GetGroupAtCentreByName(groupName, centreId);
-
-            // Then
-            result.Should().BeEquivalentTo(group);
-        }
-
-        [Test]
         public void UpdateGroupDescription_calls_expected_data_services()
         {
             // Given
@@ -458,26 +448,282 @@
         }
 
         [Test]
-        public void AddDelegatesWithMatchingAnswersToGroup_calls_data_service()
+        public void
+            GenerateGroupsFromRegistrationField_calls_data_service_methods_with_correct_values_for_custom_prompt()
         {
             // Given
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const string groupNamePrefix = "Role";
+            const int linkedToField = 1;
+
+            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = groupGenerationDetails.CentreId,
+                GroupLabel = groupName,
+                GroupDescription = null,
+                AdminUserId = groupGenerationDetails.AdminId,
+                CreatedDate = timeNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
+                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
+                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+            };
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
             A.CallTo(
-                () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                    A<int>._,
-                    A<int>._,
-                    A<int>._,
-                    A<string>._,
-                    A<int>._
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        null
+                    )
                 )
-            ).DoesNothing();
+                .DoesNothing();
 
             // When
-            groupsService.AddDelegatesWithMatchingAnswersToGroup(1, 1, 1, "Test", 1);
+            groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
 
             // Then
             A.CallTo(
-                () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(1, 1, 1, "Test", 1)
-            ).MustHaveHappenedOnceExactly();
+                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
+                        groupGenerationDetails.CentreId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        groupGenerationDetails.CentreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void
+            GenerateGroupsFromRegistrationField_calls_data_service_methods_with_correct_values_for_job_group()
+        {
+            // Given
+            const string groupName = "Nursing";
+            const int newGroupId = 1;
+            const int jobGroupId = 1;
+            const int linkedToField = 4;
+
+            var jobGroups = new List<(int id, string name)> { (jobGroupId, groupName) };
+            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 7, false, true, false, true, true);
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = groupGenerationDetails.CentreId,
+                GroupLabel = groupName,
+                GroupDescription = null,
+                AdminUserId = groupGenerationDetails.AdminId,
+                CreatedDate = timeNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
+                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
+                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+            };
+
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
+                .Returns(jobGroups);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        null
+                    )
+                )
+                .DoesNothing();
+
+            // When
+            groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
+
+            // Then
+            A.CallTo(jobGroupsDataService.GetJobGroupsAlphabetical()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        groupGenerationDetails.CentreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void
+            GenerateGroupsFromRegistrationField_correctly_prefixes_group_name_with_custom_prompt_text_when_intended()
+        {
+            // Given
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const string groupNamePrefix = "Role";
+            const int linkedToField = 1;
+
+            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, true, true, false, true, true);
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = groupGenerationDetails.CentreId,
+                GroupLabel = "Role - Manager",
+                GroupDescription = null,
+                AdminUserId = groupGenerationDetails.AdminId,
+                CreatedDate = timeNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
+                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
+                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+            };
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+            // var groupAtCentre = new Group { GroupLabel = "Test" };
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        null
+                    )
+                )
+                .DoesNothing();
+
+            // When
+            groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
+
+            // Then
+            A.CallTo(
+                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
+                        groupGenerationDetails.CentreId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        groupGenerationDetails.CentreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void
+            GenerateGroupsFromRegistrationField_skips_groups_with_duplicate_names()
+        {
+            // Given
+            const string groupName = "Manager";
+            const int newGroupId = 1;
+            const string groupNamePrefix = "Role";
+            const int linkedToField = 1;
+
+            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
+
+            var groupDetails = new GroupDetails
+            {
+                CentreId = groupGenerationDetails.CentreId,
+                GroupLabel = groupName,
+                GroupDescription = null,
+                AdminUserId = groupGenerationDetails.AdminId,
+                CreatedDate = timeNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
+                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
+                PopulateExisting = groupGenerationDetails.AddExistingDelegates,
+            };
+
+            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
+            var customPrompts = new List<CustomPrompt> { customPrompt };
+            var groupAtCentre = new Group { GroupLabel = "Manager" };
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+                .Returns(customPrompts);
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group> { groupAtCentre });
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        A<int>._,
+                        A<int>._,
+                        A<int>._,
+                        A<string>._,
+                        null
+                    )
+                )
+                .DoesNothing();
+
+            // When
+            groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
+
+            // Then
+            A.CallTo(
+                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
+                        groupGenerationDetails.CentreId
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                .MustHaveHappenedOnceExactly();
+            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
+            A.CallTo(
+                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        linkedToField,
+                        groupGenerationDetails.CentreId,
+                        groupName,
+                        null
+                    )
+                )
+                .MustHaveHappenedOnceExactly();
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)

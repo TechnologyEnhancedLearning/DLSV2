@@ -16,7 +16,6 @@
             AdminId = adminId;
             CentreId = centreId;
             RegistrationFieldOptionId = registrationFieldOptionId;
-            LinkedToField = GetLinkedToFieldValue(registrationFieldOptionId);
             PrefixGroupName = prefixGroupName;
             AddExistingDelegates = addExistingDelegates;
             AddNewRegistrants = addNewRegistrants;
@@ -27,23 +26,11 @@
         public int AdminId { get; set; }
         public int CentreId { get; set; }
         public int RegistrationFieldOptionId { get; set; }
-        public int LinkedToField { get; set; }
         public bool PrefixGroupName { get; set; }
+        // TODO: rename to PopulateExisting
         public bool AddExistingDelegates { get; set; }
         public bool AddNewRegistrants { get; set; }
         public bool SyncFieldChanges { get; set; }
         public bool SkipDuplicateNames { get; set; }
-
-        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
-        {
-            return registrationFieldOptionId switch
-            {
-                4 => 5,
-                5 => 6,
-                6 => 7,
-                7 => 4,
-                _ => registrationFieldOptionId,
-            };
-        }
     }
 }

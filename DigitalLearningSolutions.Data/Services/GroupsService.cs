@@ -91,14 +91,6 @@
         );
 
         void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
-
-        void AddDelegatesWithMatchingAnswersToGroup(
-            int groupId,
-            int linkedToField,
-            int centreId,
-            string? option = null,
-            int? jobGroupId = null
-        );
     }
 
     public class GroupsService : IGroupsService
@@ -437,22 +429,21 @@
 
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
         {
-            var isJobGroup = groupDetails.LinkedToField == 4;
+            var isJobGroup = groupDetails.RegistrationFieldOptionId == 7;
+            var linkedToField = GetLinkedToFieldValue(groupDetails.RegistrationFieldOptionId);
 
-            (List<(int id, string name)> newGroupNames, string groupNamePrefix) = GetNewGroupNamesAndPrefix(
-                isJobGroup,
-                groupDetails.CentreId,
-                groupDetails.RegistrationFieldOptionId
-            );
+            (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
+                ? GetJobGroupsAndPrefix()
+                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationFieldOptionId);
 
-            var existingGroups = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+            var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
             using var transaction = new TransactionScope();
             foreach (var (id, newGroupName) in newGroupNames)
             {
                 var groupName = groupDetails.PrefixGroupName ? $"{groupNamePrefix} - {newGroupName}" : newGroupName;
 
-                if (groupDetails.SkipDuplicateNames && existingGroups.Contains(groupName))
+                if (groupDetails.SkipDuplicateNames && groupsAtCentre.Contains(groupName))
                 {
                     return;
                 }
@@ -462,7 +453,7 @@
                     groupName,
                     null,
                     groupDetails.AdminId,
-                    groupDetails.LinkedToField,
+                    linkedToField,
                     groupDetails.SyncFieldChanges,
                     groupDetails.AddNewRegistrants,
                     groupDetails.AddExistingDelegates
@@ -470,9 +461,9 @@
 
                 if (groupDetails.AddExistingDelegates)
                 {
-                    AddDelegatesWithMatchingAnswersToGroup(
+                    groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         newGroupId,
-                        groupDetails.LinkedToField,
+                        linkedToField,
                         groupDetails.CentreId,
                         isJobGroup ? null : newGroupName,
                         isJobGroup ? id : (int?)null
@@ -481,23 +472,6 @@
             }
 
             transaction.Complete();
-        }
-
-        public void AddDelegatesWithMatchingAnswersToGroup(
-            int groupId,
-            int linkedToField,
-            int centreId,
-            string? option = null,
-            int? jobGroupId = null
-        )
-        {
-            groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                groupId,
-                linkedToField,
-                centreId,
-                option,
-                jobGroupId
-            );
         }
 
         private void EnrolDelegateOnGroupCourse(
@@ -652,29 +626,38 @@
             return new Email(EnrolEmailSubject, body, emailAddress);
         }
 
-        private (List<(int id, string name)>, string groupNamePrefix) GetNewGroupNamesAndPrefix(
-            bool isJobGroup,
+        private (List<(int id, string name)>, string groupNamePrefix) GetJobGroupsAndPrefix()
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            const string groupNamePrefix = "Job group";
+            return (jobGroups, groupNamePrefix);
+        }
+
+        private (List<(int id, string name)>, string groupNamePrefix) GetCustomPromptsAndPrefix(
             int centreId,
             int registrationFieldOptionId
         )
         {
-            if (isJobGroup)
+            var registrationPrompt = centreCustomPromptsService
+                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
+                    cp => cp.CustomPromptNumber == registrationFieldOptionId
+                );
+            var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
+                .ToList<(int id, string name)>();
+            var groupNamePrefix = registrationPrompt.CustomPromptText;
+            return (customPromptOptions, groupNamePrefix);
+        }
+
+        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
+        {
+            return registrationFieldOptionId switch
             {
-                var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
-                const string groupNamePrefix = "Job group";
-                return (jobGroups, groupNamePrefix);
-            }
-            else
-            {
-                var registrationPrompt = centreCustomPromptsService
-                    .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
-                        cp => cp.CustomPromptNumber == registrationFieldOptionId
-                    );
-                var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
-                    .ToList<(int id, string name)>();
-                var groupNamePrefix = registrationPrompt.CustomPromptText;
-                return (customPromptOptions, groupNamePrefix);
-            }
+                4 => 5,
+                5 => 6,
+                6 => 7,
+                7 => 4,
+                _ => registrationFieldOptionId,
+            };
         }
     }
 }
