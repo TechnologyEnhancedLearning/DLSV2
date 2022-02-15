@@ -26,7 +26,7 @@
             int? courseCategoryId
         );
 
-        DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId);
+        DelegateCourseDetails? GetDelegateCourseProgress(int progressId);
 
         bool? VerifyAdminUserCanManageCourse(int customisationId, int centreId, int? categoryId);
 
@@ -123,7 +123,7 @@
                 .Where(info => info.DelegateCourseInfo.RemovedDate == null);
         }
 
-        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId, int centreId)
+        public DelegateCourseDetails? GetDelegateCourseProgress(int progressId)
         {
             var info = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
 

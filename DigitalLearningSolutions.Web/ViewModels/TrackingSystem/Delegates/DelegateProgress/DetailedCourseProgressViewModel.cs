@@ -4,13 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DocumentFormat.OpenXml.Bibliography;
 
     public class DetailedCourseProgressViewModel
     {
-        public DetailedCourseProgressViewModel(DelegateUser delegateUser, DetailedCourseProgress progress, DelegateProgressAccessRoute accessedVia)
+        public DetailedCourseProgressViewModel(DelegateUser delegateUser, DetailedCourseProgress progress, DelegateCourseDetails course, DelegateProgressAccessRoute accessedVia)
         {
             AccessedVia = accessedVia;
             ProgressId = progress.ProgressId;
@@ -20,7 +21,12 @@
             DelegateName = delegateUser.FullName;
             DelegateEmail = delegateUser.EmailAddress;
             DelegateNumber = delegateUser.CandidateNumber;
-            // TODO HEEDLS-567 add datetime properties (? double-check)
+
+            LastUpdated = course.DelegateCourseInfo.LastUpdated;
+            Enrolled = course.DelegateCourseInfo.Enrolled;
+            CompleteBy = course.DelegateCourseInfo.CompleteBy;
+            Completed = course.DelegateCourseInfo.Completed;
+
             DiagnosticScore = progress.DiagnosticScore;
 
             Sections = progress.Sections.Select(s => new SectionProgressViewModel(s));
@@ -34,9 +40,12 @@
         public string DelegateName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
-        public DateTime LastAccess { get; set; }
+
+        public DateTime LastUpdated { get; set; }
         public DateTime Enrolled { get; set; }
-        public DateTime CompleteBy { get; set; }
+        public DateTime? CompleteBy { get; set; }
+        public DateTime? Completed { get; set; }
+
         public int? DiagnosticScore { get; set; }
 
         public IEnumerable<SectionProgressViewModel> Sections { get; set; }

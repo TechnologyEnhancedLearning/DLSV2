@@ -24,28 +24,24 @@
     public class DelegateProgressController : Controller
     {
         private readonly ICourseService courseService;
-        private readonly INotificationService notificationService;
         private readonly IProgressService progressService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
-            IProgressService progressService,
-            INotificationService notificationService
+            IProgressService progressService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
-            this.notificationService = notificationService;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
         {
-            var centreId = User.GetCentreId();
             var courseDelegatesData =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
+                courseService.GetDelegateCourseProgress(progressId);
 
             var model = new DelegateProgressViewModel(
                 accessedVia,
@@ -60,7 +56,7 @@
         {
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
+                courseService.GetDelegateCourseProgress(progressId);
             var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId);
 
             var model = new EditSupervisorViewModel(
@@ -96,9 +92,8 @@
         [Route("EditCompleteByDate")]
         public IActionResult EditCompleteByDate(int progressId, DelegateProgressAccessRoute accessedVia)
         {
-            var centreId = User.GetCentreId();
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
+                courseService.GetDelegateCourseProgress(progressId);
 
             var model = new EditCompleteByDateViewModel(
                 progressId,
@@ -133,9 +128,8 @@
         [Route("EditCompletionDate")]
         public IActionResult EditCompletionDate(int progressId, DelegateProgressAccessRoute accessedVia)
         {
-            var centreId = User.GetCentreId();
             var delegateCourseProgress =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
+                courseService.GetDelegateCourseProgress(progressId);
 
             var model = new EditCompletionDateViewModel(
                 progressId,
@@ -213,8 +207,10 @@
             {
                 return NotFound();
             }
+            var courseData =
+                courseService.GetDelegateCourseProgress(progressId);
 
-            var model = new DetailedCourseProgressViewModel(candidateData, progressData, accessedVia);
+            var model = new DetailedCourseProgressViewModel(candidateData, progressData, courseData, accessedVia);
             return View(model);
         }
     }
