@@ -223,7 +223,12 @@
         public IActionResult FilteredSelfAssessmentGroups(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, string filterBy = "", string searchText = null)
         {
             var appliedFilters = TempData.Get<List<AppliedFilterViewModel>>();
-            var model = filterBy == "CLEAR" ? null : new SearchSelfAssessmentOvervieviewViewModel(searchText, selfAssessmentId, vocabulary, appliedFilters);
+            var model = new SearchSelfAssessmentOvervieviewViewModel(searchText, selfAssessmentId, vocabulary, appliedFilters);
+            if (filterBy == "CLEAR")
+            {
+                model.AppliedFilters.Clear();
+            }
+            
             return SelfAssessmentOverview(selfAssessmentId, vocabulary, competencyGroupId, model);
         }
 
@@ -304,7 +309,7 @@
                         let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                         let searchTextMatchesDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                         let responseStatus = c.AssessmentQuestions.FirstOrDefault()?.ResultId == null ? SelfAssessmentResponseStatus.NotYetResponded
-                            : c.Verified != null ? SelfAssessmentResponseStatus.SelfAssessed
+                            : c.Verified == null ? SelfAssessmentResponseStatus.SelfAssessed
                             : SelfAssessmentResponseStatus.Verified
                         where ((wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesDescription)
                                 && (filters.Count() == 0 || filters.Contains(responseStatus)))
