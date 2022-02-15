@@ -161,7 +161,6 @@
                 customisationId,
                 centreId,
                 null,
-                GenericSortingHelper.Ascending,
                 null
             );
             using var resultsStream = new MemoryStream(resultBytes);

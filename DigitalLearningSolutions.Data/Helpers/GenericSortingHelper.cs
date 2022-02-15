@@ -128,7 +128,7 @@
             1,
             nameof(FullName),
             "Name",
-            nameof(CourseDelegate.FullName)
+            nameof(CourseDelegate.FullNameForSearchingSorting)
         );
 
         public static readonly CourseDelegatesSortByOption LastUpdatedDate = new CourseDelegatesSortByOption(

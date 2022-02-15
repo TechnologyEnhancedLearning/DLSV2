@@ -10,7 +10,7 @@
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
-            TitleName = courseDelegate.TitleName;
+            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(courseDelegate.FullNameForSearchingSorting, courseDelegate.EmailAddress);
             Active = courseDelegate.Active;
             ProgressId = courseDelegate.ProgressId;
             Locked = courseDelegate.Locked;

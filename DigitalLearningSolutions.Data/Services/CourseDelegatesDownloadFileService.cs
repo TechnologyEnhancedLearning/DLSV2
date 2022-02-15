@@ -91,7 +91,7 @@
             var sortedCourseDelegates =
                 GenericSortingHelper.SortAllItems(
                     filteredCourseDelegates.AsQueryable(),
-                    sortBy ?? nameof(CourseDelegateForExport.FullName),
+                    sortBy ?? nameof(CourseDelegateForExport.FullNameForSearchingSorting),
                     sortDirection
                 );
 

@@ -2,12 +2,12 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
@@ -220,7 +220,7 @@
             int progressId,
             DelegateProgressAccessRoute accessedVia,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Descending
+            string sortDirection = GenericSortingHelper.Descending
         )
         {
             sortBy ??= LearningLogSortByOptions.When.PropertyName;

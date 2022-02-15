@@ -18,7 +18,7 @@
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var customPrompts = new List<CustomPromptWithAnswer>
             {
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1)
+                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
             };
 
             // When
@@ -29,9 +29,10 @@
             {
                 returnedModel.Id.Should().Be(delegateUser.Id);
                 returnedModel.CandidateNumber.Should().Be(delegateUser.CandidateNumber);
-                returnedModel.FullName.Should().Be(delegateUser.FirstName + " " + delegateUser.LastName);
+                returnedModel.TitleName.Should().Be(
+                    $"{delegateUser.FirstName} {delegateUser.LastName} ({delegateUser.EmailAddress})"
+                );
                 returnedModel.DateRegistered.Should().Be(delegateUser.DateRegistered);
-                returnedModel.Email.Should().Be(delegateUser.EmailAddress);
                 returnedModel.JobGroup.Should().Be(delegateUser.JobGroupName);
                 returnedModel.CustomPrompts.Should().NotBeNullOrEmpty();
 

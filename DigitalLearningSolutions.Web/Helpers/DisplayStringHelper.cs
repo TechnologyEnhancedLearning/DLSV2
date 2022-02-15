@@ -47,9 +47,9 @@
             return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
         }
 
-        public static string GetSortableFullName(string? firstName, string lastName)
+        public static string GetNameWithEmailForDisplay(string name, string? email)
         {
-            return string.IsNullOrWhiteSpace(firstName) ? lastName : $"{lastName}, {firstName}";
+            return name + (string.IsNullOrWhiteSpace(email) ? "" : $" ({email})");
         }
 
         public static string GetPluralitySuffix(int number)

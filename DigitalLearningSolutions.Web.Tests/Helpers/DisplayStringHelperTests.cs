@@ -156,30 +156,30 @@
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
-        public void GetSortableFullName_returns_last_name_only_when_first_name_is_null_or_whitespace(string? firstName)
+        public void GetNameWithEmailForDisplay_returns_name_only_when_email_is_null_or_whitespace(string? email)
         {
             // Given
-            const string lastName = "Dickinson";
+            const string fullName = "FirstName LastName";
 
             // When
-            var result = DisplayStringHelper.GetSortableFullName(firstName, lastName);
+            var result = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, email);
 
             // Then
-            result.Should().Be(lastName);
+            result.Should().Be(fullName);
         }
 
         [Test]
-        public void GetSortableFullName_returns_correctly_formatted_name_when_both_names_provided()
+        public void GetSortableFullName_returns_correctly_formatted_name_with_email_when_both_are_provided()
         {
             // Given
-            const string lastName = "Dickinson";
-            const string firstName = "Bruce";
+            const string fullName = "FirstName LastName";
+            const string email = "email@email.com";
 
             // When
-            var result = DisplayStringHelper.GetSortableFullName(firstName, lastName);
+            var result = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, email);
 
             // Then
-            result.Should().Be("Dickinson, Bruce");
+            result.Should().Be("FirstName LastName (email@email.com)");
         }
 
         [Test]
