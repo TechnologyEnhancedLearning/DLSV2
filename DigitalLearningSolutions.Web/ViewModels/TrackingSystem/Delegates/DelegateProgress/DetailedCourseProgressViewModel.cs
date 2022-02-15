@@ -7,11 +7,15 @@
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DocumentFormat.OpenXml.Bibliography;
 
     public class DetailedCourseProgressViewModel
     {
-        public DetailedCourseProgressViewModel(DelegateUser delegateUser, DetailedCourseProgress progress, DelegateCourseDetails course, DelegateProgressAccessRoute accessedVia)
+        public DetailedCourseProgressViewModel(
+            DelegateUser delegateUser,
+            DetailedCourseProgress progress,
+            DelegateCourseDetails course,
+            DelegateProgressAccessRoute accessedVia
+        )
         {
             AccessedVia = accessedVia;
             ProgressId = progress.ProgressId;
@@ -64,7 +68,8 @@
             Attempts = section.Attempts;
             Passed = section.Passed;
 
-            Tutorials = section.Tutorials?.Select(t => new TutorialProgressViewModel(t)) ?? new List<TutorialProgressViewModel>();
+            Tutorials = section.Tutorials?.Select(t => new TutorialProgressViewModel(t)) ??
+                        new List<TutorialProgressViewModel>();
         }
 
         public string SectionName { get; set; }

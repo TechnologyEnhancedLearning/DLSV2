@@ -1,6 +1,10 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model SectionProgressViewModel
 
+@{
+  var positiveAttempts = Model.Attempts.HasValue && Model.Attempts > 0;
+}
+
 <div>
   <div class="basic-summary-list nhsuk-u-margin-bottom-3">
     <div class="nhsuk-grid-column-full nhsuk-body-l nhsuk-u-font-weight-bold word-break">
@@ -23,7 +27,7 @@
       </dd>
     </div>
     @if (Model.PostLearningAssessment) {
-      @if (Model.Attempts.HasValue && Model.Attempts > 0) {
+      @if (positiveAttempts) {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Outcome
@@ -32,21 +36,22 @@
             @Model.Outcome
           </dd>
         </div>
-        <div class="nhsuk-summary-list__row">
-          <dt class="nhsuk-summary-list__key">
-            Attempts
-          </dt>
-          <dd class="nhsuk-summary-list__value">
-            @Model.Attempts
-          </dd>
-        </div>
-      } else {
-        <div class="nhsuk-summary-list__row">
-          Not attempted
-        </div>
       }
       <div class="nhsuk-summary-list__row">
-        @(Model.Passed ? "Passed" : "Failed")
+        <dt class="nhsuk-summary-list__key">
+          Attempts
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+          @(positiveAttempts ? Model.Attempts.ToString() : "Not attempted")
+        </dd>
+      </div>
+      <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Passed/Failed
+        </dt>
+        <dt class="nhsuk-summary-list__value">
+          @(Model.Passed ? "Passed" : "Failed")
+        </dt>
       </div>
     }
   </div>

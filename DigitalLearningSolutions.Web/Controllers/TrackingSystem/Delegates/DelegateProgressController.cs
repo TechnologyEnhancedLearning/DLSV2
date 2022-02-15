@@ -57,7 +57,10 @@
             var centreId = User.GetCentreId();
             var delegateCourseProgress =
                 courseService.GetDelegateCourseProgress(progressId);
-            var supervisors = userService.GetSupervisorsAtCentreForCategory(centreId, delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId);
+            var supervisors = userService.GetSupervisorsAtCentreForCategory(
+                centreId,
+                delegateCourseProgress!.DelegateCourseInfo.CourseCategoryId
+            );
 
             var model = new EditSupervisorViewModel(
                 progressId,
@@ -117,7 +120,9 @@
                 return View(model);
             }
 
-            var completeByDate = formData.Year != null ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value) : (DateTime?)null;
+            var completeByDate = formData.Year != null
+                ? new DateTime(formData.Year.Value, formData.Month!.Value, formData.Day!.Value)
+                : (DateTime?)null;
 
             progressService.UpdateCompleteByDate(progressId, completeByDate);
 
@@ -202,11 +207,13 @@
             {
                 return NotFound();
             }
+
             var candidateData = userService.GetDelegateUserById(progressData.DelegateId);
             if (candidateData == null)
             {
                 return NotFound();
             }
+
             var courseData =
                 courseService.GetDelegateCourseProgress(progressId);
 
