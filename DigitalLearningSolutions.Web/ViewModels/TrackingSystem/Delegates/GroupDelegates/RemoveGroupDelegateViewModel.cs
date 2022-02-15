@@ -12,7 +12,7 @@
         {
             GroupId = groupId;
             GroupName = groupName;
-            DelegateName = DisplayStringHelper.GetFullNameForDisplay(delegateUser.FirstName, delegateUser.LastName);
+            DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             RemoveStartedEnrolmentsEnabled = progressId.HasValue;
         }
 

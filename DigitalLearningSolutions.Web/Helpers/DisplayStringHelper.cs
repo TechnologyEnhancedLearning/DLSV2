@@ -42,12 +42,12 @@
             return numberOfMonths == 0 ? null : $"{numberOfMonths} month{GetPluralitySuffix(numberOfMonths)}";
         }
 
-        public static string GetFullNameForDisplay(string? firstName, string lastName)
+        public static string GetNonSortableFullNameForDisplayOnly(string? firstName, string lastName)
         {
             return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
         }
 
-        public static string GetFullNameForSorting(string? firstName, string lastName)
+        public static string GetSortableFullName(string? firstName, string lastName)
         {
             return string.IsNullOrWhiteSpace(firstName) ? lastName : $"{lastName}, {firstName}";
         }
