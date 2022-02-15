@@ -15,8 +15,8 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string sortDirection,
-            string? filterBy
+            string? filterBy,
+            string sortDirection = GenericSortingHelper.Ascending
         );
     }
 
@@ -58,13 +58,13 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string sortDirection,
-            string? filterBy
+            string? filterBy,
+            string sortDirection = GenericSortingHelper.Ascending
         )
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, sortDirection, filterBy);
+            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, filterBy, sortDirection);
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -76,8 +76,8 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string sortDirection,
-            string? filterBy
+            string? filterBy,
+            string sortDirection
         )
         {
             var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
@@ -88,13 +88,12 @@
                 .ToList();
 
             var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterBy).ToList();
-            var sortedCourseDelegates = sortBy != null
-                ? GenericSortingHelper.SortAllItems(
+            var sortedCourseDelegates =
+                GenericSortingHelper.SortAllItems(
                     filteredCourseDelegates.AsQueryable(),
-                    sortBy,
+                    sortBy ?? nameof(CourseDelegateForExport.FullName),
                     sortDirection
-                )
-                : courseDelegates.OrderBy(x => x.LastName);
+                );
 
             var dataTable = new DataTable();
 
