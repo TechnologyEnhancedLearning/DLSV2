@@ -1,11 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
     using System;
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using FakeItEasy;
+    using FluentAssertions;
     using NUnit.Framework;
 
     public class ProgressServiceTests
@@ -188,6 +191,78 @@
             // Then
             A.CallTo(() => progressDataService.UpdateDiagnosticScore(progressId, tutorialId, myScore))
                 .MustHaveHappened();
+        }
+
+        [Test]
+        public void GetDetailedCourseProgress_returns_null_if_no_progress_found()
+        {
+            // Given
+            A.CallTo(() => progressDataService.GetProgressByProgressId(A<int>._)).Returns(null);
+
+            // When
+            var result = progressService.GetDetailedCourseProgress(1);
+        }
+
+        [Test]
+        public void GetDetailedCourseProgress_returns_progress_composed_from_data_if_progress_found()
+        {
+            // Given
+            var testCourseProgress = new Progress
+            {
+                ProgressId = 1, CustomisationId = 4, CandidateId = 5, DiagnosticScore = 42, Completed = null,
+                RemovedDate = null,
+            };
+            var testSectionProgress = new List<DetailedSectionProgress>
+            {
+                new DetailedSectionProgress { SectionId = 2, SectionName = "Section2" },
+                new DetailedSectionProgress { SectionId = 3, SectionName = "Section3" },
+            };
+            var testTutorialProgress1 = new List<DetailedTutorialProgress>
+            {
+                new DetailedTutorialProgress
+                {
+                    TutorialName = "Tut1", TutorialStatus = "Passed", AvgTime = 2, TimeTaken = 9, DiagnosticScore = 7,
+                    PossibleScore = 8,
+                },
+                new DetailedTutorialProgress
+                {
+                    TutorialName = "Tut2", TutorialStatus = "Not Passed", AvgTime = 3, TimeTaken = 8,
+                    DiagnosticScore = 5, PossibleScore = 5,
+                },
+            };
+            var testTutorialProgress2 = new List<DetailedTutorialProgress>
+            {
+                new DetailedTutorialProgress
+                {
+                    TutorialName = "Tut3", TutorialStatus = "Not Passed", AvgTime = 4, TimeTaken = 7,
+                    DiagnosticScore = 0, PossibleScore = 1,
+                },
+                new DetailedTutorialProgress
+                {
+                    TutorialName = "Tut4", TutorialStatus = "Passed", AvgTime = 5, TimeTaken = 6, DiagnosticScore = 0,
+                    PossibleScore = 5,
+                },
+            };
+
+            A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(testCourseProgress);
+            A.CallTo(() => progressDataService.GetSectionProgressDataForProgressEntry(1)).Returns(testSectionProgress);
+            A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 2)).Returns(testTutorialProgress1);
+            A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 3)).Returns(testTutorialProgress2);
+
+            var testSectionProgressWithTutorials = new List<DetailedSectionProgress>
+            {
+                new DetailedSectionProgress
+                    { SectionId = 2, SectionName = "Section2", Tutorials = testTutorialProgress1 },
+                new DetailedSectionProgress
+                    { SectionId = 3, SectionName = "Section3", Tutorials = testTutorialProgress2 },
+            };
+            var expectedResult = new DetailedCourseProgress(testCourseProgress, testSectionProgressWithTutorials);
+
+            // When
+            var result = progressService.GetDetailedCourseProgress(1);
+
+            // then
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }

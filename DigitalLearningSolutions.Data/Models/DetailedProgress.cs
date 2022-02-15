@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Data.Models
 {
     public class DetailedCourseProgress
     {
-        public DetailedCourseProgress(Progress? progress, IEnumerable<DetailedSectionProgress> sections)
+        public DetailedCourseProgress(Progress progress, IEnumerable<DetailedSectionProgress> sections)
         {
             DiagnosticScore = progress.DiagnosticScore;
             ProgressId = progress.ProgressId;
@@ -15,10 +15,6 @@ namespace DigitalLearningSolutions.Data.Models
             Sections = sections;
         }
 
-        public DateTime LastAccessed { get; set; }
-        public DateTime Enrolled { get; set; }
-        public DateTime CompleteBy { get; set; }
-        public DateTime Completed { get; set; }
         public int ProgressId { get; set; }
         public int CustomisationId { get; set; }
         public int DelegateId { get; set; }
