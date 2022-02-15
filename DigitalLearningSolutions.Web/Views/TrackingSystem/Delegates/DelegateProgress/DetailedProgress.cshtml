@@ -4,12 +4,16 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DetailedCourseProgressViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateProgress.css")" asp-append-version="true">
+
 @{
   ViewData["Title"] = "Detailed progress";
   var routeParamsForBackLink = new Dictionary<string, string?> {
     { "progressId", Model.ProgressId.ToString() },
     { "accessedVia", Model.AccessedVia.ToString() },
   };
+
+  var downloadUrl = Model.CurrentSystemBaseUrl + $"/tracking/summary?ProgressID={Model.ProgressId}";
 }
 
 @section NavBreadcrumbs {
@@ -22,7 +26,13 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    <div class="detailed-progress-title-container">
+      <h1 class="nhsuk-heading-xl detailed-progress-title">@ViewData["Title"]</h1>
+      <a class="nhsuk-button nhsuk-button--secondary right-button-mobile-margin-bottom detailed-progress-download-button" role="button"
+         href="@downloadUrl">
+        View detailed progress
+      </a>
+    </div>
     <div class="nhsuk-card">
       <div class="nhsuk-card__content basic-card-content">
         <dl class="nhsuk-summary-list">
@@ -90,7 +100,7 @@
         Overall diagnostic score:
       </div>
       <div class="nhsuk-grid-column-three-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DiagnosticScore
+        @Model.DiagnosticScore%
       </div>
     </div>
     @foreach (var section in Model.Sections) {

@@ -14,10 +14,12 @@
             DelegateUser delegateUser,
             DetailedCourseProgress progress,
             DelegateCourseDetails course,
-            DelegateProgressAccessRoute accessedVia
+            DelegateProgressAccessRoute accessedVia,
+            string currentSystemBaseUrl
         )
         {
             AccessedVia = accessedVia;
+            CurrentSystemBaseUrl = currentSystemBaseUrl;
             ProgressId = progress.ProgressId;
             DelegateId = delegateUser.Id;
             CustomisationId = progress.CustomisationId;
@@ -40,6 +42,7 @@
         public int ProgressId { get; set; }
         public int DelegateId { get; set; }
         public int CustomisationId { get; set; }
+        public string CurrentSystemBaseUrl { get; set; }
 
         public string DelegateName { get; set; }
         public string? DelegateEmail { get; set; }

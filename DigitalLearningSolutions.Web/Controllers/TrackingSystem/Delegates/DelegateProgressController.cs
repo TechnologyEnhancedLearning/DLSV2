@@ -2,6 +2,7 @@
 {
     using System;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -12,6 +13,7 @@
     using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -23,6 +25,7 @@
     [ServiceFilter(typeof(VerifyAdminUserCanAccessProgress))]
     public class DelegateProgressController : Controller
     {
+        private readonly IConfiguration configuration;
         private readonly ICourseService courseService;
         private readonly IProgressService progressService;
         private readonly IUserService userService;
@@ -30,12 +33,14 @@
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
-            IProgressService progressService
+            IProgressService progressService,
+            IConfiguration configuration
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
+            this.configuration = configuration;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia)
@@ -209,15 +214,21 @@
             }
 
             var candidateData = userService.GetDelegateUserById(progressData.DelegateId);
-            if (candidateData == null)
+            var courseData =
+                courseService.GetDelegateCourseProgress(progressId);
+
+            if (candidateData == null || courseData == null)
             {
                 return NotFound();
             }
 
-            var courseData =
-                courseService.GetDelegateCourseProgress(progressId);
-
-            var model = new DetailedCourseProgressViewModel(candidateData, progressData, courseData, accessedVia);
+            var model = new DetailedCourseProgressViewModel(
+                candidateData,
+                progressData,
+                courseData,
+                accessedVia,
+                configuration.GetCurrentSystemBaseUrl()
+            );
             return View(model);
         }
     }

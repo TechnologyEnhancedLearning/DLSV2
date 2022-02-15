@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class DelegateProgressControllerTests
@@ -51,10 +52,12 @@
             courseService = A.Fake<ICourseService>();
             userService = A.Fake<IUserService>();
             progressService = A.Fake<IProgressService>();
+            var config = A.Fake<IConfiguration>();
             delegateProgressController = new DelegateProgressController(
                     courseService,
                     userService,
-                    progressService
+                    progressService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
