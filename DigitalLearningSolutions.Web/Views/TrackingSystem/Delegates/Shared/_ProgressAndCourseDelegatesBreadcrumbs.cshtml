@@ -1,0 +1,25 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@model (int CustomisationId, int ProgressId, DelegateProgressAccessRoute AccessedVia)
+
+@{
+  var routeParamsForBackLink = new Dictionary<string, string?> {
+    { "progressId", Model.ProgressId.ToString() },
+    { "accessedVia", Model.AccessedVia.ToString() },
+  };
+}
+
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+  <div class="nhsuk-width-container">
+    <ol class="nhsuk-breadcrumb__list">
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-controller="CourseDelegates" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Course delegates</a>
+      </li>
+      <li class="nhsuk-breadcrumb__item">
+        <a class="nhsuk-breadcrumb__link" asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink">Delegate progress</a>
+      </li>
+    </ol>
+    <p class="nhsuk-breadcrumb__back">
+      <a class="nhsuk-breadcrumb__backlink" asp-controller="DelegateProgress" asp-action="Index" asp-all-route-data="@routeParamsForBackLink">Back to delegate progress</a>
+    </p>
+  </div>
+</nav>

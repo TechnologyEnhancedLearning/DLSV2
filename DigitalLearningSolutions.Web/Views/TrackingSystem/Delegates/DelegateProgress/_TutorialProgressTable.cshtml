@@ -14,50 +14,50 @@
   <div class="nhsuk-details__text">
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Tutorial
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Status
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Time taken (mins)
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Avg time (mins)
+        </th>
+        @if (showDiagnosticColumn) {
           <th role="columnheader" class="" scope="col">
-            Tutorial
+            Diagnostic score
           </th>
-          <th role="columnheader" class="" scope="col">
-            Status
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Time taken (mins)
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Avg time (mins)
-          </th>
-          @if (showDiagnosticColumn) {
-            <th role="columnheader" class="" scope="col">
-              Diagnostic score
-            </th>
-          }
-        </tr>
+        }
+      </tr>
       </thead>
       <tbody class="nhsuk-table__body">
-        @{
-          foreach (var tut in Model) {
-            <tr role="row">
+      @{
+        foreach (var tut in Model) {
+          <tr role="row">
+            <th role="columnheader" class="" scope="col">
+              @tut.TutorialName
+            </th>
+            <th role="columnheader" class="" scope="col">
+              @tut.TutorialStatus
+            </th>
+            <th role="columnheader" class="" scope="col">
+              @tut.TimeTaken
+            </th>
+            <th role="columnheader" class="" scope="col">
+              @tut.AvgTime
+            </th>
+            @if (showDiagnosticColumn) {
               <th role="columnheader" class="" scope="col">
-                @tut.TutorialName
+                @tut.DiagnosticScore / @tut.PossibleScore
               </th>
-              <th role="columnheader" class="" scope="col">
-                @tut.TutorialStatus
-              </th>
-              <th role="columnheader" class="" scope="col">
-                @tut.TimeTaken
-              </th>
-              <th role="columnheader" class="" scope="col">
-                @tut.AvgTime
-              </th>
-              @if (showDiagnosticColumn) {
-                <th role="columnheader" class="" scope="col">
-                  @tut.DiagnosticScore / @tut.PossibleScore
-                </th>
-              }
-            </tr>
-          }
+            }
+          </tr>
         }
+      }
       </tbody>
     </table>
   </div>

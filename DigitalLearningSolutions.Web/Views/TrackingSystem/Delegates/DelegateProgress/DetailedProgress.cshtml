@@ -7,9 +7,17 @@
 @{
   ViewData["Title"] = "Detailed progress";
   var routeParamsForBackLink = new Dictionary<string, string?> {
-    {"progressId", Model.ProgressId.ToString()},
-    {"accessedVia", Model.AccessedVia.ToString()},
+    { "progressId", Model.ProgressId.ToString() },
+    { "accessedVia", Model.AccessedVia.ToString() },
   };
+}
+
+@section NavBreadcrumbs {
+  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ProgressAndCourseDelegatesBreadcrumbs.cshtml" model=@((Model.CustomisationId, Model.ProgressId, Model.AccessedVia)) />
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ProgressAndViewDelegateBreadcrumbs.cshtml" model=@((Model.DelegateId, Model.ProgressId, Model.AccessedVia)) />
+  }
 }
 
 <div class="nhsuk-grid-row">
@@ -93,6 +101,5 @@
     link-text="Go back"
     asp-controller="DelegateProgress"
     asp-action="Index"
-    asp-all-route-data="@routeParamsForBackLink"/>
+    asp-all-route-data="@routeParamsForBackLink" />
 </div>
-
