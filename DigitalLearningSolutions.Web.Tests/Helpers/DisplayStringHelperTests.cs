@@ -134,23 +134,52 @@
         }
 
         [Test]
-        public void GetDelegateNameString_returns_expected_name_with_no_first_name()
+        public void GetFullNameForDisplay_returns_expected_name_with_no_first_name()
         {
             // When
-            var result = DisplayStringHelper.GetDelegateNameString(null, "LastName");
+            var result = DisplayStringHelper.GetFullNameForDisplay(null, "LastName");
 
             // Then
             result.Should().Be("LastName");
         }
 
         [Test]
-        public void GetDelegateNameString_returns_expected_name_with_first_name()
+        public void GetFullNameForDisplay_returns_expected_name_with_first_name()
         {
             // When
-            var result = DisplayStringHelper.GetDelegateNameString("FirstName", "LastName");
+            var result = DisplayStringHelper.GetFullNameForDisplay("FirstName", "LastName");
 
             // Then
             result.Should().Be("FirstName LastName");
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void GetFullNameForSorting_returns_last_name_only_when_first_name_is_not_a_name(string? firstName)
+        {
+            // Given
+            const string lastName = "Dickinson";
+
+            // When
+            var result = DisplayStringHelper.GetFullNameForSorting(firstName, lastName);
+
+            // Then
+            result.Should().Be(lastName);
+        }
+
+        [Test]
+        public void GetFullNameForSorting_returns_correctly_formatted_name_when_both_names_provided()
+        {
+            // Given
+            const string lastName = "Dickinson";
+            const string firstName = "Bruce";
+
+            // When
+            var result = DisplayStringHelper.GetFullNameForSorting(firstName, lastName);
+
+            // Then
+            result.Should().Be("Dickinson, Bruce");
         }
 
         [Test]
@@ -212,35 +241,6 @@
 
             // Then
             result.Should().Be(expectedOutput);
-        }
-
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        public void GetFullNameDisplayString_returns_last_name_only_when_first_name_is_not_a_name(string? firstName)
-        {
-            // Given
-            const string lastName = "Dickinson";
-
-            // When
-            var result = DisplayStringHelper.GetFullNameDisplayString(lastName, firstName);
-
-            // Then
-            result.Should().Be(lastName);
-        }
-
-        [Test]
-        public void GetFullNameDisplayString_returns_correctly_formatted_name_when_both_names_provided()
-        {
-            // Given
-            const string lastName = "Dickinson";
-            const string firstName = "Bruce";
-
-            // When
-            var result = DisplayStringHelper.GetFullNameDisplayString(lastName, firstName);
-
-            // Then
-            result.Should().Be("Dickinson, Bruce");
         }
     }
 }

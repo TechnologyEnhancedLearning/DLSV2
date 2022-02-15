@@ -10,7 +10,7 @@
             GroupDelegateId = groupDelegate.GroupDelegateId;
             GroupId = groupDelegate.GroupId;
             DelegateId = groupDelegate.DelegateId;
-            Name = DisplayStringHelper.GetDelegateNameString(groupDelegate.FirstName, groupDelegate.LastName);
+            Name = DisplayStringHelper.GetFullNameForDisplay(groupDelegate.FirstName, groupDelegate.LastName);
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
         }

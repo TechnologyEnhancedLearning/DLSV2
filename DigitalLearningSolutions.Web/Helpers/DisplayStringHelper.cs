@@ -42,9 +42,14 @@
             return numberOfMonths == 0 ? null : $"{numberOfMonths} month{GetPluralitySuffix(numberOfMonths)}";
         }
 
-        public static string GetDelegateNameString(string? firstName, string lastName)
+        public static string GetFullNameForDisplay(string? firstName, string lastName)
         {
             return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
+        }
+
+        public static string GetFullNameForSorting(string? firstName, string lastName)
+        {
+            return string.IsNullOrWhiteSpace(firstName) ? lastName : $"{lastName}, {firstName}";
         }
 
         public static string GetPluralitySuffix(int number)
@@ -60,11 +65,6 @@
             }
 
             return Regex.Replace(input, "[^ a-zA-Z0-9]", replacement);
-        }
-
-        public static string GetFullNameDisplayString(string lastName, string? firstName)
-        {
-            return string.IsNullOrWhiteSpace(firstName) ? lastName : $"{lastName}, {firstName}";
         }
     }
 }
