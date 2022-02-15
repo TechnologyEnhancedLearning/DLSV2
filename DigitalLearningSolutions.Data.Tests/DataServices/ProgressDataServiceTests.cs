@@ -356,5 +356,72 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void GetProgressByProgressId_returns_expected_progress()
+        {
+            // When
+            var result = progressDataService.GetProgressByProgressId(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result?.CandidateId.Should().Be(1);
+                result?.CustomisationId.Should().Be(100);
+                result?.ProgressId.Should().Be(1);
+                result?.Completed.Should().BeNull();
+                result?.RemovedDate.Should().BeNull();
+                result?.SupervisorAdminId.Should().Be(0);
+            }
+        }
+
+        [Test]
+        public void GetSectionProgressDataForProgressEntry_returns_expected_data()
+        {
+            // When
+            var result = progressDataService.GetSectionProgressDataForProgressEntry(15885).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count().Should().Be(9);
+                var first = result.First();
+
+                first.SectionId.Should().Be(74);
+                first.SectionName.Should().Be("Working with documents");
+                first.Completion.Should().Be(75);
+                first.TotalTime.Should().Be(5);
+                first.AverageTime.Should().Be(28);
+
+                first.PostLearningAssessment.Should().BeTrue();
+                first.Attempts.Should().Be(0);
+                first.Outcome.Should().Be(0);
+                first.Passed.Should().BeTrue();
+
+                first.Tutorials.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data()
+        {
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count().Should().Be(7);
+                var first = result.First();
+
+                first.TutorialName.Should().Be("Format characters");
+                first.TutorialStatus.Should().Be("Started");
+                first.TimeTaken.Should().Be(0);
+                first.AvgTime.Should().Be(7);
+                first.DiagnosticScore.Should().Be(4);
+                first.PossibleScore.Should().Be(4);
+            }
+        }
     }
 }

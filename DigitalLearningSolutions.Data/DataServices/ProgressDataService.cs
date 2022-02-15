@@ -285,19 +285,19 @@
                         (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @ProgressID) AND (s.ArchivedDate IS NULL)
                         AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
                     GROUP BY
-                        S.SectionID,
-                        S.ApplicationID,
-                             S.SectionNumber,
-                             S.SectionName,
-                             S.ConsolidationPath,
-                             S.DiagAssessPath,
-                             S.PLAssessPath,
-                             S.AverageSectionMins,
+                        s.SectionID,
+                        s.ApplicationID,
+                             s.SectionNumber,
+                             s.SectionName,
+                             s.ConsolidationPath,
+                             s.DiagAssessPath,
+                             s.PLAssessPath,
+                             s.AverageSectionMins,
                              cu.IsAssessed,
                              p.CandidateID,
                              p.CustomisationID,
                              p.PLLocked
-                    ORDER BY S.SectionNumber",
+                    ORDER BY s.SectionNumber",
                 new { progressId }
             );
         }
@@ -323,7 +323,8 @@
                         AND (p.ProgressID = @ProgressID)
                         AND (ct.Status = 1)
                         AND (c.Active = 1)
-                        AND (t.ArchivedDate IS NULL)",
+                        AND (t.ArchivedDate IS NULL)
+                    ORDER BY t.TutorialID",
                 new { progressId, sectionId }
             );
         }
