@@ -272,7 +272,7 @@
                     SELECT {CompetencyFields}
                     FROM {CompetencyTables} INNER JOIN SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID
                     WHERE ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND ((LAR.Result IS NOT NULL)
-                        OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)) AND (SA.EnforceRoleRequirementsForSignOff = 0) 
+                        OR (LAR.SupportingComments IS NOT NULL)) AND ((CAOC.IncludedInSelfAssessment = 1) OR (SAS.Optional = 0)) AND ((SA.EnforceRoleRequirementsForSignOff = 0) OR (CAQ.Required = 0))
 						OR ((LAR.Requested IS NULL) OR (LAR.Requested < DATEADD(week, -1, getUTCDate()))) AND (LAR.Verified IS NULL) AND (LAR.ResultRAG = 3) AND ((CAOC.IncludedInSelfAssessment = 1) 
 						OR (SAS.Optional = 0)) AND (SA.EnforceRoleRequirementsForSignOff = 1)
                     ORDER BY SAS.Ordering, CAQ.Ordering",
