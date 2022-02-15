@@ -117,7 +117,7 @@
           <dt class="nhsuk-summary-list__key">
             Progress locked
           </dt>
-         <partial name="_SummaryBooleanField" model="@Model.IsProgressLocked" />
+          <partial name="_SummaryBooleanField" model="@Model.IsProgressLocked" />
         </div>
 
         @if (Model.IsAssessed) {
@@ -164,7 +164,6 @@
          asp-route-accessedVia="@DelegateProgressAccessRoute.ViewDelegate">
         View progress
       </a>
-      <a class="nhsuk-button nhsuk-button--secondary" role="button">See learning log</a>
       @if (string.IsNullOrEmpty(Model.Completed)) {
         <a
           class="nhsuk-button delete-button"

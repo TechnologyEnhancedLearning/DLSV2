@@ -74,6 +74,12 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'faq-id'), 10);
     case 'CandidateNumber':
       return getElementText(searchableElement, 'delegate-id').toLocaleLowerCase();
+    case 'When':
+      return parseDate(getElementText(searchableElement, 'when'));
+    case 'LearningTime':
+      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
+    case 'AssessmentScore':
+      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
     default:
       return '';
   }
@@ -88,6 +94,10 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
 function parseDate(dateString: string): Date {
   const date = moment(dateString, 'DD/MM/YYYY').toDate();
   return date.toString() === 'Invalid Date' ? new Date(0) : date;
+}
+
+function parseNonNegativeIntOrNotApplicable(value: string): number {
+  return value === 'N/A' ? -1 : parseInt(value, 10);
 }
 
 function getSortBy(): string {

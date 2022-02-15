@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using Microsoft.AspNetCore.Authorization;
@@ -23,21 +24,18 @@
     public class DelegateProgressController : Controller
     {
         private readonly ICourseService courseService;
-        private readonly INotificationService notificationService;
         private readonly IProgressService progressService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
-            IProgressService progressService,
-            INotificationService notificationService
+            IProgressService progressService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
-            this.notificationService = notificationService;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
@@ -215,6 +213,43 @@
             }
 
             return RedirectToAction("Index", "ViewDelegate", new { delegateId });
+        }
+
+        [Route("LearningLog")]
+        public IActionResult LearningLog(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia,
+            string? sortBy = null,
+            string sortDirection = BaseSearchablePageViewModel.Descending
+        )
+        {
+            sortBy ??= LearningLogSortByOptions.When.PropertyName;
+            var learningLog = courseService.GetLearningLogDetails(progressId);
+
+            if (learningLog == null)
+            {
+                return NotFound();
+            }
+
+            var model = new LearningLogViewModel(accessedVia, learningLog, sortBy, sortDirection);
+            return View(model);
+        }
+
+        [Route("AllLearningLogEntries")]
+        public IActionResult AllLearningLogEntries(
+            int progressId,
+            DelegateProgressAccessRoute accessedVia
+        )
+        {
+            var learningLog = courseService.GetLearningLogDetails(progressId);
+
+            if (learningLog == null)
+            {
+                return NotFound();
+            }
+
+            var model = new AllLearningLogEntriesViewModel(learningLog.Entries);
+            return View(model);
         }
     }
 }

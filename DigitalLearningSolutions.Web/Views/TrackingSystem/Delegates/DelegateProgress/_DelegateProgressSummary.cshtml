@@ -1,6 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DelegateProgressViewModel
 
 <dl class="nhsuk-summary-list">
@@ -17,7 +16,7 @@
          asp-action="EditSupervisor"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page" >
+         asp-route-returnPage="@Model.Page">
         Edit<span class="nhsuk-u-visually-hidden"> supervisor</span>
       </a>
     </dd>
@@ -43,7 +42,7 @@
          asp-action="EditCompleteByDate"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@Model.AccessedVia"
-         asp-route-returnPage="@Model.Page" >
+         asp-route-returnPage="@Model.Page">
         Edit<span class="nhsuk-u-visually-hidden"> complete by date</span>
       </a>
     </dd>
@@ -69,7 +68,7 @@
          asp-action="EditCompletionDate"
          asp-route-progressId="@Model.ProgressId"
          asp-route-accessedVia="@DelegateProgressAccessRoute.CourseDelegates"
-         asp-route-returnPage="@Model.Page" >
+         asp-route-returnPage="@Model.Page">
         Edit
       </a>
     </dd>
