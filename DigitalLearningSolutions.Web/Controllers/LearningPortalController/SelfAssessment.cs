@@ -210,27 +210,33 @@
             return View("SelfAssessments/SupervisorComments", model);
         }
 
+        [HttpPost]
         public IActionResult SearchInSelfAssessmentOverviewGroups(SearchSelfAssessmentOvervieviewViewModel model)
         {
-            return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, null, model);
+            TempData.Clear();
+            TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);
+            return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
+        }
+
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/{competencyGroupId}/Filtered")]
+        [Route("LearningPortal/SelfAssessment/{selfAssessmentId}/{vocabulary}/Filtered")]
+        public IActionResult FilteredSelfAssessmentGroups(int selfAssessmentId, string vocabulary, int? competencyGroupId = null, string filterBy = "", string searchText = null)
+        {
+            var appliedFilters = TempData.Get<List<AppliedFilterViewModel>>();
+            var model = filterBy == "CLEAR" ? null : new SearchSelfAssessmentOvervieviewViewModel(searchText, selfAssessmentId, vocabulary, appliedFilters);
+            return SelfAssessmentOverview(selfAssessmentId, vocabulary, competencyGroupId, model);
         }
 
         public IActionResult AddSelfAssessmentOverviewFilter(SearchSelfAssessmentOvervieviewViewModel model)
         {
-            if (model.FilterBy == "CLEAR")
+            string filterName = Enum.GetName(model.ResponseStatus.GetType(), model.ResponseStatus);
+            if (!model.AppliedFilters.Any(f => f.FilterValue == model.ResponseStatus.ToString()))
             {
-                model.AppliedFilters.Clear();
-                model.FilterBy = nameof(model.ResponseStatus);
+                model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus?.GetDescription(), null, model.ResponseStatus.ToString()));
             }
-            else
-            {
-                string filterName = Enum.GetName(model.ResponseStatus.GetType(), model.ResponseStatus);
-                if (!model.AppliedFilters.Any(f => f.FilterValue == model.ResponseStatus.ToString()))
-                {
-                    model.AppliedFilters.Add(new AppliedFilterViewModel(model.ResponseStatus?.GetDescription(), null, model.ResponseStatus.ToString()));
-                }
-            }
-            return SelfAssessmentOverview(model.SelfAssessmentId, model.Vocabulary, null, model);
+            TempData.Clear();
+            TempData.Set<List<AppliedFilterViewModel>>(model.AppliedFilters);
+            return RedirectToAction("FilteredSelfAssessmentGroups", new { model.SelfAssessmentId, model.Vocabulary, model.CompetencyGroupId, model.SearchText });
         }
 
         [NoCaching]

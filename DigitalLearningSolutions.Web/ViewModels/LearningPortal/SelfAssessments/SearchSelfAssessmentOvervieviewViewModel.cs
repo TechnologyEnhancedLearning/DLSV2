@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
     public class SearchSelfAssessmentOvervieviewViewModel
     {
         public int SelfAssessmentId { get; set; }
+        public int? CompetencyGroupId { get; set; }
         public string Vocabulary { get; set; }
         public string SearchText { get; set; }
         public SelfAssessmentResponseStatus? ResponseStatus { get; set; }
@@ -36,7 +37,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         public SearchSelfAssessmentOvervieviewViewModel(string searchText, int selfAssessmentId, string vocabulary, List<AppliedFilterViewModel> appliedFilters)
         {
             FilterBy = nameof(ResponseStatus);
-            SearchText = searchText;
+            SearchText = searchText ?? string.Empty;
             SelfAssessmentId = selfAssessmentId;
             Vocabulary = vocabulary;
             Filters = new List<FilterViewModel>()
@@ -52,7 +53,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
                     })
 
             };
-            AppliedFilters = appliedFilters;
+            AppliedFilters = appliedFilters ?? new List<AppliedFilterViewModel>();
         }
         public SearchSelfAssessmentOvervieviewViewModel()
         {
