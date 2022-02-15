@@ -73,7 +73,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
-            "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
+            "Set enrolment options for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
