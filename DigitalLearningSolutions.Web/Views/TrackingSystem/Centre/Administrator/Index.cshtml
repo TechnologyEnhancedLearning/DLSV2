@@ -31,7 +31,7 @@
         <b>No administrators found.</b>
       </p>
     } else {
-      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+      <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
 
       <div id="searchable-elements">
         @foreach (var admin in Model.Admins) {

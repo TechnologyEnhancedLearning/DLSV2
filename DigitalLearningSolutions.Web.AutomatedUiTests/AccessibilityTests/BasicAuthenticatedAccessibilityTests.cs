@@ -61,7 +61,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Delegates/Groups/103/EditGroupName", "Edit group name")]
         [InlineData("/TrackingSystem/Delegates/Groups/Add", "Add new delegate group")]
         [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates", "Group delegates")]
-        [InlineData("/TrackingSystem/Delegates/Groups/5/Delegates/Add/SelectDelegate", "Add delegate to Activities worker or coordinator group")]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/5/Delegates/Add/SelectDelegate",
+            "Add delegate to Activities worker or coordinator group"
+        )]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Delegates/245969/Remove",
             "Are you sure you would like to remove xxxxx xxxx from this group?"
@@ -102,6 +105,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
             "Edit completion date for Digital Literacy for the Workplace - CC Test"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
+            "Delegate learning log"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]

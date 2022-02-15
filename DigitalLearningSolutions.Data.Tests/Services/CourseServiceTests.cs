@@ -903,5 +903,53 @@
                 ).MustHaveHappenedOnceExactly();
             }
         }
+
+        [Test]
+        public void GetLearningLogDetails_returns_null_when_course_details_cannot_be_found()
+        {
+            // Given
+            const int progressId = 1;
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(null);
+
+            // When
+            var result = courseService.GetLearningLogDetails(progressId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => progressDataService.GetLearningLogEntries(progressId)
+                ).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetLearningLogDetails_returns_course_and_log_details_when_available()
+        {
+            // Given
+            const int progressId = 1;
+            var courseDetails = Builder<DelegateCourseInfo>.CreateNew().Build();
+            var learningLogEntries = Builder<LearningLogEntry>.CreateListOfSize(5).Build();
+            var expectedLearningLog = new LearningLog(courseDetails, learningLogEntries);
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(courseDetails);
+            A.CallTo(() => progressDataService.GetLearningLogEntries(progressId)).Returns(learningLogEntries);
+
+            // When
+            var result = courseService.GetLearningLogDetails(progressId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(expectedLearningLog);
+                A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => progressDataService.GetLearningLogEntries(progressId)
+                ).MustHaveHappenedOnceExactly();
+            }
+        }
     }
 }
