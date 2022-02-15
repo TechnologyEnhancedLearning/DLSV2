@@ -48,7 +48,8 @@
             string? searchString = null,
             string? filterBy = null,
             string? filterValue = null,
-            int page = 1
+            int page = 1,
+            int? itemsPerPage = null
         )
         {
             filterBy = FilteringHelper.GetFilterBy(
@@ -72,7 +73,8 @@
                 searchString,
                 filterBy,
                 page,
-                loggedInAdminUser!
+                loggedInAdminUser!,
+                itemsPerPage
             );
 
             Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
