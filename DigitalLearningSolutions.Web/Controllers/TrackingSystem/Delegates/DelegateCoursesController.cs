@@ -3,12 +3,13 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -41,7 +42,7 @@
         public IActionResult Index(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = GenericSortingHelper.Ascending,
+            string sortDirection = BaseSearchablePageViewModel.Ascending,
             string? filterBy = null,
             string? filterValue = null,
             int page = 1,
@@ -59,9 +60,11 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-
-            var (centreCourses, categories, topics)
-                = courseService.GetCentreCourseCategoriesTopics(centreId, categoryId);
+            var centreCourses =
+                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
+            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
+                .Select(c => c.CategoryName);
+            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
             var model = new DelegateCoursesViewModel(
                 centreCourses,
@@ -91,7 +94,7 @@
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
-            var model = new AllDelegateCourseStatisticsViewModel(centreCourses, categories, topics);
+            var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
             return View(model);
         }
     }

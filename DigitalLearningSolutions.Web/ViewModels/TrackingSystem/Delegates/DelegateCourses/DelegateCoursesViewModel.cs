@@ -2,9 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
 
     public class DelegateCoursesViewModel : BaseSearchablePageViewModel
     {
@@ -34,16 +35,17 @@
                 sortBy,
                 sortDirection
             );
-
             var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
             var searchedItems = GenericSearchHelper.SearchItems(filteredItems, SearchString).ToList();
-            var paginatedItems = SortFilterAndPaginate(searchedItems);
+            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
 
-            Courses = paginatedItems.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
-            Filters = DelegateCourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
+            MatchingSearchResults = searchedItems.Count;
+            SetTotalPages();
+            Courses = paginatedItems.Select(c => new SearchableCourseStatisticsViewModel(c));
+            Filters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
         }
 
-        public IEnumerable<SearchableDelegateCourseStatisticsViewModel> Courses { get; set; }
+        public IEnumerable<SearchableCourseStatisticsViewModel> Courses { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {

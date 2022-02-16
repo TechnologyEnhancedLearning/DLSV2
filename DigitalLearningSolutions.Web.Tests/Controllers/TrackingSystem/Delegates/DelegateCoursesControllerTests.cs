@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using FakeItEasy;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
@@ -18,15 +17,46 @@
 
     public class DelegateCoursesControllerTests
     {
-        private readonly IEnumerable<ApplicationDetails> applicationOptions =
-            Builder<ApplicationDetails>.CreateListOfSize(1).Build();
+        private readonly List<ApplicationDetails> applicationOptions = new List<ApplicationDetails>
+        {
+            new ApplicationDetails
+            {
+                ApplicationId = 1,
+                ApplicationName = "Test Name",
+                CategoryName = "Test Category Name",
+                CourseTopicId = 1,
+                CourseTopic = "Topic",
+                PLAssess = true,
+                DiagAssess = true,
+            },
+        };
 
-        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses =
-            Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(1).Build();
+        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
+        {
+            new CourseStatisticsWithAdminFieldResponseCounts
+            {
+                ApplicationName = "Course",
+                CustomisationName = "Customisation",
+                Active = true,
+                CourseTopic = "Topic 1",
+                CategoryName = "Category 1",
+                HideInLearnerPortal = true,
+                DelegateCount = 1,
+                CompletedCount = 1,
+            },
+        };
 
-        private readonly IEnumerable<Category> categories = Builder<Category>.CreateListOfSize(2).Build();
+        private readonly List<Category> categories = new List<Category>
+        {
+            new Category { CategoryName = "Category 1" },
+            new Category { CategoryName = "Category 2" },
+        };
 
-        private readonly IEnumerable<Topic> topics = Builder<Topic>.CreateListOfSize(2).Build();
+        private readonly List<Topic> topics = new List<Topic>
+        {
+            new Topic { CourseTopic = "Topic 1" },
+            new Topic { CourseTopic = "Topic 2" },
+        };
 
         private DelegateCoursesController controller = null!;
         private DelegateCoursesController controllerWithCookies = null!;
@@ -43,9 +73,7 @@
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
 
-            A.CallTo(
-                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
-            ).Returns(courses);
+            A.CallTo(() => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)).Returns(courses);
             A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
                 .Returns(categories);
             A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
@@ -57,25 +85,25 @@
             httpResponse = A.Fake<HttpResponse>();
 
             controller = new DelegateCoursesController(
-                    courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService
-                )
-                .WithDefaultContext()
-                .WithMockUser(true, 101)
-                .WithMockTempData();
+                courseService,
+                courseCategoryDataService,
+                courseTopicsDataService
+            )
+            .WithDefaultContext()
+            .WithMockUser(true, 101)
+            .WithMockTempData();
 
             const string cookieName = "DelegateCoursesFilter";
             const string cookieValue = "Status|Active|false";
 
             controllerWithCookies = new DelegateCoursesController(
-                    courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService
-                )
-                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
-                .WithMockUser(true, 101)
-                .WithMockTempData();
+                courseService,
+                courseCategoryDataService,
+                courseTopicsDataService
+            )
+            .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+            .WithMockUser(true, 101)
+            .WithMockTempData();
         }
 
         [Test]
