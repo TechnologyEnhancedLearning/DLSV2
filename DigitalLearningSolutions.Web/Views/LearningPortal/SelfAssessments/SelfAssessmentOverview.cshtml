@@ -30,6 +30,7 @@
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 <partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" />
 <partial name="_OverviewActionButtons.cshtml" model=Model />
+<p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
 @if (Model.CompetencyGroups.Any())
 {
   foreach (var competencyGroup in Model.CompetencyGroups)
