@@ -1,0 +1,53 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DelegateCoursesViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseSetup.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Delegate courses";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-one-quarter">
+    <nav class="side-nav-menu" aria-label="Side navigation bar">
+      <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateCourses" />
+    </nav>
+  </div>
+
+  <div class="nhsuk-grid-column-three-quarters">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">Delegate courses</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+          Export all
+        </a>
+      </div>
+    </div>
+
+    <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
+
+    @if (Model.NoDataFound) {
+      <p>The centre has no courses set up yet.</p>
+    } else {
+      <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+
+      <div id="searchable-elements">
+        @foreach (var course in Model.Courses) {
+          <partial name="_CentreCourseCard" model="course" />
+        }
+      </div>
+    }
+    @if (Model.TotalPages > 1) {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
+
+  </div>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/delegateCourses.js")" asp-append-version="true"></script>
+}

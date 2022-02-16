@@ -52,6 +52,7 @@
     <None Remove="Scripts\trackingSystem\emailDelegates.ts" />
     <None Remove="Scripts\trackingSystem\learningLog.ts" />
     <None Remove="Scripts\trackingSystem\reports.ts" />
+    <None Remove="Styles\trackingSystem\delegates\delegateCourses.scss" />
   </ItemGroup>
 
     <ItemGroup>
@@ -118,6 +119,7 @@
     <TypeScriptCompile Include="Scripts\support\faqs.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\delegateCourses.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\allDelegates.ts" />
