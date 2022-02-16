@@ -916,7 +916,7 @@
             try
             {
                 // When
-                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 4, 101, null, 9);
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 7, 101, null, 9);
                 var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
                 // Then

@@ -377,7 +377,7 @@
                             gd =>
                                 gd.AdminId == 7 &&
                                 gd.CentreId == 2 &&
-                                gd.RegistrationFieldOptionId == model.RegistrationFieldOptionId &&
+                                gd.LinkedToField == model.RegistrationFieldOptionId &&
                                 gd.PrefixGroupName == model.PrefixGroupName &&
                                 gd.PopulateExisting == model.PopulateExisting &&
                                 gd.SyncFieldChanges == model.SyncFieldChanges &&
@@ -411,7 +411,7 @@
                 true,
                 false
             );
-            delegateGroupsController.ModelState.AddModelError("RegistrationFieldOptionId", "test error");
+            delegateGroupsController.ModelState.AddModelError("LinkedToField", "test error");
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
                 .DoesNothing();

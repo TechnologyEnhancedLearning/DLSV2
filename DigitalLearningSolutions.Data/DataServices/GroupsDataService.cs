@@ -469,10 +469,10 @@
                           AND ((Answer1 = @option AND @linkedToField = 1)
                             OR (Answer2 = @option AND @linkedToField = 2)
                             OR (Answer3 = @option AND @linkedToField = 3)
-                            OR (JobGroupID = @jobGroupId AND @linkedToField = 4)
-                            OR (Answer4 = @option AND @linkedToField = 5)
-                            OR (Answer5 = @option AND @linkedToField = 6)
-                            OR (Answer6 = @option AND @linkedToField = 7))",
+                            OR (Answer4 = @option AND @linkedToField = 4)
+                            OR (Answer5 = @option AND @linkedToField = 5)
+                            OR (Answer6 = @option AND @linkedToField = 6)
+                            OR (JobGroupID = @jobGroupId AND @linkedToField = 7))",
                 new { groupId, linkedToField, centreId, option, jobGroupId }
             );
         }

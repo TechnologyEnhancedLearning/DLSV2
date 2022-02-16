@@ -429,12 +429,11 @@
 
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
         {
-            var isJobGroup = groupDetails.RegistrationFieldOptionId == 7;
-            var linkedToField = GetLinkedToFieldValue(groupDetails.RegistrationFieldOptionId);
+            var isJobGroup = groupDetails.LinkedToField == 7;
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
-                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationFieldOptionId);
+                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.LinkedToField);
 
             var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
@@ -453,7 +452,7 @@
                     groupName,
                     null,
                     groupDetails.AdminId,
-                    linkedToField,
+                    groupDetails.LinkedToField,
                     groupDetails.SyncFieldChanges,
                     groupDetails.AddNewRegistrants,
                     groupDetails.PopulateExisting
@@ -463,7 +462,7 @@
                 {
                     groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         newGroupId,
-                        linkedToField,
+                        groupDetails.LinkedToField,
                         groupDetails.CentreId,
                         isJobGroup ? null : newGroupName,
                         isJobGroup ? id : (int?)null
@@ -646,18 +645,6 @@
                 .ToList<(int id, string name)>();
             var groupNamePrefix = registrationPrompt.CustomPromptText;
             return (customPromptOptions, groupNamePrefix);
-        }
-
-        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
-        {
-            return registrationFieldOptionId switch
-            {
-                4 => 5,
-                5 => 6,
-                6 => 7,
-                7 => 4,
-                _ => registrationFieldOptionId,
-            };
         }
     }
 }

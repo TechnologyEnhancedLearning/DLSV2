@@ -456,9 +456,18 @@
             const string groupName = "Manager";
             const string groupNamePrefix = "Role";
             const int newGroupId = 1;
-            const int linkedToField = 1;
+            const int registrationFieldOptionId = 1;
 
-            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
+            var groupGenerationDetails = new GroupGenerationDetails(
+                1,
+                101,
+                registrationFieldOptionId,
+                false,
+                true,
+                false,
+                true,
+                true
+            );
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
             var customPrompts = new List<CustomPrompt> { customPrompt };
@@ -506,7 +515,7 @@
                                 gd.GroupDescription == null &&
                                 gd.AdminUserId == groupGenerationDetails.AdminId &&
                                 gd.CreatedDate == timeNow &&
-                                gd.LinkedToField == linkedToField &&
+                                gd.LinkedToField == registrationFieldOptionId &&
                                 gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
                                 gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
                                 gd.PopulateExisting == groupGenerationDetails.PopulateExisting
@@ -516,7 +525,7 @@
                 A.CallTo(
                         () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                             newGroupId,
-                            linkedToField,
+                            registrationFieldOptionId,
                             groupGenerationDetails.CentreId,
                             groupName,
                             null
@@ -534,10 +543,19 @@
             const string groupName = "Nursing";
             const int newGroupId = 1;
             const int jobGroupId = 1;
-            const int linkedToField = 4;
+            const int registrationFieldOptionId = 7;
 
             var jobGroups = new List<(int id, string name)> { (jobGroupId, groupName) };
-            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 7, false, true, false, true, true);
+            var groupGenerationDetails = new GroupGenerationDetails(
+                1,
+                101,
+                registrationFieldOptionId,
+                false,
+                true,
+                false,
+                true,
+                true
+            );
 
             var timeNow = DateTime.UtcNow;
             GivenCurrentTimeIs(timeNow);
@@ -573,7 +591,7 @@
                                 gd.GroupDescription == null &&
                                 gd.AdminUserId == groupGenerationDetails.AdminId &&
                                 gd.CreatedDate == timeNow &&
-                                gd.LinkedToField == linkedToField &&
+                                gd.LinkedToField == registrationFieldOptionId &&
                                 gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
                                 gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
                                 gd.PopulateExisting == groupGenerationDetails.PopulateExisting
@@ -583,7 +601,7 @@
                 A.CallTo(
                         () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                             newGroupId,
-                            linkedToField,
+                            registrationFieldOptionId,
                             groupGenerationDetails.CentreId,
                             null,
                             jobGroupId
@@ -601,12 +619,12 @@
             const string groupName = "Manager";
             const string groupNamePrefix = "Role";
             const int newGroupId = 1;
-            const int linkedToField = 1;
+            const int registrationFieldOptionId = 1;
 
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                linkedToField,
+                registrationFieldOptionId,
                 true,
                 true,
                 false,
@@ -650,7 +668,7 @@
                                 gd.GroupDescription == null &&
                                 gd.AdminUserId == groupGenerationDetails.AdminId &&
                                 gd.CreatedDate == timeNow &&
-                                gd.LinkedToField == linkedToField &&
+                                gd.LinkedToField == registrationFieldOptionId &&
                                 gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
                                 gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
                                 gd.PopulateExisting == groupGenerationDetails.PopulateExisting

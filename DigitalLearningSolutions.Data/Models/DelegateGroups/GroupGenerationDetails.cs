@@ -5,7 +5,7 @@
         public GroupGenerationDetails(
             int adminId,
             int centreId,
-            int registrationFieldOptionId,
+            int linkedToField,
             bool prefixGroupName,
             bool populateExisting,
             bool addNewRegistrants,
@@ -15,7 +15,7 @@
         {
             AdminId = adminId;
             CentreId = centreId;
-            RegistrationFieldOptionId = registrationFieldOptionId;
+            LinkedToField = linkedToField;
             PrefixGroupName = prefixGroupName;
             PopulateExisting = populateExisting;
             AddNewRegistrants = addNewRegistrants;
@@ -25,7 +25,7 @@
 
         public int AdminId { get; set; }
         public int CentreId { get; set; }
-        public int RegistrationFieldOptionId { get; set; }
+        public int LinkedToField { get; set; }
         public bool PrefixGroupName { get; set; }
         public bool PopulateExisting { get; set; }
         public bool AddNewRegistrants { get; set; }
