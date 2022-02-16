@@ -70,8 +70,6 @@
             int? supervisorAdminId
         );
 
-        GroupCourse? GetGroupCourseById(int groupCustomisationId);
-
         void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
             int linkedToField,
