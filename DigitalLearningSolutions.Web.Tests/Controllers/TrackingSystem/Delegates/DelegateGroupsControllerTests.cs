@@ -364,17 +364,6 @@
                 false
             );
 
-            var groupGenerationDetails = new GroupGenerationDetails(
-                7,
-                2,
-                registrationFieldOptionId!,
-                model.PrefixGroupName,
-                model.PopulateExisting,
-                model.AddNewRegistrants,
-                model.SyncFieldChanges,
-                model.SkipDuplicateNames
-            );
-
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
                 .DoesNothing();
 
@@ -382,8 +371,23 @@
             var result = delegateGroupsController.GenerateGroups(model);
 
             // Them
-            A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails))
+            A.CallTo(
+                    () => groupsService.GenerateGroupsFromRegistrationField(
+                        A<GroupGenerationDetails>.That.Matches(
+                            gd =>
+                                gd.AdminId == 7 &&
+                                gd.CentreId == 2 &&
+                                gd.RegistrationFieldOptionId == model.RegistrationFieldOptionId &&
+                                gd.PrefixGroupName == model.PrefixGroupName &&
+                                gd.PopulateExisting == model.PopulateExisting &&
+                                gd.SyncFieldChanges == model.SyncFieldChanges &&
+                                gd.AddNewRegistrants == model.AddNewRegistrants &&
+                                gd.PopulateExisting == model.PopulateExisting
+                        )
+                    )
+                )
                 .MustHaveHappenedOnceExactly();
+
             result.Should().BeRedirectToActionResult().WithActionName("Index");
         }
 

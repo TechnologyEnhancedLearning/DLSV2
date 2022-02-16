@@ -16,6 +16,7 @@
     using FakeItEasy;
     using FizzWare.NBuilder;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
@@ -453,35 +454,24 @@
         {
             // Given
             const string groupName = "Manager";
-            const int newGroupId = 1;
             const string groupNamePrefix = "Role";
+            const int newGroupId = 1;
             const int linkedToField = 1;
 
             var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
 
-            var timeNow = DateTime.UtcNow;
-            GivenCurrentTimeIs(timeNow);
-
-            var groupDetails = new GroupDetails
-            {
-                CentreId = groupGenerationDetails.CentreId,
-                GroupLabel = groupName,
-                GroupDescription = null,
-                AdminUserId = groupGenerationDetails.AdminId,
-                CreatedDate = timeNow,
-                LinkedToField = linkedToField,
-                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
-                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.PopulateExisting,
-            };
-
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
             var customPrompts = new List<CustomPrompt> { customPrompt };
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
 
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
                 .Returns(customPrompts);
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
-            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
+            A.CallTo(
+                () => groupsDataService.AddDelegateGroup(A<GroupDetails>._)
+            ).Returns(newGroupId);
             A.CallTo(
                     () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         A<int>._,
@@ -497,25 +487,43 @@
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
 
             // Then
-            A.CallTo(
-                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
-                        groupGenerationDetails.CentreId
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                        () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
+                            groupGenerationDetails.CentreId
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                        newGroupId,
-                        linkedToField,
-                        groupGenerationDetails.CentreId,
-                        groupName,
-                        null
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => groupsDataService.AddDelegateGroup(
+                        A<GroupDetails>.That.Matches(
+                            gd =>
+                                gd.CentreId == groupGenerationDetails.CentreId &&
+                                gd.GroupLabel == groupName &&
+                                gd.GroupDescription == null &&
+                                gd.AdminUserId == groupGenerationDetails.AdminId &&
+                                gd.CreatedDate == timeNow &&
+                                gd.LinkedToField == linkedToField &&
+                                gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
+                                gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
+                                gd.PopulateExisting == groupGenerationDetails.PopulateExisting
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                        () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                            newGroupId,
+                            linkedToField,
+                            groupGenerationDetails.CentreId,
+                            groupName,
+                            null
+                        )
+                    )
+                    .MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
@@ -534,21 +542,7 @@
             var timeNow = DateTime.UtcNow;
             GivenCurrentTimeIs(timeNow);
 
-            var groupDetails = new GroupDetails
-            {
-                CentreId = groupGenerationDetails.CentreId,
-                GroupLabel = groupName,
-                GroupDescription = null,
-                AdminUserId = groupGenerationDetails.AdminId,
-                CreatedDate = timeNow,
-                LinkedToField = linkedToField,
-                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
-                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.PopulateExisting,
-            };
-
-            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical())
-                .Returns(jobGroups);
+            A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(jobGroups);
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
             A.CallTo(
@@ -566,20 +560,37 @@
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
 
             // Then
-            A.CallTo(jobGroupsDataService.GetJobGroupsAlphabetical()).MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                        newGroupId,
-                        linkedToField,
-                        groupGenerationDetails.CentreId,
-                        groupName,
-                        null
+            using (new AssertionScope())
+            {
+                A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => groupsDataService.AddDelegateGroup(
+                        A<GroupDetails>.That.Matches(
+                            gd =>
+                                gd.CentreId == groupGenerationDetails.CentreId &&
+                                gd.GroupLabel == groupName &&
+                                gd.GroupDescription == null &&
+                                gd.AdminUserId == groupGenerationDetails.AdminId &&
+                                gd.CreatedDate == timeNow &&
+                                gd.LinkedToField == linkedToField &&
+                                gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
+                                gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
+                                gd.PopulateExisting == groupGenerationDetails.PopulateExisting
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                        () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                            newGroupId,
+                            linkedToField,
+                            groupGenerationDetails.CentreId,
+                            null,
+                            jobGroupId
+                        )
+                    )
+                    .MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
@@ -588,31 +599,26 @@
         {
             // Given
             const string groupName = "Manager";
-            const int newGroupId = 1;
             const string groupNamePrefix = "Role";
+            const int newGroupId = 1;
             const int linkedToField = 1;
 
-            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, true, true, false, true, true);
-
-            var timeNow = DateTime.UtcNow;
-            GivenCurrentTimeIs(timeNow);
-
-            var groupDetails = new GroupDetails
-            {
-                CentreId = groupGenerationDetails.CentreId,
-                GroupLabel = "Role - Manager",
-                GroupDescription = null,
-                AdminUserId = groupGenerationDetails.AdminId,
-                CreatedDate = timeNow,
-                LinkedToField = linkedToField,
-                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
-                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.PopulateExisting,
-            };
+            var groupGenerationDetails = new GroupGenerationDetails(
+                1,
+                101,
+                linkedToField,
+                true,
+                true,
+                false,
+                true,
+                true
+            );
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
             var customPrompts = new List<CustomPrompt> { customPrompt };
-            // var groupAtCentre = new Group { GroupLabel = "Test" };
+
+            var timeNow = DateTime.UtcNow;
+            GivenCurrentTimeIs(timeNow);
 
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
                 .Returns(customPrompts);
@@ -633,25 +639,25 @@
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
 
             // Then
-            A.CallTo(
-                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
-                        groupGenerationDetails.CentreId
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => groupsDataService.AddDelegateGroup(
+                        A<GroupDetails>.That.Matches(
+                            gd =>
+                                gd.CentreId == groupGenerationDetails.CentreId &&
+                                gd.GroupLabel == "Role - Manager" &&
+                                gd.GroupDescription == null &&
+                                gd.AdminUserId == groupGenerationDetails.AdminId &&
+                                gd.CreatedDate == timeNow &&
+                                gd.LinkedToField == linkedToField &&
+                                gd.SyncFieldChanges == groupGenerationDetails.SyncFieldChanges &&
+                                gd.AddNewRegistrants == groupGenerationDetails.AddNewRegistrants &&
+                                gd.PopulateExisting == groupGenerationDetails.PopulateExisting
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                        newGroupId,
-                        linkedToField,
-                        groupGenerationDetails.CentreId,
-                        groupName,
-                        null
-                    )
-                )
-                .MustHaveHappenedOnceExactly();
+                ).MustHaveHappenedOnceExactly();
+            }
         }
 
         [Test]
@@ -660,27 +666,12 @@
         {
             // Given
             const string groupName = "Manager";
-            const int newGroupId = 1;
             const string groupNamePrefix = "Role";
-            const int linkedToField = 1;
 
             var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
 
             var timeNow = DateTime.UtcNow;
             GivenCurrentTimeIs(timeNow);
-
-            var groupDetails = new GroupDetails
-            {
-                CentreId = groupGenerationDetails.CentreId,
-                GroupLabel = groupName,
-                GroupDescription = null,
-                AdminUserId = groupGenerationDetails.AdminId,
-                CreatedDate = timeNow,
-                LinkedToField = linkedToField,
-                SyncFieldChanges = groupGenerationDetails.SyncFieldChanges,
-                AddNewRegistrants = groupGenerationDetails.AddNewRegistrants,
-                PopulateExisting = groupGenerationDetails.PopulateExisting,
-            };
 
             var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
             var customPrompts = new List<CustomPrompt> { customPrompt };
@@ -689,41 +680,27 @@
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
                 .Returns(customPrompts);
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(new List<Group> { groupAtCentre });
-            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
-            A.CallTo(
-                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                        A<int>._,
-                        A<int>._,
-                        A<int>._,
-                        A<string>._,
-                        null
-                    )
-                )
-                .DoesNothing();
 
             // When
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
 
             // Then
-            A.CallTo(
-                    () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
-                        groupGenerationDetails.CentreId
+            using (new AssertionScope())
+            {
+                A.CallTo(
+                    () => groupsDataService.AddDelegateGroup(A<GroupDetails>._)
+                ).MustNotHaveHappened();
+                A.CallTo(
+                        () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                            A<int>._,
+                            A<int>._,
+                            A<int>._,
+                            A<string>._,
+                            null
+                        )
                     )
-                )
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.GetGroupsForCentre(groupGenerationDetails.CentreId))
-                .MustHaveHappenedOnceExactly();
-            A.CallTo(() => groupsDataService.AddDelegateGroup(groupDetails)).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                    () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                        newGroupId,
-                        linkedToField,
-                        groupGenerationDetails.CentreId,
-                        groupName,
-                        null
-                    )
-                )
-                .MustHaveHappenedOnceExactly();
+                    .MustNotHaveHappened();
+            }
         }
 
         private void GivenCurrentTimeIs(DateTime validationTime)
