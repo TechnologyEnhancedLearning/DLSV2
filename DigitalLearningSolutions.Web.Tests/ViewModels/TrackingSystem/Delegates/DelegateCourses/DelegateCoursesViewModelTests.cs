@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
@@ -12,24 +13,25 @@
 
     public class DelegateCoursesViewModelTests
     {
-        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
-        {
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" }
-        };
+        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses =
+            new List<CourseStatisticsWithAdminFieldResponseCounts>
+            {
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
+                new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" },
+            };
 
         [Test]
         public void DelegateCoursesViewModel_should_default_to_returning_the_first_ten_delegates()
@@ -41,7 +43,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 null
@@ -66,7 +68,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -87,12 +89,12 @@
             var categories = new[]
             {
                 "Category 1",
-                "Category 2"
+                "Category 2",
             };
             var topics = new[]
             {
                 "Topic 1",
-                "Topic 2"
+                "Topic 2",
             };
 
             var expectedFilters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
@@ -104,7 +106,7 @@
                 topics,
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -116,7 +118,8 @@
         }
 
         [Test]
-        public void DelegateCoursesViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
+        public void
+            DelegateCoursesViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
         {
             // When
             const int itemsPerPage = 12;
@@ -126,7 +129,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 itemsPerPage
