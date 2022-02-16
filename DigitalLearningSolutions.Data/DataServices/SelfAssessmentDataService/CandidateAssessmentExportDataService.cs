@@ -112,9 +112,9 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
              CandidateAssessments AS ca INNER JOIN
              SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN
              Candidates AS c ON ca.CandidateID = c.CandidateID ON casv.ID =
-                 (SELECT MAX(ID) AS ID
-                 FROM    CandidateAssessmentSupervisorVerifications
-                 WHERE (ID = ca.ID)) LEFT OUTER JOIN
+                 (SELECT MAX(casv1.ID) AS ID
+                 FROM    CandidateAssessmentSupervisorVerifications as casv1 INNER JOIN CandidateAssessmentSupervisors as cas1 ON casv1.CandidateAssessmentSupervisorID = cas1.ID
+                 WHERE (cas1.CandidateAssessmentID = ca.ID)) LEFT OUTER JOIN
              SupervisorDelegates AS sd LEFT OUTER JOIN
              AdminUsers as au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
              CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId ON casv.CandidateAssessmentSupervisorID = cas.ID

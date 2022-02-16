@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model LearningLogViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegates/learningLog.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Delegate learning log";
+  var routeParamsForBackLink = new Dictionary<string, string?> {
+    {
+      "accessedVia", Model.AccessedVia.Name
+    }, {
+      "progressId", Model.ProgressId.ToString()
+    },
+  };
+}
+
+@section NavBreadcrumbs {
+  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
+  }
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
+             model="(Model.DelegateNameAndEmail, Model.CourseName)" />
+
+    @if (Model.NoDataFound) {
+      <p class="nhsuk-lede-text">No learning log entries exist for this delegate on this course</p>
+    } else {
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-three-quarters">
+          <partial name="SearchablePage/_Sort" model="Model" />
+          <span class="display-none" id="progress-id">@Model.ProgressId</span>
+        </div>
+      </div>
+
+      <table role="table" class="nhsuk-table-responsive">
+        <caption class="nhsuk-table__caption">Learning log entries</caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" class="" scope="col">
+            When
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Learning time (minutes)
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Assessment taken
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Assessment score
+          </th>
+          <th role="columnheader" class="" scope="col">
+            Assessment status
+          </th>
+        </tr>
+        </thead>
+        <tbody class="nhsuk-table__body" id="searchable-elements">
+        @foreach (var entry in Model.Entries) {
+          <partial name="_LearningLogTableRow" model="entry" />
+        }
+        </tbody>
+      </table>
+    }
+
+    <div class="nhsuk-u-margin-top-4">
+      <vc:back-link asp-controller="DelegateProgress" asp-action="Index" link-text="Go back" asp-all-route-data="@routeParamsForBackLink" />
+    </div>
+
+  </div>
+</div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/learningLog.js")" asp-append-version="true"></script>
+}

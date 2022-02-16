@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -49,7 +50,8 @@
                 filterBy,
                 filterValue,
                 Request,
-                CourseDelegatesFilterCookieName
+                CourseDelegatesFilterCookieName,
+                CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
             var centreId = User.GetCentreId();
@@ -65,7 +67,7 @@
                         customisationId
                     );
             }
-            catch (CourseNotFoundException)
+            catch (CourseAccessDeniedException)
             {
                 return NotFound();
             }

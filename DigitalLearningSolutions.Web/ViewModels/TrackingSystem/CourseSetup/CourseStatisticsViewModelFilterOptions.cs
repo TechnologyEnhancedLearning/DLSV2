@@ -13,13 +13,19 @@
         private static readonly IEnumerable<FilterOptionViewModel> CourseStatusOptions = new[]
         {
             CourseStatusFilterOptions.IsActive,
-            CourseStatusFilterOptions.IsInactive
+            CourseStatusFilterOptions.IsInactive,
         };
 
         private static readonly IEnumerable<FilterOptionViewModel> CourseVisibilityOptions = new[]
         {
             CourseVisibilityFilterOptions.IsHiddenInLearningPortal,
-            CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal
+            CourseVisibilityFilterOptions.IsNotHiddenInLearningPortal,
+        };
+
+        private static readonly IEnumerable<FilterOptionViewModel> CourseHasAdminFieldOptions = new[]
+        {
+            CourseHasAdminFieldsFilterOptions.HasAdminFields,
+            CourseHasAdminFieldsFilterOptions.DoesNotHaveAdminFields,
         };
 
         public static IEnumerable<FilterViewModel> GetFilterOptions(
@@ -40,7 +46,16 @@
                     GetTopicOptions(topics)
                 ),
                 new FilterViewModel(nameof(CourseStatistics.Active), "Status", CourseStatusOptions),
-                new FilterViewModel(nameof(CourseStatistics.HideInLearnerPortal), "Visibility", CourseVisibilityOptions)
+                new FilterViewModel(
+                    nameof(CourseStatistics.HideInLearnerPortal),
+                    "Visibility",
+                    CourseVisibilityOptions
+                ),
+                new FilterViewModel(
+                    nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                    "Admin fields",
+                    CourseHasAdminFieldOptions
+                ),
             };
         }
 

@@ -101,7 +101,11 @@
         [Route(
             "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AddResourceToActionPlan/{resourceReferenceId:int}"
         )]
-        public async Task<IActionResult> AddResourceToActionPlan(int selfAssessmentId, int resourceReferenceId)
+        public async Task<IActionResult> AddResourceToActionPlan(
+            int selfAssessmentId,
+            int resourceReferenceId,
+            int? returnPage
+        )
         {
             var delegateId = User.GetCandidateIdKnownNotNull();
 
@@ -126,7 +130,7 @@
                 return View("ResourceRemovedErrorPage", model);
             }
 
-            return RedirectToAction("RecommendedLearning", new { selfAssessmentId });
+            return RedirectToAction("RecommendedLearning", new { selfAssessmentId, page = returnPage });
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Filtered/Dashboard")]

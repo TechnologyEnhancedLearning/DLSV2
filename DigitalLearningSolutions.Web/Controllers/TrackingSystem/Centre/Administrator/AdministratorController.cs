@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
@@ -16,6 +14,8 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -48,7 +48,8 @@
             string? searchString = null,
             string? filterBy = null,
             string? filterValue = null,
-            int page = 1
+            int page = 1,
+            int? itemsPerPage = null
         )
         {
             filterBy = FilteringHelper.GetFilterBy(
@@ -61,6 +62,9 @@
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
 
             var model = new CentreAdministratorsViewModel(
                 centreId,
@@ -68,7 +72,9 @@
                 categories,
                 searchString,
                 filterBy,
-                page
+                page,
+                loggedInAdminUser!,
+                itemsPerPage
             );
 
             Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
@@ -80,9 +86,17 @@
         public IActionResult AllAdmins()
         {
             var centreId = User.GetCentreId();
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
+
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
-            var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
+            var model = new AllAdminsViewModel(
+                adminUsersAtCentre,
+                categories,
+                loggedInAdminUser!
+            );
             return View("AllAdmins", model);
         }
 

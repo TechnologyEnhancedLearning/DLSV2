@@ -163,6 +163,13 @@
             nameof(CourseDelegate.PassRate)
         );
 
+        public static readonly CourseDelegatesSortByOption DelegateId = new CourseDelegatesSortByOption(
+            7,
+            nameof(DelegateId),
+            "Delegate ID",
+            nameof(CourseDelegate.CandidateNumber)
+        );
+
         public readonly string DisplayText;
         public readonly string PropertyName;
 
@@ -199,5 +206,17 @@
 
         public static readonly (string DisplayText, string PropertyName) NumberOfCourses =
             ("Number of courses", nameof(Group.CoursesCount));
+    }
+
+    public static class LearningLogSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) When =
+            ("When", nameof(LearningLogEntry.When));
+
+        public static readonly (string DisplayText, string PropertyName) LearningTime =
+            ("Time", nameof(LearningLogEntry.LearningTime));
+
+        public static readonly (string DisplayText, string PropertyName) AssessmentScore =
+            ("Assessment score", nameof(LearningLogEntry.AssessmentScore));
     }
 }
