@@ -4,16 +4,22 @@ namespace DigitalLearningSolutions.Web.Extensions
 {
     public static class EnumExtensions
     {
-        public static string GetDescription(this SelfAssessmentResponseStatus status)
+        public static string GetDescription(this SelfAssessmentCompetencyFilter status)
         {
             switch (status)
             {
-                case SelfAssessmentResponseStatus.NotYetResponded:
+                case SelfAssessmentCompetencyFilter.NotYetResponded:
                     return "Not yet responded";
-                case SelfAssessmentResponseStatus.SelfAssessed:
+                case SelfAssessmentCompetencyFilter.SelfAssessed:
                     return "Self-assessed";
-                case SelfAssessmentResponseStatus.Verified:
+                case SelfAssessmentCompetencyFilter.Verified:
                     return "Verified";
+                case SelfAssessmentCompetencyFilter.MeetingRequirements:
+                    return "Meeting requirements";
+                case SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements:
+                    return "Partially meeting requirements";
+                case SelfAssessmentCompetencyFilter.NotMeetingRequirements:
+                    return "Not meeting requirements";
                 default:
                     return null;
             }

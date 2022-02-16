@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
         public int? CompetencyGroupId { get; set; }
         public string Vocabulary { get; set; }
         public string SearchText { get; set; }
-        public SelfAssessmentResponseStatus? ResponseStatus { get; set; }
+        public SelfAssessmentCompetencyFilter? ResponseStatus { get; set; }
         public int Page { get; set; }
         public List<FilterViewModel> Filters { get; set; }
         public List<AppliedFilterViewModel> AppliedFilters { get; set; }
@@ -43,15 +43,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
             Filters = new List<FilterViewModel>()
             {
                 new FilterViewModel(
-                    filterProperty: FilterBy,
-                    filterName: FilterBy,
-                    filterOptions: new List<FilterOptionViewModel>
-                    {
-                        new FilterOptionViewModel(SelfAssessmentResponseStatus.NotYetResponded.GetDescription(), SelfAssessmentResponseStatus.NotYetResponded.ToString(), FilterStatus.Default),
-                        new FilterOptionViewModel(SelfAssessmentResponseStatus.SelfAssessed.GetDescription(), SelfAssessmentResponseStatus.SelfAssessed.ToString(), FilterStatus.Warning),
-                        new FilterOptionViewModel(SelfAssessmentResponseStatus.Verified.GetDescription(), SelfAssessmentResponseStatus.Verified.ToString(), FilterStatus.Success)
-                    })
-
+                        filterProperty: FilterBy,
+                        filterName: FilterBy,
+                        filterOptions: Enum.GetValues(typeof(SelfAssessmentCompetencyFilter))
+                            .Cast<SelfAssessmentCompetencyFilter>()
+                            .Select(f => new FilterOptionViewModel(f.GetDescription(), f.ToString(), FilterStatus.Default)))
             };
             AppliedFilters = appliedFilters ?? new List<AppliedFilterViewModel>();
         }

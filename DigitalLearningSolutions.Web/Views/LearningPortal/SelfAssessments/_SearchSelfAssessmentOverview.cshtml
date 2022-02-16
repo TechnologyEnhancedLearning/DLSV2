@@ -21,7 +21,7 @@
       Model.Filters.First().FilterOptions.Select(f => new SelectListItem(
         text: f.DisplayText,
         value: f.FilterValue.ToString(),
-        selected: f.FilterValue == SelfAssessmentResponseStatus.NotYetResponded.ToString())
+        selected: f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
       ),
       new
       {
