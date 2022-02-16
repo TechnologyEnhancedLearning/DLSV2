@@ -10,6 +10,7 @@
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
+            ProfessionalRegistrationNumber = courseDelegate.ProfessionalRegistrationNumber;
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(courseDelegate.FullNameForSearchingSorting, courseDelegate.EmailAddress);
             Active = courseDelegate.Active;
             ProgressId = courseDelegate.ProgressId;
@@ -37,5 +38,6 @@
         public string? RemovedDate { get; set; }
         public double PassRate { get; set; }
         public int CustomisationId { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
     }
 }
