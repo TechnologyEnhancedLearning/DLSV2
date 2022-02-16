@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using Microsoft.AspNetCore.Mvc;
 

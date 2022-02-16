@@ -9,7 +9,7 @@
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
 
@@ -36,7 +36,7 @@
         public IActionResult MyStaffList(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             int page = 1
         )
         {

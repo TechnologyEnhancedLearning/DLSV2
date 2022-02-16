@@ -100,12 +100,12 @@ function parseNonNegativeIntOrNotApplicable(value: string): number {
   return value === 'N/A' ? -1 : parseInt(value, 10);
 }
 
-function getSortBy(): string {
+export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
   return element?.value ?? 'Name';
 }
 
-function getSortDirection(): string {
+export function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
   return element?.value ?? 'Ascending';
 }

@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -14,7 +14,7 @@
         public static readonly IEnumerable<FilterOptionViewModel> BaseLinkedFieldOptions = new[]
         {
             DelegateGroupLinkedFieldFilterOptions.None,
-            DelegateGroupLinkedFieldFilterOptions.JobGroup
+            DelegateGroupLinkedFieldFilterOptions.JobGroup,
         };
 
         public static IEnumerable<FilterOptionViewModel> GetLinkedFieldOptions(

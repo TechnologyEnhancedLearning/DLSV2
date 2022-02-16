@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -16,7 +17,7 @@
             1,
             true,
             DelegateSortByOptions.RegistrationDate.PropertyName,
-            Ascending,
+            GenericSortingHelper.Ascending,
             filterBy,
             int.MaxValue
         ) { }
@@ -73,7 +74,7 @@
                 delegateUser =>
                 {
                     var delegateSelected = selectAll ||
-                                     SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
+                                           SelectedDelegateIds != null && SelectedDelegateIds.Contains(delegateUser.Id);
                     return new EmailDelegatesItemViewModel(delegateUser, delegateSelected);
                 }
             );

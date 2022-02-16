@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
@@ -29,8 +29,8 @@
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
-                DefaultSortOption,
-                Ascending
+                GenericSortingHelper.DefaultSortOption,
+                GenericSortingHelper.Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();

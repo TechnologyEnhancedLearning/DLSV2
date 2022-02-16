@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.TestHelpers
+﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using DigitalLearningSolutions.Data.Models;
 

@@ -1,13 +1,13 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers.GenericSearchHelperTests
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers.GenericSearchHelperTests
 {
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
-    using SelfAssessmentHelper = Data.Tests.TestHelpers.SelfAssessmentHelper;
+    using SelfAssessmentHelper = DigitalLearningSolutions.Data.Tests.TestHelpers.SelfAssessmentHelper;
 
     public class CoursesSearchTests
     {

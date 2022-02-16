@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Extensions
+﻿namespace DigitalLearningSolutions.Data.Tests.Extensions
 {
     using System.Linq;
-    using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 

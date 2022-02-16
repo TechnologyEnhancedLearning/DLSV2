@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -106,13 +107,13 @@
         public IActionResult EditAdminRoles(int adminId, int? returnPage)
         {
             var centreId = User.GetCentreId();
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var adminUser = userDataService.GetAdminUserById(adminId);
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins, returnPage);
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage);
             return View(model);
         }
 

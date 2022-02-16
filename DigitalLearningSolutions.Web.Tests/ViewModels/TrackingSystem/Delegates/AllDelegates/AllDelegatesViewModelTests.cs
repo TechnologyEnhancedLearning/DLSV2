@@ -3,10 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -60,7 +59,7 @@
                 1,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 null
             );
@@ -82,7 +81,7 @@
                 2,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 null
             );
@@ -103,7 +102,7 @@
                 1,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 15
             );
@@ -125,7 +124,7 @@
                 1,
                 "purple",
                 DelegateSortByOptions.Name.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 null
             );
@@ -147,7 +146,7 @@
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
-                BaseSearchablePageViewModel.Descending,
+                GenericSortingHelper.Descending,
                 null,
                 null
             );
@@ -169,7 +168,7 @@
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator + "C 2",
                 null
             );
@@ -191,7 +190,7 @@
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 "Answer4" + FilteringHelper.Separator + "Answer4" + FilteringHelper.Separator +
                 FilteringHelper.EmptyValue,
                 null
@@ -214,7 +213,7 @@
             var customPrompts = new List<CustomPrompt>
             {
                 new CustomPrompt(1, "free text", null, true),
-                new CustomPrompt(2, "with options", "A\r\nB", true)
+                new CustomPrompt(2, "with options", "A\r\nB", true),
             };
 
             // When
@@ -225,7 +224,7 @@
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 null
             );

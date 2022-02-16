@@ -1,8 +1,8 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;

@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
+﻿namespace DigitalLearningSolutions.Data.Tests.Helpers
 {
     using System;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Tests.TestHelpers;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Configuration;
@@ -12,9 +12,9 @@
 
     public class SortingHelperTests
     {
-        private IQueryable<CurrentCourse> currentCourses = null!;
-        private IQueryable<CompletedCourse> completedCourses = null!;
         private IQueryable<AvailableCourse> availableCourses = null!;
+        private IQueryable<CompletedCourse> completedCourses = null!;
+        private IQueryable<CurrentCourse> currentCourses = null!;
 
         [SetUp]
         public void SetUp()
@@ -25,9 +25,9 @@
             currentCourses = new[]
             {
                 CurrentCourseHelper.CreateDefaultCurrentCourse(
-                    customisationId: 71,
-                    courseName: "B: Course",
-                    hasDiagnostic: true,
+                    71,
+                    "B: Course",
+                    true,
                     isAssessed: true,
                     startedDate: new DateTime(2010, 1, 31),
                     lastAccessed: new DateTime(2010, 2, 22),
@@ -36,9 +36,9 @@
                     diagnosticScore: 123
                 ),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(
-                    customisationId: 72,
-                    courseName: "C: Course",
-                    hasDiagnostic: true,
+                    72,
+                    "C: Course",
+                    true,
                     isAssessed: false,
                     startedDate: new DateTime(2010, 2, 1),
                     lastAccessed: new DateTime(2011, 2, 22),
@@ -47,24 +47,24 @@
                     diagnosticScore: 0
                 ),
                 CurrentCourseHelper.CreateDefaultCurrentCourse(
-                    customisationId: 73,
-                    courseName: "A: Course",
-                    hasDiagnostic: false,
+                    73,
+                    "A: Course",
+                    false,
                     isAssessed: true,
                     startedDate: new DateTime(2001, 1, 22),
                     lastAccessed: new DateTime(2011, 2, 23),
                     completeByDate: null,
                     passes: 0,
                     diagnosticScore: 0
-                )
+                ),
             }.AsQueryable();
 
             completedCourses = new[]
             {
                 CompletedCourseHelper.CreateDefaultCompletedCourse(
-                    customisationId: 71,
-                    courseName: "B: Course",
-                    hasDiagnostic: true,
+                    71,
+                    "B: Course",
+                    true,
                     isAssessed: true,
                     startedDate: new DateTime(2010, 1, 31),
                     lastAccessed: new DateTime(2010, 2, 22),
@@ -74,9 +74,9 @@
                     passes: 4
                 ),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(
-                    customisationId: 72,
-                    courseName: "C: Course",
-                    hasDiagnostic: true,
+                    72,
+                    "C: Course",
+                    true,
                     isAssessed: false,
                     startedDate: new DateTime(2010, 2, 1),
                     lastAccessed: new DateTime(2011, 2, 22),
@@ -86,9 +86,9 @@
                     passes: 14
                 ),
                 CompletedCourseHelper.CreateDefaultCompletedCourse(
-                    customisationId: 73,
-                    courseName: "A: Course",
-                    hasDiagnostic: false,
+                    73,
+                    "A: Course",
+                    false,
                     isAssessed: true,
                     startedDate: new DateTime(2001, 1, 22),
                     lastAccessed: new DateTime(2011, 2, 23),
@@ -96,32 +96,32 @@
                     evaluated: new DateTime(2009, 5, 5),
                     diagnosticScore: 0,
                     passes: 0
-                )
+                ),
             }.AsQueryable();
 
             availableCourses = new[]
             {
                 AvailableCourseHelper.CreateDefaultAvailableCourse(
-                    customisationId: 71,
-                    courseName: "A: Course",
+                    71,
+                    "A: Course",
                     brand: "B: Brand",
                     category: "C: Category",
                     topic: "B: Topic"
                 ),
                 AvailableCourseHelper.CreateDefaultAvailableCourse(
-                    customisationId: 72,
-                    courseName: "B: Course",
+                    72,
+                    "B: Course",
                     brand: "A: Brand",
                     category: null,
                     topic: "A: Topic"
                 ),
                 AvailableCourseHelper.CreateDefaultAvailableCourse(
-                    customisationId: 73,
-                    courseName: "C: Course",
+                    73,
+                    "C: Course",
                     brand: "C: Brand",
                     category: "A: Category",
                     topic: null
-                )
+                ),
             }.AsQueryable();
         }
 
@@ -140,7 +140,8 @@
         public void SortAllItems_should_sort_current_courses_correctly(
             string sortBy,
             string sortDirection,
-            int[] expectedIdsOrder)
+            int[] expectedIdsOrder
+        )
         {
             var sortedCurrentCourses = GenericSortingHelper.SortAllItems(currentCourses, sortBy, sortDirection);
             var sortedIds = sortedCurrentCourses.Select(course => course.Id);
@@ -158,7 +159,8 @@
         public void SortAllItems_should_sort_completed_courses_correctly(
             string sortBy,
             string sortDirection,
-            int[] expectedIdsOrder)
+            int[] expectedIdsOrder
+        )
         {
             var sortedCompletedCourses = GenericSortingHelper.SortAllItems(completedCourses, sortBy, sortDirection);
             var sortedIds = sortedCompletedCourses.Select(course => course.Id);
@@ -176,7 +178,8 @@
         public void SortAllItems_should_sort_available_courses_correctly(
             string sortBy,
             string sortDirection,
-            int[] expectedIdsOrder)
+            int[] expectedIdsOrder
+        )
         {
             var sortedCompletedCourses = GenericSortingHelper.SortAllItems(availableCourses, sortBy, sortDirection);
             var sortedIds = sortedCompletedCourses.Select(course => course.Id);
