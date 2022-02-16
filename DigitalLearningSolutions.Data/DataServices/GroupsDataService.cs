@@ -19,13 +19,6 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        void RemoveRelatedProgressRecordsForGroup(
-            int groupId,
-            int? delegateId,
-            bool removeStartedEnrolments,
-            DateTime removedDate
-        );
-
         int? GetGroupCentreId(int groupId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
@@ -40,6 +33,13 @@
             int groupId,
             int groupCustomisationId,
             bool deleteStartedEnrolment,
+            DateTime removedDate
+        );
+
+        void RemoveRelatedProgressRecordsForGroup(
+            int groupId,
+            int? delegateId,
+            bool removeStartedEnrolments,
             DateTime removedDate
         );
 
@@ -272,11 +272,6 @@
             );
         }
 
-        public void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
-        {
-            RemoveRelatedProgressRecordsForGroup(groupId, null, deleteStartedEnrolment, removedDate);
-        }
-
         public void DeleteGroupDelegates(int groupId)
         {
             connection.Execute(
@@ -311,6 +306,11 @@
                      WHERE GroupID = @groupId",
                 new { groupId }
             );
+        }
+
+        public void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, null, deleteStartedEnrolment, removedDate);
         }
 
         public void RemoveRelatedProgressRecordsForGroup(
