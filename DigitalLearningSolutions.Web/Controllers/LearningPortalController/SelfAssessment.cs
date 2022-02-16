@@ -308,15 +308,18 @@
                 filteredCompetencies = (
                     from c in competencies
                     let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    let searchTextMatchesDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    let responseStatus = c.AssessmentQuestions.Any(q => q.ResultId == null) ? SelfAssessmentCompetencyFilter.NotYetResponded
-                        : c.Verified == null ? SelfAssessmentCompetencyFilter.SelfAssessed
-                        : SelfAssessmentCompetencyFilter.Verified
-                    let requirementFilterMatch = (filters.Contains(SelfAssessmentCompetencyFilter.MeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 3))
+                    let searchTextMatchesCompetencyDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                    let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                    let responseStatusFilterMatchesAnyQuestion = 
+                           (filters.Contains(SelfAssessmentCompetencyFilter.NotYetResponded) && c.AssessmentQuestions.Any(q => q.ResultId == null))
+                        || (filters.Contains(SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.Verified == null))
+                        || (filters.Contains(SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue))
+                    let requirementsFilterMatchesAnyQuestion =
+                           (filters.Contains(SelfAssessmentCompetencyFilter.MeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 3))
                         || (filters.Contains(SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 2))
                         || (filters.Contains(SelfAssessmentCompetencyFilter.NotMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 1))
-                    where ((wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesDescription)
-                            && (filters.Count() == 0 || filters.Contains(responseStatus) || requirementFilterMatch))
+                    where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
+                       && (filters.Count() == 0 || responseStatusFilterMatchesAnyQuestion || requirementsFilterMatchesAnyQuestion)
                     select c).ToList();
             }
             return (filteredCompetencies ?? competencies);
