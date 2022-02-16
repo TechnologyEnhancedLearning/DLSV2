@@ -302,8 +302,8 @@ export class SearchSortFilterAndPaginate {
   }
 
   private stopLoadingSpinner(): void {
-      this.spinnerContainer?.classList.add('display-none');
-      this.spinner?.classList.add('loading-spinner');
-      this.areaToHide?.classList.remove('display-none');
+    this.spinnerContainer?.classList.add('display-none');
+    this.spinner?.classList.add('loading-spinner');
+    this.areaToHide?.classList.remove('display-none');
   }
 }
