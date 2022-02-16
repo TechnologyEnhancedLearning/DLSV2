@@ -17,6 +17,7 @@
     using Microsoft.FeatureManagement.Mvc;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -147,6 +148,12 @@
         public IActionResult DeactivateAdmin(int adminId, int? returnPage)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (!CanCurrentUserDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+            
             var model = new DeactivateAdminViewModel(adminUser!, returnPage);
             return View(model);
         }
@@ -156,6 +163,13 @@
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
         public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
         {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (!CanCurrentUserDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -172,6 +186,14 @@
                 .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
+        }
+
+        private bool CanCurrentUserDeactivateAdmin(AdminUser adminToDeactivate)
+        {
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
+            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate!, loggedInAdminUser!);
         }
     }
 }

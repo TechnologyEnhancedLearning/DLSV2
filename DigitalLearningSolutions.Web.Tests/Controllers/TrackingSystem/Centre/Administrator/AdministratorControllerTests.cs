@@ -14,6 +14,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
@@ -119,9 +120,12 @@
             var result = administratorController.Index(filterBy: filterBy);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
-            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .BeNull();
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                    .BeNull();
+            }
         }
 
         [Test]
@@ -135,10 +139,13 @@
             var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -152,10 +159,13 @@
             var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
 
             // Then
-            A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
-                .MustHaveHappened();
-            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(newFilterValue);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
+                    .MustHaveHappened();
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                    .Be(newFilterValue);
+            }
         }
 
         [Test]
@@ -169,46 +179,110 @@
             var result = administratorController.UnlockAccount(1);
 
             // Then
-            A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
-            result.Should().BeRedirectToActionResult().WithActionName("Index");
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.UpdateAdminUserFailedLoginCount(1, 0)).MustHaveHappened();
+                result.Should().BeRedirectToActionResult().WithActionName("Index");
+            }
+        }
+
+        [Test]
+        public void DeactivateAdminUser_returns_not_found_when_trying_to_access_page_for_own_admin_account()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var loggedInAdminUser = adminUser;
+
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
+
+            // When
+            var result = administratorController.DeactivateAdmin(adminUser.Id, 1);
+
+            // Then
+            result.Should().BeNotFoundResult();
         }
 
         [Test]
         public void DeactivateAdminUser_does_not_deactivate_admin_user_without_confirmation()
         {
             // Given
-            var adminUserId = UserTestHelper.GetDefaultAdminUser().Id;
             const string expectedErrorMessage = "You must confirm before deactivating this account";
+            var adminUser = UserTestHelper.GetDefaultAdminUser(8);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser();
+
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
 
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = false).Build();
-            administratorController.ModelState.AddModelError(nameof(DeactivateAdminViewModel.Confirm), expectedErrorMessage);
+            administratorController.ModelState.AddModelError(
+                nameof(DeactivateAdminViewModel.Confirm),
+                expectedErrorMessage
+            );
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUserId, deactivateViewModel);
+            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
 
             // Then
-            result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
-            administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage.Should()
-                .BeEquivalentTo(expectedErrorMessage);
-            A.CallTo(() => userDataService.DeactivateAdmin(adminUserId)).MustNotHaveHappened();
+            using (new AssertionScope())
+            {
+                result.Should().BeViewResult().WithDefaultViewName().ModelAs<DeactivateAdminViewModel>();
+                administratorController.ModelState[nameof(DeactivateAdminViewModel.Confirm)].Errors[0].ErrorMessage
+                    .Should()
+                    .BeEquivalentTo(expectedErrorMessage);
+                A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
+            }
         }
 
         [Test]
         public void DeactivateAdminUser_deactivates_admin_user_with_confirmation()
         {
             // Given
-            var adminUserId = UserTestHelper.GetDefaultAdminUser().Id;
-            A.CallTo(() => userDataService.DeactivateAdmin(adminUserId)).DoesNothing();
+            var adminUser = UserTestHelper.GetDefaultAdminUser(8);
+            var loggedInAdminUser = UserTestHelper.GetDefaultAdminUser();
+
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
+
+            A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).DoesNothing();
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUserId, deactivateViewModel);
+            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
 
             // Then
-            A.CallTo(() => userDataService.DeactivateAdmin(adminUserId)).MustHaveHappened();
-            result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustHaveHappened();
+                result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
+            }
+        }
+
+        [Test]
+        public void DeactivateAdminUser_submit_returns_not_found_when_trying_to_deactivate_own_admin_account()
+        {
+            // Given
+            var adminUser = UserTestHelper.GetDefaultAdminUser();
+            var loggedInAdminUser = adminUser;
+
+            A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
+            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
+
+            A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).DoesNothing();
+            var deactivateViewModel =
+                Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
+
+            // When
+            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).MustNotHaveHappened();
+                result.Should().BeNotFoundResult();
+            }
         }
     }
 }

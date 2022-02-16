@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
-            "/TrackingSystem/Centre/Administrators/1/DeactivateAdmin",
+            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin",
             "Are you sure you would like to deactivate this admin account?"
         )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
