@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using DigitalLearningSolutions.Web.ViewModels.RoleProfiles;
 

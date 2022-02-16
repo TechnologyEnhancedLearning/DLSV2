@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,7 +28,7 @@
             sortDirection,
             filterBy,
             itemsPerPage ?? DefaultItemsPerPage,
-            searchLabel: "Search delegates"
+            "Search delegates"
         )
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
@@ -62,7 +63,7 @@
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
             DelegateSortByOptions.Name,
-            DelegateSortByOptions.RegistrationDate
+            DelegateSortByOptions.RegistrationDate,
         };
 
         public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;

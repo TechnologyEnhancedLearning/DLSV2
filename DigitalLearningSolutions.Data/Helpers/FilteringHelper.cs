@@ -1,10 +1,10 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Data.Helpers
 {
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Extensions;
     using Microsoft.AspNetCore.Http;
 
     public static class FilteringHelper

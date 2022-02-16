@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -17,16 +17,17 @@
             AdminRoleFilterOptions.Trainer,
             AdminRoleFilterOptions.ContentCreatorLicense,
             AdminRoleFilterOptions.CmsAdministrator,
-            AdminRoleFilterOptions.CmsManager
+            AdminRoleFilterOptions.CmsManager,
         };
 
         public static readonly IEnumerable<FilterOptionViewModel> AccountStatusOptions = new[]
         {
             AdminAccountStatusFilterOptions.IsLocked,
-            AdminAccountStatusFilterOptions.IsNotLocked
+            AdminAccountStatusFilterOptions.IsNotLocked,
         };
 
-        public static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories){
+        public static IEnumerable<FilterOptionViewModel> GetCategoryOptions(IEnumerable<string> categories)
+        {
             return categories.Select(
                 c => new FilterOptionViewModel(
                     c,

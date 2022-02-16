@@ -1,0 +1,20 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model LearningLogEntryViewModel
+
+<tr role="row" class="nhsuk-table__row searchable-element">
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">When </span><span data-name-for-sorting="when">@Model.When</span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Learning time (minutes) </span><span data-name-for-sorting="learning-time">@Model.LearningTime</span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Assessment taken</span>@Model.AssessmentTaken
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Assessment score</span><span data-name-for-sorting="assessment-score">@Model.AssessmentScore</span>
+  </td>
+  <td role="cell" class="nhsuk-table__cell">
+    <span class="nhsuk-table-responsive__heading">Assessment status</span>@Model.AssessmentStatus
+  </td>
+</tr>

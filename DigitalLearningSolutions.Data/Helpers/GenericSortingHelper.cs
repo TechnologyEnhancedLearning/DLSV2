@@ -1,19 +1,22 @@
-﻿namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Data.Helpers
 {
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Extensions;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public static class GenericSortingHelper
     {
+        public const string DefaultSortOption = "SearchableName";
+        public const string Descending = "Descending";
+        public const string Ascending = "Ascending";
+
         /// <summary>
         ///     Sorts a list of items by property name or names.
         /// </summary>
@@ -35,7 +38,7 @@
 
             var sortByArray = sortBy.Split(',');
 
-            var result = sortDirection == BaseSearchablePageViewModel.Descending
+            var result = sortDirection == Descending
                 ? items.OrderByDescending(sortByArray[0])
                 : items.OrderBy(sortByArray[0]);
 
@@ -43,7 +46,7 @@
             {
                 for (var i = 1; i < sortByArray.Length; i++)
                 {
-                    result = sortDirection == BaseSearchablePageViewModel.Descending
+                    result = sortDirection == Descending
                         ? result.ThenByDescending(sortByArray[i])
                         : result.ThenBy(sortByArray[i]);
                 }
@@ -125,7 +128,7 @@
             1,
             nameof(FullName),
             "Name",
-            nameof(CourseDelegate.FullName)
+            nameof(CourseDelegate.FullNameForSearchingSorting)
         );
 
         public static readonly CourseDelegatesSortByOption LastUpdatedDate = new CourseDelegatesSortByOption(
@@ -184,7 +187,7 @@
     public static class DefaultSortByOptions
     {
         public static readonly (string DisplayText, string PropertyName) Name =
-            (BaseSearchablePageViewModel.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
+            (GenericSortingHelper.DefaultSortOption, nameof(BaseSearchableItem.SearchableName));
     }
 
     public static class DelegateSortByOptions
@@ -206,5 +209,17 @@
 
         public static readonly (string DisplayText, string PropertyName) NumberOfCourses =
             ("Number of courses", nameof(Group.CoursesCount));
+    }
+
+    public static class LearningLogSortByOptions
+    {
+        public static readonly (string DisplayText, string PropertyName) When =
+            ("When", nameof(LearningLogEntry.When));
+
+        public static readonly (string DisplayText, string PropertyName) LearningTime =
+            ("Time", nameof(LearningLogEntry.LearningTime));
+
+        public static readonly (string DisplayText, string PropertyName) AssessmentScore =
+            ("Assessment score", nameof(LearningLogEntry.AssessmentScore));
     }
 }

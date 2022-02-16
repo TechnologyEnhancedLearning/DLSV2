@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public interface ICourseService
@@ -92,16 +93,18 @@
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
         int CreateNewCentreCourse(Customisation customisation);
+
+        LearningLog? GetLearningLogDetails(int progressId);
     }
 
     public class CourseService : ICourseService
     {
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
+        private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
 
         public CourseService(
             ICourseDataService courseDataService,
@@ -372,6 +375,20 @@
             var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
             var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
             return filteredApplications.OrderBy(a => a.ApplicationName);
+        }
+
+        public LearningLog? GetLearningLogDetails(int progressId)
+        {
+            var delegateCourseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (delegateCourseInfo == null)
+            {
+                return null;
+            }
+
+            var learningLogEntries = progressDataService.GetLearningLogEntries(progressId);
+
+            return new LearningLog(delegateCourseInfo, learningLogEntries);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

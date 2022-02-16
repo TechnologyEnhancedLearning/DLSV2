@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,7 +20,14 @@
             string groupName,
             string? searchString,
             string? filterBy
-        ) : base(searchString, page, true, DefaultSortByOptions.Name.PropertyName, Ascending, filterBy)
+        ) : base(
+            searchString,
+            page,
+            true,
+            DefaultSortByOptions.Name.PropertyName,
+            GenericSortingHelper.Ascending,
+            filterBy
+        )
         {
             var searchedItems = GenericSearchHelper.SearchItems(delegateUserCards.AsQueryable(), SearchString);
             var paginatedItems = SortFilterAndPaginate(searchedItems);

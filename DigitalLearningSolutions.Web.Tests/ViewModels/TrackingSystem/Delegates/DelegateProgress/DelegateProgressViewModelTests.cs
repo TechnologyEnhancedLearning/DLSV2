@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.DelegateProgress
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.Courses;

@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -24,13 +24,14 @@
             IEnumerable<SearchableFaq> faqs,
             int page,
             string? searchString
-        ) : base(searchString, page, false, FaqSortBy, Descending, searchLabel: "Search faqs")
+        ) : base(searchString, page, false, FaqSortBy, GenericSortingHelper.Descending, searchLabel: "Search faqs")
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
             CurrentSystemBaseUrl = currentSystemBaseUrl;
 
-            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(faqs, SearchString, MatchCutOffScore).ToList();
+            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(faqs, SearchString, MatchCutOffScore)
+                .ToList();
             var faqsToShow = SortFilterAndPaginate(searchedItems);
             Faqs = faqsToShow.Select(f => new SearchableFaqViewModel(DlsSubApplication, f));
         }

@@ -313,3 +313,18 @@ nav, .nhsuk-header__navigation, #header-navigation {
   overflow: hidden;
   white-space: nowrap;
 }
+.nhsuk-header__link--service {
+  @include mq($from: large-desktop) {
+    align-items:unset;
+  }
+}
+.header-beta {
+  color: #c8e4ff;
+  font-family: FrutigerLTW01-55Roman, Arial, sans-serif;
+  margin-left: 2px;
+  text-transform: uppercase;
+
+  &.header-beta--dark {
+    color: $color_nhsuk-dark-pink;
+  }
+}

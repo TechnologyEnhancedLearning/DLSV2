@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
@@ -354,6 +355,40 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void GetLearningLogEntries_gets_records_correctly()
+        {
+            // Given
+            const int progressId = 1;
+            var expectedRecordFromSessionsTable = new LearningLogEntry
+            {
+                When = new DateTime(2010, 09, 22, 06, 52, 09, 540),
+                LearningTime = 51,
+                AssessmentScore = null,
+                AssessmentTaken = null,
+                AssessmentStatus = null,
+            };
+            var expectedRecordFromAssessAttemptsTable = new LearningLogEntry
+            {
+                When = new DateTime(2010, 10, 13, 07, 00, 26, 640),
+                LearningTime = null,
+                AssessmentScore = 100,
+                AssessmentTaken = "Using Windows",
+                AssessmentStatus = true,
+            };
+
+            // When
+            var result = progressDataService.GetLearningLogEntries(progressId).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(88);
+                result[0].Should().BeEquivalentTo(expectedRecordFromSessionsTable);
+                result[82].Should().BeEquivalentTo(expectedRecordFromAssessAttemptsTable);
             }
         }
     }

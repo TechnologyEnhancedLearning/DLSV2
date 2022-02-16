@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
@@ -14,15 +14,23 @@
             IEnumerable<string> categories,
             string? searchString,
             string? filterBy,
-            int page, 
-            AdminUser loggedInAdminUser
-        ) : base(searchString, page, true, filterBy: filterBy, searchLabel: "Search administrators")
+            int page,
+            AdminUser loggedInAdminUser,
+            int? itemsPerPage
+        ) : base(
+            searchString,
+            page,
+            true,
+            filterBy: filterBy,
+            itemsPerPage: itemsPerPage ?? DefaultItemsPerPage,
+            searchLabel: "Search administrators"
+        )
         {
             CentreId = centreId;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 adminUsers.AsQueryable(),
-                DefaultSortOption,
-                Ascending
+                GenericSortingHelper.DefaultSortOption,
+                GenericSortingHelper.Ascending
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
             var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
@@ -30,7 +38,9 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
-            Admins = paginatedItems.Select(adminUser => new SearchableAdminViewModel(adminUser, loggedInAdminUser, returnPage));
+            Admins = paginatedItems.Select(
+                adminUser => new SearchableAdminViewModel(adminUser, loggedInAdminUser, returnPage)
+            );
 
             Filters = new[]
             {
@@ -44,7 +54,7 @@
                     "AccountStatus",
                     "Account Status",
                     AdministratorsViewModelFilterOptions.AccountStatusOptions
-                )
+                ),
             };
         }
 
@@ -52,7 +62,7 @@
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
-            DefaultSortByOptions.Name
+            DefaultSortByOptions.Name,
         };
 
         public IEnumerable<SearchableAdminViewModel> Admins { get; }

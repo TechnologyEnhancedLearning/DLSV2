@@ -31,9 +31,13 @@
             Export all
           </a>
           <a class="nhsuk-button nhsuk-button--secondary heading-button"
+             id="export-current"
              asp-controller="CourseDelegates"
              asp-action="DownloadCurrent"
              asp-route-customisationId="@Model.CustomisationId"
+             asp-route-sortBy="@Model.CourseDetails?.SortBy"
+             asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
+             asp-route-filterBy="@Model.CourseDetails?.FilterBy"
              role="button">
             Export current
           </a>

@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.LearningPortalController
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available;
     using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +11,7 @@
         public IActionResult Available(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             int page = 1
         )
         {

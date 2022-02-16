@@ -34,7 +34,7 @@
             // Do not include decimal place below GB
             var decimalPlaces = place <= 2 ? 0 : 1;
             var number = Math.Round(byteCount / Math.Pow(1024, place), decimalPlaces);
-            return (Math.Sign(byteCount) * number) + Units[place];
+            return Math.Sign(byteCount) * number + Units[place];
         }
 
         public static string? ConvertNumberToMonthsString(int numberOfMonths)
@@ -42,9 +42,14 @@
             return numberOfMonths == 0 ? null : $"{numberOfMonths} month{GetPluralitySuffix(numberOfMonths)}";
         }
 
-        public static string GetDelegateNameString(string? firstName, string lastName)
+        public static string GetNonSortableFullNameForDisplayOnly(string? firstName, string lastName)
         {
             return (string.IsNullOrEmpty(firstName) ? "" : $"{firstName} ") + lastName;
+        }
+
+        public static string GetNameWithEmailForDisplay(string name, string? email)
+        {
+            return name + (string.IsNullOrWhiteSpace(email) ? "" : $" ({email})");
         }
 
         public static string GetPluralitySuffix(int number)
