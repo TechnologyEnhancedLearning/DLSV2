@@ -72,7 +72,7 @@ namespace DigitalLearningSolutions.Data.Services
 
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
 
-        void DeactivateAdmin(int adminId);
+        void DeactivateOrDeleteAdmin(int adminId);
     }
 
     public class UserService : IUserService
@@ -417,7 +417,7 @@ namespace DigitalLearningSolutions.Data.Services
             userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
         }
 
-        public void DeactivateAdmin(int adminId)
+        public void DeactivateOrDeleteAdmin(int adminId)
         {
             if (sessionDataService.HasAdminGotSessions(adminId))
             {

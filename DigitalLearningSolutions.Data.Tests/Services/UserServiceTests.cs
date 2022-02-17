@@ -1009,14 +1009,14 @@
         }
 
         [Test]
-        public void DeactivateAdmin_calls_deactivate_if_admin_has_admin_sessions()
+        public void DeactivateOrDeleteAdmin_calls_deactivate_if_admin_has_admin_sessions()
         {
             // Given
             const int adminId = 1;
             A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(true);
 
             // When
-            userService.DeactivateAdmin(adminId);
+            userService.DeactivateOrDeleteAdmin(adminId);
 
             // Them
             using (new AssertionScope())
@@ -1027,14 +1027,14 @@
         }
 
         [Test]
-        public void DeactivateAdmin_calls_delete_if_admin_does_not_have_admin_sessions()
+        public void DeactivateOrDeleteAdmin_calls_delete_if_admin_does_not_have_admin_sessions()
         {
             // Given
             const int adminId = 1;
             A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(false);
 
             // When
-            userService.DeactivateAdmin(adminId);
+            userService.DeactivateOrDeleteAdmin(adminId);
 
             // Them
             using (new AssertionScope())

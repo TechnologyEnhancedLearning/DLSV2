@@ -245,7 +245,7 @@
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
             A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
 
-            A.CallTo(() => userService.DeactivateAdmin(adminUser.Id)).DoesNothing();
+            A.CallTo(() => userService.DeactivateOrDeleteAdmin(adminUser.Id)).DoesNothing();
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
@@ -255,7 +255,7 @@
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => userService.DeactivateAdmin(adminUser.Id)).MustHaveHappened();
+                A.CallTo(() => userService.DeactivateOrDeleteAdmin(adminUser.Id)).MustHaveHappened();
                 result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
             }
         }
