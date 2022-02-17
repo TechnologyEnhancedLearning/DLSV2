@@ -80,7 +80,8 @@
                 AND ca.CentreId = @centreId
                 AND gc.InactivatedDate IS NULL
                 AND ap.ArchivedDate IS NULL
-                AND c.Active = 1";
+                AND c.Active = 1
+                AND ap.DefaultContentTypeID <> 4";
 
         private const string GroupCourseSql = @"SELECT
                         GroupCustomisationID,
