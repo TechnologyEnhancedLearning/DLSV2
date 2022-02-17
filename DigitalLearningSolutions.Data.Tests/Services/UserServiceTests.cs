@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Castle.Core.Internal;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
@@ -13,6 +14,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Common;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class UserServiceTests
@@ -22,6 +24,7 @@
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
+        private ISessionDataService sessionDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,11 +33,13 @@
             groupsService = A.Fake<IGroupsService>();
             userVerificationService = A.Fake<IUserVerificationService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            sessionDataService = A.Fake<ISessionDataService>();
             userService = new UserService(
                 userDataService,
                 groupsService,
                 userVerificationService,
-                centreContractAdminUsageService
+                centreContractAdminUsageService,
+                sessionDataService
             );
         }
 
@@ -1001,6 +1006,42 @@
             // Then
             A.CallTo(() => userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void DeactivateAdmin_calls_deactivate_if_admin_has_admin_sessions()
+        {
+            // Given
+            const int adminId = 1;
+            A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(true);
+
+            // When
+            userService.DeactivateAdmin(adminId);
+
+            // Them
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void DeactivateAdmin_calls_delete_if_admin_does_not_have_admin_sessions()
+        {
+            // Given
+            const int adminId = 1;
+            A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(false);
+
+            // When
+            userService.DeactivateAdmin(adminId);
+
+            // Them
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustNotHaveHappened();
+            }
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

@@ -1,15 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
+    using System.Linq;
     using Dapper;
 
     public interface ISessionDataService
     {
         int StartOrRestartDelegateSession(int candidateId, int customisationId);
+
         void StopDelegateSession(int candidateId);
+
         void UpdateDelegateSessionDuration(int sessionId);
 
         int StartAdminSession(int adminId);
+
+        bool HasAdminGotSessions(int adminId);
     }
 
     public class SessionDataService : ISessionDataService
@@ -58,7 +63,16 @@
                   VALUES (@adminId, GetUTCDate(), 0, 0);
 
                   SELECT SCOPE_IDENTITY();",
-                new { adminId });
+                new { adminId }
+            );
+        }
+
+        public bool HasAdminGotSessions(int adminId)
+        {
+            return connection.Query<bool>(
+                "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
+                new { adminId }
+            ).SingleOrDefault();
         }
     }
 }

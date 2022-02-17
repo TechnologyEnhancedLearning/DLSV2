@@ -127,6 +127,8 @@
             string? professionalRegistrationNumber,
             bool hasBeenPromptedForPrn
         );
+
+        void DeleteAdminUser(int adminId);
     }
 
     public partial class UserDataService : IUserDataService

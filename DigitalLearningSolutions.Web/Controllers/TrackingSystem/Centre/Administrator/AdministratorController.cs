@@ -175,7 +175,7 @@
                 return View(model);
             }
 
-            userDataService.DeactivateAdmin(adminId);
+            userService.DeactivateAdmin(adminId);
 
             return View("DeactivateAdminConfirmation");
         }
