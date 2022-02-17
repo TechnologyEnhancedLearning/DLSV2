@@ -3,11 +3,11 @@
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@
             int page = 1,
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             string? filterBy = null,
             string? filterValue = null,
             int? itemsPerPage = null
@@ -78,6 +78,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [Route("AllDelegateItems")]
         public IActionResult AllDelegateItems()
         {

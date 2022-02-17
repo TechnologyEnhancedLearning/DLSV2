@@ -4,13 +4,18 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
 
     public interface ICourseService
     {
         public IEnumerable<CourseStatistics> GetTopCourseStatistics(int centreId, int? categoryId);
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId);
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            );
 
         public bool DelegateHasCurrentProgress(int delegateId, int customisationId);
 
@@ -88,16 +93,18 @@
         IEnumerable<string> GetTopicsForCentreAndCentrallyManagedCourses(int centreId);
 
         int CreateNewCentreCourse(Customisation customisation);
+
+        LearningLog? GetLearningLogDetails(int progressId);
     }
 
     public class CourseService : ICourseService
     {
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
+        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseDataService courseDataService;
+        private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IProgressDataService progressDataService;
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
 
         public CourseService(
             ICourseDataService courseDataService,
@@ -122,10 +129,19 @@
             return allCourses.Where(c => c.Active).OrderByDescending(c => c.InProgressCount);
         }
 
-        public IEnumerable<CourseStatistics> GetCentreSpecificCourseStatistics(int centreId, int? categoryId)
+        public IEnumerable<CourseStatisticsWithAdminFieldResponseCounts>
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(
+                int centreId,
+                int? categoryId
+            )
         {
             var allCourses = courseDataService.GetCourseStatisticsAtCentreFilteredByCategory(centreId, categoryId);
-            return allCourses.Where(c => c.CentreId == centreId);
+            return allCourses.Where(c => c.CentreId == centreId).Select(
+                c => new CourseStatisticsWithAdminFieldResponseCounts(
+                    c,
+                    courseAdminFieldsService.GetCustomPromptsWithAnswerCountsForCourse(c.CustomisationId, centreId)
+                )
+            );
         }
 
         public IEnumerable<DelegateCourseDetails> GetAllCoursesInCategoryForDelegate(
@@ -287,7 +303,7 @@
             var allPossibleCourses = courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId)
                 .Where(c => c.Active);
 
-            var groupCourseIds = groupsDataService.GetGroupCoursesForCentre(centreId)
+            var groupCourseIds = groupsDataService.GetGroupCoursesVisibleToCentre(centreId)
                 .Where(gc => gc.IsUsable && gc.GroupId == groupId)
                 .Select(gc => gc.CustomisationId);
 
@@ -359,6 +375,20 @@
             var activeApplications = courseDataService.GetApplicationsAvailableToCentreByCategory(centreId, categoryId);
             var filteredApplications = activeApplications.Where(c => c.CourseTopicId == topicId || topicId == null);
             return filteredApplications.OrderBy(a => a.ApplicationName);
+        }
+
+        public LearningLog? GetLearningLogDetails(int progressId)
+        {
+            var delegateCourseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (delegateCourseInfo == null)
+            {
+                return null;
+            }
+
+            var learningLogEntries = progressDataService.GetLearningLogEntries(progressId);
+
+            return new LearningLog(delegateCourseInfo, learningLogEntries);
         }
 
         public DelegateCourseDetails GetDelegateAttemptsAndCourseCustomPrompts(

@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -14,6 +15,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -48,7 +50,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             bool selectAll = false
         )
         {
-            var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+            var newFilterBy = FilteringHelper.GetFilterBy(
+                filterBy,
+                filterValue,
+                Request,
+                EmailDelegateFilterCookieName
+            );
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
             var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
@@ -73,7 +80,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             if (!ModelState.IsValid)
             {
-                var newFilterBy = FilteringHelper.GetFilterBy(filterBy, filterValue, Request, EmailDelegateFilterCookieName);
+                var newFilterBy = FilteringHelper.GetFilterBy(
+                    filterBy,
+                    filterValue,
+                    Request,
+                    EmailDelegateFilterCookieName
+                );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
                 var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterBy)
@@ -81,14 +93,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     SelectedDelegateIds = model.SelectedDelegateIds,
                     Day = model.Day,
                     Month = model.Month,
-                    Year = model.Year
+                    Year = model.Year,
                 };
                 return View(viewModel);
             }
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
             var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
-            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = ConfigHelper.GetAppRootPath(ConfigHelper.GetAppConfig());
 
             passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
 

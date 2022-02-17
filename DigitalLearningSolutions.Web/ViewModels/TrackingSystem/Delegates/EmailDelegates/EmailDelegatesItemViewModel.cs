@@ -1,12 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
-    using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
+    using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper;
 
     public class EmailDelegatesItemViewModel
     {

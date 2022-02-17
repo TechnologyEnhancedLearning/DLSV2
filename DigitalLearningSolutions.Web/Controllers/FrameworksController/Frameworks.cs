@@ -1,5 +1,4 @@
 ﻿using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Web.Helpers;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks.Dashboard;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public partial class FrameworksController
     {
@@ -43,7 +42,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/View/{tabname}/{page=1:int}")]
         public IActionResult ViewFrameworks(string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             int page = 1,
             string tabname = "All")
         {
@@ -216,7 +215,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var sortedItems = GenericSortingHelper.SortAllItems(
                frameworks.AsQueryable(),
                FrameworkSortByOptions.FrameworkName.PropertyName,
-               BaseSearchablePageViewModel.Ascending
+               GenericSortingHelper.Ascending
            );
             var similarItems = GenericSearchHelper.SearchItems(sortedItems, frameworkname, 55, true);
             var brandedFrameworks = similarItems.ToList();

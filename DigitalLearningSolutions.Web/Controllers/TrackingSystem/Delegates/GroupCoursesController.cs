@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -175,7 +176,8 @@
                 completeWithinMonths,
                 User.GetAdminId()!.Value,
                 formData.CohortLearners,
-                formData.SupervisorId
+                formData.SupervisorId,
+                centreId
             );
 
             var confirmationViewModel = new AddCourseConfirmationViewModel(

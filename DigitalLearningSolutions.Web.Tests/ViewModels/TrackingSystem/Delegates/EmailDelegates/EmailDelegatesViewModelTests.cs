@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using FluentAssertions;
     using NUnit.Framework;
@@ -29,7 +29,7 @@
             new DelegateUserCard { Id = 13, FirstName = "m", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard { Id = 14, FirstName = "n", LastName = "Surname", Answer4 = "C 2" },
             new DelegateUserCard
-                { Id = 15, FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) }
+                { Id = 15, FirstName = "o", LastName = "Surname", DateRegistered = DateTime.Today.AddDays(1) },
         };
 
         [Test]
@@ -73,7 +73,7 @@
             var customPrompts = new List<CustomPrompt>
             {
                 new CustomPrompt(1, "free text", null, true),
-                new CustomPrompt(2, "with options", "A\r\nB", true)
+                new CustomPrompt(2, "with options", "A\r\nB", true),
             };
 
             // When

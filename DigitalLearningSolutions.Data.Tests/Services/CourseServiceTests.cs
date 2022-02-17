@@ -64,13 +64,15 @@
         }
 
         [Test]
-        public void GetCentreSpecificCourseStatistics_should_only_return_course_statistics_for_centre()
+        public void
+            GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts_should_only_return_course_statistics_for_centre()
         {
             // Given
             var expectedIdOrder = new List<int> { 1, 2 };
 
             // When
-            var resultIdOrder = courseService.GetCentreSpecificCourseStatistics(CentreId, AdminCategoryId)
+            var resultIdOrder = courseService
+                .GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(CentreId, AdminCategoryId)
                 .Select(r => r.CustomisationId).ToList();
 
             // Then
@@ -790,7 +792,7 @@
                 .Build();
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
                 .Returns(new List<GroupCourse>());
 
             // When
@@ -814,7 +816,7 @@
             var groupCourse = new GroupCourse { CustomisationId = 2, Active = true, GroupId = 1 };
             A.CallTo(() => courseDataService.GetCoursesAvailableToCentreByCategory(centreId, categoryId))
                 .Returns(courses);
-            A.CallTo(() => groupsDataService.GetGroupCoursesForCentre(centreId))
+            A.CallTo(() => groupsDataService.GetGroupCoursesVisibleToCentre(centreId))
                 .Returns(new List<GroupCourse> { groupCourse });
 
             // When
@@ -898,6 +900,54 @@
                 result.Should().Be(123);
                 A.CallTo(
                     () => courseDataService.CreateNewCentreCourse(customisation)
+                ).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        [Test]
+        public void GetLearningLogDetails_returns_null_when_course_details_cannot_be_found()
+        {
+            // Given
+            const int progressId = 1;
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(null);
+
+            // When
+            var result = courseService.GetLearningLogDetails(progressId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeNull();
+                A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => progressDataService.GetLearningLogEntries(progressId)
+                ).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void GetLearningLogDetails_returns_course_and_log_details_when_available()
+        {
+            // Given
+            const int progressId = 1;
+            var courseDetails = Builder<DelegateCourseInfo>.CreateNew().Build();
+            var learningLogEntries = Builder<LearningLogEntry>.CreateListOfSize(5).Build();
+            var expectedLearningLog = new LearningLog(courseDetails, learningLogEntries);
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId)).Returns(courseDetails);
+            A.CallTo(() => progressDataService.GetLearningLogEntries(progressId)).Returns(learningLogEntries);
+
+            // When
+            var result = courseService.GetLearningLogDetails(progressId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().BeEquivalentTo(expectedLearningLog);
+                A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(progressId))
+                    .MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => progressDataService.GetLearningLogEntries(progressId)
                 ).MustHaveHappenedOnceExactly();
             }
         }

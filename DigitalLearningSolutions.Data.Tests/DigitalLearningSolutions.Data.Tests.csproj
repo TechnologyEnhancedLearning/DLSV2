@@ -46,11 +46,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Extensions\" />
-      <Folder Include="Services\TutorialContentDataServiceTests\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="TestData\EvaluationSummaryDownloadTest.xlsx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

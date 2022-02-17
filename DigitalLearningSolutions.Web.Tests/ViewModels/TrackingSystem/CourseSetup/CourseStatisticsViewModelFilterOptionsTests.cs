@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
@@ -26,7 +26,7 @@
                     "CategoryName" + FilteringHelper.Separator + "CategoryName" + FilteringHelper.Separator +
                     "Category 2",
                     FilterStatus.Default
-                )
+                ),
             }
         );
 
@@ -46,7 +46,7 @@
                     "Status" + FilteringHelper.Separator + "Active" + FilteringHelper.Separator +
                     "true",
                     FilterStatus.Success
-                )
+                ),
             }
         );
 
@@ -66,7 +66,7 @@
                     "CourseTopic" + FilteringHelper.Separator + "CourseTopic" + FilteringHelper.Separator +
                     "Topic 2",
                     FilterStatus.Default
-                )
+                ),
             }
         );
 
@@ -86,6 +86,26 @@
                     "Visibility" + FilteringHelper.Separator + "HideInLearnerPortal" + FilteringHelper.Separator +
                     "false",
                     FilterStatus.Success
+                ),
+            }
+        );
+
+        private readonly FilterViewModel expectedHasAdminFieldsFilterViewModel = new FilterViewModel(
+            "HasAdminFields",
+            "Admin fields",
+            new[]
+            {
+                new FilterOptionViewModel(
+                    "Has admin fields",
+                    "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
+                    "true",
+                    FilterStatus.Default
+                ),
+                new FilterOptionViewModel(
+                    "Doesn't have admin fields",
+                    "HasAdminFields" + FilteringHelper.Separator + "HasAdminFields" + FilteringHelper.Separator +
+                    "false",
+                    FilterStatus.Default
                 )
             }
         );
@@ -108,7 +128,8 @@
                     expectedCategoriesFilterViewModel,
                     expectedTopicsFilterViewModel,
                     expectedStatusFilterViewModel,
-                    expectedVisibilityFilterViewModel
+                    expectedVisibilityFilterViewModel,
+                    expectedHasAdminFieldsFilterViewModel
                 }
             );
         }

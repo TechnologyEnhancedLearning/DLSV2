@@ -11,7 +11,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -23,7 +22,7 @@
         public async Task<IActionResult> Current(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Descending,
+            string sortDirection = GenericSortingHelper.Descending,
             int page = 1
         )
         {

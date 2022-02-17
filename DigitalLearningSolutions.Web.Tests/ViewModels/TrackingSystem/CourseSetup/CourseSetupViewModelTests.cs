@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
@@ -11,23 +12,23 @@
 
     public class CourseSetupViewModelTests
     {
-        private readonly IEnumerable<CourseStatistics> courses = new List<CourseStatistics>
+        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
         {
-            new CourseStatistics { ApplicationName = "A" },
-            new CourseStatistics { ApplicationName = "B" },
-            new CourseStatistics { ApplicationName = "C" },
-            new CourseStatistics { ApplicationName = "D" },
-            new CourseStatistics { ApplicationName = "E" },
-            new CourseStatistics { ApplicationName = "F" },
-            new CourseStatistics { ApplicationName = "G" },
-            new CourseStatistics { ApplicationName = "H" },
-            new CourseStatistics { ApplicationName = "I" },
-            new CourseStatistics { ApplicationName = "J" },
-            new CourseStatistics { ApplicationName = "K" },
-            new CourseStatistics { ApplicationName = "L" },
-            new CourseStatistics { ApplicationName = "M" },
-            new CourseStatistics { ApplicationName = "N" },
-            new CourseStatistics { ApplicationName = "O" }
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
+            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" }
         };
 
         [Test]
@@ -40,7 +41,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 null
@@ -65,7 +66,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -86,12 +87,12 @@
             var categories = new[]
             {
                 "Category 1",
-                "Category 2"
+                "Category 2",
             };
             var topics = new[]
             {
                 "Topic 1",
-                "Topic 2"
+                "Topic 2",
             };
 
             var expectedFilters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
@@ -103,7 +104,7 @@
                 topics,
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 2,
                 null
@@ -125,7 +126,7 @@
                 new List<string>(),
                 null,
                 nameof(CourseStatistics.SearchableName),
-                BaseSearchablePageViewModel.Ascending,
+                GenericSortingHelper.Ascending,
                 null,
                 1,
                 itemsPerPage

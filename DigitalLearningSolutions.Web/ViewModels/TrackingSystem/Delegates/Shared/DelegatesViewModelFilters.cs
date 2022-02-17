@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -30,7 +31,7 @@
 
         public static IEnumerable<FilterOptionViewModel> GetCustomPromptOptions(CustomPrompt customPrompt)
         {
-            string filterValueName =
+            var filterValueName =
                 CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
 
             var options = customPrompt.Options.Select(
@@ -73,9 +74,9 @@
 
         private static string GetFilterValueForCustomField(CustomFieldViewModel customField)
         {
-            string filterValueName =
+            var filterValueName =
                 CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-            string propertyValue = string.IsNullOrEmpty(customField.Answer)
+            var propertyValue = string.IsNullOrEmpty(customField.Answer)
                 ? FilteringHelper.EmptyValue.ToString()
                 : customField.Answer;
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);

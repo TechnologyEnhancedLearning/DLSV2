@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers.FilterOptions
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -35,6 +36,31 @@
             "Visible in Learning Portal",
             FilteringHelper.BuildFilterValueString(Group, nameof(CourseStatistics.HideInLearnerPortal), "false"),
             FilterStatus.Success
+        );
+    }
+
+    public static class CourseHasAdminFieldsFilterOptions
+    {
+        private const string Group = "HasAdminFields";
+
+        public static readonly FilterOptionViewModel HasAdminFields = new FilterOptionViewModel(
+            "Has admin fields",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                "true"
+            ),
+            FilterStatus.Default
+        );
+
+        public static readonly FilterOptionViewModel DoesNotHaveAdminFields = new FilterOptionViewModel(
+            "Doesn't have admin fields",
+            FilteringHelper.BuildFilterValueString(
+                Group,
+                nameof(CourseStatisticsWithAdminFieldResponseCounts.HasAdminFields),
+                "false"
+            ),
+            FilterStatus.Default
         );
     }
 }

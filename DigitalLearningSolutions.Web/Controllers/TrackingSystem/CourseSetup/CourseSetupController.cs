@@ -5,6 +5,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -15,7 +16,6 @@
     using DigitalLearningSolutions.Web.Models;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
@@ -61,7 +61,7 @@
         public IActionResult Index(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             string? filterBy = null,
             string? filterValue = null,
             int page = 1,
@@ -80,7 +80,7 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
             var centreCourses =
-                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
+                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
@@ -108,7 +108,7 @@
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
             var centreCourses =
-                courseService.GetCentreSpecificCourseStatistics(centreId, categoryId);
+                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);

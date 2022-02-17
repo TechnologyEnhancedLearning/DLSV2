@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -51,7 +52,7 @@
 
             return View(model);
         }
-        
+
         [HttpGet("Add/SelectDelegate/{page=1:int}")]
         public IActionResult SelectDelegate(
             int groupId,

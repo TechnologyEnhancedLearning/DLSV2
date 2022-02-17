@@ -227,7 +227,8 @@
                             A<int>._,
                             A<int>._,
                             A<bool>._,
-                            A<int?>._
+                            A<int?>._,
+                            A<int>._
                         )
                     )
                     .MustNotHaveHappened();
@@ -261,7 +262,8 @@
                             1,
                             ControllerContextHelper.AdminId,
                             formData.CohortLearners,
-                            formData.SupervisorId
+                            formData.SupervisorId,
+                            ControllerContextHelper.CentreId
                         )
                     )
                     .MustHaveHappenedOnceExactly();

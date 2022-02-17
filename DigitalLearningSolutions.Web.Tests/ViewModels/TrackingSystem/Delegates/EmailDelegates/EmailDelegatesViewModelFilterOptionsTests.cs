@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
@@ -20,7 +20,10 @@
 
             // When
             var result =
-                EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(jobGroups, new List<CustomPrompt>());
+                EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
+                    jobGroups,
+                    new List<CustomPrompt>()
+                );
 
             // Then
             result.Should().ContainEquivalentOf(expectedFilter);
@@ -59,7 +62,7 @@
                     "JobGroupId" + FilteringHelper.Separator +
                     "JobGroupId" + FilteringHelper.Separator + 2,
                     FilterStatus.Default
-                )
+                ),
             };
             var jobGroupFilter = new FilterViewModel("JobGroupId", "Job Group", jobGroupOptions);
 
@@ -96,7 +99,7 @@
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
-                )
+                ),
             };
             var customPrompt4Options = new[]
             {
@@ -123,12 +126,12 @@
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
-                )
+                ),
             };
             var customPromptFilters = new List<FilterViewModel>
             {
                 new FilterViewModel("CustomPrompt1", "First prompt", customPrompt1Options),
-                new FilterViewModel("CustomPrompt4", "Fourth prompt", customPrompt4Options)
+                new FilterViewModel("CustomPrompt4", "Fourth prompt", customPrompt4Options),
             };
 
             return (customPrompts, customPromptFilters);

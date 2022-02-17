@@ -306,7 +306,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         cu.HideInLearnerPortal,
                         cc.CategoryName,
                         ct.CourseTopic,
-                        cu.LearningTimeMins AS LearningMinutes
+                        cu.LearningTimeMins AS LearningMinutes,
+                        cu.IsAssessed
                     FROM dbo.Customisations AS cu
                     INNER JOIN dbo.CentreApplications AS ca ON ca.ApplicationID = cu.ApplicationID
                     INNER JOIN dbo.Applications AS ap ON ap.ApplicationID = ca.ApplicationID
