@@ -3,7 +3,7 @@
 
 @{
   var errorHasOccured = !ViewData.ModelState.IsValid;
-  var title = $"Set enrolment for {Model.CourseName} course in {Model.GroupName} group";
+  var title = $"Set enrolment options for {Model.CourseName} course in {Model.GroupName} group";
   ViewData["Title"] = errorHasOccured ? $"Error: {title}" : title;
   var routeParamsForBackLink = new Dictionary<string, string> {
     { "groupId", Model.GroupId.ToString() },
