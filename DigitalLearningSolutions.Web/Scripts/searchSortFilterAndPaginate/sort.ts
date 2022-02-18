@@ -35,19 +35,19 @@ export function getSortValue(
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
     case 'DateRegistered':
-      return parseDate(getElementText(searchableElement, 'registration-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'registration-date'));
     case 'StartedDate':
-      return parseDate(getElementText(searchableElement, 'started-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'started-date'));
     case 'Enrolled':
-      return parseDate(getElementText(searchableElement, 'enrolled-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'enrolled-date'));
     case 'LastAccessed':
-      return parseDate(getElementText(searchableElement, 'accessed-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'accessed-date'));
     case 'LastUpdated':
-      return parseDate(getElementText(searchableElement, 'last-updated-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'last-updated-date'));
     case 'CompleteByDate':
-      return parseDate(getElementText(searchableElement, 'complete-by-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
-      return parseDate(getElementText(searchableElement, 'completed-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'completed-date'));
     case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
@@ -89,11 +89,6 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
   return searchableElement.element.querySelector(`[data-name-for-sorting="${elementName}"]`)?.textContent?.trim()
     ?? searchableElement.element.querySelector(`[name="${elementName}"]`)?.textContent?.trim()
     ?? '';
-}
-
-function parseDate(dateString: string): Date {
-  const date = moment(dateString, 'DD/MM/YYYY').toDate();
-  return date.toString() === 'Invalid Date' ? new Date(0) : date;
 }
 
 function parseDateAndTime(dateString: string): Date {
