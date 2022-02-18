@@ -28,12 +28,6 @@ export class SearchSortFilterAndPaginate {
 
   private readonly filterEnabled: boolean;
 
-  private spinnerContainer: HTMLElement;
-
-  private spinner: HTMLElement;
-
-  private areaToHide: HTMLElement;
-
   // Route provided should be a relative path with no leading /
   constructor(
     route: string,
@@ -43,10 +37,6 @@ export class SearchSortFilterAndPaginate {
     filterCookieName = '',
     searchableElementClassSuffixes = ['title'],
   ) {
-    this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
-    this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
-    this.areaToHide = document.getElementById('area-to-hide-while-loading') as HTMLElement;
-    this.startLoadingSpinner();
     this.page = paginationEnabled ? SearchSortFilterAndPaginate.getPageNumber() : 1;
     this.searchEnabled = searchEnabled;
     this.paginationEnabled = paginationEnabled;
@@ -76,7 +66,6 @@ export class SearchSortFilterAndPaginate {
           this.updateSearchableElementLinks(searchableData);
         }
         this.searchSortAndPaginate(searchableData, false);
-        this.stopLoadingSpinner();
       });
   }
 
@@ -293,17 +282,5 @@ export class SearchSortFilterAndPaginate {
         anchor.search = params.toString();
       });
     });
-  }
-
-  private startLoadingSpinner(): void {
-    this.spinnerContainer?.classList.remove('display-none');
-    this.spinner?.classList.remove('loading-spinner');
-    this.areaToHide?.classList.add('display-none');
-  }
-
-  private stopLoadingSpinner(): void {
-    this.spinnerContainer?.classList.add('display-none');
-    this.spinner?.classList.add('loading-spinner');
-    this.areaToHide?.classList.remove('display-none');
   }
 }

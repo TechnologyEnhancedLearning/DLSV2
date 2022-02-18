@@ -18,42 +18,39 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <vc:loading-spinner page-has-side-nav-menu="true" />
-    <div id="area-to-hide-while-loading">
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-one-third">
-          <h1 id="page-heading" class="nhsuk-heading-xl">Groups</h1>
-        </div>
-        <div class="nhsuk-grid-column-two-thirds heading-button-group">
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" asp-action="AddDelegateGroup">
-            Add
-          </a>
-          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-            Generate
-          </a>
-        </div>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-third">
+        <h1 id="page-heading" class="nhsuk-heading-xl">Groups</h1>
       </div>
-
-      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
-
-      @if (Model.NoDataFound) {
-        <p class="nhsuk-u-margin-top-4" role="alert">
-          <b>No delegate groups found.</b>
-        </p>
-      } else {
-        <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-
-        <div id="searchable-elements">
-          @foreach (var groupModel in Model.DelegateGroups) {
-            <partial name="_SearchableDelegateGroupCard" model="groupModel" />
-          }
-        </div>
-      }
-      @if (Model.TotalPages > 1) {
-        <partial name="SearchablePage/_Pagination" model="Model" />
-      }
-
+      <div class="nhsuk-grid-column-two-thirds heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" asp-action="AddDelegateGroup">
+          Add
+        </a>
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+          Generate
+        </a>
+      </div>
     </div>
+
+    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
+
+    @if (Model.NoDataFound) {
+      <p class="nhsuk-u-margin-top-4" role="alert">
+        <b>No delegate groups found.</b>
+      </p>
+    } else {
+      <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+
+      <div id="searchable-elements">
+        @foreach (var groupModel in Model.DelegateGroups) {
+          <partial name="_SearchableDelegateGroupCard" model="groupModel" />
+        }
+      </div>
+    }
+    @if (Model.TotalPages > 1) {
+      <partial name="SearchablePage/_Pagination" model="Model" />
+    }
+
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.DelegateGroups" />
     </nav>

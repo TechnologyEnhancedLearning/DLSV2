@@ -23,8 +23,7 @@
   <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
 }
 
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div class="nhsuk-grid-row area-to-hide-while-loading">
+<div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
@@ -33,8 +32,9 @@
         <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
                                       text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
       }
-      <vc:inset-text css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
-                     text="@LearningHubWarningTextHelper.AutomaticLogin" />
+      <vc:inset-text
+        css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+        text="@LearningHubWarningTextHelper.AutomaticLogin" />
     </div>
 
     <partial name="SearchablePage/_Search" model="Model" />
