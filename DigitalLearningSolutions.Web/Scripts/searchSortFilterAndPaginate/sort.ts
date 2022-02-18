@@ -75,7 +75,7 @@ export function getSortValue(
     case 'CandidateNumber':
       return getElementText(searchableElement, 'delegate-id').toLocaleLowerCase();
     case 'When':
-      return parseDate(getElementText(searchableElement, 'when'));
+      return parseDateAndTime(getElementText(searchableElement, 'when'));
     case 'LearningTime':
       return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
     case 'AssessmentScore':
@@ -94,6 +94,11 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
 function parseDate(dateString: string): Date {
   const date = moment(dateString, 'DD/MM/YYYY').toDate();
   return date.toString() === 'Invalid Date' ? new Date(0) : date;
+}
+
+function parseDateAndTime(dateString: string): Date {
+  const dateAndTime = moment(dateString, 'DD/MM/YYYY hh:mm:ss').toDate();
+  return dateAndTime.toString() === 'Invalid Date' ? new Date(0) : dateAndTime;
 }
 
 function parseNonNegativeIntOrNotApplicable(value: string): number {
