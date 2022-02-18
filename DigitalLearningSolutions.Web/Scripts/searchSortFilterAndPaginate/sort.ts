@@ -30,6 +30,7 @@ export function getSortValue(
   sortBy: string,
 ): string | number | Date {
   switch (sortBy) {
+    case 'FullNameForSearchingSorting':
     case 'SearchableName':
     case 'FullName':
     case 'Name':
