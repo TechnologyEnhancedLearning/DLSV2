@@ -127,6 +127,7 @@
             // Given
             var info = new DelegateCourseInfo
             {
+                SupervisorAdminId = null,
                 SupervisorSurname = null,
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);

@@ -18,6 +18,13 @@
         {
             AccessedVia = accessedVia;
             IsCourseActive = details.DelegateCourseInfo.IsCourseActive;
+            Supervisor = details.DelegateCourseInfo.SupervisorAdminId != null
+                ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    details.DelegateCourseInfo.SupervisorForename,
+                    details.DelegateCourseInfo.SupervisorSurname,
+                    details.DelegateCourseInfo.SupervisorAdminActive!.Value
+                )
+                : "None";
             EnrolmentMethodId = details.DelegateCourseInfo.EnrolmentMethodId;
             EnrolledByFullName = DisplayStringHelper.GetPotentiallyInactiveAdminName(
                 details.DelegateCourseInfo.EnrolledByForename,
