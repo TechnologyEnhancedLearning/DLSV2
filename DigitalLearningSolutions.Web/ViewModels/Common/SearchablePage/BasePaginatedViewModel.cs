@@ -19,11 +19,11 @@
             ItemsPerPage = itemsPerPage;
         }
 
-        public int Page { get; protected set; }
+        public virtual int Page { get; set; }
 
-        public int TotalPages { get; protected set; }
+        public virtual int TotalPages { get; set; }
 
-        public int ItemsPerPage { get; protected set; }
+        public int ItemsPerPage { get; set; }
 
         public IEnumerable<SelectListItem> ItemsPerPageSelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(ItemsPerPageOptions);
