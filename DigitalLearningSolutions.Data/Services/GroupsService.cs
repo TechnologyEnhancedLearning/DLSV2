@@ -5,7 +5,6 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -104,9 +103,9 @@
         private readonly IEmailService emailService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly ILogger<IGroupsService> logger;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
-        private readonly ILogger<IGroupsService> logger;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -408,7 +407,9 @@
             {
                 transaction.Dispose();
                 logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
-                throw new CourseAccessDeniedException($"No course with customisationId {customisationId} available at centre {centreId}");
+                throw new CourseAccessDeniedException(
+                    $"No course with customisationId {customisationId} available at centre {centreId}"
+                );
             }
 
             foreach (var groupDelegate in groupDelegates)
@@ -429,11 +430,12 @@
 
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
         {
-            var isJobGroup = groupDetails.LinkedToField == 7;
+            var isJobGroup = groupDetails.RegistrationFieldOptionId == 7;
+            var linkedToField = GetLinkedToFieldValue(groupDetails.RegistrationFieldOptionId);
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
-                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.LinkedToField);
+                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationFieldOptionId);
 
             var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
@@ -444,7 +446,7 @@
 
                 if (groupDetails.SkipDuplicateNames && groupsAtCentre.Contains(groupName))
                 {
-                    return;
+                    continue;
                 }
 
                 var newGroupId = AddDelegateGroup(
@@ -452,7 +454,7 @@
                     groupName,
                     null,
                     groupDetails.AdminId,
-                    groupDetails.LinkedToField,
+                    linkedToField,
                     groupDetails.SyncFieldChanges,
                     groupDetails.AddNewRegistrants,
                     groupDetails.PopulateExisting
@@ -462,7 +464,7 @@
                 {
                     groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         newGroupId,
-                        groupDetails.LinkedToField,
+                        linkedToField,
                         groupDetails.CentreId,
                         isJobGroup ? null : newGroupName,
                         isJobGroup ? id : (int?)null
@@ -645,6 +647,18 @@
                 .ToList<(int id, string name)>();
             var groupNamePrefix = registrationPrompt.CustomPromptText;
             return (customPromptOptions, groupNamePrefix);
+        }
+
+        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
+        {
+            return registrationFieldOptionId switch
+            {
+                4 => 5,
+                5 => 6,
+                6 => 7,
+                7 => 4,
+                _ => registrationFieldOptionId,
+            };
         }
     }
 }

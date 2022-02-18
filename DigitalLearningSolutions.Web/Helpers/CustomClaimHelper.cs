@@ -10,6 +10,11 @@
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
         }
 
+        public static int GetAdminIdKnownNotNull(this ClaimsPrincipal user)
+        {
+            return (int)user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId)!;
+        }
+
         public static int? GetCandidateId(this ClaimsPrincipal user)
         {
             var id = user.GetCustomClaimAsInt(CustomClaimTypes.LearnCandidateId);

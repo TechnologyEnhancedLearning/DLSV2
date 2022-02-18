@@ -715,47 +715,6 @@
         }
 
         [Test]
-        public void GetGroupAtCentreByName_returns_expected_group()
-        {
-            // Given
-            var expectedGroup = GroupTestHelper.GetDefaultGroup();
-            var groupName = expectedGroup.GroupLabel;
-
-            // When
-            var result = groupsDataService.GetGroupAtCentreByName(groupName, 101);
-
-            //Then
-            result.Should().BeEquivalentTo(expectedGroup);
-        }
-
-        [Test]
-        public void GetGroupAtCentreByName_returns_null_if_no_such_group_exists()
-        {
-            // Given
-            var expectedGroup = GroupTestHelper.GetDefaultGroup();
-
-            // When
-            var result = groupsDataService.GetGroupAtCentreByName("Group name that does not exist", 101);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
-        public void GetGroupAtCentreByName_returns_null_with_incorrect_centreId()
-        {
-            // Given
-            var expectedGroup = GroupTestHelper.GetDefaultGroup();
-            const int incorrectCentreId = 1;
-
-            // When
-            var result = groupsDataService.GetGroupAtCentreByName(expectedGroup.GroupLabel, incorrectCentreId);
-
-            // Then
-            result.Should().BeNull();
-        }
-
-        [Test]
         public void UpdateGroupName_updates_record()
         {
             // Given
@@ -870,8 +829,11 @@
                 var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
                 // Then
-                groupDelegates.Count.Should().Be(1);
-                groupDelegates.First().DelegateId.Should().Be(delegateId);
+                using (new AssertionScope())
+                {
+                    groupDelegates.Count.Should().Be(1);
+                    groupDelegates.First().DelegateId.Should().Be(delegateId);
+                }
             }
             finally
             {
@@ -890,12 +852,15 @@
             try
             {
                 // When
-                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 7, 101, null, 9);
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 4, 101, null, 9);
                 var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
                 // Then
-                groupDelegates.Count.Should().Be(33);
-                groupDelegates.First().DelegateId.Should().Be(delegateId);
+                using (new AssertionScope())
+                {
+                    groupDelegates.Count.Should().Be(33);
+                    groupDelegates.First().DelegateId.Should().Be(delegateId);
+                }
             }
             finally
             {

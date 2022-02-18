@@ -8,15 +8,16 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RegistrationFieldOptionId) })" />
     }
 
     <h1 class="nhsuk-heading-xl">Generate new delegate groups from registration field options</h1>
   </div>
+</div>
 
-  <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="GenerateGroups">
+<form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="GenerateGroups">
+  <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-half">
       <vc:select-list asp-for="@nameof(Model.RegistrationFieldOptionId)"
                       label="Registration field"
@@ -27,7 +28,9 @@
                       default-option="Select a registration field"
                       select-list-options="@Model.RegistrationFieldOptions" />
     </div>
+  </div>
 
+  <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
       <vc:checkboxes label=""
                      populate-with-current-values="true"
@@ -36,8 +39,10 @@
 
       <button class="nhsuk-button" type="submit" value="save">Generate new groups</button>
     </div>
-  </form>
+  </div>
+</form>
 
+<div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     <vc:cancel-link asp-controller="DelegateGroups" asp-action="Index" />
   </div>

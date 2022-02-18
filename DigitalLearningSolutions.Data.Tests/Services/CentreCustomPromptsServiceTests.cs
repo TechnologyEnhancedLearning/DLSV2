@@ -69,8 +69,6 @@
                 true
             );
             var customPrompts = new List<CustomPrompt> { expectedPrompt };
-            var expectedCustomPrompts =
-                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompts).CustomPrompts;
             A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
                 .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
 
@@ -78,9 +76,12 @@
             var result = centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
 
             // Then
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
-                .MustHaveHappenedOnceExactly();
-            result.Should().BeEquivalentTo(expectedCustomPrompts);
+            using (new AssertionScope())
+            {
+                A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
+                    .MustHaveHappenedOnceExactly();
+                result.Should().BeEquivalentTo(customPrompts);
+            }
         }
 
         [Test]
