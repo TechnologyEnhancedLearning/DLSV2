@@ -14,13 +14,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
             CustomisationId = info.CustomisationId;
             ApplicationName = info.ApplicationName;
             CustomisationName = info.CustomisationName;
-            Supervisor = info.SupervisorSurname != null
+            Supervisor = info.SupervisorAdminId != null
                 ? DisplayStringHelper.GetPotentiallyInactiveAdminName(
                     info.SupervisorForename,
                     info.SupervisorSurname,
                     info.SupervisorAdminActive!.Value
                 )
-                : null;
+                : "None";
             Enrolled = info.Enrolled.ToString(DateHelper.StandardDateFormat);
             LastUpdated = info.LastUpdated.ToString(DateHelper.StandardDateFormat);
             CompleteBy = info.CompleteBy?.ToString(DateHelper.StandardDateFormat);

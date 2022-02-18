@@ -23,9 +23,11 @@
                 SupervisorAdminId = null,
                 SupervisorForename = "Tony",
                 SupervisorSurname = "Iommi",
+                SupervisorAdminActive = true,
                 EnrolledByAdminId = null,
-                EnrolledByForename = "Geezer",
-                EnrolledBySurname = "Butler",
+                EnrolledByForename = null,
+                EnrolledBySurname = null,
+                EnrolledByAdminActive = true,
                 DelegateId = 1,
             };
             var missingNamesViewModel = new DelegateProgressViewModel(
@@ -45,9 +47,11 @@
                 SupervisorAdminId = 1,
                 SupervisorForename = "Tony",
                 SupervisorSurname = "Iommi",
+                SupervisorAdminActive = true,
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
+                EnrolledByAdminActive = true,
                 DelegateId = 2,
             };
             var fullNamesViewModel = new DelegateProgressViewModel(
@@ -111,6 +115,7 @@
                 EnrolledByAdminId = 1,
                 EnrolledByForename = "Ronnie",
                 EnrolledBySurname = "Dio",
+                EnrolledByAdminActive = true,
                 DelegateId = 1,
             };
             var viewModel = new DelegateProgressViewModel(

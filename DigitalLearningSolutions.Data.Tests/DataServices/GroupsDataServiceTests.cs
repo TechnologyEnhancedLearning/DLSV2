@@ -47,6 +47,7 @@
                 AddedByAdminId = 1,
                 AddedByFirstName = "Kevin",
                 AddedByLastName = "Whittaker (Developer)",
+                AddedByAdminActive = true,
                 LinkedToField = 4,
                 LinkedToFieldName = "Job group",
                 ShouldAddNewRegistrantsToGroup = true,

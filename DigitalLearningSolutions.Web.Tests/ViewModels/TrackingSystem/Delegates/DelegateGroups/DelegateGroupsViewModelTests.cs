@@ -15,21 +15,21 @@
     {
         private readonly Group[] groups =
         {
-            new Group { GroupLabel = "A", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
-            new Group { GroupLabel = "B", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
-            new Group { GroupLabel = "C", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
-            new Group { GroupLabel = "D", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
-            new Group { GroupLabel = "E", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin" },
-            new Group { GroupLabel = "F", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "G", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "H", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "I", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "J", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "K", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "L", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "M", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "N", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
-            new Group { GroupLabel = "O", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person" },
+            new Group { GroupLabel = "A", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin", AddedByAdminActive = true },
+            new Group { GroupLabel = "B", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin", AddedByAdminActive = true },
+            new Group { GroupLabel = "C", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin", AddedByAdminActive = true },
+            new Group { GroupLabel = "D", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin", AddedByAdminActive = true },
+            new Group { GroupLabel = "E", AddedByAdminId = 1, AddedByFirstName = "Test", AddedByLastName = "Admin", AddedByAdminActive = true },
+            new Group { GroupLabel = "F", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "G", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "H", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "I", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "J", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "K", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "L", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "M", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "N", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
+            new Group { GroupLabel = "O", AddedByAdminId = 2, AddedByFirstName = "Test", AddedByLastName = "Person", AddedByAdminActive = true },
         };
 
         [Test]
