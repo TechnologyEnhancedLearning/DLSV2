@@ -27,7 +27,7 @@
       Supervisor
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @Model.Supervisor.Forename @Model.Supervisor.Surname (@Model.Supervisor.Email)
+      @Model.Supervisor.Forename @Model.Supervisor.Surname @(Model.Supervisor.Active ? "" : "(inactive)") (@Model.Supervisor.Email)
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
