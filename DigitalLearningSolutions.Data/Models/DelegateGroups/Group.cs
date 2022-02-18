@@ -28,8 +28,6 @@
 
         public bool ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
 
-        public string AddedByName => AddedByAdminActive ? $"{AddedByFirstName} {AddedByLastName}" : "(Inactive)";
-
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? GroupLabel;

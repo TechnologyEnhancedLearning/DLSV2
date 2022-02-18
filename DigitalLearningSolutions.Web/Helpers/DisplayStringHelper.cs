@@ -52,6 +52,13 @@
             return name + (string.IsNullOrWhiteSpace(email) ? "" : $" ({email})");
         }
 
+        public static string? GetPotentiallyInactiveAdminName(string? firstName, string? lastName, bool? active)
+        {
+            return !string.IsNullOrEmpty(lastName)
+                ? GetNonSortableFullNameForDisplayOnly(firstName, lastName) + (active == true ? "" : " (inactive)")
+                : null;
+        }
+
         public static string GetPluralitySuffix(int number)
         {
             return number == 1 ? string.Empty : "s";

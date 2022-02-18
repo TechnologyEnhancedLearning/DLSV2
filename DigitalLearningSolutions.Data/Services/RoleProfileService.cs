@@ -47,9 +47,9 @@
                  WHERE (BrandID = rp.BrandID)) AS Brand, 
                  (SELECT [Name]
                  FROM    SelfAssessments AS rp2
-                 WHERE (ID = rp.ParentSelfAssessmentID)) AS ParentSelfAssessment, 
-                 (SELECT CASE WHEN Active = 1 THEN Forename + ' ' + Surname ELSE '(Inactive)' END AS Expr1
-                 FROM    AdminUsers
+                 WHERE (ID = rp.ParentSelfAssessmentID)) AS ParentSelfAssessment,
+                 (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1
+                 FROM  AdminUsers
                  WHERE (AdminID = rp.CreatedByAdminID)) AS Owner,
                  rp.Archived,
                  rp.LastEdit, 

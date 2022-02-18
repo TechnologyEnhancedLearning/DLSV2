@@ -24,21 +24,15 @@
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
-        private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
-        private readonly IUserService userService;
 
         public DelegateGroupsController(
             ICentreCustomPromptsService centreCustomPromptsService,
-            IGroupsService groupsService,
-            IUserService userService,
-            ICourseService courseService
+            IGroupsService groupsService
         )
         {
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.groupsService = groupsService;
-            this.userService = userService;
-            this.courseService = courseService;
         }
 
         [Route("{page=1:int}")]

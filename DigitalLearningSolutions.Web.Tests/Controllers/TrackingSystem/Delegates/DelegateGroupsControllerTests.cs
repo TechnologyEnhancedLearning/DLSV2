@@ -7,10 +7,8 @@
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
     using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
@@ -29,21 +27,17 @@
             CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
 
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private ICourseService courseService = null!;
 
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             groupsService = A.Fake<IGroupsService>();
-            userService = A.Fake<IUserService>();
-            courseService = A.Fake<ICourseService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
@@ -56,16 +50,14 @@
 
             delegateGroupsController = new DelegateGroupsController(
                     centreCustomPromptsService,
-                    groupsService,
-                    userService,
-                    courseService
+                    groupsService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)
                 .WithMockServices()
                 .WithMockTempData();
         }
-        
+
         [Test]
         public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
         {
@@ -140,7 +132,7 @@
             result.As<ViewResult>().Model.As<DelegateGroupsViewModel>().FilterBy.Should()
                 .Be(newFilterValue);
         }
-        
+
         [Test]
         public void DeleteGroup_redirects_to_confirmation_if_group_has_delegates()
         {
