@@ -9,9 +9,11 @@
         {
             GroupCustomisationId = groupCourse.GroupCustomisationId;
             Name = groupCourse.CourseName;
-            Supervisor = groupCourse.SupervisorAdminActive ? (groupCourse.SupervisorLastName != null
-                ? $"{groupCourse.SupervisorFirstName} {groupCourse.SupervisorLastName}"
-                : null) : "(Inactive)";
+            Supervisor = DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                groupCourse.SupervisorFirstName,
+                groupCourse.SupervisorLastName,
+                groupCourse.SupervisorAdminActive
+            );
             IsMandatory = groupCourse.IsMandatory ? "Mandatory" : "Not mandatory";
             IsAssessed = groupCourse.IsAssessed ? "Assessed" : "Not assessed";
             AddedToGroup = groupCourse.AddedToGroup.ToString(DateHelper.StandardDateFormat);
