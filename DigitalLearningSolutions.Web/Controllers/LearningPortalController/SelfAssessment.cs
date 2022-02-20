@@ -305,8 +305,9 @@
             {
                 var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
                 var filters = search.AppliedFilters.Select(f => Enum.Parse<SelfAssessmentCompetencyFilter>(f.FilterValue));
-                filteredCompetencies = (
-                    from c in competencies
+                var noResponseStatusFilterApplied = !filters.Any(f => f.IsResponseStatusFilter());
+                var noRequirementsFilterApplied = !filters.Any(f => f.IsRequirementsFilter());
+                filteredCompetencies = (from c in competencies
                     let searchTextMatchesGroup = wordsInSearchText.Any(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                     let searchTextMatchesCompetencyDescription = wordsInSearchText.Any(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                     let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
@@ -319,7 +320,8 @@
                         || (filters.Contains(SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 2))
                         || (filters.Contains(SelfAssessmentCompetencyFilter.NotMeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 1))
                     where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                       && (filters.Count() == 0 || responseStatusFilterMatchesAnyQuestion || requirementsFilterMatchesAnyQuestion)
+                       && (noResponseStatusFilterApplied || responseStatusFilterMatchesAnyQuestion)
+                       && (noRequirementsFilterApplied || requirementsFilterMatchesAnyQuestion)
                     select c).ToList();
             }
             return (filteredCompetencies ?? competencies);

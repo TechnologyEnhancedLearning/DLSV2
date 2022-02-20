@@ -24,5 +24,19 @@ namespace DigitalLearningSolutions.Web.Extensions
                     return null;
             }
         }
+
+        public static bool IsRequirementsFilter(this SelfAssessmentCompetencyFilter filter)
+        {
+            return filter == SelfAssessmentCompetencyFilter.MeetingRequirements
+                || filter == SelfAssessmentCompetencyFilter.PartiallyMeetingRequirements
+                || filter == SelfAssessmentCompetencyFilter.NotMeetingRequirements;
+        }
+
+        public static bool IsResponseStatusFilter(this SelfAssessmentCompetencyFilter filter)
+        {
+            return filter == SelfAssessmentCompetencyFilter.NotYetResponded
+                || filter == SelfAssessmentCompetencyFilter.SelfAssessed
+                || filter == SelfAssessmentCompetencyFilter.Verified;
+        }
     }
 }
