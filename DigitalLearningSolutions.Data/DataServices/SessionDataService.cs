@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System.Data;
-    using System.Linq;
     using Dapper;
 
     public interface ISessionDataService
@@ -19,7 +18,7 @@
 
     public class SessionDataService : ISessionDataService
     {
-        private const string stopSessionsSql =
+        private const string StopSessionsSql =
             @"UPDATE Sessions SET Active = 0
                WHERE CandidateId = @candidateId;";
 
@@ -33,7 +32,7 @@
         public int StartOrRestartDelegateSession(int candidateId, int customisationId)
         {
             return connection.QueryFirst<int>(
-                stopSessionsSql +
+                StopSessionsSql +
                 @"INSERT INTO Sessions (CandidateID, CustomisationID, LoginTime, Duration, Active)
                   VALUES (@candidateId, @customisationId, GetUTCDate(), 0, 1);
 
@@ -44,7 +43,7 @@
 
         public void StopDelegateSession(int candidateId)
         {
-            connection.Query(stopSessionsSql, new { candidateId });
+            connection.Query(StopSessionsSql, new { candidateId });
         }
 
         public void UpdateDelegateSessionDuration(int sessionId)
