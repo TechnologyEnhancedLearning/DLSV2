@@ -12,12 +12,12 @@
                           "Question" : Model.FirstOrDefault().QuestionLabel)
       </th>
       <th role="columnheader" class="" scope="col">
-        Self-assessment
+        Self-assessment<br />status
       </th>
       @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
       {
         <th role="columnheader" class="" scope="col">
-          Verification status
+          Verification<br />status
         </th>
       }
       <th role="columnheader" class="" scope="col">
