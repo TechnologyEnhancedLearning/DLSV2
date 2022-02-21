@@ -25,7 +25,7 @@
         private readonly ISystemNotificationsDataService systemNotificationsDataService =
             A.Fake<ISystemNotificationsDataService>();
 
-        private readonly ISupportTicketDataService ticketDataService = A.Fake<ISupportTicketDataService>();
+        private readonly ISupportTicketService supportTicketService = A.Fake<ISupportTicketService>();
         private readonly IUserDataService userDataService = A.Fake<IUserDataService>();
         private DashboardController dashboardController = null!;
 
@@ -39,14 +39,14 @@
             A.CallTo(() => courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(A<int>._, A<int>._))
                 .Returns(1);
             A.CallTo(() => userDataService.GetNumberOfActiveAdminsAtCentre(A<int>._)).Returns(1);
-            A.CallTo(() => ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(A<int>._)).Returns(1);
+            A.CallTo(() => supportTicketService.GetNumberOfTicketsForCentreAdmin(A<int>._, A<int>._)).Returns(1);
             A.CallTo(() => centresService.GetCentreRankForCentre(A<int>._)).Returns(1);
 
             dashboardController = new DashboardController(
                     userDataService,
                     centresDataService,
                     courseDataService,
-                    ticketDataService,
+                    supportTicketService,
                     centresService,
                     systemNotificationsDataService
                 ).WithMockHttpContext(httpRequest, response: httpResponse)
