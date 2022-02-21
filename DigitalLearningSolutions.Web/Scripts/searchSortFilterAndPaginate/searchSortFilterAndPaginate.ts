@@ -297,13 +297,14 @@ export class SearchSortFilterAndPaginate {
 
   private startLoadingSpinner(): void {
     this.spinnerContainer?.classList.remove('display-none');
-    this.spinner?.classList.remove('loading-spinner');
-    this.areaToHide?.classList.add('display-none');
+    this.spinner?.classList.remove('loading-spinner');;
   }
 
   private stopLoadingSpinner(): void {
     this.spinnerContainer?.classList.add('display-none');
     this.spinner?.classList.add('loading-spinner');
-    this.areaToHide?.classList.remove('display-none');
+    if (this.areaToHide !== null) {
+      this.areaToHide.id = '';
+    }
   }
 }
