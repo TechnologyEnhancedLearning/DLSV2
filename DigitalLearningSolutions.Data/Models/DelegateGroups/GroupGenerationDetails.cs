@@ -1,11 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
+    using DigitalLearningSolutions.Data.Enums;
+
     public class GroupGenerationDetails
     {
         public GroupGenerationDetails(
             int adminId,
             int centreId,
-            int registrationFieldOptionId,
+            RegistrationField registrationField,
             bool prefixGroupName,
             bool populateExisting,
             bool addNewRegistrants,
@@ -15,7 +17,7 @@
         {
             AdminId = adminId;
             CentreId = centreId;
-            RegistrationFieldOptionId = registrationFieldOptionId;
+            RegistrationField = registrationField;
             PrefixGroupName = prefixGroupName;
             PopulateExisting = populateExisting;
             AddNewRegistrants = addNewRegistrants;
@@ -25,7 +27,7 @@
 
         public int AdminId { get; set; }
         public int CentreId { get; set; }
-        public int RegistrationFieldOptionId { get; set; }
+        public RegistrationField RegistrationField { get; set; }
         public bool PrefixGroupName { get; set; }
         public bool PopulateExisting { get; set; }
         public bool AddNewRegistrants { get; set; }

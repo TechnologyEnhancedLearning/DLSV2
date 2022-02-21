@@ -425,7 +425,7 @@
         {
             connection.Execute(
                 @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedByFieldLink)
-                        SELECT @groupId, CandidateID, @linkedToField
+                        SELECT @groupId, CandidateID, 1
                         FROM Candidates
                         WHERE (CentreID = @centreID)
                           AND (Active = 1)

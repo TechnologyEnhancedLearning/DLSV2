@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
@@ -420,15 +421,15 @@
         {
             // Given
             const string groupNamePrefix = "Role";
-            const int registrationFieldOptionId = 1;
 
-            var customPromptSelectListItem = new SelectListItem(groupNamePrefix, registrationFieldOptionId.ToString());
+            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var customPromptSelectListItem = new SelectListItem(groupNamePrefix, registrationField.Id.ToString());
             var jobGroup = new SelectListItem("Job group", "2");
             var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
 
             var model = new GenerateGroupsViewModel(
                 registrationFieldOptions,
-                registrationFieldOptionId,
+                registrationField.Id,
                 false,
                 true,
                 false,
@@ -451,7 +452,7 @@
                                 gd =>
                                     gd.AdminId == 7 &&
                                     gd.CentreId == 2 &&
-                                    gd.RegistrationFieldOptionId == model.RegistrationFieldOptionId &&
+                                    gd.RegistrationField.Equals(registrationField) &&
                                     gd.PrefixGroupName == model.PrefixGroupName &&
                                     gd.PopulateExisting == model.PopulateExisting &&
                                     gd.SyncFieldChanges == model.SyncFieldChanges &&

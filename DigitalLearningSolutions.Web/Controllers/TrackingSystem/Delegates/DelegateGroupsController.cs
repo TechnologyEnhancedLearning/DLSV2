@@ -248,11 +248,12 @@
 
             var adminId = User.GetAdminIdKnownNotNull()!;
             var centreId = User.GetCentreId();
+            var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
 
             var groupDetails = new GroupGenerationDetails(
                 adminId,
                 centreId,
-                (int)model.RegistrationFieldOptionId!,
+                registrationField!,
                 model.PrefixGroupName,
                 model.PopulateExisting,
                 model.AddNewRegistrants,

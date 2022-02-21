@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -459,13 +460,13 @@
             const string groupNamePrefix = "Role";
 
             const int linkedToField = 1;
-            const int registrationFieldOptionId = 1;
+            var registrationField = RegistrationField.CentreCustomPrompt1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                registrationFieldOptionId,
+                registrationField,
                 false,
                 true,
                 false,
@@ -498,15 +499,14 @@
             // Given
             const string groupName = "Nursing";
             const int jobGroupId = 1;
-            const int registrationFieldOptionId = 7;
-            const int linkedToField = 4;
 
             var timeNow = DateTime.UtcNow;
             var jobGroups = new List<(int id, string name)> { (jobGroupId, groupName) };
+            var registrationField = RegistrationField.JobGroup;
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                registrationFieldOptionId,
+                registrationField,
                 false,
                 true,
                 false,
@@ -525,7 +525,7 @@
             AssertCorrectMethodsAreCalledForGenerateGroups(
                 groupGenerationDetails,
                 timeNow,
-                linkedToField,
+                registrationField.LinkedToField,
                 groupName,
                 groupName,
                 jobGroupId
@@ -539,13 +539,13 @@
             // Given
             const string groupName = "Manager";
             const string groupNamePrefix = "Role";
-            const int registrationFieldOptionId = 1;
+            var registrationField = RegistrationField.CentreCustomPrompt1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                registrationFieldOptionId,
+                registrationField,
                 true,
                 true,
                 false,
@@ -565,7 +565,7 @@
             AssertCorrectMethodsAreCalledForGenerateGroups(
                 groupGenerationDetails,
                 timeNow,
-                registrationFieldOptionId,
+                registrationField.LinkedToField,
                 $"{groupNamePrefix} - {groupName}",
                 groupName
             );
@@ -581,7 +581,16 @@
             const string groupNamePrefix = "Role";
 
             var timeNow = DateTime.UtcNow;
-            var groupGenerationDetails = new GroupGenerationDetails(1, 101, 1, false, true, false, true, true);
+            var groupGenerationDetails = new GroupGenerationDetails(
+                1,
+                101,
+                RegistrationField.CentreCustomPrompt1,
+                false,
+                true,
+                false,
+                true,
+                true
+            );
 
             GivenCurrentTimeIs(timeNow);
 
@@ -827,7 +836,7 @@
             int? jobGroupId = null
         )
         {
-            var isJobGroup = groupGenerationDetails.RegistrationFieldOptionId == 7;
+            var isJobGroup = groupGenerationDetails.RegistrationField.Equals(RegistrationField.JobGroup);
 
             using (new AssertionScope())
             {

@@ -24,7 +24,7 @@
             new CheckboxListItemViewModel(
                 nameof(AddNewRegistrants),
                 "Add new registrants",
-                "Add all new delegates to the group if they answer the field the same as the other members in the group"
+                "Add all new delegates to the group if they answer the field the same as other members in the group"
             ),
 
             new CheckboxListItemViewModel(

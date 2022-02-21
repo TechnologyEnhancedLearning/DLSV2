@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -430,12 +431,12 @@
 
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
         {
-            var isJobGroup = groupDetails.RegistrationFieldOptionId == 7;
-            var linkedToField = GetLinkedToFieldValue(groupDetails.RegistrationFieldOptionId);
+            var isJobGroup = groupDetails.RegistrationField.Equals(RegistrationField.JobGroup);
+            var linkedToField = groupDetails.RegistrationField.LinkedToField;
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
-                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationFieldOptionId);
+                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
             var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
@@ -647,18 +648,6 @@
                 .ToList<(int id, string name)>();
             var groupNamePrefix = registrationPrompt.CustomPromptText;
             return (customPromptOptions, groupNamePrefix);
-        }
-
-        private static int GetLinkedToFieldValue(int registrationFieldOptionId)
-        {
-            return registrationFieldOptionId switch
-            {
-                4 => 5,
-                5 => 6,
-                6 => 7,
-                7 => 4,
-                _ => registrationFieldOptionId,
-            };
         }
     }
 }
