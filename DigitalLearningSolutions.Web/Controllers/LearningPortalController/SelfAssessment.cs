@@ -313,7 +313,7 @@
                     let searchTextMatchesCompetencyName = wordsInSearchText.Any(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
                     let responseStatusFilterMatchesAnyQuestion = 
                            (filters.Contains(SelfAssessmentCompetencyFilter.NotYetResponded) && c.AssessmentQuestions.Any(q => q.ResultId == null))
-                        || (filters.Contains(SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.Verified == null))
+                        || (filters.Contains(SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.Verified == null && q.ResultId != null))
                         || (filters.Contains(SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue))
                     let requirementsFilterMatchesAnyQuestion =
                            (filters.Contains(SelfAssessmentCompetencyFilter.MeetingRequirements) && c.AssessmentQuestions.Any(q => q.ResultRAG == 3))
