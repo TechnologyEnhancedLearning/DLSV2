@@ -187,24 +187,21 @@
         }
 
         [Test]
-        public void DeactivateAdminUser_returns_not_found_when_trying_to_access_page_for_own_admin_account()
+        public void DeactivateOrDeleteAdmin_returns_not_found_when_trying_to_access_page_for_own_admin_account()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var loggedInAdminUser = adminUser;
-
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUser.Id, 1);
+            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, 1);
 
             // Then
             result.Should().BeNotFoundResult();
         }
 
         [Test]
-        public void DeactivateAdminUser_does_not_deactivate_admin_user_without_confirmation()
+        public void DeactivateOrDeleteAdmin_does_not_deactivate_admin_user_without_confirmation()
         {
             // Given
             const string expectedErrorMessage = "You must confirm before deactivating this account";
@@ -222,7 +219,7 @@
             );
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
+            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, deactivateViewModel);
 
             // Then
             using (new AssertionScope())
@@ -236,7 +233,7 @@
         }
 
         [Test]
-        public void DeactivateAdminUser_deactivates_admin_user_with_confirmation()
+        public void DeactivateOrDeleteAdmin_deactivates_admin_user_with_confirmation()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser(8);
@@ -250,32 +247,28 @@
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
+            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, deactivateViewModel);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => userService.DeactivateOrDeleteAdmin(adminUser.Id)).MustHaveHappened();
-                result.Should().BeViewResult().WithViewName("DeactivateAdminConfirmation");
+                result.Should().BeViewResult().WithViewName("DeactivateOrDeleteAdminConfirmation");
             }
         }
 
         [Test]
-        public void DeactivateAdminUser_submit_returns_not_found_when_trying_to_deactivate_own_admin_account()
+        public void DeactivateOrDeleteAdmin_submit_returns_not_found_when_trying_to_deactivate_own_admin_account()
         {
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var loggedInAdminUser = adminUser;
-
             A.CallTo(() => userDataService.GetAdminUserById(adminUser.Id)).Returns(adminUser);
-            A.CallTo(() => userDataService.GetAdminUserById(loggedInAdminUser.Id)).Returns(loggedInAdminUser);
-
             A.CallTo(() => userDataService.DeactivateAdmin(adminUser.Id)).DoesNothing();
             var deactivateViewModel =
                 Builder<DeactivateAdminViewModel>.CreateNew().With(vm => vm.Confirm = true).Build();
 
             // When
-            var result = administratorController.DeactivateAdmin(adminUser.Id, deactivateViewModel);
+            var result = administratorController.DeactivateOrDeleteAdmin(adminUser.Id, deactivateViewModel);
 
             // Then
             using (new AssertionScope())

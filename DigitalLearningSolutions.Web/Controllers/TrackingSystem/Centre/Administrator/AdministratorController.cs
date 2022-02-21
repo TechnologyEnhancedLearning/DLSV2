@@ -145,11 +145,11 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId, int? returnPage)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, int? returnPage)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
 
-            if (!CanCurrentUserDeactivateAdmin(adminUser!))
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
             {
                 return NotFound();
             }
@@ -161,11 +161,11 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
 
-            if (!CanCurrentUserDeactivateAdmin(adminUser!))
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
             {
                 return NotFound();
             }
@@ -177,7 +177,7 @@
 
             userService.DeactivateOrDeleteAdmin(adminId);
 
-            return View("DeactivateAdminConfirmation");
+            return View("DeactivateOrDeleteAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
@@ -188,7 +188,7 @@
             return categories;
         }
 
-        private bool CanCurrentUserDeactivateAdmin(AdminUser adminToDeactivate)
+        private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)
         {
             var loggedInUserId = User.GetAdminId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());

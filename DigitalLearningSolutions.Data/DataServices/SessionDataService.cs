@@ -69,10 +69,10 @@
 
         public bool HasAdminGotSessions(int adminId)
         {
-            return connection.Query<bool>(
+            return connection.ExecuteScalar<bool>(
                 "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
                 new { adminId }
-            ).SingleOrDefault();
+            );
         }
     }
 }
