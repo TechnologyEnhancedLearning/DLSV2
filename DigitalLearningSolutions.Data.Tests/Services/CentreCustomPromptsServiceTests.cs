@@ -68,7 +68,8 @@
                 "Clinical\r\nNon-Clinical",
                 true
             );
-            var customPrompts = new List<CustomPrompt> { expectedPrompt };
+            var expectedPrompts = new List<CustomPrompt> { expectedPrompt };
+
             A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
                 .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
 
@@ -80,7 +81,7 @@
             {
                 A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
                     .MustHaveHappenedOnceExactly();
-                result.Should().BeEquivalentTo(customPrompts);
+                result.Should().BeEquivalentTo(expectedPrompts);
             }
         }
 

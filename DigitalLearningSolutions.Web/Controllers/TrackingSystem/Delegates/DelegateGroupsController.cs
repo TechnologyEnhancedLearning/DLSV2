@@ -290,7 +290,7 @@
             var registrationFieldOptions =
                 CentreCustomPromptHelper.MapCentreCustomPromptsToSelectList(centreCustomPrompts);
 
-            var jobGroupOption = (7, "Job group");
+            var jobGroupOption = (RegistrationField.JobGroup.Id, "Job group");
             registrationFieldOptions.Add(jobGroupOption);
 
             return SelectListHelper.MapOptionsToSelectListItems(registrationFieldOptions, selectedId);
