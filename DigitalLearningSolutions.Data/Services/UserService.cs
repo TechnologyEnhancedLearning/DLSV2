@@ -3,6 +3,7 @@ namespace DigitalLearningSolutions.Data.Services
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
@@ -70,6 +71,8 @@ namespace DigitalLearningSolutions.Data.Services
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
+
+        void DeactivateOrDeleteAdmin(int adminId);
     }
 
     public class UserService : IUserService
@@ -78,18 +81,21 @@ namespace DigitalLearningSolutions.Data.Services
         private readonly IGroupsService groupsService;
         private readonly IUserDataService userDataService;
         private readonly IUserVerificationService userVerificationService;
+        private readonly ISessionDataService sessionDataService;
 
         public UserService(
             IUserDataService userDataService,
             IGroupsService groupsService,
             IUserVerificationService userVerificationService,
-            ICentreContractAdminUsageService centreContractAdminUsageService
+            ICentreContractAdminUsageService centreContractAdminUsageService,
+            ISessionDataService sessionDataService
         )
         {
             this.userDataService = userDataService;
             this.groupsService = groupsService;
             this.userVerificationService = userVerificationService;
             this.centreContractAdminUsageService = centreContractAdminUsageService;
+            this.sessionDataService = sessionDataService;
         }
 
         public (AdminUser?, List<DelegateUser>) GetUsersByUsername(string username)
@@ -409,6 +415,18 @@ namespace DigitalLearningSolutions.Data.Services
         public void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status)
         {
             userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status);
+        }
+
+        public void DeactivateOrDeleteAdmin(int adminId)
+        {
+            if (sessionDataService.HasAdminGotSessions(adminId))
+            {
+                userDataService.DeactivateAdmin(adminId);
+            }
+            else
+            {
+                userDataService.DeleteAdminUser(adminId);
+            }
         }
 
         public DelegateUser? GetDelegateUserById(int delegateId)
