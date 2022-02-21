@@ -24,14 +24,14 @@
         private readonly ICentresService centresService;
         private readonly ICourseDataService courseDataService;
         private readonly ISystemNotificationsDataService systemNotificationsDataService;
-        private readonly ISupportTicketDataService ticketDataService;
+        private readonly ISupportTicketService supportTicketService;
         private readonly IUserDataService userDataService;
 
         public DashboardController(
             IUserDataService userDataService,
             ICentresDataService centresDataService,
             ICourseDataService courseDataService,
-            ISupportTicketDataService ticketDataService,
+            ISupportTicketService supportTicketService,
             ICentresService centresService,
             ISystemNotificationsDataService systemNotificationsDataService
         )
@@ -39,7 +39,7 @@
             this.userDataService = userDataService;
             this.centresDataService = centresDataService;
             this.courseDataService = courseDataService;
-            this.ticketDataService = ticketDataService;
+            this.supportTicketService = supportTicketService;
             this.centresService = centresService;
             this.systemNotificationsDataService = systemNotificationsDataService;
         }
@@ -55,21 +55,21 @@
                 return RedirectToAction("Index", "SystemNotifications");
             }
 
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var adminUser = userDataService.GetAdminUserById(adminId);
             var centreId = User.GetCentreId();
-            var centre = centresDataService.GetCentreDetailsById(centreId)!;
+            var centre = centresDataService.GetCentreDetailsById(centreId);
             var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
             var courseCount =
                 courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
                     centreId,
-                    adminUser.CategoryIdFilter
+                    adminUser!.CategoryIdFilter
                 );
             var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
-            var supportTicketCount = ticketDataService.GetNumberOfUnarchivedTicketsForCentreId(centreId);
+            var supportTicketCount = supportTicketService.GetNumberOfTicketsForCentreAdmin(centreId, adminId);
             var centreRank = centresService.GetCentreRankForCentre(centreId);
 
             var model = new CentreDashboardViewModel(
-                centre,
+                centre!,
                 adminUser.FirstName,
                 adminUser.CategoryName,
                 Request.GetUserIpAddressFromRequest(),
