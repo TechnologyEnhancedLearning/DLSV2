@@ -845,8 +845,8 @@
         public void AddDelegatesWithMatchingAnswersToGroup_adds_delegates_with_matching_job_group()
         {
             // Given
-            const int delegateId = 254480;
-            const int groupId = 100;
+            const int delegateId = 14;
+            const int groupId = 27;
 
             using var transaction = new TransactionScope();
             try
@@ -858,7 +858,7 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    groupDelegates.Count.Should().Be(33);
+                    groupDelegates.Count.Should().Be(52);
                     groupDelegates.First().DelegateId.Should().Be(delegateId);
                 }
             }
