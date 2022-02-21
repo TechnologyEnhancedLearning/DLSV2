@@ -250,6 +250,15 @@
             var centreId = User.GetCentreId();
             var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
 
+            var fieldIsValid = centreCustomPromptsService
+                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Select(cp => cp.CustomPromptNumber)
+                .Contains(registrationField!.Id) || registrationField.Equals(RegistrationField.JobGroup);
+
+            if (!fieldIsValid)
+            {
+                return StatusCode(500);
+            }
+
             var groupDetails = new GroupGenerationDetails(
                 adminId,
                 centreId,

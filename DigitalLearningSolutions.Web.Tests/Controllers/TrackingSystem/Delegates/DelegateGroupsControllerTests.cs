@@ -427,6 +427,9 @@
             var jobGroup = new SelectListItem("Job group", "2");
             var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
 
+            var customPrompt1 = new CustomPrompt(1, groupNamePrefix, "Test", false);
+            var customPrompts = new List<CustomPrompt> { customPrompt1 };
+
             var model = new GenerateGroupsViewModel(
                 registrationFieldOptions,
                 registrationField.Id,
@@ -436,6 +439,9 @@
                 true,
                 false
             );
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+                .Returns(customPrompts);
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
                 .DoesNothing();
@@ -486,6 +492,43 @@
                     .MustNotHaveHappened();
                 result.Should().BeViewResult().ModelAs<GenerateGroupsViewModel>();
                 delegateGroupsController.ModelState.IsValid.Should().BeFalse();
+            }
+        }
+
+        [Test]
+        public void GenerateGroups_POST_should_not_call_service_if_selected_field_is_a_free_text_field()
+        {
+            // Given
+            var customPrompt1 = new CustomPrompt(1, "Role", "Test", false);
+            var customPrompts = new List<CustomPrompt> { customPrompt1 };
+
+            var registrationField = RegistrationField.CentreCustomPrompt3;
+
+            var model = new GenerateGroupsViewModel(
+                new List<SelectListItem>(),
+                registrationField.Id,
+                false,
+                true,
+                false,
+                true,
+                false
+            );
+
+            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+                .Returns(customPrompts);
+
+            A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
+                .DoesNothing();
+
+            // When
+            var result = delegateGroupsController.GenerateGroups(model);
+
+            // Then
+            using (new AssertionScope())
+            {
+                A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
+                    .MustNotHaveHappened();
+                result.Should().BeStatusCodeResult();
             }
         }
     }
