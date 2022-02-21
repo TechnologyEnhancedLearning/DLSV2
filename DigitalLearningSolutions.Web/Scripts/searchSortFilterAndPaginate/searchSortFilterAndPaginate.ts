@@ -297,7 +297,7 @@ export class SearchSortFilterAndPaginate {
 
   private startLoadingSpinner(): void {
     this.spinnerContainer?.classList.remove('display-none');
-    this.spinner?.classList.remove('loading-spinner');;
+    this.spinner?.classList.remove('loading-spinner');
   }
 
   private stopLoadingSpinner(): void {
