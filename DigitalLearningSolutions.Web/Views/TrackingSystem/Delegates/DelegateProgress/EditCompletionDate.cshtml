@@ -1,16 +1,14 @@
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCompletionDateViewModel
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completion Date" : "Edit Completion Date";
+  ViewData["Title"] = errorHasOccurred ? "Error: Edit Completed Date" : "Edit Completed Date";
 
   var routeParamsForBackLink = new Dictionary<string, string?>();
 
-  var cancelLinkController = "";
+  string cancelLinkController;
 
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
@@ -22,7 +20,9 @@
     cancelLinkController = "ViewDelegate";
   }
   var exampleDate = DateTime.Today;
-  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completion date" };
+  var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}. Leave the boxes blank to clear the completion date",
+  };
 
 }
 
@@ -32,7 +32,7 @@
       <vc:error-summary order-of-property-names="@new []{ nameof(@Model.Day), nameof(@Model.Month), nameof(@Model.Year)}" />
     }
 
-    <h1 class="nhsuk-heading-xl word-break">Edit completion date for @Model.CourseName</h1>
+    <h1 class="nhsuk-heading-xl word-break">Edit completed date for @Model.CourseName</h1>
 
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
@@ -50,7 +50,7 @@
       <input type="hidden" asp-for="CourseName" />
       <input type="hidden" asp-for="ReturnPage" />
       <vc:date-input id="completion-date"
-                     label="Completion date"
+                     label="Completed date"
                      day-id="Day"
                      month-id="Month"
                      year-id="Year"
