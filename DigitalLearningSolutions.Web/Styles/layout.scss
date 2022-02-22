@@ -117,6 +117,12 @@ nav, .nhsuk-header__navigation, #header-navigation {
   }
 }
 
+#area-to-hide-while-loading {
+  .js-enabled & {
+    display: none;
+  }
+}
+
 #loading-spinner-container {
   height: 500px;
 }
