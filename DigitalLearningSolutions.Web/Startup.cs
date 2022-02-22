@@ -210,7 +210,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
-            services.AddScoped<ISupportTicketService, SupportTicketService>();
+            services.AddScoped<IDashboardInformationService, DashboardInformationService>();
             services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<ITrackerActionService, TrackerActionService>();
             services.AddScoped<ITutorialService, TutorialService>();

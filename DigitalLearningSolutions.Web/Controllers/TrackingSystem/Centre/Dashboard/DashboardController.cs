@@ -2,7 +2,6 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -20,27 +19,15 @@
     [Route("/TrackingSystem/Centre/Dashboard")]
     public class DashboardController : Controller
     {
-        private readonly ICentresDataService centresDataService;
-        private readonly ICentresService centresService;
-        private readonly ICourseDataService courseDataService;
+        private readonly IDashboardInformationService dashboardInformationService;
         private readonly ISystemNotificationsDataService systemNotificationsDataService;
-        private readonly ISupportTicketService supportTicketService;
-        private readonly IUserDataService userDataService;
 
         public DashboardController(
-            IUserDataService userDataService,
-            ICentresDataService centresDataService,
-            ICourseDataService courseDataService,
-            ISupportTicketService supportTicketService,
-            ICentresService centresService,
+            IDashboardInformationService dashboardInformationService,
             ISystemNotificationsDataService systemNotificationsDataService
         )
         {
-            this.userDataService = userDataService;
-            this.centresDataService = centresDataService;
-            this.courseDataService = courseDataService;
-            this.supportTicketService = supportTicketService;
-            this.centresService = centresService;
+            this.dashboardInformationService = dashboardInformationService;
             this.systemNotificationsDataService = systemNotificationsDataService;
         }
 
@@ -55,29 +42,18 @@
                 return RedirectToAction("Index", "SystemNotifications");
             }
 
-            var adminUser = userDataService.GetAdminUserById(adminId);
             var centreId = User.GetCentreId();
-            var centre = centresDataService.GetCentreDetailsById(centreId);
-            var delegateCount = userDataService.GetNumberOfApprovedDelegatesAtCentre(centreId);
-            var courseCount =
-                courseDataService.GetNumberOfActiveCoursesAtCentreFilteredByCategory(
-                    centreId,
-                    adminUser!.CategoryIdFilter
-                );
-            var adminCount = userDataService.GetNumberOfActiveAdminsAtCentre(centreId);
-            var supportTicketCount = supportTicketService.GetNumberOfTicketsForCentreAdmin(centreId, adminId);
-            var centreRank = centresService.GetCentreRankForCentre(centreId);
+
+            var dashboardInformation = dashboardInformationService.GetDashboardInformationForCentre(centreId, adminId);
+
+            if (dashboardInformation == null)
+            {
+                return NotFound();
+            }
 
             var model = new CentreDashboardViewModel(
-                centre!,
-                adminUser.FirstName,
-                adminUser.CategoryName,
+                dashboardInformation,
                 Request.GetUserIpAddressFromRequest(),
-                delegateCount,
-                courseCount,
-                adminCount,
-                supportTicketCount,
-                centreRank,
                 unacknowledgedNotifications.Count
             );
 
