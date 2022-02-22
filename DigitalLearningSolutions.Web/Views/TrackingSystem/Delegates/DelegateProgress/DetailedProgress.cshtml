@@ -14,9 +14,9 @@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ProgressAndCourseDelegatesBreadcrumbs.cshtml" model=@((Model.CustomisationId, Model.ProgressId, Model.AccessedVia)) />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
   } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ProgressAndViewDelegateBreadcrumbs.cshtml" model=@((Model.DelegateId, Model.ProgressId, Model.AccessedVia)) />
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
   }
 }
 
