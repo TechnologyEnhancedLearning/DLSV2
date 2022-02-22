@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
@@ -421,6 +422,75 @@
                 first.AvgTime.Should().Be(7);
                 first.DiagnosticScore.Should().Be(4);
                 first.PossibleScore.Should().Be(4);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_overridden_average_time()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE tutorials
+                        SET OverrideTutorialMins = 1
+                        WHERE TutorialID = 53");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.AvgTime.Should().Be(1);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_zero_diagattempts()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE aspProgress
+                        SET DiagAttempts = 0
+                        WHERE aspProgressID = 3373869");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.DiagnosticScore.Should().Be(null);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_diagstatus_false()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                        SET DiagStatus = 0
+                        WHERE CusTutID = 324886");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.DiagnosticScore.Should().Be(null);
             }
         }
     }

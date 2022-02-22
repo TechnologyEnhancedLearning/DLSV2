@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DigitalLearningSolutions.Data.Models
+﻿namespace DigitalLearningSolutions.Data.Models
 {
+    using System.Collections.Generic;
+
     public class DetailedCourseProgress
     {
         public DetailedCourseProgress(Progress progress, IEnumerable<DetailedSectionProgress> sections)
@@ -30,9 +28,10 @@ namespace DigitalLearningSolutions.Data.Models
         public int Completion { get; set; }
         public int TotalTime { get; set; }
         public int AverageTime { get; set; }
-        public bool PostLearningAssessment { get; set; }
-        public int? Outcome { get; set; }
-        public int? Attempts { get; set; }
+        public string? PLAssessPath { get; set; }
+        public bool IsAssessed { get; set; }
+        public int Outcome { get; set; }
+        public int Attempts { get; set; }
         public bool Passed { get; set; }
 
         public IEnumerable<DetailedTutorialProgress>? Tutorials { get; set; }

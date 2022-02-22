@@ -201,6 +201,9 @@
 
             // When
             var result = progressService.GetDetailedCourseProgress(1);
+
+            // Then
+            result.Should().BeNull();
         }
 
         [Test]
@@ -261,7 +264,7 @@
             // When
             var result = progressService.GetDetailedCourseProgress(1);
 
-            // then
+            // Then
             result.Should().BeEquivalentTo(expectedResult);
         }
     }

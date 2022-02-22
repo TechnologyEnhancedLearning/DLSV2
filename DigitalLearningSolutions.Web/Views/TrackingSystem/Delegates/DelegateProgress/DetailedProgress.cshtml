@@ -1,7 +1,5 @@
 @using DigitalLearningSolutions.Web.Models.Enums
-@using DigitalLearningSolutions.Web.ViewComponents
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DetailedCourseProgressViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateProgress.css")" asp-append-version="true">
@@ -12,8 +10,6 @@
     { "progressId", Model.ProgressId.ToString() },
     { "accessedVia", Model.AccessedVia.ToString() },
   };
-
-  var downloadUrl = Model.CurrentSystemBaseUrl + $"/tracking/summary?ProgressID={Model.ProgressId}";
 }
 
 @section NavBreadcrumbs {
@@ -26,11 +22,12 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <div class="detailed-progress-title-container">
-      <h1 class="nhsuk-heading-xl detailed-progress-title">@ViewData["Title"]</h1>
-      <a class="nhsuk-button nhsuk-button--secondary right-button-mobile-margin-bottom detailed-progress-download-button" role="button"
-         href="@downloadUrl">
-        View detailed progress
+    <div class="nhsuk-grid-column-two-thirds">
+      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+    </div>
+    <div class="nhsuk-grid-column-one-third heading-button-group">
+      <a class="nhsuk-button heading-button" role="button" href="@Model.ProgressDownloadUrl">
+        Download
       </a>
     </div>
     <div class="nhsuk-card">
@@ -62,7 +59,7 @@
           </div>
           <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-              Last Updated
+              Last access
             </dt>
             <dd class="nhsuk-summary-list__value">
               @Model.LastUpdated
@@ -81,7 +78,7 @@
               Completion By
             </dt>
             <dd class="nhsuk-summary-list__value">
-              @Model.CompleteBy
+              <partial name="_SummaryFieldValue" model="@Model.CompleteBy.ToString()" />
             </dd>
           </div>
           <div class="nhsuk-summary-list__row basic-summary-list__row">
@@ -89,17 +86,17 @@
               Completed
             </dt>
             <dd class="nhsuk-summary-list__value">
-              @Model.Completed
+              <partial name="_SummaryFieldValue" model="@Model.Completed.ToString()" />
             </dd>
           </div>
         </dl>
       </div>
     </div>
     <div class="nhsuk-grid-row nhsuk-inset-text">
-      <div class="nhsuk-grid-column-one-half nhsuk-body-l">
+      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
         Overall diagnostic score:
       </div>
-      <div class="nhsuk-grid-column-three-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+      <div class="nhsuk-grid-column-three-quarter nhsuk-body-l nhsuk-u-font-weight-bold word-break">
         @Model.DiagnosticScore%
       </div>
     </div>

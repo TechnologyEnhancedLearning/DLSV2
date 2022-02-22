@@ -267,36 +267,37 @@
                         (SUM(asp1.TutStat) * 100) / (COUNT(t.TutorialID) * 2) AS Completion,
                         SUM(asp1.TutTime) AS TotalTime,
                         s.AverageSectionMins AS AverageTime,
-                        CASE WHEN (s.PLAssessPath IS NOT NULL AND cu.IsAssessed = 1) THEN 1 ELSE 0 END AS PostLearningAssessment,
-                        COALESCE (MAX(ISNULL(aa.Score, 0)), 0) AS Outcome,
+                        cu.IsAssessed AS IsAssessed,
+                        s.PLAssessPath AS AssessPath,
+                        MAX(ISNULL(aa.Score, 0)) AS Outcome,
                         (SELECT COUNT(AssessAttemptID) AS PLAttempts
-                            FROM AssessAttempts AS aa
-                            WHERE (ProgressID = @ProgressID) AND (SectionNumber = s.SectionNumber)) AS Attempts,
+                            FROM AssessAttempts AS a_a
+                            WHERE (ProgressID = @progressId) AND (SectionNumber = s.SectionNumber)) AS Attempts,
                         MAX(ISNULL(CAST(ct.Status AS INT), 0)) AS Passed
                     FROM
                         aspProgress AS asp1
                         INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID
+                        INNER JOIN Customisations AS cu ON p.CustomisationID = cu.CustomisationID
                         INNER JOIN Sections AS s
                         INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
                         INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID ON asp1.TutorialID = t.TutorialID
-                        INNER JOIN Customisations AS cu ON p.CustomisationID = cu.CustomisationID
-                        LEFT OUTER JOIN AssessAttempts AS aa ON p.ProgressID = aa.ProgressID AND s.SectionNumber = aa.SectionNumber
+                        LEFT OUTER JOIN AssessAttempts AS aa ON asp1.ProgressID = aa.ProgressID AND s.SectionNumber = aa.SectionNumber
                     WHERE
-                        (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @ProgressID) AND (s.ArchivedDate IS NULL)
+                        (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @progressId) AND (s.ArchivedDate IS NULL)
                         AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
                     GROUP BY
                         s.SectionID,
                         s.ApplicationID,
-                             s.SectionNumber,
-                             s.SectionName,
-                             s.ConsolidationPath,
-                             s.DiagAssessPath,
-                             s.PLAssessPath,
-                             s.AverageSectionMins,
-                             cu.IsAssessed,
-                             p.CandidateID,
-                             p.CustomisationID,
-                             p.PLLocked
+                        s.SectionNumber,
+                        s.SectionName,
+                        s.ConsolidationPath,
+                        s.DiagAssessPath,
+                        s.PLAssessPath,
+                        s.AverageSectionMins,
+                        cu.IsAssessed,
+                        p.CandidateID,
+                        p.CustomisationID,
+                        p.PLLocked
                     ORDER BY s.SectionNumber",
                 new { progressId }
             );

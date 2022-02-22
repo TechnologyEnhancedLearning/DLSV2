@@ -15,20 +15,20 @@
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
       <tr role="row">
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Tutorial
         </th>
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Status
         </th>
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Time taken (mins)
         </th>
-        <th role="columnheader" class="" scope="col">
+        <th role="columnheader" scope="col">
           Avg time (mins)
         </th>
         @if (showDiagnosticColumn) {
-          <th role="columnheader" class="" scope="col">
+          <th role="columnheader" scope="col">
             Diagnostic score
           </th>
         }
@@ -38,22 +38,22 @@
       @{
         foreach (var tut in Model) {
           <tr role="row">
-            <th role="columnheader" class="" scope="col">
+            <td role="columnheader" scope="col">
               @tut.TutorialName
-            </th>
-            <th role="columnheader" class="" scope="col">
+            </td>
+            <td role="columnheader" scope="col">
               @tut.TutorialStatus
-            </th>
-            <th role="columnheader" class="" scope="col">
+            </td>
+            <td role="columnheader" scope="col">
               @tut.TimeTaken
-            </th>
-            <th role="columnheader" class="" scope="col">
+            </td>
+            <td role="columnheader" scope="col">
               @tut.AvgTime
-            </th>
+            </td>
             @if (showDiagnosticColumn) {
-              <th role="columnheader" class="" scope="col">
+              <td role="columnheader" scope="col">
                 @tut.DiagnosticScore / @tut.PossibleScore
-              </th>
+              </td>
             }
           </tr>
         }
