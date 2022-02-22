@@ -1,0 +1,27 @@
+﻿@using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model SetSectionContentViewModel
+
+@{
+  ViewData["Title"] = "Set section content";
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">Set section content</h1>
+
+    <h2 class="nhsuk-u-font-weight-normal nhsuk-heading-l word-break">
+      Section: @Model.SectionName
+    </h2>
+
+    <form method="post" novalidate asp-action="SetSectionContent">
+      <input type="hidden" asp-for="Index" />
+
+      <partial name="../CourseContent/_EditSectionContentFormInputs" model="Model" />
+
+      <button name="action" class="nhsuk-button" type="submit" value="@CourseSetupController.SaveAction">Next</button>
+    </form>
+
+    <vc:back-link asp-controller="CourseSetup" asp-action="SetCourseContent" link-text="Go back" />
+  </div>
+</div>

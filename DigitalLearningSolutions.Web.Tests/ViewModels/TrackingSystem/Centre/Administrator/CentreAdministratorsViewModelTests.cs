@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using FluentAssertions;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CentreAdministratorsViewModelTests
@@ -34,33 +35,47 @@
         [Test]
         public void Centre_administrators_should_default_to_returning_the_first_ten_admins()
         {
+            // When
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
                 new List<string>(),
                 null,
                 null,
-                1
+                1,
+                UserTestHelper.GetDefaultAdminUser(),
+                null
             );
 
-            model.Admins.Count().Should().Be(10);
-            model.Admins.FirstOrDefault(adminUser => adminUser.Name == "k Surname").Should().BeNull();
+            // Then
+            using (new AssertionScope())
+            {
+                model.Admins.Count().Should().Be(10);
+                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "k Surname").Should().BeNull();
+            }
         }
 
         [Test]
         public void Centre_administrators_should_correctly_return_the_second_page_of_admins()
         {
+            // When
             var model = new CentreAdministratorsViewModel(
                 1,
                 adminUsers,
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                UserTestHelper.GetDefaultAdminUser(),
+                null
             );
 
-            model.Admins.Count().Should().Be(5);
-            model.Admins.First().Name.Should().BeEquivalentTo("k Surname");
+            // Then
+            using (new AssertionScope())
+            {
+                model.Admins.Count().Should().Be(5);
+                model.Admins.First().Name.Should().BeEquivalentTo("k Surname");
+            }
         }
 
         [Test]
@@ -95,11 +110,39 @@
                 new List<string>(),
                 null,
                 null,
-                2
+                2,
+                UserTestHelper.GetDefaultAdminUser(),
+                null
             );
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
+        }
+
+        [Test]
+        public void Centre_administrators_with_custom_items_per_page_should_return_the_specified_number_of_admins()
+        {
+            // Given
+            const int itemsPerPage = 12;
+
+            // When
+            var model = new CentreAdministratorsViewModel(
+                1,
+                adminUsers,
+                new List<string>(),
+                null,
+                null,
+                1,
+                UserTestHelper.GetDefaultAdminUser(),
+                itemsPerPage
+            );
+
+            // Then
+            using (new AssertionScope())
+            {
+                model.Admins.Count().Should().Be(itemsPerPage);
+                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "m Surname").Should().BeNull();
+            }
         }
     }
 }

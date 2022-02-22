@@ -1,22 +1,18 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates
 @model UnapprovedDelegate
 
-@{
-  var emailString = !string.IsNullOrEmpty(Model.Email) ? $"({Model.Email})" : "";
-}
-
 <div class="card-with-buttons word-break nhsuk-panel" id="@Model.Id-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text">
-        @Model.FullName @emailString
+        @Model.TitleName
       </span>
     </summary>
     <div class="nhsuk-details__text">
       <dl class="nhsuk-summary-list">
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Delegate id
+            Delegate ID
           </dt>
           <dd class="nhsuk-summary-list__value">
             @Model.CandidateNumber
@@ -38,8 +34,7 @@
             @Model.JobGroup
           </dd>
         </div>
-        @foreach (var customPrompt in Model.CustomPrompts)
-        {
+        @foreach (var customPrompt in Model.CustomPrompts) {
           <partial name="../Shared/_CustomPromptSummaryListRow" model="customPrompt" />
         }
       </dl>
@@ -47,7 +42,7 @@
   </details>
   <div class="flex-row nhsuk-u-margin-left-4">
     <form class="delegate-approvals-button-wrapper" method="post">
-      <input type="hidden" name="delegateId" value="@Model.Id"/>
+      <input type="hidden" name="delegateId" value="@Model.Id" />
       <button class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2" asp-controller="DelegateApprovals" asp-action="ApproveDelegate">
         Approve
       </button>

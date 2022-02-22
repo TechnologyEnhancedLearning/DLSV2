@@ -12,7 +12,8 @@
             string name,
             LearningItemType type,
             DateTime? completeByDate,
-            int? progressId = null
+            int? progressId = null,
+            bool? apiIsAccessible = null
         )
         {
             Id = id;
@@ -22,6 +23,7 @@
             Month = completeByDate?.Month;
             Year = completeByDate?.Year;
             ProgressId = progressId;
+            ApiIsAccessible = apiIsAccessible;
         }
 
         public EditCompleteByDateViewModel(

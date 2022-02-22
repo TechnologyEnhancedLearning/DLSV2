@@ -9,11 +9,15 @@
 
   <ItemGroup>
     <None Remove="TestData\ActivityDataDownloadTest.xlsx" />
+    <None Remove="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx" />
     <None Remove="TestData\DelegateUploadTest.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="TestData\ActivityDataDownloadTest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\CourseDelegateExportCurrentDataDownloadTest.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\DelegateUploadTest.xlsx">
@@ -39,11 +43,6 @@
         <ProjectReference Include="..\DigitalLearningSolutions.Data.Migrations\DigitalLearningSolutions.Data.Migrations.csproj" />
         <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
         <ProjectReference Include="..\DigitalLearningSolutions.Web\DigitalLearningSolutions.Web.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Extensions\" />
-      <Folder Include="Services\TutorialContentDataServiceTests\" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,41 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
+@model ResourceRemovedViewModel
+
+@{
+  Layout = "../SelfAssessments/_Layout";
+  ViewData["Title"] = "Resource has been removed";
+  ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
+  var routeParamsForActionLink = new Dictionary<string, string?> {
+    {"selfAssessmentId", Model.SelfAssessment.Id.ToString()},
+  };
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/learningPortal/recommendedLearning.css")" asp-append-version="true">
+
+@section breadcrumbs {
+  <li class="nhsuk-breadcrumb__item">
+    <a class="nhsuk-breadcrumb__link trigger-loader"
+       asp-controller="LearningPortal"
+       asp-action="SelfAssessmentOverview"
+       asp-route-vocabulary="Capabilities"
+       asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">
+      @Model.SelfAssessment.Name
+    </a>
+  </li>
+  <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+
+    <p>
+      Unfortunately, this resource has been removed from the Learning Hub since we suggested it so it cannot be added to your action plan.
+    </p>
+
+    <vc:action-link asp-controller="RecommendedLearning"
+                    asp-action="RecommendedLearning"
+                    asp-all-route-data="@routeParamsForActionLink"
+                    link-text="Return to Recommended learning" />
+  </div>
+</div>

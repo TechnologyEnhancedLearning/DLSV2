@@ -1,0 +1,23 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model AllLearningLogEntriesViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<table>
+  <tbody>
+  @foreach (var entry in Model.LearningLogEntries) {
+    <partial name="_LearningLogTableRow" model="entry" />
+  }
+  </tbody>
+</table>
+</body>
+</html>

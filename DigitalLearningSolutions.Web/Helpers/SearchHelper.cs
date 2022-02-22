@@ -5,15 +5,16 @@
     using System.Collections.Specialized;
     using System.Linq;
     using System.Text;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.RoleProfiles;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 
     /// <summary>
-    /// This is the older version of the SearchHelper. For future search/sort implementations we should
-    /// be using the generic version <see cref="GenericSearchHelper"/> and implementing BaseSearchableItem
-    /// on the entity to be searched
+    ///     This is the older version of the SearchHelper. For future search/sort implementations we should
+    ///     be using the generic version <see cref="GenericSearchHelper" /> and implementing BaseSearchableItem
+    ///     on the entity to be searched
     /// </summary>
     public static class SearchHelper
     {
@@ -25,7 +26,7 @@
             "i", "if", "in", "is", "it", "its", "just", "of", "or", "so", "some", "such", "that",
             "the", "their", "these", "thing", "this", "to", "too", "very", "was", "we", "well", "what", "when", "where",
             "who", "will", "with", "you", "your", "framework", "competency", "capability", "competence", "skill",
-            "profile", "job", "role"
+            "profile", "job", "role",
         };
 
         public static IEnumerable<RoleProfile> FilterRoleProfiles(
@@ -47,7 +48,7 @@
 
             var query = new RoleProfile
             {
-                RoleProfileName = searchString.ToLower()
+                RoleProfileName = searchString.ToLower(),
             };
             if (stripStopWords)
             {
@@ -92,17 +93,17 @@
 
             // transform search string into array of words
             char[] wordSeparators = { ' ', '\n', '\r', ',', ';', '.', '!', '?', '-', ' ', '"', '\'' };
-            string[] words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
+            var words = searchedWords.Split(wordSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             // Create and initializes a new StringCollection.
-            StringCollection myStopWordsCol = new StringCollection();
+            var myStopWordsCol = new StringCollection();
             // Add a range of elements from an array to the end of the StringCollection.
             myStopWordsCol.AddRange(StopWordsArray);
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             for (var i = 0; i < words.Length; i++)
             {
-                string word = words[i].ToLowerInvariant().Trim();
+                var word = words[i].ToLowerInvariant().Trim();
                 if (word.Length > 1 && !myStopWordsCol.Contains(word))
                 {
                     sb.Append(word + " ");

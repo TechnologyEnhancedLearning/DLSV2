@@ -32,7 +32,8 @@
         public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_no_existing_progress_found()
         {
             // Given
-            SetupEnrolProcessFakes(GenericNewProgressId, GenericRelatedTutorialId, reusableGroupCourse);
+            SetupEnrolProcessFakes(GenericNewProgressId, GenericRelatedTutorialId);
+            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -70,9 +71,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                reusableGroupCourse,
                 existingProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -110,9 +111,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                reusableGroupCourse,
                 existingProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -150,9 +151,9 @@
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: null);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -191,9 +192,9 @@
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(supervisorAdminId: supervisorId);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -231,9 +232,9 @@
             var groupCourse = GroupTestHelper.GetDefaultGroupCourse(completeWithinMonths: 0);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -273,9 +274,9 @@
             var expectedFutureDate = testDate.AddMonths(3);
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -312,9 +313,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                reusableGroupCourse,
                 reusableProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -346,9 +347,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                groupCourse,
                 reusableProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -380,9 +381,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                groupCourse,
                 reusableProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -414,9 +415,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                groupCourse,
                 reusableProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -450,9 +451,9 @@
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
                 GenericRelatedTutorialId,
-                groupCourse,
                 reusableProgressRecord
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -481,9 +482,9 @@
             // Given
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                reusableGroupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(reusableGroupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -524,9 +525,9 @@
             );
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(
@@ -579,9 +580,9 @@
 
             SetupEnrolProcessFakes(
                 GenericNewProgressId,
-                GenericRelatedTutorialId,
-                groupCourse
+                GenericRelatedTutorialId
             );
+            SetUpAddDelegateEnrolProcessFakes(groupCourse);
 
             // When
             groupsService.EnrolDelegateOnGroupCourses(

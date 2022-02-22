@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.RecommendedLearning
 @model RecommendedLearningViewModel
 
 @{
@@ -22,17 +23,18 @@
   <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
 }
 
-<div class="nhsuk-grid-row">
+<vc:loading-spinner page-has-side-nav-menu="false" />
+<div class="nhsuk-grid-row" id="area-to-hide-while-loading">
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
     <div class="nhsuk-u-margin-bottom-4">
-      @if (Model.ResourcesSourcedFromFallbackData) {
-        <partial name="Signposting/_FallbackDataUsedWarning" />
+      @if (!Model.ApiIsAccessible) {
+        <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+                                      text="@LearningHubWarningTextHelper.ResourceDetailsMayBeOutOfDate" />
       }
-      <vc:inset-text
-        css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
-        text="Please note that you will only be logged into Learning Hub automatically if you navigate to resources via Digital Learning Solutions." />
+      <vc:inset-text css-class="nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-2"
+                     text="@LearningHubWarningTextHelper.AutomaticLogin" />
     </div>
 
     <partial name="SearchablePage/_Search" model="Model" />

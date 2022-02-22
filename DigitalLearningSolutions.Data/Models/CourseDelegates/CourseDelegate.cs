@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CourseDelegates
 {
     using System;
+    using DigitalLearningSolutions.Data.Helpers;
 
     public class CourseDelegate : BaseSearchableItem
     {
@@ -21,9 +22,7 @@
         public int AttemptsPassed { get; set; }
         public int CustomisationId { get; set; }
 
-        public string FullName => (string.IsNullOrEmpty(FirstName) ? "" : $"{FirstName} ") + LastName;
-
-        public string TitleName => FullName + (string.IsNullOrEmpty(EmailAddress) ? "" : $" ({EmailAddress})");
+        public string FullNameForSearchingSorting => NameQueryHelper.GetSortableFullName(FirstName, LastName);
 
         public bool Removed => RemovedDate.HasValue;
 
@@ -31,7 +30,7 @@
 
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? FullName;
+            get => SearchableNameOverrideForFuzzySharp ?? FullNameForSearchingSorting;
             set => SearchableNameOverrideForFuzzySharp = value;
         }
     }

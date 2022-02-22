@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.Signposting;
@@ -17,14 +19,23 @@
     {
         private SignpostingSsoController controller = null!;
         private ILearningHubLinkService learningHubLinkService = null!;
+        private ILearningHubResourceService learningHubResourceService = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             learningHubLinkService = A.Fake<ILearningHubLinkService>();
+            learningHubResourceService = A.Fake<ILearningHubResourceService>();
+            userService = A.Fake<IUserService>();
 
-            controller = new SignpostingSsoController(learningHubLinkService)
+            controller = new SignpostingSsoController(
+                    learningHubLinkService,
+                    learningHubResourceService,
+                    userService
+                )
                 .WithDefaultContext()
+                .WithMockSessionData(new Dictionary<string, string>())
                 .WithMockUser(true);
 
             A.CallTo(() => learningHubLinkService.IsLearningHubAccountLinked(A<int>._)).Returns(true);
@@ -118,7 +129,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().BeViewResult().WithDefaultViewName();
+                result.Should().BeViewResult().WithViewName("../LinkLearningHubSso");
                 A.CallTo(
                         () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
                             A<LinkLearningHubRequest>._,
@@ -157,7 +168,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Should().BeViewResult().WithDefaultViewName();
+                result.Should().BeViewResult().WithViewName("../LinkLearningHubSso");
                 A.CallTo(
                         () => learningHubLinkService.ValidateLinkingRequestAndExtractDestinationResourceId(
                             A<LinkLearningHubRequest>._,
@@ -170,6 +181,64 @@
                 A.CallTo(() => learningHubLinkService.LinkLearningHubAccountIfNotLinked(A<int>._, A<int>._))
                     .MustHaveHappenedOnceExactly();
             }
+        }
+
+        [Test]
+        public  async Task ViewResource_returns_redirect_to_login_result_when_user_linked()
+        {
+            // Given
+            var authId = 1;
+            var resourceUrl = "De/Humani/Corporis/Fabrica";
+            var resourceDetails = new ResourceReferenceWithResourceDetails{Link = resourceUrl};
+
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(authId);
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(5))
+                .Returns((resourceDetails, false));
+            A.CallTo(() => learningHubLinkService.GetLoginUrlForDelegateAuthIdAndResourceUrl(resourceUrl, authId))
+                .Returns("www.example.com/login");
+
+            // When
+            var result = await controller.ViewResource(5);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(
+                "www.example.com/login"
+            );
+        }
+
+        [Test]
+        public async Task
+            ViewResource_returns_not_found_result_when_user_linked_but_no_relevant_resource_entry()
+        {
+            // Given
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(1);
+            A.CallTo(() => learningHubResourceService.GetResourceByReferenceId(5))
+                .Returns((null, true));
+
+            // When
+            var result = await controller.ViewResource(5);
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public async Task ViewResource_returns_redirect_result_to_create_user_when_user_not_linked()
+        {
+            // Given
+            A.CallTo(() => userService.GetDelegateUserLearningHubAuthId(A<int>._)).Returns(null);
+            A.CallTo(() => learningHubLinkService.GetLinkingUrlForResource(5, A<string>._))
+                .Returns("www.example.com/link");
+
+            // When
+            var result = await controller.ViewResource(5);
+
+            // Then
+            result.Should().BeRedirectResult().WithUrl(
+                "www.example.com/link"
+            );
+            A.CallTo(() => controller.HttpContext.Session.Set(LinkLearningHubRequest.SessionIdentifierKey, A<byte[]>._))
+                .MustHaveHappenedOnceExactly();
         }
     }
 }

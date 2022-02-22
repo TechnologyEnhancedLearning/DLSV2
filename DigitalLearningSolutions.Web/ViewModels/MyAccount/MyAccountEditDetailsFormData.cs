@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Http;
 
-    public class MyAccountEditDetailsFormData : EditDetailsFormData, IValidatableObject
+    public class MyAccountEditDetailsFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
     {
         public MyAccountEditDetailsFormData() { }
 

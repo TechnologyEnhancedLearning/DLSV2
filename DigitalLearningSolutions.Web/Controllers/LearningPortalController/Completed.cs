@@ -8,7 +8,6 @@
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed;
     using Microsoft.AspNetCore.Mvc;
 
@@ -19,20 +18,20 @@
         public async Task<IActionResult> Completed(
             string? searchString = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Descending,
+            string sortDirection = GenericSortingHelper.Descending,
             int page = 1
         )
         {
             sortBy ??= CourseSortByOptions.CompletedDate.PropertyName;
             var delegateId = User.GetCandidateIdKnownNotNull();
             var completedCourses = courseDataService.GetCompletedCourses(delegateId);
-            var (completedLearningResources, sourcedFromFallbackData) =
+            var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
             var bannerText = GetBannerText();
             var model = new CompletedPageViewModel(
                 completedCourses,
                 completedLearningResources,
-                sourcedFromFallbackData,
+                apiIsAccessible,
                 config,
                 searchString,
                 sortBy,
@@ -52,7 +51,7 @@
             return View("Completed/AllCompletedItems", model);
         }
 
-        private async Task<(IEnumerable<CompletedActionPlanResource>, bool sourcedFromFallbackData)>
+        private async Task<(IList<CompletedActionPlanResource>, bool apiIsAccessible)>
             GetCompletedLearningResourcesIfSignpostingEnabled(int delegateId)
         {
             if (!config.IsSignpostingUsed())
@@ -60,9 +59,9 @@
                 return (new List<CompletedActionPlanResource>(), false);
             }
 
-            var (resources, sourcedFromFallbackData) =
+            var (resources, apiIsAccessible) =
                 await actionPlanService.GetCompletedActionPlanResources(delegateId);
-            return (resources.Select(r => new CompletedActionPlanResource(r)), sourcedFromFallbackData);
+            return (resources.Select(r => new CompletedActionPlanResource(r)).ToList(), apiIsAccessible);
         }
     }
 }

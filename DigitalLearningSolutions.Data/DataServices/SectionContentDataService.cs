@@ -12,7 +12,9 @@
     public interface ISectionContentDataService
     {
         SectionContent? GetSectionContent(int customisationId, int candidateId, int sectionId);
-        IEnumerable<Section> GetSectionsByApplicationId(int applicationId);
+
+        IEnumerable<Section> GetSectionsForApplication(int applicationId);
+
         Section? GetSectionById(int sectionId);
     }
 
@@ -163,19 +165,23 @@
                         AND Customisations.Active = 1
                         AND Tutorials.ArchivedDate IS NULL
                         ORDER BY Tutorials.OrderByNumber, Tutorials.TutorialID",
-                    (section, tutorial) =>
-                        {
+                (section, tutorial) =>
+                {
                     if (sectionContent == null)
                     {
                         sectionContent = section;
-                        sectionContent.DiagnosticAttempts = section.DiagnosticStatus ? sectionContent.DiagnosticAttempts : 0;
+                        sectionContent.DiagnosticAttempts =
+                            section.DiagnosticStatus ? sectionContent.DiagnosticAttempts : 0;
                         sectionContent.SectionScore = section.DiagnosticStatus ? sectionContent.SectionScore : 0;
                         sectionContent.MaxSectionScore = section.DiagnosticStatus ? sectionContent.MaxSectionScore : 0;
                     }
                     else if (section.DiagnosticStatus)
                     {
                         sectionContent.DiagnosticStatus = section.DiagnosticStatus;
-                        sectionContent.DiagnosticAttempts = Math.Max(sectionContent.DiagnosticAttempts, (int)section.DiagnosticAttempts);
+                        sectionContent.DiagnosticAttempts = Math.Max(
+                            sectionContent.DiagnosticAttempts,
+                            section.DiagnosticAttempts
+                        );
                         sectionContent.SectionScore += section.SectionScore;
                         sectionContent.MaxSectionScore += section.MaxSectionScore;
                     }
@@ -192,13 +198,13 @@
             ).FirstOrDefault();
         }
 
-        public IEnumerable<Section> GetSectionsByApplicationId(int applicationId)
+        public IEnumerable<Section> GetSectionsForApplication(int applicationId)
         {
             return connection.Query<Section>(
-                @"SELECT 
+                @"SELECT
                         SectionID,
                         SectionName
-                    FROM dbo.Sections 
+                    FROM dbo.Sections
                     WHERE ApplicationID = @applicationId
                     AND ArchivedDate IS NULL",
                 new { applicationId }
@@ -208,10 +214,10 @@
         public Section? GetSectionById(int sectionId)
         {
             return connection.Query<Section>(
-                @"SELECT 
+                @"SELECT
                         SectionID,
                         SectionName
-                    FROM dbo.Sections 
+                    FROM dbo.Sections
                     WHERE SectionId = @sectionId",
                 new { sectionId }
             ).SingleOrDefault();

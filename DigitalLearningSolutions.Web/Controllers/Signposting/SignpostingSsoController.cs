@@ -1,12 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.Signposting
 {
+    using System;
+    using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.Signposting;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.SignpostingSso;
+    using DigitalLearningSolutions.Web.ViewModels.Signposting;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -19,12 +21,18 @@
     public class SignpostingSsoController : Controller
     {
         private readonly ILearningHubLinkService learningHubLinkService;
+        private readonly ILearningHubResourceService learningHubResourceService;
+        private readonly IUserService userService;
 
         public SignpostingSsoController(
-            ILearningHubLinkService learningHubLinkService
+            ILearningHubLinkService learningHubLinkService,
+            ILearningHubResourceService learningHubResourceService,
+            IUserService userService
         )
         {
             this.learningHubLinkService = learningHubLinkService;
+            this.learningHubResourceService = learningHubResourceService;
+            this.userService = userService;
         }
 
         [HttpGet("LinkLearningHubSso")]
@@ -45,7 +53,38 @@
             learningHubLinkService.LinkLearningHubAccountIfNotLinked(delegateId, linkLearningHubRequest.UserId);
 
             var model = new LinkLearningHubViewModel(isAccountAlreadyLinked, learningHubResourcedId);
-            return View(model);
+            return View("../LinkLearningHubSso", model);
+        }
+
+        [HttpGet("ViewResource/{resourceReferenceId}")]
+        public async Task<IActionResult> ViewResource(int resourceReferenceId)
+        {
+            var delegateId = User.GetCandidateIdKnownNotNull();
+            var learningHubAuthId = userService.GetDelegateUserLearningHubAuthId(delegateId);
+
+            if (!learningHubAuthId.HasValue)
+            {
+                var sessionLinkingId = Guid.NewGuid().ToString();
+                HttpContext.Session.SetString(LinkLearningHubRequest.SessionIdentifierKey, sessionLinkingId);
+
+                var linkingUrl = learningHubLinkService.GetLinkingUrlForResource(resourceReferenceId, sessionLinkingId);
+                return Redirect(linkingUrl);
+            }
+
+            var (resource, _) = await learningHubResourceService.GetResourceByReferenceId(resourceReferenceId);
+            var resourceUrl = resource?.Link;
+
+            if (string.IsNullOrEmpty(resourceUrl))
+            {
+                return NotFound();
+            }
+
+            var loginUrl =
+                learningHubLinkService.GetLoginUrlForDelegateAuthIdAndResourceUrl(
+                    resourceUrl,
+                    learningHubAuthId!.Value
+                );
+            return Redirect(loginUrl);
         }
     }
 }

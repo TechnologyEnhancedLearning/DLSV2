@@ -21,6 +21,7 @@
             CatalogueName = resource.Catalogue.Name;
             ResourceLink = resource.Link;
             ResourceReferenceId = resource.RefId;
+            AbsentInLearningHub = resource.AbsentInLearningHub;
         }
 
         public DateTime? Completed { get; set; }
@@ -30,5 +31,6 @@
         public string CatalogueName { get; set; }
         public string ResourceType { get; set; }
         public int ResourceReferenceId { get; set; }
+        public bool AbsentInLearningHub { get; set; }
     }
 }

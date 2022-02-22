@@ -17,5 +17,7 @@
         public decimal Rating { get; set; }
 
         public string Link { get; set; }
+
+        public bool AbsentInLearningHub { get; set; }
     }
 }

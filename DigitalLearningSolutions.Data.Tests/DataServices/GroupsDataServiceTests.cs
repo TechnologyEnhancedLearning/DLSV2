@@ -83,28 +83,26 @@
         }
 
         [Test]
-        public void GetGroupCoursesForCentre_returns_expected_courses()
+        public void GetGroupCoursesVisibleToCentre_returns_expected_courses()
         {
             // Given
             var expectedGroupCourseIds = new List<int>
             {
                 1,
                 2,
-                21,
-                22,
-                23,
-                24,
                 25,
+                26,
+                27,
                 28,
             };
 
             // When
-            var result = groupsDataService.GetGroupCoursesForCentre(101).ToList();
+            var result = groupsDataService.GetGroupCoursesVisibleToCentre(101).ToList();
 
             // Then
             using (new AssertionScope())
             {
-                result.Should().HaveCount(8);
+                result.Should().HaveCount(6);
                 result.Should().OnlyHaveUniqueItems();
                 result.Should().OnlyContain(c => expectedGroupCourseIds.Contains(c.GroupCustomisationId));
             }
@@ -408,6 +406,32 @@
         }
 
         [Test]
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_does_not_remove_progress_for_delegates_outside_specified_group()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 5;
+                const bool deleteStartedEnrolment = true;
+                var removedDate = DateTime.UtcNow;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
+
+                // Then
+                var progressWithNoGroup = await connection.GetProgressRemovedFields(284968);
+                progressWithNoGroup.Item1.Should().Be(0);
+                progressWithNoGroup.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
         public async Task DeleteGroupDelegates_deletes_all_group_delegates()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -453,7 +477,7 @@
         }
 
         [Test]
-        public void GetGroupCourseForCentre_returns_expected_course()
+        public void GetGroupCourseIfVisibleToCentre_returns_expected_course()
         {
             // Given
             var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
@@ -468,7 +492,7 @@
             );
 
             // When
-            var result = groupsDataService.GetGroupCourseForCentre(25, 101);
+            var result = groupsDataService.GetGroupCourseIfVisibleToCentre(25, 101);
 
             // Then
             using (new AssertionScope())
@@ -743,6 +767,44 @@
             finally
             {
                 transaction.Dispose();
+            }
+        }
+
+        [Test]
+        public void InsertGroupCustomisation_inserts_expected_record()
+        {
+            // Given
+            var expectedDateTime = new DateTime(2019, 11, 15, 13, 53, 26, 510);
+            var expectedGroupCourse = GroupTestHelper.GetDefaultGroupCourse(
+                25,
+                103,
+                supervisorAdminId: 1,
+                completeWithinMonths: 0,
+                supervisorFirstName: "Kevin",
+                supervisorLastName: "Whittaker (Developer)",
+                addedToGroup: expectedDateTime
+            );
+
+            using var transaction = new TransactionScope();
+            // When
+            var insertedId = groupsDataService.InsertGroupCustomisation(
+                expectedGroupCourse.GroupId,
+                expectedGroupCourse.CustomisationId,
+                expectedGroupCourse.CompleteWithinMonths,
+                1,
+                true,
+                expectedGroupCourse.SupervisorAdminId
+            );
+            var result = groupsDataService.GetGroupCourseIfVisibleToCentre(insertedId, 101);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result.Should().BeEquivalentTo(
+                    expectedGroupCourse,
+                    options => options.Excluding(gc => gc.GroupCustomisationId).Excluding(gc => gc.AddedToGroup)
+                );
             }
         }
 

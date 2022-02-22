@@ -56,7 +56,8 @@
             byte[]? profileImage,
             string? professionalRegNumber,
             bool hasBeenPromptedForPrn,
-            int[] ids);
+            int[] ids
+        );
 
         void UpdateDelegate(
             int delegateId,
@@ -94,6 +95,8 @@
 
         List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId);
 
+        List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId);
+
         void UpdateDelegateUserCentrePrompts(
             int id,
             int jobGroupId,
@@ -116,8 +119,16 @@
         int? GetDelegateUserLearningHubAuthId(int delegateId);
 
         void SetDelegateUserLearningHubAuthId(int delegateId, int learningHubAuthId);
-        
+
         void UpdateDelegateLhLoginWarningDismissalStatus(int delegateId, bool status);
+
+        void UpdateDelegateProfessionalRegistrationNumber(
+            int delegateId,
+            string? professionalRegistrationNumber,
+            bool hasBeenPromptedForPrn
+        );
+
+        void DeleteAdminUser(int adminId);
     }
 
     public partial class UserDataService : IUserDataService

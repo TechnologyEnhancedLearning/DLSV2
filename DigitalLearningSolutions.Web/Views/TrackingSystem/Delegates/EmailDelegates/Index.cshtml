@@ -9,10 +9,13 @@
   ViewData["Title"] = "Send welcome messages";
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var exampleDate = DateTime.Today;
-  var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
+  var hintTextLines = new List<string> {
+    $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}",
+  };
 }
 
-<div class="nhsuk-grid-row">
+<vc:loading-spinner page-has-side-nav-menu="false" />
+<div class="nhsuk-grid-row" id="area-to-hide-while-loading">
   <div class="nhsuk-grid-column-full">
     <h1 id="page-heading" class="nhsuk-heading-xl nhsuk-u-margin-bottom-5">Send welcome messages</h1>
     @if (errorHasOccurred) {

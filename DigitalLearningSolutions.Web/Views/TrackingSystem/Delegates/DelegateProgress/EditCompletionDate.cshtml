@@ -1,6 +1,6 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewComponents
-@using DigitalLearningSolutions.Web.Views.TrackingSystem.Delegates.DelegateProgress
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model EditCompletionDateViewModel
 
@@ -15,6 +15,7 @@
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("accessedVia", Model.AccessedVia.ToString());
     routeParamsForBackLink.Add("progressId", Model.ProgressId.ToString());
+    routeParamsForBackLink.Add("returnPage", Model.ReturnPage.ToString());
     cancelLinkController = "DelegateProgress";
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
@@ -47,6 +48,7 @@
       <input type="hidden" asp-for="ProgressId" />
       <input type="hidden" asp-for="DelegateName" />
       <input type="hidden" asp-for="CourseName" />
+      <input type="hidden" asp-for="ReturnPage" />
       <vc:date-input id="completion-date"
                      label="Completion date"
                      day-id="Day"

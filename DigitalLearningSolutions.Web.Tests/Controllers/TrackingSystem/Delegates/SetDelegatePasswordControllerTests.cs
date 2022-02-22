@@ -40,7 +40,7 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser(emailAddress: null));
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId, true);
+            var result = setDelegatePasswordController.Index(DelegateId, true, null);
 
             // Then
             result.Should().BeViewResult().WithViewName("NoEmail");
@@ -54,7 +54,7 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId, false);
+            var result = setDelegatePasswordController.Index(DelegateId, false, null);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();
@@ -69,7 +69,7 @@
                 .Returns(UserTestHelper.GetDefaultDelegateUser());
 
             // When
-            var result = setDelegatePasswordController.Index(DelegateId, true);
+            var result = setDelegatePasswordController.Index(DelegateId, true, null);
 
             // Then
             result.Should().BeViewResult().WithDefaultViewName();

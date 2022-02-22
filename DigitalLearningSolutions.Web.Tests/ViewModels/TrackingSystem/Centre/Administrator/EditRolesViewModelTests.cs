@@ -36,7 +36,7 @@
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, 3);
 
             // Then
             using (new AssertionScope())
@@ -50,6 +50,7 @@
                 result.LearningCategory.Should().Be(0);
                 result.LearningCategories.Count().Should().Be(2);
                 result.ContentManagementRole.Should().BeEquivalentTo(ContentManagementRole.CmsAdministrator);
+                result.ReturnPage.Should().Be(3);
             }
         }
 
@@ -64,7 +65,7 @@
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             result.ContentManagementRole.Should().BeEquivalentTo(ContentManagementRole.CmsManager);
@@ -81,7 +82,7 @@
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             result.ContentManagementRole.Should().BeEquivalentTo(ContentManagementRole.NoContentManagementRole);
@@ -95,7 +96,7 @@
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -124,7 +125,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -144,7 +145,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(trainers: 5, trainerSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -165,7 +166,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -186,7 +187,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(ccLicences: 5, ccLicenceSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -210,7 +211,7 @@
                 );
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -235,7 +236,7 @@
                 );
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -257,7 +258,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -279,7 +280,7 @@
                 CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators(cmsManagers: 5, cmsManagerSpots: 5);
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())
@@ -306,7 +307,7 @@
                 );
 
             // When
-            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins);
+            var result = new EditRolesViewModel(adminUser, 1, categories, numberOfAdmins, null);
 
             // Then
             using (new AssertionScope())

@@ -46,11 +46,12 @@
          asp-controller="RecommendedLearning"
          asp-action="AddResourceToActionPlan"
          asp-route-selfAssessmentId="@Model.SelfAssessmentId"
-         asp-route-resourceReferenceId="@Model.LearningResourceReferenceId">
+         asp-route-resourceReferenceId="@Model.LearningResourceReferenceId"
+         asp-route-returnPage="@Model.ReturnPage">
         Add to action plan
       </a>
     }
-    
+
     <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2 nhsuk-u-margin-top-0"
        role="button"
        asp-controller="Signposting"

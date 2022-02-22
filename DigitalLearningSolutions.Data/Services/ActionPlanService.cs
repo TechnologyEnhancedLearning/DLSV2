@@ -7,6 +7,7 @@
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
+    using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using Microsoft.Extensions.Configuration;
@@ -15,14 +16,17 @@
     {
         Task AddResourceToActionPlan(int learningResourceReferenceId, int delegateId, int selfAssessmentId);
 
-        Task<(IEnumerable<ActionPlanResource> resources, bool SourcedFromFallbackData)>
-            GetIncompleteActionPlanResources(int delegateId);
-
-        Task<(IEnumerable<ActionPlanResource> resources, bool SourcedFromFallbackData)> GetCompletedActionPlanResources(
+        Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)> GetIncompleteActionPlanResources(
             int delegateId
         );
 
-        Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId);
+        Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)> GetCompletedActionPlanResources(
+            int delegateId
+        );
+
+        Task<(ActionPlanResource? actionPlanResource, bool apiIsAccessible)> GetActionPlanResource(
+            int learningLogItemId
+        );
 
         void UpdateActionPlanResourcesLastAccessedDateIfPresent(int resourceReferenceId, int delegateId);
 
@@ -84,12 +88,17 @@
 
             var addedDate = clockService.UtcNow;
 
-            var resource = (await learningHubResourceService.GetResourceByReferenceId(learningHubResourceReferenceId))
-                .resource;
+            var (resource, apiIsAccessible) =
+                await learningHubResourceService.GetResourceByReferenceId(
+                    learningHubResourceReferenceId
+                );
 
             if (resource == null)
             {
-                return;
+                throw new ResourceNotFoundException(
+                    "Item cannot be added to action plan.",
+                    apiIsAccessible
+                );
             }
 
             using var transaction = new TransactionScope();
@@ -116,7 +125,7 @@
             transaction.Complete();
         }
 
-        public async Task<(IEnumerable<ActionPlanResource> resources, bool SourcedFromFallbackData)>
+        public async Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)>
             GetIncompleteActionPlanResources(int delegateId)
         {
             var incompleteLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
@@ -127,7 +136,7 @@
             return await MapLearningLogItemsToActionPlanResources(incompleteLearningLogItems);
         }
 
-        public async Task<(IEnumerable<ActionPlanResource> resources, bool SourcedFromFallbackData)>
+        public async Task<(IEnumerable<ActionPlanResource> resources, bool apiIsAccessible)>
             GetCompletedActionPlanResources(int delegateId)
         {
             var completedLearningLogItems = learningLogItemsDataService.GetLearningLogItems(delegateId)
@@ -138,18 +147,20 @@
             return await MapLearningLogItemsToActionPlanResources(completedLearningLogItems);
         }
 
-        public async Task<ActionPlanResource?> GetActionPlanResource(int learningLogItemId)
+        public async Task<(ActionPlanResource? actionPlanResource, bool apiIsAccessible)> GetActionPlanResource(
+            int learningLogItemId
+        )
         {
             var learningLogItem = learningLogItemsDataService.GetLearningLogItem(learningLogItemId)!;
 
-            var response =
-                await learningHubResourceService.GetResourceByReferenceId(
+            var (resource, apiIsAccessible) = await learningHubResourceService
+                .GetResourceByReferenceIdAndPopulateDeletedDetailsFromDatabase(
                     learningLogItem.LearningHubResourceReferenceId!.Value
                 );
 
-            return response.resource != null
-                ? new ActionPlanResource(learningLogItem, response.resource)
-                : null;
+            return resource != null
+                ? (new ActionPlanResource(learningLogItem, resource), apiIsAccessible)
+                : (null, apiIsAccessible);
         }
 
         public void UpdateActionPlanResourcesLastAccessedDateIfPresent(
@@ -216,7 +227,7 @@
             return incompleteLearningLogItems.All(i => i.LearningResourceReferenceId != resourceReferenceId);
         }
 
-        private async Task<(IEnumerable<ActionPlanResource>, bool sourcedFromFallbackData)>
+        private async Task<(IEnumerable<ActionPlanResource>, bool apiIsAccessible)>
             MapLearningLogItemsToActionPlanResources(
                 IEnumerable<LearningLogItem> learningLogItems
             )
@@ -226,14 +237,15 @@
 
             if (!learningLogItemsWithResourceReferencesIds.Any())
             {
-                return (new List<ActionPlanResource>(), false);
+                return (new List<ActionPlanResource>(), true);
             }
 
             var resourceIds = learningLogItemsWithResourceReferencesIds
                 .Select(i => i.LearningHubResourceReferenceId!.Value).Distinct().ToList();
-            var bulkResponse = await learningHubResourceService.GetBulkResourcesByReferenceIds(resourceIds);
+            var (bulkResourceReferences, apiIsAccessible) = await learningHubResourceService
+                .GetBulkResourcesByReferenceIdsAndPopulateDeletedDetailsFromDatabase(resourceIds);
             var matchingLearningLogItems = learningLogItemsWithResourceReferencesIds.Where(
-                i => !bulkResponse.bulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
+                i => !bulkResourceReferences.UnmatchedResourceReferenceIds.Contains(
                     i.LearningHubResourceReferenceId!.Value
                 )
             );
@@ -241,13 +253,13 @@
             var actionPlanResources = matchingLearningLogItems.Select(
                 learningLogItem =>
                 {
-                    var matchingResource = bulkResponse.bulkResourceReferences.ResourceReferences.Single(
+                    var matchingResource = bulkResourceReferences.ResourceReferences.Single(
                         resource => resource.RefId == learningLogItem.LearningHubResourceReferenceId
                     );
                     return new ActionPlanResource(learningLogItem, matchingResource);
                 }
             ).Where(r => r != null);
-            return (actionPlanResources, bulkResponse.sourcedFromFallbackData);
+            return (actionPlanResources, apiIsAccessible);
         }
     }
 }

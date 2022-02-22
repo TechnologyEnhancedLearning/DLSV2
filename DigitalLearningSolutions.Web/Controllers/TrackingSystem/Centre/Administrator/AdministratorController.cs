@@ -1,22 +1,23 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Administrator
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
-    using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -49,7 +50,8 @@
             string? searchString = null,
             string? filterBy = null,
             string? filterValue = null,
-            int page = 1
+            int page = 1,
+            int? itemsPerPage = null
         )
         {
             filterBy = FilteringHelper.GetFilterBy(
@@ -62,6 +64,9 @@
             var centreId = User.GetCentreId();
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
 
             var model = new CentreAdministratorsViewModel(
                 centreId,
@@ -69,7 +74,9 @@
                 categories,
                 searchString,
                 filterBy,
-                page
+                page,
+                loggedInAdminUser!,
+                itemsPerPage
             );
 
             Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
@@ -81,40 +88,48 @@
         public IActionResult AllAdmins()
         {
             var centreId = User.GetCentreId();
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
+
             var adminUsersAtCentre = userDataService.GetAdminUsersByCentreId(centreId);
             var categories = GetCourseCategories(centreId);
-            var model = new AllAdminsViewModel(adminUsersAtCentre, categories);
+            var model = new AllAdminsViewModel(
+                adminUsersAtCentre,
+                categories,
+                loggedInAdminUser!
+            );
             return View("AllAdmins", model);
         }
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(int adminId)
+        public IActionResult EditAdminRoles(int adminId, int? returnPage)
         {
             var centreId = User.GetCentreId();
-            var adminUser = userDataService.GetAdminUserById(adminId)!;
+            var adminUser = userDataService.GetAdminUserById(adminId);
 
             var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             categories = categories.Prepend(new Category { CategoryName = "All", CourseCategoryID = 0 });
             var numberOfAdmins = centreContractAdminUsageService.GetCentreAdministratorNumbers(centreId);
 
-            var model = new EditRolesViewModel(adminUser, centreId, categories, numberOfAdmins);
+            var model = new EditRolesViewModel(adminUser!, centreId, categories, numberOfAdmins, returnPage);
             return View(model);
         }
 
         [Route("{adminId:int}/EditAdminRoles")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult EditAdminRoles(AdminRolesFormData formData, int adminId)
+        public IActionResult EditAdminRoles(AdminRolesFormData model, int adminId)
         {
             userService.UpdateAdminUserPermissions(
                 adminId,
-                formData.GetAdminRoles(),
-                formData.LearningCategory
+                model.GetAdminRoles(),
+                model.LearningCategory
             );
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { page = model.ReturnPage });
         }
 
         [Route("{adminId:int}/UnlockAccount")]
@@ -130,26 +145,39 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, int? returnPage)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
-            var model = new DeactivateAdminViewModel(adminUser!);
+
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+            
+            var model = new DeactivateAdminViewModel(adminUser!, returnPage);
             return View(model);
         }
 
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            userDataService.DeactivateAdmin(adminId);
+            userService.DeactivateOrDeleteAdmin(adminId);
 
-            return View("DeactivateAdminConfirmation");
+            return View("DeactivateOrDeleteAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
@@ -158,6 +186,14 @@
                 .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
+        }
+
+        private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)
+        {
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
+            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate!, loggedInAdminUser!);
         }
     }
 }

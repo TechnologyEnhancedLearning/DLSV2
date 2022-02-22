@@ -7,22 +7,31 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using FakeItEasy;
+    using FizzWare.NBuilder;
+    using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
+    using FluentAssertions.Execution;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using NUnit.Framework;
 
     public class CourseDelegatesControllerTests
     {
         private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
+        private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
 
         [SetUp]
         public void SetUp()
         {
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
+            courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
 
-            controller = new CourseDelegatesController(courseDelegatesService).WithDefaultContext()
+            controller = new CourseDelegatesController(courseDelegatesService, courseDelegatesDownloadFileService)
+                .WithDefaultContext()
                 .WithMockUser(true, UserCentreId);
         }
 
@@ -46,13 +55,72 @@
         {
             // Given
             A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, 2))
-                .Throws<CourseNotFoundException>();
+                .Throws<CourseAccessDeniedException>();
 
             // When
             var result = controller.Index(2);
 
             // Then
             result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void Index_should_default_to_Active_filter_and_return_active_course_delegates()
+        {
+            // Given
+            const int customisationId = 2;
+            var course = new Course { CustomisationId = customisationId, Active = true };
+            var courseDelegate = Builder<CourseDelegate>
+                .CreateListOfSize(2)
+                .TheFirst(1)
+                .With(c => c.Active = false)
+                .TheLast(1)
+                .With(c => c.Active = true)
+                .Build();
+            A.CallTo(
+                    () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                        UserCentreId,
+                        null,
+                        customisationId
+                    )
+                )
+                .Returns(new CourseDelegatesData(customisationId, new List<Course> { course }, courseDelegate));
+
+            var httpRequest = A.Fake<HttpRequest>();
+            var httpResponse = A.Fake<HttpResponse>();
+            const string cookieName = "CourseDelegatesFilter";
+            const string cookieValue = "AccountStatus|Active|true";
+
+            var courseDelegatesController = new CourseDelegatesController(
+                    courseDelegatesService,
+                    courseDelegatesDownloadFileService
+                )
+                .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
+                .WithMockUser(true, UserCentreId)
+                .WithMockTempData();
+
+            A.CallTo(() => httpRequest.Cookies).Returns(A.Fake<IRequestCookieCollection>());
+
+            // When
+            var result = courseDelegatesController.Index(customisationId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.FilterBy.Should()
+                    .Be("AccountStatus|Active|true");
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.Delegates.Should()
+                    .HaveCount(1);
+
+                A.CallTo(
+                        () => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                            UserCentreId,
+                            null,
+                            customisationId
+                        )
+                    )
+                    .MustHaveHappened();
+            }
         }
 
         [Test]

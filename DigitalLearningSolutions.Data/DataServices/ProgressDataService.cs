@@ -37,6 +37,8 @@
 
         void UnlockProgress(int progressId);
 
+        IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId);
+
         Progress? GetProgressByProgressId(int progressId);
 
         IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
@@ -232,6 +234,33 @@
                 @"UPDATE Progress SET
                         PLLocked = 0
                     WHERE ProgressID = @progressId",
+                new { progressId }
+            );
+        }
+
+        public IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId)
+        {
+            return connection.Query<LearningLogEntry>(
+                @"SELECT 
+                        ses.LoginTime AS [When],
+                        ses.Duration  AS LearningTime,
+                        NULL AS AssessmentTaken,
+                        NULL AS AssessmentScore,
+                        NULL AS AssessmentStatus
+                    FROM [Sessions] AS ses 
+                    INNER JOIN Progress AS pr ON pr.CustomisationID = ses.CustomisationID AND pr.CandidateID = ses.CandidateID
+                    WHERE pr.ProgressID = @progressId
+                    UNION ALL
+                    SELECT 
+                        aa.[Date] AS [When],
+                        NULL AS Duration,
+                        sec.SectionName AS AssessmentTaken,
+                        aa.Score AS AssessmentScore,
+                        aa.[Status] AS AssessmentStatus
+                    FROM AssessAttempts AS aa 
+                    INNER JOIN dbo.Customisations AS cu ON cu.CustomisationID = aa.CustomisationID
+                    LEFT JOIN Sections AS sec ON sec.ApplicationID = cu.ApplicationID AND sec.SectionNumber = aa.SectionNumber
+                    WHERE aa.ProgressID = @progressId",
                 new { progressId }
             );
         }

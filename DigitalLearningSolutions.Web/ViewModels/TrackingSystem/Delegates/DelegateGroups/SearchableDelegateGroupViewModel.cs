@@ -1,14 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.Helpers;
 
     public class SearchableDelegateGroupViewModel
     {
         private const string Yes = "Yes";
         private const string No = "No";
 
-        public SearchableDelegateGroupViewModel(Group group)
+        public SearchableDelegateGroupViewModel(Group group, int? page)
         {
             Id = group.GroupId;
             Name = group.GroupLabel;
@@ -22,6 +22,7 @@
             ShouldAddNewRegistrantsToGroup = group.ShouldAddNewRegistrantsToGroup ? Yes : No;
             ChangesToRegistrationDetailsShouldChangeGroupMembership =
                 group.ChangesToRegistrationDetailsShouldChangeGroupMembership ? Yes : No;
+            Page = page;
         }
 
         public int Id { get; set; }
@@ -45,12 +46,15 @@
         public string AddedByFilter => nameof(Group.AddedByAdminId) + FilteringHelper.Separator +
                                        nameof(Group.AddedByAdminId) +
                                        FilteringHelper.Separator + AddedByAdminId;
+
         public string LinkedFieldFilter => nameof(Group.LinkedToField) + FilteringHelper.Separator +
-                                       nameof(Group.LinkedToField) +
-                                       FilteringHelper.Separator + LinkedToField;
+                                           nameof(Group.LinkedToField) +
+                                           FilteringHelper.Separator + LinkedToField;
 
         public string ShouldAddNewRegistrantsToGroup { get; set; }
 
         public string ChangesToRegistrationDetailsShouldChangeGroupMembership { get; set; }
+
+        public int? Page { get; set; }
     }
 }

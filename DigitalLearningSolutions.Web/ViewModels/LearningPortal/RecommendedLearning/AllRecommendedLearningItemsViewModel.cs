@@ -10,7 +10,7 @@
         {
             RecommendedResources =
                 resources.OrderByDescending(r => r.RecommendationScore).Select(
-                    r => new SearchableRecommendedResourceViewModel(r, selfAssessmentId)
+                    r => new SearchableRecommendedResourceViewModel(r, selfAssessmentId, 1)
                 );
         }
 

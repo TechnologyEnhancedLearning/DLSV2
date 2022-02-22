@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class DelegateGroupsViewModel : BaseSearchablePageViewModel
@@ -29,7 +29,8 @@
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g));
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
+            DelegateGroups = paginatedItems.Select(g => new SearchableDelegateGroupViewModel(g, returnPage));
 
             var admins = groups.Select(g => (g.AddedByAdminId, g.AddedByName)).Distinct();
 
@@ -44,7 +45,7 @@
                     nameof(Group.LinkedToField),
                     "Linked field",
                     DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
-                )
+                ),
             };
         }
 
@@ -54,7 +55,7 @@
         {
             DelegateGroupsSortByOptions.Name,
             DelegateGroupsSortByOptions.NumberOfDelegates,
-            DelegateGroupsSortByOptions.NumberOfCourses
+            DelegateGroupsSortByOptions.NumberOfCourses,
         };
 
         public override bool NoDataFound => !DelegateGroups.Any() && NoSearchOrFilter;

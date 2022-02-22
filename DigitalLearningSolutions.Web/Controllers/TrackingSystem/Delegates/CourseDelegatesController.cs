@@ -2,12 +2,14 @@
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -21,20 +23,23 @@
     public class CourseDelegatesController : Controller
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
+        private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
 
         public CourseDelegatesController(
-            ICourseDelegatesService courseDelegatesService
+            ICourseDelegatesService courseDelegatesService,
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
         )
         {
             this.courseDelegatesService = courseDelegatesService;
+            this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
         }
 
         [Route("{page:int=1}")]
         public IActionResult Index(
             int? customisationId = null,
             string? sortBy = null,
-            string sortDirection = BaseSearchablePageViewModel.Ascending,
+            string sortDirection = GenericSortingHelper.Ascending,
             string? filterBy = null,
             string? filterValue = null,
             int page = 1
@@ -45,7 +50,8 @@
                 filterBy,
                 filterValue,
                 Request,
-                CourseDelegatesFilterCookieName
+                CourseDelegatesFilterCookieName,
+                CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
             var centreId = User.GetCentreId();
@@ -61,7 +67,7 @@
                         customisationId
                     );
             }
-            catch (CourseNotFoundException)
+            catch (CourseAccessDeniedException)
             {
                 return NotFound();
             }
@@ -88,6 +94,32 @@
             var model = new AllCourseDelegatesViewModel(courseDelegates);
 
             return View(model);
+        }
+
+        [ServiceFilter(typeof(VerifyAdminUserCanViewCourse))]
+        [Route("DownloadCurrent/{customisationId:int}")]
+        public IActionResult DownloadCurrent(
+            int customisationId,
+            string? sortBy = null,
+            string sortDirection = GenericSortingHelper.Ascending,
+            string? filterBy = null
+        )
+        {
+            var centreId = User.GetCentreId();
+            var content = courseDelegatesDownloadFileService.GetCourseDelegateDownloadFileForCourse(
+                customisationId,
+                centreId,
+                sortBy,
+                filterBy,
+                sortDirection
+            );
+
+            const string fileName = "Digital Learning Solutions Course Delegates.xlsx";
+            return File(
+                content,
+                FileHelper.GetContentTypeFromFileName(fileName),
+                fileName
+            );
         }
     }
 }

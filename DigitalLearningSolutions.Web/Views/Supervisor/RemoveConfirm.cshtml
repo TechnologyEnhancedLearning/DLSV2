@@ -1,18 +1,25 @@
-﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
 @using Microsoft.Extensions.Configuration
-@model SupervisorDelegateDetail;
+@model SupervisorDelegateViewModel;
 @inject IConfiguration Configuration;
 @{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Application"] = "Supervisor";
-  ViewData["Title"] = "My Staff - Confirm Remove";
+  ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "My Staff - Confirm Remove";
   ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/Supervisor/MyStaff";
   ViewData["HeaderPathName"] = "My Staff";
 }
+
 @section NavMenuItems {
   <partial name="Shared/_NavMenuItems" />
 }
+
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
+    @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ConfirmedRemove) })" />
+    }
     <h1 id="page-heading">Confirm Remove Staff Member</h1>
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-one-quarter nhsuk-heading-l">
@@ -25,12 +32,21 @@
       </div>
     </div>
     <p class="nhsuk-body-m">You are supervising @Model.CandidateAssessmentCount profile assessments for this member of staff.</p>
-    <p class="nhsuk-body-m">Are you sure that you wish to remove them from your staff list?</p>
-    <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate" asp-route-supervisorDelegateId="@Model.ID">
-      Remove
-    </a>
-    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="MyStaffList">
-     Cancel
-    </a>
+    <form method="post" asp-controller="Supervisor">
+      <div class="nhsuk-checkboxes__item">
+          <vc:single-checkbox asp-for="@nameof(Model.ConfirmedRemove)"
+              label="I am sure that I wish to remove @Model.FirstName @Model.LastName from my staff list"
+              hint-text="This action will remove the staff member from your staff list and you will no longer be able to review their self assessments." />
+      </div>
+      <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveSupervisorDelegate">
+        Remove
+      </button>
+      @Html.HiddenFor(m => m.Id)
+      @Html.HiddenFor(m => m.FirstName)
+      @Html.HiddenFor(m=> m.LastName)
+      @Html.HiddenFor(m=> m.DelegateEmail)
+      @Html.HiddenFor(m=> m.CandidateAssessmentCount)
+    </form>
+    <vc:cancel-link asp-controller="Supervisor" asp-action="MyStaffList" asp-route-returnPage="@Model.ReturnPage">Cancel</vc:cancel-link>
   </div>
 </div>

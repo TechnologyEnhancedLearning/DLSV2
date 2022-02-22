@@ -134,23 +134,52 @@
         }
 
         [Test]
-        public void GetDelegateNameString_returns_expected_name_with_no_first_name()
+        public void GetNonSortableFullNameForDisplayOnly_returns_expected_name_with_no_first_name()
         {
             // When
-            var result = DisplayStringHelper.GetDelegateNameString(null, "LastName");
+            var result = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(null, "LastName");
 
             // Then
             result.Should().Be("LastName");
         }
 
         [Test]
-        public void GetDelegateNameString_returns_expected_name_with_first_name()
+        public void GetNonSortableFullNameForDisplayOnly_returns_expected_name_with_first_name()
         {
             // When
-            var result = DisplayStringHelper.GetDelegateNameString("FirstName", "LastName");
+            var result = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly("FirstName", "LastName");
 
             // Then
             result.Should().Be("FirstName LastName");
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        public void GetNameWithEmailForDisplay_returns_name_only_when_email_is_null_or_whitespace(string? email)
+        {
+            // Given
+            const string fullName = "FirstName LastName";
+
+            // When
+            var result = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, email);
+
+            // Then
+            result.Should().Be(fullName);
+        }
+
+        [Test]
+        public void GetSortableFullName_returns_correctly_formatted_name_with_email_when_both_are_provided()
+        {
+            // Given
+            const string fullName = "FirstName LastName";
+            const string email = "email@email.com";
+
+            // When
+            var result = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, email);
+
+            // Then
+            result.Should().Be("FirstName LastName (email@email.com)");
         }
 
         [Test]
@@ -173,7 +202,6 @@
             result.Should().Be("s");
         }
 
-        
         [Test]
         public void GetPluralitySuffix_returns_empty_string_when_number_is_1()
         {

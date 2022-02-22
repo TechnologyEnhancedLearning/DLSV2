@@ -5,6 +5,7 @@
 
 @{
   ViewData["Title"] = "Edit Administrator Roles";
+  var cancelLinkData = new Dictionary<string, string> { { "page", Model.ReturnPage.ToString() } };
 }
 
 <div class="nhsuk-grid-row">
@@ -45,6 +46,7 @@
     </div>
 
     <form class="nhsuk-u-margin-bottom-3" method="post" novalidate asp-action="EditAdminRoles">
+      <input type="hidden" asp-for="ReturnPage" />
 
       <vc:checkboxes label="Please select all the roles this user has."
                      populate-with-current-values="true"
@@ -73,6 +75,6 @@
       <button class="nhsuk-button nhsuk-u-margin-top-6" type="submit" value="save">Save</button>
     </form>
 
-    <vc:cancel-link asp-controller="Administrator" asp-action="Index" />
+    <vc:cancel-link asp-controller="Administrator" asp-action="Index" asp-all-route-data="@cancelLinkData" />
   </div>
 </div>

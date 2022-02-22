@@ -1,3 +1,8 @@
 ﻿@import "~nhsuk-frontend/packages/core/all";
 @import "../shared/cardWithButtons";
 @import "../shared/searchableElements/searchableElements";
+@import "../shared/headingButtons.scss";
+
+.admin-field-count {
+    width: 10%;
+}

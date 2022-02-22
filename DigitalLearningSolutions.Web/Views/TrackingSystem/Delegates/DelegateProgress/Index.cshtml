@@ -1,7 +1,5 @@
-﻿@inject IConfiguration Configuration
-@using DigitalLearningSolutions.Web.Models.Enums
+﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
-@using Microsoft.Extensions.Configuration
 @model DelegateProgressViewModel
 
 @{
@@ -10,6 +8,7 @@
 
   if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
     routeParamsForBackLink.Add("customisationId", Model.CustomisationId.ToString());
+    routeParamsForBackLink.Add("page", Model.Page.ToString());
   } else {
     routeParamsForBackLink.Add("delegateId", Model.DelegateId.ToString());
   }
@@ -17,9 +16,9 @@
 
 @section NavBreadcrumbs {
   @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId"/>
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesBreadcrumbs.cshtml" model="Model.CustomisationId" />
   } else {
-    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId"/>
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateBreadcrumbs.cshtml" model="Model.DelegateId" />
   }
 }
 
@@ -27,26 +26,10 @@
   <div class="nhsuk-grid-column-full">
     <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Delegate
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DelegateNameAndEmail
-      </div>
-    </div>
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegateAndCourseNames.cshtml"
+             model="(Model.DelegateNameAndEmail, Model.CourseName)" />
 
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
-        Course
-      </div>
-      <div class="nhsuk-grid-column-three-quarters nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.CourseName
-      </div>
-    </div>
-
-    @if (!Model.IsCourseActive)
-    {
+    @if (!Model.IsCourseActive) {
       <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
     }
 
@@ -58,7 +41,11 @@
        asp-route-accessedVia="@Model.AccessedVia">
       View detailed progress
     </a>
-    <a class="nhsuk-button nhsuk-button--secondary" role="button">
+    <a class="nhsuk-button nhsuk-button--secondary"
+       role="button"
+       asp-action="LearningLog"
+       asp-route-accessedVia="@Model.AccessedVia"
+       asp-route-progressId="@Model.ProgressId">
       View learning log
     </a>
 

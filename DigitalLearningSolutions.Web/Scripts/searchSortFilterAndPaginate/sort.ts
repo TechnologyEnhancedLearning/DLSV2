@@ -30,24 +30,25 @@ export function getSortValue(
   sortBy: string,
 ): string | number | Date {
   switch (sortBy) {
+    case 'FullNameForSearchingSorting':
     case 'SearchableName':
     case 'FullName':
     case 'Name':
       return getElementText(searchableElement, 'name').toLocaleLowerCase();
     case 'DateRegistered':
-      return parseDate(getElementText(searchableElement, 'registration-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'registration-date'));
     case 'StartedDate':
-      return parseDate(getElementText(searchableElement, 'started-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'started-date'));
     case 'Enrolled':
-      return parseDate(getElementText(searchableElement, 'enrolled-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'enrolled-date'));
     case 'LastAccessed':
-      return parseDate(getElementText(searchableElement, 'accessed-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'accessed-date'));
     case 'LastUpdated':
-      return parseDate(getElementText(searchableElement, 'last-updated-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'last-updated-date'));
     case 'CompleteByDate':
-      return parseDate(getElementText(searchableElement, 'complete-by-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'complete-by-date'));
     case 'Completed':
-      return parseDate(getElementText(searchableElement, 'completed-date'));
+      return parseDateAndTime(getElementText(searchableElement, 'completed-date'));
     case 'HasDiagnostic,DiagnosticScore':
       return parseInt(getElementText(searchableElement, 'diagnostic-score').split('/')[0] || '-1', 10);
     case 'IsAssessed,Passes':
@@ -72,6 +73,14 @@ export function getSortValue(
       return parseInt(getElementText(searchableElement, 'faq-weighting'), 10);
     case 'FaqId':
       return parseInt(getElementText(searchableElement, 'faq-id'), 10);
+    case 'CandidateNumber':
+      return getElementText(searchableElement, 'delegate-id').toLocaleLowerCase();
+    case 'When':
+      return parseDateAndTime(getElementText(searchableElement, 'when'));
+    case 'LearningTime':
+      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'learning-time'));
+    case 'AssessmentScore':
+      return parseNonNegativeIntOrNotApplicable(getElementText(searchableElement, 'assessment-score'));
     default:
       return '';
   }
@@ -83,17 +92,21 @@ function getElementText(searchableElement: ISearchableElement, elementName: stri
     ?? '';
 }
 
-function parseDate(dateString: string): Date {
-  const date = moment(dateString, 'DD/MM/YYYY').toDate();
-  return date.toString() === 'Invalid Date' ? new Date(0) : date;
+function parseDateAndTime(dateString: string): Date {
+  const dateAndTime = moment(dateString, 'DD/MM/YYYY hh:mm:ss').toDate();
+  return dateAndTime.toString() === 'Invalid Date' ? new Date(0) : dateAndTime;
 }
 
-function getSortBy(): string {
+function parseNonNegativeIntOrNotApplicable(value: string): number {
+  return value === 'N/A' ? -1 : parseInt(value, 10);
+}
+
+export function getSortBy(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-by');
   return element?.value ?? 'Name';
 }
 
-function getSortDirection(): string {
+export function getSortDirection(): string {
   const element = <HTMLInputElement>document.getElementById('select-sort-direction');
   return element?.value ?? 'Ascending';
 }

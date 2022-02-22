@@ -89,7 +89,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var (_, approved) = registrationService.RegisterDelegate(
                 model,
                 clientIp,
-                false
+                false,
+                null
             );
 
             // Then
@@ -100,7 +101,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                         )
                 )
                 .MustHaveHappened();
-            Assert.That(approved);
+            approved.Should().BeTrue();
         }
 
         [Test]
@@ -110,7 +111,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "::1", false);
+            registrationService.RegisterDelegate(model, "::1", false, null);
 
             // Then
             A.CallTo(
@@ -129,7 +130,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "987.654.321.100", false);
+            registrationService.RegisterDelegate(model, "987.654.321.100", false, null);
 
             // Then
             A.CallTo(
@@ -148,7 +149,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false);
+            registrationService.RegisterDelegate(model, string.Empty, false, null);
 
             // Then
             A.CallTo(
@@ -173,7 +174,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, true);
+            registrationService.RegisterDelegate(model, string.Empty, true, null);
 
             // Then
             A.CallTo(
@@ -198,7 +199,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, "123.456.789.100", false);
+            registrationService.RegisterDelegate(model, "123.456.789.100", false, null);
 
             // Then
             A.CallTo(
@@ -214,7 +215,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false);
+            registrationService.RegisterDelegate(model, string.Empty, false, null);
 
             // Then
             A.CallTo(
@@ -234,7 +235,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
 
             // When
             var candidateNumber =
-                registrationService.RegisterDelegate(model, string.Empty, false)
+                registrationService.RegisterDelegate(model, string.Empty, false, null)
                     .candidateNumber;
 
             // Then
@@ -257,7 +258,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .Returns(new DelegateUser { Id = 777 });
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, 999);
+            registrationService.RegisterDelegate(model, string.Empty, false, null, 999);
 
             // Then
             A.CallTo(
@@ -282,6 +283,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 model,
                 string.Empty,
                 false,
+                null,
                 matchingSupervisorDelegateId
             );
 
@@ -304,7 +306,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             GivenNoPendingSupervisorDelegateRecordsForEmail();
 
             // When
-            registrationService.RegisterDelegate(model, string.Empty, false, 999);
+            registrationService.RegisterDelegate(model, string.Empty, false, null, 999);
 
             // Then
             A.CallTo(
@@ -331,6 +333,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 model,
                 string.Empty,
                 false,
+                null,
                 supervisorDelegateId
             );
 
@@ -339,7 +342,8 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 .MustHaveHappened();
             A.CallTo(
                 () => frameworkNotificationService.SendSupervisorDelegateAcceptance(
-                    A<int>.That.Matches(id => id != supervisorDelegateId), A<int>._
+                    A<int>.That.Matches(id => id != supervisorDelegateId),
+                    A<int>._
                 )
             ).MustNotHaveHappened();
         }
@@ -352,7 +356,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false);
+            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false, null);
 
             // Then
             act.Should().Throw<DelegateCreationFailedException>();
@@ -366,7 +370,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             A.CallTo(() => registrationDataService.RegisterDelegate(model)).Returns("-1");
 
             // When
-            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false);
+            Action act = () => registrationService.RegisterDelegate(model, string.Empty, false, null);
 
             // Then
             act.Should().Throw<DelegateCreationFailedException>();
@@ -378,6 +382,35 @@ namespace DigitalLearningSolutions.Data.Tests.Services
                 () =>
                     passwordDataService.SetPasswordByCandidateNumber(A<string>._, A<string>._)
             ).MustNotHaveHappened();
+        }
+
+        [Test]
+        public void Registering_delegate_calls_data_service_to_set_prn()
+        {
+            // Given
+            const string clientIp = ApprovedIpPrefix + ".100";
+            const string prn = "PRN";
+            var model = RegistrationModelTestHelper.GetDefaultDelegateRegistrationModel();
+
+            // When
+            var (_, approved) = registrationService.RegisterDelegate(
+                model,
+                clientIp,
+                false,
+                prn
+            );
+
+            // Then
+            A.CallTo(
+                    () =>
+                        userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                            A<int>._,
+                            prn,
+                            true
+                        )
+                )
+                .MustHaveHappenedOnceExactly();
+            approved.Should().BeTrue();
         }
 
         [Test]

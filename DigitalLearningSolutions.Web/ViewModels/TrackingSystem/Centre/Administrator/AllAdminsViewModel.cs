@@ -10,9 +10,12 @@
     {
         public readonly IEnumerable<SearchableAdminViewModel> Admins;
 
-        public AllAdminsViewModel(IEnumerable<AdminUser> adminUsers, IEnumerable<string> categories)
+        public AllAdminsViewModel(IEnumerable<AdminUser> adminUsers,
+            IEnumerable<string> categories,
+            AdminUser loggedInAdminUser)
+        
         {
-            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au));
+            Admins = adminUsers.Select(au => new SearchableAdminViewModel(au, loggedInAdminUser, 1));
 
             Filters = new[]
             {

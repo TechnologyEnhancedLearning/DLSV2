@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -19,7 +20,16 @@
             string sortDirection,
             string? filterBy,
             int? itemsPerPage
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy, itemsPerPage ?? DefaultItemsPerPage, searchLabel: "Search delegates")
+        ) : base(
+            searchString,
+            page,
+            true,
+            sortBy,
+            sortDirection,
+            filterBy,
+            itemsPerPage ?? DefaultItemsPerPage,
+            "Search delegates"
+        )
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 delegateUserCards.AsQueryable(),
@@ -33,11 +43,12 @@
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
                     var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, returnPage);
                 }
             );
 
@@ -52,7 +63,7 @@
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
         {
             DelegateSortByOptions.Name,
-            DelegateSortByOptions.RegistrationDate
+            DelegateSortByOptions.RegistrationDate,
         };
 
         public override bool NoDataFound => !Delegates.Any() && NoSearchOrFilter;

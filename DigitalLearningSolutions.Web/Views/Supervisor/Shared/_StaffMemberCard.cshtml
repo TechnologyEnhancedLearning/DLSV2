@@ -1,15 +1,15 @@
-﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
-@model SupervisorDelegateDetail;
-<div class="searchable-element nhsuk-panel" id="@Model.ID-card">
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@model SupervisorDelegateDetailViewModel;
+<div class="searchable-element nhsuk-panel" id="@Model.SupervisorDelegateDetail.ID-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
     <summary class="nhsuk-details__summary">
 
-      @if (Model.CandidateID == null)
+      @if (Model.SupervisorDelegateDetail.CandidateID == null)
       {
         <div class="nhsuk-grid-row searchable-element-title">
           <div class="nhsuk-grid-column-three-quarters">
-            <span class="nhsuk-details__summary-text" id="@Model.ID-name" name="name" role="heading" aria-level="3">
-              <text>@Model.DelegateEmail</text>
+            <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
+              <text>@Model.SupervisorDelegateDetail.DelegateEmail</text>
             </span>
           </div>
           <div class="nhsuk-grid-column-one-quarter">
@@ -25,16 +25,16 @@
       {
         <div class="nhsuk-grid-row">
           <div class="nhsuk-grid-column-three-quarters searchable-element-title">
-            <span class="nhsuk-details__summary-text" id="@Model.ID-name" name="name" role="heading" aria-level="3">
-              <text>@Model.FirstName @Model.LastName (@Model.DelegateEmail)</text>
+            <span class="nhsuk-details__summary-text" id="@Model.SupervisorDelegateDetail.ID-name" name="name" role="heading" aria-level="3">
+              <text>@Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName (@Model.SupervisorDelegateDetail.DelegateEmail)</text>
             </span>
           </div>
           <div class="nhsuk-grid-column-one-quarter">
             <span class="float-right-additional-information">
-              @if (Model.Confirmed == null)
+              @if (Model.SupervisorDelegateDetail.Confirmed == null)
               {
                 <strong class="nhsuk-tag nhsuk-tag--yellow">
-                  Awaiting @(Model.AddedByDelegate ? "supervisor" : "delegate") confirmation
+                  Awaiting @(Model.SupervisorDelegateDetail.AddedByDelegate ? "supervisor" : "delegate") confirmation
                 </strong>
               }
               else
@@ -51,7 +51,7 @@
     </summary>
     <div class="nhsuk-details__text">
       <div class="nhsuk-u-padding-left-3">
-        @if (Model.CandidateID == null)
+        @if (Model.SupervisorDelegateDetail.CandidateID == null)
         {
           <dl class="nhsuk-summary-list">
             <div class="nhsuk-summary-list__row">
@@ -59,7 +59,7 @@
               Added
             </dt>
             <dd class="nhsuk-summary-list__value">
-              @(Model.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.Added.ToShortDateString() : "Today")
+              @(Model.SupervisorDelegateDetail.Added.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.Added.ToShortDateString() : "Today")
             </dd>
             <dd class="nhsuk-summary-list__actions">
             </dd>
@@ -69,12 +69,12 @@
             Notification Sent
           </dt>
           <dd class="nhsuk-summary-list__value">
-            @(Model.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.NotificationSent.ToShortDateString() : "Today")
+            @(Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString() ? Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() : "Today")
           </dd>
           <dd class="nhsuk-summary-list__actions">
-            @if (Model.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
+            @if (Model.SupervisorDelegateDetail.NotificationSent.ToShortDateString() != DateTime.UtcNow.ToShortDateString())
             {
-              <a asp-action="ResendInvite" asp-route-reviewId="@Model.ID">
+              <a asp-action="ResendInvite" asp-route-reviewId="@Model.SupervisorDelegateDetail.ID">
                 Send reminder
               </a>
             }
@@ -84,35 +84,38 @@
       }
       else
       {
-        <partial name="Shared/_StaffDetails" model="Model" />
+        <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
       }
       </div>
-      <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small" asp-action="@(Model.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")" asp-route-supervisorDelegateId="@Model.ID">
+      <a class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4 button-small"
+         asp-action="@(Model.SupervisorDelegateDetail.CandidateAssessmentCount == 0 ? "RemoveSupervisorDelegate" : "RemoveSupervisorDelegateConfirm")"
+         asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
+         asp-route-returnPage="@Model.Page">
         Remove staff member
       </a>
 
   </div>
 
   </details>
-  @if (Model.Confirmed != null)
+  @if (Model.SupervisorDelegateDetail.Confirmed != null)
   {
-    
+
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-           aria-describedby="@Model.ID-name"
+           aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
            asp-controller="Supervisor"
            asp-action="DelegateProfileAssessments"
-           asp-route-supervisorDelegateId="@Model.ID">
-          View self assessments (@Model.CandidateAssessmentCount)
+           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
+          View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
         </a>
   }
-  else if (Model.AddedByDelegate)
+  else if (Model.SupervisorDelegateDetail.AddedByDelegate)
   {
-    
+
         <a class="nhsuk-button nhsuk-u-margin-left-4 nhsuk-u-margin-top-0"
-           aria-describedby="@Model.ID-name"
+           aria-describedby="@Model.SupervisorDelegateDetail.ID-name"
            asp-controller="Supervisor"
            asp-action="ConfirmSupervise"
-           asp-route-supervisorDelegateId="@Model.ID">
+           asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
           Confirm
         </a>
   }
