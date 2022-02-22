@@ -395,7 +395,8 @@
                 first.TotalTime.Should().Be(5);
                 first.AverageTime.Should().Be(28);
 
-                first.PostLearningAssessment.Should().BeTrue();
+                first.PostLearningAssessPath.Should().Be("https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr");
+                first.IsAssessed.Should().BeTrue();
                 first.Attempts.Should().Be(0);
                 first.Outcome.Should().Be(0);
                 first.Passed.Should().BeTrue();

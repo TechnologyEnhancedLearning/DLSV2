@@ -52,7 +52,7 @@
         public int Completion { get; set; }
         public int TotalTime { get; set; }
         public int AverageTime { get; set; }
-        public string? PLAssessPath { get; set; }
+        public string? PostLearningAssessPath { get; set; }
         public bool IsAssessed { get; set; }
         public int Outcome { get; set; }
         public int Attempts { get; set; }

@@ -12,7 +12,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Deleg
             Completion = section.Completion;
             TotalTime = section.TotalTime;
             AverageTime = section.AverageTime;
-            PostLearningAssessment = !string.IsNullOrWhiteSpace(section.PLAssessPath) && section.IsAssessed;
+            PostLearningAssessment = !string.IsNullOrWhiteSpace(section.PostLearningAssessPath) && section.IsAssessed;
             Outcome = section.Outcome;
             Attempts = section.Attempts;
             Passed = section.Passed;

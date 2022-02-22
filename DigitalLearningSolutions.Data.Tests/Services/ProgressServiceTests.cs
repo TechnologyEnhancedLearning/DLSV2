@@ -246,11 +246,23 @@
                     PossibleScore = 5,
                 },
             };
+            var testCourseInfo = new DelegateCourseInfo
+            {
+                DelegateLastName = "lastName",
+                DelegateEmail = "email",
+                DelegateId = 99,
+                DelegateNumber = "five",
+                LastUpdated = DateTime.UnixEpoch,
+                Enrolled = DateTime.MinValue,
+                Completed = DateTime.Today,
+                CompleteBy = DateTime.Now,
+            };
 
             A.CallTo(() => progressDataService.GetProgressByProgressId(1)).Returns(testCourseProgress);
             A.CallTo(() => progressDataService.GetSectionProgressDataForProgressEntry(1)).Returns(testSectionProgress);
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 2)).Returns(testTutorialProgress1);
             A.CallTo(() => progressDataService.GetTutorialProgressDataForSection(1, 3)).Returns(testTutorialProgress2);
+            A.CallTo(() => courseDataService.GetDelegateCourseInfoByProgressId(1)).Returns(testCourseInfo);
 
             var testSectionProgressWithTutorials = new List<DetailedSectionProgress>
             {
@@ -259,7 +271,7 @@
                 new DetailedSectionProgress
                     { SectionId = 3, SectionName = "Section3", Tutorials = testTutorialProgress2 },
             };
-            var expectedResult = new DetailedCourseProgress(testCourseProgress, testSectionProgressWithTutorials);
+            var expectedResult = new DetailedCourseProgress(testCourseProgress, testSectionProgressWithTutorials, testCourseInfo);
 
             // When
             var result = progressService.GetDetailedCourseProgress(1);

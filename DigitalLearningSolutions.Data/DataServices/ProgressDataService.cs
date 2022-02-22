@@ -268,7 +268,7 @@
                         SUM(asp1.TutTime) AS TotalTime,
                         s.AverageSectionMins AS AverageTime,
                         cu.IsAssessed AS IsAssessed,
-                        s.PLAssessPath AS AssessPath,
+                        s.PLAssessPath AS PostLearningAssessPath,
                         MAX(ISNULL(aa.Score, 0)) AS Outcome,
                         (SELECT COUNT(AssessAttemptID) AS PLAttempts
                             FROM AssessAttempts AS a_a
