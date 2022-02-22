@@ -20,10 +20,20 @@
         public void GetNumberOfUnarchivedTicketsForCentreId_returns_expected_count()
         {
             // When
-            var count = supportTicketDataService.GetNumberOfUnarchivedTicketsForCentreId(2);
+            var count = supportTicketDataService.GetNumberOfUnarchivedTicketsForCentreId(615);
 
             // Then
-            count.Should().Be(0);
+            count.Should().Be(5);
+        }
+
+        [Test]
+        public void GetNumberOfUnarchivedTicketsForAdminId_returns_expected_count()
+        {
+            // When
+            var count = supportTicketDataService.GetNumberOfUnarchivedTicketsForAdminId(3534);
+
+            // Then
+            count.Should().Be(5);
         }
     }
 }
