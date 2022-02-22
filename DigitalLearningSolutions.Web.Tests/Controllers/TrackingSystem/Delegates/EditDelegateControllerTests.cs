@@ -72,6 +72,7 @@
             {
                 JobGroupId = 1,
                 Email = email,
+                HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
             A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
@@ -118,6 +119,7 @@
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
             A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);

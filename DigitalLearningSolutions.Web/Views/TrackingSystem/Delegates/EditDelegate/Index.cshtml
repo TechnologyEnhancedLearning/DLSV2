@@ -57,6 +57,8 @@
                        autocomplete=""
                        hint-text=""
                        css-class="nhsuk-u-width-one-half" />
+
+        <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
 
       <vc:select-list asp-for="@nameof(Model.JobGroupId)"

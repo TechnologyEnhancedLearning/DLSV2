@@ -836,7 +836,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -879,7 +881,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -923,7 +927,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
