@@ -93,11 +93,11 @@
       </div>
     </div>
     <div class="nhsuk-grid-row nhsuk-inset-text">
-      <div class="nhsuk-grid-column-one-quarter nhsuk-body-l">
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l">
         Overall diagnostic score:
       </div>
-      <div class="nhsuk-grid-column-three-quarter nhsuk-body-l nhsuk-u-font-weight-bold word-break">
-        @Model.DiagnosticScore%
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")
       </div>
     </div>
     @foreach (var section in Model.Sections) {
