@@ -100,7 +100,9 @@
         {
             var progress = progressDataService.GetProgressByProgressId(progressId);
 
-            if (progress == null)
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (progress == null || courseInfo == null)
             {
                 return null;
             }
@@ -112,7 +114,7 @@
                     progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
             }
 
-            return new DetailedCourseProgress(progress, sections);
+            return new DetailedCourseProgress(progress, sections, courseInfo);
         }
     }
 }

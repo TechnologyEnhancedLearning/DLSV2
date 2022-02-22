@@ -1,15 +1,29 @@
 ﻿namespace DigitalLearningSolutions.Data.Models
 {
+    using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Models.Courses;
 
     public class DetailedCourseProgress
     {
-        public DetailedCourseProgress(Progress progress, IEnumerable<DetailedSectionProgress> sections)
+        public DetailedCourseProgress(Progress progress, IEnumerable<DetailedSectionProgress> sections, DelegateCourseInfo delegateCourseInfo)
         {
             DiagnosticScore = progress.DiagnosticScore;
             ProgressId = progress.ProgressId;
             CustomisationId = progress.CustomisationId;
             DelegateId = progress.CandidateId;
+
+            DelegateName = delegateCourseInfo.DelegateFirstName == null
+                ? delegateCourseInfo.DelegateLastName
+                : $"{delegateCourseInfo.DelegateFirstName} {delegateCourseInfo.DelegateLastName}";
+            DelegateEmail = delegateCourseInfo.DelegateEmail;
+            DelegateNumber = delegateCourseInfo.DelegateNumber;
+
+            LastUpdated = delegateCourseInfo.LastUpdated;
+            Enrolled = delegateCourseInfo.Enrolled;
+            CompleteBy = delegateCourseInfo.CompleteBy;
+            Completed = delegateCourseInfo.Completed;
+
             Sections = sections;
         }
 
@@ -17,6 +31,16 @@
         public int CustomisationId { get; set; }
         public int DelegateId { get; set; }
         public int? DiagnosticScore { get; set; }
+
+        public string DelegateName { get; set; }
+        public string? DelegateEmail { get; set; }
+        public string DelegateNumber { get; set; }
+
+        public DateTime LastUpdated { get; set; }
+        public DateTime Enrolled { get; set; }
+        public DateTime? CompleteBy { get; set; }
+        public DateTime? Completed { get; set; }
+
         public IEnumerable<DetailedSectionProgress> Sections { get; set; }
     }
 

@@ -213,19 +213,8 @@
                 return NotFound();
             }
 
-            var candidateData = userService.GetDelegateUserById(progressData.DelegateId);
-            var courseData =
-                courseService.GetDelegateCourseProgress(progressId);
-
-            if (candidateData == null || courseData == null)
-            {
-                return NotFound();
-            }
-
             var model = new DetailedCourseProgressViewModel(
-                candidateData,
                 progressData,
-                courseData,
                 accessedVia,
                 configuration.GetCurrentSystemBaseUrl()
             );

@@ -11,26 +11,24 @@
     public class DetailedCourseProgressViewModel
     {
         public DetailedCourseProgressViewModel(
-            DelegateUser delegateUser,
             DetailedCourseProgress progress,
-            DelegateCourseDetails course,
             DelegateProgressAccessRoute accessedVia,
             string currentSystemBaseUrl
         )
         {
             AccessedVia = accessedVia;
             ProgressId = progress.ProgressId;
-            DelegateId = delegateUser.Id;
+            DelegateId = progress.DelegateId;
             CustomisationId = progress.CustomisationId;
 
-            DelegateName = delegateUser.FullName;
-            DelegateEmail = delegateUser.EmailAddress;
-            DelegateNumber = delegateUser.CandidateNumber;
+            DelegateName = progress.DelegateName;
+            DelegateEmail = progress.DelegateEmail;
+            DelegateNumber = progress.DelegateNumber;
 
-            LastUpdated = course.DelegateCourseInfo.LastUpdated;
-            Enrolled = course.DelegateCourseInfo.Enrolled;
-            CompleteBy = course.DelegateCourseInfo.CompleteBy;
-            Completed = course.DelegateCourseInfo.Completed;
+            LastUpdated = progress.LastUpdated;
+            Enrolled = progress.Enrolled;
+            CompleteBy = progress.CompleteBy;
+            Completed = progress.Completed;
 
             DiagnosticScore = progress.DiagnosticScore;
 
