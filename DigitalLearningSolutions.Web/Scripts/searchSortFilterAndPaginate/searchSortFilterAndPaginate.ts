@@ -304,7 +304,7 @@ export class SearchSortFilterAndPaginate {
     this.spinnerContainer?.classList.add('display-none');
     this.spinner?.classList.add('loading-spinner');
     if (this.areaToHide !== null) {
-      this.areaToHide.id = '';
+      this.areaToHide.style.display = 'inline';
     }
   }
 }
