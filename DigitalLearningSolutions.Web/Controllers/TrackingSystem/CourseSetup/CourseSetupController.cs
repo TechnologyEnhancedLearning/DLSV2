@@ -166,6 +166,7 @@
 
             if (applicationId == null)
             {
+                ModelState.AddModelError("ApplicationId", "Select a course");
                 return View(
                     "AddNewCentreCourse/SelectCourse",
                     GetSelectCourseViewModel(

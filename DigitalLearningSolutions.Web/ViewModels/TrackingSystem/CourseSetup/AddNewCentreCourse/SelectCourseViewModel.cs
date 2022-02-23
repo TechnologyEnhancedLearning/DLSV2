@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
@@ -56,9 +55,7 @@
                 );
         }
 
-        [Required(ErrorMessage = "Select a course")]
         public int? ApplicationId { get; set; }
-
         public IEnumerable<FilterableApplicationSelectListItemViewModel> ApplicationOptions { get; set; }
         public IEnumerable<SelectListItem> ApplicationOptionsSelectList { get; set; }
         public string? CategoryFilterBy { get; set; }
