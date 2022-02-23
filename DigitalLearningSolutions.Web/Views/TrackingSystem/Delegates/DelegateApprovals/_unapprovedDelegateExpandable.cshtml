@@ -12,7 +12,7 @@
       <dl class="nhsuk-summary-list">
         <div class="nhsuk-summary-list__row basic-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Delegate id
+            Delegate ID
           </dt>
           <dd class="nhsuk-summary-list__value">
             @Model.CandidateNumber
@@ -51,7 +51,7 @@
   </details>
   <div class="flex-row nhsuk-u-margin-left-4">
     <form class="delegate-approvals-button-wrapper" method="post">
-      <input type="hidden" name="delegateId" value="@Model.Id"/>
+      <input type="hidden" name="delegateId" value="@Model.Id" />
       <button class="nhsuk-button nhsuk-u-margin-bottom-2 nhsuk-u-margin-right-2" asp-controller="DelegateApprovals" asp-action="ApproveDelegate">
         Approve
       </button>

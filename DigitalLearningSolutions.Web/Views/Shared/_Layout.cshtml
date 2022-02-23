@@ -67,9 +67,12 @@
           </svg>
 
                         <span class="nhsuk-header__service-name">@(ViewData[LayoutViewDataKeys.HeaderPrefix] ?? "Digital Learning Solutions ")@(headerExtension)</span>
-                        @if(ViewData[LayoutViewDataKeys.Application].ToString() == "Framework Service" | ViewData[LayoutViewDataKeys.Application].ToString() == "Supervise")
+                        @if (ViewData[LayoutViewDataKeys.Application] != null)
                         {
-                            <sup class="header-beta header-beta--dark">Beta</sup>
+                            if (ViewData[LayoutViewDataKeys.Application].ToString() == "Framework Service" | ViewData[LayoutViewDataKeys.Application].ToString() == "Supervise")
+                            {
+                                <sup class="header-beta header-beta--dark">Beta</sup>
+                            }
                         }
                     </a>
       </div>

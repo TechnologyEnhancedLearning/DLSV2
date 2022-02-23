@@ -78,6 +78,7 @@
             return View(model);
         }
 
+        [NoCaching]
         [Route("AllDelegateItems")]
         public IActionResult AllDelegateItems()
         {

@@ -19,13 +19,6 @@
 
         string? GetGroupName(int groupId, int centreId);
 
-        void RemoveRelatedProgressRecordsForGroup(
-            int groupId,
-            int? delegateId,
-            bool removeStartedEnrolments,
-            DateTime removedDate
-        );
-
         int? GetGroupCentreId(int groupId);
 
         int? GetRelatedProgressIdForGroupDelegate(int groupId, int delegateId);
@@ -40,6 +33,13 @@
             int groupId,
             int groupCustomisationId,
             bool deleteStartedEnrolment,
+            DateTime removedDate
+        );
+
+        void RemoveRelatedProgressRecordsForGroup(
+            int groupId,
+            int? delegateId,
+            bool removeStartedEnrolments,
             DateTime removedDate
         );
 
@@ -80,7 +80,8 @@
                 AND ca.CentreId = @centreId
                 AND gc.InactivatedDate IS NULL
                 AND ap.ArchivedDate IS NULL
-                AND c.Active = 1";
+                AND c.Active = 1
+                AND ap.DefaultContentTypeID <> 4";
 
         private const string GroupCourseSql = @"SELECT
                         GroupCustomisationID,
@@ -112,6 +113,22 @@
                             FROM CentreApplications
                             WHERE (ApplicationID = c.ApplicationID)
                                 AND (CentreID = @centreID) AND (Active = 1))";
+
+        private const string SelectIdsOfGroupProgressRecordsSuitableForRemoval =
+            @"SELECT ProgressID
+            FROM Progress AS P
+            INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
+            INNER JOIN GroupDelegates AS GD ON GD.DelegateID = P.CandidateID AND GD.GroupID = GC.GroupID
+            WHERE P.Completed IS NULL
+            AND P.EnrollmentMethodID = 3
+            AND GC.GroupID = @groupId
+            AND P.RemovedDate IS NULL
+            AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
+            AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
+                            INNER JOIN GroupDelegates AS GDInner ON GCInner.GroupID = GDInner.GroupID
+                            WHERE GCInner.CustomisationID = P.CustomisationID
+                            AND GDInner.DelegateID = P.CandidateID
+                            AND GCInner.GroupID != GC.GroupID)";
 
         private readonly IDbConnection connection;
 
@@ -257,11 +274,6 @@
             );
         }
 
-        public void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
-        {
-            RemoveRelatedProgressRecordsForGroup(groupId, null, deleteStartedEnrolment, removedDate);
-        }
-
         public void DeleteGroupDelegates(int groupId)
         {
             connection.Execute(
@@ -298,8 +310,11 @@
             );
         }
 
-        // TODO: HEEDLS-689 see note on ticket regarding
-        // commonising duplicate SQL here and in method RemoveRelatedProgressRecordsForGroupCourse
+        public void RemoveRelatedProgressRecordsForGroup(int groupId, bool deleteStartedEnrolment, DateTime removedDate)
+        {
+            RemoveRelatedProgressRecordsForGroup(groupId, null, deleteStartedEnrolment, removedDate);
+        }
+
         public void RemoveRelatedProgressRecordsForGroup(
             int groupId,
             int? delegateId,
@@ -308,31 +323,17 @@
         )
         {
             connection.Execute(
-                @"UPDATE Progress
+                $@"UPDATE Progress
                         SET
                             RemovedDate = @removedDate,
                             RemovalMethodID = 3
                         WHERE ProgressID IN
-                            (SELECT ProgressID
-                             FROM Progress AS P
-                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                             WHERE P.Completed IS NULL
-                             AND P.EnrollmentMethodID = 3
-                             AND GC.GroupID = @groupId
-                             AND (P.CandidateID = @delegateId OR @delegateId IS NULL)
-                             AND P.RemovedDate IS NULL
-                             AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
-                             AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
-                                                INNER JOIN GroupDelegates AS GD ON GCInner.GroupID = GD.GroupID
-                                                WHERE GCInner.CustomisationID = P.CustomisationID
-                                                AND GD.DelegateID = P.CandidateID
-                                                AND GCInner.GroupID != GC.GroupID))",
+                            ({SelectIdsOfGroupProgressRecordsSuitableForRemoval}
+                             AND (P.CandidateID = @delegateId OR @delegateId IS NULL))",
                 new { groupId, removedDate, deleteStartedEnrolment, delegateId }
             );
         }
 
-        // TODO: HEEDLS-689 see note on ticket regarding
-        // commonising duplicate SQL here and in method RemoveRelatedProgressRecordsForGroup
         public void RemoveRelatedProgressRecordsForGroupCourse(
             int groupId,
             int groupCustomisationId,
@@ -341,26 +342,13 @@
         )
         {
             connection.Execute(
-                @"UPDATE Progress
+                $@"UPDATE Progress
                         SET
                             RemovedDate = @timeOfRemoval,
                             RemovalMethodID = 3
                         WHERE ProgressID IN
-                            (SELECT ProgressID
-                             FROM Progress AS P
-                             INNER JOIN GroupCustomisations AS GC ON P.CustomisationID = GC.CustomisationID
-                             INNER JOIN GroupDelegates AS GD ON GD.DelegateID = P.CandidateID AND GD.GroupID = GC.GroupID
-                             WHERE P.Completed IS NULL
-                             AND P.EnrollmentMethodID = 3
-                             AND GC.GroupID = @groupId
-                             AND GC.GroupCustomisationID = @groupCustomisationId
-                             AND P.RemovedDate IS NULL
-                             AND (P.LoginCount = 0 OR @deleteStartedEnrolment = 1)
-                             AND NOT EXISTS (SELECT * FROM GroupCustomisations AS GCInner
-                                                INNER JOIN GroupDelegates AS GDInner ON GCInner.GroupID = GDInner.GroupID
-                                                WHERE GCInner.CustomisationID = P.CustomisationID
-                                                AND GDInner.DelegateID = P.CandidateID
-                                                AND GCInner.GroupID != GC.GroupID))",
+                            ({SelectIdsOfGroupProgressRecordsSuitableForRemoval}
+                             AND GC.GroupCustomisationID = @groupCustomisationId)",
                 new { groupId, timeOfRemoval, deleteStartedEnrolment, groupCustomisationId }
             );
         }
@@ -435,13 +423,12 @@
                     OUTPUT Inserted.GroupCustomisationId
                     VALUES
                         (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
-                new { groupId, customisationId, completeWithinMonths, addedByAdminUserId, cohortLearners, supervisorAdminId }
+                new
+                {
+                    groupId, customisationId, completeWithinMonths, addedByAdminUserId, cohortLearners,
+                    supervisorAdminId,
+                }
             );
-        }
-
-        public void RemoveRelatedProgressRecordsForGroupDelegate(int groupId, int delegateId, DateTime removedDate)
-        {
-            RemoveRelatedProgressRecordsForGroup(groupId, delegateId, false, removedDate);
         }
     }
 }

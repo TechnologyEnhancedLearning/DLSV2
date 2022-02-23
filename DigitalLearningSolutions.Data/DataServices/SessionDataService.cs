@@ -6,15 +6,19 @@
     public interface ISessionDataService
     {
         int StartOrRestartDelegateSession(int candidateId, int customisationId);
+
         void StopDelegateSession(int candidateId);
+
         void UpdateDelegateSessionDuration(int sessionId);
 
         int StartAdminSession(int adminId);
+
+        bool HasAdminGotSessions(int adminId);
     }
 
     public class SessionDataService : ISessionDataService
     {
-        private const string stopSessionsSql =
+        private const string StopSessionsSql =
             @"UPDATE Sessions SET Active = 0
                WHERE CandidateId = @candidateId;";
 
@@ -28,7 +32,7 @@
         public int StartOrRestartDelegateSession(int candidateId, int customisationId)
         {
             return connection.QueryFirst<int>(
-                stopSessionsSql +
+                StopSessionsSql +
                 @"INSERT INTO Sessions (CandidateID, CustomisationID, LoginTime, Duration, Active)
                   VALUES (@candidateId, @customisationId, GetUTCDate(), 0, 1);
 
@@ -39,7 +43,7 @@
 
         public void StopDelegateSession(int candidateId)
         {
-            connection.Query(stopSessionsSql, new { candidateId });
+            connection.Query(StopSessionsSql, new { candidateId });
         }
 
         public void UpdateDelegateSessionDuration(int sessionId)
@@ -58,7 +62,16 @@
                   VALUES (@adminId, GetUTCDate(), 0, 0);
 
                   SELECT SCOPE_IDENTITY();",
-                new { adminId });
+                new { adminId }
+            );
+        }
+
+        public bool HasAdminGotSessions(int adminId)
+        {
+            return connection.ExecuteScalar<bool>(
+                "SELECT 1 WHERE EXISTS (SELECT AdminSessionId FROM AdminSessions WHERE AdminID = @adminId)",
+                new { adminId }
+            );
         }
     }
 }
