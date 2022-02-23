@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import Cookies from 'js-cookie';
-import { ISearchableElement } from './searchSortFilterAndPaginate';
-import { sendBrowserAgnosticEvent } from '../common';
+import {ISearchableElement} from './searchSortFilterAndPaginate';
+import {sendBrowserAgnosticEvent} from '../common';
 
 export interface IAppliedFilter {
   group: string;
@@ -76,21 +76,19 @@ function setUpFilterSubmitButtons() {
 }
 
 function setUpClearFiltersButton() {
-  document.getElementById('clear-filters')?.
-    addEventListener('click', (e) => {
-      e.preventDefault();
-      clearFilters();
-    });
+  document.getElementById('clear-filters')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearFilters();
+  });
 }
 
 function setUpFilterSelectorDropdown() {
-  document.getElementById('filter-selector')?.
-    addEventListener('change', () => {
-      showSelectedFilterDropdown();
-    });
+  document.getElementById('filter-selector')?.addEventListener('change', () => {
+    showSelectedFilterDropdown();
+  });
 }
 
-function getAppliedFilters(filterBy: string): IAppliedFilter[] {
+export function getAppliedFilters(filterBy: string): IAppliedFilter[] {
   return filterBy.split(filterSeparator)
     .map((filter) => newAppliedFilterFromFilter(filter));
 }
@@ -192,14 +190,14 @@ export function getFilterByValue(): string {
   return getFilterByElement().value;
 }
 
-function updateFilterBy(newFilter: string): void {
+export function updateFilterBy(newFilter: string): void {
   const element = getFilterByElement();
   element.value = newFilter;
   sendBrowserAgnosticEvent(element, 'change');
 }
 
 function updateFilterCookieValue(newFilter: string): void {
-  Cookies.set(cookieName, newFilter, { expires: cookieMaxLifeInDays });
+  Cookies.set(cookieName, newFilter, {expires: cookieMaxLifeInDays});
 }
 
 function clearFilterCookie(): void {

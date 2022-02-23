@@ -1,4 +1,28 @@
 ﻿@import '../../shared/searchableElements/searchableElements';
 @import '../../shared/headingButtons';
 @import '../../shared/cardWithThreeButtons';
-@import '../selectCourse';
+
+.course-dropdown-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.course-dropdown {
+  @extend .input-with-submit-button;
+  display: flex;
+  flex: 1;
+}
+
+.course-submit {
+  @extend .right-submit-button;
+
+  &__dropdown {
+    @extend .right-submit-button;
+    background-color: $button-dark-blue;
+
+    @include mq($from: tablet) {
+      width: 20%;
+    }
+  }
+}
