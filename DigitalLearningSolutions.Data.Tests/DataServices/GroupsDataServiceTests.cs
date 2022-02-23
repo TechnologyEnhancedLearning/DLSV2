@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
-    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
@@ -850,9 +849,9 @@
         public void AddDelegatesWithMatchingAnswersToGroup_adds_delegates_with_matching_job_group()
         {
             // Given
-            const int delegateId = 14;
-            const int groupId = 27;
-            var addedDate = DateTime.UtcNow;
+            const int delegateId = 254480;
+            const int groupId = 100;
+            var addedDate = new DateTime(2021, 12, 25);
 
             using var transaction = new TransactionScope();
             try
@@ -864,8 +863,11 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    groupDelegates.Count.Should().Be(52);
-                    groupDelegates.First().DelegateId.Should().Be(delegateId);
+                    groupDelegates.Count.Should().Be(33);
+                    var groupDelegate = groupDelegates.First(gd => gd.DelegateId == delegateId);
+                    groupDelegate.Should().NotBeNull();
+                    groupDelegate.GroupId.Should().Be(groupId);
+                    groupDelegate.AddedDate.Should().Be(addedDate);
                 }
             }
             finally
@@ -880,7 +882,7 @@
         {
             // Given
             const int groupId = 100;
-            var addedDate = DateTime.UtcNow;
+            var addedDate = new DateTime(2021, 12, 25);
 
             using var transaction = new TransactionScope();
             try
@@ -911,7 +913,7 @@
         {
             // Given
             const int groupId = 100;
-            var addedDate = DateTime.UtcNow;
+            var addedDate = new DateTime(2021, 12, 25);
 
             using var transaction = new TransactionScope();
             try
