@@ -10,6 +10,7 @@
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
+    using FakeItEasy;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.Data.SqlClient;
@@ -814,14 +815,14 @@
             // Given
             const int delegateId = 254480;
             const int groupId = 100;
-            var addedDate = DateTime.UtcNow;
+            var addedDate = new DateTime(2021, 12, 25);
 
             using var transaction = new TransactionScope();
             try
             {
                 // When
                 groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                    100,
+                    groupId,
                     addedDate,
                     1,
                     101,
@@ -835,6 +836,8 @@
                 {
                     groupDelegates.Count.Should().Be(1);
                     groupDelegates.First().DelegateId.Should().Be(delegateId);
+                    groupDelegates.First().GroupId.Should().Be(groupId);
+                    groupDelegates.First().AddedDate.Should().Be(addedDate);
                 }
             }
             finally
