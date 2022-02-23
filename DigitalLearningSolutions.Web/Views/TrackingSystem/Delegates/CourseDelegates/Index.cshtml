@@ -20,89 +20,92 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-third">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
+    <vc:loading-spinner page-has-side-nav-menu="true" />
+    <div id="area-to-hide-while-loading">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-third">
+          <h1 id="page-heading" class="nhsuk-heading-xl">Course delegates</h1>
+        </div>
+        <div class="nhsuk-grid-column-two-thirds heading-button-group">
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+            Export all
+          </a>
+          <a class="nhsuk-button nhsuk-button--secondary heading-button"
+             id="export-current"
+             asp-controller="CourseDelegates"
+             asp-action="DownloadCurrent"
+             asp-route-customisationId="@Model.CustomisationId"
+             asp-route-sortBy="@Model.CourseDetails?.SortBy"
+             asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
+             asp-route-filterBy="@Model.CourseDetails?.FilterBy"
+             role="button">
+            Export current
+          </a>
+        </div>
       </div>
-      <div class="nhsuk-grid-column-two-thirds heading-button-group">
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-          Export all
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary heading-button"
-           id="export-current"
-           asp-controller="CourseDelegates"
-           asp-action="DownloadCurrent"
-           asp-route-customisationId="@Model.CustomisationId"
-           asp-route-sortBy="@Model.CourseDetails?.SortBy"
-           asp-route-sortDirection="@Model.CourseDetails?.SortDirection"
-           asp-route-filterBy="@Model.CourseDetails?.FilterBy"
-           role="button">
-          Export current
-        </a>
-      </div>
-    </div>
-
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
-        <p>
-          Choose a course to see delegates enrolled on it. If you'd like to export delegates on all courses, click "Export all" above.
-        </p>
-      </div>
-    </div>
-
-    @if (Model.Courses.Any() && Model.CourseDetails != null) {
-      @if (!Model.CourseDetails.Active) {
-        <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
-      }
 
       <div class="nhsuk-grid-row">
-        <form method="get" role="search">
-          <div class="nhsuk-grid-column-full nhsuk-form-group">
-            <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
-            <div class="course-dropdown-container">
-              <select id="selected-customisation-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
-                      asp-for="CustomisationId"
-                      asp-items="Model.Courses"
-                      aria-label="Choose course">
-              </select>
-              <button class="nhsuk-search__submit course-submit" type="submit">
-                Select
-              </button>
+        <div class="nhsuk-grid-column-full">
+          <p>
+            Choose a course to see delegates enrolled on it. If you'd like to export delegates on all courses, click "Export all" above.
+          </p>
+        </div>
+      </div>
+
+      @if (Model.Courses.Any() && Model.CourseDetails != null) {
+        @if (!Model.CourseDetails.Active) {
+          <partial name="~/Views/TrackingSystem/Shared/_InactiveCourseInset.cshtml" />
+        }
+
+        <div class="nhsuk-grid-row">
+          <form method="get" role="search">
+            <div class="nhsuk-grid-column-full nhsuk-form-group">
+              <label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Choose course</label>
+              <div class="course-dropdown-container">
+                <select id="selected-customisation-Id" class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown"
+                        asp-for="CustomisationId"
+                        asp-items="Model.Courses"
+                        aria-label="Choose course">
+                </select>
+                <button class="nhsuk-search__submit course-submit" type="submit">
+                  Select
+                </button>
+              </div>
             </div>
+          </form>
+        </div>
+
+        <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model.CourseDetails" />
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            @if (Model.CourseDetails.NoDataFound) {
+              <p class="nhsuk-u-margin-top-4" role="alert">
+                <b>No delegates are enrolled on this course.</b>
+              </p>
+            } else {
+              <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
+
+              <div id="searchable-elements">
+                @foreach (var delegateUser in Model.CourseDetails.Delegates) {
+                  <partial name="_SearchableCourseDelegateCard" model="delegateUser" />
+                }
+              </div>
+            }
+            @if (Model.CourseDetails.TotalPages > 1) {
+              <partial name="SearchablePage/_Pagination" model="Model.CourseDetails" />
+            }
           </div>
-        </form>
-      </div>
-
-      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSortAndFilter" model="Model.CourseDetails" />
-
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          @if (Model.CourseDetails.NoDataFound) {
-            <p class="nhsuk-u-margin-top-4" role="alert">
-              <b>No delegates are enrolled on this course.</b>
-            </p>
-          } else {
-            <partial name="SearchablePage/_SearchResultsCount" model="Model.CourseDetails" />
-
-            <div id="searchable-elements">
-              @foreach (var delegateUser in Model.CourseDetails.Delegates) {
-                <partial name="_SearchableCourseDelegateCard" model="delegateUser" />
-              }
-            </div>
-          }
-          @if (Model.CourseDetails.TotalPages > 1) {
-            <partial name="SearchablePage/_Pagination" model="Model.CourseDetails" />
-          }
         </div>
-      </div>
-    } else {
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <p class="nhsuk-body-m">There are no courses set up in your centre for the category you manage.</p>
-          <vc:action-link asp-controller="CourseSetup" asp-action="Index" link-text="Course setup"></vc:action-link>
+      } else {
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            <p class="nhsuk-body-m">There are no courses set up in your centre for the category you manage.</p>
+            <vc:action-link asp-controller="CourseSetup" asp-action="Index" link-text="Course setup"></vc:action-link>
+          </div>
         </div>
-      </div>
-    }
+      }
+    </div>
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.CourseDelegates" />
