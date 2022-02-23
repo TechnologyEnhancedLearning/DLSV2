@@ -28,7 +28,7 @@
                 LastUpdated = updatedDate,
                 CompleteBy = completeByDate,
                 Completed = completedDate,
-                Evaluated = evaluatedDate
+                Evaluated = evaluatedDate,
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
@@ -92,7 +92,7 @@
             // Given
             var info = new DelegateCourseInfo
             {
-                ApplicationName = "my application", CustomisationName = ""
+                ApplicationName = "my application", CustomisationName = "",
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
@@ -110,7 +110,7 @@
             var info = new DelegateCourseInfo
             {
                 ApplicationName = "my application",
-                CustomisationName = "my customisation"
+                CustomisationName = "my customisation",
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
@@ -127,7 +127,7 @@
             // Given
             var info = new DelegateCourseInfo
             {
-                SupervisorSurname = null
+                SupervisorSurname = null,
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
@@ -135,7 +135,7 @@
             var model = new DelegateCourseInfoViewModel(details);
 
             // Then
-            model.Supervisor.Should().BeNull();
+            model.Supervisor.Should().Be("None");
         }
 
         [Test]
@@ -145,7 +145,7 @@
             var info = new DelegateCourseInfo
             {
                 SupervisorForename = "",
-                SupervisorSurname = "surname"
+                SupervisorSurname = "surname",
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
@@ -163,7 +163,7 @@
             var info = new DelegateCourseInfo
             {
                 SupervisorForename = "firstname",
-                SupervisorSurname = "surname"
+                SupervisorSurname = "surname",
             };
             var details = new DelegateCourseDetails(info, customPromptsWithAnswers, attemptStats);
 
