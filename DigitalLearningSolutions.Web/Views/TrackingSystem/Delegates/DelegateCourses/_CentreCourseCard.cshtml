@@ -1,5 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
-@model SearchableCourseStatisticsViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@model SearchableDelegateCourseStatisticsViewModel
 
 <div class="searchable-element nhsuk-panel card-with-buttons word-break" id="@Model.CustomisationId-card">
   <details class="nhsuk-details nhsuk-expander nhsuk-u-margin-bottom-0">
@@ -12,11 +12,11 @@
     <div class="nhsuk-details__text">
       <partial name="SearchablePage/_FilterableTags" model="@Model.Tags" />
 
-      <partial name="../../CourseSetup/_CentreCourseCardDetails" model="@Model" />
+      <partial name="_CentreCourseCardDetails" model="@Model" />
 
-      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter"/>
+      <input type="hidden" data-filter-value="@Model.HasAdminFieldsFilter" />
       @if (Model.HasAdminFields) {
-        <partial name="../../CourseSetup/_CentreCourseCardAdminFields" model="@Model" />
+        <partial name="_CentreCourseCardAdminFields" model="@Model" />
       }
     </div>
   </details>

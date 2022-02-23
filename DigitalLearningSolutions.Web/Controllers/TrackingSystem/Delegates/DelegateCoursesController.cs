@@ -9,7 +9,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -60,11 +59,9 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var centreCourses =
-                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+
+            var (centreCourses, categories, topics)
+                = courseService.GetCentreCourseCategoriesTopics(centreId, categoryId);
 
             var model = new DelegateCoursesViewModel(
                 centreCourses,
@@ -94,7 +91,7 @@
                 .Select(c => c.CategoryName);
             var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
 
-            var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
+            var model = new AllDelegateCourseStatisticsViewModel(centreCourses, categories, topics);
             return View(model);
         }
     }

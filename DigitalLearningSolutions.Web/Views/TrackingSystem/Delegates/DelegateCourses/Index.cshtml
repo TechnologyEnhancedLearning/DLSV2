@@ -1,6 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model DelegateCoursesViewModel
 
 <link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/courseSetup.css")" asp-append-version="true">
@@ -17,34 +16,36 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-two-thirds">
-        <h1 class="nhsuk-heading-xl">Delegate courses</h1>
+    <vc:loading-spinner page-has-side-nav-menu="true" />
+    <div id="area-to-hide-while-loading">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-two-thirds">
+          <h1 class="nhsuk-heading-xl">Delegate courses</h1>
+        </div>
+        <div class="nhsuk-grid-column-one-third heading-button-group">
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+            Export
+          </a>
+        </div>
       </div>
-      <div class="nhsuk-grid-column-one-third heading-button-group">
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-          Export all
-        </a>
-      </div>
+
+      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
+
+      @if (Model.NoDataFound) {
+        <p>The centre has no courses set up yet.</p>
+      } else {
+        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+
+        <div id="searchable-elements">
+          @foreach (var course in Model.Courses) {
+            <partial name="_CentreCourseCard" model="course" />
+          }
+        </div>
+      }
+      @if (Model.TotalPages > 1) {
+        <partial name="SearchablePage/_Pagination" model="Model" />
+      }
     </div>
-
-    <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
-
-    @if (Model.NoDataFound) {
-      <p>The centre has no courses set up yet.</p>
-    } else {
-      <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
-
-      <div id="searchable-elements">
-        @foreach (var course in Model.Courses) {
-          <partial name="_CentreCourseCard" model="course" />
-        }
-      </div>
-    }
-    @if (Model.TotalPages > 1) {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
-
   </div>
 </div>
 

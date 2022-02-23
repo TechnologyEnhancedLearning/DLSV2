@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.CourseSetup
+﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Common
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -10,7 +10,7 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class CourseSetupViewModelTests
+    public class SearchablePageViewModelTests
     {
         private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
         {
@@ -32,7 +32,7 @@
         };
 
         [Test]
-        public void CourseSetupViewModel_should_default_to_returning_the_first_ten_delegates()
+        public void SearchablePageViewModel_should_default_to_returning_the_first_ten_delegates()
         {
             // When
             var model = new CourseSetupViewModel(
@@ -57,7 +57,7 @@
         }
 
         [Test]
-        public void CourseSetupViewModel_should_correctly_return_the_second_page_of_delegates()
+        public void SearchablePageViewModel_should_correctly_return_the_second_page_of_delegates()
         {
             // When
             var model = new CourseSetupViewModel(
@@ -81,7 +81,7 @@
         }
 
         [Test]
-        public void CourseSetupViewModel_filters_should_be_set()
+        public void SearchablePageViewModel_filters_should_be_set()
         {
             // Given
             var categories = new[]
@@ -116,7 +116,7 @@
         }
 
         [Test]
-        public void CourseSetupViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
+        public void SearchablePageViewModel_with_custom_items_per_page_should_return_the_specified_number_of_delegates()
         {
             // When
             const int itemsPerPage = 12;

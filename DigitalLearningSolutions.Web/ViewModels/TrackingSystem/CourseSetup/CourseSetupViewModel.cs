@@ -37,12 +37,9 @@
 
             var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
             var searchedItems = GenericSearchHelper.SearchItems(filteredItems, SearchString).ToList();
-            MatchingSearchResults = searchedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
+            var paginatedItems = SortFilterAndPaginate(searchedItems);
 
             Courses = paginatedItems.Select(c => new SearchableCourseStatisticsViewModel(c));
-
             Filters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
         }
 
