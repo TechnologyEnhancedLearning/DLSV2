@@ -28,8 +28,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View("Developer/EditCompetencyLearningResources", model);
         }
 
-        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource")]
-        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, string searchText, int page = 1)
+        [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyId}/CompetencyGroup/{frameworkCompetencyGroupId}/Signposting/AddResource/{page=1:int}")]
+        public async Task<IActionResult> SearchLearningResourcesAsync(int frameworkId, int frameworkCompetencyId, int? frameworkCompetencyGroupId, string searchText, int page)
         {
             var model = new CompetencyResourceSignpostingViewModel(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId);
             if (frameworkCompetencyGroupId.HasValue)
@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             if (searchText?.Trim().Length > 1)
             {
-                model.Page = page; 
+                model.Page = Math.Max(page, 1);
                 model.SearchText = searchText;
                 try
                 {
