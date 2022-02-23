@@ -27,6 +27,10 @@
 
 <vc:loading-spinner page-has-side-nav-menu="false" />
 <div id="area-to-hide-while-loading">
+  @if (errorHasOccurred)
+        {
+          <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
+        }
   <h1>My Staff</h1>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -74,10 +78,6 @@
         <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
           <h2>Add a member of staff</h2>
         </label>
-        @if (errorHasOccurred)
-        {
-          <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
-        }
         <div class="nhsuk-form-group">
           <div class=" sort-select-container">
             <vc:text-input asp-for="DelegateEmail"
