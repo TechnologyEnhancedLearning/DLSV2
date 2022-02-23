@@ -3,12 +3,15 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Models.Enums;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
+    [SetDlsSubApplication(nameof(DlsSubApplication.Frameworks))]
     public partial class FrameworksController : Controller
     {
         private readonly IFrameworkService frameworkService;
