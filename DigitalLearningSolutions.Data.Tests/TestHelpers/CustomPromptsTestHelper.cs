@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.TestHelpers
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
     public static class CustomPromptsTestHelper
@@ -23,13 +22,13 @@
         }
 
         public static CustomPrompt GetDefaultCustomPrompt(
-            RegistrationField registrationField,
+            int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false
         )
         {
-            return new CustomPrompt(registrationField, text, options, mandatory);
+            return new CustomPrompt(promptNumber, text, options, mandatory);
         }
 
         public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers(

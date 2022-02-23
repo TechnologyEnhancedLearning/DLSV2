@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -73,12 +72,12 @@
         private (List<CustomPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
         {
             var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
-                RegistrationField.CentreCustomPrompt1,
+                1,
                 "First prompt",
                 "Clinical\r\nNon-Clinical"
             );
-            var customPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(RegistrationField.CentreCustomPrompt3);
-            var customPrompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(RegistrationField.CentreCustomPrompt4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
+            var customPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3);
+            var customPrompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
             var customPrompts = new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 };
 
             var customPrompt1Options = new[]

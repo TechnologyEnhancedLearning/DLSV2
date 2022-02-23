@@ -12,7 +12,7 @@
                     cp =>
                         new CourseAdminFieldManagementViewModel(
                             customisationId,
-                            cp.RegistrationField.Id,
+                            cp.CustomPromptNumber,
                             cp.CustomPromptText,
                             cp.Mandatory,
                             cp.Options

@@ -11,7 +11,7 @@
             CustomFields = customPrompts.Select(
                     cp =>
                         new CustomPromptManagementViewModel(
-                            cp.RegistrationField.Id,
+                            cp.CustomPromptNumber,
                             cp.CustomPromptText,
                             cp.Mandatory,
                             cp.Options

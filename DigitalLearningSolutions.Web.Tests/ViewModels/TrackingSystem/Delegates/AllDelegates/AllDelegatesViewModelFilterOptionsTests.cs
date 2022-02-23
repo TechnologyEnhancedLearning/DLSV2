@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.AllDelegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -70,7 +69,7 @@
         private (List<CustomPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
         {
             var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
-                RegistrationField.CentreCustomPrompt1,
+                1,
                 "First prompt",
                 "Clinical\r\nNon-Clinical"
             );

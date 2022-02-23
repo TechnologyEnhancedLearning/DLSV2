@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
@@ -73,8 +72,8 @@
             // Given
             var customPrompts = new List<CustomPrompt>
             {
-                new CustomPrompt(RegistrationField.CentreCustomPrompt1, "free text", null, true),
-                new CustomPrompt(RegistrationField.CentreCustomPrompt2, "with options", "A\r\nB", true),
+                new CustomPrompt(1, "free text", null, true),
+                new CustomPrompt(2, "with options", "A\r\nB", true),
             };
 
             // When

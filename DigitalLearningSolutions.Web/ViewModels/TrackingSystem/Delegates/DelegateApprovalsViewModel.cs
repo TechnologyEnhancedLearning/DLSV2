@@ -33,7 +33,7 @@
             JobGroup = delegateUser.JobGroupName;
             CustomPrompts = customPrompts
                 .Select(
-                    cp => new CustomFieldViewModel(cp.RegistrationField.Id, cp.CustomPromptText, cp.Mandatory, cp.Answer)
+                    cp => new CustomFieldViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory, cp.Answer)
                 )
                 .ToList();
         }

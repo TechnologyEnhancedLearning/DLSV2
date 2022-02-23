@@ -26,7 +26,7 @@
 
         public EditRegistrationPromptViewModel(CustomPrompt customPrompt)
         {
-            PromptNumber = customPrompt.RegistrationField.Id;
+            PromptNumber = customPrompt.CustomPromptNumber;
             Prompt = customPrompt.CustomPromptText;
             Mandatory = customPrompt.Mandatory;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);

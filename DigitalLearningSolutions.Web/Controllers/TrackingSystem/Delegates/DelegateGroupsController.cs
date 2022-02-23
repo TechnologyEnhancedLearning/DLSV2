@@ -251,7 +251,7 @@
             var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
 
             var fieldIsValid = centreCustomPromptsService
-                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Select(cp => cp.RegistrationField)
+                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Select(cp => cp.CustomPromptNumber)
                 .Contains(registrationField!.Id) || registrationField.Equals(RegistrationField.JobGroup);
 
             if (!fieldIsValid)

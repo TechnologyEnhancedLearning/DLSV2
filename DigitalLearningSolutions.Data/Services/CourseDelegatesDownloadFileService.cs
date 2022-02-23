@@ -129,7 +129,7 @@
                 dataTable.Columns.Add(
                     !dataTable.Columns.Contains(prompt.CustomPromptText)
                         ? prompt.CustomPromptText
-                        : $"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"
+                        : $"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"
                 );
             }
 
@@ -149,7 +149,7 @@
                 dataTable.Columns.Add(
                     !dataTable.Columns.Contains(prompt.CustomPromptText)
                         ? prompt.CustomPromptText
-                        : $"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"
+                        : $"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"
                 );
             }
         }
@@ -169,15 +169,15 @@
 
             foreach (var prompt in customRegistrationPrompts.CustomPrompts)
             {
-                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"))
+                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"))
                 {
-                    row[$"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
+                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"] =
+                        courseDelegate.CustomRegistrationPromptAnswers[prompt.CustomPromptNumber - 1];
                 }
                 else
                 {
                     row[prompt.CustomPromptText] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
+                        courseDelegate.CustomRegistrationPromptAnswers[prompt.CustomPromptNumber - 1];
                 }
             }
 
@@ -197,15 +197,15 @@
 
             foreach (var prompt in adminFields.AdminFields)
             {
-                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"))
+                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"))
                 {
-                    row[$"{prompt.CustomPromptText} (Prompt {prompt.RegistrationField.Id})"] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.RegistrationField.Id - 1];
+                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"] =
+                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
                 }
                 else
                 {
                     row[prompt.CustomPromptText] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.RegistrationField.Id - 1];
+                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
                 }
             }
 

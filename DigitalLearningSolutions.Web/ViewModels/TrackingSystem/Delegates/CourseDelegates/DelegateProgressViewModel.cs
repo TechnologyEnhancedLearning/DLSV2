@@ -35,7 +35,7 @@
             CustomFields = details.CustomPrompts.Select(
                     cp =>
                         new CustomFieldViewModel(
-                            cp.RegistrationField.Id,
+                            cp.CustomPromptNumber,
                             cp.CustomPromptText,
                             cp.Mandatory,
                             cp.Answer

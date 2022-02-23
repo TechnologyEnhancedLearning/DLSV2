@@ -65,11 +65,11 @@
 
             return customPrompts.CustomPrompts.Select(
                 cp => new EditCustomFieldViewModel(
-                    cp.RegistrationField.Id,
+                    cp.CustomPromptNumber,
                     cp.CustomPromptText,
                     cp.Mandatory,
                     cp.Options,
-                    answers[cp.RegistrationField.Id - 1]
+                    answers[cp.CustomPromptNumber - 1]
                 )
             ).ToList();
         }
@@ -89,10 +89,10 @@
 
             return customPrompts.CustomPrompts.Select(
                 cp => new CustomFieldViewModel(
-                    cp.RegistrationField.Id,
+                    cp.CustomPromptNumber,
                     cp.CustomPromptText,
                     cp.Mandatory,
-                    answers[cp.RegistrationField.Id - 1]
+                    answers[cp.CustomPromptNumber - 1]
                 )
             ).ToList();
         }
@@ -114,10 +114,10 @@
 
             return customPrompts.Select(
                 cp => new CustomFieldViewModel(
-                    cp.RegistrationField.Id,
+                    cp.CustomPromptNumber,
                     cp.CustomPromptText,
                     cp.Mandatory,
-                    answers[cp.RegistrationField.Id - 1]
+                    answers[cp.CustomPromptNumber - 1]
                 )
             ).ToList();
         }
@@ -210,7 +210,7 @@
             IEnumerable<CustomPrompt> centreCustomPrompts
         )
         {
-            var customPromptOptions = centreCustomPrompts.Select(cp => (cp.RegistrationField.Id, cp.CustomPromptText))
+            var customPromptOptions = centreCustomPrompts.Select(cp => (cp.CustomPromptNumber, cp.CustomPromptText))
                 .ToList<(int id, string name)>();
 
             var customPromptNames = customPromptOptions.Select(r => r.name).ToList();

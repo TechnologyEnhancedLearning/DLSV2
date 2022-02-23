@@ -5,7 +5,6 @@
     using System.IO;
     using ClosedXML.Excel;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -141,18 +140,18 @@
 
             var customPrompts = new List<CustomPrompt>
             {
-                new CustomPrompt(RegistrationField.CentreCustomPrompt1, "Role type", null, true),
-                new CustomPrompt(RegistrationField.CentreCustomPrompt2, "Manager", null, true),
-                new CustomPrompt(RegistrationField.CentreCustomPrompt3, "Base / office / place of work", null, true),
-                new CustomPrompt(RegistrationField.CentreCustomPrompt4, "Base / office / place of work", null, true),
-                new CustomPrompt(RegistrationField.CentreCustomPrompt5, "Contact telephone number", null, true),
+                new CustomPrompt(1, "Role type", null, true),
+                new CustomPrompt(2, "Manager", null, true),
+                new CustomPrompt(3, "Base / office / place of work", null, true),
+                new CustomPrompt(4, "Base / office / place of work", null, true),
+                new CustomPrompt(5, "Contact telephone number", null, true),
             };
             A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(centreId))
                 .Returns(new CentreCustomPrompts(centreId, customPrompts));
 
             var adminFields = new List<CustomPrompt>
             {
-                new CustomPrompt(RegistrationField.CentreCustomPrompt1, "Access Permissions", null, true),
+                new CustomPrompt(1, "Access Permissions", null, true),
             };
             A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(customisationId))
                 .Returns(new CourseAdminFields(customisationId, adminFields));
