@@ -17,7 +17,8 @@
             string? firstName = "xxxxx",
             string lastName = "xxxx",
             string? emailAddress = "gslectik.m@vao",
-            string candidateNumber = "KT553"
+            string candidateNumber = "KT553",
+            string? professionalRegistrationNumber = null
         )
         {
             return new GroupDelegate
@@ -29,6 +30,7 @@
                 LastName = lastName,
                 EmailAddress = emailAddress,
                 CandidateNumber = candidateNumber,
+                ProfessionalRegistrationNumber = professionalRegistrationNumber,
             };
         }
 
