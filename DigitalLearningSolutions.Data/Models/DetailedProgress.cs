@@ -13,9 +13,8 @@
             CustomisationId = progress.CustomisationId;
             DelegateId = progress.CandidateId;
 
-            DelegateName = delegateCourseInfo.DelegateFirstName == null
-                ? delegateCourseInfo.DelegateLastName
-                : $"{delegateCourseInfo.DelegateFirstName} {delegateCourseInfo.DelegateLastName}";
+            DelegateFirstName = delegateCourseInfo.DelegateFirstName;
+            DelegateLastName = delegateCourseInfo.DelegateLastName;
             DelegateEmail = delegateCourseInfo.DelegateEmail;
             DelegateNumber = delegateCourseInfo.DelegateNumber;
 
@@ -32,7 +31,8 @@
         public int DelegateId { get; set; }
         public int? DiagnosticScore { get; set; }
 
-        public string DelegateName { get; set; }
+        public string? DelegateFirstName { get; set; }
+        public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
 

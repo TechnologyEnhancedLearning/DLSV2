@@ -14,44 +14,49 @@
   <div class="nhsuk-details__text">
     <table role="table" class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
-      <tr role="row">
-        <th role="columnheader" scope="col">
-          Tutorial
-        </th>
-        <th role="columnheader" scope="col">
-          Status
-        </th>
-        <th role="columnheader" scope="col">
-          Time taken (mins)
-        </th>
-        <th role="columnheader" scope="col">
-          Avg time (mins)
-        </th>
-        @if (showDiagnosticColumn) {
+        <tr role="row">
           <th role="columnheader" scope="col">
-            Diagnostic score
+            Tutorial
           </th>
-        }
-      </tr>
+          <th role="columnheader" scope="col">
+            Status
+          </th>
+          <th role="columnheader" scope="col">
+            Time taken (mins)
+          </th>
+          <th role="columnheader" scope="col">
+            Avg time (mins)
+          </th>
+          @if (showDiagnosticColumn) {
+            <th role="columnheader" scope="col">
+              Diagnostic score
+            </th>
+          }
+        </tr>
       </thead>
       <tbody class="nhsuk-table__body">
       @{
         foreach (var tut in Model) {
-          <tr role="row">
-            <td role="columnheader" scope="col">
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Tutorial </span>
               @tut.TutorialName
             </td>
-            <td role="columnheader" scope="col">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Status </span>
               @tut.TutorialStatus
             </td>
-            <td role="columnheader" scope="col">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Time taken (mins) </span>
               @tut.TimeTaken
             </td>
-            <td role="columnheader" scope="col">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Avg time (mins) </span>
               @tut.AvgTime
             </td>
             @if (showDiagnosticColumn) {
-              <td role="columnheader" scope="col">
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Diagnostic score </span>
                 @tut.DiagnosticScore / @tut.PossibleScore
               </td>
             }

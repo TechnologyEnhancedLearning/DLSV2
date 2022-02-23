@@ -45,9 +45,7 @@
             <dt class="nhsuk-summary-list__key">
               Email
             </dt>
-            <dd class="nhsuk-summary-list__value">
-              @Model.DelegateEmail
-            </dd>
+            <partial name="_SummaryFieldValue" model="@Model.DelegateEmail" />
           </div>
           <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
@@ -77,17 +75,13 @@
             <dt class="nhsuk-summary-list__key">
               Complete By
             </dt>
-            <dd class="nhsuk-summary-list__value">
-              <partial name="_SummaryFieldValue" model="@Model.CompleteBy.ToString()" />
-            </dd>
+            <partial name="_SummaryFieldValue" model="@Model.CompleteBy.ToString()" />
           </div>
           <div class="nhsuk-summary-list__row basic-summary-list__row">
             <dt class="nhsuk-summary-list__key">
               Completed
             </dt>
-            <dd class="nhsuk-summary-list__value">
-              <partial name="_SummaryFieldValue" model="@Model.Completed.ToString()" />
-            </dd>
+            <partial name="_SummaryFieldValue" model="@Model.Completed.ToString()" />
           </div>
         </dl>
       </div>

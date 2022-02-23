@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
 
     public class DetailedCourseProgressViewModel
@@ -19,7 +20,10 @@
             DelegateId = progress.DelegateId;
             CustomisationId = progress.CustomisationId;
 
-            DelegateName = progress.DelegateName;
+            DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                progress.DelegateFirstName,
+                progress.DelegateLastName
+            );
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
 
