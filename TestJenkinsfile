@@ -1,0 +1,15 @@
+﻿pipeline {
+    agent {
+        label 'windows'
+    }
+    environment {
+        EmailsAndSlackIds = credentials('emails-and-slack-ids-for-notification')
+    }
+    stages {
+        stage('LogCredentials') {
+            steps {
+                echo EmailsAndSlackIds
+            }
+        }
+    }
+}
