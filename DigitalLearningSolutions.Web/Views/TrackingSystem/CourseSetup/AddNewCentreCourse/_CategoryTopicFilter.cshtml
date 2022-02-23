@@ -24,7 +24,7 @@
                 id="@Model.FilterProperty"
                 aria-label="@Model.FilterName filter">
           <option value="" selected="@isDropdownUnselected">
-            Select @Model.FilterName.ToLower()
+            @(Model.FilterName == "Category" ? "All categories" : "All topics")
           </option>
           @foreach (var filterOption in Model.FilterOptions) {
             <option value="@filterOption.FilterValue"

@@ -6,6 +6,7 @@
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   var errorMessage = errorHasOccurred ? ViewData.ModelState[nameof(Model.ApplicationId)]?.Errors[0].ErrorMessage : null;
+  var defaultOptionText = Model.ApplicationOptions.Any() ? "Select a course" : "No matching courses";
   ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
 }
 
@@ -47,7 +48,7 @@
                   name="@nameof(Model.ApplicationId)"
                   value="@Model.ApplicationId?.ToString()">
 
-            <option value="" disabled selected=@(Model.ApplicationId?.ToString() != null ? "" : "selected")>Select a course</option>
+            <option id="default-option" disabled selected=@(Model.ApplicationId?.ToString() != null ? "" : "selected")>@defaultOptionText</option>
             @foreach (var item in Model.ApplicationOptions) {
               <partial name="AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="@item" />
             }

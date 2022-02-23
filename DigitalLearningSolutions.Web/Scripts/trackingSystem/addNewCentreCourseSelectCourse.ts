@@ -11,6 +11,7 @@ import {
   updateFilterBy
 } from "../searchSortFilterAndPaginate/filter";
 import * as _ from "lodash";
+import Details from "nhsuk-frontend/packages/components/details/details";
 
 // eslint-disable-next-line no-new
 SearchSortFilterAndPaginate.getSearchableElements(`TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses`, ['title'])
@@ -45,7 +46,31 @@ function filter(searchableData: ISearchableData): void {
     });
   }
 
-  SearchSortFilterAndPaginate.displaySearchableElements(filteredSearchableElements);
+  displaySearchableElements(filteredSearchableElements);
+}
+
+function displaySearchableElements(searchableElements: ISearchableElement[]): void {
+  const searchableElementsContainer = document.getElementById('searchable-elements');
+  if (!searchableElementsContainer) {
+    return;
+  }
+
+  const defaultOption = document.getElementById('default-option');
+  if (!defaultOption) {
+    return;
+  }
+  defaultOption.innerText = searchableElements.length === 0 ? "No matching courses" : "Select a course";
+
+  searchableElementsContainer.textContent = '';
+  searchableElementsContainer.appendChild(defaultOption);
+  searchableElements.forEach(
+    (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
+  );
+
+  console.log(searchableElementsContainer);
+
+  // This is required to polyfill the new elements in IE
+  Details();
 }
 
 function setUpFilter(onFilterUpdated: VoidFunction): void {
