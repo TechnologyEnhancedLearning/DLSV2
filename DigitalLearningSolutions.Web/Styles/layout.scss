@@ -116,17 +116,6 @@ nav, .nhsuk-header__navigation, #header-navigation {
     display: block;
   }
 }
-
-#area-to-hide-while-loading {
-  .js-enabled & {
-    display: none;
-  }
-}
-
-#loading-spinner-container {
-  height: 500px;
-}
-
 .loading-spinner {
   margin: 0;
   height: 0;
@@ -142,24 +131,12 @@ nav, .nhsuk-header__navigation, #header-navigation {
   top: 50%;
   left: 50%;
   transform: var(--center);
-
-  &.page-has-side-nav-menu {
-    @include mq($from: desktop) {
-      left: 55%;
-    }
-  }
 }
 
 .outer-spin, .inner-spin {
   position: absolute;
   top: 50%;
   left: 50%;
-
-  &.page-has-side-nav-menu {
-    @include mq($from: desktop) {
-      left: 55%;
-    }
-  }
 }
 
 .outer-spin {

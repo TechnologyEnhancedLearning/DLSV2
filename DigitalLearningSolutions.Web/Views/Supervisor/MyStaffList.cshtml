@@ -23,81 +23,77 @@
     </p>
   </nav>
 }
-
-<vc:loading-spinner page-has-side-nav-menu="false" />
-<div id="area-to-hide-while-loading">
-  <h1>My Staff</h1>
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      @if (Model.SuperviseDelegateDetailViewModels.Any() | Model.SearchString != null)
-      {
-        <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
-          <div class="nhsuk-grid-row">
-            <partial name="SearchablePage/_Search" model="Model" />
-          </div>
-          <div class="nhsuk-grid-row">
-            <div class="nhsuk-grid-column-full">
-              <partial name="SearchablePage/_SearchResultsCount" model="Model" />
-              <input type="hidden" id="select-sort-by" value="Name" />
-              <input type="hidden" id="select-sort-direction" value="Ascending" />
-              @if (@Model.SuperviseDelegateDetailViewModels.Any())
-              {
-                <div id="searchable-elements">
-                  @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels)
-                  {
-                    <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
-                  }
-                </div>
-                if (Model.TotalPages > 1)
+<h1>My Staff</h1>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.SuperviseDelegateDetailViewModels.Any() | Model.SearchString != null)
+    {
+      <form method="get" role="search" asp-action="Index" asp-route-page="@Model.Page">
+        <div class="nhsuk-grid-row">
+          <partial name="SearchablePage/_Search" model="Model" />
+        </div>
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-full">
+            <partial name="SearchablePage/_SearchResultsCount" model="Model" />
+            <input type="hidden" id="select-sort-by" value="Name" />
+            <input type="hidden" id="select-sort-direction" value="Ascending" />
+            @if (@Model.SuperviseDelegateDetailViewModels.Any())
+            {
+              <div id="searchable-elements">
+                @foreach (var supervisorDelegateDetail in Model.SuperviseDelegateDetailViewModels)
                 {
-                  <partial name="SearchablePage/_Pagination" model="Model" />
+                  <partial name="Shared/_StaffMemberCard" model="supervisorDelegateDetail" />
                 }
-              }
-              else
+              </div>
+              if (Model.TotalPages > 1)
               {
-                <p>Please change your search criteria and try again.</p>
+                <partial name="SearchablePage/_Pagination" model="Model" />
               }
-            </div>
-          </div>
-        </form>
-      }
-      else
-      {
-        <p>You are not supervising any staff, yet.</p>
-      }
-    </div>
-  </div>
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <form method="post">
-        <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-          <h2>Add a member of staff</h2>
-        </label>
-        <div class="nhsuk-form-group">
-          <div class=" sort-select-container">
-            <label class="nhsuk-label" for="delegateEmail">
-              User email address
-            </label>
-            <div class="nhsuk-hint" id="add-user-hint">
-              Provide the work email address of a member of staff to add to your supervision list.
-            </div>
-            <input class="nhsuk-input" id="delegateEmail" aria-describedby="add-user-hint" type="email" name="delegateEmail" />
+            }
+            else
+            {
+              <p>Please change your search criteria and try again.</p>
+            }
           </div>
         </div>
-        <button class="nhsuk-button" type="submit">
-          Submit
-        </button>
       </form>
+    }
+    else
+    {
+      <p>You are not supervising any staff, yet.</p>
+    }
     </div>
   </div>
-  <div class="nhsuk-grid-row">
-    <div class="nhsuk-grid-column-full">
-      <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="AddMultipleSuperviseDelegates">
-        Add multiple staff members
-      </a>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <form method="post">
+      <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
+        <h2>Add a member of staff</h2>
+      </label>
+      <div class="nhsuk-form-group">
+        <div class=" sort-select-container">
+          <label class="nhsuk-label" for="delegateEmail">
+            User email address
+          </label>
+          <div class="nhsuk-hint" id="add-user-hint">
+            Provide the work email address of a member of staff to add to your supervision list.
+          </div>
+          <input class="nhsuk-input" id="delegateEmail" aria-describedby="add-user-hint" type="email" name="delegateEmail" />
+        </div>
+      </div>
+      <button class="nhsuk-button" type="submit">
+        Submit
+      </button>
+    </form>
+    </div>
+ </div>
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-top-4" asp-action="AddMultipleSuperviseDelegates">
+      Add multiple staff members
+    </a>
     </div>
   </div>
-</div>
-@section scripts {
-  <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
-}
+    @section scripts {
+      <script src="@Url.Content("~/js/supervisor/staffList.js")" asp-append-version="true"></script>
+    }
