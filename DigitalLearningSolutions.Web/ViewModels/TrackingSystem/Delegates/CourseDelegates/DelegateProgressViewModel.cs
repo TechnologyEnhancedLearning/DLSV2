@@ -56,7 +56,6 @@
         public int? EnrolledByAdminId { get; set; }
         public string? EnrolledByForename { get; set; }
         public string? EnrolledBySurname { get; set; }
-        public int DelegateId { get; set; }
         public string? DelegateFirstName { get; set; }
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
@@ -71,9 +70,6 @@
 
         public string? EnrolledByFullName =>
             EnrolledByAdminId == null ? null : $"{EnrolledByForename} {EnrolledBySurname}";
-
-        public string SupervisorFullName =>
-            SupervisorAdminId == null ? "None" : $"{SupervisorForename} {SupervisorSurname}";
 
         public new string EnrolmentMethod
         {
