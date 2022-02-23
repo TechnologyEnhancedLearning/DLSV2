@@ -9,7 +9,7 @@
 
         public EditAdminFieldViewModel(CustomPrompt customPrompt)
         {
-            PromptNumber = customPrompt.CustomPromptNumber;
+            PromptNumber = customPrompt.RegistrationField.Id;
             Prompt = customPrompt.CustomPromptText;
             OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
             IncludeAnswersTableCaption = true;

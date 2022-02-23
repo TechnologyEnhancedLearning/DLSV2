@@ -25,7 +25,7 @@
                 prompt => new FilterOptionViewModel(
                     prompt.CustomPromptText,
                     nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
-                    FilteringHelper.Separator + GetLinkedFieldIdFromRegistrationPromptNumber(prompt.CustomPromptNumber),
+                    FilteringHelper.Separator + GetLinkedFieldIdFromRegistrationPromptNumber(prompt.RegistrationField.Id),
                     FilterStatus.Default
                 )
             );

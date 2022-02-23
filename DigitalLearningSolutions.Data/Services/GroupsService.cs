@@ -436,7 +436,7 @@
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
-                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
+                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField);
 
             var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
@@ -638,12 +638,12 @@
 
         private (List<(int id, string name)>, string groupNamePrefix) GetCustomPromptsAndPrefix(
             int centreId,
-            int registrationFieldOptionId
+            RegistrationField registrationField
         )
         {
             var registrationPrompt = centreCustomPromptsService
                 .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
-                    cp => cp.CustomPromptNumber == registrationFieldOptionId
+                    cp => cp.RegistrationField.Equals(registrationField)
                 );
             var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
                 .ToList<(int id, string name)>();

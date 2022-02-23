@@ -177,7 +177,7 @@
                     customPrompt.Options.Select(
                         x => new ResponseCount(
                             x,
-                            allAnswers.Count(a => a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1] == x)
+                            allAnswers.Count(a => a.AdminFieldAnswers[customPrompt.RegistrationField.Id - 1] == x)
                         )
                     )
                 );
@@ -188,7 +188,7 @@
                     new ResponseCount(
                         notBlank,
                         allAnswers.Count(
-                            a => !string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1])
+                            a => !string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.RegistrationField.Id - 1])
                         )
                     )
                 );
@@ -198,7 +198,7 @@
                 new ResponseCount(
                     blank,
                     allAnswers.Count(
-                        a => string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.CustomPromptNumber - 1])
+                        a => string.IsNullOrEmpty(a.AdminFieldAnswers[customPrompt.RegistrationField.Id - 1])
                     )
                 )
             );
@@ -209,7 +209,7 @@
         private static int? GetNextPromptNumber(CourseAdminFields courseAdminFields)
         {
             var existingPromptNumbers = courseAdminFields.AdminFields
-                .Select(c => c.CustomPromptNumber);
+                .Select(c => c.RegistrationField.Id);
 
             var promptNumbers = new List<int> { 1, 2, 3 };
             var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();

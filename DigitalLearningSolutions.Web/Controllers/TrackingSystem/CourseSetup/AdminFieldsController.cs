@@ -65,7 +65,7 @@
             var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
                     customisationId
                 ).AdminFields
-                .Single(cp => cp.CustomPromptNumber == promptNumber);
+                .Single(cp => cp.RegistrationField.Id == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
 
