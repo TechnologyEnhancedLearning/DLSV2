@@ -109,7 +109,9 @@
           <dt class="nhsuk-summary-list__key">
             Diagnostic score
           </dt>
-          <partial name="_SummaryFieldValue" model="@Model.DiagnosticScore.ToString()" />
+          <dd class="nhsuk-summary-list__value">
+            @(Model.DiagnosticScore?.ToString() ?? "N/A")
+          </dd>
           <dd class="nhsuk-summary-list__actions"></dd>
         </div>
 
