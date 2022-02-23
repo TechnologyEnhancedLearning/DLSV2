@@ -12,6 +12,7 @@
 
         public CentreCustomPrompts()
         {
+            CustomPrompts = new List<CustomPrompt>();
         }
 
         public int CentreId { get; set; }
