@@ -46,11 +46,11 @@
             4
         );
 
-        public readonly int LinkedToField;
+        public readonly int LinkedToFieldId;
 
-        private RegistrationField(int id, string name, int linkedToField) : base(id, name)
+        private RegistrationField(int id, string name, int linkedToFieldId) : base(id, name)
         {
-            LinkedToField = linkedToField;
+            LinkedToFieldId = linkedToFieldId;
         }
 
         public static implicit operator RegistrationField(int value)

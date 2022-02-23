@@ -814,6 +814,7 @@
             // Given
             const int delegateId = 254480;
             const int groupId = 100;
+            var addedDate = DateTime.UtcNow;
 
             using var transaction = new TransactionScope();
             try
@@ -821,6 +822,7 @@
                 // When
                 groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                     100,
+                    addedDate,
                     1,
                     101,
                     "Implementation and Business Change Manager",
@@ -847,12 +849,13 @@
             // Given
             const int delegateId = 14;
             const int groupId = 27;
+            var addedDate = DateTime.UtcNow;
 
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(groupId, 4, 101, null, 9);
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(groupId, addedDate, 4, 101, null, 9);
                 var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
                 // Then
@@ -874,6 +877,7 @@
         {
             // Given
             const int groupId = 100;
+            var addedDate = DateTime.UtcNow;
 
             using var transaction = new TransactionScope();
             try
@@ -881,6 +885,7 @@
                 // When
                 groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                     100,
+                    addedDate,
                     2,
                     101,
                     "Implementation and Business Change Manager",
@@ -903,12 +908,13 @@
         {
             // Given
             const int groupId = 100;
+            var addedDate = DateTime.UtcNow;
 
             using var transaction = new TransactionScope();
             try
             {
                 // When
-                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, 5, 101, null, 9);
+                groupsDataService.AddDelegatesWithMatchingAnswersToGroup(100, addedDate, 5, 101, null, 9);
                 var groupDelegates = groupsDataService.GetGroupDelegates(groupId).ToList();
 
                 // Then

@@ -9,12 +9,7 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] {
-                                                   nameof(Model.CustomisationName),
-                                                   nameof(Model.Password),
-                                                   nameof(Model.NotificationEmails),
-                                                   nameof(Model.TutCompletionThreshold),
-                                                   nameof(Model.DiagCompletionThreshold) })" />
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CustomisationName), nameof(Model.Password), nameof(Model.NotificationEmails), nameof(Model.TutCompletionThreshold), nameof(Model.DiagCompletionThreshold) })" />
     }
     <h1 class="nhsuk-heading-xl">Set course details</h1>
 

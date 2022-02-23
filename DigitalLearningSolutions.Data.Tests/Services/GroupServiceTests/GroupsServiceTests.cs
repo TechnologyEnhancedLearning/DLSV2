@@ -25,6 +25,7 @@
     {
         private const int GenericNewProgressId = 17;
         private const int GenericRelatedTutorialId = 5;
+        private const int NewGroupId = 1;
 
         private readonly DelegateUser reusableDelegateDetails =
             UserTestHelper.GetDefaultDelegateUser(answer1: "old answer");
@@ -525,7 +526,7 @@
             AssertCorrectMethodsAreCalledForGenerateGroups(
                 groupGenerationDetails,
                 timeNow,
-                registrationField.LinkedToField,
+                registrationField.LinkedToFieldId,
                 groupName,
                 groupName,
                 jobGroupId
@@ -565,7 +566,7 @@
             AssertCorrectMethodsAreCalledForGenerateGroups(
                 groupGenerationDetails,
                 timeNow,
-                registrationField.LinkedToField,
+                registrationField.LinkedToFieldId,
                 $"{groupNamePrefix} - {groupName}",
                 groupName
             );
@@ -630,6 +631,7 @@
                 A.CallTo(
                         () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                             A<int>._,
+                            A<DateTime>._,
                             A<int>._,
                             A<int>._,
                             duplicateGroupName,
@@ -640,6 +642,7 @@
                 A.CallTo(
                         () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                             A<int>._,
+                            A<DateTime>._,
                             A<int>._,
                             A<int>._,
                             nonDuplicateGroupName,
@@ -818,6 +821,7 @@
             A.CallTo(
                     () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         A<int>._,
+                        A<DateTime>._,
                         A<int>._,
                         A<int>._,
                         A<string>._,
@@ -871,7 +875,8 @@
 
                 A.CallTo(
                         () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
-                            1,
+                            NewGroupId,
+                            A<DateTime>._,
                             linkedToField,
                             groupGenerationDetails.CentreId,
                             isJobGroup ? null : customPromptOptionText,

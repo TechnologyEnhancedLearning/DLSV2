@@ -262,7 +262,7 @@
             var groupDetails = new GroupGenerationDetails(
                 adminId,
                 centreId,
-                registrationField!,
+                registrationField,
                 model.PrefixGroupName,
                 model.PopulateExisting,
                 model.AddNewRegistrants,
@@ -288,7 +288,7 @@
             var centreCustomPrompts = centreCustomPromptsService
                 .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
             var registrationFieldOptions =
-                CentreCustomPromptHelper.MapCentreCustomPromptsToSelectList(centreCustomPrompts);
+                CentreCustomPromptHelper.MapCentreCustomPromptsToDataForSelectList(centreCustomPrompts);
 
             var jobGroupOption = (RegistrationField.JobGroup.Id, "Job group");
             registrationFieldOptions.Add(jobGroupOption);

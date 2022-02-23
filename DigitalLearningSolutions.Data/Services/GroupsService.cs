@@ -432,7 +432,7 @@
         public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
         {
             var isJobGroup = groupDetails.RegistrationField.Equals(RegistrationField.JobGroup);
-            var linkedToField = groupDetails.RegistrationField.LinkedToField;
+            var linkedToField = groupDetails.RegistrationField.LinkedToFieldId;
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
@@ -465,6 +465,7 @@
                 {
                     groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
                         newGroupId,
+                        clockService.UtcNow,
                         linkedToField,
                         groupDetails.CentreId,
                         isJobGroup ? null : newGroupName,

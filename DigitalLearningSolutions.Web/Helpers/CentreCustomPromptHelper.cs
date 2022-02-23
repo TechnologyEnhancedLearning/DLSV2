@@ -206,7 +206,7 @@
             };
         }
 
-        public static List<(int id, string name)> MapCentreCustomPromptsToSelectList(
+        public static List<(int id, string name)> MapCentreCustomPromptsToDataForSelectList(
             IEnumerable<CustomPrompt> centreCustomPrompts
         )
         {

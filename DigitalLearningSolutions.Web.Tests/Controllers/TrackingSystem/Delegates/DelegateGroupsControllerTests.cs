@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -31,23 +30,16 @@
             CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
 
         private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private ICourseService courseService = null!;
-
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
-        private IJobGroupsDataService jobGroupsDataService = null!;
-        private IUserService userService = null!;
 
         [SetUp]
         public void Setup()
         {
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             groupsService = A.Fake<IGroupsService>();
-            userService = A.Fake<IUserService>();
-            courseService = A.Fake<ICourseService>();
-            jobGroupsDataService = A.Fake<IJobGroupsDataService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
             A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))

@@ -70,6 +70,7 @@
 
         void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
+            DateTime addedDate,
             int linkedToField,
             int centreId,
             string? option,
@@ -140,7 +141,7 @@
 
         private readonly IDbConnection connection;
 
-        private readonly string GroupsSql = @$"SELECT
+        private readonly string groupsSql = @$"SELECT
                         GroupID,
                         GroupLabel,
                         GroupDescription,
@@ -175,7 +176,7 @@
         public IEnumerable<Group> GetGroupsForCentre(int centreId)
         {
             return connection.Query<Group>(
-                @$"{GroupsSql} AND g.CentreID = @centreId",
+                @$"{groupsSql} AND g.CentreID = @centreId",
                 new { centreId }
             );
         }
@@ -365,7 +366,7 @@
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return connection.Query<Group>(
-                @$"{GroupsSql} AND g.CentreID = @centreId AND GroupID = @groupId",
+                @$"{groupsSql} AND g.CentreID = @centreId AND GroupID = @groupId",
                 new { groupId, centreId }
             ).SingleOrDefault();
         }
@@ -417,6 +418,7 @@
 
         public void AddDelegatesWithMatchingAnswersToGroup(
             int groupId,
+            DateTime addedDate,
             int linkedToField,
             int centreId,
             string? option,
@@ -424,8 +426,8 @@
         )
         {
             connection.Execute(
-                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedByFieldLink)
-                        SELECT @groupId, CandidateID, 1
+                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                        SELECT @groupId, CandidateID, @addedDate, 1
                         FROM Candidates
                         WHERE (CentreID = @centreID)
                           AND (Active = 1)
@@ -436,7 +438,7 @@
                             OR (Answer4 = @option AND @linkedToField = 5)
                             OR (Answer5 = @option AND @linkedToField = 6)
                             OR (Answer6 = @option AND @linkedToField = 7))",
-                new { groupId, linkedToField, centreId, option, jobGroupId }
+                new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
             );
         }
     }
