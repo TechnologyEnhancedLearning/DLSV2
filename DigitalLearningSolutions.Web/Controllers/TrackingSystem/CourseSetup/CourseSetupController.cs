@@ -35,7 +35,6 @@
         private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
         private readonly ICourseTopicsDataService courseTopicsDataService;
-        private readonly ICourseTopicsService courseTopicsService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
@@ -44,8 +43,7 @@
             ICourseCategoriesDataService courseCategoriesDataService,
             ICourseTopicsDataService courseTopicsDataService,
             ITutorialService tutorialService,
-            ISectionService sectionService,
-            ICourseTopicsService courseTopicsService
+            ISectionService sectionService
         )
         {
             this.courseService = courseService;
@@ -53,7 +51,6 @@
             this.courseTopicsDataService = courseTopicsDataService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
-            this.courseTopicsService = courseTopicsService;
         }
 
         [Route("{page=1:int}")]

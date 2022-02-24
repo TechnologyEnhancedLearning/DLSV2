@@ -81,7 +81,6 @@
         private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
         private ICourseTopicsDataService courseTopicsDataService = null!;
-        private ICourseTopicsService courseTopicsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
@@ -95,7 +94,6 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
-            courseTopicsService = A.Fake<ICourseTopicsService>();
 
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
@@ -116,8 +114,7 @@
                     courseCategoryDataService,
                     courseTopicsDataService,
                     tutorialService,
-                    sectionService,
-                    courseTopicsService
+                    sectionService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -131,8 +128,7 @@
                     courseCategoryDataService,
                     courseTopicsDataService,
                     tutorialService,
-                    sectionService,
-                    courseTopicsService
+                    sectionService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -251,22 +247,13 @@
             }
         }
 
-        // TODO: 551 controller tests
-        /*[Test]
+        [Test]
         public void SelectCourse_post_updates_temp_data_and_redirects()
         {
-            var applications = new List<ApplicationDetails> { new ApplicationDetails() };
-            var categories = new List<string>();
-            var topics = new List<string>();
-            int? topicId = 1;
-            int? categoryId = 1;
-            int? adminCategoryFilter = 0;
-            string? filterBy = "";
-            var model = new SelectCourseViewModel(application.ApplicationId, applications, );
             SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(application.ApplicationId);
 
             // Then
             using (new AssertionScope())
@@ -279,17 +266,15 @@
                 controller.TempData.Peek<AddNewCentreCourseData>()!.SetSectionContentModels.Should().BeNull();
                 result.Should().BeRedirectToActionResult().WithActionName("SetCourseDetails");
             }
-        }*/
+        }
 
-        /*[Test]
-        public void SelectCourse_does_not_redirect_with_invalid_model()
+        [Test]
+        public void SelectCourse_does_not_redirect_with_null_applicationId()
         {
-            var model = new SelectCourseViewModel { ApplicationId = 1 };
-            controller.ModelState.AddModelError("ApplicationId", "Select a course");
-            SetAddNewCentreCourseTempData(application);
+            SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(applicationId: null);
 
             // Then
             using (new AssertionScope())
@@ -298,7 +283,7 @@
                 controller.ModelState["ApplicationId"].Errors[0].ErrorMessage.Should()
                     .Be("Select a course");
             }
-        }*/
+        }
 
         [Test]
         public void

@@ -25,6 +25,28 @@ SearchSortFilterAndPaginate.getSearchableElements(`TrackingSystem/CourseSetup/Ad
     filter(searchableData);
   });
 
+function setUpFilter(onFilterUpdated: VoidFunction): void {
+
+  setUpFilterDropdowns();
+
+  document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
+}
+
+function setUpFilterDropdowns() {
+  const filterSubmits = Array.from(
+    document.getElementsByClassName('filter-dropdown'),
+  );
+
+  filterSubmits.forEach((filterSubmit) => {
+    filterSubmit.addEventListener('change', (e) => {
+      e.preventDefault();
+      const newFilter = getCategoryAndTopicFilterBy();
+
+      updateFilterBy(newFilter!);
+    });
+  });
+}
+
 function filter(searchableData: ISearchableData): void {
   let filteredSearchableElements = searchableData.searchableElements;
   const filterBy = getFilterByValue();
@@ -49,6 +71,15 @@ function filter(searchableData: ISearchableData): void {
   displaySearchableElements(filteredSearchableElements);
 }
 
+function filterElements(
+  searchableElements: ISearchableElement[],
+  appliedFilter: IAppliedFilter,
+): ISearchableElement[] {
+  return searchableElements.filter(
+    (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
+  );
+}
+
 function displaySearchableElements(searchableElements: ISearchableElement[]): void {
   const searchableElementsContainer = document.getElementById('searchable-elements');
   if (!searchableElementsContainer) {
@@ -67,32 +98,8 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
     (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
   );
 
-  console.log(searchableElementsContainer);
-
   // This is required to polyfill the new elements in IE
   Details();
-}
-
-function setUpFilter(onFilterUpdated: VoidFunction): void {
-
-  setUpFilterSubmitButtons();
-
-  document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
-}
-
-function setUpFilterSubmitButtons() {
-  const filterSubmits = Array.from(
-    document.getElementsByClassName('filter-submit'),
-  );
-  filterSubmits.forEach((filterSubmit) => {
-    const element = <HTMLInputElement>filterSubmit;
-    element.addEventListener('click', (e) => {
-      e.preventDefault();
-      const newFilter = getCategoryAndTopicFilterBy();
-
-      updateFilterBy(newFilter!);
-    });
-  });
 }
 
 function getCategoryAndTopicFilterBy() {
@@ -115,15 +122,6 @@ function getCategoryAndTopicFilterBy() {
   }
 
   return topicFilterValue + filterSeparator + categoryFilterValue;
-}
-
-function filterElements(
-  searchableElements: ISearchableElement[],
-  appliedFilter: IAppliedFilter,
-): ISearchableElement[] {
-  return searchableElements.filter(
-    (element) => doesElementMatchFilterValue(element, appliedFilter.filterValue),
-  );
 }
 
 function doesElementMatchFilterValue(

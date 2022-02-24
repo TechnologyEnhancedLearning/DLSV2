@@ -1,0 +1,14 @@
+﻿@import "../shared/searchableElements/filter";
+
+.filter-dropdown {
+  @extend .input-with-no-js-submit-button;
+  width: 100%;
+
+  @include mq($from: tablet) {
+    flex: 1;
+  }
+
+  .js-enabled & {
+    width: 100%;
+  }
+}
