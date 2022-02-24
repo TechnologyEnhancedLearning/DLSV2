@@ -44,7 +44,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCourse_correctly_updates_custom_prompt()
+        public void UpdateAdminFieldForCourse_correctly_updates_custom_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -53,7 +53,7 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 1, 1, options);
+                courseAdminFieldsDataService.UpdateAdminFieldForCourse(100, 1, 1, options);
                 var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100);
 
                 // Then
@@ -69,7 +69,7 @@
         }
 
         [Test]
-        public void GetPromptNameForCourseAndPromptNumber_returns_expected_prompt_name()
+        public void GetPromptName_returns_expected_prompt_name()
         {
             // When
             var result = courseAdminFieldsDataService.GetPromptName(100, 1);
@@ -79,7 +79,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCourse_correctly_adds_custom_prompt()
+        public void UpdateAdminFieldForCourse_correctly_adds_custom_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -88,7 +88,7 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
+                courseAdminFieldsDataService.UpdateAdminFieldForCourse(100, 3, 1, options);
                 var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100);
                 var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
                     .Single(c => c.id == 1)

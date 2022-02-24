@@ -149,11 +149,11 @@
             A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(centreId))
                 .Returns(new CentreCustomPrompts(centreId, customPrompts));
 
-            var adminFields = new List<CustomPrompt>
+            var adminFields = new List<CoursePrompt>
             {
-                new CustomPrompt(1, "Access Permissions", null, true),
+                new CoursePrompt(1, "Access Permissions", null, true),
             };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(customisationId))
+            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsForCourse(customisationId))
                 .Returns(new CourseAdminFields(customisationId, adminFields));
 
             // When

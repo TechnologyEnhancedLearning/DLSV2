@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -67,9 +68,9 @@
         public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
-            var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, "System Access Granted", "Yes\r\nNo");
-            var customPrompts = new List<CustomPrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
+            var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCoursePrompt(1, "System Access Granted", "Yes\r\nNo");
+            var customPrompts = new List<CoursePrompt> { samplePrompt1 };
+            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsForCourse(A<int>._))
                 .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
             controller.TempData.Set(samplePrompt1);
 
@@ -89,7 +90,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
                     1,
                     1,
                     "Options"
@@ -101,7 +102,7 @@
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
                     1,
                     1,
                     "Options"
@@ -118,7 +119,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => courseAdminFieldsService.UpdateCustomPromptForCourse(
+                () => courseAdminFieldsService.UpdateAdminFieldForCourse(
                     1,
                     1,
                     "Test"
@@ -247,7 +248,7 @@
             controller.TempData.Set(initialTempData);
 
             A.CallTo(
-                () => courseAdminFieldsService.AddCustomPromptToCourse(
+                () => courseAdminFieldsService.AddAdminFieldToCourse(
                     100,
                     1,
                     "Test"
@@ -271,7 +272,7 @@
             controller.TempData.Set(initialTempData);
 
             A.CallTo(
-                () => courseAdminFieldsService.AddCustomPromptToCourse(
+                () => courseAdminFieldsService.AddAdminFieldToCourse(
                     100,
                     1,
                     null
@@ -295,7 +296,7 @@
             controller.TempData.Set(initialTempData);
 
             A.CallTo(
-                () => courseAdminFieldsService.AddCustomPromptToCourse(
+                () => courseAdminFieldsService.AddAdminFieldToCourse(
                     100,
                     1,
                     "Test"

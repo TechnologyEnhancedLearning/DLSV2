@@ -10,7 +10,7 @@
 
         public CourseStatisticsWithAdminFieldResponseCounts(
             CourseStatistics courseStatistics,
-            IEnumerable<CustomPromptWithResponseCounts> adminFieldsWithResponses
+            IEnumerable<CoursePromptWithResponseCounts> adminFieldsWithResponses
         )
         {
             AdminFieldsWithResponses = adminFieldsWithResponses;
@@ -32,7 +32,7 @@
             ApplicationName = courseStatistics.ApplicationName;
         }
 
-        public IEnumerable<CustomPromptWithResponseCounts> AdminFieldsWithResponses { get; set; }
+        public IEnumerable<CoursePromptWithResponseCounts> AdminFieldsWithResponses { get; set; }
 
         public bool HasAdminFields => AdminFieldsWithResponses.Any();
     }

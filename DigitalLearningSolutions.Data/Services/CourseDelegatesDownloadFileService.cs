@@ -80,7 +80,7 @@
             string sortDirection
         )
         {
-            var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var adminFields = courseAdminFieldsService.GetCoursePromptsForCourse(customisationId);
 
             var customRegistrationPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
 
@@ -149,7 +149,7 @@
                 dataTable.Columns.Add(
                     !dataTable.Columns.Contains(prompt.CustomPromptText)
                         ? prompt.CustomPromptText
-                        : $"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"
+                        : $"{prompt.CustomPromptText} (Prompt {prompt.CoursePromptNumber})"
                 );
             }
         }
@@ -197,15 +197,15 @@
 
             foreach (var prompt in adminFields.AdminFields)
             {
-                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"))
+                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CoursePromptNumber})"))
                 {
-                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
+                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CoursePromptNumber})"] =
+                        courseDelegate.CustomAdminFieldAnswers[prompt.CoursePromptNumber - 1];
                 }
                 else
                 {
                     row[prompt.CustomPromptText] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
+                        courseDelegate.CustomAdminFieldAnswers[prompt.CoursePromptNumber - 1];
                 }
             }
 

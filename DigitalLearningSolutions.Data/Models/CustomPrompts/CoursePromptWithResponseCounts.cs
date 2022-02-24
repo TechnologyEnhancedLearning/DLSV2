@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class CustomPromptWithResponseCounts : CustomPrompt
+    public class CoursePromptWithResponseCounts : CoursePrompt
     {
-        public CustomPromptWithResponseCounts(int customPromptNumber, string text, string? options, bool mandatory) :
+        public CoursePromptWithResponseCounts(int customPromptNumber, string text, string? options, bool mandatory) :
             base(customPromptNumber, text, options, mandatory) { }
 
         public IEnumerable<ResponseCount> ResponseCounts { get; set; }

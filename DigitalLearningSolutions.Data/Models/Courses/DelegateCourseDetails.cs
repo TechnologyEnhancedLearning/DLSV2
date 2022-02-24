@@ -7,17 +7,17 @@
     {
         public DelegateCourseDetails(
             DelegateCourseInfo delegateCourseInfo,
-            List<CustomPromptWithAnswer> customPrompts,
+            List<CoursePromptWithAnswer> coursePrompts,
             AttemptStats attemptStats
         )
         {
             DelegateCourseInfo = delegateCourseInfo;
-            CustomPrompts = customPrompts;
+            CoursePrompts = coursePrompts;
             AttemptStats = attemptStats;
         }
 
         public DelegateCourseInfo DelegateCourseInfo { get; set; }
-        public List<CustomPromptWithAnswer> CustomPrompts { get; set; }
+        public List<CoursePromptWithAnswer> CoursePrompts { get; set; }
         public AttemptStats AttemptStats { get; set; }
     }
 }

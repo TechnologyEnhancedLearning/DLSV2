@@ -32,10 +32,10 @@
             DelegateLastName = details.DelegateCourseInfo.DelegateLastName;
             DelegateEmail = details.DelegateCourseInfo.DelegateEmail;
             DelegateCentreId = details.DelegateCourseInfo.DelegateCentreId;
-            CustomFields = details.CustomPrompts.Select(
+            AdminFields = details.CoursePrompts.Select(
                     cp =>
                         new CustomFieldViewModel(
-                            cp.CustomPromptNumber,
+                            cp.CoursePromptNumber,
                             cp.CustomPromptText,
                             cp.Mandatory,
                             cp.Answer
@@ -61,7 +61,7 @@
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
         public int DelegateCentreId { get; set; }
-        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; }
+        public IEnumerable<CustomFieldViewModel> AdminFields { get; set; }
 
         public string DelegateFullName =>
             DelegateFirstName == null ? DelegateLastName : $"{DelegateFirstName} {DelegateLastName}";

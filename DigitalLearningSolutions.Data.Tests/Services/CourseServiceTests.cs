@@ -123,11 +123,11 @@
                 .Returns(attemptStatsReturnedByDataService);
 
             // When
-            var results = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
+            var results = courseService.GetDelegateAttemptsAndCoursePrompts(info);
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCoursePromptsWithAnswersForCourse(
                     info,
                     customisationId
                 )
@@ -147,11 +147,11 @@
                 { CustomisationId = customisationId, IsAssessed = false };
 
             // When
-            var result = courseService.GetDelegateAttemptsAndCourseCustomPrompts(info);
+            var result = courseService.GetDelegateAttemptsAndCoursePrompts(info);
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsService.GetCustomPromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCoursePromptsWithAnswersForCourse(
                     info,
                     customisationId
                 )

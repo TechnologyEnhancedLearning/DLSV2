@@ -14,7 +14,7 @@
             Id = delegateUser.Id;
             Name = delegateUser.SearchableName;
             CandidateNumber = delegateUser.CandidateNumber;
-            
+
             IsActive = delegateUser.Active;
             IsAdmin = delegateUser.IsAdmin;
             IsPasswordSet = delegateUser.IsPasswordSet;

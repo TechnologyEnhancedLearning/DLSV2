@@ -14,11 +14,11 @@
         }
 
         public static CourseAdminFields GetDefaultCourseAdminFields(
-            List<CustomPrompt> customPrompts,
+            List<CoursePrompt> coursePrompts,
             int customisationId = 100
         )
         {
-            return new CourseAdminFields(customisationId, customPrompts);
+            return new CourseAdminFields(customisationId, coursePrompts);
         }
 
         public static CustomPrompt GetDefaultCustomPrompt(
@@ -29,6 +29,16 @@
         )
         {
             return new CustomPrompt(promptNumber, text, options, mandatory);
+        }
+
+        public static CoursePrompt GetDefaultCoursePrompt(
+            int promptNumber,
+            string text = "Course Prompt",
+            string? options = "",
+            bool mandatory = false
+        )
+        {
+            return new CoursePrompt(promptNumber, text, options, mandatory);
         }
 
         public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers(
@@ -48,6 +58,17 @@
         )
         {
             return new CustomPromptWithAnswer(promptNumber, text, options, mandatory, answer);
+        }
+
+        public static CoursePromptWithAnswer GetDefaultCoursePromptWithAnswer(
+            int promptNumber,
+            string text = "Course Prompt",
+            string? options = "",
+            bool mandatory = false,
+            string? answer = null
+        )
+        {
+            return new CoursePromptWithAnswer(promptNumber, text, options, mandatory, answer);
         }
 
         public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult(
@@ -92,7 +113,7 @@
                 CustomField5Mandatory = customField5Mandatory,
                 CustomField6Prompt = customField6Prompt,
                 CustomField6Options = customField6Options,
-                CustomField6Mandatory = customField6Mandatory
+                CustomField6Mandatory = customField6Mandatory,
             };
         }
 
@@ -114,7 +135,7 @@
                 CustomField2Options = customField2Options,
                 CustomField3Prompt = customField3Prompt,
                 CustomField3Options = customField3Options,
-                CourseCategoryId = courseCategoryId
+                CourseCategoryId = courseCategoryId,
             };
         }
     }

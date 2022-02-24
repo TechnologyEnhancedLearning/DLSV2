@@ -14,6 +14,16 @@
             return prompt != null ? new CustomPrompt(promptNumber, prompt, options, mandatory) : null;
         }
 
+        public static CoursePrompt? PopulateCoursePrompt(
+            int promptNumber,
+            string? prompt,
+            string? options,
+            bool mandatory
+        )
+        {
+            return prompt != null ? new CoursePrompt(promptNumber, prompt, options, mandatory) : null;
+        }
+
         public static CustomPromptWithAnswer? PopulateCustomPromptWithAnswer(
             int promptNumber,
             string? prompt,
@@ -25,14 +35,25 @@
             return prompt != null ? new CustomPromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
         }
 
-        public static CustomPromptWithResponseCounts? GetBaseCustomPromptWithResponseCountsModel(
+        public static CoursePromptWithAnswer? PopulateCoursePromptWithAnswer(
+            int promptNumber,
+            string? prompt,
+            string? options,
+            bool mandatory,
+            string? answer
+        )
+        {
+            return prompt != null ? new CoursePromptWithAnswer(promptNumber, prompt, options, mandatory, answer) : null;
+        }
+
+        public static CoursePromptWithResponseCounts? GetBaseCoursePromptWithResponseCountsModel(
             int promptNumber,
             string? prompt,
             string? options,
             bool mandatory
         )
         {
-            return prompt != null ? new CustomPromptWithResponseCounts(promptNumber, prompt, options, mandatory) : null;
+            return prompt != null ? new CoursePromptWithResponseCounts(promptNumber, prompt, options, mandatory) : null;
         }
     }
 }

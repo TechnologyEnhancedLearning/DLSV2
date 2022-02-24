@@ -11,11 +11,11 @@
     {
         CourseAdminFieldsResult GetCourseAdminFields(int customisationId);
 
-        void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
+        void UpdateAdminFieldForCourse(int customisationId, int promptNumber, string? options);
 
         IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
 
-        void UpdateCustomPromptForCourse(
+        void UpdateAdminFieldForCourse(
             int customisationId,
             int promptNumber,
             int promptId,
@@ -74,7 +74,7 @@
             return result;
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
+        public void UpdateAdminFieldForCourse(int customisationId, int promptNumber, string? options)
         {
             connection.Execute(
                 @$"UPDATE Customisations
@@ -96,7 +96,7 @@
             );
         }
 
-        public void UpdateCustomPromptForCourse(
+        public void UpdateAdminFieldForCourse(
             int customisationId,
             int promptNumber,
             int promptId,

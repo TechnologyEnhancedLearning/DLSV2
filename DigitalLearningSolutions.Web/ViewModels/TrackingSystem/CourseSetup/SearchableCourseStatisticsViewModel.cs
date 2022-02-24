@@ -35,7 +35,7 @@
         public string LearningMinutes { get; set; }
         public bool Assessed { get; set; }
 
-        public IEnumerable<CustomPromptWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
+        public IEnumerable<CoursePromptWithResponseCounts> AdminFieldWithResponseCounts { get; set; }
         public bool HasAdminFields => AdminFieldWithResponseCounts.Any();
 
         public string CategoryFilter => nameof(CourseStatistics.CategoryName) + FilteringHelper.Separator +

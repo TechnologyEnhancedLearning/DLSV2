@@ -44,7 +44,7 @@
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var courseAdminFields = courseAdminFieldsService.GetCoursePromptsForCourse(customisationId);
 
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
@@ -62,10 +62,10 @@
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
+            var courseAdminField = courseAdminFieldsService.GetCoursePromptsForCourse(
                     customisationId
                 ).AdminFields
-                .Single(cp => cp.CustomPromptNumber == promptNumber);
+                .Single(cp => cp.CoursePromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
 
@@ -269,7 +269,7 @@
         {
             ModelState.ClearAllErrors();
 
-            courseAdminFieldsService.UpdateCustomPromptForCourse(
+            courseAdminFieldsService.UpdateAdminFieldForCourse(
                 customisationId,
                 model.PromptNumber,
                 model.OptionsString
@@ -304,7 +304,7 @@
                 return View(model);
             }
 
-            if (courseAdminFieldsService.AddCustomPromptToCourse(
+            if (courseAdminFieldsService.AddAdminFieldToCourse(
                 customisationId,
                 model.AdminFieldId!.Value,
                 model.OptionsString
@@ -334,7 +334,7 @@
 
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
         {
-            courseAdminFieldsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
+            courseAdminFieldsService.RemoveAdminFieldFromCourse(customisationId, promptNumber);
             return RedirectToAction("Index", new { customisationId });
         }
 
