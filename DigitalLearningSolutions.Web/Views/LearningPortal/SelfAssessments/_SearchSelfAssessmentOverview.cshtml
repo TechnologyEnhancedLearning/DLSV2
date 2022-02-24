@@ -1,6 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using DigitalLearningSolutions.Data.Enums;
 @model SearchSelfAssessmentOvervieviewViewModel
+@{
+    var parent = (SelfAssessmentOverviewViewModel)ViewData["parent"];
+}
 <form method="post" asp-controller="SelfAssessment">
   <div class="search-container">
     <div class="search-box-container" id="search">
@@ -18,10 +21,14 @@
   </div>
   <div class="filter-value-container">
     @Html.DropDownListFor(m => m.ResponseStatus,
-      Model.Filters.First().FilterOptions.Select(f => new SelectListItem(
-        text: f.DisplayText,
-        value: f.FilterValue.ToString(),
-        selected: f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
+      Model.Filters.First().FilterOptions
+        .Where(f => parent.SelfAssessment.IsSupervised == false
+                || f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString()
+                || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
+        .Select(f => new SelectListItem(
+          text: f.DisplayText,
+          value: f.FilterValue.ToString(),
+          selected: f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
       ),
       new
       {
