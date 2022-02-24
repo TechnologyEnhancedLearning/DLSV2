@@ -25,18 +25,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
         private readonly ILogger<ConfigurationController> logger;
         private readonly IMapsApiHelper mapsApiHelper;
         private readonly IImageResizeService imageResizeService;
+        private ICertificateService certificateService;
 
         public ConfigurationController(
             ICentresDataService centresDataService,
             IMapsApiHelper mapsApiHelper,
             ILogger<ConfigurationController> logger,
-            IImageResizeService imageResizeService
+            IImageResizeService imageResizeService,
+            ICertificateService certificateService
         )
         {
             this.centresDataService = centresDataService;
             this.mapsApiHelper = mapsApiHelper;
             this.logger = logger;
             this.imageResizeService = imageResizeService;
+            this.certificateService = certificateService;
         }
 
         public IActionResult Index()
@@ -169,6 +172,20 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
                 "removeLogo" => EditCentreDetailsPostRemoveLogo(model),
                 _ => new StatusCodeResult(500)
             };
+        }
+
+        [HttpGet("Certificate")]
+        public IActionResult PreviewCertificate()
+        {
+            var centreId = User.GetCentreId();
+            var certificateInfo = certificateService.GetPreviewCertificateForCentre(centreId);
+            if (certificateInfo == null)
+            {
+                return NotFound();
+            }
+
+            var model = new PreviewCertificateViewModel(certificateInfo);
+            return View(model);
         }
 
         private IActionResult EditCentreDetailsPostSave(EditCentreDetailsViewModel model)
