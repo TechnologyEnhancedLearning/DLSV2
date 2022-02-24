@@ -22,7 +22,7 @@
   <div class="filter-value-container">
     @Html.DropDownListFor(m => m.ResponseStatus,
       Model.Filters.First().FilterOptions
-        .Where(f => parent.SelfAssessment.IsSupervised == false
+        .Where(f => parent.SelfAssessment.IsSupervisorResultsReviewed
                 || f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString()
                 || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
         .Select(f => new SelectListItem(
