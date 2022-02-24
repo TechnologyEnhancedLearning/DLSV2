@@ -40,8 +40,7 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
         </div>
-        @foreach (var customPrompt in Model.CustomPrompts)
-        {
+        @foreach (var customPrompt in Model.CustomPrompts) {
           <partial name="../Shared/_CustomPromptSummaryListRow" model="customPrompt" />
         }
       </dl>
