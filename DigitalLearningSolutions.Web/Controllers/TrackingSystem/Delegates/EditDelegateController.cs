@@ -75,8 +75,7 @@
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
                 ModelState,
                 formData.HasProfessionalRegistrationNumber,
-                formData.ProfessionalRegistrationNumber,
-                true
+                formData.ProfessionalRegistrationNumber
             );
 
             if (!ModelState.IsValid)
