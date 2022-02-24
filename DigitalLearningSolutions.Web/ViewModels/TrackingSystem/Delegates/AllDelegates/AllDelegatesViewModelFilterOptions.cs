@@ -54,7 +54,7 @@
             filters.AddRange(
                 promptsWithOptions.Select(
                     customPrompt => new FilterViewModel(
-                        $"CustomPrompt{customPrompt.CustomPromptNumber}",
+                        $"CustomPrompt{customPrompt.RegistrationField.Id}",
                         customPrompt.CustomPromptText,
                         DelegatesViewModelFilters.GetCustomPromptOptions(customPrompt)
                     )

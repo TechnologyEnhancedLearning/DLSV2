@@ -643,7 +643,7 @@
         {
             var registrationPrompt = centreCustomPromptsService
                 .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
-                    cp => cp.CustomPromptNumber == registrationFieldOptionId
+                    cp => cp.RegistrationField.Id == registrationFieldOptionId
                 );
             var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
                 .ToList<(int id, string name)>();

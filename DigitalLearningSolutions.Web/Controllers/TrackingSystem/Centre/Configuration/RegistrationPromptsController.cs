@@ -68,7 +68,7 @@
             var centreId = User.GetCentreId();
 
             var customPrompt = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Single(cp => cp.CustomPromptNumber == promptNumber);
+                .Single(cp => cp.RegistrationField.Id == promptNumber);
 
             var data = TempData.Get<EditRegistrationPromptData>();
 

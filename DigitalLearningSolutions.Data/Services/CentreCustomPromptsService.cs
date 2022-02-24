@@ -117,7 +117,7 @@
         {
             var centreCustomPrompts = GetCustomPromptsForCentreByCentreId(centreId);
             var existingPromptNumbers = centreCustomPrompts.CustomPrompts
-                .Select(c => c.CustomPromptNumber);
+                .Select(c => c.RegistrationField.Id);
 
             var promptNumbers = new List<int> { 1, 2, 3, 4, 5, 6 };
             var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();

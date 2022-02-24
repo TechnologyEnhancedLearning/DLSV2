@@ -40,7 +40,7 @@
                 var promptData = customPrompts.First();
                 promptModel.Answer.Should().Be(promptData.Answer);
                 promptModel.CustomPrompt.Should().Be(promptData.CustomPromptText);
-                promptModel.CustomFieldId.Should().Be(promptData.CustomPromptNumber);
+                promptModel.CustomFieldId.Should().Be(promptData.RegistrationField.Id);
                 promptModel.Mandatory.Should().Be(promptData.Mandatory);
             }
         }

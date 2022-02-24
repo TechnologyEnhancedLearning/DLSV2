@@ -32,7 +32,7 @@
         public static IEnumerable<FilterOptionViewModel> GetCustomPromptOptions(CustomPrompt customPrompt)
         {
             var filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
+                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.RegistrationField.Id);
 
             var options = customPrompt.Options.Select(
                 option => new FilterOptionViewModel(
@@ -60,7 +60,7 @@
             IEnumerable<CustomPrompt> promptsWithOptions
         )
         {
-            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
+            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.RegistrationField.Id);
             var customFieldsWithOptions =
                 customFields.Where(customField => promptsWithOptionsIds.Contains(customField.CustomFieldId));
             return customFieldsWithOptions
