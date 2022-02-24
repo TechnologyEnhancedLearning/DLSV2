@@ -27,10 +27,10 @@
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
 
-            LastUpdated = progress.LastUpdated;
-            Enrolled = progress.Enrolled;
-            CompleteBy = progress.CompleteBy;
-            Completed = progress.Completed;
+            LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateFormat);
+            Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateFormat);
+            CompleteBy = progress.CompleteBy?.ToString(DateHelper.StandardDateFormat);
+            Completed = progress.Completed?.ToString(DateHelper.StandardDateFormat);
 
             DiagnosticScore = progress.DiagnosticScore;
 
@@ -49,10 +49,10 @@
         public string? DelegateEmail { get; set; }
         public string DelegateNumber { get; set; }
 
-        public DateTime LastUpdated { get; set; }
-        public DateTime Enrolled { get; set; }
-        public DateTime? CompleteBy { get; set; }
-        public DateTime? Completed { get; set; }
+        public string LastUpdated { get; set; }
+        public string Enrolled { get; set; }
+        public string? CompleteBy { get; set; }
+        public string? Completed { get; set; }
 
         public int? DiagnosticScore { get; set; }
 

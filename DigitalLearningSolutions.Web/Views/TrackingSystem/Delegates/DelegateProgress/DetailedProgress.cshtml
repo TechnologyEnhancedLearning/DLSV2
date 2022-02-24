@@ -2,7 +2,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
 @model DetailedCourseProgressViewModel
 
-<link rel="stylesheet" href="@Url.Content("~/css/trackingSystem/delegateProgress.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
 
 @{
   ViewData["Title"] = "Detailed progress";
@@ -22,13 +22,15 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    <div class="nhsuk-grid-column-two-thirds">
-      <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
-    </div>
-    <div class="nhsuk-grid-column-one-third heading-button-group">
-      <a class="nhsuk-button heading-button" role="button" href="@Model.ProgressDownloadUrl">
-        Download
-      </a>
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
+          Download
+        </a>
+      </div>
     </div>
     <div class="nhsuk-card">
       <div class="nhsuk-card__content basic-card-content">

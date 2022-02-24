@@ -57,7 +57,11 @@
             @if (showDiagnosticColumn) {
               <td role="cell" class="nhsuk-table__cell">
                 <span class="nhsuk-table-responsive__heading">Diagnostic score </span>
-                @tut.DiagnosticScore / @tut.PossibleScore
+                @if (tut.DiagnosticScore.HasValue) {
+                  <div>tut.DiagnosticScore / tut.PossibleScore</div>
+                } else {
+                  <div>N/A</div>
+                }
               </td>
             }
           </tr>
