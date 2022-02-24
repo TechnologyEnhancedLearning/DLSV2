@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -21,12 +20,26 @@
         private readonly IEnumerable<ApplicationDetails> applicationOptions =
             Builder<ApplicationDetails>.CreateListOfSize(1).Build();
 
-        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses =
-            Builder<CourseStatisticsWithAdminFieldResponseCounts>.CreateListOfSize(1).Build();
-
-        private readonly IEnumerable<Category> categories = Builder<Category>.CreateListOfSize(2).Build();
-
-        private readonly IEnumerable<Topic> topics = Builder<Topic>.CreateListOfSize(2).Build();
+        private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
+            .With(
+                x => x.Courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
+                {
+                    new CourseStatisticsWithAdminFieldResponseCounts
+                    {
+                        ApplicationName = "Course",
+                        CustomisationName = "Customisation",
+                        Active = true,
+                        CourseTopic = "Topic 1",
+                        CategoryName = "Category 1",
+                        HideInLearnerPortal = true,
+                        DelegateCount = 1,
+                        CompletedCount = 1,
+                    },
+                }
+            )
+            .And(x => x.Categories = new List<string> { "Category 1", "Category 2" })
+            .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
+            .Build();
 
         private DelegateCoursesController controller = null!;
         private DelegateCoursesController controllerWithCookies = null!;
@@ -43,12 +56,7 @@
             courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
 
-            A.CallTo(
-                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
-            ).Returns(courses);
-            A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
-                .Returns(categories);
-            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
+            A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
                 () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
             ).Returns(applicationOptions);

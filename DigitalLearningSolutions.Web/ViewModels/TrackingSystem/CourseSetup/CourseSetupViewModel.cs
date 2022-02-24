@@ -29,17 +29,8 @@
             "Search courses"
         )
         {
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                courses.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-
-            var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
-            var searchedItems = GenericSearchHelper.SearchItems(filteredItems, SearchString).ToList();
-            MatchingSearchResults = searchedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
+            var searchedItems = GenericSearchHelper.SearchItems(courses.AsQueryable(), SearchString).ToList();
+            var paginatedItems = SortFilterAndPaginate(searchedItems);
 
             Courses = paginatedItems.Select(c => new SearchableCourseStatisticsViewModel(c));
 

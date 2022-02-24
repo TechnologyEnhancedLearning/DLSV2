@@ -61,11 +61,7 @@
             int? topicId = null
         );
 
-        public (
-            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics)
-            GetCentreCourseCategoriesTopics(int centreId, int? categoryId);
+        public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId);
 
         public bool DoesCourseNameExistAtCentre(
             string customisationName,
@@ -334,17 +330,17 @@
             return courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
         }
 
-        public (
-            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics
-            ) GetCentreCourseCategoriesTopics(int centreId, int? categoryId)
+        public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId)
         {
-            return (
+            var details = new CentreCourseDetails();
+
+            (details.Courses, details.Categories, details.Topics) = (
                 GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
                 courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
+
+            return details;
         }
 
         public void RemoveDelegateFromCourse(

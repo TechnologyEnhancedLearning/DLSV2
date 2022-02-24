@@ -79,16 +79,13 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var centreCourses =
-                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new CourseSetupViewModel(
-                centreCourses,
-                categories,
-                topics,
+                details.Courses,
+                details.Categories,
+                details.Topics,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -107,13 +104,10 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var centreCourses =
-                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
+            var model = new AllCourseStatisticsViewModel(details.Courses, details.Categories, details.Topics);
+
             return View(model);
         }
 
