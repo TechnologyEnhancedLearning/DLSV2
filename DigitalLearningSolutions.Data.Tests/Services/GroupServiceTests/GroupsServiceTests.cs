@@ -802,8 +802,7 @@
         private void SetUpGenerateGroupFakes(
             DateTime timeNow,
             IEnumerable<CustomPrompt>? customPrompts = null,
-            IEnumerable<Group>? groupsAtCentre = null,
-            int newGroupId = 1
+            IEnumerable<Group>? groupsAtCentre = null
         )
         {
             GivenCurrentTimeIs(timeNow);
@@ -816,7 +815,7 @@
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(groupsAtCentre ?? new List<Group>());
 
-            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(newGroupId);
+            A.CallTo(() => groupsDataService.AddDelegateGroup(A<GroupDetails>._)).Returns(NewGroupId);
 
             A.CallTo(
                     () => groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
