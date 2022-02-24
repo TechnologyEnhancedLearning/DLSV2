@@ -8,6 +8,10 @@
             FilterCategory = filterCategory;
             FilterValue = filterValue;
         }
+        public AppliedFilterViewModel()
+        {
+
+        }
 
         public string DisplayText { get; set; }
 
