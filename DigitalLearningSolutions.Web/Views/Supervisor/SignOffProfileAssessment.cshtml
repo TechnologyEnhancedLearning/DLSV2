@@ -104,7 +104,10 @@
       </dt>
       <dd class="nhsuk-summary-list__value">
         @foreach (var candidateAssessmentSupervisorVerificationSummary in Model.CandidateAssessmentSupervisorVerificationSummaries) {
-          <span>@DisplayStringHelper.GetPotentiallyInactiveAdminName(candidateAssessmentSupervisorVerificationSummary.Forename, candidateAssessmentSupervisorVerificationSummary.Surname, candidateAssessmentSupervisorVerificationSummary.AdminActive) (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span>
+          <span>@DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                    candidateAssessmentSupervisorVerificationSummary.Forename,
+                  candidateAssessmentSupervisorVerificationSummary.Surname,
+                  candidateAssessmentSupervisorVerificationSummary.AdminActive) (@candidateAssessmentSupervisorVerificationSummary.Email) - @candidateAssessmentSupervisorVerificationSummary.VerifiedCount</span>
           <br />
         }
       </dd>

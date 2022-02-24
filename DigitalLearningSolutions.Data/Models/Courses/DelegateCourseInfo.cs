@@ -18,7 +18,7 @@
             int? supervisorAdminId,
             string? supervisorForename,
             string? supervisorSurname,
-            bool supervisorAdminActive,
+            bool? supervisorAdminActive,
             DateTime enrolled,
             DateTime lastUpdated,
             DateTime? completeBy,

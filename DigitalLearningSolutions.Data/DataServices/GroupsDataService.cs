@@ -148,8 +148,8 @@
                         (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
                         ({CourseCountSql}) AS CoursesCount,
                         g.CreatedByAdminUserID AS AddedByAdminId,
-                        CASE WHEN au.Active = 1 THEN au.Forename ELSE NULL END AS AddedByFirstName,
-                        CASE WHEN au.Active = 1 THEN au.Surname ELSE NULL END AS AddedByLastName,
+                        au.Forename AS AddedByFirstName,
+                        au.Surname AS AddedByLastName,
                         au.Active AS AddedByAdminActive,
                         LinkedToField,
                         CASE
