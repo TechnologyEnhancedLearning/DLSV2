@@ -219,5 +219,20 @@
                 transaction.Dispose();
             }
         }
+
+        [Test]
+        public void DeleteAdmin_deletes_admin_record()
+        {
+            // Given
+            const int adminId = 25;
+            using var transaction = new TransactionScope();
+
+            // When
+            userDataService.DeleteAdminUser(adminId);
+            var result = userDataService.GetAdminUserById(adminId);
+
+            // Then
+            result.Should().BeNull();
+        }
     }
 }

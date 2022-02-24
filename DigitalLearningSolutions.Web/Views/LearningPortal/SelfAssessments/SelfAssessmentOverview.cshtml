@@ -9,7 +9,6 @@
   ViewData["Title"] = "Self Assessment";
   ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
-
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">
     <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a>
@@ -29,9 +28,13 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
+<partial name="SelfAssessments/_SearchSelfAssessmentOverview" model="@Model.SearchViewModel" view-data="@(new ViewDataDictionary(ViewData) { { "parent", Model } })"/>
 <partial name="_OverviewActionButtons.cshtml" model=Model />
-@if (Model.CompetencyGroups.Any()) {
-  foreach (var competencyGroup in Model.CompetencyGroups) {
+<p><span role="alert">@Model.CompetencyGroups.Sum(g => g.Count()) matching @Model.VocabPlural().ToLower()</span></p>
+@if (Model.CompetencyGroups.Any())
+{
+  foreach (var competencyGroup in Model.CompetencyGroups)
+  {
     <div class="nhsuk-panel competency-group-panel nhsuk-u-padding-0">
       @{
         var expanderOpen = Model.CompetencyGroups.Count() == 1
@@ -47,7 +50,8 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
-          @if (Model.SelfAssessment.LinearNavigation) {
+          @if (Model.SelfAssessment.LinearNavigation)
+          {
             <partial name="SelfAssessments/_MeanScores"
                      view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
           }
@@ -58,7 +62,8 @@
 
         </div>
       </details>
-      @if (Model.SelfAssessment.LinearNavigation) {
+      @if (Model.SelfAssessment.LinearNavigation)
+      {
         <div class="outer-score-container nhsuk-u-padding-bottom-4">
           <partial name="SelfAssessments/_MeanScores"
                    view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup } })" />
@@ -69,10 +74,12 @@
   <partial name="_OverviewActionButtons.cshtml" model=Model />
 }
 
-@if (Model.SelfAssessment.IncludesSignposting) {
+@if (Model.SelfAssessment.IncludesSignposting)
+{
   <p class="nhsuk-u-reading-width">Once you are happy with your responses, submit your self-assessment to retrieve a list of recommended learning resources.</p>
 
-  @if (Configuration.IsSignpostingUsed()) {
+  @if (Configuration.IsSignpostingUsed())
+  {
     <a class="nhsuk-button finish-review-button trigger-loader"
        asp-controller="RecommendedLearning"
        asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
@@ -80,7 +87,9 @@
        role="button">
       Submit results
     </a>
-  } else {
+  }
+  else
+  {
     <a class="nhsuk-button finish-review-button trigger-loader"
        asp-controller="RecommendedLearning"
        asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
@@ -90,12 +99,15 @@
     </a>
   }
 }
-@if (Model.SelfAssessment.IsSupervised) {
+@if (Model.SelfAssessment.IsSupervised)
+{
   <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
-    @if (Model.AllQuestionsVerifiedOrNotRequired()) {
-      @if (!Model.SupervisorSignOffs.Any()) {
+    @if (Model.AllQuestionsVerifiedOrNotRequired())
+    {
+      @if (!Model.SupervisorSignOffs.Any())
+      {
         <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
       }
       <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
@@ -105,7 +117,9 @@
          role="button">
         Request @Model.SelfAssessment.SignOffRoleName sign-off
       </a>
-    } else {
+    }
+    else
+    {
       <p class="nhsuk-body-l">
         All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and verified,
         before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.

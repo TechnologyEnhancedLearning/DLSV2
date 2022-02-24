@@ -10,6 +10,11 @@
             CustomPrompts = customPrompts;
         }
 
+        public CentreCustomPrompts()
+        {
+            CustomPrompts = new List<CustomPrompt>();
+        }
+
         public int CentreId { get; set; }
 
         public List<CustomPrompt> CustomPrompts { get; set; }

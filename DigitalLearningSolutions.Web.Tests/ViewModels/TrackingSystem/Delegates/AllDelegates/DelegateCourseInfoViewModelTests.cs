@@ -136,7 +136,7 @@
             var model = new DelegateCourseInfoViewModel(details);
 
             // Then
-            model.Supervisor.Should().BeNull();
+            model.Supervisor.Should().Be("None");
         }
 
         [Test]

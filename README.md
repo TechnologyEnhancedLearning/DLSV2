@@ -19,12 +19,16 @@ git checkout https://github.com/TechnologyEnhancedLearning/DLSV2.git
 You should now be able to open the solution in Visual Studio 2019 by finding and double-clicking the `DigitalLearningSolutions.sln` file.
 
 # Configuring text editor
+
 To get useful git diffs and make code reviewing easier, it's helpful to have the same line separator and file encoding settings on our text editors.
 
-Line separators should be CRLF (and git auto-CRLF should be turned off).
+Line separators should be CRLF.
 File encoding should be UTF-8 with BOM.
+Git auto-CRLF should be turned off - otherwise Git will convert your local CRLF line endings to LF when you push to the remote repo.
 
-In JetBrains Rider these can be set in `Settings > Editor > File Encodings` (UTF-8, with BOM) and `Settings > Editor > Code Style` (CRLF).
+In JetBrains Rider the text editor settings can be set in `Settings > Editor > File Encodings` (UTF-8, with BOM) and `Settings > Editor > Code Style` (CRLF).
+
+To turn off git autoCrlf, run `git config --global core.autocrlf false` in a terminal.
 
 # Setting up the database
 

@@ -110,8 +110,8 @@
                 customisationId,
                 centreId,
                 sortBy,
-                sortDirection,
-                filterBy
+                filterBy,
+                sortDirection
             );
 
             const string fileName = "Digital Learning Solutions Course Delegates.xlsx";

@@ -18,6 +18,7 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
 
     public class CourseDataServiceTests
     {
+        private const int OneSecondInMs = 1_000;
         private static readonly DateTime EnrollmentDate = new DateTime(2019, 04, 11, 14, 33, 37).AddMilliseconds(140);
 
         private static readonly DelegateCourseInfo ExpectedCourseInfo = new DelegateCourseInfo(
@@ -247,26 +248,20 @@ namespace DigitalLearningSolutions.Data.Tests.DataServices
         public async Task Remove_current_course_sets_removal_date_and_method_correctly()
         {
             // Given
-            var removedDate = DateTime.UtcNow;
             const int progressId = 94323;
             const int candidateId = 1;
 
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-            try
-            {
-                // When
-                courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.NotRemoved);
-                var progressFields = await connection.GetProgressRemovedFields(progressId);
+            // When
+            courseDataService.RemoveCurrentCourse(progressId, candidateId, RemovalMethod.NotRemoved);
+            var timeOfRemoval = DateTime.UtcNow;
 
-                // Then
-                progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
-                progressFields.Item2.Should().BeCloseTo(removedDate, 500);
-            }
-            finally
-            {
-                transaction.Dispose();
-            }
+            // Then
+            var progressFields = await connection.GetProgressRemovedFields(progressId);
+            progressFields.Item1.Should().Be((int)RemovalMethod.NotRemoved);
+            progressFields.Item2.Should().BeCloseTo(timeOfRemoval, OneSecondInMs);
+            transaction.Dispose();
         }
 
         [Test]

@@ -165,5 +165,14 @@
                 new { adminId }
             );
         }
+
+        public void DeleteAdminUser(int adminId)
+        {
+            connection.Execute(
+                @"DELETE AdminUsers
+                    WHERE AdminID = @adminId",
+                new { adminId }
+            );
+        }
     }
 }
