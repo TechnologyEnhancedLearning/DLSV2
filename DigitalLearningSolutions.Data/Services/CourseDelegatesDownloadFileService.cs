@@ -172,12 +172,12 @@
                 if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
                 {
                     row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
+                        courseDelegate.CentreRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
                 }
                 else
                 {
                     row[prompt.PromptText] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
+                        courseDelegate.CentreRegistrationPromptAnswers[prompt.RegistrationField.Id - 1];
                 }
             }
 
@@ -200,12 +200,12 @@
                 if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.PromptNumber})"))
                 {
                     row[$"{prompt.PromptText} (Prompt {prompt.PromptNumber})"] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.PromptNumber - 1];
+                        courseDelegate.CourseAdminFieldAnswers[prompt.PromptNumber - 1];
                 }
                 else
                 {
                     row[prompt.PromptText] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.PromptNumber - 1];
+                        courseDelegate.CourseAdminFieldAnswers[prompt.PromptNumber - 1];
                 }
             }
 

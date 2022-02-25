@@ -20,7 +20,7 @@
 
     public class UnapprovedDelegate
     {
-        public UnapprovedDelegate(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> customPrompts)
+        public UnapprovedDelegate(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> registrationPrompts)
         {
             Id = delegateUser.Id;
             CandidateNumber = delegateUser.CandidateNumber;
@@ -31,7 +31,7 @@
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, delegateUser.EmailAddress);
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
-            DelegateRegistrationPrompts = customPrompts
+            DelegateRegistrationPrompts = registrationPrompts
                 .Select(
                     cp => new DelegateRegistrationPrompt(cp.RegistrationField.Id, cp.PromptText, cp.Mandatory, cp.Answer)
                 )

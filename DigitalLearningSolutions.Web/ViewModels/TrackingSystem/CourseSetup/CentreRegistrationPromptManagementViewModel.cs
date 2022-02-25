@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class CentreRegistrationPromptManagementViewModel : CustomPromptManagementViewModel
+    public class CentreRegistrationPromptManagementViewModel : PromptManagementViewModel
     {
         public CentreRegistrationPromptManagementViewModel(
             int fieldId,

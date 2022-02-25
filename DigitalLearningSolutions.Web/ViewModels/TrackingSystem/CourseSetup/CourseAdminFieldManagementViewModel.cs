@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class CourseAdminFieldManagementViewModel : CustomPromptManagementViewModel
+    public class CourseAdminFieldManagementViewModel : PromptManagementViewModel
     {
         public CourseAdminFieldManagementViewModel(
             int customisationId,

@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
 
-    public class CustomPromptManagementViewModel
+    public class PromptManagementViewModel
     {
-        public CustomPromptManagementViewModel(int fieldId, string promptName, List<string> options)
+        public PromptManagementViewModel(int fieldId, string promptName, List<string> options)
         {
             PromptNumber = fieldId;
             PromptName = promptName;

@@ -12,7 +12,7 @@
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using NUnit.Framework;
 
-    public class CustomPromptHelperTests
+    public class CentreRegistrationPromptHelperTests
     {
         private const string Answer1 = "Answer1";
         private const string Answer2 = "Answer2";
