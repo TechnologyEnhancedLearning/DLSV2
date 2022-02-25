@@ -51,7 +51,7 @@
             using (new AssertionScope())
             {
                 model.Admins.Count().Should().Be(10);
-                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "k Surname").Should().BeNull();
+                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "Surname, k").Should().BeNull();
             }
         }
 
@@ -74,7 +74,7 @@
             using (new AssertionScope())
             {
                 model.Admins.Count().Should().Be(5);
-                model.Admins.First().Name.Should().BeEquivalentTo("k Surname");
+                model.Admins.First().Name.Should().BeEquivalentTo("Surname, k");
             }
         }
 
@@ -141,7 +141,7 @@
             using (new AssertionScope())
             {
                 model.Admins.Count().Should().Be(itemsPerPage);
-                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "m Surname").Should().BeNull();
+                model.Admins.FirstOrDefault(adminUser => adminUser.Name == "Surname, m").Should().BeNull();
             }
         }
     }

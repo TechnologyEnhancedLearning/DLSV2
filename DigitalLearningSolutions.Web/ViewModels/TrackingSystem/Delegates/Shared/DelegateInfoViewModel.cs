@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -12,7 +11,11 @@
         public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<CustomFieldViewModel> customFields)
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            TitleName = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                delegateUser.FirstName,
+                delegateUser.LastName
+            );
             CandidateNumber = delegateUser.CandidateNumber;
             
             IsActive = delegateUser.Active;
@@ -34,6 +37,7 @@
         }
 
         public int Id { get; set; }
+        public string TitleName { get; set; }
         public string Name { get; set; }
         public string CandidateNumber { get; set; }
 

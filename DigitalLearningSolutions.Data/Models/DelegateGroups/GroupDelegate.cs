@@ -1,6 +1,8 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
-    public class GroupDelegate
+    using DigitalLearningSolutions.Data.Helpers;
+
+    public class GroupDelegate : BaseSearchableItem
     {
         public int GroupDelegateId { get; set; }
 
@@ -16,6 +18,10 @@
 
         public string CandidateNumber { get; set; }
 
-        public string Name => $"{FirstName} {LastName}";
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? NameQueryHelper.GetSortableFullName(FirstName, LastName);
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
     }
 }

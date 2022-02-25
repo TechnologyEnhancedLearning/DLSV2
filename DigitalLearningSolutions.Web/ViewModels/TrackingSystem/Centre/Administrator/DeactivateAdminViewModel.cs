@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class DeactivateAdminViewModel
     {
@@ -9,7 +10,7 @@
 
         public DeactivateAdminViewModel(AdminUser user, int? returnPage)
         {
-            FullName = user.FullName;
+            FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(user.FirstName, user.LastName);
             EmailAddress = user.EmailAddress;
             ReturnPage = returnPage;
         }
