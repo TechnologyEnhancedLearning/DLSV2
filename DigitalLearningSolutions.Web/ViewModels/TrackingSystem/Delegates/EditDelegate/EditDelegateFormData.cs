@@ -7,7 +7,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
-    public class EditDelegateFormData : EditDetailsFormData, IValidatableObject
+    public class EditDelegateFormData : EditDetailsFormData, IEditProfessionalRegistrationNumbers, IValidatableObject
     {
         public EditDelegateFormData() {}
 
@@ -28,6 +28,13 @@
             Answer6 = delegateUser.Answer6;
 
             AliasId = delegateUser.AliasId;
+
+            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber =
+                ProfessionalRegistrationNumberHelper.GetHasProfessionalRegistrationNumberForView(
+                    delegateUser.HasBeenPromptedForPrn,
+                    delegateUser.ProfessionalRegistrationNumber
+                );
         }
 
         public EditDelegateFormData(EditDelegateFormData formData)
@@ -43,6 +50,8 @@
             Answer5 = formData.Answer5;
             Answer6 = formData.Answer6;
             AliasId = formData.AliasId;
+            ProfessionalRegistrationNumber = formData.ProfessionalRegistrationNumber;
+            HasProfessionalRegistrationNumber = formData.HasProfessionalRegistrationNumber;
         }
 
         [MaxLength(250, ErrorMessage = CommonValidationErrorMessages.TooLongLastName)]

@@ -3,6 +3,8 @@
 @using Microsoft.Extensions.Configuration
 @model EditDelegateViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/formElements.css")" asp-append-version="true">
+
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate details" : "Edit delegate details";
@@ -57,6 +59,8 @@
                        autocomplete=""
                        hint-text=""
                        css-class="nhsuk-u-width-one-half" />
+
+        <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
 
       <vc:select-list asp-for="@nameof(Model.JobGroupId)"
