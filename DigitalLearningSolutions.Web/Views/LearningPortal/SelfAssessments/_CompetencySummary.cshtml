@@ -1,0 +1,17 @@
+﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
+@{
+    var questions = ((IGrouping<string, Competency>)ViewData["competencyGroup"])
+      .SelectMany(c => c.AssessmentQuestions)
+      .Where(q => q.Required);
+    var selfAssessed = questions.Count(q => q.Verified == null && q.ResultId.HasValue);
+    var verified = questions.Count(q => q.Verified.HasValue);
+}
+
+<span class="score">
+  Self assessed: @selfAssessed / @questions.Count()
+</span>
+<br />
+<span class="score">
+  Verified: @verified / @questions.Count()
+</span>
+<br />
