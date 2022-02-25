@@ -1245,6 +1245,11 @@
         [Test]
         public void GetUsersByEmailAddress_returns_no_results_for_empty_address()
         {
+            // Given
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(new AdminUser());
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(A<string>._))
+                .Returns(new List<DelegateUser> { new DelegateUser() });
+
             // When
             var result = userService.GetUsersByEmailAddress("");
 
