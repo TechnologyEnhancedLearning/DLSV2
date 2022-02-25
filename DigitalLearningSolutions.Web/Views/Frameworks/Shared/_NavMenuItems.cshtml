@@ -22,6 +22,12 @@
     </a>
   </li>
 </feature>
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Support)">
+  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
+    Support
+    <partial name="_NhsChevronRight" />
+  </a>
+</li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
     My account

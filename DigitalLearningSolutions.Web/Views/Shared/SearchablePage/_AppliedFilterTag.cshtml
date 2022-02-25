@@ -2,5 +2,9 @@
 @model AppliedFilterViewModel
 
 <div class="nhsuk-tag nhsuk-tag--blue filter-tag word-break" data-filter-value="@Model.FilterValue">
-  @Model.FilterCategory: @Model.DisplayText<span class="nhsuk-u-visually-hidden">.</span>
+  @if(!string.IsNullOrEmpty(Model.FilterCategory))
+  {
+    @Model.FilterCategory<text>:</text>
+  }
+  @Model.DisplayText<span class="nhsuk-u-visually-hidden">.</span>
 </div>

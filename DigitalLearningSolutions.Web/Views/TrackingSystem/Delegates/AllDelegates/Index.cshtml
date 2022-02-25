@@ -18,49 +18,47 @@
   </div>
 
   <div class="nhsuk-grid-column-three-quarters">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-one-third">
-        <h1 id="page-heading" class="nhsuk-heading-xl">Delegates</h1>
+    <vc:loading-spinner page-has-side-nav-menu="true" />
+    <div id="area-to-hide-while-loading">
+      <div class="nhsuk-grid-row">
+        <div class="nhsuk-grid-column-one-third">
+          <h1 id="page-heading" class="nhsuk-heading-xl">Delegates</h1>
+        </div>
+        <div class="nhsuk-grid-column-two-thirds heading-button-group">
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="RegisterDelegateByCentre" asp-action="Index" role="button">
+            Register
+          </a>
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="EmailDelegates" asp-action="Index" role="button">
+            Email
+          </a>
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="BulkUpload" asp-action="Index" role="button">
+            Upload
+          </a>
+          <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
+            Export
+          </a>
+        </div>
       </div>
-      <div class="nhsuk-grid-column-two-thirds heading-button-group">
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="RegisterDelegateByCentre" asp-action="Index" role="button">
-          Register
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="EmailDelegates" asp-action="Index" role="button">
-          Email
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" asp-controller="BulkUpload" asp-action="Index" role="button">
-          Upload
-        </a>
-        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button">
-          Export
-        </a>
-      </div>
+
+      <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
+
+      @if (Model.NoDataFound) {
+        <p class="nhsuk-u-margin-top-4" role="alert">
+          <b>No delegates found.</b>
+        </p>
+      } else {
+        <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
+
+        <div id="searchable-elements">
+          @foreach (var delegateModel in Model.Delegates) {
+            <partial name="_SearchableDelegateCard" model="delegateModel" />
+          }
+        </div>
+      }
+      @if (Model.TotalPages > 1) {
+        <partial name="SearchablePage/_Pagination" model="Model" />
+      }
     </div>
-
-    <partial name="SearchablePage/Configurations/_ThreeQuarterWidthSearchSortAndFilter" model="Model" />
-
-    @if (Model.NoDataFound)
-    {
-      <p class="nhsuk-u-margin-top-4" role="alert">
-        <b>No delegates found.</b>
-      </p>
-    }
-    else
-    {
-      <partial name="SearchablePage/Configurations/_ResultsCountAndItemsPerPage" model="Model" />
-
-      <div id="searchable-elements">
-        @foreach (var delegateModel in Model.Delegates)
-        {
-          <partial name="_SearchableDelegateCard" model="delegateModel" />
-        }
-      </div>
-    }
-    @if (Model.TotalPages > 1)
-    {
-      <partial name="SearchablePage/_Pagination" model="Model" />
-    }
 
     <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">
       <partial name="~/Views/TrackingSystem/Delegates/Shared/_DelegatesSideNavMenu.cshtml" model="DelegatePage.AllDelegates" />

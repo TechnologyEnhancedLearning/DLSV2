@@ -19,6 +19,7 @@
             SupervisorId = formData.SupervisorId;
             GroupName = formData.GroupName;
             CourseName = formData.CourseName;
+            MonthsToComplete = formData.MonthsToComplete;
         }
 
         public bool CohortLearners { get; set; }

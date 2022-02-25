@@ -24,7 +24,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Last updated
+            Last access
           </dt>
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
             @Model.LastUpdated
@@ -48,7 +48,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Completed date
+            Completed
           </dt>
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
             @(Model.Completed ?? "-")
@@ -56,7 +56,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            Removed date
+            Removed
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
         </div>

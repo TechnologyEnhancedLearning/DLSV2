@@ -406,6 +406,32 @@
         }
 
         [Test]
+        public async Task
+            RemoveRelatedProgressRecordsForGroup_does_not_remove_progress_for_delegates_outside_specified_group()
+        {
+            using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
+            {
+                // Given
+                const int groupId = 5;
+                const bool deleteStartedEnrolment = true;
+                var removedDate = DateTime.UtcNow;
+
+                // When
+                groupsDataService.RemoveRelatedProgressRecordsForGroup(groupId, deleteStartedEnrolment, removedDate);
+
+                // Then
+                var progressWithNoGroup = await connection.GetProgressRemovedFields(284968);
+                progressWithNoGroup.Item1.Should().Be(0);
+                progressWithNoGroup.Item2.Should().BeNull();
+            }
+            finally
+            {
+                transaction.Dispose();
+            }
+        }
+
+        [Test]
         public async Task DeleteGroupDelegates_deletes_all_group_delegates()
         {
             using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);

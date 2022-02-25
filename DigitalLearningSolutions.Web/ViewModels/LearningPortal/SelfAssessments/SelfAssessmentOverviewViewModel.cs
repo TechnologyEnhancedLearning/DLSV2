@@ -14,6 +14,7 @@
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
         public int PreviousCompetencyNumber { get; set; }
         public int NumberOfOptionalCompetencies { get; set; }
+        public SearchSelfAssessmentOvervieviewViewModel SearchViewModel { get; set; }
         public string VocabPlural()
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);

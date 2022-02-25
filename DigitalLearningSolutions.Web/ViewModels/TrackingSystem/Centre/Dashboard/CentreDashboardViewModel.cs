@@ -1,30 +1,29 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Dashboard
 {
-    using DigitalLearningSolutions.Data.Models.Centres;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Web.Helpers;
 
     public class CentreDashboardViewModel
     {
         public CentreDashboardViewModel(
-            Centre centre,
-            string? firstName,
-            string? categoryName,
+            CentreDashboardInformation dashboardInformation,
             string userIpAddress,
-            int delegates,
-            int courses,
-            int admins,
-            int supportTickets,
-            int? centreRank,
             int unacknowledgedNotificationsCount
         )
         {
-            CentreDetails = new DashboardCentreDetailsViewModel(centre, userIpAddress, centreRank);
-            FirstName = string.IsNullOrWhiteSpace(firstName) ? "User" : firstName;
-            CourseCategory = categoryName ?? "all";
-            NumberOfDelegates = delegates;
-            NumberOfCourses = courses;
-            NumberOfAdmins = admins;
-            NumberOfSupportTickets = supportTickets;
+            CentreDetails = new DashboardCentreDetailsViewModel(
+                dashboardInformation.Centre,
+                userIpAddress,
+                dashboardInformation.CentreRank
+            );
+            FirstName = string.IsNullOrWhiteSpace(dashboardInformation.FirstName)
+                ? "User"
+                : dashboardInformation.FirstName;
+            CourseCategory = dashboardInformation.CategoryName ?? "all";
+            NumberOfDelegates = dashboardInformation.DelegateCount;
+            NumberOfCourses = dashboardInformation.CourseCount;
+            NumberOfAdmins = dashboardInformation.AdminCount;
+            NumberOfSupportTickets = dashboardInformation.SupportTicketCount;
             ViewNotificationsButtonText = "View " + unacknowledgedNotificationsCount + " notification" +
                                           DisplayStringHelper.GetPluralitySuffix(unacknowledgedNotificationsCount);
         }

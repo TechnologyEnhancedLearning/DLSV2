@@ -5,7 +5,9 @@
 
     public interface ISupportTicketDataService
     {
-        public int GetNumberOfUnarchivedTicketsForCentreId(int centreId);
+        int GetNumberOfUnarchivedTicketsForCentreId(int centreId);
+
+        int GetNumberOfUnarchivedTicketsForAdminId(int adminId);
     }
 
     public class SupportTicketDataService : ISupportTicketDataService
@@ -25,6 +27,16 @@
                     INNER JOIN AdminUsers AS au ON au.AdminID = t.AdminUserID
                     WHERE t.ArchivedDate IS NULL AND t.TStatusID < 4 AND au.CentreID = @centreId",
                 new { centreId }
+            );
+        }
+
+        public int GetNumberOfUnarchivedTicketsForAdminId(int adminId)
+        {
+            return (int)connection.ExecuteScalar(
+                @"SELECT COUNT(*)
+                    FROM Tickets AS t
+                    WHERE t.ArchivedDate IS NULL AND t.TStatusID < 4 AND t.AdminUserID = @adminId",
+                new { adminId }
             );
         }
     }

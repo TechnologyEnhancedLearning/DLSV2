@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
-            "/TrackingSystem/Centre/Administrators/1/DeactivateAdmin",
+            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin",
             "Are you sure you would like to deactivate this admin account?"
         )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
@@ -76,7 +76,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/5/Courses/Add/10716",
-            "Set enrolment for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
+            "Set enrolment options for Level 1 - Microsoft Excel 2010 - Inductions course in Activities worker or coordinator group"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/Groups/103/Courses/25/Remove",
@@ -104,7 +104,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
-            "Edit completion date for Digital Literacy for the Workplace - CC Test"
+            "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
