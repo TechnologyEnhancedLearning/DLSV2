@@ -56,18 +56,25 @@
                 sortDirection,
                 page
             );
+            ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
             return View("MyStaffList", model);
         }
 
         [HttpPost]
         [Route("/Supervisor/Staff/List/{page=1:int}")]
-        public IActionResult AddSuperviseDelegate(string delegateEmail, int page = 1)
+        public IActionResult AddSuperviseDelegate(MyStaffListViewModel model)
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
             var supervisorEmail = GetUserEmail();
-            AddSupervisorDelegateAndReturnId(adminId, delegateEmail, supervisorEmail, centreId);
-            return RedirectToAction("MyStaffList", page);
+            AddSupervisorDelegateAndReturnId(adminId, model.DelegateEmail ?? String.Empty, supervisorEmail, centreId);
+            if (ModelState.IsValid)
+                return RedirectToAction("MyStaffList", model.Page);
+            else
+            {
+                ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
+                return MyStaffList(model.SearchString, model.SortBy, model.SortDirection, model.Page);
+            }
         }
 
         [Route("/Supervisor/Staff/AddMultiple")]

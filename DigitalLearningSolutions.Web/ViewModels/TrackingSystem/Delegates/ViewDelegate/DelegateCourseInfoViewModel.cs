@@ -67,19 +67,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public double PassRate { get; set; }
         public bool IsProgressLocked { get; set; }
 
-        public string? Supervisor
-        {
-            get
-            {
-                // SupervisorSurname is not nullable in db; will only be null if no supervisor
-                if (SupervisorSurname == null)
-                {
-                    return null;
-                }
-
-                return (string.IsNullOrEmpty(SupervisorForename) ? "" : $"{SupervisorForename} ") + SupervisorSurname;
-            }
-        }
+        // SupervisorSurname is not nullable in db; will only be null if no supervisor
+        public string Supervisor => SupervisorSurname == null
+            ? "None"
+            : DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(SupervisorForename, SupervisorSurname);
 
         public string CourseName =>
             ApplicationName + (string.IsNullOrEmpty(CustomisationName) ? "" : $" - {CustomisationName}");

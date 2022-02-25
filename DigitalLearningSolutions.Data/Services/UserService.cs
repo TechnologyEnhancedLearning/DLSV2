@@ -384,6 +384,12 @@ namespace DigitalLearningSolutions.Data.Services
                 editDelegateDetailsData.Email
             );
 
+            userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                delegateUser.Id,
+                editDelegateDetailsData.ProfessionalRegistrationNumber,
+                editDelegateDetailsData.HasBeenPromptedForPrn
+            );
+
             groupsService.SynchroniseUserChangesWithGroups(
                 delegateUser,
                 editDelegateDetailsData,
