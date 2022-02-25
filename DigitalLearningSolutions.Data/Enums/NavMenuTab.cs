@@ -91,6 +91,11 @@
             nameof(Frameworks)
         );
 
+        public static readonly NavMenuTab RolesProfiles = new NavMenuTab(
+            17,
+            nameof(RolesProfiles)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)
