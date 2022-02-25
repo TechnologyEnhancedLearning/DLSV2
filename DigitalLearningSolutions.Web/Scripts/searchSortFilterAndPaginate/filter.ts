@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import Cookies from 'js-cookie';
-import {ISearchableElement} from './searchSortFilterAndPaginate';
-import {sendBrowserAgnosticEvent} from '../common';
+import { ISearchableElement } from './searchSortFilterAndPaginate';
+import { sendBrowserAgnosticEvent } from '../common';
 
 export interface IAppliedFilter {
   group: string;
@@ -197,7 +197,7 @@ export function updateFilterBy(newFilter: string): void {
 }
 
 function updateFilterCookieValue(newFilter: string): void {
-  Cookies.set(cookieName, newFilter, {expires: cookieMaxLifeInDays});
+  Cookies.set(cookieName, newFilter, { expires: cookieMaxLifeInDays });
 }
 
 function clearFilterCookie(): void {

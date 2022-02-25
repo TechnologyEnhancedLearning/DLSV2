@@ -7,7 +7,7 @@ const courseSelectBox = <HTMLSelectElement>document.getElementById('selected-cus
 const customisationId = courseSelectBox?.value.trim();
 
 const exportCurrentLink = <HTMLAnchorElement>document.getElementById('export-current');
-exportCurrentLink.addEventListener('click', (e) => {
+exportCurrentLink.addEventListener('click', () => {
   const filterBy = getFilterByValue();
   const sortBy = getSortBy();
   const sortDirection = getSortDirection();

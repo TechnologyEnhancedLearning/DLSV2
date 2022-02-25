@@ -1,20 +1,20 @@
-﻿import {
+import * as _ from 'lodash';
+import Details from 'nhsuk-frontend/packages/components/details/details';
+import {
   ISearchableData,
   ISearchableElement,
-  SearchSortFilterAndPaginate
+  SearchSortFilterAndPaginate,
 } from '../searchSortFilterAndPaginate/searchSortFilterAndPaginate';
 import {
   filterSeparator,
   getAppliedFilters,
   getFilterByValue,
   IAppliedFilter,
-  updateFilterBy
-} from "../searchSortFilterAndPaginate/filter";
-import * as _ from "lodash";
-import Details from "nhsuk-frontend/packages/components/details/details";
+  updateFilterBy,
+} from '../searchSortFilterAndPaginate/filter';
 
 // eslint-disable-next-line no-new
-SearchSortFilterAndPaginate.getSearchableElements(`TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses`, ['title'])
+SearchSortFilterAndPaginate.getSearchableElements('TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses', ['title'])
   .then((searchableData) => {
     if (searchableData === undefined) {
       return;
@@ -26,7 +26,6 @@ SearchSortFilterAndPaginate.getSearchableElements(`TrackingSystem/CourseSetup/Ad
   });
 
 function setUpFilter(onFilterUpdated: VoidFunction): void {
-
   setUpFilterDropdowns();
 
   document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
@@ -42,7 +41,9 @@ function setUpFilterDropdowns() {
       e.preventDefault();
       const newFilter = getCategoryAndTopicFilterBy();
 
-      updateFilterBy(newFilter!);
+      if (newFilter != null) {
+        updateFilterBy(newFilter);
+      }
     });
   });
 }
@@ -51,11 +52,10 @@ function filter(searchableData: ISearchableData): void {
   let filteredSearchableElements = searchableData.searchableElements;
   const filterBy = getFilterByValue();
 
-  if (typeof filterBy != undefined && filterBy) {
-
+  if (typeof filterBy !== undefined && filterBy) {
     const appliedFilters = getAppliedFilters(filterBy);
 
-    const filterGroups = _.groupBy(appliedFilters, (filter) => filter.group);
+    const filterGroups = _.groupBy(appliedFilters, (appliedFilter) => appliedFilter.group);
 
     _.forEach(filterGroups, (appliedFiltersInGroup) => {
       const itemsToFilter = filteredSearchableElements;
@@ -90,7 +90,7 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
   if (!defaultOption) {
     return;
   }
-  defaultOption.innerText = searchableElements.length === 0 ? "No matching courses" : "Select a course";
+  defaultOption.innerText = searchableElements.length === 0 ? 'No matching courses' : 'Select a course';
 
   searchableElementsContainer.textContent = '';
   searchableElementsContainer.appendChild(defaultOption);
@@ -126,15 +126,15 @@ function getCategoryAndTopicFilterBy() {
 
 function doesElementMatchFilterValue(
   searchableElement: ISearchableElement,
-  filter: string,
+  filterValue: string,
 ): boolean {
   const categoryFilterValue = searchableElement.element.getAttribute('category-filter-value')?.trim() ?? '';
   const topicFilterValue = searchableElement.element.getAttribute('topic-filter-value')?.trim() ?? '';
-  return categoryFilterValue === filter || topicFilterValue === filter;
+  return categoryFilterValue === filterValue || topicFilterValue === filterValue;
 }
 
 function isNullOrEmpty(
   filterValue: string,
 ): boolean {
-  return typeof filterValue == undefined || !filterValue
+  return typeof filterValue === undefined || !filterValue;
 }
