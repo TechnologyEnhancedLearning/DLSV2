@@ -2,8 +2,9 @@
 
 @model MyStaffListViewModel;
 @{
-  ViewData["Title"] = "My Staff List";
-  ViewData["Application"] = "Supervisor";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: My Staff List" : "My Staff List";
+    ViewData["Application"] = "Supervisor";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
@@ -26,6 +27,10 @@
 
 <vc:loading-spinner page-has-side-nav-menu="false" />
 <div id="area-to-hide-while-loading">
+  @if (errorHasOccurred)
+        {
+          <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DelegateEmail) })" />
+        }
   <h1>My Staff</h1>
   <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -61,7 +66,7 @@
           </div>
         </form>
       }
-      else
+      else if(!errorHasOccurred)
       {
         <p>You are not supervising any staff, yet.</p>
       }
@@ -75,18 +80,23 @@
         </label>
         <div class="nhsuk-form-group">
           <div class=" sort-select-container">
-            <label class="nhsuk-label" for="delegateEmail">
-              User email address
-            </label>
-            <div class="nhsuk-hint" id="add-user-hint">
-              Provide the work email address of a member of staff to add to your supervision list.
-            </div>
-            <input class="nhsuk-input" id="delegateEmail" aria-describedby="add-user-hint" type="email" name="delegateEmail" />
+            <vc:text-input asp-for="DelegateEmail"
+                           label="User email address"
+                           populate-with-current-value="false"
+                           type="text"
+                           spell-check="false"
+                           hint-text="Provide the work email address of a member of staff to add to your supervision list."
+                           autocomplete="email"
+                           css-class="nhsuk-input" />
           </div>
         </div>
-        <button class="nhsuk-button" type="submit">
+        <button class="nhsuk-button" type="submit" asp-action="AddSuperviseDelegate">
           Submit
         </button>
+        @Html.HiddenFor(m => m.SearchString)
+        @Html.HiddenFor(m => m.SortBy)
+        @Html.HiddenFor(m => m.SortDirection)
+        @Html.HiddenFor(m => m.Page)
       </form>
     </div>
   </div>

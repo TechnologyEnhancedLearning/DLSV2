@@ -72,6 +72,12 @@
                 );
             }
 
+            ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
+                ModelState,
+                formData.HasProfessionalRegistrationNumber,
+                formData.ProfessionalRegistrationNumber
+            );
+
             if (!ModelState.IsValid)
             {
                 return ReturnToEditDetailsViewWithErrors(formData, delegateId, centreId);

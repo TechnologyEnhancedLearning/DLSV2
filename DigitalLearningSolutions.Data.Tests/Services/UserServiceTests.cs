@@ -836,7 +836,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -879,7 +881,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -923,7 +927,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -948,6 +954,50 @@
                     A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserAccountDetailsViaDelegateAccount_calls_UpdateDelegateProfessionalRegistrationNumber()
+        {
+            // Given
+            const string email = "test@email.com";
+            const string prn = "PRNNUMBER";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId,
+                prn,
+                true
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateUser.Id,
+                    prn,
+                    true)
+                ).MustHaveHappened();
         }
 
         [Test]

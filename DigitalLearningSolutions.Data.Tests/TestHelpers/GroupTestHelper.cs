@@ -21,6 +21,8 @@
             string? professionalRegistrationNumber = null
         )
         {
+            var addedDate = new DateTime(2018, 11, 02, 10, 49, 35, 600);
+
             return new GroupDelegate
             {
                 GroupDelegateId = groupDelegateId,
@@ -30,6 +32,7 @@
                 LastName = lastName,
                 EmailAddress = emailAddress,
                 CandidateNumber = candidateNumber,
+                AddedDate = addedDate,
                 ProfessionalRegistrationNumber = professionalRegistrationNumber,
             };
         }

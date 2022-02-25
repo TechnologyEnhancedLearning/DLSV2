@@ -1,13 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class CentreCustomPromptHelper
     {
@@ -18,9 +18,12 @@
             centreCustomPromptsService = customPromptsService;
         }
 
-        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(DelegateUser? delegateUser, int centreId)
+        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
+            DelegateUser? delegateUser,
+            int centreId
+        )
         {
-           return GetEditCustomFieldViewModelsForCentre(
+            return GetEditCustomFieldViewModelsForCentre(
                 centreId,
                 delegateUser?.Answer1,
                 delegateUser?.Answer2,
@@ -31,7 +34,10 @@
             );
         }
 
-        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(EditDetailsFormData formData, int centreId)
+        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
+            EditDetailsFormData formData,
+            int centreId
+        )
         {
             return GetEditCustomFieldViewModelsForCentre(
                 centreId,
@@ -103,7 +109,7 @@
                 delegateUser.Answer3,
                 delegateUser.Answer4,
                 delegateUser.Answer5,
-                delegateUser.Answer6
+                delegateUser.Answer6,
             };
 
             return customPrompts.Select(
@@ -196,8 +202,29 @@
                 4 => nameof(DelegateUserCard.Answer4),
                 5 => nameof(DelegateUserCard.Answer5),
                 6 => nameof(DelegateUserCard.Answer6),
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
+        }
+
+        public static List<(int id, string name)> MapCentreCustomPromptsToDataForSelectList(
+            IEnumerable<CustomPrompt> centreCustomPrompts
+        )
+        {
+            var customPromptOptions = centreCustomPrompts.Select(cp => (cp.CustomPromptNumber, cp.CustomPromptText))
+                .ToList<(int id, string name)>();
+
+            var customPromptNames = customPromptOptions.Select(r => r.name).ToList();
+
+            if (customPromptNames.Distinct().Count() == customPromptOptions.Count)
+            {
+                return customPromptOptions;
+            }
+
+            return customPromptOptions.Select(
+                cpo => customPromptNames.Count(cpn => cpn == cpo.name) > 1
+                    ? (cpo.id, $"{cpo.name} (Prompt {cpo.id})")
+                    : cpo
+            ).ToList<(int id, string name)>();
         }
     }
 }

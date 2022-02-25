@@ -2,14 +2,13 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FakeItEasy;
     using FluentAssertions;
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    public class JobGroupsServiceTests
+    public class JobGroupsDataServiceTests
     {
         private JobGroupsDataService jobGroupsDataService;
 

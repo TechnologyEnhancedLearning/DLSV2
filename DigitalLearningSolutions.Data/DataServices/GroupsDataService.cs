@@ -67,6 +67,15 @@
             bool cohortLearners,
             int? supervisorAdminId
         );
+
+        void AddDelegatesWithMatchingAnswersToGroup(
+            int groupId,
+            DateTime addedDate,
+            int linkedToField,
+            int centreId,
+            string? option,
+            int? jobGroupId
+        );
     }
 
     public class GroupsDataService : IGroupsDataService
@@ -132,15 +141,7 @@
 
         private readonly IDbConnection connection;
 
-        public GroupsDataService(IDbConnection connection)
-        {
-            this.connection = connection;
-        }
-
-        public IEnumerable<Group> GetGroupsForCentre(int centreId)
-        {
-            return connection.Query<Group>(
-                @$"SELECT
+        private readonly string groupsSql = @$"SELECT
                         GroupID,
                         GroupLabel,
                         GroupDescription,
@@ -162,10 +163,20 @@
                         END AS LinkedToFieldName,
                         AddNewRegistrants,
                         SyncFieldChanges
-                    FROM Groups AS g
+                        FROM Groups AS g
                     JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
                     JOIN Centres AS c ON c.CentreID = g.CentreID
-                    WHERE RemovedDate IS NULL AND g.CentreID = @centreId",
+                    WHERE RemovedDate IS NULL";
+
+        public GroupsDataService(IDbConnection connection)
+        {
+            this.connection = connection;
+        }
+
+        public IEnumerable<Group> GetGroupsForCentre(int centreId)
+        {
+            return connection.Query<Group>(
+                @$"{groupsSql} AND g.CentreID = @centreId",
                 new { centreId }
             );
         }
@@ -181,6 +192,7 @@
                         LastName,
                         EmailAddress,
                         CandidateNumber,
+                        AddedDate,
                         ProfessionalRegistrationNumber
                     FROM GroupDelegates AS gd
                     JOIN Candidates AS c ON c.CandidateID = gd.DelegateID
@@ -356,32 +368,7 @@
         public Group? GetGroupAtCentreById(int groupId, int centreId)
         {
             return connection.Query<Group>(
-                @$"SELECT
-                        GroupID,
-                        GroupLabel,
-                        GroupDescription,
-                        (SELECT COUNT(*) FROM GroupDelegates AS gd WHERE gd.GroupID = g.GroupID) AS DelegateCount,
-                        ({CourseCountSql}) AS CoursesCount,
-                        g.CreatedByAdminUserID As AddedByAdminId,
-                        au.Forename AS AddedByFirstName,
-                        au.Surname AS AddedByLastName,
-                        LinkedToField,
-                        CASE
-                            WHEN LinkedToField = 0 THEN 'None'
-                            WHEN LinkedToField = 1 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField1PromptID)
-                            WHEN LinkedToField = 2 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField2PromptID)
-                            WHEN LinkedToField = 3 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField3PromptID)
-                            WHEN LinkedToField = 4 THEN 'Job group'
-                            WHEN LinkedToField = 5 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField4PromptID)
-                            WHEN LinkedToField = 6 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField5PromptID)
-                            WHEN LinkedToField = 7 THEN (SELECT cp.CustomPrompt FROM CustomPrompts AS cp WHERE cp.CustomPromptID = c.CustomField6PromptID)
-                        END AS LinkedToFieldName,
-                        AddNewRegistrants,
-                        SyncFieldChanges
-                    FROM Groups AS g
-                    JOIN AdminUsers AS au ON au.AdminID = g.CreatedByAdminUserID
-                    JOIN Centres AS c ON c.CentreID = g.CentreID
-                    WHERE RemovedDate IS NULL AND g.CentreID = @centreId AND GroupID = @groupId",
+                @$"{groupsSql} AND g.CentreID = @centreId AND GroupID = @groupId",
                 new { groupId, centreId }
             ).SingleOrDefault();
         }
@@ -425,9 +412,35 @@
                         (@groupId, @customisationId, @completeWithinMonths, @addedByAdminUserId, @cohortLearners, @supervisorAdminID)",
                 new
                 {
-                    groupId, customisationId, completeWithinMonths, addedByAdminUserId, cohortLearners,
-                    supervisorAdminId,
+                    groupId, customisationId, completeWithinMonths,
+                    addedByAdminUserId, cohortLearners, supervisorAdminId,
                 }
+            );
+        }
+
+        public void AddDelegatesWithMatchingAnswersToGroup(
+            int groupId,
+            DateTime addedDate,
+            int linkedToField,
+            int centreId,
+            string? option,
+            int? jobGroupId
+        )
+        {
+            connection.Execute(
+                @"INSERT INTO GroupDelegates (GroupID, DelegateID, AddedDate, AddedByFieldLink)
+                        SELECT @groupId, CandidateID, @addedDate, 1
+                        FROM Candidates
+                        WHERE (CentreID = @centreID)
+                          AND (Active = 1)
+                          AND ((Answer1 = @option AND @linkedToField = 1)
+                            OR (Answer2 = @option AND @linkedToField = 2)
+                            OR (Answer3 = @option AND @linkedToField = 3)
+                            OR (JobGroupID = @jobGroupId AND @linkedToField = 4)
+                            OR (Answer4 = @option AND @linkedToField = 5)
+                            OR (Answer5 = @option AND @linkedToField = 6)
+                            OR (Answer6 = @option AND @linkedToField = 7))",
+                new { groupId, addedDate, linkedToField, centreId, option, jobGroupId }
             );
         }
     }
