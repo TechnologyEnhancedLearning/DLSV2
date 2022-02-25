@@ -14,6 +14,8 @@
     {
         public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId);
 
+        public IEnumerable<CustomPrompt> GetCustomPromptsThatHaveOptionsForCentreByCentreId(int centreId);
+
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
             int centreId,
             DelegateUser? delegateUser
@@ -61,6 +63,11 @@
                 result.CentreId,
                 PopulateCustomPromptListFromCentreCustomPromptsResult(result)
             );
+        }
+
+        public IEnumerable<CustomPrompt> GetCustomPromptsThatHaveOptionsForCentreByCentreId(int centreId)
+        {
+            return GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Where(cp => cp.Options.Any());
         }
 
         public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.DelegateGroups
 {
+    using System;
     using DigitalLearningSolutions.Data.Helpers;
 
     public class GroupDelegate : BaseSearchableItem
@@ -17,6 +18,8 @@
         public string? EmailAddress { get; set; }
 
         public string CandidateNumber { get; set; }
+
+        public DateTime AddedDate { get; set; }
 
         public override string SearchableName
         {

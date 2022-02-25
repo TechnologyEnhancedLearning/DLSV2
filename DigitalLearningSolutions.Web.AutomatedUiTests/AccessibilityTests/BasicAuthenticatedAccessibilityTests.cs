@@ -110,6 +110,10 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
             "Delegate learning log"
         )]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/Generate",
+            "Generate new delegate groups from registration field options"
+        )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]
         [InlineData("/NotificationPreferences/Edit/DelegateUser", "Update notification preferences")]
