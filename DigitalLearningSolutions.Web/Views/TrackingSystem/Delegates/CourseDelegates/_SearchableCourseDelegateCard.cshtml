@@ -18,9 +18,15 @@
           <dt class="nhsuk-summary-list__key">
             Delegate ID
           </dt>
-          <dd class="nhsuk-summary-list__value"  data-name-for-sorting="delegate-id">
+          <dd class="nhsuk-summary-list__value" data-name-for-sorting="delegate-id">
             @Model.CandidateNumber
           </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">

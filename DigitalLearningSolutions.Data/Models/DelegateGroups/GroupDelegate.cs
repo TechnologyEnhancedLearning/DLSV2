@@ -20,6 +20,8 @@
 
         public DateTime AddedDate { get; set; }
 
+        public string? ProfessionalRegistrationNumber { get; set; }
+
         public string Name => $"{FirstName} {LastName}";
     }
 }
