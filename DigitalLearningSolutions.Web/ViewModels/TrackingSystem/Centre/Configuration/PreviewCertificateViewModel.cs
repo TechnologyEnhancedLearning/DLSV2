@@ -13,7 +13,7 @@
                     certificateInformation.ContactForename,
                     certificateInformation.ContactSurname
                 )
-                : "Not set";
+                : null;
 
             DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 certificateInformation.DelegateFirstName,
@@ -31,7 +31,7 @@
 
         public string DelegateName { get; set; }
         public string CourseName { get; set; }
-        public string CentreContactName { get; set; }
+        public string? CentreContactName { get; set; }
         public byte[]? SignatureImage { get; set; }
         public byte[]? CentreLogo { get; set; }
         public DateTime CompletionDate { get; set; }
