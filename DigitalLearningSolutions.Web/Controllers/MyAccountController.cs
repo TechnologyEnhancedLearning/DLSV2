@@ -43,6 +43,7 @@
         }
 
         [NoCaching]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
@@ -62,6 +63,7 @@
 
         [NoCaching]
         [HttpGet("EditDetails")]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
@@ -85,6 +87,7 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult EditDetails(
             MyAccountEditDetailsFormData formData,
             string action,
@@ -176,6 +179,7 @@
             return View(model);
         }
 
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostPreviewImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -205,6 +209,7 @@
             return View(model);
         }
 
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostRemoveImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
