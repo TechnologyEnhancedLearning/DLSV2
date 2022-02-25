@@ -86,6 +86,11 @@
             nameof(Dashboard)
         );
 
+        public static readonly NavMenuTab Frameworks = new NavMenuTab(
+            16,
+            nameof(Frameworks)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)

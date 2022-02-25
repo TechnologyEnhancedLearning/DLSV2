@@ -13,7 +13,7 @@
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Frameworks))]
-    [SetSelectedTab(nameof(NavMenuTab.Dashboard))]
+    [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
     public partial class FrameworksController : Controller
     {
         private readonly IFrameworkService frameworkService;
