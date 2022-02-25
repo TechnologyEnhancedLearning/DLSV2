@@ -16,5 +16,6 @@
         public int EnrollmentMethodId { get; set; }
         public int EnrolledByAdminId { get; set; }
         public bool SystemRefreshed { get; set; }
+        public int? DiagnosticScore { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Data.Services
 {
     using System;
+    using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Models;
 
     public interface IProgressService
     {
@@ -16,6 +18,8 @@
         void UpdateDiagnosticScore(int progressId, int tutorialId, int myScore);
 
         void UnlockProgress(int progressId);
+
+        DetailedCourseProgress? GetDetailedCourseProgress(int progressId);
     }
 
     public class ProgressService : IProgressService
@@ -90,6 +94,27 @@
         public void UnlockProgress(int progressId)
         {
             progressDataService.UnlockProgress(progressId);
+        }
+
+        public DetailedCourseProgress? GetDetailedCourseProgress(int progressId)
+        {
+            var progress = progressDataService.GetProgressByProgressId(progressId);
+
+            var courseInfo = courseDataService.GetDelegateCourseInfoByProgressId(progressId);
+
+            if (progress == null || courseInfo == null)
+            {
+                return null;
+            }
+
+            var sections = progressDataService.GetSectionProgressDataForProgressEntry(progressId).ToList();
+            foreach (var section in sections)
+            {
+                section.Tutorials =
+                    progressDataService.GetTutorialProgressDataForSection(progressId, section.SectionId);
+            }
+
+            return new DetailedCourseProgress(progress, sections, courseInfo);
         }
     }
 }
