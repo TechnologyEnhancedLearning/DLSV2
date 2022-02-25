@@ -21,6 +21,8 @@
 
         public DateTime AddedDate { get; set; }
 
+        public string? ProfessionalRegistrationNumber { get; set; }
+        
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? NameQueryHelper.GetSortableFullName(FirstName, LastName);

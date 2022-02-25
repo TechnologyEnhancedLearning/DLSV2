@@ -53,6 +53,13 @@
           <div hidden data-filter-value="@Model.JobGroupFilter"></div>
         </div>
 
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
+        </div>
+
         @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>

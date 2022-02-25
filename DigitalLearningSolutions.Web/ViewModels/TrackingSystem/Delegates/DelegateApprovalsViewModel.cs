@@ -31,6 +31,7 @@
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, delegateUser.EmailAddress);
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
+            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
             CustomPrompts = customPrompts
                 .Select(
                     cp => new CustomFieldViewModel(cp.CustomPromptNumber, cp.CustomPromptText, cp.Mandatory, cp.Answer)
@@ -43,6 +44,7 @@
         public string TitleName { get; set; }
         public DateTime? DateRegistered { get; set; }
         public string? JobGroup { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
         public List<CustomFieldViewModel> CustomPrompts { get; set; }
     }
 }

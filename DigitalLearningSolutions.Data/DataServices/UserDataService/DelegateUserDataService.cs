@@ -178,6 +178,7 @@
                         cd.Answer5,
                         cd.Answer6,
                         cd.JobGroupID,
+                        cd.ProfessionalRegistrationNumber,
                         jg.JobGroupName
                     FROM Candidates AS cd
                     INNER JOIN Centres AS ct ON ct.CentreID = cd.CentreID

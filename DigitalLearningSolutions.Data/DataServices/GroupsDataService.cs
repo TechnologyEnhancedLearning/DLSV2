@@ -192,7 +192,8 @@
                         LastName,
                         EmailAddress,
                         CandidateNumber,
-                        AddedDate
+                        AddedDate,
+                        ProfessionalRegistrationNumber
                     FROM GroupDelegates AS gd
                     JOIN Candidates AS c ON c.CandidateID = gd.DelegateID
                     WHERE gd.GroupID = @groupId",
