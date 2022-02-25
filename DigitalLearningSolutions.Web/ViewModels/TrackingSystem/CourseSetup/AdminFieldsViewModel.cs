@@ -6,15 +6,14 @@
 
     public class AdminFieldsViewModel
     {
-        public AdminFieldsViewModel(IEnumerable<CoursePrompt> coursePrompts, int customisationId)
+        public AdminFieldsViewModel(IEnumerable<CourseAdminField> coursePrompts, int customisationId)
         {
             CustomFields = coursePrompts.Select(
                     cp =>
                         new CourseAdminFieldManagementViewModel(
                             customisationId,
-                            cp.CoursePromptNumber,
-                            cp.CustomPromptText,
-                            cp.Mandatory,
+                            cp.PromptNumber,
+                            cp.PromptText,
                             cp.Options
                         )
                 )

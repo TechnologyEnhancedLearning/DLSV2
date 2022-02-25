@@ -12,7 +12,7 @@
         public MyAccountViewModel(
             AdminUser? adminUser,
             DelegateUser? delegateUser,
-            CentreCustomPromptsWithAnswers? customPrompts,
+            CentreRegistrationPromptsWithAnswers? customPrompts,
             DlsSubApplication dlsSubApplication
         )
         {
@@ -28,14 +28,14 @@
                 ? delegateUser.ProfessionalRegistrationNumber ?? "Not professionally registered"
                 : "Not yet provided";
 
-            CustomFields = new List<CustomFieldViewModel>();
+            DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
             {
-                CustomFields = customPrompts.CustomPrompts.Select(
+                DelegateRegistrationPrompts = customPrompts.CustomPrompts.Select(
                         cp =>
-                            new CustomFieldViewModel(
+                            new DelegateRegistrationPrompt(
                                 cp.RegistrationField.Id,
-                                cp.CustomPromptText,
+                                cp.PromptText,
                                 cp.Mandatory,
                                 cp.Answer
                             )
@@ -64,7 +64,7 @@
 
         public string? ProfessionalRegistrationNumber { get; set; }
 
-        public List<CustomFieldViewModel> CustomFields { get; set; }
+        public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
 
         public DlsSubApplication DlsSubApplication { get; set; }
     }

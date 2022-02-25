@@ -26,7 +26,7 @@
         {
             // Given
             var expectedCourseAdminFieldsResult =
-                CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                PromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                     "System Access Granted",
                     "Test",
                     "Priority Access",
@@ -79,7 +79,7 @@
         }
 
         [Test]
-        public void UpdateAdminFieldForCourse_correctly_adds_custom_prompt()
+        public void UpdateAdminFieldForCourse_correctly_adds_admin_field()
         {
             using var transaction = new TransactionScope();
             try

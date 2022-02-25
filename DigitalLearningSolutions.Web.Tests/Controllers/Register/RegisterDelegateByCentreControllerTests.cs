@@ -27,7 +27,7 @@
 
     public class RegisterDelegateByCentreControllerTests
     {
-        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+        private CentreRegistrationPromptHelper centreRegistrationPromptHelper = null!;
         private RegisterDelegateByCentreController controller = null!;
         private ICryptoService cryptoService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -41,13 +41,13 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             userService = A.Fake<IUserService>();
             userDataService = A.Fake<IUserDataService>();
-            centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
+            centreRegistrationPromptHelper = A.Fake<CentreRegistrationPromptHelper>();
             cryptoService = A.Fake<ICryptoService>();
             registrationService = A.Fake<IRegistrationService>();
             controller = new RegisterDelegateByCentreController(
                     jobGroupsDataService,
                     userService,
-                    centreCustomPromptHelper,
+                    centreRegistrationPromptHelper,
                     cryptoService,
                     userDataService,
                     registrationService

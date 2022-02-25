@@ -98,7 +98,7 @@
         private const string AddDelegateToGroupAddedByProcess = "AddDelegateToGroup_Refactor";
         private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IClockService clockService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
@@ -116,7 +116,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IProgressDataService progressDataService,
             IConfiguration configuration,
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             ILogger<IGroupsService> logger
         )
         {
@@ -127,7 +127,7 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.progressDataService = progressDataService;
             this.configuration = configuration;
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
         }
 
@@ -168,7 +168,7 @@
                 delegateAccountWithOldDetails.GetCentreAnswersData(),
                 newCentreAnswers,
                 jobGroupsDataService,
-                centreCustomPromptsService
+                centreRegistrationPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
@@ -641,13 +641,13 @@
             int registrationFieldOptionId
         )
         {
-            var registrationPrompt = centreCustomPromptsService
-                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Single(
+            var registrationPrompt = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId).Single(
                     cp => cp.RegistrationField.Id == registrationFieldOptionId
                 );
             var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
                 .ToList<(int id, string name)>();
-            var groupNamePrefix = registrationPrompt.CustomPromptText;
+            var groupNamePrefix = registrationPrompt.PromptText;
             return (customPromptOptions, groupNamePrefix);
         }
     }

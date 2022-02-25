@@ -42,7 +42,7 @@
 
         public string? Answer6 { get; set; }
 
-        public IEnumerable<EditCustomFieldViewModel> CustomFields { get; set; } = new List<EditCustomFieldViewModel>();
+        public IEnumerable<EditDelegateRegistrationPromptViewModel> CustomFields { get; set; } = new List<EditDelegateRegistrationPromptViewModel>();
 
         public IEnumerable<SelectListItem> JobGroupOptions { get; set; } = new List<SelectListItem>();
         public string? ProfessionalRegistrationNumber { get; set; }

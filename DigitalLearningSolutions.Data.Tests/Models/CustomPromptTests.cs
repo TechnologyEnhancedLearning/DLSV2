@@ -11,7 +11,7 @@
         public void CustomPrompt_constructor_populates_options_with_null()
         {
             // When
-            var result = new CustomPrompt(1,"Test", null, false);
+            var result = new CentreRegistrationPrompt(1,"Test", null, false);
 
             // Then
             using (new AssertionScope())
@@ -25,7 +25,7 @@
         public void CustomPrompt_constructor_populates_options_with_single_entry()
         {
             // When
-            var result = new CustomPrompt(1,"Test", "Option", false);
+            var result = new CentreRegistrationPrompt(1,"Test", "Option", false);
 
             // Then
             using (new AssertionScope())
@@ -42,7 +42,7 @@
             var options = "Option1\r\nOption2\r\nOption3\r\nOption4";
 
             // When
-            var result = new CustomPrompt(1,"Test", options, false);
+            var result = new CentreRegistrationPrompt(1,"Test", options, false);
 
             // Then
             using (new AssertionScope())
@@ -59,7 +59,7 @@
             var options = "Option1\r\nOption2\r\n\r\nOption3\r\n\r\n\r\n\r\nOption4";
 
             // When
-            var result = new CustomPrompt(1,"Test", options, false);
+            var result = new CentreRegistrationPrompt(1,"Test", options, false);
 
             // Then
             using (new AssertionScope())

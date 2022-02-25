@@ -163,12 +163,12 @@
   @foreach (var prompt in Model.AdminFields) {
     <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        @prompt.CustomPrompt
+        @prompt.Prompt
       </dt>
       <partial name="_SummaryFieldValue" model="prompt.Answer" />
       <dd class="nhsuk-summary-list__actions">
         <a href="#">
-          Edit<span class="nhsuk-u-visually-hidden"> @prompt.CustomPrompt</span>
+          Edit<span class="nhsuk-u-visually-hidden"> @prompt.Prompt</span>
         </a>
       </dd>
     </div>

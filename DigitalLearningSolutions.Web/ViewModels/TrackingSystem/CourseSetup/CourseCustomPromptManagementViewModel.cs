@@ -7,18 +7,15 @@
     {
         public CourseAdminFieldManagementViewModel(
             int customisationId,
-            int fieldId,
+            int promptNumber,
             string promptName,
-            bool mandatory,
             List<string> options
-        ) : base(fieldId, promptName, mandatory, options)
+        ) : base(promptNumber, promptName, options)
         {
             CustomisationId = customisationId;
-            PromptNumber = fieldId;
+            PromptNumber = promptNumber;
         }
 
         public int CustomisationId { get; set; }
-
-        public int PromptNumber { get; set; }
     }
 }

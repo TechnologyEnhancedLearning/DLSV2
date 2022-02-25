@@ -24,14 +24,14 @@
             }
 
             IsDelegateSelected = isDelegateSelected;
-            CustomPromptFilters = new Dictionary<int, string>();
+            RegistrationPromptFilters = new Dictionary<int, string>();
         }
 
         public EmailDelegatesItemViewModel(
             DelegateUser delegateUser,
             bool isDelegateSelected,
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
         )
         {
             Id = delegateUser.Id;
@@ -44,7 +44,7 @@
 
             IsDelegateSelected = isDelegateSelected;
             JobGroupId = delegateUser.JobGroupId;
-            CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(customFields, promptsWithOptions);
+            RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(delegateRegistrationPrompts, promptsWithOptions);
         }
 
         public int Id { get; set; }
@@ -60,6 +60,6 @@
             JobGroupId.ToString()
         );
 
-        public Dictionary<int, string> CustomPromptFilters { get; set; }
+        public Dictionary<int, string> RegistrationPromptFilters { get; set; }
     }
 }

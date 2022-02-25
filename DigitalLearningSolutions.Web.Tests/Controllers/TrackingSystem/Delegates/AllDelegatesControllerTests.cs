@@ -16,7 +16,7 @@
     public class AllDelegatesControllerTests
     {
         private AllDelegatesController allDelegatesController = null!;
-        private CentreCustomPromptHelper centreCustomPromptsHelper = null!;
+        private CentreRegistrationPromptHelper centreRegistrationPromptsHelper = null!;
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -26,8 +26,8 @@
         [SetUp]
         public void Setup()
         {
-            var centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
-            centreCustomPromptsHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
+            var centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+            centreRegistrationPromptsHelper = new CentreRegistrationPromptHelper(centreRegistrationPromptsService);
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
 
@@ -38,7 +38,7 @@
 
             allDelegatesController = new AllDelegatesController(
                     userDataService,
-                    centreCustomPromptsHelper,
+                    centreRegistrationPromptsHelper,
                     jobGroupsDataService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)

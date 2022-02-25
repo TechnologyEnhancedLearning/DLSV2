@@ -109,19 +109,19 @@
         private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDelegatesDataService courseDelegatesDataService = null!;
         private CourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
-        private ICentreCustomPromptsService customPromptsService = null!;
+        private ICentreRegistrationPromptsService registrationPromptsService = null!;
 
         [SetUp]
         public void Setup()
         {
             courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDelegatesDataService = A.Fake<ICourseDelegatesDataService>();
-            customPromptsService = A.Fake<ICentreCustomPromptsService>();
+            registrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
 
             courseDelegatesDownloadFileService = new CourseDelegatesDownloadFileService(
                 courseDelegatesDataService,
                 courseAdminFieldsService,
-                customPromptsService
+                registrationPromptsService
             );
         }
 
@@ -138,22 +138,22 @@
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId))
                 .Returns(courseDelegates);
 
-            var customPrompts = new List<CustomPrompt>
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
-                new CustomPrompt(1, "Role type", null, true),
-                new CustomPrompt(2, "Manager", null, true),
-                new CustomPrompt(3, "Base / office / place of work", null, true),
-                new CustomPrompt(4, "Base / office / place of work", null, true),
-                new CustomPrompt(5, "Contact telephone number", null, true),
+                new CentreRegistrationPrompt(1, "Role type", null, true),
+                new CentreRegistrationPrompt(2, "Manager", null, true),
+                new CentreRegistrationPrompt(3, "Base / office / place of work", null, true),
+                new CentreRegistrationPrompt(4, "Base / office / place of work", null, true),
+                new CentreRegistrationPrompt(5, "Contact telephone number", null, true),
             };
-            A.CallTo(() => customPromptsService.GetCustomPromptsForCentreByCentreId(centreId))
-                .Returns(new CentreCustomPrompts(centreId, customPrompts));
+            A.CallTo(() => registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId))
+                .Returns(new CentreRegistrationPrompts(centreId, centreRegistrationPrompts));
 
-            var adminFields = new List<CoursePrompt>
+            var adminFields = new List<CourseAdminField>
             {
-                new CoursePrompt(1, "Access Permissions", null, true),
+                new CourseAdminField(1, "Access Permissions", null),
             };
-            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsForCourse(customisationId))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId))
                 .Returns(new CourseAdminFields(customisationId, adminFields));
 
             // When

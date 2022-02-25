@@ -25,15 +25,15 @@
     public class DelegateGroupsController : Controller
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
 
         public DelegateGroupsController(
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IGroupsService groupsService
         )
         {
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
         }
 
@@ -250,8 +250,8 @@
             var centreId = User.GetCentreId();
             var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
 
-            var fieldIsValid = centreCustomPromptsService
-                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId).Select(cp => cp.RegistrationField.Id)
+            var fieldIsValid = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId).Select(cp => cp.RegistrationField.Id)
                 .Contains(registrationField!.Id) || registrationField.Equals(RegistrationField.JobGroup);
 
             if (!fieldIsValid)
@@ -275,9 +275,9 @@
             return RedirectToAction("Index");
         }
 
-        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        private IEnumerable<CentreRegistrationPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
         {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+            return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
         }
 
@@ -285,10 +285,10 @@
         {
             var centreId = User.GetCentreId();
 
-            var centreCustomPrompts = centreCustomPromptsService
-                .GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
             var registrationFieldOptions =
-                CentreCustomPromptHelper.MapCentreCustomPromptsToDataForSelectList(centreCustomPrompts);
+                CentreRegistrationPromptHelper.MapCentreRegistrationPromptsToDataForSelectList(centreCustomPrompts);
 
             var jobGroupOption = (RegistrationField.JobGroup.Id, "Job group");
             registrationFieldOptions.Add(jobGroupOption);

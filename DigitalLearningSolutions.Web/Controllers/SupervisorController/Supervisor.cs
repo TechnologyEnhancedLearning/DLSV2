@@ -42,7 +42,7 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
@@ -173,7 +173,7 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);

@@ -8,32 +8,32 @@
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
-    public class CentreCustomPromptsDataServiceTests
+    public class CentreRegistrationPromptsDataServiceTests
     {
-        private ICentreCustomPromptsDataService centreCustomPromptsDataService = null!;
+        private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService = null!;
 
         [SetUp]
         public void Setup()
         {
             var connection = ServiceTestHelper.GetDatabaseConnection();
-            centreCustomPromptsDataService = new CentreCustomPromptsDataService(connection);
+            centreRegistrationPromptsDataService = new CentreRegistrationPromptsDataService(connection);
         }
 
         [Test]
-        public void GetCentreCustomPromptsByCentreId_Returns_populated_CentreCustomPromptsResult()
+        public void GetCentreRegistrationPromptsByCentreId_Returns_populated_CentreCustomPromptsResult()
         {
             // Given
-            var expectedCentreCustomPromptsResult = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult();
+            var expectedCentreRegistrationPromptsResult = PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult();
 
             // When
-            var returnedCentreCustomPromptsResult = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29);
+            var returnedCentreRegistrationPromptsResult = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29);
 
             // Then
-            returnedCentreCustomPromptsResult.Should().BeEquivalentTo(expectedCentreCustomPromptsResult);
+            returnedCentreRegistrationPromptsResult.Should().BeEquivalentTo(expectedCentreRegistrationPromptsResult);
         }
 
         [Test]
-        public void UpdateCustomPrompt_correctly_updates_custom_prompt()
+        public void UpdateCentreRegistrationPrompt_correctly_updates_registration_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -42,8 +42,8 @@
                 const string? options = "options";
 
                 // When
-                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, false, options);
-                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
+                centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(2, 1, false, options);
+                var centreCustomPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
 
                 // Then
                 using (new AssertionScope())
@@ -59,17 +59,17 @@
         }
 
         [Test]
-        public void Get_custom_prompts_should_contain_a_custom_prompt()
+        public void GetCustomPromptsAlphabetical_should_contain_a_custom_prompt()
         {
             // When
-            var result = centreCustomPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+            var result = centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical().ToList();
 
             // Then
             result.Contains((1, "Department / team")).Should().BeTrue();
         }
 
         [Test]
-        public void UpdateCustomPromptForCentre_correctly_adds_custom_prompt()
+        public void UpdateCentreRegistrationPrompt_correctly_adds_registration_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -78,9 +78,9 @@
                 const string? options = "options";
 
                 // When
-                centreCustomPromptsDataService.UpdateCustomPromptForCentre(2, 1, 1, false, options);
-                var centreCustomPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(2);
-                var customPrompt = centreCustomPromptsDataService.GetCustomPromptsAlphabetical()
+                centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(2, 1, 1, false, options);
+                var centreCustomPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
+                var customPrompt = centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical()
                     .Single(c => c.Item1 == 1)
                     .Item2;
 
@@ -99,10 +99,10 @@
         }
 
         [Test]
-        public void GetPromptNameForCentreAndPromptNumber_returns_expected_prompt_name()
+        public void GetCentreRegistrationPromptNameAndPromptNumber_returns_expected_prompt_name()
         {
             // When
-            var result = centreCustomPromptsDataService.GetPromptNameForCentreAndPromptNumber(101, 1);
+            var result = centreRegistrationPromptsDataService.GetCentreRegistrationPromptNameAndPromptNumber(101, 1);
 
             // Then
             result.Should().BeEquivalentTo("Role type");

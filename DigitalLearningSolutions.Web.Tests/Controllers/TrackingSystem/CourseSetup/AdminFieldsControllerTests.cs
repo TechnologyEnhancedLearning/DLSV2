@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -68,17 +67,17 @@
         public void AdminFields_returns_AdminFields_page_when_appropriate_course_found_and_clears_TempData()
         {
             // Given
-            var samplePrompt1 = CustomPromptsTestHelper.GetDefaultCoursePrompt(1, "System Access Granted", "Yes\r\nNo");
-            var customPrompts = new List<CoursePrompt> { samplePrompt1 };
-            A.CallTo(() => courseAdminFieldsService.GetCoursePromptsForCourse(A<int>._))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts));
-            controller.TempData.Set(samplePrompt1);
+            var courseAdminField1 = PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Yes\r\nNo");
+            var courseAdminFields = new List<CourseAdminField> { courseAdminField1 };
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
+                .Returns(PromptsTestHelper.GetDefaultCourseAdminFields(courseAdminFields));
+            controller.TempData.Set(courseAdminField1);
 
             // When
             var result = controller.Index(1);
 
             // Then
-            controller.TempData.Peek<CustomPrompt>().Should().BeNull();
+            controller.TempData.Peek<CourseAdminField>().Should().BeNull();
             result.Should().BeViewResult().WithDefaultViewName().ModelAs<AdminFieldsViewModel>();
         }
 

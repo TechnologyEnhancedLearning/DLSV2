@@ -56,12 +56,12 @@
           <div hidden data-filter-value="@Model.JobGroupFilter"></div>
         </div>
 
-        @foreach (var customField in Model.DelegateInfo.CustomFields) {
+        @foreach (var customField in Model.DelegateInfo.DelegateRegistrationPrompts) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
+            <dt class="nhsuk-summary-list__key">@customField.Prompt</dt>
             <partial name="_SummaryFieldValue" model="@customField.Answer" />
-            @if (Model.CustomPromptFilters.ContainsKey(customField.CustomFieldId)) {
-              <div hidden data-filter-value="@Model.CustomPromptFilters[customField.CustomFieldId]"></div>
+            @if (Model.RegistrationPromptFilters.ContainsKey(customField.PromptNumber)) {
+              <div hidden data-filter-value="@Model.RegistrationPromptFilters[customField.PromptNumber]"></div>
             }
           </div>
         }

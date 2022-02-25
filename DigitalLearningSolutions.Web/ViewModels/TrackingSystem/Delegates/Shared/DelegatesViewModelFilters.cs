@@ -29,12 +29,12 @@
             );
         }
 
-        public static IEnumerable<FilterOptionViewModel> GetCustomPromptOptions(CustomPrompt customPrompt)
+        public static IEnumerable<FilterOptionViewModel> GetCentreRegistrationPromptOptions(CentreRegistrationPrompt centreRegistrationPrompt)
         {
             var filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.RegistrationField.Id);
+                CentreRegistrationPromptHelper.GetDelegateRegistrationPromptAnswerName(centreRegistrationPrompt.RegistrationField.Id);
 
-            var options = customPrompt.Options.Select(
+            var options = centreRegistrationPrompt.Options.Select(
                 option => new FilterOptionViewModel(
                     option,
                     FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
@@ -55,30 +55,30 @@
             return options;
         }
 
-        public static Dictionary<int, string> GetCustomPromptFilters(
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
+        public static Dictionary<int, string> GetRegistrationPromptFilters(
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
         )
         {
             var promptsWithOptionsIds = promptsWithOptions.Select(c => c.RegistrationField.Id);
-            var customFieldsWithOptions =
-                customFields.Where(customField => promptsWithOptionsIds.Contains(customField.CustomFieldId));
-            return customFieldsWithOptions
+            var delegateRegistrationPromptsWithOptions =
+                delegateRegistrationPrompts.Where(delegateRegistrationPrompt => promptsWithOptionsIds.Contains(delegateRegistrationPrompt.PromptNumber));
+            return delegateRegistrationPromptsWithOptions
                 .Select(
-                    customField => new KeyValuePair<int, string>(
-                        customField.CustomFieldId,
-                        GetFilterValueForCustomField(customField)
+                    delegateRegistrationPrompt => new KeyValuePair<int, string>(
+                        delegateRegistrationPrompt.PromptNumber,
+                        GetFilterValueForRegistrationPrompt(delegateRegistrationPrompt)
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        private static string GetFilterValueForCustomField(CustomFieldViewModel customField)
+        private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
         {
             var filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-            var propertyValue = string.IsNullOrEmpty(customField.Answer)
+                CentreRegistrationPromptHelper.GetDelegateRegistrationPromptAnswerName(delegatePrompt.PromptNumber);
+            var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
                 ? FilteringHelper.EmptyValue.ToString()
-                : customField.Answer;
+                : delegatePrompt.Answer;
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
     }

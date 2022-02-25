@@ -69,7 +69,7 @@
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CoursePromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -96,7 +96,7 @@
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CoursePromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -123,7 +123,7 @@
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CoursePromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -150,7 +150,7 @@
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CoursePromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -177,7 +177,7 @@
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CoursePromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );

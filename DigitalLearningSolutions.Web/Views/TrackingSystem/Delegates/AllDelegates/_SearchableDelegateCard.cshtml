@@ -53,12 +53,12 @@
           <div hidden data-filter-value="@Model.JobGroupFilter"></div>
         </div>
 
-        @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
+        @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
-            <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
-            <partial name="_SummaryFieldValue" model="@customField.Answer" />
-            @if (Model.CustomPromptFilters.ContainsKey(customField.CustomFieldId)) {
-              <div hidden data-filter-value="@Model.CustomPromptFilters[customField.CustomFieldId]"></div>
+            <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
+            <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
+            @if (Model.RegistrationPromptFilters.ContainsKey(delegateRegistrationPrompt.PromptNumber)) {
+              <div hidden data-filter-value="@Model.RegistrationPromptFilters[delegateRegistrationPrompt.PromptNumber]"></div>
             }
           </div>
         }

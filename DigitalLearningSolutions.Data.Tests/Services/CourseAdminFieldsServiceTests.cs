@@ -32,48 +32,48 @@
         }
 
         [Test]
-        public void GetCoursePromptsForCourse_Returns_Populated_CourseAdminFields()
+        public void GetCourseAdminFieldsForCourse_Returns_Populated_CourseAdminFields()
         {
             // Given
             var expectedPrompt1 =
-                CustomPromptsTestHelper.GetDefaultCoursePrompt(1, "System Access Granted", "Test");
-            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCoursePrompt(2, "Priority Access");
-            var customPrompts = new List<CoursePrompt> { expectedPrompt1, expectedPrompt2 };
-            var expectedCourseAdminFields = CustomPromptsTestHelper.GetDefaultCourseAdminFields(customPrompts);
+                PromptsTestHelper.GetDefaultCourseAdminField(1, "System Access Granted", "Test");
+            var expectedPrompt2 = PromptsTestHelper.GetDefaultCourseAdminField(2, "Priority Access");
+            var courseAdminFields = new List<CourseAdminField> { expectedPrompt1, expectedPrompt2 };
+            var expectedCourseAdminFields = PromptsTestHelper.GetDefaultCourseAdminFields(courseAdminFields);
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+                .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsForCourse(100);
+            var result = courseAdminFieldsService.GetCourseAdminFieldsForCourse(100);
 
             // Then
             result.Should().BeEquivalentTo(expectedCourseAdminFields);
         }
 
         [Test]
-        public void GetCoursePromptsWithAnswersForCourse_Returns_Populated_List_of_CustomPromptWithAnswer()
+        public void GetCourseAdminFieldsWithAnswersForCourse_Returns_Populated_List_of_CourseAdminFieldWithAnswer()
         {
             // Given
             const string answer1 = "ans1";
             const string answer2 = "ans2";
-            var expected1 = CustomPromptsTestHelper.GetDefaultCoursePromptWithAnswer(
+            var expected1 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
                 1,
                 "System Access Granted",
                 "Test",
                 answer: answer1
             );
-            var expected2 = CustomPromptsTestHelper.GetDefaultCoursePromptWithAnswer(
+            var expected2 = PromptsTestHelper.GetDefaultCourseAdminFieldWithAnswer(
                 2,
                 "Priority Access",
                 answer: answer2
             );
-            var expected = new List<CoursePromptWithAnswer> { expected1, expected2 };
+            var expected = new List<CourseAdminFieldWithAnswer> { expected1, expected2 };
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+                .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
             var delegateCourseInfo = new DelegateCourseInfo { Answer1 = answer1, Answer2 = answer2 };
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsWithAnswersForCourse(delegateCourseInfo, 100);
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(delegateCourseInfo, 100);
 
             // Then
             result.Should().BeEquivalentTo(expected);
@@ -93,7 +93,7 @@
         }
 
         [Test]
-        public void GetCoursePromptsAlphabeticalList_calls_data_service()
+        public void GetCourseAdminFieldsAlphabeticalList_calls_data_service()
         {
             // Given
             const string promptName = "Access Permissions";
@@ -102,7 +102,7 @@
                 (coursePrompts);
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
+            var result = courseAdminFieldsService.GetCourseAdminFieldsAlphabeticalList();
 
             // Then
             A.CallTo(() => courseAdminFieldsDataService.GetCoursePromptsAlphabetical()).MustHaveHappened();
@@ -118,7 +118,7 @@
                 () => courseAdminFieldsDataService.UpdateAdminFieldForCourse(100, A<int>._, A<int>._, null)
             ).DoesNothing();
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
-                .Returns(CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult());
+                .Returns(PromptsTestHelper.GetDefaultCourseAdminFieldsResult());
 
             // When
             var result = courseAdminFieldsService.AddAdminFieldToCourse(100, 3, null);
@@ -132,7 +132,7 @@
         }
 
         [Test]
-        public void AddAdminFieldToCourse_does_not_add_prompt_if_course_has_all_prompts_defined()
+        public void AddAdminFieldToCourse_does_not_add_admin_field_if_course_has_all_fields_defined()
         {
             // Given
             A.CallTo
@@ -141,7 +141,7 @@
             ).DoesNothing();
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(100))
                 .Returns(
-                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    PromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                         "System Access Granted",
                         "Test",
                         "Priority Access",
@@ -193,7 +193,7 @@
         }
 
         [Test]
-        public void GetCoursePromptsWithAnswerCountsForCourse_returns_empty_list_with_no_admin_fields()
+        public void GetCourseAdminFieldsWithAnswerCountsForCourse_returns_empty_list_with_no_admin_fields()
         {
             // Given
             const int customisationId = 1;
@@ -202,7 +202,7 @@
                 .Returns(new CourseAdminFieldsResult());
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsWithAnswerCountsForCourse(customisationId, centreId);
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId);
 
             // Then
             using (new AssertionScope())
@@ -215,7 +215,7 @@
         }
 
         [Test]
-        public void GetCoursePromptsWithAnswerCountsForCourse_counts_free_text_admin_fields_correctly()
+        public void GetCourseAdminFieldsWithAnswerCountsForCourse_counts_free_text_admin_fields_correctly()
         {
             // Given
             const int customisationId = 1;
@@ -224,7 +224,7 @@
             const int numberOfDelegatesWithAnswer = 3;
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(customisationId))
                 .Returns(
-                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    PromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                         "System Access Granted",
                         null,
                         null
@@ -243,7 +243,7 @@
                 .Returns(delegateAnswers);
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsWithAnswerCountsForCourse(customisationId, centreId)
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
                 .ToList();
 
             // Then
@@ -262,7 +262,7 @@
         }
 
         [Test]
-        public void GetCoursePromptsWithAnswerCountsForCourse_counts_configured_answers_admin_fields_correctly()
+        public void GetCourseAdminFieldsWithAnswerCountsForCourse_counts_configured_answers_admin_fields_correctly()
         {
             // Given
             const int customisationId = 1;
@@ -272,7 +272,7 @@
             const int numberOfDelegatesWithTest = 2;
             A.CallTo(() => courseAdminFieldsDataService.GetCourseAdminFields(customisationId))
                 .Returns(
-                    CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                    PromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                         "System Access Granted",
                         "Test\r\nAnswer",
                         null
@@ -293,7 +293,7 @@
                 .Returns(delegateAnswers);
 
             // When
-            var result = courseAdminFieldsService.GetCoursePromptsWithAnswerCountsForCourse(customisationId, centreId)
+            var result = courseAdminFieldsService.GetCourseAdminFieldsWithAnswerCountsForCourse(customisationId, centreId)
                 .ToList();
 
             // Then

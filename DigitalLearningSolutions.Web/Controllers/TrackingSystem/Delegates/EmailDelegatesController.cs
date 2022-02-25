@@ -25,19 +25,19 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     public class EmailDelegatesController : Controller
     {
         private const string EmailDelegateFilterCookieName = "EmailDelegateFilter";
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
 
         public EmailDelegatesController(
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            CentreRegistrationPromptHelper centreRegistrationPromptHelper,
             IJobGroupsDataService jobGroupsDataService,
             IPasswordResetService passwordResetService,
             IUserService userService
         )
         {
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.centreRegistrationPromptHelper = centreRegistrationPromptHelper;
             this.jobGroupsDataService = jobGroupsDataService;
             this.passwordResetService = passwordResetService;
             this.userService = userService;
@@ -57,7 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 EmailDelegateFilterCookieName
             );
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+            var customPrompts = centreRegistrationPromptHelper.GetCentreRegistrationPrompts(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
 
             var model = new EmailDelegatesViewModel(
@@ -87,7 +87,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     EmailDelegateFilterCookieName
                 );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-                var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+                var customPrompts = centreRegistrationPromptHelper.GetCentreRegistrationPrompts(User.GetCentreId());
                 var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterBy)
                 {
                     SelectedDelegateIds = model.SelectedDelegateIds,
@@ -111,7 +111,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult AllEmailDelegateItems(IEnumerable<int> selectedIds)
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
+            var customPrompts = centreRegistrationPromptHelper.GetCentreRegistrationPrompts(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
 
             var model = new AllEmailDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts, selectedIds);

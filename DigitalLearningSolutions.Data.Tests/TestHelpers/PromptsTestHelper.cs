@@ -3,53 +3,52 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public static class CustomPromptsTestHelper
+    public static class PromptsTestHelper
     {
-        public static CentreCustomPrompts GetDefaultCentreCustomPrompts(
-            List<CustomPrompt> customPrompts,
+        public static CentreRegistrationPrompts GetDefaultCentreRegistrationPrompts(
+            List<CentreRegistrationPrompt> customPrompts,
             int centreId = 29
         )
         {
-            return new CentreCustomPrompts(centreId, customPrompts);
+            return new CentreRegistrationPrompts(centreId, customPrompts);
         }
 
         public static CourseAdminFields GetDefaultCourseAdminFields(
-            List<CoursePrompt> coursePrompts,
+            List<CourseAdminField> courseAdminFields,
             int customisationId = 100
         )
         {
-            return new CourseAdminFields(customisationId, coursePrompts);
+            return new CourseAdminFields(customisationId, courseAdminFields);
         }
 
-        public static CustomPrompt GetDefaultCustomPrompt(
+        public static CentreRegistrationPrompt GetDefaultCentreRegistrationPrompt(
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
             bool mandatory = false
         )
         {
-            return new CustomPrompt(promptNumber, text, options, mandatory);
+            return new CentreRegistrationPrompt(promptNumber, text, options, mandatory);
         }
 
-        public static CoursePrompt GetDefaultCoursePrompt(
+        public static CourseAdminField GetDefaultCourseAdminField(
             int promptNumber,
             string text = "Course Prompt",
-            string? options = "",
-            bool mandatory = false
+            string? options = ""
         )
         {
-            return new CoursePrompt(promptNumber, text, options, mandatory);
+            return new CourseAdminField(promptNumber, text, options);
         }
 
-        public static CentreCustomPromptsWithAnswers GetDefaultCentreCustomPromptsWithAnswers(
-            List<CustomPromptWithAnswer> customPrompts,
+        public static CentreRegistrationPromptsWithAnswers GetDefaultCentreRegistrationPromptsWithAnswers(
+            List<CentreRegistrationPromptWithAnswer> customPrompts,
             int centreId = 29
         )
         {
-            return new CentreCustomPromptsWithAnswers(centreId, customPrompts);
+            return new CentreRegistrationPromptsWithAnswers(centreId, customPrompts);
         }
 
-        public static CustomPromptWithAnswer GetDefaultCustomPromptWithAnswer(
+        public static CentreRegistrationPromptWithAnswer GetDefaultCustomPromptWithAnswer(
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",
@@ -57,21 +56,20 @@
             string? answer = null
         )
         {
-            return new CustomPromptWithAnswer(promptNumber, text, options, mandatory, answer);
+            return new CentreRegistrationPromptWithAnswer(promptNumber, text, options, mandatory, answer);
         }
 
-        public static CoursePromptWithAnswer GetDefaultCoursePromptWithAnswer(
+        public static CourseAdminFieldWithAnswer GetDefaultCourseAdminFieldWithAnswer(
             int promptNumber,
             string text = "Course Prompt",
             string? options = "",
-            bool mandatory = false,
             string? answer = null
         )
         {
-            return new CoursePromptWithAnswer(promptNumber, text, options, mandatory, answer);
+            return new CourseAdminFieldWithAnswer(promptNumber, text, options, answer);
         }
 
-        public static CentreCustomPromptsResult GetDefaultCentreCustomPromptsResult(
+        public static CentreRegistrationPromptsResult GetDefaultCentreRegistrationPromptsResult(
             int centreId = 29,
             string? customField1Prompt = "Group",
             string? customField1Options = "Clinical\r\nNon-Clinical",
@@ -93,7 +91,7 @@
             bool customField6Mandatory = false
         )
         {
-            return new CentreCustomPromptsResult
+            return new CentreRegistrationPromptsResult
             {
                 CentreId = centreId,
                 CustomField1Prompt = customField1Prompt,

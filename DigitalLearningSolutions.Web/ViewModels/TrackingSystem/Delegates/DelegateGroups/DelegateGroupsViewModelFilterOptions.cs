@@ -18,12 +18,12 @@
         };
 
         public static IEnumerable<FilterOptionViewModel> GetLinkedFieldOptions(
-            IEnumerable<CustomPrompt> registrationPrompts
+            IEnumerable<CentreRegistrationPrompt> registrationPrompts
         )
         {
             var promptOptions = registrationPrompts.Select(
                 prompt => new FilterOptionViewModel(
-                    prompt.CustomPromptText,
+                    prompt.PromptText,
                     nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
                     FilteringHelper.Separator + GetLinkedFieldIdFromRegistrationPromptNumber(prompt.RegistrationField.Id),
                     FilterStatus.Default

@@ -146,10 +146,10 @@
           </div>
         }
 
-        @foreach (var courseCustomPrompt in Model.CoursePromptsWithAnswers) {
+        @foreach (var courseCustomPrompt in Model.CourseAdminFieldsWithAnswers) {
           <div class="nhsuk-summary-list__row details-list-with-button__row">
             <dt class="nhsuk-summary-list__key">
-              @courseCustomPrompt.CustomPromptText
+              @courseCustomPrompt.PromptText
             </dt>
             <partial name="_SummaryFieldValue" model="@courseCustomPrompt.Answer" />
             <dd class="nhsuk-summary-list__actions"></dd>

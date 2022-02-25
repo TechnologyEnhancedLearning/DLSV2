@@ -11,16 +11,16 @@
 
     public interface ICourseAdminFieldsService
     {
-        public CourseAdminFields GetCoursePromptsForCourse(int customisationId);
+        public CourseAdminFields GetCourseAdminFieldsForCourse(int customisationId);
 
-        public List<CoursePromptWithAnswer> GetCoursePromptsWithAnswersForCourse(
+        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId
         );
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options);
 
-        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList();
+        public IEnumerable<(int id, string value)> GetCourseAdminFieldsAlphabeticalList();
 
         public bool AddAdminFieldToCourse(
             int customisationId,
@@ -32,7 +32,7 @@
 
         public string GetPromptName(int customisationId, int promptNumber);
 
-        public IEnumerable<CoursePromptWithResponseCounts> GetCoursePromptsWithAnswerCountsForCourse(
+        public IEnumerable<CourseAdminFieldWithResponseCounts> GetCourseAdminFieldsWithAnswerCountsForCourse(
             int customisationId,
             int centreId
         );
@@ -52,25 +52,25 @@
             this.logger = logger;
         }
 
-        public CourseAdminFields GetCoursePromptsForCourse(
+        public CourseAdminFields GetCourseAdminFieldsForCourse(
             int customisationId
         )
         {
             var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId);
             return new CourseAdminFields(
                 customisationId,
-                PopulateCoursePromptListFromCourseAdminFieldsResult(result)
+                PopulateCourseAdminFieldListFromResult(result)
             );
         }
 
-        public List<CoursePromptWithAnswer> GetCoursePromptsWithAnswersForCourse(
+        public List<CourseAdminFieldWithAnswer> GetCourseAdminFieldsWithAnswersForCourse(
             DelegateCourseInfo delegateCourseInfo,
             int customisationId
         )
         {
             var result = GetCourseAdminFieldsResultForCourse(customisationId);
 
-            return PopulateCoursePromptWithAnswerListFromCourseAdminFieldsResult(result, delegateCourseInfo);
+            return PopulateCourseAdminFieldWithAnswerListFromResult(result, delegateCourseInfo);
         }
 
         public void UpdateAdminFieldForCourse(int customisationId, int promptId, string? options)
@@ -78,7 +78,7 @@
             courseAdminFieldsDataService.UpdateAdminFieldForCourse(customisationId, promptId, options);
         }
 
-        public IEnumerable<(int id, string value)> GetCoursePromptsAlphabeticalList()
+        public IEnumerable<(int id, string value)> GetCourseAdminFieldsAlphabeticalList()
         {
             return courseAdminFieldsDataService.GetCoursePromptsAlphabetical().ToList();
         }
@@ -89,7 +89,7 @@
             string? options
         )
         {
-            var courseAdminFields = GetCoursePromptsForCourse(
+            var courseAdminFields = GetCourseAdminFieldsForCourse(
                 customisationId
             );
 
@@ -137,13 +137,13 @@
             return courseAdminFieldsDataService.GetPromptName(customisationId, promptNumber);
         }
 
-        public IEnumerable<CoursePromptWithResponseCounts> GetCoursePromptsWithAnswerCountsForCourse(
+        public IEnumerable<CourseAdminFieldWithResponseCounts> GetCourseAdminFieldsWithAnswerCountsForCourse(
             int customisationId,
             int centreId
         )
         {
             var result = courseAdminFieldsDataService.GetCourseAdminFields(customisationId);
-            var adminFields = GetBaseCustomPromptWithResponseCountsModelsFromCourseCustomPromptsResult(result);
+            var adminFields = GetBaseCourseAdminFieldWithResponseCountsModelsFromResult(result);
 
             if (!adminFields.Any())
             {
@@ -163,7 +163,7 @@
         }
 
         private static IEnumerable<ResponseCount> GetResponseCountsForPrompt(
-            CoursePrompt coursePrompt,
+            CourseAdminField courseAdminField,
             IReadOnlyCollection<DelegateCourseAdminFieldAnswers> allAnswers
         )
         {
@@ -171,13 +171,13 @@
             const string notBlank = "not blank";
 
             var responseCounts = new List<ResponseCount>();
-            if (coursePrompt.Options.Any())
+            if (courseAdminField.Options.Any())
             {
                 responseCounts.AddRange(
-                    coursePrompt.Options.Select(
+                    courseAdminField.Options.Select(
                         x => new ResponseCount(
                             x,
-                            allAnswers.Count(a => a.AdminFieldAnswers[coursePrompt.CoursePromptNumber - 1] == x)
+                            allAnswers.Count(a => a.AdminFieldAnswers[courseAdminField.PromptNumber - 1] == x)
                         )
                     )
                 );
@@ -188,7 +188,7 @@
                     new ResponseCount(
                         notBlank,
                         allAnswers.Count(
-                            a => !string.IsNullOrEmpty(a.AdminFieldAnswers[coursePrompt.CoursePromptNumber - 1])
+                            a => !string.IsNullOrEmpty(a.AdminFieldAnswers[courseAdminField.PromptNumber - 1])
                         )
                     )
                 );
@@ -198,7 +198,7 @@
                 new ResponseCount(
                     blank,
                     allAnswers.Count(
-                        a => string.IsNullOrEmpty(a.AdminFieldAnswers[coursePrompt.CoursePromptNumber - 1])
+                        a => string.IsNullOrEmpty(a.AdminFieldAnswers[courseAdminField.PromptNumber - 1])
                     )
                 )
             );
@@ -209,7 +209,7 @@
         private static int? GetNextPromptNumber(CourseAdminFields courseAdminFields)
         {
             var existingPromptNumbers = courseAdminFields.AdminFields
-                .Select(c => c.CoursePromptNumber);
+                .Select(c => c.PromptNumber);
 
             var promptNumbers = new List<int> { 1, 2, 3 };
             var unusedPromptNumbers = promptNumbers.Except(existingPromptNumbers).ToList();
@@ -221,44 +221,41 @@
             return courseAdminFieldsDataService.GetCourseAdminFields(customisationId);
         }
 
-        private static List<CoursePrompt> PopulateCoursePromptListFromCourseAdminFieldsResult(
+        private static List<CourseAdminField> PopulateCourseAdminFieldListFromResult(
             CourseAdminFieldsResult? result
         )
         {
-            var list = new List<CoursePrompt>();
+            var list = new List<CourseAdminField>();
 
             if (result == null)
             {
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.PopulateCoursePrompt(
+            var prompt1 = PromptHelper.PopulateCourseAdminField(
                 1,
                 result.CustomField1Prompt,
-                result.CustomField1Options,
-                false
+                result.CustomField1Options
             );
             if (prompt1 != null)
             {
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.PopulateCoursePrompt(
+            var prompt2 = PromptHelper.PopulateCourseAdminField(
                 2,
                 result.CustomField2Prompt,
-                result.CustomField2Options,
-                false
+                result.CustomField2Options
             );
             if (prompt2 != null)
             {
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.PopulateCoursePrompt(
+            var prompt3 = PromptHelper.PopulateCourseAdminField(
                 3,
                 result.CustomField3Prompt,
-                result.CustomField3Options,
-                false
+                result.CustomField3Options
             );
             if (prompt3 != null)
             {
@@ -268,23 +265,22 @@
             return list;
         }
 
-        private List<CoursePromptWithAnswer> PopulateCoursePromptWithAnswerListFromCourseAdminFieldsResult(
+        private List<CourseAdminFieldWithAnswer> PopulateCourseAdminFieldWithAnswerListFromResult(
             CourseAdminFieldsResult? result,
             DelegateCourseInfo delegateCourseInfo
         )
         {
-            var list = new List<CoursePromptWithAnswer>();
+            var list = new List<CourseAdminFieldWithAnswer>();
 
             if (result == null)
             {
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.PopulateCoursePromptWithAnswer(
+            var prompt1 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
-                false,
                 delegateCourseInfo.Answer1
             );
             if (prompt1 != null)
@@ -292,11 +288,10 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.PopulateCoursePromptWithAnswer(
+            var prompt2 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
-                false,
                 delegateCourseInfo.Answer2
             );
             if (prompt2 != null)
@@ -304,11 +299,10 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.PopulateCoursePromptWithAnswer(
+            var prompt3 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
-                false,
                 delegateCourseInfo.Answer3
             );
             if (prompt3 != null)
@@ -319,45 +313,42 @@
             return list;
         }
 
-        private static List<CoursePromptWithResponseCounts>
-            GetBaseCustomPromptWithResponseCountsModelsFromCourseCustomPromptsResult(
+        private static List<CourseAdminFieldWithResponseCounts>
+            GetBaseCourseAdminFieldWithResponseCountsModelsFromResult(
                 CourseAdminFieldsResult? result
             )
         {
-            var list = new List<CoursePromptWithResponseCounts>();
+            var list = new List<CourseAdminFieldWithResponseCounts>();
 
             if (result == null)
             {
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.GetBaseCoursePromptWithResponseCountsModel(
+            var prompt1 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 1,
                 result.CustomField1Prompt,
-                result.CustomField1Options,
-                false
+                result.CustomField1Options
             );
             if (prompt1 != null)
             {
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.GetBaseCoursePromptWithResponseCountsModel(
+            var prompt2 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 2,
                 result.CustomField2Prompt,
-                result.CustomField2Options,
-                false
+                result.CustomField2Options
             );
             if (prompt2 != null)
             {
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.GetBaseCoursePromptWithResponseCountsModel(
+            var prompt3 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 3,
                 result.CustomField3Prompt,
-                result.CustomField3Options,
-                false
+                result.CustomField3Options
             );
             if (prompt3 != null)
             {

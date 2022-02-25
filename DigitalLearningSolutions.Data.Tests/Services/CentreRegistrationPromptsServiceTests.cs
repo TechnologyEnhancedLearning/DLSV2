@@ -13,100 +13,100 @@
     using Microsoft.Extensions.Logging;
     using NUnit.Framework;
 
-    public class CentreCustomPromptsServiceTests
+    public class CentreRegistrationPromptsServiceTests
     {
-        private ICentreCustomPromptsDataService centreCustomPromptsDataService = null!;
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
-        private ILogger<CentreCustomPromptsService> logger = null!;
+        private ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
+        private ILogger<CentreRegistrationPromptsService> logger = null!;
         private IUserDataService userDataService = null!;
 
         [SetUp]
         public void Setup()
         {
-            centreCustomPromptsDataService = A.Fake<ICentreCustomPromptsDataService>();
-            logger = A.Fake<ILogger<CentreCustomPromptsService>>();
+            centreRegistrationPromptsDataService = A.Fake<ICentreRegistrationPromptsDataService>();
+            logger = A.Fake<ILogger<CentreRegistrationPromptsService>>();
             userDataService = A.Fake<IUserDataService>();
-            centreCustomPromptsService = new CentreCustomPromptsService(
-                centreCustomPromptsDataService,
+            centreRegistrationPromptsService = new CentreRegistrationPromptsService(
+                centreRegistrationPromptsDataService,
                 logger,
                 userDataService
             );
         }
 
         [Test]
-        public void GetCustomPromptsForCentreByCentreId_Returns_Populated_CentreCustomPrompts()
+        public void GetCentreRegistrationPromptsByCentreId_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
-            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: null, mandatory: true);
-            var expectedPrompt2 = CustomPromptsTestHelper.GetDefaultCustomPrompt(2, "Department / team", null, true);
-            var customPrompts = new List<CustomPrompt> { expectedPrompt1, expectedPrompt2 };
-            var expectedCustomPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPrompts);
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29))
+            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
+            var expectedPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, "Department / team", null, true);
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { expectedPrompt1, expectedPrompt2 };
+            var expectedPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(centreRegistrationPrompts);
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
                 .Returns
                 (
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Custom Prompt",
                         customField1Options: null
                     )
                 );
 
             // When
-            var result = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(29);
+            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(29);
 
             // Then
-            result.Should().BeEquivalentTo(expectedCustomPrompts);
+            result.Should().BeEquivalentTo(expectedPrompts);
         }
 
         [Test]
-        public void GetCustomPromptsThatHaveOptionsForCentreByCentreId_only_returns_prompts_with_options()
+        public void GetCentreRegistrationPromptsThatHaveOptionsByCentreId_only_returns_prompts_with_options()
         {
             // Given
             const int centreId = 29;
-            var expectedPrompt = CustomPromptsTestHelper.GetDefaultCustomPrompt(
+            var expectedPrompt = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,
                 "Group",
                 "Clinical\r\nNon-Clinical",
                 true
             );
-            var expectedPrompts = new List<CustomPrompt> { expectedPrompt };
+            var expectedPrompts = new List<CentreRegistrationPrompt> { expectedPrompt };
 
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
-                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId))
+                .Returns(PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult());
 
             // When
-            var result = centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId);
+            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId))
+                A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId))
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeEquivalentTo(expectedPrompts);
             }
         }
 
         [Test]
-        public void GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreCustomPrompts()
+        public void GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser_Returns_Populated_CentreRegistrationPrompts()
         {
             // Given
             var answer1 = "Answer 1";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var expectedPrompt1 =
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
                     1,
                     options: null,
                     mandatory: true,
                     answer: answer1
                 );
             var expectedPrompt2 =
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
-            var customPrompts = new List<CustomPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
+                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
+            var centreRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
             var expectedCustomerPrompts =
-                CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(customPrompts);
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29))
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(centreRegistrationPrompts);
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
                 .Returns
                 (
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Custom Prompt",
                         customField1Options: null
                     )
@@ -114,44 +114,44 @@
 
             // When
             var result =
-                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(29, delegateUser);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(29, delegateUser);
 
             // Then
             result.Should().BeEquivalentTo(expectedCustomerPrompts);
         }
 
         [Test]
-        public void GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers_Returns_Populated_Tuple()
+        public void GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers_Returns_Populated_Tuple()
         {
             // Given
             const string answer1 = "Answer 1";
             const string answer2 = "Answer 2";
             var delegateUser1 = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var delegateUser2 = UserTestHelper.GetDefaultDelegateUser(answer1: answer2);
-            var expectedPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+            var expectedPrompt1 = PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
                 1,
                 options: null,
                 mandatory: true,
                 answer: answer1
             );
             var expectedPrompt2 =
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
-            var expectedPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
+            var expectedPrompt3 = PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
                 1,
                 options: null,
                 mandatory: true,
                 answer: answer2
             );
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29))
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
                 .Returns(
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Custom Prompt",
                         customField1Options: null
                     )
                 );
 
             // When
-            var result = centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
                 29,
                 new[] { delegateUser1, delegateUser2 }
             );
@@ -176,14 +176,14 @@
         }
 
         [Test]
-        public void GetCustomPrompts_with_options_splits_correctly()
+        public void GetCentreRegistrationPromptsByCentreId_with_options_splits_correctly()
         {
             // Given
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(29))
-                .Returns(CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult());
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
+                .Returns(PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult());
 
             // When
-            var result = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(29);
+            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(29);
 
             // Then
             using (new AssertionScope())
@@ -196,47 +196,47 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCentre_calls_data_service()
+        public void UpdateCentreRegistrationPrompt_calls_data_service()
         {
             // Given
-            A.CallTo(() => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 1, true, null)).DoesNothing();
+            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, true, null)).DoesNothing();
 
             // When
-            centreCustomPromptsService.UpdateCustomPromptForCentre(1, 1, true, null);
+            centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(1, 1, true, null);
 
             // Then
-            A.CallTo(() => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 1, true, null))
+            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, true, null))
                 .MustHaveHappened();
         }
 
         [Test]
-        public void GetCustomPromptsAlphabeticalList_calls_data_service()
+        public void GetCentreRegistrationPromptsAlphabeticalList_calls_data_service()
         {
             // Given
             const string promptName = "Department / team";
-            A.CallTo(() => centreCustomPromptsDataService.GetCustomPromptsAlphabetical()).Returns
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical()).Returns
                 (new List<(int, string)> { (1, promptName) });
 
             // When
-            var result = centreCustomPromptsService.GetCustomPromptsAlphabeticalList();
+            var result = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList();
 
             // Then
-            A.CallTo(() => centreCustomPromptsDataService.GetCustomPromptsAlphabetical()).MustHaveHappened();
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical()).MustHaveHappened();
             result.Contains((1, promptName)).Should().BeTrue();
         }
 
         [Test]
-        public void AddCustomPromptToCentre_add_prompt_at_lowest_possible_prompt_number()
+        public void AddCentreRegistrationPrompt_add_prompt_at_lowest_possible_prompt_number()
         {
             // Given
             A.CallTo
             (
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, A<int>._, 1, true, null)
             ).DoesNothing();
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(1))
                 .Returns
                 (
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Prompt",
                         customField2Prompt: "Prompt",
                         customField3Prompt: null,
@@ -247,28 +247,28 @@
                 );
 
             // When
-            var result = centreCustomPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+            var result = centreRegistrationPromptsService.AddCentreRegistrationPrompt(1, 1, true, null);
 
             // Then
             A.CallTo
             (
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 3, 1, true, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 3, 1, true, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void AddCustomPromptToCentre_add_prompt_at_lowest_possible_prompt_number_with_gaps_in_prompt_numbers()
+        public void AddCentreRegistrationPrompt_adds_prompt_at_lowest_possible_prompt_number_with_gaps_in_prompt_numbers()
         {
             // Given
             A.CallTo
             (
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, A<int>._, 1, true, null)
             ).DoesNothing();
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(1))
                 .Returns
                 (
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Prompt",
                         customField2Prompt: null,
                         customField3Prompt: "Prompt",
@@ -279,28 +279,28 @@
                 );
 
             // When
-            var result = centreCustomPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+            var result = centreRegistrationPromptsService.AddCentreRegistrationPrompt(1, 1, true, null);
 
             // Then
             A.CallTo
             (
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 2, 1, true, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 2, 1, true, null)
             ).MustHaveHappened();
             result.Should().BeTrue();
         }
 
         [Test]
-        public void AddCustomPromptToCentre_does_not_add_prompt_if_centre_has_all_prompts_defined()
+        public void AddCentreRegistrationPrompt_does_not_add_prompt_if_centre_has_all_prompts_defined()
         {
             // Given
             A.CallTo
             (
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, A<int>._, 1, true, null)
             ).DoesNothing();
-            A.CallTo(() => centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(1))
+            A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(1))
                 .Returns
                 (
-                    CustomPromptsTestHelper.GetDefaultCentreCustomPromptsResult(
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
                         customField1Prompt: "Prompt",
                         customField2Prompt: "Prompt",
                         customField3Prompt: "Prompt",
@@ -311,28 +311,28 @@
                 );
 
             // When
-            var result = centreCustomPromptsService.AddCustomPromptToCentre(1, 1, true, null);
+            var result = centreRegistrationPromptsService.AddCentreRegistrationPrompt(1, 1, true, null);
 
             // Then
-            A.CallTo(() => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, A<int>._, 1, true, null))
+            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, A<int>._, 1, true, null))
                 .MustNotHaveHappened();
             result.Should().BeFalse();
         }
 
         [Test]
-        public void RemoveCustomPromptFromCentre_calls_data_service_with_correct_values()
+        public void RemoveCentreRegistrationPrompt_calls_data_service_with_correct_values()
         {
             // Given
-            A.CallTo(() => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null))
+            A.CallTo(() => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, 0, false, null))
                 .DoesNothing();
             A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).DoesNothing();
 
             // When
-            centreCustomPromptsService.RemoveCustomPromptFromCentre(1, 1);
+            centreRegistrationPromptsService.RemoveCentreRegistrationPrompt(1, 1);
 
             // Then
             A.CallTo(
-                () => centreCustomPromptsDataService.UpdateCustomPromptForCentre(1, 1, 0, false, null)
+                () => centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(1, 1, 0, false, null)
             ).MustHaveHappened();
             A.CallTo(() => userDataService.DeleteAllAnswersForPrompt(1, 1)).MustHaveHappened();
         }

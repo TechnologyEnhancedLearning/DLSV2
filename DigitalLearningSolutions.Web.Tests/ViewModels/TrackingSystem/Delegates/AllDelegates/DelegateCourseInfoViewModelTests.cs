@@ -11,7 +11,7 @@
     public class DelegateCourseInfoViewModelTests
     {
         private readonly AttemptStats attemptStats = new AttemptStats(0, 0);
-        private readonly List<CoursePromptWithAnswer> coursePromptsWithAnswers = new List<CoursePromptWithAnswer>();
+        private readonly List<CourseAdminFieldWithAnswer> courseAdminFieldsWithAnswers = new List<CourseAdminFieldWithAnswer>();
 
         [Test]
         public void DelegateCourseInfoViewModel_sets_date_strings_correctly()
@@ -30,7 +30,7 @@
                 Completed = completedDate,
                 Evaluated = evaluatedDate
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -54,7 +54,7 @@
         {
             // Given
             var info = new DelegateCourseInfo { EnrolmentMethodId = enrollmentMethodId };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -75,7 +75,7 @@
             // Given
             var details = new DelegateCourseDetails(
                 new DelegateCourseInfo(),
-                coursePromptsWithAnswers,
+                courseAdminFieldsWithAnswers,
                 new AttemptStats(totalAttempts, attemptsPassed)
             );
 
@@ -94,7 +94,7 @@
             {
                 ApplicationName = "my application", CustomisationName = ""
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -112,7 +112,7 @@
                 ApplicationName = "my application",
                 CustomisationName = "my customisation"
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -129,7 +129,7 @@
             {
                 SupervisorSurname = null
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -147,7 +147,7 @@
                 SupervisorForename = "",
                 SupervisorSurname = "surname"
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);
@@ -165,7 +165,7 @@
                 SupervisorForename = "firstname",
                 SupervisorSurname = "surname"
             };
-            var details = new DelegateCourseDetails(info, coursePromptsWithAnswers, attemptStats);
+            var details = new DelegateCourseDetails(info, courseAdminFieldsWithAnswers, attemptStats);
 
             // When
             var model = new DelegateCourseInfoViewModel(details);

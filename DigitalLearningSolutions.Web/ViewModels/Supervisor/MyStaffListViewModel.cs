@@ -10,14 +10,14 @@
     {
         public MyStaffListViewModel(
             IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
-            CentreCustomPrompts centreCustomPrompts,
+            CentreRegistrationPrompts centreRegistrationPrompts,
             string? searchString,
             string sortBy,
             string sortDirection,
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
-            CentreCustomPrompts = centreCustomPrompts;
+            CentreRegistrationPrompts = centreRegistrationPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
                 sortBy,
@@ -37,7 +37,7 @@
             DefaultSortByOptions.Name,
         };
 
-        public CentreCustomPrompts CentreCustomPrompts { get; set; }
+        public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
     }

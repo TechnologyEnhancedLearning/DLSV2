@@ -9,21 +9,21 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-    public class CentreCustomPromptHelper
+    public class CentreRegistrationPromptHelper
     {
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
 
-        public CentreCustomPromptHelper(ICentreCustomPromptsService customPromptsService)
+        public CentreRegistrationPromptHelper(ICentreRegistrationPromptsService registrationPromptsService)
         {
-            centreCustomPromptsService = customPromptsService;
+            centreRegistrationPromptsService = registrationPromptsService;
         }
 
-        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             DelegateUser? delegateUser,
             int centreId
         )
         {
-            return GetEditCustomFieldViewModelsForCentre(
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 delegateUser?.Answer1,
                 delegateUser?.Answer2,
@@ -34,12 +34,12 @@
             );
         }
 
-        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             EditDetailsFormData formData,
             int centreId
         )
         {
-            return GetEditCustomFieldViewModelsForCentre(
+            return GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 formData.Answer1,
                 formData.Answer2,
@@ -50,7 +50,7 @@
             );
         }
 
-        public List<EditCustomFieldViewModel> GetEditCustomFieldViewModelsForCentre(
+        public List<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsForCentre(
             int centreId,
             string? answer1,
             string? answer2,
@@ -61,12 +61,12 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            return customPrompts.CustomPrompts.Select(
-                cp => new EditCustomFieldViewModel(
+            return centreRegistrationPrompts.CustomPrompts.Select(
+                cp => new EditDelegateRegistrationPromptViewModel(
                     cp.RegistrationField.Id,
-                    cp.CustomPromptText,
+                    cp.PromptText,
                     cp.Mandatory,
                     cp.Options,
                     answers[cp.RegistrationField.Id - 1]
@@ -74,7 +74,7 @@
             ).ToList();
         }
 
-        public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(
+        public List<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsForCentre(
             int centreId,
             string? answer1,
             string? answer2,
@@ -85,21 +85,21 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            return customPrompts.CustomPrompts.Select(
-                cp => new CustomFieldViewModel(
+            return centreRegistrationPrompts.CustomPrompts.Select(
+                cp => new DelegateRegistrationPrompt(
                     cp.RegistrationField.Id,
-                    cp.CustomPromptText,
+                    cp.PromptText,
                     cp.Mandatory,
                     answers[cp.RegistrationField.Id - 1]
                 )
             ).ToList();
         }
 
-        public static List<CustomFieldViewModel> GetCustomFieldViewModels(
+        public static List<DelegateRegistrationPrompt> GetDelegateRegistrationPrompts(
             DelegateUser delegateUser,
-            IEnumerable<CustomPrompt> customPrompts
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
             var answers = new List<string?>
@@ -112,19 +112,19 @@
                 delegateUser.Answer6,
             };
 
-            return customPrompts.Select(
-                cp => new CustomFieldViewModel(
+            return centreRegistrationPrompts.Select(
+                cp => new DelegateRegistrationPrompt(
                     cp.RegistrationField.Id,
-                    cp.CustomPromptText,
+                    cp.PromptText,
                     cp.Mandatory,
                     answers[cp.RegistrationField.Id - 1]
                 )
             ).ToList();
         }
 
-        public List<CustomFieldViewModel> GetCustomFieldViewModelsForCentre(int centreId, DelegateUser delegateUser)
+        public List<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsForCentre(int centreId, DelegateUser delegateUser)
         {
-            return GetCustomFieldViewModelsForCentre(
+            return GetDelegateRegistrationPromptsForCentre(
                 centreId,
                 delegateUser.Answer1,
                 delegateUser.Answer2,
@@ -135,9 +135,9 @@
             );
         }
 
-        public void ValidateCustomPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
+        public void ValidateCentreRegistrationPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
         {
-            ValidateCustomPrompts(
+            ValidateCentreRegistrationPrompts(
                 centreId,
                 formData.Answer1,
                 formData.Answer2,
@@ -149,7 +149,7 @@
             );
         }
 
-        public void ValidateCustomPrompts(
+        public void ValidateCentreRegistrationPrompts(
             int centreId,
             string? answer1,
             string? answer2,
@@ -160,7 +160,7 @@
             ModelStateDictionary modelState
         )
         {
-            var customFields = GetEditCustomFieldViewModelsForCentre(
+            var delegateRegistrationPrompts = GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 answer1,
                 answer2,
@@ -170,29 +170,29 @@
                 answer6
             );
 
-            foreach (var customField in customFields)
+            foreach (var delegateRegistrationPrompt in delegateRegistrationPrompts)
             {
-                if (customField.Mandatory && customField.Answer == null)
+                if (delegateRegistrationPrompt.Mandatory && delegateRegistrationPrompt.Answer == null)
                 {
                     var errorMessage =
-                        $"{(customField.Options.Any() ? "Select" : "Enter")} a {customField.CustomPrompt.ToLower()}";
-                    modelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
+                        $"{(delegateRegistrationPrompt.Options.Any() ? "Select" : "Enter")} a {delegateRegistrationPrompt.Prompt.ToLower()}";
+                    modelState.AddModelError("Answer" + delegateRegistrationPrompt.PromptNumber, errorMessage);
                 }
 
-                if (customField.Answer?.Length > 100)
+                if (delegateRegistrationPrompt.Answer?.Length > 100)
                 {
-                    var errorMessage = $"{customField.CustomPrompt} must be at most 100 characters";
-                    modelState.AddModelError("Answer" + customField.CustomFieldId, errorMessage);
+                    var errorMessage = $"{delegateRegistrationPrompt.Prompt} must be at most 100 characters";
+                    modelState.AddModelError("Answer" + delegateRegistrationPrompt.PromptNumber, errorMessage);
                 }
             }
         }
 
-        public IEnumerable<CustomPrompt> GetCustomPromptsForCentre(int centreId)
+        public IEnumerable<CentreRegistrationPrompt> GetCentreRegistrationPrompts(int centreId)
         {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts;
+            return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts;
         }
 
-        public static string GetDelegateCustomPromptAnswerName(int customPromptNumber)
+        public static string GetDelegateRegistrationPromptAnswerName(int customPromptNumber)
         {
             return customPromptNumber switch
             {
@@ -206,22 +206,22 @@
             };
         }
 
-        public static List<(int id, string name)> MapCentreCustomPromptsToDataForSelectList(
-            IEnumerable<CustomPrompt> centreCustomPrompts
+        public static List<(int id, string name)> MapCentreRegistrationPromptsToDataForSelectList(
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
-            var customPromptOptions = centreCustomPrompts.Select(cp => (cp.RegistrationField.Id, cp.CustomPromptText))
+            var registrationPromptOptions = centreRegistrationPrompts.Select(cp => (cp.RegistrationField.Id, CustomPromptText: cp.PromptText))
                 .ToList<(int id, string name)>();
 
-            var customPromptNames = customPromptOptions.Select(r => r.name).ToList();
+            var registrationPromptNames = registrationPromptOptions.Select(r => r.name).ToList();
 
-            if (customPromptNames.Distinct().Count() == customPromptOptions.Count)
+            if (registrationPromptNames.Distinct().Count() == registrationPromptOptions.Count)
             {
-                return customPromptOptions;
+                return registrationPromptOptions;
             }
 
-            return customPromptOptions.Select(
-                cpo => customPromptNames.Count(cpn => cpn == cpo.name) > 1
+            return registrationPromptOptions.Select(
+                cpo => registrationPromptNames.Count(cpn => cpn == cpo.name) > 1
                     ? (cpo.id, $"{cpo.name} (Prompt {cpo.id})")
                     : cpo
             ).ToList<(int id, string name)>();

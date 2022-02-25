@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserService userService,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            CentreRegistrationPromptHelper centreRegistrationPromptHelper,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
         )
@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userService = userService;
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.centreRegistrationPromptHelper = centreRegistrationPromptHelper;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
         }
@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre.Value;
 
-            centreCustomPromptHelper.ValidateCustomPrompts(
+            centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -326,12 +326,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
+        private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditDelegateRegistrationPromptViewModelsFromModel(
             LearnerInformationViewModel model,
             int centreId
         )
         {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -342,9 +342,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            return centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
+            return centreRegistrationPromptHelper.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,
@@ -369,7 +369,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             DelegateRegistrationData data
         )
         {
-            model.CustomFields = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
+            model.CustomFields = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
@@ -380,7 +380,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
-            model.CustomFields = GetCustomFieldsFromData(data);
+            model.DelegateRegistrationPrompts = GetCustomFieldsFromData(data);
         }
     }
 }

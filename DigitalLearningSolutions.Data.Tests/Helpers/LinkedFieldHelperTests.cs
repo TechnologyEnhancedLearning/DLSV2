@@ -17,14 +17,14 @@
         private const string NewAnswer = "new answer";
         private const string OldJobGroupName = "old job group";
         private const string NewJobGroupName = "new job group";
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
 
         [SetUp]
         public void SetUp()
         {
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
 
             A.CallTo(() => jobGroupsDataService.GetJobGroupName(1)).Returns(OldJobGroupName);
             A.CallTo(() => jobGroupsDataService.GetJobGroupName(2)).Returns(NewJobGroupName);
@@ -42,7 +42,7 @@
         )
         {
             // Given
-            A.CallTo(() => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(A<int>._, A<int>._))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(A<int>._, A<int>._))
                 .Returns(expectedLinkedFieldName);
 
             var expectedResult = new List<LinkedFieldChange>
@@ -60,7 +60,7 @@
                 oldAnswers,
                 newAnswers,
                 jobGroupsDataService,
-                centreCustomPromptsService
+                centreRegistrationPromptsService
             );
 
             // Then

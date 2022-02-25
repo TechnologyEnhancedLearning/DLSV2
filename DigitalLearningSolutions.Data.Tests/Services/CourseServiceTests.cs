@@ -111,7 +111,7 @@
         }
 
         [Test]
-        public void GetDelegateAttemptsAndCourseCustomPrompts_should_call_correct_data_service_and_helper_methods()
+        public void GetDelegateAttemptsAndCourseAdminFields_should_call_correct_data_service_and_helper_methods()
         {
             // Given
             const int delegateId = 20;
@@ -123,11 +123,11 @@
                 .Returns(attemptStatsReturnedByDataService);
 
             // When
-            var results = courseService.GetDelegateAttemptsAndCoursePrompts(info);
+            var results = courseService.GetDelegateAttemptsAndCourseAdminFields(info);
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsService.GetCoursePromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
                     info,
                     customisationId
                 )
@@ -139,7 +139,7 @@
         }
 
         [Test]
-        public void GetDelegateAttemptsAndCourseCustomPrompts_should_not_fetch_attempt_stats_if_course_not_assessed()
+        public void GetDelegateAttemptsAndCourseAdminFields_should_not_fetch_attempt_stats_if_course_not_assessed()
         {
             // Given
             const int customisationId = 111;
@@ -147,11 +147,11 @@
                 { CustomisationId = customisationId, IsAssessed = false };
 
             // When
-            var result = courseService.GetDelegateAttemptsAndCoursePrompts(info);
+            var result = courseService.GetDelegateAttemptsAndCourseAdminFields(info);
 
             // Then
             A.CallTo(
-                () => courseAdminFieldsService.GetCoursePromptsWithAnswersForCourse(
+                () => courseAdminFieldsService.GetCourseAdminFieldsWithAnswersForCourse(
                     info,
                     customisationId
                 )

@@ -15,7 +15,7 @@
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IConfigService configService;
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
         public SupervisorController(
@@ -24,7 +24,7 @@
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
           IConfigService configService,
-          ICentreCustomPromptsService centreCustomPromptsService,
+          ICentreRegistrationPromptsService centreRegistrationPromptsService,
            ILogger<SupervisorController> logger,
            IConfiguration config)
         {
@@ -33,7 +33,7 @@
             this.frameworkNotificationService = frameworkNotificationService;
             this.selfAssessmentService = selfAssessmentService;
             this.configService = configService;
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
             this.config = config;
         }

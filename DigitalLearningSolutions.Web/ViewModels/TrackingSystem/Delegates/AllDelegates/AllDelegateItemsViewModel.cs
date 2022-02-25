@@ -15,15 +15,15 @@
         public AllDelegateItemsViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> customPrompts
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var promptsWithOptions = centreRegistrationPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
-                    var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, 1);
+                    var delegateRegistrationPrompts = CentreRegistrationPromptHelper.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, 1);
                 }
             );
 

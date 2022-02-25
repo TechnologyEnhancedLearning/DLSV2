@@ -19,7 +19,7 @@
     public class EditDelegateControllerTests
     {
         private const int DelegateId = 1;
-        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+        private CentreRegistrationPromptHelper centreRegistrationPromptHelper = null!;
         private EditDelegateController controller = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserService userService = null!;
@@ -27,11 +27,11 @@
         [SetUp]
         public void SetUp()
         {
-            centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
+            centreRegistrationPromptHelper = A.Fake<CentreRegistrationPromptHelper>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             userService = A.Fake<IUserService>();
 
-            controller = new EditDelegateController(userService, jobGroupsDataService, centreCustomPromptHelper)
+            controller = new EditDelegateController(userService, jobGroupsDataService, centreRegistrationPromptHelper)
                 .WithDefaultContext()
                 .WithMockUser(true);
         }

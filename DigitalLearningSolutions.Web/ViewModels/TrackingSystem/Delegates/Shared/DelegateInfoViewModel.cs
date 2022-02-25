@@ -9,7 +9,7 @@
 
     public class DelegateInfoViewModel
     {
-        public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<CustomFieldViewModel> customFields)
+        public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts)
         {
             Id = delegateUser.Id;
             Name = delegateUser.SearchableName;
@@ -30,7 +30,7 @@
 
             AliasId = delegateUser.AliasId;
 
-            CustomFields = customFields;
+            DelegateRegistrationPrompts = delegateRegistrationPrompts;
         }
 
         public int Id { get; set; }
@@ -48,6 +48,6 @@
         public string? RegistrationDate { get; set; }
         public string? AliasId { get; set; }
 
-        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; }
+        public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }
 }

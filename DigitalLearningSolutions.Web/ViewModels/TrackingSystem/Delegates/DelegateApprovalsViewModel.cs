@@ -20,7 +20,7 @@
 
     public class UnapprovedDelegate
     {
-        public UnapprovedDelegate(DelegateUser delegateUser, List<CustomPromptWithAnswer> customPrompts)
+        public UnapprovedDelegate(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> customPrompts)
         {
             Id = delegateUser.Id;
             CandidateNumber = delegateUser.CandidateNumber;
@@ -31,9 +31,9 @@
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, delegateUser.EmailAddress);
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
-            CustomPrompts = customPrompts
+            DelegateRegistrationPrompts = customPrompts
                 .Select(
-                    cp => new CustomFieldViewModel(cp.RegistrationField.Id, cp.CustomPromptText, cp.Mandatory, cp.Answer)
+                    cp => new DelegateRegistrationPrompt(cp.RegistrationField.Id, cp.PromptText, cp.Mandatory, cp.Answer)
                 )
                 .ToList();
         }
@@ -43,6 +43,6 @@
         public string TitleName { get; set; }
         public DateTime? DateRegistered { get; set; }
         public string? JobGroup { get; set; }
-        public List<CustomFieldViewModel> CustomPrompts { get; set; }
+        public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }
 }

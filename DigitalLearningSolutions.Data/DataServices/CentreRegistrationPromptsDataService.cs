@@ -6,14 +6,14 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
 
-    public interface ICentreCustomPromptsDataService
+    public interface ICentreRegistrationPromptsDataService
     {
-        public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId);
-        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+        public CentreRegistrationPromptsResult GetCentreRegistrationPromptsByCentreId(int centreId);
+        public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
 
         public IEnumerable<(int, string)> GetCustomPromptsAlphabetical();
 
-        public void UpdateCustomPromptForCentre(
+        public void UpdateCentreRegistrationPrompt(
             int centreId,
             int promptNumber,
             int promptId,
@@ -21,21 +21,21 @@
             string? options
         );
 
-        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+        public string GetCentreRegistrationPromptNameAndPromptNumber(int centreId, int promptNumber);
     }
 
-    public class CentreCustomPromptsDataService : ICentreCustomPromptsDataService
+    public class CentreRegistrationPromptsDataService : ICentreRegistrationPromptsDataService
     {
         private readonly IDbConnection connection;
 
-        public CentreCustomPromptsDataService(IDbConnection connection)
+        public CentreRegistrationPromptsDataService(IDbConnection connection)
         {
             this.connection = connection;
         }
 
-        public CentreCustomPromptsResult GetCentreCustomPromptsByCentreId(int centreId)
+        public CentreRegistrationPromptsResult GetCentreRegistrationPromptsByCentreId(int centreId)
         {
-            var result = connection.Query<CentreCustomPromptsResult>(
+            var result = connection.Query<CentreRegistrationPromptsResult>(
                 @"SELECT
 	                    c.CentreID,
 	                    cp1.CustomPrompt AS CustomField1Prompt,
@@ -77,7 +77,7 @@
             return result;
         }
 
-        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options)
         {
             connection.Execute(
                 @$"UPDATE Centres
@@ -101,7 +101,7 @@
             return jobGroups;
         }
 
-        public void UpdateCustomPromptForCentre(
+        public void UpdateCentreRegistrationPrompt(
             int centreId,
             int promptNumber,
             int promptId,
@@ -120,7 +120,7 @@
             );
         }
 
-        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
+        public string GetCentreRegistrationPromptNameAndPromptNumber(int centreId, int promptNumber)
         {
             return connection.Query<string>(
                 @$"SELECT

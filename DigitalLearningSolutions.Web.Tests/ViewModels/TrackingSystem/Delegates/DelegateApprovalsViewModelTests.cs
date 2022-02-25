@@ -16,9 +16,9 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var customPrompts = new List<CustomPromptWithAnswer>
+            var customPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
             };
 
             // When
@@ -34,13 +34,13 @@
                 );
                 returnedModel.DateRegistered.Should().Be(delegateUser.DateRegistered);
                 returnedModel.JobGroup.Should().Be(delegateUser.JobGroupName);
-                returnedModel.CustomPrompts.Should().NotBeNullOrEmpty();
+                returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
 
-                var promptModel = returnedModel.CustomPrompts.First();
+                var promptModel = returnedModel.DelegateRegistrationPrompts.First();
                 var promptData = customPrompts.First();
                 promptModel.Answer.Should().Be(promptData.Answer);
-                promptModel.CustomPrompt.Should().Be(promptData.CustomPromptText);
-                promptModel.CustomFieldId.Should().Be(promptData.RegistrationField.Id);
+                promptModel.Prompt.Should().Be(promptData.PromptText);
+                promptModel.PromptNumber.Should().Be(promptData.RegistrationField.Id);
                 promptModel.Mandatory.Should().Be(promptData.Mandatory);
             }
         }

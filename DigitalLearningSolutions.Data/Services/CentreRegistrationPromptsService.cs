@@ -10,67 +10,67 @@
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Logging;
 
-    public interface ICentreCustomPromptsService
+    public interface ICentreRegistrationPromptsService
     {
-        public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId);
+        public CentreRegistrationPrompts GetCentreRegistrationPromptsByCentreId(int centreId);
 
-        public IEnumerable<CustomPrompt> GetCustomPromptsThatHaveOptionsForCentreByCentreId(int centreId);
+        public IEnumerable<CentreRegistrationPrompt> GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId);
 
-        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
             int centreId,
             DelegateUser? delegateUser
         );
 
-        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
-            GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
                 int centreId,
                 IEnumerable<DelegateUser> delegateUsers
             );
 
-        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options);
+        public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options);
 
-        List<(int id, string value)> GetCustomPromptsAlphabeticalList();
+        List<(int id, string value)> GetCentreRegistrationPromptsAlphabeticalList();
 
-        public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options);
+        public bool AddCentreRegistrationPrompt(int centreId, int promptId, bool mandatory, string? options);
 
-        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber);
+        public void RemoveCentreRegistrationPrompt(int centreId, int promptNumber);
 
-        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber);
+        public string GetCentreRegistrationPromptNameAndNumber(int centreId, int promptNumber);
     }
 
-    public class CentreCustomPromptsService : ICentreCustomPromptsService
+    public class CentreRegistrationPromptsService : ICentreRegistrationPromptsService
     {
-        private readonly ICentreCustomPromptsDataService centreCustomPromptsDataService;
-        private readonly ILogger<CentreCustomPromptsService> logger;
+        private readonly ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService;
+        private readonly ILogger<CentreRegistrationPromptsService> logger;
         private readonly IUserDataService userDataService;
 
-        public CentreCustomPromptsService(
-            ICentreCustomPromptsDataService centreCustomPromptsDataService,
-            ILogger<CentreCustomPromptsService> logger,
+        public CentreRegistrationPromptsService(
+            ICentreRegistrationPromptsDataService centreRegistrationPromptsDataService,
+            ILogger<CentreRegistrationPromptsService> logger,
             IUserDataService userDataService
         )
         {
-            this.centreCustomPromptsDataService = centreCustomPromptsDataService;
+            this.centreRegistrationPromptsDataService = centreRegistrationPromptsDataService;
             this.logger = logger;
             this.userDataService = userDataService;
         }
 
-        public CentreCustomPrompts GetCustomPromptsForCentreByCentreId(int centreId)
+        public CentreRegistrationPrompts GetCentreRegistrationPromptsByCentreId(int centreId)
         {
-            var result = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var result = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            return new CentreCustomPrompts(
+            return new CentreRegistrationPrompts(
                 result.CentreId,
-                PopulateCustomPromptListFromCentreCustomPromptsResult(result)
+                PopulateCentreRegistrationPromptListFromResult(result)
             );
         }
 
-        public IEnumerable<CustomPrompt> GetCustomPromptsThatHaveOptionsForCentreByCentreId(int centreId)
+        public IEnumerable<CentreRegistrationPrompt> GetCentreRegistrationPromptsThatHaveOptionsByCentreId(int centreId)
         {
-            return GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts.Where(cp => cp.Options.Any());
+            return GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts.Where(cp => cp.Options.Any());
         }
 
-        public CentreCustomPromptsWithAnswers? GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+        public CentreRegistrationPromptsWithAnswers? GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
             int centreId,
             DelegateUser? delegateUser
         )
@@ -80,42 +80,42 @@
                 return null;
             }
 
-            var result = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var result = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId);
 
-            return new CentreCustomPromptsWithAnswers(
+            return new CentreRegistrationPromptsWithAnswers(
                 result.CentreId,
-                PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(result, delegateUser)
+                PopulateCentreRegistrationPromptWithAnswerListFromResult(result, delegateUser)
             );
         }
 
-        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
-            GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
                 int centreId,
                 IEnumerable<DelegateUser> delegateUsers
             )
         {
-            var customPrompts = centreCustomPromptsDataService.GetCentreCustomPromptsByCentreId(centreId);
+            var customPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(centreId);
 
             return delegateUsers.Select(
                     user =>
-                        (user, PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(customPrompts, user))
+                        (user, PopulateCentreRegistrationPromptWithAnswerListFromResult(customPrompts, user))
                 )
                 .ToList();
         }
 
-        public void UpdateCustomPromptForCentre(int centreId, int promptNumber, bool mandatory, string? options)
+        public void UpdateCentreRegistrationPrompt(int centreId, int promptNumber, bool mandatory, string? options)
         {
-            centreCustomPromptsDataService.UpdateCustomPromptForCentre(centreId, promptNumber, mandatory, options);
+            centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(centreId, promptNumber, mandatory, options);
         }
 
-        public List<(int id, string value)> GetCustomPromptsAlphabeticalList()
+        public List<(int id, string value)> GetCentreRegistrationPromptsAlphabeticalList()
         {
-            return centreCustomPromptsDataService.GetCustomPromptsAlphabetical().ToList();
+            return centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical().ToList();
         }
 
-        public bool AddCustomPromptToCentre(int centreId, int promptId, bool mandatory, string? options)
+        public bool AddCentreRegistrationPrompt(int centreId, int promptId, bool mandatory, string? options)
         {
-            var centreCustomPrompts = GetCustomPromptsForCentreByCentreId(centreId);
+            var centreCustomPrompts = GetCentreRegistrationPromptsByCentreId(centreId);
             var existingPromptNumbers = centreCustomPrompts.CustomPrompts
                 .Select(c => c.RegistrationField.Id);
 
@@ -125,7 +125,7 @@
 
             if (promptNumber != null)
             {
-                centreCustomPromptsDataService.UpdateCustomPromptForCentre(
+                centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(
                     centreId,
                     promptNumber.Value,
                     promptId,
@@ -139,13 +139,13 @@
             return false;
         }
 
-        public void RemoveCustomPromptFromCentre(int centreId, int promptNumber)
+        public void RemoveCentreRegistrationPrompt(int centreId, int promptNumber)
         {
             using var transaction = new TransactionScope();
             try
             {
                 userDataService.DeleteAllAnswersForPrompt(centreId, promptNumber);
-                centreCustomPromptsDataService.UpdateCustomPromptForCentre(
+                centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(
                     centreId,
                     promptNumber,
                     0,
@@ -160,23 +160,23 @@
             }
         }
 
-        public string GetPromptNameForCentreAndPromptNumber(int centreId, int promptNumber)
+        public string GetCentreRegistrationPromptNameAndNumber(int centreId, int promptNumber)
         {
-            return centreCustomPromptsDataService.GetPromptNameForCentreAndPromptNumber(centreId, promptNumber);
+            return centreRegistrationPromptsDataService.GetCentreRegistrationPromptNameAndPromptNumber(centreId, promptNumber);
         }
 
-        private static List<CustomPrompt> PopulateCustomPromptListFromCentreCustomPromptsResult(
-            CentreCustomPromptsResult? result
+        private static List<CentreRegistrationPrompt> PopulateCentreRegistrationPromptListFromResult(
+            CentreRegistrationPromptsResult? result
         )
         {
-            var list = new List<CustomPrompt>();
+            var list = new List<CentreRegistrationPrompt>();
 
             if (result == null)
             {
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt1 = PromptHelper.PopulateCentreRegistrationPrompt(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -187,7 +187,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt2 = PromptHelper.PopulateCentreRegistrationPrompt(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -198,7 +198,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt3 = PromptHelper.PopulateCentreRegistrationPrompt(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -209,7 +209,7 @@
                 list.Add(prompt3);
             }
 
-            var prompt4 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt4 = PromptHelper.PopulateCentreRegistrationPrompt(
                 4,
                 result.CustomField4Prompt,
                 result.CustomField4Options,
@@ -220,7 +220,7 @@
                 list.Add(prompt4);
             }
 
-            var prompt5 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt5 = PromptHelper.PopulateCentreRegistrationPrompt(
                 5,
                 result.CustomField5Prompt,
                 result.CustomField5Options,
@@ -231,7 +231,7 @@
                 list.Add(prompt5);
             }
 
-            var prompt6 = CustomPromptHelper.PopulateCustomPrompt(
+            var prompt6 = PromptHelper.PopulateCentreRegistrationPrompt(
                 6,
                 result.CustomField6Prompt,
                 result.CustomField6Options,
@@ -245,19 +245,19 @@
             return list;
         }
 
-        private static List<CustomPromptWithAnswer> PopulateCustomPromptWithAnswerListFromCentreCustomPromptsResult(
-            CentreCustomPromptsResult? result,
+        private static List<CentreRegistrationPromptWithAnswer> PopulateCentreRegistrationPromptWithAnswerListFromResult(
+            CentreRegistrationPromptsResult? result,
             DelegateUser delegateUser
         )
         {
-            var list = new List<CustomPromptWithAnswer>();
+            var list = new List<CentreRegistrationPromptWithAnswer>();
 
             if (result == null)
             {
                 return list;
             }
 
-            var prompt1 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt1 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 1,
                 result.CustomField1Prompt,
                 result.CustomField1Options,
@@ -269,7 +269,7 @@
                 list.Add(prompt1);
             }
 
-            var prompt2 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt2 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 2,
                 result.CustomField2Prompt,
                 result.CustomField2Options,
@@ -281,7 +281,7 @@
                 list.Add(prompt2);
             }
 
-            var prompt3 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt3 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 3,
                 result.CustomField3Prompt,
                 result.CustomField3Options,
@@ -293,7 +293,7 @@
                 list.Add(prompt3);
             }
 
-            var prompt4 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt4 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 4,
                 result.CustomField4Prompt,
                 result.CustomField4Options,
@@ -305,7 +305,7 @@
                 list.Add(prompt4);
             }
 
-            var prompt5 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt5 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 5,
                 result.CustomField5Prompt,
                 result.CustomField5Options,
@@ -317,7 +317,7 @@
                 list.Add(prompt5);
             }
 
-            var prompt6 = CustomPromptHelper.PopulateCustomPromptWithAnswer(
+            var prompt6 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 6,
                 result.CustomField6Prompt,
                 result.CustomField6Options,

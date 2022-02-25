@@ -32,7 +32,7 @@
                 DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     missingNamesDelegateInfo,
-                    new List<CoursePromptWithAnswer>(),
+                    new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
                 null
@@ -54,7 +54,7 @@
                 DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     fullNamesDelegateInfo,
-                    new List<CoursePromptWithAnswer>(),
+                    new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
                 null
@@ -89,7 +89,7 @@
                 DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     delegateInfo,
-                    new List<CoursePromptWithAnswer>(),
+                    new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
                 null
@@ -119,7 +119,7 @@
                 DelegateProgressAccessRoute.ViewDelegate,
                 new DelegateCourseDetails(
                     delegateInfo,
-                    new List<CoursePromptWithAnswer>(),
+                    new List<CourseAdminFieldWithAnswer>(),
                     new AttemptStats(0, 0)
                 ),
                 null
