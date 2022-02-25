@@ -27,10 +27,10 @@
             DelegateEmail = progress.DelegateEmail;
             DelegateNumber = progress.DelegateNumber;
 
-            LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateFormat);
-            Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateFormat);
-            CompleteBy = progress.CompleteBy?.ToString(DateHelper.StandardDateFormat);
-            Completed = progress.Completed?.ToString(DateHelper.StandardDateFormat);
+            LastUpdated = progress.LastUpdated.ToString(DateHelper.StandardDateAndTimeFormat);
+            Enrolled = progress.Enrolled.ToString(DateHelper.StandardDateAndTimeFormat);
+            CompleteBy = progress.CompleteBy?.ToString(DateHelper.StandardDateAndTimeFormat);
+            Completed = progress.Completed?.ToString(DateHelper.StandardDateAndTimeFormat);
 
             DiagnosticScore = progress.DiagnosticScore;
 
