@@ -4,7 +4,7 @@
   var questions = ((IGrouping<string, Competency>)ViewData["competencyGroup"])
     .SelectMany(c => c.AssessmentQuestions)
     .Where(q => q.Required);
-  var selfAssessed = questions.Count(q => q.Verified == null && q.ResultId.HasValue);
+  var selfAssessed = questions.Count(q => q.ResultId.HasValue);
   var verified = questions.Count(q => q.Verified.HasValue);
 }
 
