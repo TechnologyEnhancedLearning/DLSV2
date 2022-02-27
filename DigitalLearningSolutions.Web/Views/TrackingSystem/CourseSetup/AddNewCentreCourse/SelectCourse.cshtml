@@ -12,9 +12,6 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-
-    <input type="hidden" id="filter-by">
-
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
@@ -29,6 +26,7 @@
     }
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
+      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
       <input type="hidden" asp-for="CategoryFilterBy">
       <input type="hidden" asp-for="TopicFilterBy">
 

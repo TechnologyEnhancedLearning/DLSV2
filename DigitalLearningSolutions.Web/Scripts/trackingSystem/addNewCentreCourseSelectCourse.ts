@@ -10,8 +10,9 @@ import {
   getAppliedFilters,
   getFilterByValue,
   IAppliedFilter,
-  updateFilterBy,
+  updateFilterBy
 } from '../searchSortFilterAndPaginate/filter';
+import {sendBrowserAgnosticEvent} from "../common";
 
 // eslint-disable-next-line no-new
 SearchSortFilterAndPaginate.getSearchableElements('TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses', ['title'])
@@ -32,14 +33,14 @@ function setUpFilter(onFilterUpdated: VoidFunction): void {
 }
 
 function setUpFilterDropdowns() {
-  const filterSubmits = Array.from(
+  const filterDropdowns = Array.from(
     document.getElementsByClassName('filter-dropdown'),
   );
 
-  filterSubmits.forEach((filterSubmit) => {
-    filterSubmit.addEventListener('change', (e) => {
+  filterDropdowns.forEach((filterDropdown) => {
+    filterDropdown.addEventListener('change', (e) => {
       e.preventDefault();
-      const newFilter = getCategoryAndTopicFilterBy();
+      const newFilter = getCategoryAndTopicFilterByAndUpdateHiddenInputs();
 
       if (newFilter != null) {
         updateFilterBy(newFilter);
@@ -102,7 +103,7 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
   Details();
 }
 
-function getCategoryAndTopicFilterBy() {
+function getCategoryAndTopicFilterByAndUpdateHiddenInputs() {
   const categoryFilterElement = <HTMLSelectElement>document.getElementById('CategoryName');
   const categoryFilterValue = categoryFilterElement.value;
 
@@ -114,14 +115,29 @@ function getCategoryAndTopicFilterBy() {
   }
 
   if (isNullOrEmpty(categoryFilterValue)) {
+    updateFilterByHiddenInput('TopicFilterBy', topicFilterValue);
     return topicFilterValue;
   }
 
   if (isNullOrEmpty(topicFilterValue)) {
+    updateFilterByHiddenInput('CategoryFilterBy', categoryFilterValue);
     return categoryFilterValue;
   }
 
+  updateFilterByHiddenInput('CategoryFilterBy', categoryFilterValue);
+  updateFilterByHiddenInput('TopicFilterBy', topicFilterValue);
+
   return topicFilterValue + filterSeparator + categoryFilterValue;
+}
+
+function updateFilterByHiddenInput(elementName: string, newFilter: string): void {
+  const filterByElements = Array.from(document.getElementsByName(elementName));
+
+  filterByElements.forEach((filterByElement) => {
+    const hiddenInput = <HTMLInputElement>filterByElement;
+    hiddenInput.value = newFilter;
+    sendBrowserAgnosticEvent(hiddenInput, 'change');
+  });
 }
 
 function doesElementMatchFilterValue(
