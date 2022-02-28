@@ -15,8 +15,9 @@
     {
         private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
             .With(x => x.Courses = Builder<CourseStatisticsWithAdminFieldResponseCounts>
-                .CreateListOfSize(14)
+                .CreateListOfSize(15)
                 .All()
+                .With(g => g.CustomisationName = "v1")
                 .With((g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
                 .Build().ToArray())
             .And(x => x.Categories = new[] { "Category 1", "Category 2" })
@@ -41,7 +42,7 @@
             using (new AssertionScope())
             {
                 model.Courses.Count().Should().Be(BasePaginatedViewModel.DefaultItemsPerPage);
-                model.Courses.Any(c => c.CourseName == "K - CustomisationName11").Should()
+                model.Courses.Any(c => c.CourseName == "K - v1").Should()
                     .BeFalse();
             }
         }
@@ -63,8 +64,8 @@
             // Then
             using (new AssertionScope())
             {
-                model.Courses.Count().Should().Be(4);
-                model.Courses.First().CourseName.Should().BeEquivalentTo("K - CustomisationName11");
+                model.Courses.Count().Should().Be(5);
+                model.Courses.First().CourseName.Should().BeEquivalentTo("K - v1");
             }
         }
 
@@ -86,7 +87,7 @@
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
-            model.Courses.First().CourseName.Should().BeEquivalentTo("K - CustomisationName11");
+            model.Courses.First().CourseName.Should().BeEquivalentTo("K - v1");
         }
 
         [Test]
