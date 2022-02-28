@@ -13,16 +13,22 @@
 
     public class SearchablePageViewModelTests
     {
-        private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
-            .With(x => x.Courses = Builder<CourseStatisticsWithAdminFieldResponseCounts>
-                .CreateListOfSize(15)
-                .All()
-                .With(g => g.CustomisationName = "v1")
-                .With((g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
-                .Build().ToArray())
-            .And(x => x.Categories = new[] { "Category 1", "Category 2" })
-            .And(x => x.Topics = new[] { "Topic 1", "Topic 2" })
-            .Build();
+        private CentreCourseDetails details = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            details = Builder<CentreCourseDetails>.CreateNew()
+                .With(x => x.Courses = Builder<CourseStatisticsWithAdminFieldResponseCounts>
+                    .CreateListOfSize(15)
+                    .All()
+                    .With(g => g.CustomisationName = "v1")
+                    .With((g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
+                    .Build().ToArray())
+                .And(x => x.Categories = new[] { "Category 1", "Category 2" })
+                .And(x => x.Topics = new[] { "Topic 1", "Topic 2" })
+                .Build();
+        }
 
         [Test]
         public void SearchablePageViewModel_should_default_to_returning_the_first_ten_delegates()
@@ -110,7 +116,7 @@
             using (new AssertionScope())
             {
                 model.Courses.Count().Should().Be(itemsPerPage);
-                model.Courses.Any(c => c.CourseName == "M").Should()
+                model.Courses.Any(c => c.CourseName == "M - v1").Should()
                     .BeFalse();
             }
         }
