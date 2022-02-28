@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
 

@@ -1,4 +1,4 @@
-namespace DigitalLearningSolutions.Web.Helpers
+﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Extensions;
