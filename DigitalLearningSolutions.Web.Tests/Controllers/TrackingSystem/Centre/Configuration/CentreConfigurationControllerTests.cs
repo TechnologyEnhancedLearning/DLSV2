@@ -1,9 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Centre.Configuration
 {
+    using System;
     using System.Globalization;
     using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Models.Certificates;
     using DigitalLearningSolutions.Data.Models.External.Maps;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configuration;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -27,13 +30,21 @@
             A.Fake<ILogger<ConfigurationController>>();
 
         private readonly IMapsApiHelper mapsApiHelper = A.Fake<IMapsApiHelper>();
+        private ICertificateService certificateService = null!;
         private ConfigurationController controller = null!;
 
         [SetUp]
         public void Setup()
         {
+            certificateService = A.Fake<ICertificateService>();
             controller =
-                new ConfigurationController(centresDataService, mapsApiHelper, logger, imageResizeService)
+                new ConfigurationController(
+                        centresDataService,
+                        mapsApiHelper,
+                        logger,
+                        imageResizeService,
+                        certificateService
+                    )
                     .WithDefaultContext()
                     .WithMockUser(true);
 
@@ -107,7 +118,7 @@
             {
                 NotifyEmail = "email@test.com",
                 BannerText = "Banner text",
-                CentreSignatureFile = A.Fake<FormFile>()
+                CentreSignatureFile = A.Fake<FormFile>(),
             };
 
             // When
@@ -137,7 +148,7 @@
             {
                 NotifyEmail = "email@test.com",
                 BannerText = "Banner text",
-                CentreLogoFile = A.Fake<FormFile>()
+                CentreLogoFile = A.Fake<FormFile>(),
             };
 
             // When
@@ -180,7 +191,7 @@
             const string action = "save";
             var model = new EditCentreDetailsViewModel
             {
-                BannerText = "Test banner text"
+                BannerText = "Test banner text",
             };
 
             // When
@@ -201,7 +212,7 @@
             {
                 BannerText = "Test banner text",
                 CentreSignature = new byte[100],
-                CentreSignatureFile = A.Fake<IFormFile>()
+                CentreSignatureFile = A.Fake<IFormFile>(),
             };
             var newImage = new byte [200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
@@ -225,7 +236,7 @@
             {
                 BannerText = "Test banner text",
                 CentreLogo = new byte[100],
-                CentreLogoFile = A.Fake<IFormFile>()
+                CentreLogoFile = A.Fake<IFormFile>(),
             };
             var newImage = new byte [200];
             A.CallTo(() => imageResizeService.ResizeCentreImage(A<IFormFile>._)).Returns(newImage);
@@ -248,7 +259,7 @@
             var model = new EditCentreDetailsViewModel
             {
                 BannerText = "Test banner text",
-                CentreSignature = new byte[100]
+                CentreSignature = new byte[100],
             };
 
             // When
@@ -268,7 +279,7 @@
             var model = new EditCentreDetailsViewModel
             {
                 BannerText = "Test banner text",
-                CentreLogo = new byte[100]
+                CentreLogo = new byte[100],
             };
 
             // When
@@ -312,6 +323,40 @@
             ).MustHaveHappened();
         }
 
+        [Test]
+        public void PreviewCertificate_returns_not_found_when_service_returns_null()
+        {
+            // Given
+            A.CallTo(() => certificateService.GetPreviewCertificateForCentre(A<int>._)).Returns(null);
+
+            // When
+            var result = controller.PreviewCertificate();
+
+            // Then
+            result.Should().BeNotFoundResult();
+        }
+
+        [Test]
+        public void PreviewCertificate_returns_view_when_service_returns_object()
+        {
+            // Given
+            var certificateInformation = new CertificateInformation(
+                CentreTestHelper.GetDefaultCentre(),
+                "Test",
+                "Name",
+                "Course",
+                DateTime.UtcNow,
+                "Modifier"
+            );
+            A.CallTo(() => certificateService.GetPreviewCertificateForCentre(A<int>._)).Returns(certificateInformation);
+
+            // When
+            var result = controller.PreviewCertificate();
+
+            // Then
+            result.Should().BeViewResult().WithDefaultViewName();
+        }
+
         private MapsResponse CreateSuccessfulMapsResponse(double latitude, double longitude)
         {
             return new MapsResponse
@@ -326,11 +371,11 @@
                             Location = new Coordinates
                             {
                                 Latitude = latitude.ToString(CultureInfo.CreateSpecificCulture("en-GB")),
-                                Longitude = longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB"))
-                            }
-                        }
-                    }
-                }
+                                Longitude = longitude.ToString(CultureInfo.CreateSpecificCulture("en-GB")),
+                            },
+                        },
+                    },
+                },
             };
         }
     }
