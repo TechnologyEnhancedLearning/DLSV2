@@ -1,44 +1,34 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.CourseSetup
 {
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class CourseSetupViewModelTests
     {
-        private readonly IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
-        {
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
-            new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" }
-        };
+        private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
+            .With(x => x.Courses = Builder<CourseStatisticsWithAdminFieldResponseCounts>
+                .CreateListOfSize(14)
+                .All()
+                .With((g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
+                .Build().ToArray())
+            .And(x => x.Categories = new[] { "Category 1", "Category 2" })
+            .And(x => x.Topics = new[] { "Topic 1", "Topic 2" })
+            .Build();
 
         [Test]
         public void CourseSetupViewModel_should_default_to_returning_the_first_ten_delegates()
         {
             // When
             var model = new CourseSetupViewModel(
-                courses,
-                new List<string>(),
-                new List<string>(),
+                details,
                 null,
                 nameof(CourseStatistics.SearchableName),
                 GenericSortingHelper.Ascending,
@@ -61,9 +51,7 @@
         {
             // When
             var model = new CourseSetupViewModel(
-                courses,
-                new List<string>(),
-                new List<string>(),
+                details,
                 null,
                 nameof(CourseStatistics.SearchableName),
                 GenericSortingHelper.Ascending,
@@ -75,8 +63,8 @@
             // Then
             using (new AssertionScope())
             {
-                model.Courses.Count().Should().Be(5);
-                model.Courses.First().CourseName.Should().BeEquivalentTo("K");
+                model.Courses.Count().Should().Be(4);
+                model.Courses.First().CourseName.Should().BeEquivalentTo("K - CustomisationName11");
             }
         }
 
@@ -84,24 +72,11 @@
         public void CourseSetupViewModel_filters_should_be_set()
         {
             // Given
-            var categories = new[]
-            {
-                "Category 1",
-                "Category 2",
-            };
-            var topics = new[]
-            {
-                "Topic 1",
-                "Topic 2",
-            };
-
-            var expectedFilters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
+            var expectedFilters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(details.Categories, details.Topics);
 
             // When
             var model = new CourseSetupViewModel(
-                courses,
-                categories,
-                topics,
+                details,
                 null,
                 nameof(CourseStatistics.SearchableName),
                 GenericSortingHelper.Ascending,
@@ -112,7 +87,7 @@
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
-            model.Courses.First().CourseName.Should().BeEquivalentTo("K");
+            model.Courses.First().CourseName.Should().BeEquivalentTo("K - CustomisationName11");
         }
 
         [Test]
@@ -120,10 +95,9 @@
         {
             // When
             const int itemsPerPage = 12;
+
             var model = new CourseSetupViewModel(
-                courses,
-                new List<string>(),
-                new List<string>(),
+                details,
                 null,
                 nameof(CourseStatistics.SearchableName),
                 GenericSortingHelper.Ascending,

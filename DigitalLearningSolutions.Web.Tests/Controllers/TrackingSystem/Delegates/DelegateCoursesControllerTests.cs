@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
@@ -43,17 +42,13 @@
 
         private DelegateCoursesController controller = null!;
         private DelegateCoursesController controllerWithCookies = null!;
-        private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
 
         [SetUp]
         public void Setup()
         {
-            courseCategoryDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
@@ -64,11 +59,7 @@
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
 
-            controller = new DelegateCoursesController(
-                    courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService
-                )
+            controller = new DelegateCoursesController(courseService)
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
                 .WithMockTempData();
@@ -76,11 +67,7 @@
             const string cookieName = "DelegateCoursesFilter";
             const string cookieValue = "Status|Active|false";
 
-            controllerWithCookies = new DelegateCoursesController(
-                    courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService
-                )
+            controllerWithCookies = new DelegateCoursesController(courseService)
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
                 .WithMockTempData();

@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
@@ -72,9 +71,7 @@
 
         private CourseSetupController controller = null!;
         private CourseSetupController controllerWithCookies = null!;
-        private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
         private ICourseTopicsService courseTopicsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -84,8 +81,6 @@
         [SetUp]
         public void Setup()
         {
-            courseCategoryDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
@@ -101,8 +96,6 @@
 
             controller = new CourseSetupController(
                     courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService,
                     tutorialService,
                     sectionService,
                     courseTopicsService
@@ -116,8 +109,6 @@
 
             controllerWithCookies = new CourseSetupController(
                     courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService,
                     tutorialService,
                     sectionService,
                     courseTopicsService

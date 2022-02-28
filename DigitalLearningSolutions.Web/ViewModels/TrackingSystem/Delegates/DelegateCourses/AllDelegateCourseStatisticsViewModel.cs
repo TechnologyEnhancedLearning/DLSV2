@@ -8,15 +8,11 @@
 
     public class AllDelegateCourseStatisticsViewModel : BaseJavaScriptFilterableViewModel
     {
-        public AllDelegateCourseStatisticsViewModel(
-            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics
-        )
+        public AllDelegateCourseStatisticsViewModel(CentreCourseDetails details)
         {
-            Courses = courses.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
+            Courses = details.Courses.Select(c => new SearchableDelegateCourseStatisticsViewModel(c));
 
-            Filters = DelegateCourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics)
+            Filters = DelegateCourseStatisticsViewModelFilterOptions.GetFilterOptions(details.Categories, details.Topics)
                 .SelectAppliedFilterViewModels();
         }
 

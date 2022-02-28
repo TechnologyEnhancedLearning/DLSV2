@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -33,25 +32,19 @@
     {
         private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly ICourseTopicsService courseTopicsService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
         public CourseSetupController(
             ICourseService courseService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService,
             ITutorialService tutorialService,
             ISectionService sectionService,
             ICourseTopicsService courseTopicsService
         )
         {
             this.courseService = courseService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
             this.courseTopicsService = courseTopicsService;
@@ -83,9 +76,7 @@
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new CourseSetupViewModel(
-                details.Courses,
-                details.Categories,
-                details.Topics,
+                details,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -106,7 +97,7 @@
             var categoryId = User.GetAdminCourseCategoryFilter();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllCourseStatisticsViewModel(details.Courses, details.Categories, details.Topics);
+            var model = new AllCourseStatisticsViewModel(details);
 
             return View(model);
         }

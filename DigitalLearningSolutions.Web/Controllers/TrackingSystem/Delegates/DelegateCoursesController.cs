@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
-    using System.Linq;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
@@ -22,19 +20,11 @@
     public class DelegateCoursesController : Controller
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
 
-        public DelegateCoursesController(
-            ICourseService courseService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService
-        )
+        public DelegateCoursesController(ICourseService courseService)
         {
             this.courseService = courseService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
         }
 
         [Route("{page=1:int}")]
@@ -63,9 +53,7 @@
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new DelegateCoursesViewModel(
-                details.Courses,
-                details.Categories,
-                details.Topics,
+                details,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -86,7 +74,7 @@
             var categoryId = User.GetAdminCourseCategoryFilter();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllDelegateCourseStatisticsViewModel(details.Courses, details.Categories, details.Topics);
+            var model = new AllDelegateCourseStatisticsViewModel(details);
 
             return View(model);
         }
