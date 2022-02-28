@@ -332,15 +332,13 @@
 
         public CentreCourseDetails GetCentreCourseDetails(int centreId, int? categoryId)
         {
-            var details = new CentreCourseDetails();
-
-            (details.Courses, details.Categories, details.Topics) = (
+            var (courses, categories, topics) = (
                 GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId),
                 courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
                     .Select(c => c.CategoryName),
                 courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic));
 
-            return details;
+            return new CentreCourseDetails(courses, categories, topics);
         }
 
         public void RemoveDelegateFromCourse(
