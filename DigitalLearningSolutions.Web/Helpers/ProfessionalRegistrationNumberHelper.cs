@@ -30,14 +30,14 @@
             {
                 modelState.AddModelError(
                     "HasProfessionalRegistrationNumber",
-                    "Select your professional registration number status"
+                    "Select a professional registration number status"
                 );
                 return;
             }
 
             if (string.IsNullOrEmpty(prn))
             {
-                modelState.AddModelError("ProfessionalRegistrationNumber", "Enter professional registration number");
+                modelState.AddModelError("ProfessionalRegistrationNumber", "Enter a professional registration number");
                 return;
             }
 
