@@ -1,9 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.Common
 {
+    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup;
     using FizzWare.NBuilder;
@@ -19,12 +19,24 @@
         public void Setup()
         {
             details = Builder<CentreCourseDetails>.CreateNew()
-                .With(x => x.Courses = Builder<CourseStatisticsWithAdminFieldResponseCounts>
-                    .CreateListOfSize(15)
-                    .All()
-                    .With(g => g.CustomisationName = "v1")
-                    .With((g, i) => g.ApplicationName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
-                    .Build().ToArray())
+                .With(x => x.Courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
+                {
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "A" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "B" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "C" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "D" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "E" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "F" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "G" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "H" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "I" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "J" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "K" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "L" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "M" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "N" },
+                    new CourseStatisticsWithAdminFieldResponseCounts { ApplicationName = "O" },
+                })
                 .And(x => x.Categories = new[] { "Category 1", "Category 2" })
                 .And(x => x.Topics = new[] { "Topic 1", "Topic 2" })
                 .Build();
@@ -48,7 +60,7 @@
             using (new AssertionScope())
             {
                 model.Courses.Count().Should().Be(BasePaginatedViewModel.DefaultItemsPerPage);
-                model.Courses.Any(c => c.CourseName == "K - v1").Should()
+                model.Courses.Any(c => c.CourseName == "K").Should()
                     .BeFalse();
             }
         }
@@ -71,7 +83,7 @@
             using (new AssertionScope())
             {
                 model.Courses.Count().Should().Be(5);
-                model.Courses.First().CourseName.Should().BeEquivalentTo("K - v1");
+                model.Courses.First().CourseName.Should().BeEquivalentTo("K");
             }
         }
 
@@ -93,7 +105,7 @@
 
             // Then
             model.Filters.Should().BeEquivalentTo(expectedFilters);
-            model.Courses.First().CourseName.Should().BeEquivalentTo("K - v1");
+            model.Courses.First().CourseName.Should().BeEquivalentTo("K");
         }
 
         [Test]
@@ -116,7 +128,7 @@
             using (new AssertionScope())
             {
                 model.Courses.Count().Should().Be(itemsPerPage);
-                model.Courses.Any(c => c.CourseName == "M - v1").Should()
+                model.Courses.Any(c => c.CourseName == "M").Should()
                     .BeFalse();
             }
         }
