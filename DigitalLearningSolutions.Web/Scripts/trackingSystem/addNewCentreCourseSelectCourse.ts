@@ -10,9 +10,9 @@ import {
   getAppliedFilters,
   getFilterByValue,
   IAppliedFilter,
-  updateFilterBy
+  updateFilterBy,
 } from '../searchSortFilterAndPaginate/filter';
-import {sendBrowserAgnosticEvent} from "../common";
+import { sendBrowserAgnosticEvent } from '../common';
 
 const categoryHiddenInputName = 'CategoryFilterBy';
 const topicHiddenInputName = 'TopicFilterBy';
