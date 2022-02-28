@@ -3,8 +3,14 @@
     using System;
     using System.Collections.Generic;
 
-    public class Prompt
+    public abstract class Prompt
     {
+        protected Prompt(string promptText, string? options)
+        {
+            PromptText = promptText;
+            Options = SplitOptionsString(options);
+        }
+
         public string PromptText { get; set; }
         public List<string> Options { get; set; }
 

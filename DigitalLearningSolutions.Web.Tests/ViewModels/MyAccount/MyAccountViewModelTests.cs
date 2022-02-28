@@ -20,7 +20,7 @@
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
 
@@ -77,7 +77,7 @@
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
 
@@ -106,8 +106,8 @@
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 
@@ -165,8 +165,8 @@
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 
@@ -191,8 +191,8 @@
             var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
                 new List<CentreRegistrationPromptWithAnswer>
                 {
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 

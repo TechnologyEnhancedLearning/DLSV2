@@ -54,7 +54,7 @@
             var expectedUserList = new List<DelegateUser> { expectedDelegateUser };
             var expectedCustomPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
-                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                     1,
                     options: null,
                     mandatory: true,

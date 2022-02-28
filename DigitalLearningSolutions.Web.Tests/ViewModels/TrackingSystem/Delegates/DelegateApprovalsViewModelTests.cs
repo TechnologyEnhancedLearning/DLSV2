@@ -18,7 +18,7 @@
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var customPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
-                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
             };
 
             // When

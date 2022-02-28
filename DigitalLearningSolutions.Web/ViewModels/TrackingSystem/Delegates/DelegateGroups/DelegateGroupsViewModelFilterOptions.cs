@@ -25,7 +25,7 @@
                 prompt => new FilterOptionViewModel(
                     prompt.PromptText,
                     nameof(Group.LinkedToField) + FilteringHelper.Separator + nameof(Group.LinkedToField) +
-                    FilteringHelper.Separator + GetLinkedFieldIdFromRegistrationPromptNumber(prompt.RegistrationField.Id),
+                    FilteringHelper.Separator + prompt.RegistrationField.LinkedToFieldId,
                     FilterStatus.Default
                 )
             );
@@ -45,13 +45,6 @@
                     FilterStatus.Default
                 )
             );
-        }
-
-        // Centre registration prompts correspond to Groups.LinkedToField
-        // 4 is reserved for Job Group so we must skip it
-        private static int GetLinkedFieldIdFromRegistrationPromptNumber(int promptNumber)
-        {
-            return promptNumber > 3 ? promptNumber + 1 : promptNumber;
         }
     }
 }

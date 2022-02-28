@@ -2,11 +2,10 @@
 {
     public class DelegateCourseAdminField : DelegatePrompt
     {
-        public DelegateCourseAdminField(int promptNumber, string prompt, string? answer)
-        {
-            PromptNumber = promptNumber;
-            Prompt = prompt;
-            Answer = answer;
-        }
+        public DelegateCourseAdminField(int promptNumber, string prompt, string? answer) : base(
+            promptNumber,
+            prompt,
+            answer
+        ) { }
     }
 }

@@ -5,11 +5,9 @@
 
     public class CourseAdminField : Prompt
     {
-        public CourseAdminField(int promptNumber, string text, string? options)
+        public CourseAdminField(int promptNumber, string promptText, string? options) : base(promptText, options)
         {
             PromptNumber = promptNumber;
-            PromptText = text;
-            Options = SplitOptionsString(options);
         }
 
         public int PromptNumber { get; set; }

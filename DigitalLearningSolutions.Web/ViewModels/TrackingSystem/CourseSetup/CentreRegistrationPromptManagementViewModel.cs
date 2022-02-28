@@ -12,8 +12,6 @@
             List<string> options
         ) : base(fieldId, promptName, options)
         {
-            PromptNumber = fieldId;
-            PromptName = promptName;
             Mandatory = mandatory;
         }
 

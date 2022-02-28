@@ -1,16 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CustomPrompts
 {
-    using System;
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Enums;
 
     public class CentreRegistrationPrompt : Prompt
     {
-        public CentreRegistrationPrompt(RegistrationField registrationField, string text, string? options, bool mandatory)
+        public CentreRegistrationPrompt(
+            RegistrationField registrationField,
+            string promptText,
+            string? options,
+            bool mandatory
+        ) : base(promptText, options)
         {
             RegistrationField = registrationField;
-            PromptText = text;
-            Options = SplitOptionsString(options);
             Mandatory = mandatory;
         }
 

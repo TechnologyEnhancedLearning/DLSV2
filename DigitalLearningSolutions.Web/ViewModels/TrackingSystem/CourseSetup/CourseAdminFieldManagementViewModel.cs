@@ -13,7 +13,6 @@
         ) : base(promptNumber, promptName, options)
         {
             CustomisationId = customisationId;
-            PromptNumber = promptNumber;
         }
 
         public int CustomisationId { get; set; }

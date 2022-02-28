@@ -26,10 +26,10 @@
 
         public int? DiagnosticScore { get; set; }
 
-        public string?[] CentreRegistrationPromptAnswers =>
+        public string?[] DelegateRegistrationPrompts =>
             new[] { Answer1, Answer2, Answer3, Answer4, Answer5, Answer6 };
 
-        public string?[] CourseAdminFieldAnswers =>
+        public string?[] DelegateCourseAdminFields =>
             new[] { CourseAnswer1, CourseAnswer2, CourseAnswer3 };
     }
 }

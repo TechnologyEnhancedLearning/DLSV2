@@ -92,14 +92,14 @@
             var answer1 = "Answer 1";
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var expectedPrompt1 =
-                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                     1,
                     options: null,
                     mandatory: true,
                     answer: answer1
                 );
             var expectedPrompt2 =
-                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
             var centreRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer> { expectedPrompt1, expectedPrompt2 };
             var expectedCustomerPrompts =
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(centreRegistrationPrompts);
@@ -128,15 +128,15 @@
             const string answer2 = "Answer 2";
             var delegateUser1 = UserTestHelper.GetDefaultDelegateUser(answer1: answer1);
             var delegateUser2 = UserTestHelper.GetDefaultDelegateUser(answer1: answer2);
-            var expectedPrompt1 = PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+            var expectedPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                 1,
                 options: null,
                 mandatory: true,
                 answer: answer1
             );
             var expectedPrompt2 =
-                PromptsTestHelper.GetDefaultCustomPromptWithAnswer(2, "Department / team", null, true);
-            var expectedPrompt3 = PromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2, "Department / team", null, true);
+            var expectedPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                 1,
                 options: null,
                 mandatory: true,

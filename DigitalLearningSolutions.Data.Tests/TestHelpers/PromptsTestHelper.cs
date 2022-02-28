@@ -48,7 +48,7 @@
             return new CentreRegistrationPromptsWithAnswers(centreId, customPrompts);
         }
 
-        public static CentreRegistrationPromptWithAnswer GetDefaultCustomPromptWithAnswer(
+        public static CentreRegistrationPromptWithAnswer GetDefaultCentreRegistrationPromptWithAnswer(
             int promptNumber,
             string text = "Custom Prompt",
             string? options = "",

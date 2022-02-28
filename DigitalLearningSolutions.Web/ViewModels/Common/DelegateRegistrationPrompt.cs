@@ -2,12 +2,13 @@
 {
     public class DelegateRegistrationPrompt : DelegatePrompt
     {
-        public DelegateRegistrationPrompt(int promptNumber, string prompt, bool mandatory, string? answer)
+        public DelegateRegistrationPrompt(int promptNumber, string prompt, bool mandatory, string? answer) : base(
+            promptNumber,
+            prompt,
+            answer
+        )
         {
-            PromptNumber = promptNumber;
-            Prompt = prompt;
             Mandatory = mandatory;
-            Answer = answer;
         }
 
         public bool Mandatory { get; set; }
