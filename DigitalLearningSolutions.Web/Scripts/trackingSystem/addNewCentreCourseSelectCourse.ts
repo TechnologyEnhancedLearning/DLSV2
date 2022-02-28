@@ -14,6 +14,9 @@ import {
 } from '../searchSortFilterAndPaginate/filter';
 import {sendBrowserAgnosticEvent} from "../common";
 
+const categoryHiddenInputName = 'CategoryFilterBy';
+const topicHiddenInputName = 'TopicFilterBy';
+
 // eslint-disable-next-line no-new
 SearchSortFilterAndPaginate.getSearchableElements('TrackingSystem/CourseSetup/AddCourse/SelectCourseAllCourses', ['title'])
   .then((searchableData) => {
@@ -115,17 +118,17 @@ function getCategoryAndTopicFilterByAndUpdateHiddenInputs() {
   }
 
   if (isNullOrEmpty(categoryFilterValue)) {
-    updateFilterByHiddenInput('TopicFilterBy', topicFilterValue);
+    updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
     return topicFilterValue;
   }
 
   if (isNullOrEmpty(topicFilterValue)) {
-    updateFilterByHiddenInput('CategoryFilterBy', categoryFilterValue);
+    updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
     return categoryFilterValue;
   }
 
-  updateFilterByHiddenInput('CategoryFilterBy', categoryFilterValue);
-  updateFilterByHiddenInput('TopicFilterBy', topicFilterValue);
+  updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
+  updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
 
   return topicFilterValue + filterSeparator + categoryFilterValue;
 }
