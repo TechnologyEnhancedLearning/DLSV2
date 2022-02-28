@@ -50,6 +50,9 @@
           </span>
         </summary>
         <div class="nhsuk-details__text">
+          <partial name="SelfAssessments/_CompetencySummary"
+                   view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup }, { "selfAssessment", Model.SelfAssessment } })" />
+
           @if (Model.SelfAssessment.LinearNavigation)
           {
             <partial name="SelfAssessments/_MeanScores"
@@ -62,6 +65,10 @@
 
         </div>
       </details>
+      <div class="outer-score-container">
+        <partial name="SelfAssessments/_CompetencySummary"
+                 view-data="@(new ViewDataDictionary(ViewData) { { "competencyGroup", competencyGroup }, { "selfAssessment", Model.SelfAssessment } })" />
+      </div>
       @if (Model.SelfAssessment.LinearNavigation)
       {
         <div class="outer-score-container nhsuk-u-padding-bottom-4">
