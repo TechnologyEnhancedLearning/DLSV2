@@ -12,7 +12,7 @@ import {
   IAppliedFilter,
   updateFilterBy,
 } from '../searchSortFilterAndPaginate/filter';
-import { sendBrowserAgnosticEvent } from '../common';
+import { isNullOrEmpty, sendBrowserAgnosticEvent } from '../common';
 
 const categoryHiddenInputName = 'CategoryFilterBy';
 const topicHiddenInputName = 'TopicFilterBy';
@@ -150,10 +150,4 @@ function doesElementMatchFilterValue(
   const categoryFilterValue = searchableElement.element.getAttribute('category-filter-value')?.trim() ?? '';
   const topicFilterValue = searchableElement.element.getAttribute('topic-filter-value')?.trim() ?? '';
   return categoryFilterValue === filterValue || topicFilterValue === filterValue;
-}
-
-function isNullOrEmpty(
-  filterValue: string,
-): boolean {
-  return typeof filterValue === undefined || !filterValue;
 }

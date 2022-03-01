@@ -40,7 +40,7 @@
               <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
             </span>
           }
-          <select class="nhsuk-select nhsuk-u-width-full nhsuk-u-margin-bottom-2 @(errorHasOccurred ? "nhsuk-input--error" : "")"
+          <select class="nhsuk-select nhsuk-u-width-full course-dropdown nhsuk-u-margin-bottom-2 @(errorHasOccurred ? "nhsuk-input--error" : "")"
                   aria-describedby="@nameof(Model.ApplicationId)-error @nameof(Model.ApplicationId)-hint"
                   id="searchable-elements"
                   name="@nameof(Model.ApplicationId)"
