@@ -58,7 +58,7 @@
         [TestCase("Mark", new[] { 10, 200 })]
         [TestCase("MJ1", new[] { 10 })]
         [TestCase("J1", new[] { 10, 12 })]
-        [TestCase("Harper H14", new[] { 14, 144 })]
+        [TestCase("Harper", new[] { 14, 144 })]
         [TestCase("lo", new[] { 200, 202 })]
         public void DelegateUsers_should_be_filtered_on_name_and_candidateNumber_correctly(
             string searchString,

@@ -115,7 +115,7 @@
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var model = new ConfirmDelegateAddedViewModel(delegateUser!.FullName, groupName!, groupId);
+            var model = new ConfirmDelegateAddedViewModel(delegateUser!, groupName!, groupId);
             return View(model);
         }
 

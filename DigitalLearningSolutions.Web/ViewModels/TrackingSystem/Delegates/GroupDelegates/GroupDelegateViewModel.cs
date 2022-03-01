@@ -10,6 +10,7 @@
             GroupDelegateId = groupDelegate.GroupDelegateId;
             GroupId = groupDelegate.GroupId;
             DelegateId = groupDelegate.DelegateId;
+            TitleName = groupDelegate.SearchableName;
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(groupDelegate.FirstName, groupDelegate.LastName);
             EmailAddress = groupDelegate.EmailAddress;
             CandidateNumber = groupDelegate.CandidateNumber;
@@ -21,6 +22,8 @@
         public int GroupId { get; set; }
 
         public int DelegateId { get; set; }
+
+        public string TitleName { get; set; }
 
         public string Name { get; set; }
 

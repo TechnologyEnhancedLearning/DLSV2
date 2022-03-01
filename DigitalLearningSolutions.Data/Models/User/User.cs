@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using DigitalLearningSolutions.Data.Helpers;
+
     public abstract class User : BaseSearchableItem
     {
         public int Id { get; set; }
@@ -28,7 +30,7 @@
 
         public override string SearchableName
         {
-            get => SearchableNameOverrideForFuzzySharp ?? $"{FirstName} {LastName}";
+            get => SearchableNameOverrideForFuzzySharp ?? NameQueryHelper.GetSortableFullName(FirstName, LastName);
             set => SearchableNameOverrideForFuzzySharp = value;
         }
 
