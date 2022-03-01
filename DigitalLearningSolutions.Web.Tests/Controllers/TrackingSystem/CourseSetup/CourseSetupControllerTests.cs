@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
@@ -48,12 +47,6 @@
             },
         };
 
-        private readonly List<Category> categories = new List<Category>
-        {
-            new Category { CategoryName = "Category 1" },
-            new Category { CategoryName = "Category 2" },
-        };
-
         private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses =
             new List<CourseStatisticsWithAdminFieldResponseCounts>
             {
@@ -69,12 +62,6 @@
                     CompletedCount = 1,
                 },
             };
-
-        private readonly List<Topic> topics = new List<Topic>
-        {
-            new Topic { CourseTopic = "Topic 1" },
-            new Topic { CourseTopic = "Topic 2" },
-        };
 
         private CourseSetupController controller = null!;
         private CourseSetupController controllerWithCookies = null!;
@@ -98,9 +85,6 @@
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
             ).Returns(courses);
-            A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
-                .Returns(categories);
-            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
 
             A.CallTo(
                 () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)

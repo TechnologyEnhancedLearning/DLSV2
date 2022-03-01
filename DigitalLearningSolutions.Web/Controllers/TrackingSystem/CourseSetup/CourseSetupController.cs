@@ -399,9 +399,8 @@
 
             var applications = courseService
                 .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
             return new SelectCourseViewModel(
                 applications,
