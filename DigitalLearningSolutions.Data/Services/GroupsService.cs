@@ -176,23 +176,23 @@
 
             foreach (var changedAnswer in changedLinkedFields)
             {
-                var groupToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.SingleOrDefault(
+                var groupsToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.OldValue, changedAnswer.LinkedFieldName)
                 );
 
-                var groupToAddDelegateTo = allSynchronisedGroupsAtCentre.SingleOrDefault(
+                var groupsToAddDelegateTo = allSynchronisedGroupsAtCentre.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
                 using var transaction = new TransactionScope();
-                if (groupToRemoveDelegateFrom != null)
+                foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
                     RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
                 }
 
-                if (groupToAddDelegateTo != null)
+                foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
                         delegateAccountWithOldDetails.Id,
