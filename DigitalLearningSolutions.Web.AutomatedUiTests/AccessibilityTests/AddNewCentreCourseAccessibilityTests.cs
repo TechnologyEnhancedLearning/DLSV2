@@ -23,7 +23,7 @@
             Driver.Navigate().GoToUrl(BaseUrl + startUrl);
             ValidatePageHeading("Add new centre course");
             var selectCoursePageResult = new AxeBuilder(Driver).Analyze();
-            Driver.SelectDropdownItemValue("ApplicationId", "206");
+            Driver.SelectDropdownItemValue("searchable-elements", "206");
             Driver.ClickButtonByText("Next");
 
             ValidatePageHeading("Set course details");

@@ -57,6 +57,29 @@
             return AddNewFilterToFilterBy(filterBy, filterValue);
         }
 
+        public static string? GetCategoryAndTopicFilterBy(
+            string? categoryFilterBy,
+            string? topicFilterBy
+        )
+        {
+            if (categoryFilterBy == null && topicFilterBy == null)
+            {
+                return null;
+            }
+
+            if (categoryFilterBy == null)
+            {
+                return topicFilterBy;
+            }
+
+            if (topicFilterBy == null)
+            {
+                return categoryFilterBy;
+            }
+
+            return topicFilterBy + FilterSeparator + categoryFilterBy;
+        }
+
         public static IEnumerable<T> FilterItems<T>(
             IQueryable<T> items,
             string? filterBy

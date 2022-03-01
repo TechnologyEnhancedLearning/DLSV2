@@ -6,7 +6,8 @@
   ViewData["Title"] = errorHasOccurred ? "Error: Set course content" : "Set course content";
   const string chooseSectionsId = "conditional-choose-sections";
   var selectSectionsCss = "nhsuk-radios__conditional"
-                          + (Model.IncludeAllSections ? " nhsuk-radios__conditional--hidden" : "");
+                          + (Model.IncludeAllSections ? " nhsuk-radios__conditional--hidden" : "")
+                          + (errorHasOccurred ? " nhsuk-form-group--error" : "");
 }
 
 <div class="nhsuk-grid-row">
@@ -48,7 +49,7 @@
               </label>
             </div>
 
-            <div class="@selectSectionsCss" id="@chooseSectionsId">
+            <div class="nhsuk-form-group @selectSectionsCss" id="@chooseSectionsId">
               <div class="nhsuk-checkboxes">
                 @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i))) {
                   <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionId)}")" value="@sectionModel.SectionId" />

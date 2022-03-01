@@ -62,9 +62,11 @@ function copyTextToClipboardFallback(textToCopy: string): boolean {
 }
 
 function displaySuccessAlert(text: string): void {
+  // eslint-disable-next-line no-alert
   alert(`Copied the text: ${text}`);
 }
 
 function displayFailureAlert(text: string): void {
+  // eslint-disable-next-line no-alert
   alert(`Copy not supported or blocked. Try manually selecting and copying: ${text}`);
 }

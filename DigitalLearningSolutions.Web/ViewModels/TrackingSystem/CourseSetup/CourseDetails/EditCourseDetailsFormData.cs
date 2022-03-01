@@ -73,12 +73,9 @@
         [WholeNumberWithinInclusiveRange(0, 100, "Enter a whole number from 0 to 100")]
         public string? DiagCompletionThreshold { get; set; }
 
-        public void ConvertCustomisationNameToEmptyStringIfNull()
+        public void TrimCustomisationNameOrConvertToEmptyStringIfNull()
         {
-            if (string.IsNullOrWhiteSpace(CustomisationName))
-            {
-                CustomisationName = string.Empty;
-            }
+            CustomisationName = string.IsNullOrWhiteSpace(CustomisationName) ? string.Empty : CustomisationName.Trim();
         }
     }
 }

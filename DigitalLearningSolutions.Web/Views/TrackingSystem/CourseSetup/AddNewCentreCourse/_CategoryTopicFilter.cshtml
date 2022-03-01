@@ -1,0 +1,40 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse
+@model CategoryTopicFilterViewModel
+
+@{
+  var isDropdownUnselected = Model.ActionParameterName == "categoryFilterBy" && Model.CategoryFilterBy == null ||
+                             Model.ActionParameterName == "topicFilterBy" && Model.TopicFilterBy == null;
+}
+
+<label class="nhsuk-label--s nhsuk-u-margin-bottom-1">Filter by @Model.FilterName.ToLower()</label>
+
+<div class="" id="filter-@Model.FilterProperty">
+  <form class="filter-form" method="get" asp-action="@ViewContext.RouteData.Values["action"].ToString()" asp-route-page="1">
+
+    @if (Model.ActionParameterName == "topicFilterBy") {
+      <input type="hidden" name="CategoryFilterBy" value="@Model.CategoryFilterBy" />
+    } else {
+      <input type="hidden" name="TopicFilterBy" value="@Model.TopicFilterBy" />
+    }
+
+    <div class="filter-value-container">
+      <select class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown filter-dropdown"
+              name="@Model.ActionParameterName"
+              id="@Model.FilterProperty"
+              aria-label="@Model.FilterName filter">
+        <option value="" selected="@isDropdownUnselected">
+          @(Model.FilterName == "Category" ? "All categories" : "All topics")
+        </option>
+        @foreach (var filterOption in Model.FilterOptions) {
+          <option value="@filterOption.FilterValue"
+                  selected="@(filterOption.FilterValue == Model.CategoryFilterBy || filterOption.FilterValue == Model.TopicFilterBy)">
+            @filterOption.DisplayText
+          </option>
+        }
+      </select>
+      <button class="non-js-only nhsuk-search__submit filter-submit filter-submit__dropdown" type="submit" id="@Model.FilterProperty-submit">
+        Add filter
+      </button>
+    </div>
+  </form>
+</div>

@@ -15,7 +15,7 @@
             int customisationId = 0
         )
         {
-            formData.ConvertCustomisationNameToEmptyStringIfNull();
+            formData.TrimCustomisationNameOrConvertToEmptyStringIfNull();
 
             var courseExistsAtCentre = courseService.DoesCourseNameExistAtCentre(
                 formData.CustomisationName!,
