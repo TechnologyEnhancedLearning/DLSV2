@@ -2,21 +2,23 @@
 {
     using Microsoft.Extensions.Configuration;
 
-    public static class ConfigHelper
+    public static class ConfigurationExtensions
     {
-        public const string AppRootPathName = "AppRootPath";
-        public const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
+        public const string UseSignposting = "FeatureManagement:UseSignposting";
+
+        private const string AppRootPathName = "AppRootPath";
+        private const string CurrentSystemBaseUrlName = "CurrentSystemBaseUrl";
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
-        public const string UseSignposting = "FeatureManagement:UseSignposting";
         private const string PricingPageEnabled = "FeatureManagement:PricingPage";
 
-        public const string LearningHubAuthBaseUrl = "BaseUrl";
-        public const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
-        public const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
-        public const string LearningHubAuthClientCode = "ClientCode";
+        private const string LearningHubAuthBaseUrl = "BaseUrl";
+        private const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
+        private const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
+        private const string LearningHubAuthClientCode = "ClientCode";
 
-        public const string LearningHubSsoSectionKey = "LearningHubSSO";
+        private const string MapsApiKey = "MapsAPIKey";
+        private const string LearningHubSsoSectionKey = "LearningHubSSO";
         private const string LearningHubSsoToleranceKey = "ToleranceInSeconds";
         private const string LearningHubSsoIterationsKey = "HashIterations";
         private const string LearningHubSsoByteLengthKey = "ByteLength";
@@ -90,6 +92,36 @@
         public static string GetLearningHubSsoSecretKey(this IConfiguration config)
         {
             return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"];
+        }
+
+        public static string GetEvaluateUrl(this IConfiguration config, int progressId, bool fromLearningPortal)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}";
+        }
+
+        public static string GetTrackingUrl(this IConfiguration config)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/tracker";
+        }
+
+        public static string GetScormPlayerUrl(this IConfiguration config)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/scoplayer/sco";
+        }
+
+        public static string GetDownloadSummaryUrl(this IConfiguration config, int progressId)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/summary?ProgressID={progressId}";
+        }
+
+        public static string GetConsolidationPathUrl(this IConfiguration config, string consolidationPath)
+        {
+            return $"{config[CurrentSystemBaseUrlName]}/tracking/dlconsolidation?client={consolidationPath}";
+        }
+
+        public static string GetMapsApiKey(this IConfiguration config)
+        {
+            return config[MapsApiKey];
         }
     }
 }

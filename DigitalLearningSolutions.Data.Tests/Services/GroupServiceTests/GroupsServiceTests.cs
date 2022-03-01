@@ -5,7 +5,6 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
@@ -68,7 +67,9 @@
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
 
-            A.CallTo(() => configuration[ConfigHelper.AppRootPathName]).Returns("baseUrl");
+
+
+            A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
             DatabaseModificationsDoNothing();
             groupsService = new GroupsService(
                 groupsDataService,

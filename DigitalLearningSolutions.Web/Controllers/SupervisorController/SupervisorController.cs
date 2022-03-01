@@ -14,7 +14,7 @@
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly ICentreCustomPromptsService centreCustomPromptsService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
@@ -23,7 +23,7 @@
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
-          IConfigService configService,
+          IConfigDataService configDataService,
           ICentreCustomPromptsService centreCustomPromptsService,
            ILogger<SupervisorController> logger,
            IConfiguration config)
@@ -32,7 +32,7 @@
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
             this.selfAssessmentService = selfAssessmentService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.centreCustomPromptsService = centreCustomPromptsService;
             this.logger = logger;
             this.config = config;

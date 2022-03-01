@@ -5,14 +5,14 @@
     using System.Linq;
     using Dapper;
 
-    public interface IConfigService
+    public interface IConfigDataService
     {
         string? GetConfigValue(string key);
         bool GetCentreBetaTesting(int centreId);
         string GetConfigValueMissingExceptionMessage(string missingConfigValue);
     }
 
-    public class ConfigService : IConfigService
+    public class ConfigDataDataService : IConfigDataService
     {
         public const string MailServer = "MailServer";
         public const string MailFromAddress = "MailFromAddress";
@@ -26,7 +26,7 @@
 
         private readonly IDbConnection connection;
 
-        public ConfigService(IDbConnection connection)
+        public ConfigDataDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

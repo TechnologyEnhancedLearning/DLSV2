@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SectionContent;
-    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class SectionContentViewModel

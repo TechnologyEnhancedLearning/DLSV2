@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;

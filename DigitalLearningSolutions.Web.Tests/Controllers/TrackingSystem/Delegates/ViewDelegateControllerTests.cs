@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     internal class ViewDelegateControllerTests
@@ -19,23 +20,27 @@
         private ICourseService courseService = null!;
         private IUserDataService userDataService = null!;
         private ViewDelegateController viewDelegateController = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void SetUp()
         {
             var centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             var centreCustomPromptsHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
+            var passwordResetService = A.Fake<IPasswordResetService>();
+
             userDataService = A.Fake<IUserDataService>();
             courseService = A.Fake<ICourseService>();
-            var passwordResetService = A.Fake<IPasswordResetService>();
             courseDataService = A.Fake<ICourseDataService>();
+            config = A.Fake<IConfiguration>();
 
             viewDelegateController = new ViewDelegateController(
                     userDataService,
                     centreCustomPromptsHelper,
                     courseService,
                     passwordResetService,
-                    courseDataService
+                    courseDataService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true);
@@ -171,7 +176,7 @@
         {
             //Given
             A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(null);
-            
+
             // When
             var result = viewDelegateController.ReactivateDelegate(10);
 

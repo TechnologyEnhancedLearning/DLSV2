@@ -1,7 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class CompletedCourseViewModel : CompletedLearningItemViewModel

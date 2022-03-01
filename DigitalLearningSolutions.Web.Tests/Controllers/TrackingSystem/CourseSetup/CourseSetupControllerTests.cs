@@ -19,6 +19,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseSetupControllerTests
@@ -77,6 +78,7 @@
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -85,6 +87,7 @@
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
             courseTopicsService = A.Fake<ICourseTopicsService>();
+            config = A.Fake<IConfiguration>();
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
@@ -98,7 +101,8 @@
                     courseService,
                     tutorialService,
                     sectionService,
-                    courseTopicsService
+                    courseTopicsService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -111,7 +115,8 @@
                     courseService,
                     tutorialService,
                     sectionService,
-                    courseTopicsService
+                    courseTopicsService,
+                    config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

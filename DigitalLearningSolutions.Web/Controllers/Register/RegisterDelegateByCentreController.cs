@@ -7,6 +7,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Extensions;
@@ -19,6 +20,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     using DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
     using ConfirmationViewModel =
         DigitalLearningSolutions.Web.ViewModels.Register.RegisterDelegateByCentre.ConfirmationViewModel;
@@ -37,6 +39,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private readonly IRegistrationService registrationService;
         private readonly IUserDataService userDataService;
         private readonly IUserService userService;
+        private readonly IConfiguration config;
 
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
@@ -44,7 +47,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             CentreCustomPromptHelper centreCustomPromptHelper,
             ICryptoService cryptoService,
             IUserDataService userDataService,
-            IRegistrationService registrationService
+            IRegistrationService registrationService,
+            IConfiguration config
         )
         {
             this.jobGroupsDataService = jobGroupsDataService;
@@ -53,6 +57,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
+            this.config = config;
         }
 
         [Route("/TrackingSystem/Delegates/Register")]
@@ -215,8 +220,8 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public IActionResult Summary(SummaryViewModel model)
         {
             var data = TempData.Peek<DelegateRegistrationByCentreData>()!;
+            var baseUrl = config.GetAppRootPath();
 
-            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
             try
             {
                 var candidateNumber = registrationService.RegisterDelegateByCentre(

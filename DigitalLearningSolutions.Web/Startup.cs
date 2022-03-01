@@ -11,6 +11,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Factories;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Mappers;
     using DigitalLearningSolutions.Data.Models.DelegateUpload;
     using DigitalLearningSolutions.Data.Models.User;
@@ -169,7 +170,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ICommonService, CommonService>();
-            services.AddScoped<IConfigService, ConfigService>();
+            services.AddScoped<IConfigDataService, ConfigDataDataService>();
             services.AddScoped<ICourseAdminFieldsService, CourseAdminFieldsService>();
             services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             services.AddScoped<ICourseContentService, CourseContentService>();

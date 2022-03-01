@@ -12,23 +12,23 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
     public class LearningSolutionsController : Controller
     {
         private readonly ICentresDataService centresDataService;
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly ILogger<LearningSolutionsController> logger;
 
         public LearningSolutionsController(
-            IConfigService configService,
+            IConfigDataService configDataService,
             ILogger<LearningSolutionsController> logger,
             ICentresDataService centresDataService
         )
         {
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.logger = logger;
             this.centresDataService = centresDataService;
         }
 
         public IActionResult AccessibilityHelp()
         {
-            var accessibilityText = configService.GetConfigValue(ConfigService.AccessibilityHelpText);
+            var accessibilityText = configDataService.GetConfigValue(ConfigDataDataService.AccessibilityHelpText);
             if (accessibilityText == null)
             {
                 logger.LogError("Accessibility text from Config table is null");
@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult Terms()
         {
-            var termsText = configService.GetConfigValue(ConfigService.TermsText);
+            var termsText = configDataService.GetConfigValue(ConfigDataDataService.TermsText);
             if (termsText == null)
             {
                 logger.LogError("Terms text from Config table is null");

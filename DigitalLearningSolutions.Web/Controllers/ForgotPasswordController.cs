@@ -3,22 +3,25 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.ForgotPassword;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
 
     [SetDlsSubApplication(nameof(DlsSubApplication.Main))]
     [SetSelectedTab(nameof(NavMenuTab.LogIn))]
     public class ForgotPasswordController : Controller
     {
         private readonly IPasswordResetService passwordResetService;
+        private readonly IConfiguration config;
 
-        public ForgotPasswordController(IPasswordResetService passwordResetService)
+        public ForgotPasswordController(IPasswordResetService passwordResetService, IConfiguration config)
         {
             this.passwordResetService = passwordResetService;
+            this.config = config;
         }
 
         [HttpGet]
@@ -40,7 +43,7 @@
                 return View(model);
             }
 
-            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = config.GetAppRootPath();
 
             try
             {

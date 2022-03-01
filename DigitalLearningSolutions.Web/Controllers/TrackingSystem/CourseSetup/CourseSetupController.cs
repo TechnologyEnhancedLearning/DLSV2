@@ -21,6 +21,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -30,24 +31,27 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class CourseSetupController : Controller
     {
-        private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
+        private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseService courseService;
         private readonly ICourseTopicsService courseTopicsService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
+        private readonly IConfiguration config;
 
         public CourseSetupController(
             ICourseService courseService,
             ITutorialService tutorialService,
             ISectionService sectionService,
-            ICourseTopicsService courseTopicsService
+            ICourseTopicsService courseTopicsService,
+            IConfiguration config
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
             this.courseTopicsService = courseTopicsService;
+            this.config = config;
         }
 
         [Route("{page=1:int}")]
@@ -82,7 +86,8 @@
                 sortDirection,
                 filterBy,
                 page,
-                itemsPerPage
+                itemsPerPage,
+                config
             );
 
             Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, filterBy);
@@ -97,7 +102,7 @@
             var categoryId = User.GetAdminCourseCategoryFilter();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllCourseStatisticsViewModel(details);
+            var model = new AllCourseStatisticsViewModel(details, config);
 
             return View(model);
         }

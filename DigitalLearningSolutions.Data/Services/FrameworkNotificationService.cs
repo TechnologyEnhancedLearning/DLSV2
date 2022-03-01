@@ -4,7 +4,6 @@
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using MimeKit;
-    using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 
@@ -29,7 +28,7 @@
     }
     public class FrameworkNotificationService : IFrameworkNotificationService
     {
-        private readonly IConfigService configService;
+        private readonly IConfigDataService configDataService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
         private readonly IRoleProfileService roleProfileService;
@@ -37,7 +36,7 @@
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
         public FrameworkNotificationService(
            IFrameworkService frameworkService,
-           IConfigService configService,
+           IConfigDataService configDataService,
            IEmailService emailService,
            IRoleProfileService roleProfileService,
            ISupervisorService supervisorService,
@@ -45,7 +44,7 @@
        )
         {
             this.frameworkService = frameworkService;
-            this.configService = configService;
+            this.configDataService = configDataService;
             this.emailService = emailService;
             this.roleProfileService = roleProfileService;
             this.supervisorService = supervisorService;
@@ -155,8 +154,8 @@
         }
         public UriBuilder GetDLSUriBuilder()
         {
-            var trackingSystemBaseUrl = configService.GetConfigValue(ConfigService.AppBaseUrl) ??
-                                       throw new ConfigValueMissingException(configService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
+            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataDataService.AppBaseUrl) ??
+                                       throw new ConfigValueMissingException(configDataService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             ;
             return new UriBuilder(trackingSystemBaseUrl);
         }
