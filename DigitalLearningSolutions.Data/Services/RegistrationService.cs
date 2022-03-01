@@ -237,6 +237,7 @@ namespace DigitalLearningSolutions.Data.Services
                 adminRoles.IsCentreAdmin,
                 false,
                 adminRoles.IsSupervisor,
+                adminRoles.IsNominatedSupervisor,
                 adminRoles.IsTrainer,
                 adminRoles.IsContentCreator,
                 adminRoles.IsCmsAdministrator,

@@ -683,7 +683,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(firstName: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
 
             // When
@@ -700,7 +700,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: null);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
 
             // When
@@ -718,7 +718,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
             var adminUser = UserTestHelper.GetDefaultAdminUser();
-            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(adminUser);
 
@@ -736,7 +736,7 @@ namespace DigitalLearningSolutions.Data.Tests.Services
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
             A.CallTo(() => userDataService.GetDelegateUserById(A<int>._)).Returns(delegateUser);
             A.CallTo(() => userDataService.GetAdminUserByEmailAddress(A<string>._)).Returns(null);
 

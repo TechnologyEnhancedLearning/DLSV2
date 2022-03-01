@@ -48,7 +48,7 @@
         public void GetNotificationRoles_returns_full_list_with_all_roles()
         {
             // Given
-            var expectedRoles = new List<int> { 1, 2, 3, 4, 6, 7 };
+            var expectedRoles = new List<int> { 1, 2, 3, 4, 6, 7, 8 };
             var adminRegistrationModel = new AdminRegistrationModel(
                 "Test",
                 "Name",
@@ -58,6 +58,7 @@
                 true,
                 true,
                 0,
+                true,
                 true,
                 true,
                 true,

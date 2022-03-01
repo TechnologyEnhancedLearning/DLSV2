@@ -73,7 +73,8 @@
                 contentManager = registrationModel.IsContentManager,
                 importOnly = registrationModel.ImportOnly,
                 trainer = registrationModel.IsTrainer,
-                supervisor = registrationModel.IsSupervisor
+                supervisor = registrationModel.IsSupervisor,
+                nominatedSupervisor = registrationModel.IsNominatedSupervisor
             };
 
             using var transaction = new TransactionScope();
@@ -95,7 +96,8 @@
                         ContentManager,
                         ImportOnly,
                         Trainer,
-                        Supervisor
+                        Supervisor,
+                        NominatedSupervisor
                     )
                     OUTPUT Inserted.AdminID
                     VALUES
@@ -114,7 +116,8 @@
                         @contentManager,
                         @importOnly,
                         @trainer,
-                        @supervisor
+                        @supervisor,
+                        @nominatedSupervisor
                     )",
                 values
             );

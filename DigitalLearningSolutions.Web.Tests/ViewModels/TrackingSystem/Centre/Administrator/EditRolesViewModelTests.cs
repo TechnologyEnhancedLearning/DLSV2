@@ -101,7 +101,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Checkboxes.Count.Should().Be(4);
+                result.Checkboxes.Count.Should().Be(5);
                 result.Radios.Count.Should().Be(3);
                 result.Checkboxes.Contains(AdminRoleInputs.CentreAdminCheckbox).Should().BeTrue();
                 result.Checkboxes.Contains(AdminRoleInputs.SupervisorCheckbox).Should().BeTrue();
@@ -130,7 +130,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Checkboxes.Count.Should().Be(3);
+                result.Checkboxes.Count.Should().Be(4);
                 result.Checkboxes.Contains(AdminRoleInputs.TrainerCheckbox).Should().BeFalse();
                 result.NotAllRolesDisplayed.Should().BeTrue();
             }
@@ -150,7 +150,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Checkboxes.Count.Should().Be(4);
+                result.Checkboxes.Count.Should().Be(5);
                 result.Checkboxes.Contains(AdminRoleInputs.TrainerCheckbox).Should().BeTrue();
                 result.NotAllRolesDisplayed.Should().BeFalse();
             }
@@ -171,7 +171,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Checkboxes.Count.Should().Be(3);
+                result.Checkboxes.Count.Should().Be(4);
                 result.Checkboxes.Contains(AdminRoleInputs.ContentCreatorCheckbox).Should().BeFalse();
                 result.NotAllRolesDisplayed.Should().BeTrue();
             }
@@ -192,7 +192,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.Checkboxes.Count.Should().Be(4);
+                result.Checkboxes.Count.Should().Be(5);
                 result.Checkboxes.Contains(AdminRoleInputs.ContentCreatorCheckbox).Should().BeTrue();
                 result.NotAllRolesDisplayed.Should().BeFalse();
             }

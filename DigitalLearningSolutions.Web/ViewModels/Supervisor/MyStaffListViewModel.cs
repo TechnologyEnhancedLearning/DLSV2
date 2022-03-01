@@ -8,10 +8,12 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
         public MyStaffListViewModel(
+            AdminUser adminUser,
             IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
             CentreCustomPrompts centreCustomPrompts,
             string? searchString,
@@ -20,6 +22,7 @@
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
+            IsNominatedSupervisor = adminUser?.IsNominatedSupervisor ?? false;
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
@@ -33,7 +36,7 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
-        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
+        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
         {
 
         }
@@ -46,6 +49,7 @@
         };
 
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
+        public bool IsNominatedSupervisor { get; set; }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
