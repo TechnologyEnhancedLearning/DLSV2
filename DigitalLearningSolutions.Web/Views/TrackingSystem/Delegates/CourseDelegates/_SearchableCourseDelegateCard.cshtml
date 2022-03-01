@@ -21,12 +21,14 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="delegate-id">
             @Model.CandidateNumber
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Professional Registration Number
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -35,6 +37,7 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="last-updated-date">
             @Model.LastUpdated
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -43,6 +46,7 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="enrolled-date">
             @Model.Enrolled
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -51,6 +55,7 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
             @(Model.CompleteBy ?? "-")
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -59,12 +64,14 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="completed-date">
             @(Model.Completed ?? "-")
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Removed
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.RemovedDate" />
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
@@ -73,13 +80,29 @@
           <dd class="nhsuk-summary-list__value" data-name-for-sorting="pass-rate">
             @Model.PassRate%
           </dd>
+          <dd class="nhsuk-summary-list__actions" />
         </div>
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
             Progress locked
           </dt>
           <partial name="_SummaryBooleanField" model="Model.Locked" />
+          <dd class="nhsuk-summary-list__actions" />
         </div>
+        @foreach (var adminField in Model.AdminFields) {
+          <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">@adminField.CustomPrompt</dt>
+            <partial name="_SummaryFieldValue" model="@adminField.Answer" />
+            @if (Model.AdminFieldFilters.ContainsKey(adminField.CustomFieldId)) {
+              <div hidden data-filter-value="@Model.AdminFieldFilters[adminField.CustomFieldId]"></div>
+            }
+            <dd class="nhsuk-summary-list__actions">
+              <a>
+                Edit<span class="nhsuk-u-visually-hidden"> @adminField.CustomPrompt</span>
+              </a>
+            </dd>
+          </div>
+        }
       </dl>
 
       <a class="nhsuk-button expander-card__button"

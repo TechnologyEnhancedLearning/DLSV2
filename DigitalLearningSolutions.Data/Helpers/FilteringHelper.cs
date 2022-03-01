@@ -11,8 +11,10 @@
     {
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
-        public const char EmptyValue = '╳';
+        public const string EmptyValue = "╳";
         public const string ClearString = "CLEAR";
+        public const string FreeTextBlankValue = "FREETEXTBLANKVALUE";
+        public const string FreeTextNotBlankValue = "FREETEXTNOTBLANKVALUE";
 
         public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
         {
@@ -86,9 +88,16 @@
         {
             var propertyType = typeof(T).GetProperty(propertyName)!.PropertyType;
             var propertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromString(propertyValueString);
-            return EmptyValue.ToString().Equals(propertyValue)
-                ? items.WhereNullOrEmpty(propertyName)
-                : items.Where(propertyName, propertyValue);
+            switch (propertyValue)
+            {
+                case EmptyValue:
+                case FreeTextBlankValue:
+                    return items.WhereNullOrEmpty(propertyName);
+                case FreeTextNotBlankValue:
+                    return items.Where(item => !items.WhereNullOrEmpty(propertyName).Contains(item));
+                default:
+                    return items.Where(propertyName, propertyValue);
+            }
         }
 
         private class AppliedFilter
