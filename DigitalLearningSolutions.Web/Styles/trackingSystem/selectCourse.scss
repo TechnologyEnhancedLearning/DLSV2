@@ -1,26 +1,18 @@
-﻿@import "../shared/searchableElements/search";
+﻿@import "../shared/searchableElements/filter";
 
-.course-dropdown-container {
-  display: flex;
-  flex-direction: row;
+.filter-dropdown {
+  @extend .input-with-no-js-submit-button;
   width: 100%;
+
+  @include mq($from: tablet) {
+    flex: 1;
+  }
+
+  .js-enabled & {
+    width: 100%;
+  }
 }
 
 .course-dropdown {
-  @extend .input-with-submit-button;
-  display: flex;
-  flex: 1;
-}
-
-.course-submit {
-  @extend .right-submit-button;
-
-  &__dropdown {
-    @extend .right-submit-button;
-    background-color: $button-dark-blue;
-
-    @include mq($from: tablet) {
-      width: 20%;
-    }
-  }
+  border-radius: 4px;
 }

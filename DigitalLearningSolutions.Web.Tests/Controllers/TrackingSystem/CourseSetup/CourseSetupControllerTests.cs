@@ -18,7 +18,6 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
@@ -70,10 +69,25 @@
             .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
             .Build();
 
+        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses =
+            new List<CourseStatisticsWithAdminFieldResponseCounts>
+            {
+                new CourseStatisticsWithAdminFieldResponseCounts
+                {
+                    ApplicationName = "Course",
+                    CustomisationName = "Customisation",
+                    Active = true,
+                    CourseTopic = "Topic 1",
+                    CategoryName = "Category 1",
+                    HideInLearnerPortal = true,
+                    DelegateCount = 1,
+                    CompletedCount = 1,
+                },
+            };
+
         private CourseSetupController controller = null!;
         private CourseSetupController controllerWithCookies = null!;
         private ICourseService courseService = null!;
-        private ICourseTopicsService courseTopicsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
@@ -86,8 +100,11 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
-            courseTopicsService = A.Fake<ICourseTopicsService>();
             config = A.Fake<IConfiguration>();
+
+            A.CallTo(
+                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
+            ).Returns(courses);
 
             A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
@@ -101,7 +118,6 @@
                     courseService,
                     tutorialService,
                     sectionService,
-                    courseTopicsService,
                     config
                 )
                 .WithDefaultContext()
@@ -115,7 +131,6 @@
                     courseService,
                     tutorialService,
                     sectionService,
-                    courseTopicsService,
                     config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
@@ -238,12 +253,10 @@
         [Test]
         public void SelectCourse_post_updates_temp_data_and_redirects()
         {
-            var applicationOptionsSelectList = new List<SelectListItem> { new SelectListItem("Test Name", "1") };
-            var model = new SelectCourseViewModel(application.ApplicationId, applicationOptionsSelectList);
             SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(application.ApplicationId);
 
             // Then
             using (new AssertionScope())
@@ -259,14 +272,12 @@
         }
 
         [Test]
-        public void SelectCourse_does_not_redirect_with_invalid_model()
+        public void SelectCourse_does_not_redirect_with_null_applicationId()
         {
-            var model = new SelectCourseViewModel { ApplicationId = 1 };
-            controller.ModelState.AddModelError("ApplicationId", "Select a course");
-            SetAddNewCentreCourseTempData(application);
+            SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(applicationId: null);
 
             // Then
             using (new AssertionScope())
