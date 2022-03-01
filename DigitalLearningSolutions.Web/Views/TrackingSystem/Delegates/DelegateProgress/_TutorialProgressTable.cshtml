@@ -1,0 +1,73 @@
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model IEnumerable<TutorialProgressViewModel>
+
+@{
+  var showDiagnosticColumn = Model.Any(t => t.DiagnosticScore.HasValue);
+}
+
+<details class="nhsuk-details">
+  <summary class="nhsuk-details__summary">
+    <span class="nhsuk-details__summary-text">
+      Tutorials breakdown
+    </span>
+  </summary>
+  <div class="nhsuk-details__text">
+    <table role="table" class="nhsuk-table-responsive">
+      <thead role="rowgroup" class="nhsuk-table__head">
+        <tr role="row">
+          <th role="columnheader" scope="col">
+            Tutorial
+          </th>
+          <th role="columnheader" scope="col">
+            Status
+          </th>
+          <th role="columnheader" scope="col">
+            Time taken (mins)
+          </th>
+          <th role="columnheader" scope="col">
+            Avg time (mins)
+          </th>
+          @if (showDiagnosticColumn) {
+            <th role="columnheader" scope="col">
+              Diagnostic score
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody class="nhsuk-table__body">
+      @{
+        foreach (var tut in Model) {
+          <tr role="row" class="nhsuk-table__row">
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Tutorial </span>
+              @tut.TutorialName
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Status </span>
+              @tut.TutorialStatus
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Time taken (mins) </span>
+              @tut.TimeTaken
+            </td>
+            <td role="cell" class="nhsuk-table__cell">
+              <span class="nhsuk-table-responsive__heading">Avg time (mins) </span>
+              @tut.AvgTime
+            </td>
+            @if (showDiagnosticColumn) {
+              <td role="cell" class="nhsuk-table__cell">
+                <span class="nhsuk-table-responsive__heading">Diagnostic score </span>
+                @if (tut.DiagnosticScore.HasValue) {
+                  <div>tut.DiagnosticScore / tut.PossibleScore</div>
+                } else {
+                  <div>N/A</div>
+                }
+              </td>
+            }
+          </tr>
+        }
+      }
+      </tbody>
+    </table>
+  </div>
+</details>

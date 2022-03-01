@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         [InlineData("/TrackingSystem/Centre/Administrators", "Centre administrators")]
         [InlineData("/TrackingSystem/Centre/Administrators/1/EditAdminRoles", "Edit administrator roles")]
         [InlineData(
-            "/TrackingSystem/Centre/Administrators/1/DeactivateAdmin",
+            "/TrackingSystem/Centre/Administrators/188/DeactivateAdmin",
             "Are you sure you would like to deactivate this admin account?"
         )]
         [InlineData("/TrackingSystem/Centre/Dashboard", "Centre dashboard")]
@@ -104,11 +104,15 @@ namespace DigitalLearningSolutions.Web.AutomatedUiTests.AccessibilityTests
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/EditCompletionDate",
-            "Edit completion date for Digital Literacy for the Workplace - CC Test"
+            "Edit completed date for Digital Literacy for the Workplace - CC Test"
         )]
         [InlineData(
             "/TrackingSystem/Delegates/CourseDelegates/DelegateProgress/243104/LearningLog",
             "Delegate learning log"
+        )]
+        [InlineData(
+            "/TrackingSystem/Delegates/Groups/Generate",
+            "Generate new delegate groups from registration field options"
         )]
         [InlineData("/NotificationPreferences", "Notification preferences")]
         [InlineData("/NotificationPreferences/Edit/AdminUser", "Update notification preferences")]

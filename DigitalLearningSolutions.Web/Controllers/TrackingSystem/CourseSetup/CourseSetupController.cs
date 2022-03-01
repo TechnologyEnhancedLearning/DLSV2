@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Transactions;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -32,23 +31,17 @@
     {
         private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
-        private readonly ICourseCategoriesDataService courseCategoriesDataService;
         private readonly ICourseService courseService;
-        private readonly ICourseTopicsDataService courseTopicsDataService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
         public CourseSetupController(
             ICourseService courseService,
-            ICourseCategoriesDataService courseCategoriesDataService,
-            ICourseTopicsDataService courseTopicsDataService,
             ITutorialService tutorialService,
             ISectionService sectionService
         )
         {
             this.courseService = courseService;
-            this.courseCategoriesDataService = courseCategoriesDataService;
-            this.courseTopicsDataService = courseTopicsDataService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
         }
@@ -75,16 +68,11 @@
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var centreCourses =
-                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
             var model = new CourseSetupViewModel(
-                centreCourses,
-                categories,
-                topics,
+                details,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -103,13 +91,10 @@
         {
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
-            var centreCourses =
-                courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(centreId, categoryId);
-            var categories = courseCategoriesDataService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId)
-                .Select(c => c.CategoryName);
-            var topics = courseTopicsDataService.GetCourseTopicsAvailableAtCentre(centreId).Select(c => c.CourseTopic);
+            var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllCourseStatisticsViewModel(centreCourses, categories, topics);
+            var model = new AllCourseStatisticsViewModel(details);
+
             return View(model);
         }
 

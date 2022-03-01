@@ -54,9 +54,7 @@
         {
             var delegateGroupsController = new DelegateGroupsController(
                 A.Fake<ICentreCustomPromptsService>(),
-                A.Fake<IGroupsService>(),
-                A.Fake<IUserService>(),
-                A.Fake<ICourseService>()
+                A.Fake<IGroupsService>()
             ).WithDefaultContext().WithMockUser(true, UserCentreId);
             var context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);
             context.RouteData.Values["groupId"] = GroupId;

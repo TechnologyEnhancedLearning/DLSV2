@@ -16,7 +16,7 @@ export function setUpSearch(onSearchUpdated: VoidFunction): void {
 
 export function search(searchableElements: ISearchableElement[]): ISearchableElement[] {
   const query = getQuery();
-  if (query.length === 0) {
+  if (query == null || query.length === 0) {
     return searchableElements;
   }
 
@@ -31,7 +31,7 @@ export function search(searchableElements: ISearchableElement[]): ISearchableEle
 
 export function getQuery(): string {
   const searchBox = getSearchBox();
-  return searchBox.value.trim();
+  return searchBox?.value.trim();
 }
 
 function getSearchBox(): HTMLInputElement {

@@ -3,6 +3,8 @@
 @using Microsoft.Extensions.Configuration
 @model EditDelegateViewModel
 
+<link rel="stylesheet" href="@Url.Content("~/css/shared/formElements.css")" asp-append-version="true">
+
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
   ViewData["Title"] = errorHasOccurred ? "Error: Edit delegate details" : "Edit delegate details";
@@ -14,7 +16,21 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.AliasId) })" />
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.FirstName),
+                                                   nameof(Model.LastName),
+                                                   nameof(Model.Email),
+                                                   nameof(Model.AliasId),
+                                                   nameof(Model.HasProfessionalRegistrationNumber),
+                                                   nameof(Model.ProfessionalRegistrationNumber),
+                                                   nameof(Model.JobGroupId),
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6)
+                                                 })" />
     }
 
     <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
@@ -57,6 +73,8 @@
                        autocomplete=""
                        hint-text=""
                        css-class="nhsuk-u-width-one-half" />
+
+        <partial name="_EditRegistrationNumber" model="@Model" />
       </div>
 
       <vc:select-list asp-for="@nameof(Model.JobGroupId)"

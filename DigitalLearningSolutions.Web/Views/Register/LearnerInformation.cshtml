@@ -13,6 +13,8 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] {
                                                    nameof(Model.JobGroup),
+                                                   nameof(Model.HasProfessionalRegistrationNumber),
+                                                   nameof(Model.ProfessionalRegistrationNumber),
                                                    nameof(Model.Answer1),
                                                    nameof(Model.Answer2),
                                                    nameof(Model.Answer3),

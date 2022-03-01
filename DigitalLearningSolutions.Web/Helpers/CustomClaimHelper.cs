@@ -1,13 +1,17 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
     using System.Security.Claims;
-    using DigitalLearningSolutions.Data.Models.User;
 
     public static class CustomClaimHelper
     {
         public static int? GetAdminId(this ClaimsPrincipal user)
         {
             return user.GetCustomClaimAsInt(CustomClaimTypes.UserAdminId);
+        }
+
+        public static int GetAdminIdKnownNotNull(this ClaimsPrincipal user)
+        {
+            return user.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
         }
 
         public static int? GetCandidateId(this ClaimsPrincipal user)

@@ -12,9 +12,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
         public List<SignpostingCardViewModel> CompetencyResourceLinks { get; set; }
         public IEnumerable<SearchableCompetencyViewModel> Delegates { get; set; }
         public string SearchText { get; set; }
-        public int Page { get; set; }
+        public override int Page { get; set; }
         public bool LearningHubApiError { get; set; }
-        public int TotalPages
+        public override int TotalPages
         {
             get
             {
@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.Frameworks
             return new CompetencyResourceSignpostingViewModel(model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId);
         }
 
-        public CompetencyResourceSignpostingViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId)
+        public CompetencyResourceSignpostingViewModel(int frameworkId, int? frameworkCompetencyId, int? frameworkCompetencyGroupId) : base(frameworkId, frameworkCompetencyId, frameworkCompetencyGroupId, 1, ItemsPerPage)
         {
             FrameworkId = frameworkId;
             FrameworkCompetencyId = frameworkCompetencyId;

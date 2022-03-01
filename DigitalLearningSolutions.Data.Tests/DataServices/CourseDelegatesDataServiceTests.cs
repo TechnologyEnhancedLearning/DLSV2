@@ -42,6 +42,7 @@
                 CustomisationId = 1,
                 AllAttempts = 0,
                 AttemptsPassed = 0,
+                ProfessionalRegistrationNumber = null,
             };
 
             // When

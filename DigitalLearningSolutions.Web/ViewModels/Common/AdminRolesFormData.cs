@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
 
     public class AdminRolesFormData
@@ -10,7 +11,7 @@
 
         public AdminRolesFormData(User user)
         {
-            FullName = user.FullName;
+            FullName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(user.FirstName, user.LastName);
         }
 
         public string? FullName { get; set; }
