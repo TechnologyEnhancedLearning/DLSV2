@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     public class AllDelegatesViewModel : BaseSearchablePageViewModel
     {
@@ -47,7 +48,7 @@
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var delegateRegistrationPrompts = CentreRegistrationPromptHelper.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    var delegateRegistrationPrompts = PromptHelper.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
                     return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, returnPage);
                 }
             );

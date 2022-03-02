@@ -17,14 +17,14 @@
         private const string Answer1 = "Answer1";
         private const string Answer2 = "Answer2";
         private const string Answer3 = "Answer3";
-        private CentreRegistrationPromptHelper centreRegistrationPromptHelper = null!;
+        private PromptHelper promptHelper = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
 
         [SetUp]
         public void Setup()
         {
             centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            centreRegistrationPromptHelper = new CentreRegistrationPromptHelper(centreRegistrationPromptsService);
+            promptHelper = new PromptHelper(centreRegistrationPromptsService);
         }
 
         [Test]
@@ -42,7 +42,7 @@
 
             // When
             var result =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
                     1,
                     Answer1,
                     Answer2,
@@ -81,7 +81,7 @@
 
             // When
             var result =
-                centreRegistrationPromptHelper.GetDelegateRegistrationPromptsForCentre(1, Answer1, Answer2, null, null, null, null);
+                promptHelper.GetDelegateRegistrationPromptsForCentre(1, Answer1, Answer2, null, null, null, null);
 
             // Then
             using (new AssertionScope())
@@ -107,7 +107,7 @@
                 .Returns(centreCustomPrompts);
 
             // When
-            centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(1, null, Answer2, null, null, null, null, modelState);
+            promptHelper.ValidateCentreRegistrationPrompts(1, null, Answer2, null, null, null, null, modelState);
 
             // Then
             modelState["Answer1"].Errors.Count.Should().Be(1);
@@ -131,7 +131,7 @@
                 .Returns(centreCustomPrompts);
 
             // When
-            centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
+            promptHelper.ValidateCentreRegistrationPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
 
             // Then
             modelState[Answer1].Should().BeNull();
@@ -153,7 +153,7 @@
 
             // When
             var result =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
                     1,
                     Answer1,
                     Answer2,
@@ -194,7 +194,7 @@
 
             // When
             var result =
-                centreRegistrationPromptHelper.GetDelegateRegistrationPromptsForCentre(
+                promptHelper.GetDelegateRegistrationPromptsForCentre(
                     1,
                     Answer1,
                     Answer2,

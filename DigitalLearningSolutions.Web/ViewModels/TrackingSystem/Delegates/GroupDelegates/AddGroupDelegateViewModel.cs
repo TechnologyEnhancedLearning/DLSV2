@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
+    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     public class AddGroupDelegateViewModel : BaseSearchablePageViewModel
     {
@@ -36,7 +37,7 @@
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = CentreRegistrationPromptHelper.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
+                    var customFields = PromptHelper.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
                     return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, page);
                 }
             );

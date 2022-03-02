@@ -24,7 +24,7 @@
         public void SetUp()
         {
             var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            var centreCustomPromptsHelper = new CentreRegistrationPromptHelper(centreCustomPromptsService);
+            var centreCustomPromptsHelper = new PromptHelper(centreCustomPromptsService);
             userDataService = A.Fake<IUserDataService>();
             courseService = A.Fake<ICourseService>();
             var passwordResetService = A.Fake<IPasswordResetService>();

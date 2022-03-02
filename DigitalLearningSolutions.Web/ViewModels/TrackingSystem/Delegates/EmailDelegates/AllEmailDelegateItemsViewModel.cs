@@ -24,7 +24,7 @@
                 delegateUser =>
                 {
                     var isDelegateSelected = selectedDelegateIds.Contains(delegateUser.Id);
-                    var customFields = CentreRegistrationPromptHelper.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
+                    var customFields = PromptHelper.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
                     return new EmailDelegatesItemViewModel(delegateUser, isDelegateSelected, customFields, promptsWithOptions);
                 }
             );

@@ -12,6 +12,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
+    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -21,18 +22,18 @@
     public class AllDelegatesController : Controller
     {
         private const string DelegateFilterCookieName = "DelegateFilter";
-        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
+        private readonly PromptHelper promptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
-            CentreRegistrationPromptHelper centreRegistrationPromptHelper,
+            PromptHelper promptHelper,
             IJobGroupsDataService jobGroupsDataService
         )
         {
             this.userDataService = userDataService;
-            this.centreRegistrationPromptHelper = centreRegistrationPromptHelper;
+            this.promptHelper = promptHelper;
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
@@ -58,7 +59,7 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreRegistrationPromptHelper.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegatesViewModel(
@@ -84,7 +85,7 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreRegistrationPromptHelper.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);

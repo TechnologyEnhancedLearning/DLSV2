@@ -26,7 +26,7 @@
                     customPrompt => new FilterViewModel(
                         $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
                         customPrompt.PromptText,
-                        DelegatesViewModelFilters.GetCentreRegistrationPromptOptions(customPrompt)
+                        DelegatesViewModelFilters.GetPromptOptions(customPrompt)
                     )
                 )
             );

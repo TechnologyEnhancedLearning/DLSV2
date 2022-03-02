@@ -14,7 +14,7 @@
 
     public class EmailDelegatesControllerTests
     {
-        private CentreRegistrationPromptHelper centreRegistrationPromptsHelper = null!;
+        private PromptHelper promptsHelper = null!;
         private EmailDelegatesController emailDelegatesController = null!;
 
         private HttpRequest httpRequest = null!;
@@ -27,7 +27,7 @@
         public void Setup()
         {
             var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            centreRegistrationPromptsHelper = new CentreRegistrationPromptHelper(centreCustomPromptsService);
+            promptsHelper = new PromptHelper(centreCustomPromptsService);
             userService = A.Fake<IUserService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             passwordResetService = A.Fake<IPasswordResetService>();
@@ -38,7 +38,7 @@
             const string cookieValue = "JobGroupId|JobGroupId|1";
 
             emailDelegatesController = new EmailDelegatesController(
-                    centreRegistrationPromptsHelper,
+                    promptsHelper,
                     jobGroupsDataService,
                     passwordResetService,
                     userService

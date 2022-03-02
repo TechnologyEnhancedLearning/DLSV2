@@ -3,17 +3,18 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-    public class CentreRegistrationPromptHelper
+    public class PromptHelper
     {
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
 
-        public CentreRegistrationPromptHelper(ICentreRegistrationPromptsService registrationPromptsService)
+        public PromptHelper(ICentreRegistrationPromptsService registrationPromptsService)
         {
             centreRegistrationPromptsService = registrationPromptsService;
         }
@@ -202,6 +203,17 @@
                 4 => nameof(DelegateUserCard.Answer4),
                 5 => nameof(DelegateUserCard.Answer5),
                 6 => nameof(DelegateUserCard.Answer6),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+        }
+
+        public static string GetCourseAdminFieldAnswerName(int customPromptNumber)
+        {
+            return customPromptNumber switch
+            {
+                1 => nameof(CourseDelegate.Answer1),
+                2 => nameof(CourseDelegate.Answer2),
+                3 => nameof(CourseDelegate.Answer3),
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }

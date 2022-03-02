@@ -11,8 +11,8 @@
     {
         public SearchableCourseDelegateViewModel(
             CourseDelegate courseDelegate,
-            IList<CustomFieldViewModel> adminFields,
-            IEnumerable<CustomPrompt> adminFieldsWithOptions
+            IList<DelegateCourseAdminField> adminFields,
+            IEnumerable<CourseAdminField> adminFieldsWithOptions
         )
         {
             DelegateId = courseDelegate.DelegateId;
@@ -33,7 +33,7 @@
             CustomisationId = courseDelegate.CustomisationId;
             PassRate = courseDelegate.PassRate;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
-            AdminFields = adminFields;
+            DelegateCourseAdminFields = adminFields;
             AdminFieldFilters =
                 CourseDelegateViewModelFilterOptions.GetAdminFieldFilters(adminFields, adminFieldsWithOptions);
         }
@@ -52,7 +52,7 @@
         public double PassRate { get; set; }
         public int CustomisationId { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
-        public IEnumerable<CustomFieldViewModel> AdminFields { get; set; }
+        public IEnumerable<DelegateCourseAdminField> DelegateCourseAdminFields { get; set; }
         public Dictionary<int, string> AdminFieldFilters { get; set; }
     }
 }

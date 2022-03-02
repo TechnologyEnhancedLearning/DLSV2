@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     public static class DelegatesViewModelFilters
     {
@@ -29,12 +30,13 @@
             );
         }
 
-        public static IEnumerable<FilterOptionViewModel> GetCentreRegistrationPromptOptions(CentreRegistrationPrompt centreRegistrationPrompt)
+        public static IEnumerable<FilterOptionViewModel> GetPromptOptions(Prompt prompt)
         {
-            var filterValueName =
-                CentreRegistrationPromptHelper.GetDelegateRegistrationPromptAnswerName(centreRegistrationPrompt.RegistrationField.Id);
+            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt ?
+                PromptHelper.GetDelegateRegistrationPromptAnswerName(registrationPrompt.RegistrationField.Id)
+                : PromptHelper.GetCourseAdminFieldAnswerName(((CourseAdminField)prompt).PromptNumber);
 
-            var options = centreRegistrationPrompt.Options.Select(
+            var options = prompt.Options.Select(
                 option => new FilterOptionViewModel(
                     option,
                     FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
@@ -75,7 +77,7 @@
         private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
         {
             var filterValueName =
-                CentreRegistrationPromptHelper.GetDelegateRegistrationPromptAnswerName(delegatePrompt.PromptNumber);
+                PromptHelper.GetDelegateRegistrationPromptAnswerName(delegatePrompt.PromptNumber);
             var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
                 ? FilteringHelper.EmptyValue
                 : delegatePrompt.Answer;

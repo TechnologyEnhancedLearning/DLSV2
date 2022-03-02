@@ -33,7 +33,7 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
-        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
+        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
         {
 
         }

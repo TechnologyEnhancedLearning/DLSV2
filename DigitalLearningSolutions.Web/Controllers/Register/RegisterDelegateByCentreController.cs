@@ -31,7 +31,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
+        private readonly PromptHelper promptHelper;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
@@ -41,7 +41,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
-            CentreRegistrationPromptHelper centreRegistrationPromptHelper,
+            PromptHelper promptHelper,
             ICryptoService cryptoService,
             IUserDataService userDataService,
             IRegistrationService registrationService
@@ -49,7 +49,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
-            this.centreRegistrationPromptHelper = centreRegistrationPromptHelper;
+            this.promptHelper = promptHelper;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
@@ -118,7 +118,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre!.Value;
 
-            centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(
+            promptHelper.ValidateCentreRegistrationPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -308,7 +308,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             int centreId
         )
         {
-            return centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
+            return promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -321,7 +321,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private IEnumerable<DelegateRegistrationPrompt> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            return centreRegistrationPromptHelper.GetDelegateRegistrationPromptsForCentre(
+            return promptHelper.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,

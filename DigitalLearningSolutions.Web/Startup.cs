@@ -260,7 +260,7 @@ namespace DigitalLearningSolutions.Web
 
         private static void RegisterHelpers(IServiceCollection services)
         {
-            services.AddScoped<CentreRegistrationPromptHelper>();
+            services.AddScoped<PromptHelper>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 

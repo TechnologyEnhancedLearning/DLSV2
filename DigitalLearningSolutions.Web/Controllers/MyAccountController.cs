@@ -21,7 +21,7 @@
     [Authorize]
     public class MyAccountController : Controller
     {
-        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
+        private readonly PromptHelper promptHelper;
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
@@ -32,14 +32,14 @@
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            CentreRegistrationPromptHelper registrationPromptHelper
+            PromptHelper registrationPromptHelper
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
-            centreRegistrationPromptHelper = registrationPromptHelper;
+            promptHelper = registrationPromptHelper;
         }
 
         [NoCaching]
@@ -72,7 +72,7 @@
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(
                 adminUser,
@@ -113,7 +113,7 @@
 
             if (userDelegateId.HasValue)
             {
-                centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(formData, User.GetCentreId(), ModelState);
+                promptHelper.ValidateCentreRegistrationPrompts(formData, User.GetCentreId(), ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -174,7 +174,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }
@@ -192,7 +192,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             if (!ModelState.IsValid)
             {
@@ -225,7 +225,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);

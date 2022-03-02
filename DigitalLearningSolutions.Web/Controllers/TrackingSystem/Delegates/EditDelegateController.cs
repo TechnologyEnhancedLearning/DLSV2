@@ -22,19 +22,19 @@
     [SetSelectedTab(nameof(NavMenuTab.Delegates))]
     public class EditDelegateController : Controller
     {
-        private readonly CentreRegistrationPromptHelper centreRegistrationPromptHelper;
+        private readonly PromptHelper promptHelper;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
         public EditDelegateController(
             IUserService userService,
             IJobGroupsDataService jobGroupsDataService,
-            CentreRegistrationPromptHelper registrationPromptHelper
+            PromptHelper registrationPromptHelper
         )
         {
             this.userService = userService;
             this.jobGroupsDataService = jobGroupsDataService;
-            centreRegistrationPromptHelper = registrationPromptHelper;
+            promptHelper = registrationPromptHelper;
         }
 
         [HttpGet]
@@ -51,7 +51,7 @@
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
 
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, centreId);
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, centreId);
             var model = new EditDelegateViewModel(delegateUser, jobGroups, customPrompts);
 
             return View(model);
@@ -62,7 +62,7 @@
         {
             var centreId = User.GetCentreId();
 
-            centreRegistrationPromptHelper.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
+            promptHelper.ValidateCentreRegistrationPrompts(formData, centreId, ModelState);
 
             if (!userService.NewAliasIsValid(formData.AliasId, delegateId, centreId))
             {
@@ -110,7 +110,7 @@
         {
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreRegistrationPromptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, centreId);
+                promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(formData, centreId);
             var model = new EditDelegateViewModel(formData, jobGroups, customPrompts, delegateId);
             return View(model);
         }
