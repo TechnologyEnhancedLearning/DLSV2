@@ -10,11 +10,13 @@
     {
         private const int MaxNumberOfCmsRoleRadios = 3;
         private const int MinNumberOfCmsRoleRadios = 1;
-        private const int MaxNumberOfRoleCheckboxes = 4;
+        private const int MaxNumberOfRoleCheckboxes = 5;
 
         public readonly List<CheckboxListItemViewModel> Checkboxes = new List<CheckboxListItemViewModel>
         {
-            AdminRoleInputs.CentreAdminCheckbox, AdminRoleInputs.SupervisorCheckbox
+            AdminRoleInputs.CentreAdminCheckbox,
+            AdminRoleInputs.SupervisorCheckbox,
+            AdminRoleInputs.NominatedSupervisorCheckbox
         };
 
         public readonly List<RadiosListItemViewModel> Radios = new List<RadiosListItemViewModel>();

@@ -5,6 +5,7 @@
         public AdminRoles(
             bool isCentreAdmin,
             bool isSupervisor,
+            bool isNominatedSupervisor,
             bool isContentCreator,
             bool isTrainer,
             bool isContentManager,
@@ -13,6 +14,7 @@
         {
             IsCentreAdmin = isCentreAdmin;
             IsSupervisor = isSupervisor;
+            IsNominatedSupervisor = isNominatedSupervisor;
             IsContentCreator = isContentCreator;
             IsTrainer = isTrainer;
             IsContentManager = isContentManager;
@@ -21,6 +23,7 @@
 
         public bool IsCentreAdmin { get; set; }
         public bool IsSupervisor { get; set; }
+        public bool IsNominatedSupervisor { get; set; }
         public bool IsTrainer { get; set; }
         public bool IsContentCreator { get; set; }
         public bool IsContentManager { get; set; }
