@@ -47,7 +47,7 @@
                     FilteringHelper.BuildFilterValueString(
                         filterValueName,
                         filterValueName,
-                        FilteringHelper.EmptyValue.ToString()
+                        FilteringHelper.EmptyValue
                     ),
                     FilterStatus.Default
                 )
@@ -77,7 +77,7 @@
             var filterValueName =
                 CentreRegistrationPromptHelper.GetDelegateRegistrationPromptAnswerName(delegatePrompt.PromptNumber);
             var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
-                ? FilteringHelper.EmptyValue.ToString()
+                ? FilteringHelper.EmptyValue
                 : delegatePrompt.Answer;
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }

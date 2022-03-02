@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Castle.Core.Internal;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models;
@@ -13,6 +14,7 @@
     using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Common;
+    using FluentAssertions.Execution;
     using NUnit.Framework;
 
     public class UserServiceTests
@@ -22,6 +24,7 @@
         private IUserDataService userDataService = null!;
         private IUserService userService = null!;
         private IUserVerificationService userVerificationService = null!;
+        private ISessionDataService sessionDataService = null!;
 
         [SetUp]
         public void Setup()
@@ -30,11 +33,13 @@
             groupsService = A.Fake<IGroupsService>();
             userVerificationService = A.Fake<IUserVerificationService>();
             centreContractAdminUsageService = A.Fake<ICentreContractAdminUsageService>();
+            sessionDataService = A.Fake<ISessionDataService>();
             userService = new UserService(
                 userDataService,
                 groupsService,
                 userVerificationService,
-                centreContractAdminUsageService
+                centreContractAdminUsageService,
+                sessionDataService
             );
         }
 
@@ -831,7 +836,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -874,7 +881,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -918,7 +927,9 @@
                 delegateUser.FirstName!,
                 delegateUser.LastName,
                 delegateUser.EmailAddress!,
-                delegateUser.AliasId
+                delegateUser.AliasId,
+                null,
+                true
             );
             var centreAnswersData = new CentreAnswersData(
                 delegateUser.CentreId,
@@ -943,6 +954,50 @@
                     A<int[]>.That.Matches(x => x.First() == 2 && x.Last() == 3)
                 )
             ).MustHaveHappened();
+        }
+
+        [Test]
+        public void UpdateUserAccountDetailsViaDelegateAccount_calls_UpdateDelegateProfessionalRegistrationNumber()
+        {
+            // Given
+            const string email = "test@email.com";
+            const string prn = "PRNNUMBER";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId,
+                prn,
+                true
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateDelegateProfessionalRegistrationNumber(
+                    delegateUser.Id,
+                    prn,
+                    true)
+                ).MustHaveHappened();
         }
 
         [Test]
@@ -1001,6 +1056,42 @@
             // Then
             A.CallTo(() => userDataService.UpdateDelegateLhLoginWarningDismissalStatus(delegateId, status))
                 .MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public void DeactivateOrDeleteAdmin_calls_deactivate_if_admin_has_admin_sessions()
+        {
+            // Given
+            const int adminId = 1;
+            A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(true);
+
+            // When
+            userService.DeactivateOrDeleteAdmin(adminId);
+
+            // Them
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustNotHaveHappened();
+            }
+        }
+
+        [Test]
+        public void DeactivateOrDeleteAdmin_calls_delete_if_admin_does_not_have_admin_sessions()
+        {
+            // Given
+            const int adminId = 1;
+            A.CallTo(() => sessionDataService.HasAdminGotSessions(1)).Returns(false);
+
+            // When
+            userService.DeactivateOrDeleteAdmin(adminId);
+
+            // Them
+            using (new AssertionScope())
+            {
+                A.CallTo(() => userDataService.DeleteAdminUser(adminId)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => userDataService.DeactivateAdmin(adminId)).MustNotHaveHappened();
+            }
         }
 
         private void AssertAdminPermissionsCalledCorrectly(

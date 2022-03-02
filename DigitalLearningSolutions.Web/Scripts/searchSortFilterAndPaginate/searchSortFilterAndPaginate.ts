@@ -279,7 +279,9 @@ export class SearchSortFilterAndPaginate {
   }
 
   private updateSearchableElementLinks(searchableData: ISearchableData): void {
-    const setReturnPage = !this.searchEnabled || getQuery().length === 0;
+    const searchBoxContent = getQuery();
+    const setReturnPage = !this.searchEnabled
+      || (searchBoxContent != null && searchBoxContent.length === 0);
 
     _.forEach(searchableData.searchableElements, (searchableElement) => {
       _.forEach(searchableElement.element.getElementsByTagName('a'), (anchor: HTMLAnchorElement) => {
@@ -298,12 +300,13 @@ export class SearchSortFilterAndPaginate {
   private startLoadingSpinner(): void {
     this.spinnerContainer?.classList.remove('display-none');
     this.spinner?.classList.remove('loading-spinner');
-    this.areaToHide?.classList.add('display-none');
   }
 
   private stopLoadingSpinner(): void {
     this.spinnerContainer?.classList.add('display-none');
     this.spinner?.classList.add('loading-spinner');
-    this.areaToHide?.classList.remove('display-none');
+    if (this.areaToHide !== null) {
+      this.areaToHide.style.display = 'inline';
+    }
   }
 }

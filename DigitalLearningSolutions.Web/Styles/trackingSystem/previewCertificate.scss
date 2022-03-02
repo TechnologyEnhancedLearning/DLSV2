@@ -1,0 +1,171 @@
+﻿body, html {
+  background-color: #D9ECFF !important;
+}
+
+.style {
+  color: #000000;
+  font-family: Verdana, Arial, Helvetica, sans-serif !important;
+
+  &1 {
+    @extend .style;
+    font-size: 30px
+  }
+
+  &2 {
+    @extend .style1;
+    font-weight: bold;
+  }
+
+  &3 {
+    @extend .style;
+    font-size: 24px;
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+
+  &4 {
+    @extend .style;
+    font-size: 16px;
+  }
+
+  &7 {
+    @extend .style;
+    font-size: 12px;
+  }
+}
+
+.col {
+  position: relative;
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.row {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  flex-direction: column;
+  max-width: 1140px;
+}
+
+.card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem
+}
+
+.card-body {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: 1.25rem
+}
+
+.card-default {
+  border-color: #00529E !important;
+  border-style: solid !important;
+  border-width: 3px !important;
+}
+
+.text-center {
+  text-align: center !important
+}
+
+.clearfix::after {
+  display: block;
+  clear: both;
+  content: ""
+}
+
+.float-right {
+  float: right !important
+}
+
+.p-4 {
+  padding: 1.5rem !important
+}
+
+#Logo {
+  max-width: 500px;
+  max-height: 90px;
+  height: auto;
+  width: auto;
+}
+
+@media print {
+  .maincontentcontainer {
+    background-color: #FFFFFF;
+    border: none;
+    color: #000;
+    margin: 0 0 0 0;
+    min-height: 500px;
+  }
+
+  #header,
+  #footer {
+    display: none !important;
+  }
+
+  .no-print, .no-print * {
+    display: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  img {
+    page-break-inside: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  @page {
+    size: a3;
+  }
+
+  body {
+    min-width: 992px !important;
+  }
+
+  .container {
+    min-width: 992px !important;
+  }
+}

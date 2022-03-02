@@ -166,6 +166,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<ICentreRegistrationPromptsService, CentreRegistrationPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
+            services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockService, ClockService>();
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<IConfigService, ConfigService>();
@@ -210,6 +211,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISupervisorDelegateService, SupervisorDelegateService>();
             services.AddScoped<ISupervisorService, SupervisorService>();
+            services.AddScoped<IDashboardInformationService, DashboardInformationService>();
             services.AddScoped<ITrackerService, TrackerService>();
             services.AddScoped<ITrackerActionService, TrackerActionService>();
             services.AddScoped<ITutorialService, TutorialService>();

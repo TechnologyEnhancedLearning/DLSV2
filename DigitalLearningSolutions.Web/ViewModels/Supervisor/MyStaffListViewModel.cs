@@ -5,6 +5,9 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using System.ComponentModel.DataAnnotations;
+    using DigitalLearningSolutions.Web.Attributes;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
@@ -30,6 +33,11 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
+        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
+        {
+
+        }
+
         public IEnumerable<SupervisorDelegateDetailViewModel> SuperviseDelegateDetailViewModels { get; set; }
 
         public override IEnumerable<(string, string)> SortOptions { get; } = new[]
@@ -40,5 +48,11 @@
         public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
+
+        [Required(ErrorMessage = "Enter an email address")]
+        [MaxLength(255, ErrorMessage = CommonValidationErrorMessages.TooLongEmail)]
+        [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
+        [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
+        public string? DelegateEmail { get; set; }
     }
 }

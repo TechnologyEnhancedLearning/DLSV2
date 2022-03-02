@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates;
     using DigitalLearningSolutions.Web.Tests.ControllerHelpers;
@@ -21,16 +22,22 @@
     {
         private const int UserCentreId = 3;
         private CourseDelegatesController controller = null!;
+        private ICourseAdminFieldsService courseAdminFieldsService = null!;
         private ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService = null!;
         private ICourseDelegatesService courseDelegatesService = null!;
 
         [SetUp]
         public void SetUp()
         {
+            courseAdminFieldsService = A.Fake<ICourseAdminFieldsService>();
             courseDelegatesService = A.Fake<ICourseDelegatesService>();
             courseDelegatesDownloadFileService = A.Fake<ICourseDelegatesDownloadFileService>();
 
-            controller = new CourseDelegatesController(courseDelegatesService, courseDelegatesDownloadFileService)
+            controller = new CourseDelegatesController(
+                    courseAdminFieldsService,
+                    courseDelegatesService,
+                    courseDelegatesDownloadFileService
+                )
                 .WithDefaultContext()
                 .WithMockUser(true, UserCentreId);
         }
@@ -41,7 +48,14 @@
             // Given
             var course = new Course { CustomisationId = 1, Active = true };
             A.CallTo(() => courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(UserCentreId, null, null))
-                .Returns(new CourseDelegatesData(1, new List<Course> { course }, new List<CourseDelegate>()));
+                .Returns(
+                    new CourseDelegatesData(
+                        1,
+                        new List<Course> { course },
+                        new List<CourseDelegate>(),
+                        new List<CustomPrompt>()
+                    )
+                );
 
             // When
             var result = controller.Index();
@@ -84,7 +98,14 @@
                         customisationId
                     )
                 )
-                .Returns(new CourseDelegatesData(customisationId, new List<Course> { course }, courseDelegate));
+                .Returns(
+                    new CourseDelegatesData(
+                        customisationId,
+                        new List<Course> { course },
+                        courseDelegate,
+                        new List<CustomPrompt>()
+                    )
+                );
 
             var httpRequest = A.Fake<HttpRequest>();
             var httpResponse = A.Fake<HttpResponse>();
@@ -92,6 +113,7 @@
             const string cookieValue = "AccountStatus|Active|true";
 
             var courseDelegatesController = new CourseDelegatesController(
+                    courseAdminFieldsService,
                     courseDelegatesService,
                     courseDelegatesDownloadFileService
                 )

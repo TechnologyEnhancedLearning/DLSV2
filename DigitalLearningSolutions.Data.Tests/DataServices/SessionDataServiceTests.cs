@@ -4,16 +4,15 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Tests.Helpers;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using FluentAssertions;
     using NUnit.Framework;
 
     internal class SessionDataServiceTests
     {
-        private const int twoMinutesInMilliseconds = 120 * 1000;
-        private SessionDataService sessionDataService;
-        private SessionTestHelper sessionTestHelper;
+        private const int TwoMinutesInMilliseconds = 120 * 1000;
+        private SessionDataService sessionDataService = null!;
+        private SessionTestHelper sessionTestHelper = null!;
 
         [SetUp]
         public void Setup()
@@ -77,7 +76,7 @@
 
                 // Then
                 var sessions = sessionTestHelper.GetCandidateSessions(candidateId);
-                var activeSessions = sessions.Where(session => session.Active);
+                var activeSessions = sessions.Where(session => session.Active).ToList();
 
                 activeSessions.Should().HaveCount(1);
                 activeSessions.First().SessionId.Should().Be(sessionId);
@@ -124,7 +123,7 @@
 
                 var activeSession = updatedSessions.First(session => session.SessionId == sessionId);
                 activeSession.LoginTime.AddMinutes(activeSession.Duration)
-                    .Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
+                    .Should().BeCloseTo(DateTime.UtcNow, TwoMinutesInMilliseconds);
             }
         }
 
@@ -161,9 +160,32 @@
 
                 // Then
                 newAdminSession.Should().NotBe(null);
-                newAdminSession.AdminId.Should().Be(7);
-                newAdminSession.LoginTime.Should().BeCloseTo(DateTime.UtcNow, twoMinutesInMilliseconds);
+                newAdminSession!.AdminId.Should().Be(7);
+                newAdminSession.LoginTime.Should().BeCloseTo(DateTime.UtcNow, TwoMinutesInMilliseconds);
             }
+        }
+
+        [Test]
+        public void HasAdminGotSessions_returns_true_when_admin_has_sessions()
+        {
+            // When
+            var result = sessionDataService.HasAdminGotSessions(1);
+
+            // Then
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void HasAdminGotSessions_returns_false_when_admin_does_not_have_sessions()
+        {
+            // Given
+            const int fakeVeryLargeAdminId = 123123123;
+
+            // When
+            var result = sessionDataService.HasAdminGotSessions(fakeVeryLargeAdminId);
+
+            // Then
+            result.Should().BeFalse();
         }
     }
 }

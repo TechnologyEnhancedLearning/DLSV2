@@ -45,6 +45,7 @@
                         c.LastName,
                         c.EmailAddress,
                         c.Active,
+                        c.ProfessionalRegistrationNumber,
                         p.ProgressID,
                         p.PLLocked AS Locked,
                         p.SubmittedTime AS LastUpdated,
@@ -53,6 +54,9 @@
                         p.RemovedDate,
                         p.Completed,
                         p.CustomisationId,
+                        p.Answer1,
+                        p.Answer2,
+                        p.Answer3,
                         {AllAttemptsQuery},
                         {AttemptsPassedQuery}
                     FROM Candidates AS c

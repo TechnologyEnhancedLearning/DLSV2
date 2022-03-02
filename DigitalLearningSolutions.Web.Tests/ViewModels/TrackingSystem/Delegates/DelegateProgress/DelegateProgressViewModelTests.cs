@@ -21,8 +21,8 @@
                 DelegateLastName = "Osbourne",
                 DelegateEmail = "Prince@Darkness",
                 SupervisorAdminId = null,
-                SupervisorForename = "Tony",
-                SupervisorSurname = "Iommi",
+                SupervisorForename = null,
+                SupervisorSurname = null,
                 EnrolledByAdminId = null,
                 EnrolledByForename = "Geezer",
                 EnrolledBySurname = "Butler",
@@ -65,11 +65,11 @@
             {
                 missingNamesViewModel.DelegateFullName.Should().Be("Osbourne");
                 missingNamesViewModel.DelegateNameAndEmail.Should().Be("Osbourne (Prince@Darkness)");
-                missingNamesViewModel.SupervisorFullName.Should().Be("None");
+                missingNamesViewModel.Supervisor.Should().Be("None");
                 missingNamesViewModel.EnrolledByFullName.Should().BeNull();
                 fullNamesViewModel.DelegateFullName.Should().Be("Ozzy Osbourne");
                 fullNamesViewModel.DelegateNameAndEmail.Should().Be("Ozzy Osbourne (Prince@Darkness)");
-                fullNamesViewModel.SupervisorFullName.Should().Be("Tony Iommi");
+                fullNamesViewModel.Supervisor.Should().Be("Tony Iommi");
                 fullNamesViewModel.EnrolledByFullName.Should().Be("Geezer Butler");
             }
         }

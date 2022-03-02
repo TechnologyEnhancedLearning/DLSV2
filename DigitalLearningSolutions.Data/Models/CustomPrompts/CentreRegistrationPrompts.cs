@@ -10,6 +10,11 @@
             CustomPrompts = customPrompts;
         }
 
+        public CentreRegistrationPrompts()
+        {
+            CustomPrompts = new List<CentreRegistrationPrompt>();
+        }
+
         public int CentreId { get; set; }
 
         public List<CentreRegistrationPrompt> CustomPrompts { get; set; }

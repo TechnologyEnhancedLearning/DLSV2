@@ -7,7 +7,7 @@
   <details class="nhsuk-details nhsuk-expander">
     <summary class="nhsuk-details__summary">
       <span class="nhsuk-details__summary-text" id="@Model.DelegateInfo.Id-name">
-        <span class="searchable-element-title" name="name">@Model.DelegateInfo.Name</span> <span class="searchable-element-candidate-number">(@Model.DelegateInfo.CandidateNumber)</span>
+        <span class="searchable-element-title" name="name">@Model.DelegateInfo.TitleName</span> <span class="searchable-element-candidate-number">(@Model.DelegateInfo.CandidateNumber)</span>
       </span>
     </summary>
 
@@ -51,6 +51,13 @@
           </dt>
           <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
           <div hidden data-filter-value="@Model.JobGroupFilter"></div>
+        </div>
+
+        <div class="nhsuk-summary-list__row details-list-with-button__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.ProfessionalRegistrationNumber" />
         </div>
 
         @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {

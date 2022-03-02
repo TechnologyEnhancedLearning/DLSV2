@@ -1,12 +1,18 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates
 {
+    using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
+
     public class ConfirmDelegateAddedViewModel
     {
         public ConfirmDelegateAddedViewModel() { }
 
-        public ConfirmDelegateAddedViewModel(string delegateName, string groupName, int groupId)
+        public ConfirmDelegateAddedViewModel(DelegateUser delegateUser, string groupName, int groupId)
         {
-            DelegateName = delegateName;
+            DelegateName = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                delegateUser.FirstName,
+                delegateUser.LastName
+            );
             GroupName = groupName;
             GroupId = groupId;
         }

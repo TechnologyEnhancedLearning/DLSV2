@@ -53,7 +53,11 @@
                 formData.FirstName!,
                 formData.LastName!,
                 formData.Email!,
-                formData.AliasId
+                formData.AliasId,
+                formData.HasProfessionalRegistrationNumber == true
+                    ? formData.ProfessionalRegistrationNumber
+                    : null,
+                formData.HasProfessionalRegistrationNumber.HasValue
             );
 
             var centreAnswersData = new CentreAnswersData(

@@ -42,6 +42,10 @@
                 CustomisationId = 1,
                 AllAttempts = 0,
                 AttemptsPassed = 0,
+                ProfessionalRegistrationNumber = null,
+                Answer1 = string.Empty,
+                Answer2 = string.Empty,
+                Answer3 = string.Empty,
             };
 
             // When

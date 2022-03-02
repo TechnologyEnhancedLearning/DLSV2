@@ -35,6 +35,10 @@
 
         public string? Answer6 { get; set; }
 
+        public string? ProfessionalRegistrationNumber { get; set; }
+
+        public bool? HasProfessionalRegistrationNumber { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (!JobGroupId.HasValue)

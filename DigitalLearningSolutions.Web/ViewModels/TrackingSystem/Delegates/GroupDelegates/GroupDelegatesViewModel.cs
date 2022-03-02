@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -19,7 +20,11 @@
             GroupId = groupId;
             NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Delegates);
 
-            var sortedItems = groupDelegates.OrderBy(gd => gd.Name).ToList();
+            var sortedItems = GenericSortingHelper.SortAllItems(
+                groupDelegates.AsQueryable(),
+                nameof(GroupDelegate.SearchableName),
+                GenericSortingHelper.Ascending
+            ).ToList();
 
             MatchingSearchResults = sortedItems.Count;
             SetTotalPages();

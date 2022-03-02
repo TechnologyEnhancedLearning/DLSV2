@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
     using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper;
@@ -16,7 +17,7 @@
         )
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             Email = delegateUser.EmailAddress;
             if (delegateUser.DateRegistered.HasValue)
             {
@@ -35,7 +36,7 @@
         )
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             Email = delegateUser.EmailAddress;
             if (delegateUser.DateRegistered.HasValue)
             {

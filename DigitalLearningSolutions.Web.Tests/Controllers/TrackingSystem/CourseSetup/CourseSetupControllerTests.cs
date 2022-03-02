@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.CourseSetup
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
-    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Controllers.TrackingSystem.CourseSetup;
@@ -14,12 +12,12 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.AddNewCentreCourse;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using FakeItEasy;
+    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.AspNetCore.Mvc;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using NUnit.Framework;
 
     public class CourseSetupControllerTests
@@ -49,39 +47,46 @@
             },
         };
 
-        private readonly List<Category> categories = new List<Category>
-        {
-            new Category { CategoryName = "Category 1" },
-            new Category { CategoryName = "Category 2" },
-        };
+        private readonly CentreCourseDetails details = Builder<CentreCourseDetails>.CreateNew()
+            .With(
+                x => x.Courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
+                {
+                    new CourseStatisticsWithAdminFieldResponseCounts
+                    {
+                        ApplicationName = "Course",
+                        CustomisationName = "Customisation",
+                        Active = true,
+                        CourseTopic = "Topic 1",
+                        CategoryName = "Category 1",
+                        HideInLearnerPortal = true,
+                        DelegateCount = 1,
+                        CompletedCount = 1,
+                    },
+                }
+            )
+            .And(x => x.Categories = new List<string> { "Category 1", "Category 2" })
+            .And(x => x.Topics = new List<string> { "Topic 1", "Topic 2" })
+            .Build();
 
-        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses = new List<CourseStatisticsWithAdminFieldResponseCounts>
-        {
-            new CourseStatisticsWithAdminFieldResponseCounts
+        private readonly List<CourseStatisticsWithAdminFieldResponseCounts> courses =
+            new List<CourseStatisticsWithAdminFieldResponseCounts>
             {
-                ApplicationName = "Course",
-                CustomisationName = "Customisation",
-                Active = true,
-                CourseTopic = "Topic 1",
-                CategoryName = "Category 1",
-                HideInLearnerPortal = true,
-                DelegateCount = 1,
-                CompletedCount = 1,
-            },
-        };
-
-        private readonly List<Topic> topics = new List<Topic>
-        {
-            new Topic { CourseTopic = "Topic 1" },
-            new Topic { CourseTopic = "Topic 2" },
-        };
+                new CourseStatisticsWithAdminFieldResponseCounts
+                {
+                    ApplicationName = "Course",
+                    CustomisationName = "Customisation",
+                    Active = true,
+                    CourseTopic = "Topic 1",
+                    CategoryName = "Category 1",
+                    HideInLearnerPortal = true,
+                    DelegateCount = 1,
+                    CompletedCount = 1,
+                },
+            };
 
         private CourseSetupController controller = null!;
         private CourseSetupController controllerWithCookies = null!;
-        private ICourseCategoriesDataService courseCategoryDataService = null!;
         private ICourseService courseService = null!;
-        private ICourseTopicsDataService courseTopicsDataService = null!;
-        private ICourseTopicsService courseTopicsService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
@@ -90,18 +95,15 @@
         [SetUp]
         public void Setup()
         {
-            courseCategoryDataService = A.Fake<ICourseCategoriesDataService>();
-            courseTopicsDataService = A.Fake<ICourseTopicsDataService>();
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
-            courseTopicsService = A.Fake<ICourseTopicsService>();
 
-            A.CallTo(() => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)).Returns(courses);
-            A.CallTo(() => courseCategoryDataService.GetCategoriesForCentreAndCentrallyManagedCourses(A<int>._))
-                .Returns(categories);
-            A.CallTo(() => courseTopicsDataService.GetCourseTopicsAvailableAtCentre(A<int>._)).Returns(topics);
+            A.CallTo(
+                () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
+            ).Returns(courses);
 
+            A.CallTo(() => courseService.GetCentreCourseDetails(A<int>._, A<int?>._)).Returns(details);
             A.CallTo(
                 () => courseService.GetApplicationOptionsAlphabeticalListForCentre(A<int>._, A<int?>._, A<int?>._)
             ).Returns(applicationOptions);
@@ -111,11 +113,8 @@
 
             controller = new CourseSetupController(
                     courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService,
                     tutorialService,
-                    sectionService,
-                    courseTopicsService
+                    sectionService
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -126,11 +125,8 @@
 
             controllerWithCookies = new CourseSetupController(
                     courseService,
-                    courseCategoryDataService,
-                    courseTopicsDataService,
                     tutorialService,
-                    sectionService,
-                    courseTopicsService
+                    sectionService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)
@@ -252,12 +248,10 @@
         [Test]
         public void SelectCourse_post_updates_temp_data_and_redirects()
         {
-            var applicationOptionsSelectList = new List<SelectListItem> { new SelectListItem("Test Name", "1") };
-            var model = new SelectCourseViewModel(application.ApplicationId, applicationOptionsSelectList);
             SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(application.ApplicationId);
 
             // Then
             using (new AssertionScope())
@@ -273,14 +267,12 @@
         }
 
         [Test]
-        public void SelectCourse_does_not_redirect_with_invalid_model()
+        public void SelectCourse_does_not_redirect_with_null_applicationId()
         {
-            var model = new SelectCourseViewModel { ApplicationId = 1 };
-            controller.ModelState.AddModelError("ApplicationId", "Select a course");
-            SetAddNewCentreCourseTempData(application);
+            SetAddNewCentreCourseTempData();
 
             // When
-            var result = controller.SelectCourse(model);
+            var result = controller.SelectCourse(applicationId: null);
 
             // Then
             using (new AssertionScope())

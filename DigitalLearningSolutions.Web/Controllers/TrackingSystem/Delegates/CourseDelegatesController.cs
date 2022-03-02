@@ -23,14 +23,17 @@
     public class CourseDelegatesController : Controller
     {
         private const string CourseDelegatesFilterCookieName = "CourseDelegatesFilter";
+        private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
 
         public CourseDelegatesController(
+            ICourseAdminFieldsService courseAdminFieldsService,
             ICourseDelegatesService courseDelegatesService,
             ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
         )
         {
+            this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseDelegatesService = courseDelegatesService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
         }
@@ -90,8 +93,8 @@
         {
             var centreId = User.GetCentreId();
             var courseDelegates = courseDelegatesService.GetCourseDelegatesForCentre(customisationId, centreId);
-
-            var model = new AllCourseDelegatesViewModel(courseDelegates);
+            var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var model = new AllCourseDelegatesViewModel(courseDelegates, adminFields.AdminFields);
 
             return View(model);
         }

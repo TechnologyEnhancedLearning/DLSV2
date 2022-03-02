@@ -62,7 +62,7 @@
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                 delegateUser.EmailAddress!,
@@ -102,7 +102,10 @@
                 DelegateId = delegateUser!.Id,
                 CustomisationId = customisationId,
                 CourseName = course!.CourseName,
-                Name = delegateUser.FullName,
+                Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                    delegateUser.FirstName,
+                    delegateUser.LastName
+                ),
                 Confirm = false,
             };
             return View("ConfirmRemoveFromCourse", model);

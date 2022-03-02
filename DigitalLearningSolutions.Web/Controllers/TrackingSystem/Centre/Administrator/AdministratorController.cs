@@ -17,6 +17,7 @@
     using Microsoft.FeatureManagement.Mvc;
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.User;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreManager)]
@@ -144,9 +145,15 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpGet]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId, int? returnPage)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, int? returnPage)
         {
             var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+            
             var model = new DeactivateAdminViewModel(adminUser!, returnPage);
             return View(model);
         }
@@ -154,16 +161,23 @@
         [Route("{adminId:int}/DeactivateAdmin")]
         [HttpPost]
         [ServiceFilter(typeof(VerifyAdminUserCanAccessAdminUser))]
-        public IActionResult DeactivateAdmin(int adminId, DeactivateAdminViewModel model)
+        public IActionResult DeactivateOrDeleteAdmin(int adminId, DeactivateAdminViewModel model)
         {
+            var adminUser = userDataService.GetAdminUserById(adminId);
+
+            if (!CurrentUserCanDeactivateAdmin(adminUser!))
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            userDataService.DeactivateAdmin(adminId);
+            userService.DeactivateOrDeleteAdmin(adminId);
 
-            return View("DeactivateAdminConfirmation");
+            return View("DeactivateOrDeleteAdminConfirmation");
         }
 
         private IEnumerable<string> GetCourseCategories(int centreId)
@@ -172,6 +186,14 @@
                 .Select(c => c.CategoryName);
             categories = categories.Prepend("All");
             return categories;
+        }
+
+        private bool CurrentUserCanDeactivateAdmin(AdminUser adminToDeactivate)
+        {
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+
+            return UserPermissionsHelper.LoggedInAdminCanDeactivateUser(adminToDeactivate!, loggedInAdminUser!);
         }
     }
 }

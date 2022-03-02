@@ -72,6 +72,7 @@
             {
                 JobGroupId = 1,
                 Email = email,
+                HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(email, null, DelegateId, A<int>._)).Returns(false);
             A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
@@ -83,7 +84,10 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(result, "A user with this email address is already registered at this centre");
+                AssertModelStateErrorIsExpected(
+                    result,
+                    "A user with this email address is already registered at this centre"
+                );
             }
         }
 
@@ -107,7 +111,37 @@
             using (new AssertionScope())
             {
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
-                AssertModelStateErrorIsExpected(result, "A user with this alias ID is already registered at this centre");
+                AssertModelStateErrorIsExpected(
+                    result,
+                    "A user with this alias ID is already registered at this centre"
+                );
+            }
+        }
+
+        [Test]
+        public void Index_post_returns_view_with_model_error_with_invalid_prn()
+        {
+            // Given
+            var formData = new EditDelegateFormData
+            {
+                JobGroupId = 1,
+                HasProfessionalRegistrationNumber = true,
+                ProfessionalRegistrationNumber = "!&^£%&*^!%£",
+            };
+            A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
+            A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);
+
+            // When
+            var result = controller.Index(formData, DelegateId);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
+                AssertModelStateErrorIsExpected(
+                    result,
+                    "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+                );
             }
         }
 
@@ -118,6 +152,7 @@
             var formData = new EditDelegateFormData
             {
                 JobGroupId = 1,
+                HasProfessionalRegistrationNumber = false,
             };
             A.CallTo(() => userService.NewEmailAddressIsValid(A<string>._, null, DelegateId, A<int>._)).Returns(true);
             A.CallTo(() => userService.NewAliasIsValid(A<string>._, DelegateId, A<int>._)).Returns(true);

@@ -72,9 +72,5 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
         public IFormFile? ProfileImageFile { get; set; }
 
         public bool IsDelegateUser { get; set; }
-
-        public string? ProfessionalRegistrationNumber { get; set; }
-
-        public bool? HasProfessionalRegistrationNumber { get; set; }
     }
 }

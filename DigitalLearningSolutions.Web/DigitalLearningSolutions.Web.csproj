@@ -117,6 +117,7 @@
     <TypeScriptCompile Include="Scripts\supervisor\staffList.ts" />
     <TypeScriptCompile Include="Scripts\support\faqs.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\addCourseToGroupSelectCourse.ts" />
+    <TypeScriptCompile Include="Scripts\trackingSystem\addNewCentreCourseSelectCourse.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\courseDelegates.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\editCourseContent.ts" />
     <TypeScriptCompile Include="Scripts\trackingSystem\emailDelegates.ts" />

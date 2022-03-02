@@ -12,10 +12,13 @@
     using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Web.Attributes;
     public partial class RoleProfilesController
     {
         private const string CookieName = "DLSFrameworkService";
         [Route("/RoleProfiles/View/{tabname}/{page=1:int}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult ViewRoleProfiles(string tabname, string? searchString = null,
             string sortBy = RoleProfileSortByOptionTexts.RoleProfileName,
             string sortDirection = BaseRoleProfilesPageViewModel.AscendingText,
@@ -140,8 +143,10 @@
             TempData.Set(sessionNewRoleProfile);
             return RedirectToAction("RoleProfileName", "RoleProfiles", new { actionname = "New" });
         }
+
         [Route("/RoleProfiles/Name/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/Name/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult RoleProfileName(string actionname, int roleProfileId = 0)
         {
             var adminId = GetAdminID();
@@ -168,9 +173,11 @@
             }
             return View("Name", roleProfileBase);
         }
+
         [HttpPost]
         [Route("/RoleProfiles/Name/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/Name/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult SaveProfileName(RoleProfileBase roleProfileBase, string actionname, int roleProfileId = 0)
         {
             if (!ModelState.IsValid)
@@ -215,8 +222,10 @@
 
             }
         }
+
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult RoleProfileProfessionalGroup(string actionname, int roleProfileId = 0)
         {
             var adminId = GetAdminID();
@@ -249,9 +258,11 @@
             };
             return View("ProfessionalGroup", model);
         }
+
         [HttpPost]
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/ProfessionalGroup/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult SaveProfessionalGroup(RoleProfileBase roleProfileBase, string actionname, int roleProfileId = 0)
         {
             if (roleProfileBase.NRPProfessionalGroupID == null)
@@ -282,8 +293,10 @@
                 }
             }
         }
+
         [Route("/RoleProfiles/SubGroup/{actionname}/{roleProfileId}")]
         [Route("/RoleProfiles/SubGroup/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.RolesProfiles))]
         public IActionResult RoleProfileSubGroup(string actionname, int roleProfileId = 0)
         {
             return View("SubGroup");

@@ -31,6 +31,7 @@
             TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(fullName, delegateUser.EmailAddress);
             DateRegistered = delegateUser.DateRegistered;
             JobGroup = delegateUser.JobGroupName;
+            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
             DelegateRegistrationPrompts = registrationPrompts
                 .Select(
                     cp => new DelegateRegistrationPrompt(cp.RegistrationField.Id, cp.PromptText, cp.Mandatory, cp.Answer)
@@ -43,6 +44,7 @@
         public string TitleName { get; set; }
         public DateTime? DateRegistered { get; set; }
         public string? JobGroup { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
         public List<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }
 }

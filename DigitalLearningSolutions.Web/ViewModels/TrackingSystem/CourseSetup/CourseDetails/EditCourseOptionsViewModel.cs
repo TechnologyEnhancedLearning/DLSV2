@@ -8,11 +8,12 @@
 
         public EditCourseOptionsViewModel(CourseOptions courseOptions, int customisationId)
         {
+            Active = courseOptions.Active;
             AllowSelfEnrolment = courseOptions.SelfRegister;
             DiagnosticObjectiveSelection = courseOptions.DiagObjSelect;
             HideInLearningPortal = courseOptions.HideInLearnerPortal;
             CustomisationId = customisationId;
-            SetUpCheckboxes(courseOptions.DiagAssess);
+            SetUpCheckboxes(courseOptions.DiagAssess, true);
         }
 
         public int CustomisationId { get; set; }

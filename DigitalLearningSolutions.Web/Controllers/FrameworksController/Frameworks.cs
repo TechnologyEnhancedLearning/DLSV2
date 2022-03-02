@@ -13,11 +13,15 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Web.Attributes;
 
     public partial class FrameworksController
     {
         private const string CookieName = "DLSFrameworkService";
+
+        [SetSelectedTab(nameof(NavMenuTab.Dashboard))]
         public IActionResult Index()
         {
             var adminId = GetAdminId();
@@ -40,6 +44,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return View(model);
         }
         [Route("/Frameworks/View/{tabname}/{page=1:int}")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult ViewFrameworks(string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
@@ -100,6 +105,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 );
             return View("Developer/Frameworks", frameworksViewModel);
         }
+
         public IActionResult StartNewFrameworkSession()
         {
             var adminId = GetAdminId();
@@ -150,8 +156,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Set(sessionNewFramework);
             return RedirectToAction("CreateNewFramework", "Frameworks", new { actionname = "New" });
         }
+
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult CreateNewFramework(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -179,6 +187,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [HttpPost]
         [Route("/Frameworks/Name/{actionname}/{frameworkId}")]
         [Route("/Frameworks/Name/{actionname}")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult CreateNewFramework(DetailFramework detailFramework, string actionname, int frameworkId = 0)
         {
             if (!ModelState.IsValid)
@@ -201,6 +210,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             ModelState.AddModelError(nameof(BaseFramework.FrameworkName), "Another framework exists with that name. Please choose a different name.");
             return View("Developer/Name", detailFramework);
         }
+
         [Route("/Frameworks/Similar/{actionname}")]
         public IActionResult SetNewFrameworkName(string frameworkname, string actionname)
         {
@@ -246,8 +256,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Set(sessionNewFramework);
             return RedirectToAction("FrameworkDescription", "Frameworks", new { actionname });
         }
+
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult FrameworkDescription(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -272,6 +284,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             return View("Developer/Description", framework);
         }
+
         [HttpPost]
         [Route("/Frameworks/Description/{actionname}/")]
         [Route("/Frameworks/Description/{actionname}/{frameworkId}/")]
@@ -289,8 +302,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
 
         }
+
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult FrameworkType(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -315,6 +330,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             return View("Developer/Type", framework);
         }
+
         [HttpPost]
         [Route("/Frameworks/Type/{actionname}/")]
         [Route("/Frameworks/Type/{actionname}/{frameworkId}/")]
@@ -331,8 +347,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkService.UpdateFrameworkConfig(frameworkId, GetAdminId(), detailFramework.FrameworkConfig);
             return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
         }
+
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult SetNewFrameworkBrand(string actionname, int frameworkId = 0)
         {
             var adminId = GetAdminId();
@@ -374,6 +392,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             };
             return View("Developer/Branding", model);
         }
+
         [HttpPost]
         [Route("/Frameworks/Categorise/{actionname}/")]
         [Route("/Frameworks/Categorise/{actionname}/{frameworkId}/")]
@@ -411,6 +430,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             TempData.Set(sessionNewFramework);
             return RedirectToAction("FrameworkSummary", "Frameworks");
         }
+
         public DetailFramework? InsertBrandingCategoryTopicIfRequired(DetailFramework? detailFramework)
         {
             if (detailFramework == null)
@@ -445,7 +465,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
             return detailFramework;
         }
+
         [Route("/Frameworks/New/Summary")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult FrameworkSummary()
         {
             var sessionNewFramework = TempData.Peek<SessionNewFramework>();
@@ -470,6 +492,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             };
             return View("Developer/Collaborators", model);
         }
+
         [HttpPost]
         [Route("/Frameworks/Collaborators/{actionname}/{frameworkId}/")]
         public IActionResult AddCollaborator(string actionname, string userEmail, bool canModify, int frameworkId)
@@ -479,14 +502,17 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
+
         public IActionResult RemoveCollaborator(int frameworkId, string actionname, int id)
         {
             frameworkService.RemoveCollaboratorFromFramework(frameworkId, id);
             return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionname });
         }
+
         [Route("/Framework/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/{frameworkCompetencyId}")]
         [Route("/Framework/{frameworkId}/{tabname}/{frameworkCompetencyGroupId}/")]
         [Route("/Framework/{frameworkId}/{tabname}/")]
+        [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
         public IActionResult ViewFramework(string tabname, int frameworkId, int? frameworkCompetencyGroupId = null, int? frameworkCompetencyId = null)
         {
             var adminId = GetAdminId();
@@ -511,6 +537,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             }
             return View("Developer/Framework", model);
         }
+
         public IActionResult InsertFramework()
         {
             var adminId = GetAdminId();

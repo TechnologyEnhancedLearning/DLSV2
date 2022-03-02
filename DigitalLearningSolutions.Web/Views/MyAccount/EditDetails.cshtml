@@ -15,7 +15,21 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber) })" />
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.FirstName),
+                                                   nameof(Model.LastName),
+                                                   nameof(Model.Email),
+                                                   nameof(Model.HasProfessionalRegistrationNumber),
+                                                   nameof(Model.ProfessionalRegistrationNumber),
+                                                   nameof(Model.Password),
+                                                   nameof(Model.JobGroupId),
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6)
+                                                 })" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>

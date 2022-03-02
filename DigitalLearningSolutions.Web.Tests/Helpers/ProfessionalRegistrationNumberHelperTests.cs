@@ -105,12 +105,12 @@
             using (new AssertionScope())
             {
                 state.IsValid.Should().BeFalse();
-                state.Values.First().Errors.Should().OnlyContain(e => e.ErrorMessage == "Select your professional registration number status");
+                state.Values.First().Errors.Should().OnlyContain(e => e.ErrorMessage == "Select a professional registration number status");
             }
         }
 
-        [TestCase(null, "Enter professional registration number")]
-        [TestCase("", "Enter professional registration number")]
+        [TestCase(null, "Enter a professional registration number")]
+        [TestCase("", "Enter a professional registration number")]
         [TestCase("123", "Professional registration number must be between 5 and 20 characters")]
         [TestCase("0123456789-0123456789", "Professional registration number must be between 5 and 20 characters")]
         [TestCase(

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Logging;
@@ -37,6 +38,12 @@
         void UnlockProgress(int progressId);
 
         IEnumerable<LearningLogEntry> GetLearningLogEntries(int progressId);
+
+        Progress? GetProgressByProgressId(int progressId);
+
+        IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId);
+
+        IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId);
     }
 
     public class ProgressDataService : IProgressDataService
@@ -67,7 +74,8 @@
                         EnrollmentMethodID,
                         EnrolledByAdminID,
                         SubmittedTime,
-                        CustomisationVersion
+                        CustomisationVersion,
+                        DiagnosticScore
                     FROM Progress
                     WHERE CandidateID = @delegateId
                         AND CustomisationID = @customisationId",
@@ -254,6 +262,100 @@
                     LEFT JOIN Sections AS sec ON sec.ApplicationID = cu.ApplicationID AND sec.SectionNumber = aa.SectionNumber
                     WHERE aa.ProgressID = @progressId",
                 new { progressId }
+            );
+        }
+
+        public Progress? GetProgressByProgressId(int progressId)
+        {
+            return connection.Query<Progress>(
+                @"SELECT ProgressId,
+                        CandidateID,
+                        CustomisationID,
+                        Completed,
+                        RemovedDate,
+                        SystemRefreshed,
+                        SupervisorAdminID,
+                        CompleteByDate,
+                        EnrollmentMethodID,
+                        EnrolledByAdminID,
+                        SubmittedTime,
+                        CustomisationVersion,
+                        DiagnosticScore
+                    FROM Progress
+                    WHERE ProgressID = @progressId",
+                new { progressId }
+            ).SingleOrDefault();
+        }
+
+        public IEnumerable<DetailedSectionProgress> GetSectionProgressDataForProgressEntry(int progressId)
+        {
+            return connection.Query<DetailedSectionProgress>(
+                @"SELECT
+                        s.SectionID,
+                        s.SectionName,
+                        (SUM(asp1.TutStat) * 100) / (COUNT(t.TutorialID) * 2) AS Completion,
+                        SUM(asp1.TutTime) AS TotalTime,
+                        s.AverageSectionMins AS AverageTime,
+                        cu.IsAssessed AS IsAssessed,
+                        s.PLAssessPath AS PostLearningAssessPath,
+                        MAX(ISNULL(aa.Score, 0)) AS Outcome,
+                        (SELECT COUNT(AssessAttemptID) AS PLAttempts
+                            FROM AssessAttempts AS a_a
+                            WHERE (ProgressID = @progressId) AND (SectionNumber = s.SectionNumber)) AS Attempts,
+                        MAX(ISNULL(CAST(ct.Status AS INT), 0)) AS Passed
+                    FROM
+                        aspProgress AS asp1
+                        INNER JOIN Progress AS p ON asp1.ProgressID = p.ProgressID
+                        INNER JOIN Customisations AS cu ON p.CustomisationID = cu.CustomisationID
+                        INNER JOIN Sections AS s
+                        INNER JOIN Tutorials AS t ON s.SectionID = t.SectionID
+                        INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID ON asp1.TutorialID = t.TutorialID
+                        LEFT OUTER JOIN AssessAttempts AS aa ON asp1.ProgressID = aa.ProgressID AND s.SectionNumber = aa.SectionNumber
+                    WHERE
+                        (ct.CustomisationID = p.CustomisationID) AND (p.ProgressID = @progressId) AND (s.ArchivedDate IS NULL)
+                        AND (ct.Status = 1 OR ct.DiagStatus = 1 OR cu.IsAssessed = 1)
+                    GROUP BY
+                        s.SectionID,
+                        s.ApplicationID,
+                        s.SectionNumber,
+                        s.SectionName,
+                        s.ConsolidationPath,
+                        s.DiagAssessPath,
+                        s.PLAssessPath,
+                        s.AverageSectionMins,
+                        cu.IsAssessed,
+                        p.CandidateID,
+                        p.CustomisationID,
+                        p.PLLocked
+                    ORDER BY s.SectionNumber",
+                new { progressId }
+            );
+        }
+
+        public IEnumerable<DetailedTutorialProgress> GetTutorialProgressDataForSection(int progressId, int sectionId)
+        {
+            return connection.Query<DetailedTutorialProgress>(
+                @"SELECT
+                        t.TutorialName,
+                        ts.Status AS TutorialStatus,
+                        ap.TutTime AS TimeTaken,
+                        CASE WHEN t.OverrideTutorialMins > 0 THEN t.OverrideTutorialMins ELSE t.AverageTutMins END AS AvgTime,
+                        CASE WHEN (ap.DiagAttempts > 0 AND ct.DiagStatus = 1) THEN ap.DiagLast ELSE NULL END AS DiagnosticScore,
+                        t.DiagAssessOutOf AS PossibleScore
+                    FROM
+                        Progress AS p
+                        INNER JOIN Tutorials AS t
+                        INNER JOIN CustomisationTutorials AS ct ON t.TutorialID = ct.TutorialID
+                        INNER JOIN Customisations AS c ON ct.CustomisationID = c.CustomisationID ON p.CustomisationID = c.CustomisationID AND p.CustomisationID = ct.CustomisationID
+                        INNER JOIN TutStatus AS ts
+                        INNER JOIN aspProgress AS ap ON ts.TutStatusID = ap.TutStat ON P.ProgressID = ap.ProgressID AND t.TutorialID = ap.TutorialID
+                    WHERE (t.SectionID = @sectionID)
+                        AND (p.ProgressID = @ProgressID)
+                        AND (ct.Status = 1)
+                        AND (c.Active = 1)
+                        AND (t.ArchivedDate IS NULL)
+                    ORDER BY t.TutorialID",
+                new { progressId, sectionId }
             );
         }
     }

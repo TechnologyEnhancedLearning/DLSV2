@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using System.Collections.Generic;
-    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
@@ -12,7 +11,11 @@
         public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts)
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            TitleName = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                delegateUser.FirstName,
+                delegateUser.LastName
+            );
             CandidateNumber = delegateUser.CandidateNumber;
 
             IsActive = delegateUser.Active;
@@ -23,6 +26,7 @@
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
+            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
             if (delegateUser.DateRegistered.HasValue)
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
@@ -34,6 +38,7 @@
         }
 
         public int Id { get; set; }
+        public string TitleName { get; set; }
         public string Name { get; set; }
         public string CandidateNumber { get; set; }
 
@@ -47,6 +52,7 @@
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
         public string? AliasId { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
 
         public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; }
     }

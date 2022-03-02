@@ -4,6 +4,12 @@
 
     public static class CourseOptionsInputs
     {
+        public static readonly CheckboxListItemViewModel ActiveCheckbox = new CheckboxListItemViewModel(
+            nameof(EditCourseOptionsViewModel.Active),
+            "Active",
+            "Active courses are open to new enrolments. Inactive courses are not."
+        );
+
         public static readonly CheckboxListItemViewModel AllowSelfEnrolmentCheckbox = new CheckboxListItemViewModel(
             nameof(EditCourseOptionsFormData.AllowSelfEnrolment),
             "Allow self-enrolment",
