@@ -135,20 +135,7 @@
             );
 
             // Then
-            A.CallTo(
-                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-                    synchronisedGroup.GroupId,
-                    reusableDelegateDetails.Id
-                )
-            ).MustHaveHappened();
-            A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
-                    synchronisedGroup.GroupId,
-                    reusableDelegateDetails.Id,
-                    removeStartedEnrolments,
-                    testDate
-                )
-            ).MustHaveHappened();
+            DelegateMustHaveBeenRemovedFromGroups(new List<int> { synchronisedGroup.GroupId });
         }
 
         [Test]
@@ -183,20 +170,7 @@
             );
 
             // Then
-            A.CallTo(
-                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-                    synchronisedGroup.GroupId,
-                    reusableDelegateDetails.Id
-                )
-            ).MustHaveHappened();
-            A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
-                    synchronisedGroup.GroupId,
-                    reusableDelegateDetails.Id,
-                    removeStartedEnrolments,
-                    testDate
-                )
-            ).MustHaveHappened();
+            DelegateMustHaveBeenRemovedFromGroups(new List<int> { synchronisedGroup.GroupId });
         }
 
         [Test]
@@ -237,34 +211,52 @@
             );
 
             // Then
+            DelegateMustHaveBeenRemovedFromGroups(
+                new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId }
+            );
+        }
+
+        [Test]
+        public void
+            SynchroniseUserChangesWithGroups_removes_delegate_from_matching_synchronised_old_answer_groups_when_group_labels_differ_in_casing()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
+            const bool removeStartedEnrolments = false;
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
-                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-                    synchronisedGroup1.GroupId,
-                    reusableDelegateDetails.Id
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    reusableDelegateDetails.CentreId,
+                    1
                 )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
-                    synchronisedGroup2.GroupId,
-                    reusableDelegateDetails.Id
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
-                    synchronisedGroup1.GroupId,
-                    reusableDelegateDetails.Id,
-                    removeStartedEnrolments,
-                    testDate
-                )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => groupsDataService.RemoveRelatedProgressRecordsForGroup(
-                    synchronisedGroup2.GroupId,
-                    reusableDelegateDetails.Id,
-                    removeStartedEnrolments,
-                    testDate
-                )
-            ).MustHaveHappenedOnceExactly();
+            ).Returns("PROMPT NAME");
+            var synchronisedGroup1 = GroupTestHelper.GetDefaultGroup(
+                5,
+                "old answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            var synchronisedGroup2 = GroupTestHelper.GetDefaultGroup(
+                6,
+                "prompt name - old answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
+            );
+
+            // When
+            groupsService.SynchroniseUserChangesWithGroups(
+                reusableDelegateDetails,
+                reusableMyAccountDetailsData,
+                centreAnswersData
+            );
+
+            // Then
+            DelegateMustHaveBeenRemovedFromGroups(
+                new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId }
+            );
         }
 
         [Test]
@@ -291,14 +283,7 @@
             );
 
             // Then
-            A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(
-                    reusableDelegateDetails.Id,
-                    synchronisedGroup.GroupId,
-                    testDate,
-                    1
-                )
-            ).MustHaveHappened();
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
         }
 
         [Test]
@@ -333,14 +318,7 @@
             );
 
             // Then
-            A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(
-                    reusableDelegateDetails.Id,
-                    synchronisedGroup.GroupId,
-                    testDate,
-                    1
-                )
-            ).MustHaveHappened();
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup.GroupId });
         }
 
         [Test]
@@ -380,22 +358,82 @@
             );
 
             // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId });
+        }
+
+        [Test]
+        public void
+            SynchroniseUserChangesWithGroups_adds_delegate_to_matching_synchronised_new_answer_groups_when_group_labels_differ_in_casing()
+        {
+            // Given
+            var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "NEW ANSWER");
+            A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(
-                    reusableDelegateDetails.Id,
-                    synchronisedGroup1.GroupId,
-                    testDate,
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
+                    reusableDelegateDetails.CentreId,
                     1
                 )
-            ).MustHaveHappenedOnceExactly();
-            A.CallTo(
-                () => groupsDataService.AddDelegateToGroup(
-                    reusableDelegateDetails.Id,
-                    synchronisedGroup2.GroupId,
-                    testDate,
-                    1
-                )
-            ).MustHaveHappenedOnceExactly();
+            ).Returns("PROMPT NAME");
+
+            var synchronisedGroup1 = GroupTestHelper.GetDefaultGroup(
+                5,
+                "new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            var synchronisedGroup2 = GroupTestHelper.GetDefaultGroup(
+                6,
+                "prompt name - new answer",
+                linkedToField: 1,
+                changesToRegistrationDetailsShouldChangeGroupMembership: true
+            );
+            A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(
+                new List<Group> { synchronisedGroup1, synchronisedGroup2 }
+            );
+
+            // When
+            groupsService.SynchroniseUserChangesWithGroups(
+                reusableDelegateDetails,
+                reusableMyAccountDetailsData,
+                centreAnswersData
+            );
+
+            // Then
+            DelegateMustHaveBeenAddedToGroups(new List<int> { synchronisedGroup1.GroupId, synchronisedGroup2.GroupId });
+        }
+
+        private void DelegateMustHaveBeenRemovedFromGroups(IEnumerable<int> groupIds)
+        {
+            foreach (var groupId in groupIds)
+            {
+                A.CallTo(
+                    () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                        groupId,
+                        reusableDelegateDetails.Id
+                    )
+                ).MustHaveHappenedOnceExactly();
+                A.CallTo(
+                    () => groupsDataService.DeleteGroupDelegatesRecordForDelegate(
+                        groupId,
+                        reusableDelegateDetails.Id
+                    )
+                ).MustHaveHappenedOnceExactly();
+            }
+        }
+
+        private void DelegateMustHaveBeenAddedToGroups(IEnumerable<int> groupIds)
+        {
+            foreach (var groupId in groupIds)
+            {
+                A.CallTo(
+                    () => groupsDataService.AddDelegateToGroup(
+                        reusableDelegateDetails.Id,
+                        groupId,
+                        testDate,
+                        1
+                    )
+                ).MustHaveHappenedOnceExactly();
+            }
         }
     }
 }

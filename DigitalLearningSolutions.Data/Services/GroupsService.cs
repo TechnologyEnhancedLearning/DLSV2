@@ -556,9 +556,13 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
+        private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
         {
-            return groupLabel == answer || groupLabel == linkedFieldName + " - " + answer;
+            return string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
+                groupLabel,
+                linkedFieldName + " - " + answer,
+                StringComparison.CurrentCultureIgnoreCase
+            );
         }
 
         private static bool ProgressShouldBeUpdatedOnEnrolment(
