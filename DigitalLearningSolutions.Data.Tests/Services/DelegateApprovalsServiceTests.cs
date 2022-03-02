@@ -47,12 +47,12 @@
 
         [Test]
         public void
-            GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre_returns_unapproved_delegates_with_custom_prompt_answers_for_centre()
+            GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre_returns_unapproved_delegates_with_registration_prompt_answers_for_centre()
         {
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             var expectedUserList = new List<DelegateUser> { expectedDelegateUser };
-            var expectedCustomPrompts = new List<CentreRegistrationPromptWithAnswer>
+            var expectedRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
                 PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                     1,
@@ -72,7 +72,7 @@
                 )
                 .Returns(
                     new List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
-                        { (expectedDelegateUser, expectedCustomPrompts) }
+                        { (expectedDelegateUser, expectedRegistrationPrompts) }
                 );
 
             // When
@@ -80,7 +80,7 @@
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<(DelegateUser, List<CentreRegistrationPromptWithAnswer>)> { (expectedDelegateUser, expectedCustomPrompts) }
+                new List<(DelegateUser, List<CentreRegistrationPromptWithAnswer>)> { (expectedDelegateUser, expectedRegistrationPrompts) }
             );
         }
 

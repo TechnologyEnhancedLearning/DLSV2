@@ -461,7 +461,7 @@
             const string groupNamePrefix = "Role";
 
             const int linkedToField = 1;
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
@@ -540,7 +540,7 @@
             // Given
             const string groupName = "Manager";
             const string groupNamePrefix = "Role";
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
@@ -585,7 +585,7 @@
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                RegistrationField.CentreCustomPrompt1,
+                RegistrationField.CentreRegistrationField1,
                 false,
                 true,
                 false,

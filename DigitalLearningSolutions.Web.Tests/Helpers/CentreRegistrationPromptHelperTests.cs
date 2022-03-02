@@ -28,17 +28,17 @@
         }
 
         [Test]
-        public void GetEditCustomFieldViewModelsForCentre_returns_populated_list()
+        public void GetEditDelegateRegistrationPromptViewModelsForCentre_returns_populated_list()
         {
             // Given
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
-            var customPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
+            var registrationPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt2 },
                 1
             );
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             var result =
@@ -67,17 +67,17 @@
         }
 
         [Test]
-        public void GetCustomFieldViewModelsForCentre_returns_populated_list()
+        public void GetDelegateRegistrationPromptsForCentre_returns_populated_list()
         {
             // Given
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
-            var customPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
+            var registrationPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt2 },
                 1
             );
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             var result =
@@ -93,18 +93,18 @@
         }
 
         [Test]
-        public void ValidateCustomPrompts_adds_error_for_missing_mandatory_answer()
+        public void ValidateCentreRegistrationPrompts_adds_error_for_missing_mandatory_answer()
         {
             // Given
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true);
-            var customPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, mandatory: true);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true);
+            var registrationPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2, mandatory: true);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt2 },
                 1
             );
             var modelState = new ModelStateDictionary();
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             promptHelper.ValidateCentreRegistrationPrompts(1, null, Answer2, null, null, null, null, modelState);
@@ -115,20 +115,20 @@
         }
 
         [Test]
-        public void ValidateCustomPrompts_adds_error_for_too_long_answer()
+        public void ValidateCentreRegistrationPrompts_adds_error_for_too_long_answer()
         {
             // Given
             const string? longAnswer2 =
                 "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1);
-            var customPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1);
+            var registrationPrompt2 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(2);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt2 },
                 1
             );
             var modelState = new ModelStateDictionary();
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             promptHelper.ValidateCentreRegistrationPrompts(1, Answer1, longAnswer2, null, null, null, null, modelState);
@@ -139,17 +139,17 @@
         }
 
         [Test]
-        public void GetEditCustomFieldViewModelsForCentre_returns_correctly_mapped_answers_with_gap_in_prompts()
+        public void GetEditDelegateRegistrationPromptViewModelsForCentre_returns_correctly_mapped_answers_with_gap_in_prompts()
         {
             // Given
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
-            var customPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt3 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
+            var registrationPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt3 },
                 1
             );
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             var result =
@@ -180,17 +180,17 @@
         }
 
         [Test]
-        public void GetCustomFieldViewModelsForCentre_returns_correctly_mapped_answers_with_gap_in_prompts()
+        public void GetDelegateRegistrationPromptsForCentre_returns_correctly_mapped_answers_with_gap_in_prompts()
         {
             // Given
-            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
-            var customPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
-            var centreCustomPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
-                new List<CentreRegistrationPrompt> { customPrompt1, customPrompt3 },
+            var registrationPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: "Clinical\r\nNon-Clinical");
+            var registrationPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
+            var centreRegistrationPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPrompts(
+                new List<CentreRegistrationPrompt> { registrationPrompt1, registrationPrompt3 },
                 1
             );
             A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(1))
-                .Returns(centreCustomPrompts);
+                .Returns(centreRegistrationPrompts);
 
             // When
             var result =

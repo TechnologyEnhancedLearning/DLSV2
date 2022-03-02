@@ -38,7 +38,7 @@
 
       <partial name="_EditRegistrationNumber" model="@Model" />
 
-      @foreach (var customField in Model.CustomFields) {
+      @foreach (var customField in Model.DelegateRegistrationPrompts) {
         if (customField.Options.Any()) {
           <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
                           label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"

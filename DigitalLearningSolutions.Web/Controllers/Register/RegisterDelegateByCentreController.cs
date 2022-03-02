@@ -337,7 +337,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             RegistrationData data
         )
         {
-            model.CustomFields = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup

@@ -414,7 +414,7 @@
             // Given
             const string groupNamePrefix = "Role";
 
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
             var customPromptSelectListItem = new SelectListItem(groupNamePrefix, registrationField.Id.ToString());
             var jobGroup = new SelectListItem("Job group", "2");
             var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
@@ -494,7 +494,7 @@
             var customPrompt1 = new CentreRegistrationPrompt(1, "Role", "Test", false);
             var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1 };
 
-            var registrationField = RegistrationField.CentreCustomPrompt3;
+            var registrationField = RegistrationField.CentreRegistrationField3;
 
             var model = new GenerateGroupsViewModel(
                 new List<SelectListItem>(),

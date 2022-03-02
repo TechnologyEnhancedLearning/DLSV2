@@ -342,7 +342,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<DelegateRegistrationPrompt> GetCustomFieldsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(DelegateRegistrationData data)
         {
             return promptHelper.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
@@ -369,7 +369,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             DelegateRegistrationData data
         )
         {
-            model.CustomFields = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts = GetEditDelegateRegistrationPromptViewModelsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
@@ -380,7 +380,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             model.Centre = centresDataService.GetCentreName((int)data.Centre!);
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
-            model.DelegateRegistrationPrompts = GetCustomFieldsFromData(data);
+            model.DelegateRegistrationPrompts = GetDelegateRegistrationPromptsFromData(data);
         }
     }
 }

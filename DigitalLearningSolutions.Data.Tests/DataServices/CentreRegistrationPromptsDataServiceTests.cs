@@ -20,7 +20,7 @@
         }
 
         [Test]
-        public void GetCentreRegistrationPromptsByCentreId_Returns_populated_CentreCustomPromptsResult()
+        public void GetCentreRegistrationPromptsByCentreId_Returns_populated_CentreRegistrationPromptsResult()
         {
             // Given
             var expectedCentreRegistrationPromptsResult = PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult();
@@ -43,13 +43,13 @@
 
                 // When
                 centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(2, 1, false, options);
-                var centreCustomPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
+                var centreRegistrationPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
 
                 // Then
                 using (new AssertionScope())
                 {
-                    centreCustomPrompts.CustomField1Mandatory.Should().BeFalse();
-                    centreCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                    centreRegistrationPrompts.CustomField1Mandatory.Should().BeFalse();
+                    centreRegistrationPrompts.CustomField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
@@ -79,7 +79,7 @@
 
                 // When
                 centreRegistrationPromptsDataService.UpdateCentreRegistrationPrompt(2, 1, 1, false, options);
-                var centreCustomPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
+                var centreRegistrationPrompts = centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(2);
                 var customPrompt = centreRegistrationPromptsDataService.GetCustomPromptsAlphabetical()
                     .Single(c => c.Item1 == 1)
                     .Item2;
@@ -87,9 +87,9 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    centreCustomPrompts.CustomField1Prompt.Should().BeEquivalentTo(customPrompt);
-                    centreCustomPrompts.CustomField1Mandatory.Should().BeFalse();
-                    centreCustomPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                    centreRegistrationPrompts.CustomField1Prompt.Should().BeEquivalentTo(customPrompt);
+                    centreRegistrationPrompts.CustomField1Mandatory.Should().BeFalse();
+                    centreRegistrationPrompts.CustomField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
