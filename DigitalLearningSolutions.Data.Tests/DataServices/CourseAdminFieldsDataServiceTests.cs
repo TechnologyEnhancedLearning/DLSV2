@@ -59,7 +59,7 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    courseAdminFields!.CustomField1Options.Should().BeEquivalentTo(options);
+                    courseAdminFields!.CourseAdminField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
@@ -97,8 +97,8 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    courseCustomPrompts!.CustomField3Prompt.Should().BeEquivalentTo(customPrompt);
-                    courseCustomPrompts.CustomField3Options.Should().BeEquivalentTo(options);
+                    courseCustomPrompts!.CourseAdminField3Prompt.Should().BeEquivalentTo(customPrompt);
+                    courseCustomPrompts.CourseAdminField3Options.Should().BeEquivalentTo(options);
                 }
             }
             finally

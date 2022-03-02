@@ -234,8 +234,8 @@
 
             var prompt1 = PromptHelper.PopulateCourseAdminField(
                 1,
-                result.CustomField1Prompt,
-                result.CustomField1Options
+                result.CourseAdminField1Prompt,
+                result.CourseAdminField1Options
             );
             if (prompt1 != null)
             {
@@ -244,8 +244,8 @@
 
             var prompt2 = PromptHelper.PopulateCourseAdminField(
                 2,
-                result.CustomField2Prompt,
-                result.CustomField2Options
+                result.CourseAdminField2Prompt,
+                result.CourseAdminField2Options
             );
             if (prompt2 != null)
             {
@@ -254,8 +254,8 @@
 
             var prompt3 = PromptHelper.PopulateCourseAdminField(
                 3,
-                result.CustomField3Prompt,
-                result.CustomField3Options
+                result.CourseAdminField3Prompt,
+                result.CourseAdminField3Options
             );
             if (prompt3 != null)
             {
@@ -279,8 +279,8 @@
 
             var prompt1 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 1,
-                result.CustomField1Prompt,
-                result.CustomField1Options,
+                result.CourseAdminField1Prompt,
+                result.CourseAdminField1Options,
                 delegateCourseInfo.Answer1
             );
             if (prompt1 != null)
@@ -290,8 +290,8 @@
 
             var prompt2 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 2,
-                result.CustomField2Prompt,
-                result.CustomField2Options,
+                result.CourseAdminField2Prompt,
+                result.CourseAdminField2Options,
                 delegateCourseInfo.Answer2
             );
             if (prompt2 != null)
@@ -301,8 +301,8 @@
 
             var prompt3 = PromptHelper.PopulateCourseAdminFieldWithAnswer(
                 3,
-                result.CustomField3Prompt,
-                result.CustomField3Options,
+                result.CourseAdminField3Prompt,
+                result.CourseAdminField3Options,
                 delegateCourseInfo.Answer3
             );
             if (prompt3 != null)
@@ -327,8 +327,8 @@
 
             var prompt1 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 1,
-                result.CustomField1Prompt,
-                result.CustomField1Options
+                result.CourseAdminField1Prompt,
+                result.CourseAdminField1Options
             );
             if (prompt1 != null)
             {
@@ -337,8 +337,8 @@
 
             var prompt2 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 2,
-                result.CustomField2Prompt,
-                result.CustomField2Options
+                result.CourseAdminField2Prompt,
+                result.CourseAdminField2Options
             );
             if (prompt2 != null)
             {
@@ -347,8 +347,8 @@
 
             var prompt3 = PromptHelper.GetBaseCourseAdminFieldWithResponseCountsModel(
                 3,
-                result.CustomField3Prompt,
-                result.CustomField3Options
+                result.CourseAdminField3Prompt,
+                result.CourseAdminField3Options
             );
             if (prompt3 != null)
             {

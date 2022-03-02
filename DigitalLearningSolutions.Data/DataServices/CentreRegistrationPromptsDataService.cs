@@ -38,24 +38,24 @@
             var result = connection.Query<CentreRegistrationPromptsResult>(
                 @"SELECT
 	                    c.CentreID,
-	                    cp1.CustomPrompt AS CustomField1Prompt,
-	                    c.F1Options AS CustomField1Options,
-	                    c.F1Mandatory AS CustomField1Mandatory,
-	                    cp2.CustomPrompt AS CustomField2Prompt,
-	                    c.F2Options AS CustomField2Options,
-	                    c.F2Mandatory AS CustomField2Mandatory,
-	                    cp3.CustomPrompt AS CustomField3Prompt,
-	                    c.F3Options AS CustomField3Options,
-	                    c.F3Mandatory AS CustomField3Mandatory,
-	                    cp4.CustomPrompt AS CustomField4Prompt,
-	                    c.F4Options AS CustomField4Options,
-	                    c.F4Mandatory AS CustomField4Mandatory,
-	                    cp5.CustomPrompt AS CustomField5Prompt,
-	                    c.F5Options AS CustomField5Options,
-	                    c.F5Mandatory AS CustomField5Mandatory,
-	                    cp6.CustomPrompt AS CustomField6Prompt,
-	                    c.F6Options AS CustomField6Options,
-	                    c.F6Mandatory AS CustomField6Mandatory
+	                    cp1.CustomPrompt AS CentreRegistrationPrompt1Prompt,
+	                    c.F1Options AS CentreRegistrationPrompt1Options,
+	                    c.F1Mandatory AS CentreRegistrationPrompt1Mandatory,
+	                    cp2.CustomPrompt AS CentreRegistrationPrompt2Prompt,
+	                    c.F2Options AS CentreRegistrationPrompt2Options,
+	                    c.F2Mandatory AS CentreRegistrationPrompt2Mandatory,
+	                    cp3.CustomPrompt AS CentreRegistrationPrompt3Prompt,
+	                    c.F3Options AS CentreRegistrationPrompt3Options,
+	                    c.F3Mandatory AS CentreRegistrationPrompt3Mandatory,
+	                    cp4.CustomPrompt AS CentreRegistrationPrompt4Prompt,
+	                    c.F4Options AS CentreRegistrationPrompt4Options,
+	                    c.F4Mandatory AS CentreRegistrationPrompt4Mandatory,
+	                    cp5.CustomPrompt AS CentreRegistrationPrompt5Prompt,
+	                    c.F5Options AS CentreRegistrationPrompt5Options,
+	                    c.F5Mandatory AS CentreRegistrationPrompt5Mandatory,
+	                    cp6.CustomPrompt AS CentreRegistrationPrompt6Prompt,
+	                    c.F6Options AS CentreRegistrationPrompt6Options,
+	                    c.F6Mandatory AS CentreRegistrationPrompt6Mandatory
                     FROM
 	                    Centres c
                     LEFT JOIN CustomPrompts cp1

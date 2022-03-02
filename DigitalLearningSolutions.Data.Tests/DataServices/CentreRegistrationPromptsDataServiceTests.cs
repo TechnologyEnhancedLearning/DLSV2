@@ -48,8 +48,8 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    centreRegistrationPrompts.CustomField1Mandatory.Should().BeFalse();
-                    centreRegistrationPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                    centreRegistrationPrompts.CentreRegistrationPrompt1Mandatory.Should().BeFalse();
+                    centreRegistrationPrompts.CentreRegistrationPrompt1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
@@ -87,9 +87,9 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    centreRegistrationPrompts.CustomField1Prompt.Should().BeEquivalentTo(customPrompt);
-                    centreRegistrationPrompts.CustomField1Mandatory.Should().BeFalse();
-                    centreRegistrationPrompts.CustomField1Options.Should().BeEquivalentTo(options);
+                    centreRegistrationPrompts.CentreRegistrationPrompt1Prompt.Should().BeEquivalentTo(customPrompt);
+                    centreRegistrationPrompts.CentreRegistrationPrompt1Mandatory.Should().BeFalse();
+                    centreRegistrationPrompts.CentreRegistrationPrompt1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally

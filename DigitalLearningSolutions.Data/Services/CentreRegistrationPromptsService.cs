@@ -178,9 +178,9 @@
 
             var prompt1 = PromptHelper.PopulateCentreRegistrationPrompt(
                 1,
-                result.CustomField1Prompt,
-                result.CustomField1Options,
-                result.CustomField1Mandatory
+                result.CentreRegistrationPrompt1Prompt,
+                result.CentreRegistrationPrompt1Options,
+                result.CentreRegistrationPrompt1Mandatory
             );
             if (prompt1 != null)
             {
@@ -189,9 +189,9 @@
 
             var prompt2 = PromptHelper.PopulateCentreRegistrationPrompt(
                 2,
-                result.CustomField2Prompt,
-                result.CustomField2Options,
-                result.CustomField2Mandatory
+                result.CentreRegistrationPrompt2Prompt,
+                result.CentreRegistrationPrompt2Options,
+                result.CentreRegistrationPrompt2Mandatory
             );
             if (prompt2 != null)
             {
@@ -200,9 +200,9 @@
 
             var prompt3 = PromptHelper.PopulateCentreRegistrationPrompt(
                 3,
-                result.CustomField3Prompt,
-                result.CustomField3Options,
-                result.CustomField3Mandatory
+                result.CentreRegistrationPrompt3Prompt,
+                result.CentreRegistrationPrompt3Options,
+                result.CentreRegistrationPrompt3Mandatory
             );
             if (prompt3 != null)
             {
@@ -211,9 +211,9 @@
 
             var prompt4 = PromptHelper.PopulateCentreRegistrationPrompt(
                 4,
-                result.CustomField4Prompt,
-                result.CustomField4Options,
-                result.CustomField4Mandatory
+                result.CentreRegistrationPrompt4Prompt,
+                result.CentreRegistrationPrompt4Options,
+                result.CentreRegistrationPrompt4Mandatory
             );
             if (prompt4 != null)
             {
@@ -222,9 +222,9 @@
 
             var prompt5 = PromptHelper.PopulateCentreRegistrationPrompt(
                 5,
-                result.CustomField5Prompt,
-                result.CustomField5Options,
-                result.CustomField5Mandatory
+                result.CentreRegistrationPrompt5Prompt,
+                result.CentreRegistrationPrompt5Options,
+                result.CentreRegistrationPrompt5Mandatory
             );
             if (prompt5 != null)
             {
@@ -233,9 +233,9 @@
 
             var prompt6 = PromptHelper.PopulateCentreRegistrationPrompt(
                 6,
-                result.CustomField6Prompt,
-                result.CustomField6Options,
-                result.CustomField6Mandatory
+                result.CentreRegistrationPrompt6Prompt,
+                result.CentreRegistrationPrompt6Options,
+                result.CentreRegistrationPrompt6Mandatory
             );
             if (prompt6 != null)
             {
@@ -259,9 +259,9 @@
 
             var prompt1 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 1,
-                result.CustomField1Prompt,
-                result.CustomField1Options,
-                result.CustomField1Mandatory,
+                result.CentreRegistrationPrompt1Prompt,
+                result.CentreRegistrationPrompt1Options,
+                result.CentreRegistrationPrompt1Mandatory,
                 delegateUser.Answer1
             );
             if (prompt1 != null)
@@ -271,9 +271,9 @@
 
             var prompt2 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 2,
-                result.CustomField2Prompt,
-                result.CustomField2Options,
-                result.CustomField2Mandatory,
+                result.CentreRegistrationPrompt2Prompt,
+                result.CentreRegistrationPrompt2Options,
+                result.CentreRegistrationPrompt2Mandatory,
                 delegateUser.Answer2
             );
             if (prompt2 != null)
@@ -283,9 +283,9 @@
 
             var prompt3 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 3,
-                result.CustomField3Prompt,
-                result.CustomField3Options,
-                result.CustomField3Mandatory,
+                result.CentreRegistrationPrompt3Prompt,
+                result.CentreRegistrationPrompt3Options,
+                result.CentreRegistrationPrompt3Mandatory,
                 delegateUser.Answer3
             );
             if (prompt3 != null)
@@ -295,9 +295,9 @@
 
             var prompt4 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 4,
-                result.CustomField4Prompt,
-                result.CustomField4Options,
-                result.CustomField4Mandatory,
+                result.CentreRegistrationPrompt4Prompt,
+                result.CentreRegistrationPrompt4Options,
+                result.CentreRegistrationPrompt4Mandatory,
                 delegateUser.Answer4
             );
             if (prompt4 != null)
@@ -307,9 +307,9 @@
 
             var prompt5 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 5,
-                result.CustomField5Prompt,
-                result.CustomField5Options,
-                result.CustomField5Mandatory,
+                result.CentreRegistrationPrompt5Prompt,
+                result.CentreRegistrationPrompt5Options,
+                result.CentreRegistrationPrompt5Mandatory,
                 delegateUser.Answer5
             );
             if (prompt5 != null)
@@ -319,9 +319,9 @@
 
             var prompt6 = PromptHelper.PopulateCentreRegistrationPromptWithAnswer(
                 6,
-                result.CustomField6Prompt,
-                result.CustomField6Options,
-                result.CustomField6Mandatory,
+                result.CentreRegistrationPrompt6Prompt,
+                result.CentreRegistrationPrompt6Options,
+                result.CentreRegistrationPrompt6Mandatory,
                 delegateUser.Answer6
             );
             if (prompt6 != null)

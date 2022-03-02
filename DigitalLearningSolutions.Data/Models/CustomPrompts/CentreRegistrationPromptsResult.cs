@@ -4,28 +4,28 @@
     {
         public int CentreId { get; set; }
 
-        public string? CustomField1Prompt { get; set; }
-        public string? CustomField1Options { get; set; }
-        public bool CustomField1Mandatory { get; set; }
+        public string? CentreRegistrationPrompt1Prompt { get; set; }
+        public string? CentreRegistrationPrompt1Options { get; set; }
+        public bool CentreRegistrationPrompt1Mandatory { get; set; }
 
-        public string? CustomField2Prompt { get; set; }
-        public string? CustomField2Options { get; set; }
-        public bool CustomField2Mandatory { get; set; }
+        public string? CentreRegistrationPrompt2Prompt { get; set; }
+        public string? CentreRegistrationPrompt2Options { get; set; }
+        public bool CentreRegistrationPrompt2Mandatory { get; set; }
 
-        public string? CustomField3Prompt { get; set; }
-        public string? CustomField3Options { get; set; }
-        public bool CustomField3Mandatory { get; set; }
+        public string? CentreRegistrationPrompt3Prompt { get; set; }
+        public string? CentreRegistrationPrompt3Options { get; set; }
+        public bool CentreRegistrationPrompt3Mandatory { get; set; }
 
-        public string? CustomField4Prompt { get; set; }
-        public string? CustomField4Options { get; set; }
-        public bool CustomField4Mandatory { get; set; }
+        public string? CentreRegistrationPrompt4Prompt { get; set; }
+        public string? CentreRegistrationPrompt4Options { get; set; }
+        public bool CentreRegistrationPrompt4Mandatory { get; set; }
 
-        public string? CustomField5Prompt { get; set; }
-        public string? CustomField5Options { get; set; }
-        public bool CustomField5Mandatory { get; set; }
+        public string? CentreRegistrationPrompt5Prompt { get; set; }
+        public string? CentreRegistrationPrompt5Options { get; set; }
+        public bool CentreRegistrationPrompt5Mandatory { get; set; }
 
-        public string? CustomField6Prompt { get; set; }
-        public string? CustomField6Options { get; set; }
-        public bool CustomField6Mandatory { get; set; }
+        public string? CentreRegistrationPrompt6Prompt { get; set; }
+        public string? CentreRegistrationPrompt6Options { get; set; }
+        public bool CentreRegistrationPrompt6Mandatory { get; set; }
     }
 }

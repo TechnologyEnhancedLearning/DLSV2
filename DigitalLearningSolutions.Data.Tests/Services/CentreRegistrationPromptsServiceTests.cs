@@ -45,8 +45,8 @@
                 .Returns
                 (
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Custom Prompt",
-                        customField1Options: null
+                        centreRegistrationPrompt1Prompt: "Custom Prompt",
+                        centreRegistrationPrompt1Options: null
                     )
                 );
 
@@ -107,8 +107,8 @@
                 .Returns
                 (
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Custom Prompt",
-                        customField1Options: null
+                        centreRegistrationPrompt1Prompt: "Custom Prompt",
+                        centreRegistrationPrompt1Options: null
                     )
                 );
 
@@ -145,8 +145,8 @@
             A.CallTo(() => centreRegistrationPromptsDataService.GetCentreRegistrationPromptsByCentreId(29))
                 .Returns(
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Custom Prompt",
-                        customField1Options: null
+                        centreRegistrationPrompt1Prompt: "Custom Prompt",
+                        centreRegistrationPrompt1Options: null
                     )
                 );
 
@@ -237,12 +237,12 @@
                 .Returns
                 (
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Prompt",
-                        customField2Prompt: "Prompt",
-                        customField3Prompt: null,
-                        customField4Prompt: null,
-                        customField5Prompt: null,
-                        customField6Prompt: null
+                        centreRegistrationPrompt1Prompt: "Prompt",
+                        centreRegistrationPrompt2Prompt: "Prompt",
+                        centreRegistrationPrompt3Prompt: null,
+                        centreRegistrationPrompt4Prompt: null,
+                        centreRegistrationPrompt5Prompt: null,
+                        centreRegistrationPrompt6Prompt: null
                     )
                 );
 
@@ -269,12 +269,12 @@
                 .Returns
                 (
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Prompt",
-                        customField2Prompt: null,
-                        customField3Prompt: "Prompt",
-                        customField4Prompt: "Prompt",
-                        customField5Prompt: "Prompt",
-                        customField6Prompt: null
+                        centreRegistrationPrompt1Prompt: "Prompt",
+                        centreRegistrationPrompt2Prompt: null,
+                        centreRegistrationPrompt3Prompt: "Prompt",
+                        centreRegistrationPrompt4Prompt: "Prompt",
+                        centreRegistrationPrompt5Prompt: "Prompt",
+                        centreRegistrationPrompt6Prompt: null
                     )
                 );
 
@@ -301,12 +301,12 @@
                 .Returns
                 (
                     PromptsTestHelper.GetDefaultCentreRegistrationPromptsResult(
-                        customField1Prompt: "Prompt",
-                        customField2Prompt: "Prompt",
-                        customField3Prompt: "Prompt",
-                        customField4Prompt: "Prompt",
-                        customField5Prompt: "Prompt",
-                        customField6Prompt: "Prompt"
+                        centreRegistrationPrompt1Prompt: "Prompt",
+                        centreRegistrationPrompt2Prompt: "Prompt",
+                        centreRegistrationPrompt3Prompt: "Prompt",
+                        centreRegistrationPrompt4Prompt: "Prompt",
+                        centreRegistrationPrompt5Prompt: "Prompt",
+                        centreRegistrationPrompt6Prompt: "Prompt"
                     )
                 );
 
