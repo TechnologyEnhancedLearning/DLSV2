@@ -11,10 +11,12 @@
             FullName = delegateUser.FirstName + " " + delegateUser.LastName;
             Email = delegateUser.EmailAddress;
             DateRegistered = delegateUser.DateRegistered;
+            ProfessionalRegistrationNumber = delegateUser.ProfessionalRegistrationNumber;
         }
         public int Id { get; set; }
         public string FullName { get; set; }
         public string? Email { get; set; }
         public DateTime? DateRegistered { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
     }
 }
