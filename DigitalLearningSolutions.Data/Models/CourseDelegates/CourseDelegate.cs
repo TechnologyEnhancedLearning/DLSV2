@@ -19,6 +19,9 @@
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
+        public string? Answer1 { get; set; }
+        public string? Answer2 { get; set; }
+        public string? Answer3 { get; set; }
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public int CustomisationId { get; set; }

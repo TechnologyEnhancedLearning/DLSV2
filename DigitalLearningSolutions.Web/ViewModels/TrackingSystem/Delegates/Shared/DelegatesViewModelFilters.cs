@@ -47,7 +47,7 @@
                     FilteringHelper.BuildFilterValueString(
                         filterValueName,
                         filterValueName,
-                        FilteringHelper.EmptyValue.ToString()
+                        FilteringHelper.EmptyValue
                     ),
                     FilterStatus.Default
                 )
@@ -77,7 +77,7 @@
             var filterValueName =
                 CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
             var propertyValue = string.IsNullOrEmpty(customField.Answer)
-                ? FilteringHelper.EmptyValue.ToString()
+                ? FilteringHelper.EmptyValue
                 : customField.Answer;
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
