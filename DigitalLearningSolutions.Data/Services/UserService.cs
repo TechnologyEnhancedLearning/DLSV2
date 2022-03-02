@@ -106,7 +106,7 @@ namespace DigitalLearningSolutions.Data.Services
             return (adminUser, delegateUsers);
         }
 
-        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string emailAddress)
+        public (AdminUser? adminUser, List<DelegateUser> delegateUsers) GetUsersByEmailAddress(string? emailAddress)
         {
             if (string.IsNullOrWhiteSpace(emailAddress))
             {
@@ -352,11 +352,7 @@ namespace DigitalLearningSolutions.Data.Services
         )
         {
             var delegateUser = userDataService.GetDelegateUserById(editDelegateDetailsData.DelegateId);
-            var (adminUser, delegateUsers) = GetUsersByEmailAddress(delegateUser!.EmailAddress!);
-            if (delegateUsers.Count == 0)
-            {
-                delegateUsers.Add(delegateUser);
-            }
+            var (adminUser, delegateUsers) = GetUsersByEmailAddress(delegateUser!.EmailAddress);
 
             if (adminUser != null)
             {
