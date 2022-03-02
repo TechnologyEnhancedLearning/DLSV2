@@ -22,7 +22,7 @@
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
-            IsNominatedSupervisor = adminUser?.IsNominatedSupervisor ?? false;
+            AdminUser = adminUser;
             CentreCustomPrompts = centreCustomPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
@@ -49,7 +49,13 @@
         };
 
         public CentreCustomPrompts CentreCustomPrompts { get; set; }
-        public bool IsNominatedSupervisor { get; set; }
+        public bool IsNominatedSupervisor
+        {
+            get
+            {
+                return AdminUser?.IsSupervisor == true ? false : AdminUser?.IsNominatedSupervisor ?? false;
+            }
+        }
 
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
@@ -58,5 +64,7 @@
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmail { get; set; }
+
+        private AdminUser AdminUser;
     }
 }
