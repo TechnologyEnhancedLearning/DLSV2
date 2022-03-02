@@ -19,14 +19,14 @@
             int groupId,
             string groupName,
             string? searchString,
-            string? filterBy
+            string? existingFilterString
         ) : base(
             searchString,
             page,
             true,
             DefaultSortByOptions.Name.PropertyName,
             GenericSortingHelper.Ascending,
-            filterBy
+            existingFilterString
         )
         {
             var searchedItems = GenericSearchHelper.SearchItems(delegateUserCards.AsQueryable(), SearchString);

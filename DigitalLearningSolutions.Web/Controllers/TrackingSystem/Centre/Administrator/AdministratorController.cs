@@ -48,15 +48,15 @@
         [Route("{page=1:int}")]
         public IActionResult Index(
             string? searchString = null,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1,
             int? itemsPerPage = null
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 AdminFilterCookieName
             );
@@ -73,13 +73,13 @@
                 adminUsersAtCentre,
                 categories,
                 searchString,
-                filterBy,
+                existingFilterString,
                 page,
                 loggedInAdminUser!,
                 itemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(AdminFilterCookieName, existingFilterString);
 
             return View(model);
         }

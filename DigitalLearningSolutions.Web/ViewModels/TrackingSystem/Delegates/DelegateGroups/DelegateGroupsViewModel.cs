@@ -15,9 +15,9 @@
             string searchString,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int page
-        ) : base(searchString, page, true, sortBy, sortDirection, filterBy)
+        ) : base(searchString, page, true, sortBy, sortDirection, existingFilterString)
         {
             var sortedItems = GenericSortingHelper.SortAllItems(
                 groups.AsQueryable(),
@@ -25,7 +25,7 @@
                 sortDirection
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);

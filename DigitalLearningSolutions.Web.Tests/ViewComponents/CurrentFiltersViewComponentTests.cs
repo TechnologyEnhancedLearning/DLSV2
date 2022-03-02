@@ -52,7 +52,7 @@
                 new AppliedFilterViewModel(
                     AdminRoleFilterOptions.CentreAdministrator.DisplayText,
                     "Role",
-                    AdminRoleFilterOptions.CentreAdministrator.FilterValue
+                    AdminRoleFilterOptions.CentreAdministrator.NewFilterToAdd
                 ),
                 new AppliedFilterViewModel("Word", "Category", "CategoryName|CategoryName|Word"),
             };

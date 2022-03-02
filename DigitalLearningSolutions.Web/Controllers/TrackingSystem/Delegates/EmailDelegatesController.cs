@@ -45,14 +45,14 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
         [HttpGet]
         public IActionResult Index(
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             bool selectAll = false
         )
         {
-            var newFilterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            var newFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 EmailDelegateFilterCookieName
             );
@@ -64,31 +64,31 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 delegateUsers,
                 jobGroups,
                 customPrompts,
-                newFilterBy,
+                newFilterString,
                 selectAll
             );
 
-            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, newFilterBy);
+            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, newFilterString);
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Index(EmailDelegatesViewModel model, string? filterBy = null, string? filterValue = null)
+        public IActionResult Index(EmailDelegatesViewModel model, string? existingFilterString = null, string? newFilterToAdd = null)
         {
             var delegateUsers = GetDelegateUserCards();
 
             if (!ModelState.IsValid)
             {
-                var newFilterBy = FilteringHelper.GetFilterBy(
-                    filterBy,
-                    filterValue,
+                var newFilterString = FilteringHelper.GetFilterString(
+                    existingFilterString,
+                    newFilterToAdd,
                     Request,
                     EmailDelegateFilterCookieName
                 );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(User.GetCentreId());
-                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterBy)
+                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterString)
                 {
                     SelectedDelegateIds = model.SelectedDelegateIds,
                     Day = model.Day,

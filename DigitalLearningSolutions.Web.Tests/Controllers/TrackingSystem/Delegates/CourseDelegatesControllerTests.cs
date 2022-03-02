@@ -129,7 +129,7 @@
             // Then
             using (new AssertionScope())
             {
-                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.FilterBy.Should()
+                result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.ExistingFilterString.Should()
                     .Be("AccountStatus|Active|true");
                 result.As<ViewResult>().Model.As<CourseDelegatesViewModel>().CourseDetails!.Delegates.Should()
                     .HaveCount(1);

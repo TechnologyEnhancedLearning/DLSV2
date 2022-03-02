@@ -15,7 +15,7 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
             string sortDirection = GenericSortingHelper.Ascending
         );
     }
@@ -58,13 +58,13 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
             string sortDirection = GenericSortingHelper.Ascending
         )
         {
             using var workbook = new XLWorkbook();
 
-            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, filterBy, sortDirection);
+            PopulateCourseDelegatesSheetForCourse(workbook, customisationId, centreId, sortBy, filterString, sortDirection);
 
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
@@ -76,7 +76,7 @@
             int customisationId,
             int centreId,
             string? sortBy,
-            string? filterBy,
+            string? filterString,
             string sortDirection
         )
         {
@@ -87,7 +87,7 @@
             var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
                 .ToList();
 
-            var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterBy).ToList();
+            var filteredCourseDelegates = FilteringHelper.FilterItems(courseDelegates.AsQueryable(), filterString).ToList();
             var sortedCourseDelegates =
                 GenericSortingHelper.SortAllItems(
                     filteredCourseDelegates.AsQueryable(),

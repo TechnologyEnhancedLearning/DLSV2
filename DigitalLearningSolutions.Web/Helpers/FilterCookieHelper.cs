@@ -7,13 +7,13 @@
     {
         private static readonly DateTimeOffset CookieExpiry = DateTimeOffset.UtcNow.AddDays(30);
 
-        public static void UpdateOrDeleteFilterCookie(this HttpResponse response, string cookieName, string? filterBy)
+        public static void UpdateOrDeleteFilterCookie(this HttpResponse response, string cookieName, string? existingFilterString)
         {
-            if (filterBy != null)
+            if (existingFilterString != null)
             {
                 response.Cookies.Append(
                     cookieName,
-                    filterBy,
+                    existingFilterString,
                     new CookieOptions
                     {
                         Expires = CookieExpiry

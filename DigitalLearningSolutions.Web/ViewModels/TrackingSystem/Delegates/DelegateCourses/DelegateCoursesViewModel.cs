@@ -13,7 +13,7 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int page,
             int? itemsPerPage
         ) : base(
@@ -22,7 +22,7 @@
             true,
             sortBy,
             sortDirection,
-            filterBy,
+            existingFilterString,
             itemsPerPage ?? DefaultItemsPerPage,
             "Search courses"
         )

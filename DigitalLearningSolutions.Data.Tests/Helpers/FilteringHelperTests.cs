@@ -10,7 +10,7 @@
 
     public class FilteringHelperTests
     {
-        private const string FilterByAlphaBravoCharlie = "Group|Name|Alpha╡Group|Name|Bravo╡Group|Name|Charlie";
+        private const string FilterStringAlphaBravoCharlie = "Group|Name|Alpha╡Group|Name|Bravo╡Group|Name|Charlie";
         private const string CookieName = "TestFilterCookie";
         private static readonly SortableItem ItemA1 = new SortableItem("a", 1);
         private static readonly SortableItem ItemA3 = new SortableItem("a", 3);
@@ -29,10 +29,10 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            var filterBy = "Name|Name|a";
+            const string filterString = "Name|Name|a";
 
             // When
-            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
@@ -43,10 +43,10 @@
         {
             // Given
             var expectedItems = new[] { ItemA1 }.AsQueryable();
-            var filterBy = "Name|Name|a╡Number|Number|1";
+            const string filterString = "Name|Name|a╡Number|Number|1";
 
             // When
-            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
@@ -57,10 +57,10 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3, ItemB2 }.AsQueryable();
-            var filterBy = "Group|Name|a╡Group|Name|b";
+            const string filterString = "Group|Name|a╡Group|Name|b";
 
             // When
-            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
@@ -71,10 +71,10 @@
         {
             // Given
             var expectedItems = new[] { ItemA1, ItemA3 }.AsQueryable();
-            var filterBy = "Group|Name|a╡Group|Name|a";
+            const string filterString = "Group|Name|a╡Group|Name|a";
 
             // When
-            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
@@ -85,124 +85,127 @@
         {
             // Given
             var expectedItems = new[] { ItemA3 }.AsQueryable();
-            var filterBy = "Group|Name|a╡Group|Name|b╡Number|Number|3";
+            const string filterString = "Group|Name|a╡Group|Name|b╡Number|Number|3";
 
             // When
-            var result = FilteringHelper.FilterItems(InputItems, filterBy);
+            var result = FilteringHelper.FilterItems(InputItems, filterString);
 
             // Then
             result.Should().BeEquivalentTo(expectedItems);
         }
 
         [Test]
-        public void AddNewFilterToFilterBy_doesnt_append_with_null_new_filter()
+        public void AddNewFilterToFilterString_doesnt_append_with_null_new_filter()
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy("Test", null);
+            var result = FilteringHelper.AddNewFilterToFilterString("Test", null);
 
             // Then
             result.Should().Be("Test");
         }
 
         [TestCase("Test", "Test")]
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|Bravo")]
-        public void AddNewFilterToFilterBy_doesnt_append_with_new_filter_already_in_filterBy(
-            string filterBy,
-            string newFilterValue
+        [TestCase(FilterStringAlphaBravoCharlie, "Group|Name|Bravo")]
+        public void AddNewFilterToFilterString_doesnt_append_with_new_filter_already_in_filterString(
+            string filterString,
+            string newFilterToAdd
         )
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy(filterBy, newFilterValue);
+            var result = FilteringHelper.AddNewFilterToFilterString(filterString, newFilterToAdd);
 
             // Then
-            result.Should().Be(filterBy);
+            result.Should().Be(filterString);
         }
 
         [Test]
-        public void AddNewFilterToFilterBy_returns_new_filter_if_filterBy_is_null()
+        public void AddNewFilterToFilterString_returns_new_filter_if_existingFilterString_is_null()
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy(null, "Test");
+            var result = FilteringHelper.AddNewFilterToFilterString(null, "Test");
 
             // Then
             result.Should().Be("Test");
         }
 
         [Test]
-        public void AddNewFilterToFilterBy_appends_new_filter()
+        public void AddNewFilterToFilterString_appends_new_filter()
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy("Test", "Filter");
+            var result = FilteringHelper.AddNewFilterToFilterString("Test", "Filter");
 
             // Then
             result.Should().Be("Test╡Filter");
         }
 
-        [TestCase(FilterByAlphaBravoCharlie, "Group|Name|A")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|B")]
-        [TestCase(FilterByAlphaBravoCharlie, "p|Name|Charlie")]
-        public void AddNewFilterToFilterBy_appends_new_filter_even_if_substring(string filterBy, string newFilterValue)
+        [TestCase(FilterStringAlphaBravoCharlie, "Group|Name|A")]
+        [TestCase(FilterStringAlphaBravoCharlie, "p|Name|B")]
+        [TestCase(FilterStringAlphaBravoCharlie, "p|Name|Charlie")]
+        public void AddNewFilterToFilterString_appends_new_filter_even_if_substring(
+            string filterString,
+            string newFilterToAdd
+        )
         {
             // When
-            var result = FilteringHelper.AddNewFilterToFilterBy(filterBy, newFilterValue);
+            var result = FilteringHelper.AddNewFilterToFilterString(filterString, newFilterToAdd);
 
             // Then
-            result.Should().Be($"{filterBy}╡{newFilterValue}");
+            result.Should().Be($"{filterString}╡{newFilterToAdd}");
         }
 
         [Test]
-        public void GetFilterBy_with_no_parameters_returns_cookie_value()
+        public void GetFilterString_with_no_parameters_returns_cookie_value()
         {
             // Given
-            const string CookieValue = "Cookie Value";
+            const string cookieValue = "Cookie Value";
             A.CallTo(() => httpRequest.Cookies.ContainsKey(CookieName)).Returns(true);
-            A.CallTo(() => httpRequest.Cookies[CookieName]).Returns(CookieValue);
+            A.CallTo(() => httpRequest.Cookies[CookieName]).Returns(cookieValue);
 
             // When
-            var result = FilteringHelper.GetFilterBy(null, null, httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString(null, null, httpRequest, CookieName);
 
             // Then
-            result.Should().Be(CookieValue);
+            result.Should().Be(cookieValue);
         }
 
         [Test]
-        public void GetFilterBy_with_no_parameters_and_no_cookies_returns_defaultFilterValue()
+        public void GetFilterString_with_no_parameters_and_no_cookies_returns_defaultFilterValue()
         {
             // When
-            var result = FilteringHelper.GetFilterBy(null, null, httpRequest, CookieName, "default-filter");
+            var result = FilteringHelper.GetFilterString(null, null, httpRequest, CookieName, "default-filter");
 
             // Then
             result.Should().Be("default-filter");
         }
 
         [Test]
-        public void GetFilterBy_with_CLEAR_filterBy_and_no_filterValue_returns_null()
+        public void GetFilterString_with_CLEAR_existingFilterString_and_no_filterValue_returns_null()
         {
             // When
-            var result = FilteringHelper.GetFilterBy("CLEAR", null, httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString("CLEAR", null, httpRequest, CookieName);
 
             // Then
             result.Should().BeNull();
         }
 
         [Test]
-        public void GetFilterBy_with_CLEAR_filterBy_and_set_filterValue_returns_filterValue()
+        public void GetFilterString_with_CLEAR_existingFilterString_and_set_filterValue_returns_filterValue()
         {
             // When
-            var result = FilteringHelper.GetFilterBy("CLEAR", "filter-value", httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString("CLEAR", "filter-value", httpRequest, CookieName);
 
             // Then
             result.Should().Be("filter-value");
         }
 
         [Test]
-        public void GetFilterBy_with_filterBy_and_filterValue_returns_combined_filter_by()
+        public void GetFilterString_with_existingFilterString_and_newFilterToAdd_returns_combined_filter_by()
         {
             // When
-            var result = FilteringHelper.GetFilterBy("filter-by", "filter-value", httpRequest, CookieName);
+            var result = FilteringHelper.GetFilterString("existing-filter-string", "filter-value", httpRequest, CookieName);
 
             // Then
-            result.Should().Be("filter-by╡filter-value");
+            result.Should().Be("existing-filter-string╡filter-value");
         }
     }
 }

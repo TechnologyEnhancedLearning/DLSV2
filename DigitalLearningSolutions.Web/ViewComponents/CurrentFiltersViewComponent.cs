@@ -12,7 +12,7 @@
             BaseSearchablePageViewModel searchablePageViewModel
         )
         {
-            var currentFilters = searchablePageViewModel.FilterBy?.Split(FilteringHelper.FilterSeparator).ToList() ??
+            var currentFilters = searchablePageViewModel.ExistingFilterString?.Split(FilteringHelper.FilterSeparator).ToList() ??
                                  new List<string>();
 
             var appliedFilters = currentFilters.Select(
@@ -49,7 +49,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
+            return filterOptions.First(filterOption => filterOption.NewFilterToAdd == currentFilter).DisplayText;
         }
 
         private static string GetFilterValue(
@@ -57,7 +57,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
+            return filterOptions.First(filterOption => filterOption.NewFilterToAdd == currentFilter).NewFilterToAdd;
         }
 
         private static bool FilterOptionsContainsFilter(
@@ -65,7 +65,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.Any(filterOption => filterOption.FilterValue == currentFilter);
+            return filterOptions.Any(filterOption => filterOption.NewFilterToAdd == currentFilter);
         }
     }
 }

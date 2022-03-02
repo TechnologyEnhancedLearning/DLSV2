@@ -57,14 +57,14 @@
         public IActionResult SelectDelegate(
             int groupId,
             string? searchString = null,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 AddGroupDelegateCookieName
             );
@@ -83,10 +83,10 @@
                 groupId,
                 groupName!,
                 searchString,
-                filterBy
+                existingFilterString
             );
 
-            Response.UpdateOrDeleteFilterCookie(AddGroupDelegateCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(AddGroupDelegateCookieName, existingFilterString);
             return View(model);
         }
 

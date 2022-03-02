@@ -85,85 +85,85 @@
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
             // When
             var result = administratorController.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
                 .Be("Role|IsCentreAdmin|true");
         }
 
         [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_filterBy()
+        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
         {
             // Given
-            const string filterBy = "Role|IsCmsManager|true";
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            const string existingFilterString = "Role|IsCmsManager|true";
+            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = administratorController.Index(filterBy: filterBy);
+            var result = administratorController.Index(existingFilterString: existingFilterString);
 
             // Then
-            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
-                .Be(filterBy);
+            result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
+                .Be(existingFilterString);
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string? existingFilterString = "CLEAR";
 
             // When
-            var result = administratorController.Index(filterBy: filterBy);
+            var result = administratorController.Index(existingFilterString: existingFilterString);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => httpResponse.Cookies.Delete("AdminFilter")).MustHaveHappened();
-                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
         }
 
         [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_add_new_cookie_value()
+        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_add_new_cookie_value()
         {
             // Given
-            const string? filterBy = null;
+            const string? existingFilterString = null;
             const string? newFilterValue = "Role|IsCmsManager|true";
 
             // When
-            var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
                     .Be(newFilterValue);
             }
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
         {
             // Given
-            const string? filterBy = "CLEAR";
+            const string? existingFilterString = "CLEAR";
             const string? newFilterValue = "Role|IsCmsManager|true";
 
             // When
-            var result = administratorController.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = administratorController.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => httpResponse.Cookies.Append("AdminFilter", newFilterValue, A<CookieOptions>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().FilterBy.Should()
+                result.As<ViewResult>().Model.As<CentreAdministratorsViewModel>().ExistingFilterString.Should()
                     .Be(newFilterValue);
             }
         }

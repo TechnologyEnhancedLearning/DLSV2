@@ -12,13 +12,13 @@
 
     public class EmailDelegatesViewModel : BaseSearchablePageViewModel, IValidatableObject
     {
-        public EmailDelegatesViewModel(string? filterBy) : base(
+        public EmailDelegatesViewModel(string? existingFilterString) : base(
             null,
             1,
             true,
             DelegateSortByOptions.RegistrationDate.PropertyName,
             GenericSortingHelper.Ascending,
-            filterBy,
+            existingFilterString,
             int.MaxValue
         ) { }
 
@@ -28,14 +28,14 @@
             IEnumerable<DelegateUserCard> delegateUsers,
             IEnumerable<(int id, string name)> jobGroups,
             IEnumerable<CustomPrompt> customPrompts,
-            string? filterBy,
+            string? existingFilterString,
             bool selectAll = false
-        ) : this(filterBy)
+        ) : this(existingFilterString)
         {
             Day = DateTime.Today.Day;
             Month = DateTime.Today.Month;
             Year = DateTime.Today.Year;
-            SetDelegates(delegateUsers, filterBy, selectAll);
+            SetDelegates(delegateUsers, existingFilterString, selectAll);
             SetFilters(jobGroups, customPrompts);
         }
 
@@ -67,9 +67,9 @@
             );
         }
 
-        private void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? filterBy, bool selectAll = false)
+        private void SetDelegates(IEnumerable<DelegateUserCard> delegateUsers, string? existingFilterString, bool selectAll = false)
         {
-            var filteredItems = FilteringHelper.FilterItems(delegateUsers.AsQueryable(), filterBy).ToList();
+            var filteredItems = FilteringHelper.FilterItems(delegateUsers.AsQueryable(), existingFilterString).ToList();
             Delegates = filteredItems.Select(
                 delegateUser =>
                 {
