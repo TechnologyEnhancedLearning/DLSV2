@@ -23,6 +23,7 @@
         {
             IsCentreAdmin = user.IsCentreAdmin;
             IsSupervisor = user.IsSupervisor;
+            IsNominatedSupervisor = user.IsNominatedSupervisor;
             IsTrainer = user.IsTrainer;
             IsContentCreator = user.IsContentCreator;
             ReturnPage = returnPage;
