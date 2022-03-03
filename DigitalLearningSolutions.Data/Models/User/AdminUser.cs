@@ -27,6 +27,7 @@
         public string? CategoryName { get; set; }
 
         public bool IsSupervisor { get; set; }
+        public bool IsNominatedSupervisor { get; set; }
 
         public bool IsTrainer { get; set; }
 
