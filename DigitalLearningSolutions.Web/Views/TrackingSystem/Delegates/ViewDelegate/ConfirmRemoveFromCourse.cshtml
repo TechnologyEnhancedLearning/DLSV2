@@ -14,8 +14,9 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">Remove delegate enrolment from @Model.CourseName</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">Remove enrolment</h1>
     <h2 class="nhsuk-heading-l word-break">Delegate: @Model.Name</h2>
+    <h2 class="nhsuk-heading-l word-break">Activity: @Model.CourseName</h2>
     <div class="nhsuk-form-group">
       <form asp-action="ExecuteRemoveFromCourse" asp-route-delegateId="@Model.DelegateId" asp-route-customisationId="@Model.CustomisationId">
         <fieldset class="nhsuk-fieldset" aria-describedby="example-hint">
@@ -24,11 +25,11 @@
               <input type="hidden" name="name" value="@Model.Name" />
               <input type="hidden" name="courseName" value="@Model.CourseName" />
               <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
-                                  label="I am sure that I want to remove @Model.Name from the @Model.CourseName course."
-                                  hint-text="This action will remove the course from the delegate's Current courses list and archive their progress." />
+                                  label="I am sure that I wish to remove this enrolment"
+                                  hint-text="This action will remove the activity from the delegate’s Current Activities list and archive their progress." />
             </div>
           </div>
-          <button class="nhsuk-button delete-button nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6" role="button" type="submit">Remove delegate</button>
+          <button class="nhsuk-button delete-button nhsuk-u-margin-top-4 nhsuk-u-margin-bottom-6" role="button" type="submit">Remove enrolment</button>
         </fieldset>
       </form>
       <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@cancelLinkRouteData" />
