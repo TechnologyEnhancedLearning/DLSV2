@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public abstract class User : BaseSearchableItem
     {

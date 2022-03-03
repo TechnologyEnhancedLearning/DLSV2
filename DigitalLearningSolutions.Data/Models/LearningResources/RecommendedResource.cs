@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.LearningResources
 {
     using DigitalLearningSolutions.Data.Models.External.LearningHubApiClient;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
 
     public class RecommendedResource : BaseSearchableItem
     {

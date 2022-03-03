@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using FuzzySharp;
     using FuzzySharp.SimilarityRatio;
     using FuzzySharp.SimilarityRatio.Scorer;
