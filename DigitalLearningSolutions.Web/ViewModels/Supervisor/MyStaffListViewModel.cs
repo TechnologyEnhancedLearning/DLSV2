@@ -8,10 +8,12 @@
     using System.ComponentModel.DataAnnotations;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Models.User;
 
     public class MyStaffListViewModel : BaseSearchablePageViewModel
     {
         public MyStaffListViewModel(
+            AdminUser adminUser,
             IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
             CentreRegistrationPrompts centreRegistrationPrompts,
             string? searchString,
@@ -20,6 +22,7 @@
             int page
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
+            AdminUser = adminUser;
             CentreRegistrationPrompts = centreRegistrationPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
@@ -33,7 +36,7 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
-        public MyStaffListViewModel() : this(Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
+        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
         {
 
         }
@@ -47,6 +50,14 @@
 
         public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
 
+        public bool IsNominatedSupervisor
+        {
+            get
+            {
+                return AdminUser?.IsSupervisor == true ? false : AdminUser?.IsNominatedSupervisor ?? false;
+            }
+        }
+
         public override bool NoDataFound => !SuperviseDelegateDetailViewModels.Any() && NoSearchOrFilter;
 
         [Required(ErrorMessage = "Enter an email address")]
@@ -54,5 +65,7 @@
         [EmailAddress(ErrorMessage = CommonValidationErrorMessages.InvalidEmail)]
         [NoWhitespace(CommonValidationErrorMessages.WhitespaceInEmail)]
         public string? DelegateEmail { get; set; }
+
+        private AdminUser AdminUser;
     }
 }

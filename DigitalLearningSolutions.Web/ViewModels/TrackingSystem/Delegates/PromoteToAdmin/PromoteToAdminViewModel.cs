@@ -25,6 +25,7 @@
 
             IsCentreAdmin = false;
             IsSupervisor = false;
+            IsNominatedSupervisor = false;
             IsTrainer = false;
             IsContentCreator = false;
             ContentManagementRole = ContentManagementRole.NoContentManagementRole;

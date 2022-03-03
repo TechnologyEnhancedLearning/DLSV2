@@ -34,6 +34,7 @@
                             ELSE cc.CategoryName
                         END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
+                        au.NominatedSupervisor AS IsNominatedSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage,
@@ -80,6 +81,7 @@
                             ELSE cc.CategoryName
                         END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
+                        au.NominatedSupervisor AS IsNominatedSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage,
@@ -124,6 +126,7 @@
                             ELSE cc.CategoryName
                         END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
+                        au.NominatedSupervisor AS IsNominatedSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage,
@@ -169,6 +172,7 @@
                             ELSE cc.CategoryName
                         END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
+                        au.NominatedSupervisor AS IsNominatedSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage,
@@ -214,6 +218,7 @@
             int adminId,
             bool isCentreAdmin,
             bool isSupervisor,
+            bool isNominatedSupervisor,
             bool isTrainer,
             bool isContentCreator,
             bool isContentManager,
@@ -226,6 +231,7 @@
                         SET
                             CentreAdmin = @isCentreAdmin,
                             Supervisor = @isSupervisor,
+                            NominatedSupervisor = @isNominatedSupervisor,
                             Trainer = @isTrainer,
                             ContentCreator = @isContentCreator,
                             ContentManager = @isContentManager,
@@ -236,6 +242,7 @@
                 {
                     isCentreAdmin,
                     isSupervisor,
+                    isNominatedSupervisor,
                     isTrainer,
                     isContentCreator,
                     isContentManager,
