@@ -785,7 +785,7 @@
             );
             var numberOfAdmins = CentreContractAdminUsageTestHelper.GetDefaultNumberOfAdministrators();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, true, true, true, true);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, true);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -811,7 +811,7 @@
 
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, true, true, true, importOnly);
+            var adminRoles = new AdminRoles(true, true, true, true, true, true, importOnly);
 
             // When
             userService.UpdateAdminUserPermissions(currentAdminUser.Id, adminRoles, 0);
@@ -840,7 +840,7 @@
             );
             var numberOfAdmins = GetFullCentreContractAdminUsage();
             GivenAdminDataReturned(numberOfAdmins, currentAdminUser);
-            var adminRoles = new AdminRoles(true, true, newIsContentCreator, newIsTrainer, true, newImportOnly);
+            var adminRoles = new AdminRoles(true, true, newIsContentCreator, true, newIsTrainer, true, newImportOnly);
 
             // Then
             Assert.Throws<AdminRoleFullException>(
@@ -1289,6 +1289,7 @@
                     adminId,
                     adminRoles.IsCentreAdmin,
                     adminRoles.IsSupervisor,
+                    adminRoles.IsNominatedSupervisor,
                     adminRoles.IsTrainer,
                     adminRoles.IsContentCreator,
                     adminRoles.IsContentManager,
@@ -1303,6 +1304,7 @@
             A.CallTo(
                 () => userDataService.UpdateAdminUserPermissions(
                     A<int>._,
+                    A<bool>._,
                     A<bool>._,
                     A<bool>._,
                     A<bool>._,

@@ -11,8 +11,10 @@
     {
         public const char Separator = '|';
         public const char FilterSeparator = '╡';
-        public const char EmptyValue = '╳';
+        public const string EmptyValue = "╳";
         public const string ClearString = "CLEAR";
+        public const string FreeTextBlankValue = "FREETEXTBLANKVALUE";
+        public const string FreeTextNotBlankValue = "FREETEXTNOTBLANKVALUE";
 
         public static string BuildFilterValueString(string group, string propertyName, string propertyValue)
         {
@@ -57,6 +59,29 @@
             return AddNewFilterToFilterBy(filterBy, filterValue);
         }
 
+        public static string? GetCategoryAndTopicFilterBy(
+            string? categoryFilterBy,
+            string? topicFilterBy
+        )
+        {
+            if (categoryFilterBy == null && topicFilterBy == null)
+            {
+                return null;
+            }
+
+            if (categoryFilterBy == null)
+            {
+                return topicFilterBy;
+            }
+
+            if (topicFilterBy == null)
+            {
+                return categoryFilterBy;
+            }
+
+            return topicFilterBy + FilterSeparator + categoryFilterBy;
+        }
+
         public static IEnumerable<T> FilterItems<T>(
             IQueryable<T> items,
             string? filterBy
@@ -86,9 +111,16 @@
         {
             var propertyType = typeof(T).GetProperty(propertyName)!.PropertyType;
             var propertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromString(propertyValueString);
-            return EmptyValue.ToString().Equals(propertyValue)
-                ? items.WhereNullOrEmpty(propertyName)
-                : items.Where(propertyName, propertyValue);
+            switch (propertyValue)
+            {
+                case EmptyValue:
+                case FreeTextBlankValue:
+                    return items.WhereNullOrEmpty(propertyName);
+                case FreeTextNotBlankValue:
+                    return items.Where(item => !items.WhereNullOrEmpty(propertyName).Contains(item));
+                default:
+                    return items.Where(propertyName, propertyValue);
+            }
         }
 
         private class AppliedFilter

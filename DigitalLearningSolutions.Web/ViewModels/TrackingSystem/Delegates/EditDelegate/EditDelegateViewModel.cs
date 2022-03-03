@@ -12,18 +12,18 @@
         public EditDelegateViewModel(
             DelegateUser delegateUser,
             IReadOnlyCollection<(int id, string name)> jobGroups,
-            List<EditCustomFieldViewModel> editCustomFieldViewModels
+            List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels
         ) : base(delegateUser, jobGroups)
         {
             DelegateId = delegateUser.Id;
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, delegateUser.JobGroupName);
-            CustomFields = editCustomFieldViewModels;
+            CustomFields = editDelegateRegistrationPromptViewModels;
         }
 
         public EditDelegateViewModel(
             EditDelegateFormData formData,
             IReadOnlyCollection<(int id, string name)> jobGroups,
-            List<EditCustomFieldViewModel> editCustomFieldViewModels,
+            List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
             int delegateId
         ) : base(formData)
         {
@@ -31,13 +31,13 @@
             var jobGroupName = jobGroups.Where(jg => jg.id == formData.JobGroupId).Select(jg => jg.name)
                 .SingleOrDefault();
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, jobGroupName);
-            CustomFields = editCustomFieldViewModels;
+            CustomFields = editDelegateRegistrationPromptViewModels;
         }
 
         public int DelegateId { get; }
 
         public IEnumerable<SelectListItem> JobGroups { get; }
 
-        public List<EditCustomFieldViewModel> CustomFields { get; }
+        public List<EditDelegateRegistrationPromptViewModel> CustomFields { get; }
     }
 }

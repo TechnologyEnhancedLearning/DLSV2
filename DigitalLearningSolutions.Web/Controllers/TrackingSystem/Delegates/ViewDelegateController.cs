@@ -21,7 +21,7 @@
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly PromptsService promptsService;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
@@ -29,14 +29,14 @@
 
         public ViewDelegateController(
             IUserDataService userDataService,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
             ICourseDataService courseDataService
         )
         {
             this.userDataService = userDataService;
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
@@ -48,7 +48,7 @@
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
             var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
-            var customFields = centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(centreId, delegateUser);
+            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
@@ -62,7 +62,7 @@
         {
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
 
-            string baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
+            var baseUrl = ConfigHelper.GetAppConfig().GetAppRootPath();
 
             passwordResetService.GenerateAndSendDelegateWelcomeEmail(
                 delegateUser.EmailAddress!,
@@ -102,7 +102,10 @@
                 DelegateId = delegateUser!.Id,
                 CustomisationId = customisationId,
                 CourseName = course!.CourseName,
-                Name = delegateUser.FullName,
+                Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
+                    delegateUser.FirstName,
+                    delegateUser.LastName
+                ),
                 Confirm = false,
             };
             return View("ConfirmRemoveFromCourse", model);

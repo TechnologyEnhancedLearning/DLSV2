@@ -1,7 +1,13 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Courses
 {
-    public class ApplicationDetails
+    public class ApplicationDetails : BaseSearchableItem
     {
+        public override string SearchableName
+        {
+            get => SearchableNameOverrideForFuzzySharp ?? ApplicationName;
+            set => SearchableNameOverrideForFuzzySharp = value;
+        }
+
         public int ApplicationId { get; set; }
         public string ApplicationName { get; set; }
         public string CategoryName { get; set; }

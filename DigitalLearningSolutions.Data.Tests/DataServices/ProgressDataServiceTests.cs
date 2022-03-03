@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Transactions;
+    using Dapper;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
@@ -389,6 +390,143 @@
                 result.Count.Should().Be(88);
                 result[0].Should().BeEquivalentTo(expectedRecordFromSessionsTable);
                 result[82].Should().BeEquivalentTo(expectedRecordFromAssessAttemptsTable);
+            }
+        }
+
+        [Test]
+        public void GetProgressByProgressId_returns_expected_progress()
+        {
+            // When
+            var result = progressDataService.GetProgressByProgressId(1);
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Should().NotBeNull();
+                result?.CandidateId.Should().Be(1);
+                result?.CustomisationId.Should().Be(100);
+                result?.ProgressId.Should().Be(1);
+                result?.Completed.Should().BeNull();
+                result?.RemovedDate.Should().BeNull();
+                result?.SupervisorAdminId.Should().Be(0);
+            }
+        }
+
+        [Test]
+        public void GetSectionProgressDataForProgressEntry_returns_expected_data()
+        {
+            // When
+            var result = progressDataService.GetSectionProgressDataForProgressEntry(15885).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count().Should().Be(9);
+                var first = result.First();
+
+                first.SectionId.Should().Be(74);
+                first.SectionName.Should().Be("Working with documents");
+                first.Completion.Should().Be(75);
+                first.TotalTime.Should().Be(5);
+                first.AverageTime.Should().Be(28);
+
+                first.PostLearningAssessPath.Should().Be("https://www.dls.nhs.uk/tracking/MOST/Word07Core/Assess/L2_Word_2007_Post_1.dcr");
+                first.IsAssessed.Should().BeTrue();
+                first.Attempts.Should().Be(0);
+                first.Outcome.Should().Be(0);
+                first.Passed.Should().BeTrue();
+
+                first.Tutorials.Should().BeNull();
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data()
+        {
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count().Should().Be(7);
+                var first = result.First();
+
+                first.TutorialName.Should().Be("Format characters");
+                first.TutorialStatus.Should().Be("Started");
+                first.TimeTaken.Should().Be(0);
+                first.AvgTime.Should().Be(7);
+                first.DiagnosticScore.Should().Be(4);
+                first.PossibleScore.Should().Be(4);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_overridden_average_time()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE tutorials
+                        SET OverrideTutorialMins = 1
+                        WHERE TutorialID = 53");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.AvgTime.Should().Be(1);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_zero_diagattempts()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE aspProgress
+                        SET DiagAttempts = 0
+                        WHERE aspProgressID = 3373869");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.DiagnosticScore.Should().Be(null);
+            }
+        }
+
+        [Test]
+        public void GetTutorialProgressDataForSection_returns_expected_data_for_diagstatus_false()
+        {
+            // Given
+            using var transaction = new TransactionScope();
+            connection.Execute(
+                @"UPDATE CustomisationTutorials
+                        SET DiagStatus = 0
+                        WHERE CusTutID = 324886");
+
+            // When
+            var result = progressDataService.GetTutorialProgressDataForSection(157704, 75).ToList();
+
+            // Then
+            using (new AssertionScope())
+            {
+                result.Count.Should().Be(7);
+                var first = result.First();
+
+                first.DiagnosticScore.Should().Be(null);
             }
         }
     }

@@ -1,0 +1,108 @@
+@using DigitalLearningSolutions.Web.Models.Enums
+@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress
+@model DetailedCourseProgressViewModel
+
+<link rel="stylesheet" href="@Url.Content("~/css/shared/headingButtons.css")" asp-append-version="true">
+
+@{
+  ViewData["Title"] = "Detailed progress";
+  var routeParamsForBackLink = new Dictionary<string, string?> {
+    { "progressId", Model.ProgressId.ToString() },
+    { "accessedVia", Model.AccessedVia.ToString() },
+  };
+}
+
+@section NavBreadcrumbs {
+  @if (Model.AccessedVia.Equals(DelegateProgressAccessRoute.CourseDelegates)) {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_CourseDelegatesProgressBreadcrumbs.cshtml" model="(Model.CustomisationId, Model.ProgressId)" />
+  } else {
+    <partial name="~/Views/TrackingSystem/Delegates/Shared/_ViewDelegateProgressBreadcrumbs.cshtml" model="(Model.DelegateId, Model.ProgressId)" />
+  }
+}
+
+<div class="nhsuk-grid-row">
+  <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-two-thirds">
+        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+      </div>
+      <div class="nhsuk-grid-column-one-third heading-button-group">
+        <a class="nhsuk-button nhsuk-button--secondary heading-button" role="button" href="@Model.ProgressDownloadUrl">
+          Download
+        </a>
+      </div>
+    </div>
+    <div class="nhsuk-card">
+      <div class="nhsuk-card__content basic-card-content">
+        <dl class="nhsuk-summary-list">
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Name
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.DelegateName
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Email
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.DelegateEmail" />
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Delegate ID
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.DelegateNumber
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Last access
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.LastUpdated
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Enrolled
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+              @Model.Enrolled
+            </dd>
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Complete By
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.CompleteBy" />
+          </div>
+          <div class="nhsuk-summary-list__row basic-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Completed
+            </dt>
+            <partial name="_SummaryFieldValue" model="@Model.Completed" />
+          </div>
+        </dl>
+      </div>
+    </div>
+    <div class="nhsuk-grid-row nhsuk-inset-text">
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l">
+        Overall diagnostic score:
+      </div>
+      <div class="nhsuk-grid-column-one-half nhsuk-body-l nhsuk-u-font-weight-bold word-break">
+        @(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")
+      </div>
+    </div>
+    @foreach (var section in Model.Sections) {
+      <partial name="_SectionProgress" model="section" />
+    }
+  </div>
+  <vc:back-link
+    link-text="Go back"
+    asp-controller="DelegateProgress"
+    asp-action="Index"
+    asp-all-route-data="@routeParamsForBackLink" />
+</div>

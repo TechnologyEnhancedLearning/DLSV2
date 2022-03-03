@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -12,6 +13,7 @@
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Frameworks))]
+    [SetSelectedTab(nameof(NavMenuTab.Frameworks))]
     public partial class FrameworksController : Controller
     {
         private readonly IFrameworkService frameworkService;

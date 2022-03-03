@@ -40,6 +40,12 @@
           @Model.DateRegistered?.ToShortDateString()
         </dd>
       </div>
+      <div class="nhsuk-summary-list__row basic-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+          Professional Registration Number
+        </dt>
+        <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+      </div>
     </dl>
 
     <form class="nhsuk-u-margin-bottom-5" asp-controller="DelegateApprovals" asp-action="RejectDelegate" method="post">

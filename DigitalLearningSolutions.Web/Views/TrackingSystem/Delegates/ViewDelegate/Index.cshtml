@@ -76,10 +76,10 @@
         <partial name="_SummaryFieldValue" model="@Model.DelegateInfo.JobGroup" />
       </div>
 
-      @foreach (CustomFieldViewModel customField in Model.DelegateInfo.CustomFields) {
+      @foreach (DelegateRegistrationPrompt delegateRegistrationPrompt in Model.DelegateInfo.DelegateRegistrationPrompts) {
         <div class="nhsuk-summary-list__row details-list-with-button__row">
-          <dt class="nhsuk-summary-list__key">@customField.CustomPrompt</dt>
-          <partial name="_SummaryFieldValue" model="@customField.Answer" />
+          <dt class="nhsuk-summary-list__key">@delegateRegistrationPrompt.Prompt</dt>
+          <partial name="_SummaryFieldValue" model="@delegateRegistrationPrompt.Answer" />
         </div>
       }
     </dl>

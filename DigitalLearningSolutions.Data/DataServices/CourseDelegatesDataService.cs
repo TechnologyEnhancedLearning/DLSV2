@@ -54,6 +54,9 @@
                         p.RemovedDate,
                         p.Completed,
                         p.CustomisationId,
+                        p.Answer1,
+                        p.Answer2,
+                        p.Answer3,
                         {AllAttemptsQuery},
                         {AttemptsPassedQuery}
                     FROM Candidates AS c

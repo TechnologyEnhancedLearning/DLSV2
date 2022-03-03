@@ -19,7 +19,7 @@
 
     public class RegistrationPromptsControllerTests
     {
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private HttpRequest httpRequest = null!;
         private RegistrationPromptsController registrationPromptsController = null!;
         private RegistrationPromptsController registrationPromptsControllerWithMockHttpContext = null!;
@@ -52,11 +52,11 @@
         [SetUp]
         public void Setup()
         {
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             userDataService = A.Fake<IUserDataService>();
 
             registrationPromptsController =
-                new RegistrationPromptsController(centreCustomPromptsService, userDataService)
+                new RegistrationPromptsController(centreRegistrationPromptsService, userDataService)
                     .WithDefaultContext()
                     .WithMockUser(true)
                     .WithMockTempData();
@@ -66,7 +66,7 @@
             const string cookieValue = "AddRegistrationPromptData";
 
             registrationPromptsControllerWithMockHttpContext =
-                new RegistrationPromptsController(centreCustomPromptsService, userDataService)
+                new RegistrationPromptsController(centreRegistrationPromptsService, userDataService)
                     .WithMockHttpContext(httpRequest, cookieName, cookieValue)
                     .WithMockUser(true)
                     .WithMockTempData();
@@ -94,7 +94,7 @@
             const string action = "save";
 
             A.CallTo(
-                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
+                () => centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -107,7 +107,7 @@
 
             // Then
             A.CallTo(
-                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
+                () => centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -125,7 +125,7 @@
             const string action = "addPrompt";
 
             A.CallTo(
-                () => centreCustomPromptsService.UpdateCustomPromptForCentre(
+                () => centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
                     1,
                     false,
@@ -355,7 +355,7 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSummary_calls_custom_prompt_service_and_redirects_to_index()
+        public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_index()
         {
             // Given
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
@@ -364,7 +364,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => centreCustomPromptsService.AddCustomPromptToCentre(
+                () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -379,7 +379,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => centreCustomPromptsService.AddCustomPromptToCentre(
+                    () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                         ControllerContextHelper.CentreId,
                         1,
                         true,
@@ -392,7 +392,7 @@
         }
 
         [Test]
-        public void AddRegistrationPromptSummary_calls_custom_prompt_service_and_redirects_to_error_on_failure()
+        public void AddRegistrationPromptSummary_calls_registration_prompt_service_and_redirects_to_error_on_failure()
         {
             // Given
             var initialPromptModel = new AddRegistrationPromptSelectPromptViewModel(1, true);
@@ -401,7 +401,7 @@
                 { SelectPromptViewModel = initialPromptModel, ConfigureAnswersViewModel = initialViewModel };
             registrationPromptsController.TempData.Set(initialTempData);
             A.CallTo(
-                () => centreCustomPromptsService.AddCustomPromptToCentre(
+                () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                     ControllerContextHelper.CentreId,
                     1,
                     true,
@@ -416,7 +416,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                    () => centreCustomPromptsService.AddCustomPromptToCentre(
+                    () => centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                         ControllerContextHelper.CentreId,
                         1,
                         true,

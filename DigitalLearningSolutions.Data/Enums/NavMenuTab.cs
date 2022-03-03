@@ -81,6 +81,21 @@
             nameof(System)
         );
 
+        public static readonly NavMenuTab Dashboard = new NavMenuTab(
+            15,
+            nameof(Dashboard)
+        );
+
+        public static readonly NavMenuTab Frameworks = new NavMenuTab(
+            16,
+            nameof(Frameworks)
+        );
+
+        public static readonly NavMenuTab RolesProfiles = new NavMenuTab(
+            17,
+            nameof(RolesProfiles)
+        );
+
         private NavMenuTab(int id, string name) : base(id, name) { }
 
         public static implicit operator NavMenuTab(string value)

@@ -327,6 +327,7 @@ namespace DigitalLearningSolutions.Data.Services
                 adminId,
                 adminRoles.IsCentreAdmin,
                 adminRoles.IsSupervisor,
+                adminRoles.IsNominatedSupervisor,
                 adminRoles.IsTrainer,
                 adminRoles.IsContentCreator,
                 adminRoles.IsContentManager,

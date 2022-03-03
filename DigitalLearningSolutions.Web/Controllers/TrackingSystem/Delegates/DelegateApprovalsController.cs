@@ -36,7 +36,7 @@
             var centreId = User.GetCentreId();
 
             var delegates = delegateApprovalsService
-                .GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(centreId)
+                .GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(centreId)
                 .Select(d => new UnapprovedDelegate(d.delegateUser, d.prompts));
 
             var model = new DelegateApprovalsViewModel(delegates);

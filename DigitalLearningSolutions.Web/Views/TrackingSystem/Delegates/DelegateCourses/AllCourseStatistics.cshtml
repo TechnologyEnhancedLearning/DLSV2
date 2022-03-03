@@ -1,0 +1,22 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateCourses
+@model AllDelegateCourseStatisticsViewModel
+
+@{
+  Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+@foreach (var course in Model.Courses) {
+  <partial name="~/Views/TrackingSystem/Delegates/DelegateCourses/_CentreCourseCard.cshtml" model="course" />
+}
+@foreach (var filter in Model.Filters) {
+  <partial name="SearchablePage/_AppliedFilterTag" model="filter" />
+}
+</body>
+</html>

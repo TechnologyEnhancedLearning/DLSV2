@@ -5,6 +5,7 @@
         AllDelegates,
         DelegateGroups,
         CourseDelegates,
-        ApproveDelegateRegistrations
+        DelegateCourses,
+        ApproveDelegateRegistrations,
     }
 }

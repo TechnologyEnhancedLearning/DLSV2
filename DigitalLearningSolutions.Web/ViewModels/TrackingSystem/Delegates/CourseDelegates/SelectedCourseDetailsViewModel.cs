@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SelectedCourseDetailsViewModel : BaseSearchablePageViewModel
@@ -20,10 +21,21 @@
         {
             Active = courseDelegatesData.Courses.Single(c => c.CustomisationId == courseDelegatesData.CustomisationId)
                 .Active;
-
             var courseDelegatesToShow = SortFilterAndPaginate(courseDelegatesData.Delegates);
-            Delegates = courseDelegatesToShow.Select(d => new SearchableCourseDelegateViewModel(d));
-            Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels();
+            var adminFieldsWithOptions = courseDelegatesData.CourseAdminFields.Where(field => field.Options.Count > 0);
+            Delegates = courseDelegatesToShow.Select(
+                d =>
+                {
+                    var adminFields = AdminFieldsHelper.GetCourseAdminFieldViewModels(
+                        d,
+                        courseDelegatesData.CourseAdminFields
+                    );
+                    return new SearchableCourseDelegateViewModel(d, adminFields, adminFieldsWithOptions);
+                }
+            );
+            Filters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(
+                courseDelegatesData.CourseAdminFields
+            );
         }
 
         public bool Active { get; set; }
