@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Supervisor
 {
+    using DigitalLearningSolutions.Data.Enums;
     using System;
 
     public class SupervisorDelegateDetail : SupervisorDelegate
@@ -22,5 +23,6 @@
         public string? SupervisorName { get; set; }
         public int CandidateAssessmentCount { get; set; }
         public Guid? InviteHash { get; set; }
+        public DlsRole? DlsRole { get; set; }
     }
 }

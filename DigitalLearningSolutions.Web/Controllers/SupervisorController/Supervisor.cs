@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
+    using DigitalLearningSolutions.Data.Enums;
 
     public partial class SupervisorController
     {
@@ -44,9 +45,11 @@
             var centreId = GetCentreId();
             var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
-                supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
-            );
+            var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
+            {
+                supervisor.DlsRole = GetSupervisorDlsRole(supervisor);
+                return new SupervisorDelegateDetailViewModel(supervisor, page);
+            });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
             var model = new MyStaffListViewModel(
                 supervisorDelegateDetailViewModels,
@@ -58,6 +61,19 @@
             );
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
             return View("MyStaffList", model);
+        }
+
+        private DlsRole GetSupervisorDlsRole(SupervisorDelegateDetail supervisor)
+        {
+            var loggedInUserId = User.GetAdminId();
+            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
+            bool activeAdminRecordAtSameCenter = loggedInAdminUser != null
+                && loggedInAdminUser.CentreId == supervisor.CentreId
+                && loggedInAdminUser.EmailAddress == supervisor.SupervisorEmail
+                && loggedInAdminUser.Active;
+            return activeAdminRecordAtSameCenter && loggedInAdminUser.IsSupervisor ? DlsRole.Supervisor
+                : activeAdminRecordAtSameCenter && !loggedInAdminUser.IsSupervisor ? DlsRole.NominatedSupervisor
+                : DlsRole.Learner;
         }
 
         [HttpPost]
@@ -181,7 +197,13 @@
             var adminId = GetAdminID();
             var centreId = GetCentreId();
             var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
-            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
+                .Select(supervisor =>
+                {
+                    supervisor.DlsRole = GetSupervisorDlsRole(supervisor);
+                    return supervisor;
+                }
+            );
             var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
             return View("AllStaffList", model);
         }
