@@ -16,7 +16,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
-    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -289,7 +288,7 @@
             var centreCustomPrompts = centreRegistrationPromptsService
                 .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
             var registrationFieldOptions =
-                PromptHelper.MapCentreRegistrationPromptsToDataForSelectList(centreCustomPrompts);
+                PromptsService.MapCentreRegistrationPromptsToDataForSelectList(centreCustomPrompts);
 
             var jobGroupOption = (RegistrationField.JobGroup.Id, "Job group");
             registrationFieldOptions.Add(jobGroupOption);

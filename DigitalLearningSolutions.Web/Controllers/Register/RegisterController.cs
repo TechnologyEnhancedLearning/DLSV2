@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [SetSelectedTab(nameof(NavMenuTab.Register))]
     public class RegisterController : Controller
     {
-        private readonly PromptHelper promptHelper;
+        private readonly PromptsService promptsService;
         private readonly ICentresDataService centresDataService;
         private readonly ICryptoService cryptoService;
         private readonly IFeatureManager featureManager;
@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             IRegistrationService registrationService,
             ICryptoService cryptoService,
             IUserService userService,
-            PromptHelper promptHelper,
+            PromptsService promptsService,
             IFeatureManager featureManager,
             ISupervisorDelegateService supervisorDelegateService
         )
@@ -47,7 +47,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
             this.userService = userService;
-            this.promptHelper = promptHelper;
+            this.promptsService = promptsService;
             this.featureManager = featureManager;
             this.supervisorDelegateService = supervisorDelegateService;
         }
@@ -153,7 +153,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre.Value;
 
-            promptHelper.ValidateCentreRegistrationPrompts(
+            promptsService.ValidateCentreRegistrationPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -331,7 +331,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             int centreId
         )
         {
-            return promptHelper.GetEditDelegateRegistrationPromptViewModelsForCentre(
+            return promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -344,7 +344,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
         private IEnumerable<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsFromData(DelegateRegistrationData data)
         {
-            return promptHelper.GetDelegateRegistrationPromptsForCentre(
+            return promptsService.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,

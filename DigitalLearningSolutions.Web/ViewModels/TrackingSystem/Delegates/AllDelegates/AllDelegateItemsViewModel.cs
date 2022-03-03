@@ -22,7 +22,7 @@
             Delegates = delegateUserCards.Select(
                 delegateUser =>
                 {
-                    var delegateRegistrationPrompts = PromptHelper.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
                     return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, 1);
                 }
             );

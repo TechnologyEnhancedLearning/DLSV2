@@ -24,7 +24,7 @@
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
-        private PromptHelper promptHelper = null!;
+        private PromptsService promptsService = null!;
         private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
@@ -37,7 +37,7 @@
             userService = A.Fake<IUserService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            promptHelper = new PromptHelper(centreRegistrationPromptsService);
+            promptsService = new PromptsService(centreRegistrationPromptsService);
         }
 
         [Test]
@@ -49,7 +49,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true);
             var formData = new MyAccountEditDetailsFormData();
             var expectedModel = new MyAccountEditDetailsViewModel(
@@ -78,7 +78,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CentreRegistrationPrompt>
                 { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
@@ -115,7 +115,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -153,7 +153,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             var customPromptLists = new List<CentreRegistrationPrompt>
                 { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
@@ -193,7 +193,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -234,7 +234,7 @@
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                promptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             const string action = "unexpectedString";
             var model = new MyAccountEditDetailsFormData();

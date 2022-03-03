@@ -28,7 +28,7 @@
         private const string IpAddress = "1.1.1.1";
         private const int SupervisorDelegateId = 1;
 
-        private PromptHelper promptHelper = null!;
+        private PromptsService promptsService = null!;
         private ICentresDataService centresDataService = null!;
         private RegisterController controller = null!;
         private ICryptoService cryptoService = null!;
@@ -47,7 +47,7 @@
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             registrationService = A.Fake<IRegistrationService>();
             userService = A.Fake<IUserService>();
-            promptHelper = A.Fake<PromptHelper>();
+            promptsService = A.Fake<PromptsService>();
             featureManager = A.Fake<IFeatureManager>();
             supervisorDelegateService = A.Fake<ISupervisorDelegateService>();
             request = A.Fake<HttpRequest>();
@@ -58,7 +58,7 @@
                     registrationService,
                     cryptoService,
                     userService,
-                    promptHelper,
+                    promptsService,
                     featureManager,
                     supervisorDelegateService
                 )

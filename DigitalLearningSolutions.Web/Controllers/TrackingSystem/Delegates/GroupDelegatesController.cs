@@ -12,7 +12,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -23,7 +22,7 @@
     public class GroupDelegatesController : Controller
     {
         private const string AddGroupDelegateCookieName = "AddGroupDelegateFilter";
-        private readonly PromptHelper promptHelper;
+        private readonly PromptsService promptsService;
         private readonly IGroupsService groupsService;
         private readonly IJobGroupsService jobGroupsService;
         private readonly IUserService userService;
@@ -31,11 +30,11 @@
         public GroupDelegatesController(
             IJobGroupsService jobGroupsService,
             IUserService userService,
-            PromptHelper promptHelper,
+            PromptsService promptsService,
             IGroupsService groupsService
         )
         {
-            this.promptHelper = promptHelper;
+            this.promptsService = promptsService;
             this.jobGroupsService = jobGroupsService;
             this.userService = userService;
             this.groupsService = groupsService;
@@ -72,7 +71,7 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId).ToList();
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
@@ -125,7 +124,7 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
-            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
 
             var model = new SelectDelegateAllItemsViewModel(

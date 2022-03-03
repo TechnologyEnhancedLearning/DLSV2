@@ -14,7 +14,7 @@
 
     public class EmailDelegatesControllerTests
     {
-        private PromptHelper promptsHelper = null!;
+        private PromptsService promptsHelper = null!;
         private EmailDelegatesController emailDelegatesController = null!;
 
         private HttpRequest httpRequest = null!;
@@ -27,7 +27,7 @@
         public void Setup()
         {
             var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            promptsHelper = new PromptHelper(centreCustomPromptsService);
+            promptsHelper = new PromptsService(centreCustomPromptsService);
             userService = A.Fake<IUserService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             passwordResetService = A.Fake<IPasswordResetService>();

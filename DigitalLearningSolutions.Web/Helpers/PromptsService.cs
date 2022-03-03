@@ -10,11 +10,11 @@
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-    public class PromptHelper
+    public class PromptsService
     {
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
 
-        public PromptHelper(ICentreRegistrationPromptsService registrationPromptsService)
+        public PromptsService(ICentreRegistrationPromptsService registrationPromptsService)
         {
             centreRegistrationPromptsService = registrationPromptsService;
         }

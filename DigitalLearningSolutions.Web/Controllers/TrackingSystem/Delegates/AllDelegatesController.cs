@@ -12,7 +12,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
-    using PromptHelper = DigitalLearningSolutions.Web.Helpers.PromptHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -22,18 +21,18 @@
     public class AllDelegatesController : Controller
     {
         private const string DelegateFilterCookieName = "DelegateFilter";
-        private readonly PromptHelper promptHelper;
+        private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
-            PromptHelper promptHelper,
+            PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService
         )
         {
             this.userDataService = userDataService;
-            this.promptHelper = promptHelper;
+            this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
@@ -59,7 +58,7 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegatesViewModel(
@@ -85,7 +84,7 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptHelper.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);

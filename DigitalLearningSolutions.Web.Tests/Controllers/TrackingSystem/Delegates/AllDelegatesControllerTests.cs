@@ -16,7 +16,7 @@
     public class AllDelegatesControllerTests
     {
         private AllDelegatesController allDelegatesController = null!;
-        private PromptHelper promptsHelper = null!;
+        private PromptsService promptsHelper = null!;
 
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
@@ -27,7 +27,7 @@
         public void Setup()
         {
             var centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
-            promptsHelper = new PromptHelper(centreRegistrationPromptsService);
+            promptsHelper = new PromptsService(centreRegistrationPromptsService);
             userDataService = A.Fake<IUserDataService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
 

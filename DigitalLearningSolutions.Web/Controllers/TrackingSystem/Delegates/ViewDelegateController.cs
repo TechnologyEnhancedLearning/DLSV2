@@ -21,7 +21,7 @@
     [Route("TrackingSystem/Delegates/{delegateId:int}/View")]
     public class ViewDelegateController : Controller
     {
-        private readonly PromptHelper promptHelper;
+        private readonly PromptsService promptsService;
         private readonly ICourseDataService courseDataService;
         private readonly ICourseService courseService;
         private readonly IPasswordResetService passwordResetService;
@@ -29,14 +29,14 @@
 
         public ViewDelegateController(
             IUserDataService userDataService,
-            PromptHelper promptHelper,
+            PromptsService promptsService,
             ICourseService courseService,
             IPasswordResetService passwordResetService,
             ICourseDataService courseDataService
         )
         {
             this.userDataService = userDataService;
-            this.promptHelper = promptHelper;
+            this.promptsService = promptsService;
             this.courseService = courseService;
             this.passwordResetService = passwordResetService;
             this.courseDataService = courseDataService;
@@ -48,7 +48,7 @@
             var delegateUser = userDataService.GetDelegateUserCardById(delegateId)!;
             var categoryIdFilter = User.GetAdminCourseCategoryFilter();
 
-            var customFields = promptHelper.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
+            var customFields = promptsService.GetDelegateRegistrationPromptsForCentre(centreId, delegateUser);
             var delegateCourses =
                 courseService.GetAllCoursesInCategoryForDelegate(delegateId, centreId, categoryIdFilter);
 
