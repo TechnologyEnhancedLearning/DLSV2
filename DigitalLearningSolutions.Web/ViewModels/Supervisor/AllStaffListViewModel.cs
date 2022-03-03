@@ -8,16 +8,16 @@
     public class AllStaffListViewModel
     {
         public readonly IEnumerable<SupervisorDelegateDetailViewModel> SupervisorDelegateDetailViewModels;
-        public readonly CentreCustomPrompts CentreCustomPrompts;
+        public readonly CentreRegistrationPrompts CentreRegistrationPrompts;
 
         public AllStaffListViewModel(
             IEnumerable<SupervisorDelegateDetail> supervisorDelegates,
-            CentreCustomPrompts centreCustomPrompts
+            CentreRegistrationPrompts centreRegistrationPrompts
         )
         {
             SupervisorDelegateDetailViewModels =
                 supervisorDelegates.Select(supervisor => new SupervisorDelegateDetailViewModel(supervisor, 1));
-            CentreCustomPrompts = centreCustomPrompts;
+            CentreRegistrationPrompts = centreRegistrationPrompts;
         }
     }
 }

@@ -24,7 +24,7 @@
             groupsService = A.Fake<IGroupsService>();
 
             var delegateGroupsController = new DelegateGroupsController(
-                A.Fake<ICentreCustomPromptsService>(),
+                A.Fake<ICentreRegistrationPromptsService>(),
                 A.Fake<IGroupsService>()
             ).WithDefaultContext().WithMockUser(true);
             context = ContextHelper.GetDefaultActionExecutingContext(delegateGroupsController);

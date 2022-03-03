@@ -21,15 +21,15 @@
 
     public class DelegateGroupsControllerTests
     {
-        private static readonly CustomPrompt ExpectedPrompt1 =
-            CustomPromptsTestHelper.GetDefaultCustomPrompt(1, options: null, mandatory: true);
+        private static readonly CentreRegistrationPrompt ExpectedPrompt1 =
+            PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, options: null, mandatory: true);
 
-        private static readonly List<CustomPrompt> CustomPrompts = new List<CustomPrompt> { ExpectedPrompt1 };
+        private static readonly List<CentreRegistrationPrompt> CustomPrompts = new List<CentreRegistrationPrompt> { ExpectedPrompt1 };
 
-        private readonly CentreCustomPrompts prompts =
-            CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(CustomPrompts);
+        private readonly CentreRegistrationPrompts prompts =
+            PromptsTestHelper.GetDefaultCentreRegistrationPrompts(CustomPrompts);
 
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private DelegateGroupsController delegateGroupsController = null!;
         private IGroupsService groupsService = null!;
         private HttpRequest httpRequest = null!;
@@ -38,11 +38,11 @@
         [SetUp]
         public void Setup()
         {
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             groupsService = A.Fake<IGroupsService>();
 
             A.CallTo(() => groupsService.GetGroupsForCentre(A<int>._)).Returns(new List<Group>());
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(A<int>._))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(A<int>._))
                 .Returns(prompts);
 
             httpRequest = A.Fake<HttpRequest>();
@@ -51,7 +51,7 @@
             const string cookieValue = "LinkedToField|LinkedToField|0";
 
             delegateGroupsController = new DelegateGroupsController(
-                    centreCustomPromptsService,
+                    centreRegistrationPromptsService,
                     groupsService
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
@@ -351,11 +351,11 @@
             var registrationFieldOptions = new List<SelectListItem>
                 { customPromptSelectListItem1, customPromptSelectListItem2, jobGroupSelectListItem };
 
-            var customPrompt1 = new CustomPrompt(1, customPromptName1, "Test", false);
-            var customPrompt2 = new CustomPrompt(2, customPromptName2, "Test", false);
-            var customPrompts = new List<CustomPrompt> { customPrompt1, customPrompt2 };
+            var customPrompt1 = new CentreRegistrationPrompt(1, customPromptName1, "Test", false);
+            var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName2, "Test", false);
+            var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId))
                 .Returns(customPrompts);
 
             // When
@@ -365,7 +365,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._)
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._)
                     )
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().ModelAs<GenerateGroupsViewModel>().RegistrationFieldOptions.Should()
@@ -386,11 +386,11 @@
             var registrationFieldOptions = new List<SelectListItem>
                 { customPromptSelectListItem1, customPromptSelectListItem2, jobGroupSelectListItem };
 
-            var customPrompt1 = new CustomPrompt(1, customPromptName, "Test", false);
-            var customPrompt2 = new CustomPrompt(2, customPromptName, "Test", false);
-            var customPrompts = new List<CustomPrompt> { customPrompt1, customPrompt2 };
+            var customPrompt1 = new CentreRegistrationPrompt(1, customPromptName, "Test", false);
+            var customPrompt2 = new CentreRegistrationPrompt(2, customPromptName, "Test", false);
+            var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt2 };
 
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(centreId))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId))
                 .Returns(customPrompts);
 
             // When
@@ -400,7 +400,7 @@
             using (new AssertionScope())
             {
                 A.CallTo(
-                        () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._)
+                        () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._)
                     )
                     .MustHaveHappenedOnceExactly();
                 result.Should().BeViewResult().ModelAs<GenerateGroupsViewModel>().RegistrationFieldOptions.Should()
@@ -414,13 +414,13 @@
             // Given
             const string groupNamePrefix = "Role";
 
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
             var customPromptSelectListItem = new SelectListItem(groupNamePrefix, registrationField.Id.ToString());
             var jobGroup = new SelectListItem("Job group", "2");
             var registrationFieldOptions = new List<SelectListItem> { customPromptSelectListItem, jobGroup };
 
-            var customPrompt1 = new CustomPrompt(1, groupNamePrefix, "Test", false);
-            var customPrompts = new List<CustomPrompt> { customPrompt1 };
+            var customPrompt1 = new CentreRegistrationPrompt(1, groupNamePrefix, "Test", false);
+            var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1 };
 
             var model = new GenerateGroupsViewModel(
                 registrationFieldOptions,
@@ -432,7 +432,7 @@
                 false
             );
 
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
                 .Returns(customPrompts);
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))
@@ -491,10 +491,10 @@
         public void GenerateGroups_POST_should_not_call_service_if_selected_field_is_a_free_text_field()
         {
             // Given
-            var customPrompt1 = new CustomPrompt(1, "Role", "Test", false);
-            var customPrompts = new List<CustomPrompt> { customPrompt1 };
+            var customPrompt1 = new CentreRegistrationPrompt(1, "Role", "Test", false);
+            var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1 };
 
-            var registrationField = RegistrationField.CentreCustomPrompt3;
+            var registrationField = RegistrationField.CentreRegistrationField3;
 
             var model = new GenerateGroupsViewModel(
                 new List<SelectListItem>(),
@@ -506,7 +506,7 @@
                 false
             );
 
-            A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
+            A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
                 .Returns(customPrompts);
 
             A.CallTo(() => groupsService.GenerateGroupsFromRegistrationField(A<GroupGenerationDetails>._))

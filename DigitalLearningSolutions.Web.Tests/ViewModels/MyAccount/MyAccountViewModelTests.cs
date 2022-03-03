@@ -17,10 +17,10 @@
             // Given
             var adminUser = UserTestHelper.GetDefaultAdminUser();
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
 
@@ -42,7 +42,7 @@
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
-                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
+                returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
             }
         }
 
@@ -65,7 +65,7 @@
                 returnedModel.DelegateNumber.Should().BeNull();
                 returnedModel.User.Should().BeEquivalentTo(adminUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeNull();
-                returnedModel.CustomFields.Should().BeEmpty();
+                returnedModel.DelegateRegistrationPrompts.Should().BeEmpty();
             }
         }
 
@@ -74,10 +74,10 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
                 }
             );
 
@@ -94,7 +94,7 @@
                 returnedModel.DelegateNumber.Should().BeEquivalentTo(delegateUser.CandidateNumber);
                 returnedModel.User.Should().BeEquivalentTo(delegateUser.EmailAddress);
                 returnedModel.JobGroup.Should().BeEquivalentTo(delegateUser.JobGroupName);
-                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
+                returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
             }
         }
 
@@ -103,11 +103,11 @@
         {
             // Given
             var delegateUser = UserTestHelper.GetDefaultDelegateUser();
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 
@@ -117,18 +117,18 @@
             // Then
             using (new AssertionScope())
             {
-                returnedModel.CustomFields.Should().NotBeNullOrEmpty();
-                returnedModel.CustomFields[0].CustomFieldId.Should().Be(1);
-                returnedModel.CustomFields[0].CustomPrompt.Should()
-                    .BeEquivalentTo(customPrompts.CustomPrompts[0].CustomPromptText);
-                returnedModel.CustomFields[0].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
-                returnedModel.CustomFields[0].Mandatory.Should().BeFalse();
+                returnedModel.DelegateRegistrationPrompts.Should().NotBeNullOrEmpty();
+                returnedModel.DelegateRegistrationPrompts[0].PromptNumber.Should().Be(1);
+                returnedModel.DelegateRegistrationPrompts[0].Prompt.Should()
+                    .BeEquivalentTo(customPrompts.CustomPrompts[0].PromptText);
+                returnedModel.DelegateRegistrationPrompts[0].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.DelegateRegistrationPrompts[0].Mandatory.Should().BeFalse();
 
-                returnedModel.CustomFields[1].CustomFieldId.Should().Be(2);
-                returnedModel.CustomFields[1].CustomPrompt.Should()
-                    .BeEquivalentTo(customPrompts.CustomPrompts[1].CustomPromptText);
-                returnedModel.CustomFields[1].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
-                returnedModel.CustomFields[1].Mandatory.Should().BeFalse();
+                returnedModel.DelegateRegistrationPrompts[1].PromptNumber.Should().Be(2);
+                returnedModel.DelegateRegistrationPrompts[1].Prompt.Should()
+                    .BeEquivalentTo(customPrompts.CustomPrompts[1].PromptText);
+                returnedModel.DelegateRegistrationPrompts[1].Answer.Should().BeEquivalentTo(delegateUser.Answer1);
+                returnedModel.DelegateRegistrationPrompts[1].Mandatory.Should().BeFalse();
             }
         }
 
@@ -140,8 +140,8 @@
                 hasBeenPromptedForPrn: false,
                 professionalRegistrationNumber: null
             );
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>{}
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>{}
             );
 
             // When
@@ -162,11 +162,11 @@
                 hasBeenPromptedForPrn: true,
                 professionalRegistrationNumber: null
             );
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 
@@ -188,11 +188,11 @@
                 hasBeenPromptedForPrn: true,
                 professionalRegistrationNumber: "12345678"
             );
-            var customPrompts = CustomPromptsTestHelper.GetDefaultCentreCustomPromptsWithAnswers(
-                new List<CustomPromptWithAnswer>
+            var customPrompts = PromptsTestHelper.GetDefaultCentreRegistrationPromptsWithAnswers(
+                new List<CentreRegistrationPromptWithAnswer>
                 {
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(1),
-                    CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(2),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(1),
+                    PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(2),
                 }
             );
 

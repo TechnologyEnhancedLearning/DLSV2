@@ -44,7 +44,7 @@
             var loggedInUserId = User.GetAdminId();
             var centreId = GetCentreId();
             var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select(
                 supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
@@ -53,7 +53,7 @@
             var model = new MyStaffListViewModel(
                 loggedInAdminUser,
                 supervisorDelegateDetailViewModels,
-                centreCustomPrompts,
+                centreRegistrationPrompts,
                 searchString,
                 sortBy,
                 sortDirection,
@@ -185,9 +185,9 @@
         {
             var adminId = GetAdminID();
             var centreId = GetCentreId();
-            var centreCustomPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
-            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreCustomPrompts);
+            var model = new AllStaffListViewModel(supervisorDelegateDetails, centreRegistrationPrompts);
             return View("AllStaffList", model);
         }
 

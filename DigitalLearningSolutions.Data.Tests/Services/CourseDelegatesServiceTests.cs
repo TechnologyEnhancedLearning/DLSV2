@@ -47,11 +47,11 @@
                 );
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(
                     new CourseAdminFields(
                         customisationId,
-                        new List<CustomPrompt> { new CustomPrompt(1, "prompt", null, true) }
+                        new List<CourseAdminField> { new CourseAdminField(1, "prompt", null) }
                     )
                 );
 
@@ -105,11 +105,11 @@
                 .Returns(new List<CourseAssessmentDetails> { new CourseAssessmentDetails { CustomisationId = 1 } });
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .Returns(new List<CourseDelegate> { new CourseDelegate() });
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .Returns(
                     new CourseAdminFields(
                         customisationId,
-                        new List<CustomPrompt> { new CustomPrompt(1, "prompt", null, true) }
+                        new List<CourseAdminField> { new CourseAdminField(1, "prompt", null) }
                     )
                 );
 
@@ -123,7 +123,7 @@
             // Then
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(customisationId, centreId))
                 .MustHaveHappened();
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(customisationId))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId))
                 .MustHaveHappenedOnceExactly();
             result.Should().NotBeNull();
         }
@@ -149,7 +149,7 @@
             );
             A.CallTo(() => courseDelegatesDataService.GetDelegatesOnCourse(A<int>._, A<int>._))
                 .MustNotHaveHappened();
-            A.CallTo(() => courseAdminFieldsService.GetCustomPromptsForCourse(A<int>._))
+            A.CallTo(() => courseAdminFieldsService.GetCourseAdminFieldsForCourse(A<int>._))
                 .MustNotHaveHappened();
         }
     }

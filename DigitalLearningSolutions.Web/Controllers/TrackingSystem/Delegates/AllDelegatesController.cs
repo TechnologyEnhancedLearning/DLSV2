@@ -21,18 +21,18 @@
     public class AllDelegatesController : Controller
     {
         private const string DelegateFilterCookieName = "DelegateFilter";
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService
         )
         {
             this.userDataService = userDataService;
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
         }
 
@@ -58,7 +58,7 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegatesViewModel(
@@ -84,7 +84,7 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
             var model = new AllDelegateItemsViewModel(delegateUsers, jobGroups, customPrompts);

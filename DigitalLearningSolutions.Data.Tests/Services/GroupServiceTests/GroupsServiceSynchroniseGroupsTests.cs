@@ -160,7 +160,7 @@
             const bool removeStartedEnrolments = false;
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
-                () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
                     reusableDelegateDetails.CentreId,
                     1
                 )
@@ -241,7 +241,7 @@
             var centreAnswersData = UserTestHelper.GetDefaultCentreAnswersData(answer1: "new answer");
             A.CallTo(() => clockService.UtcNow).Returns(testDate);
             A.CallTo(
-                () => centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(
+                () => centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(
                     reusableDelegateDetails.CentreId,
                     1
                 )

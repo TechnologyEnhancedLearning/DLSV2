@@ -27,15 +27,15 @@
             expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
         }
 
-        private static (List<CustomPrompt> adminFields, List<FilterViewModel> filters) GetSampleAdminFieldsAndFilters()
+        private static (List<CourseAdminField> adminFields, List<FilterViewModel> filters) GetSampleAdminFieldsAndFilters()
         {
-            var adminField1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
+            var adminField1 = PromptsTestHelper.GetDefaultCourseAdminField(
                 1,
                 "System access",
                 "Yes\r\nNo"
             );
-            var adminField3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3, "Some Free Text Field");
-            var adminFields = new List<CustomPrompt> { adminField1, adminField3 };
+            var adminField3 = PromptsTestHelper.GetDefaultCourseAdminField(3, "Some Free Text Field");
+            var adminFields = new List<CourseAdminField> { adminField1, adminField3 };
 
             var adminField1Options = new[]
             {
@@ -75,8 +75,8 @@
             };
             var adminFieldFilters = new List<FilterViewModel>
             {
-                new FilterViewModel("CustomPrompt1", "System access", adminField1Options),
-                new FilterViewModel("CustomPrompt3", "Some Free Text Field", adminField3Options),
+                new FilterViewModel("CourseAdminField1", "System access", adminField1Options),
+                new FilterViewModel("CourseAdminField3", "Some Free Text Field", adminField3Options),
             };
 
             return (adminFields, adminFieldFilters);

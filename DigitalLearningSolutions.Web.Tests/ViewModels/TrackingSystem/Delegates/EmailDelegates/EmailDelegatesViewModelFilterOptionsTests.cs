@@ -22,7 +22,7 @@
             var result =
                 EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
                     jobGroups,
-                    new List<CustomPrompt>()
+                    new List<CentreRegistrationPrompt>()
                 );
 
             // Then
@@ -69,16 +69,16 @@
             return (jobGroups, jobGroupFilter);
         }
 
-        private (List<CustomPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
+        private (List<CentreRegistrationPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
         {
-            var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
+            var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,
                 "First prompt",
                 "Clinical\r\nNon-Clinical"
             );
-            var customPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3);
-            var customPrompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
-            var customPrompts = new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 };
+            var customPrompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
+            var customPrompt4 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
+            var customPrompts = new List<CentreRegistrationPrompt> { customPrompt1, customPrompt3, customPrompt4 };
 
             var customPrompt1Options = new[]
             {
@@ -130,8 +130,8 @@
             };
             var customPromptFilters = new List<FilterViewModel>
             {
-                new FilterViewModel("CustomPrompt1", "First prompt", customPrompt1Options),
-                new FilterViewModel("CustomPrompt4", "Fourth prompt", customPrompt4Options),
+                new FilterViewModel("CentreRegistrationPrompt1", "First prompt", customPrompt1Options),
+                new FilterViewModel("CentreRegistrationPrompt4", "Fourth prompt", customPrompt4Options),
             };
 
             return (customPrompts, customPromptFilters);

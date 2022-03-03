@@ -18,7 +18,7 @@
 
     public class DelegateApprovalsServiceTests
     {
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private ICentresDataService centresDataService = null!;
         private IConfiguration config = null!;
         private IDelegateApprovalsService delegateApprovalsService = null!;
@@ -30,14 +30,14 @@
         public void SetUp()
         {
             userDataService = A.Fake<IUserDataService>();
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             emailService = A.Fake<IEmailService>();
             centresDataService = A.Fake<ICentresDataService>();
             logger = A.Fake<ILogger<DelegateApprovalsService>>();
             config = A.Fake<IConfiguration>();
             delegateApprovalsService = new DelegateApprovalsService(
                 userDataService,
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 emailService,
                 centresDataService,
                 logger,
@@ -47,14 +47,14 @@
 
         [Test]
         public void
-            GetUnapprovedDelegatesWithCustomPromptAnswersForCentre_returns_unapproved_delegates_with_custom_prompt_answers_for_centre()
+            GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre_returns_unapproved_delegates_with_registration_prompt_answers_for_centre()
         {
             // Given
             var expectedDelegateUser = UserTestHelper.GetDefaultDelegateUser();
             var expectedUserList = new List<DelegateUser> { expectedDelegateUser };
-            var expectedCustomPrompts = new List<CustomPromptWithAnswer>
+            var expectedRegistrationPrompts = new List<CentreRegistrationPromptWithAnswer>
             {
-                CustomPromptsTestHelper.GetDefaultCustomPromptWithAnswer(
+                PromptsTestHelper.GetDefaultCentreRegistrationPromptWithAnswer(
                     1,
                     options: null,
                     mandatory: true,
@@ -65,22 +65,22 @@
             A.CallTo(() => userDataService.GetUnapprovedDelegateUsersByCentreId(2))
                 .Returns(expectedUserList);
             A.CallTo(
-                    () => centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(
+                    () => centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(
                         2,
                         expectedUserList
                     )
                 )
                 .Returns(
-                    new List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
-                        { (expectedDelegateUser, expectedCustomPrompts) }
+                    new List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+                        { (expectedDelegateUser, expectedRegistrationPrompts) }
                 );
 
             // When
-            var result = delegateApprovalsService.GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(2);
+            var result = delegateApprovalsService.GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(2);
 
             // Then
             result.Should().BeEquivalentTo(
-                new List<(DelegateUser, List<CustomPromptWithAnswer>)> { (expectedDelegateUser, expectedCustomPrompts) }
+                new List<(DelegateUser, List<CentreRegistrationPromptWithAnswer>)> { (expectedDelegateUser, expectedRegistrationPrompts) }
             );
         }
 
