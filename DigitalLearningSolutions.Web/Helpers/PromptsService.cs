@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -62,7 +60,8 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var centreRegistrationPrompts =
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
             return centreRegistrationPrompts.CustomPrompts.Select(
                 cp => new EditDelegateRegistrationPromptViewModel(
@@ -86,7 +85,8 @@
         )
         {
             var answers = new List<string?> { answer1, answer2, answer3, answer4, answer5, answer6 };
-            var centreRegistrationPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var centreRegistrationPrompts =
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
             return centreRegistrationPrompts.CustomPrompts.Select(
                 cp => new DelegateRegistrationPrompt(
@@ -123,7 +123,10 @@
             ).ToList();
         }
 
-        public List<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsForCentre(int centreId, DelegateUser delegateUser)
+        public List<DelegateRegistrationPrompt> GetDelegateRegistrationPromptsForCentre(
+            int centreId,
+            DelegateUser delegateUser
+        )
         {
             return GetDelegateRegistrationPromptsForCentre(
                 centreId,
@@ -136,7 +139,11 @@
             );
         }
 
-        public void ValidateCentreRegistrationPrompts(EditDetailsFormData formData, int centreId, ModelStateDictionary modelState)
+        public void ValidateCentreRegistrationPrompts(
+            EditDetailsFormData formData,
+            int centreId,
+            ModelStateDictionary modelState
+        )
         {
             ValidateCentreRegistrationPrompts(
                 centreId,
@@ -193,36 +200,12 @@
             return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts;
         }
 
-        public static string GetDelegateRegistrationPromptAnswerName(int customPromptNumber)
-        {
-            return customPromptNumber switch
-            {
-                1 => nameof(DelegateUserCard.Answer1),
-                2 => nameof(DelegateUserCard.Answer2),
-                3 => nameof(DelegateUserCard.Answer3),
-                4 => nameof(DelegateUserCard.Answer4),
-                5 => nameof(DelegateUserCard.Answer5),
-                6 => nameof(DelegateUserCard.Answer6),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
-        }
-
-        public static string GetCourseAdminFieldAnswerName(int customPromptNumber)
-        {
-            return customPromptNumber switch
-            {
-                1 => nameof(CourseDelegate.Answer1),
-                2 => nameof(CourseDelegate.Answer2),
-                3 => nameof(CourseDelegate.Answer3),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
-        }
-
         public static List<(int id, string name)> MapCentreRegistrationPromptsToDataForSelectList(
             IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts
         )
         {
-            var registrationPromptOptions = centreRegistrationPrompts.Select(cp => (cp.RegistrationField.Id, CustomPromptText: cp.PromptText))
+            var registrationPromptOptions = centreRegistrationPrompts
+                .Select(cp => (cp.RegistrationField.Id, CustomPromptText: cp.PromptText))
                 .ToList<(int id, string name)>();
 
             var registrationPromptNames = registrationPromptOptions.Select(r => r.name).ToList();

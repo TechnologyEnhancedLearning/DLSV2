@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -31,9 +31,11 @@
 
         public static IEnumerable<FilterOptionViewModel> GetPromptOptions(Prompt prompt)
         {
-            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt ?
-                PromptsService.GetDelegateRegistrationPromptAnswerName(registrationPrompt.RegistrationField.Id)
-                : PromptsService.GetCourseAdminFieldAnswerName(((CourseAdminField)prompt).PromptNumber);
+            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
+                    registrationPrompt.RegistrationField.Id
+                )
+                : CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber);
 
             var options = prompt.Options.Select(
                 option => new FilterOptionViewModel(
@@ -63,7 +65,10 @@
         {
             var promptsWithOptionsIds = promptsWithOptions.Select(c => c.RegistrationField.Id);
             var delegateRegistrationPromptsWithOptions =
-                delegateRegistrationPrompts.Where(delegateRegistrationPrompt => promptsWithOptionsIds.Contains(delegateRegistrationPrompt.PromptNumber));
+                delegateRegistrationPrompts.Where(
+                    delegateRegistrationPrompt =>
+                        promptsWithOptionsIds.Contains(delegateRegistrationPrompt.PromptNumber)
+                );
             return delegateRegistrationPromptsWithOptions
                 .Select(
                     delegateRegistrationPrompt => new KeyValuePair<int, string>(
@@ -76,7 +81,7 @@
         private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
         {
             var filterValueName =
-                PromptsService.GetDelegateRegistrationPromptAnswerName(delegatePrompt.PromptNumber);
+                DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(delegatePrompt.PromptNumber);
             var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
                 ? FilteringHelper.EmptyValue
                 : delegatePrompt.Answer;
