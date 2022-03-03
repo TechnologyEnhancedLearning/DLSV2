@@ -1094,6 +1094,78 @@
         }
 
         [Test]
+        public void UpdateUserAccountDetailsViaDelegateAccount_updates_single_account_if_no_email_set()
+        {
+
+            // Given
+            const string email = "";
+            const string prn = "PRNNUMBER";
+            var delegateUser = UserTestHelper.GetDefaultDelegateUser(emailAddress: email);
+            var secondDelegateUser = UserTestHelper.GetDefaultDelegateUser(3, emailAddress: email);
+            A.CallTo(() => userDataService.GetDelegateUserById(delegateUser.Id)).Returns(delegateUser);
+            A.CallTo(() => userDataService.GetDelegateUsersByEmailAddress(email))
+                .Returns(new List<DelegateUser> { delegateUser, secondDelegateUser });
+            A.CallTo(() => userDataService.GetAdminUserByEmailAddress(email)).Returns(null);
+            var editDelegateDetailsData = new EditDelegateDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!,
+                delegateUser.AliasId,
+                prn,
+                true
+            );
+            var centreAnswersData = new CentreAnswersData(
+                delegateUser.CentreId,
+                delegateUser.JobGroupId,
+                delegateUser.Answer1,
+                delegateUser.Answer2,
+                delegateUser.Answer3,
+                delegateUser.Answer4,
+                delegateUser.Answer5,
+                delegateUser.Answer6
+            );
+
+            // When
+            userService.UpdateUserAccountDetailsViaDelegateAccount(editDelegateDetailsData, centreAnswersData);
+
+            // Then
+            A.CallTo(
+                () => userDataService.UpdateAdminUser(
+                    A<string>._,
+                    A<string>._,
+                    A<string>._,
+                    A<byte[]?>._,
+                    A<int>._
+                )
+            ).MustNotHaveHappened();
+            A.CallTo(
+                () => userDataService.UpdateDelegateAccountDetails(
+                    editDelegateDetailsData.FirstName,
+                    editDelegateDetailsData.Surname,
+                    editDelegateDetailsData.Email,
+                    A<int[]>.That.Matches(x => x.Length == 0))
+            ).MustHaveHappened();
+            A.CallTo(
+                () => userDataService.UpdateDelegate(
+                    editDelegateDetailsData.DelegateId,
+                    editDelegateDetailsData.FirstName,
+                    editDelegateDetailsData.Surname,
+                    centreAnswersData.JobGroupId,
+                    delegateUser.Active,
+                    centreAnswersData.Answer1,
+                    centreAnswersData.Answer2,
+                    centreAnswersData.Answer3,
+                    centreAnswersData.Answer4,
+                    centreAnswersData.Answer5,
+                    centreAnswersData.Answer6,
+                    editDelegateDetailsData.Alias,
+                    editDelegateDetailsData.Email
+                )
+            ).MustHaveHappened();
+        }
+
+        [Test]
         public void GetSupervisorsAtCentre_returns_expected_admins()
         {
             // Given
