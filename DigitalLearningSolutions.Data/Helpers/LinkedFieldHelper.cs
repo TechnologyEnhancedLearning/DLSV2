@@ -49,7 +49,7 @@
             {
                 var oldJobGroup = jobGroupsDataService.GetJobGroupName(oldAnswers.JobGroupId);
                 var newJobGroup = jobGroupsDataService.GetJobGroupName(newAnswers.JobGroupId);
-                changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job Group", oldJobGroup, newJobGroup));
+                changedLinkedFieldsWithAnswers.Add(new LinkedFieldChange(RegistrationField.JobGroup.LinkedToFieldId, "Job group", oldJobGroup, newJobGroup));
             }
 
             if (newAnswers.Answer4 != oldAnswers.Answer4)
