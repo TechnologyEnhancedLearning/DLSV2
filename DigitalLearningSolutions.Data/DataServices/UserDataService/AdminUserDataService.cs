@@ -169,6 +169,7 @@
                             ELSE cc.CategoryName
                         END AS CategoryName,
                         au.Supervisor AS IsSupervisor,
+                        au.NominatedSupervisor AS IsNominatedSupervisor,
                         au.Trainer AS IsTrainer,
                         au.IsFrameworkDeveloper,
                         au.ProfileImage,

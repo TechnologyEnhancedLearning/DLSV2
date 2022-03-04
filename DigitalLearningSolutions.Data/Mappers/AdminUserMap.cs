@@ -27,6 +27,7 @@
             Map(adminUser => adminUser.IsUserAdmin).ToColumn("IsUserAdmin");
             Map(adminUser => adminUser.CategoryId).ToColumn("CategoryID");
             Map(adminUser => adminUser.IsSupervisor).ToColumn("IsSupervisor");
+            Map(adminUser => adminUser.IsNominatedSupervisor).ToColumn("IsNominatedSupervisor");
             Map(adminUser => adminUser.IsTrainer).ToColumn("IsTrainer");
             Map(adminUser => adminUser.IsFrameworkDeveloper).ToColumn("IsFrameworkDeveloper");
         }
