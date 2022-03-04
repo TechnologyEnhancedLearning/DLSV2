@@ -1,48 +1,68 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public abstract class BaseSearchablePageViewModel : BasePaginatedViewModel
+    public interface IBaseSearchablePageViewModel : IBasePaginatedViewModel
     {
-        public readonly string? ExistingFilterString;
+        string? ExistingFilterString { get; }
 
-        public readonly bool FilterEnabled;
+        bool FilterEnabled { get; }
 
-        public readonly string? SearchLabel;
+        string? SearchLabel { get; }
 
-        public readonly string? SearchString;
+        string? SearchString { get; }
 
+        string? SortBy { get; }
+
+        string? SortDirection { get; }
+
+        public IEnumerable<SelectListItem> SortBySelectListItems =>
+            SelectListHelper.MapOptionsToSelectListItems(SortOptions);
+
+        IEnumerable<(string, string)> SortOptions { get; }
+
+        bool NoDataFound { get; }
+
+        bool NoSearchOrFilter => SearchString == null && ExistingFilterString == null;
+
+        IEnumerable<FilterModel> Filters { get; set; }
+
+        Dictionary<string, string> RouteData { get; set; }
+    }
+
+    public abstract class BaseSearchablePageViewModel<T> : BasePaginatedViewModel<T>, IBaseSearchablePageViewModel
+        where T : BaseSearchableItem
+    {
         protected BaseSearchablePageViewModel(
-            string? searchString,
-            int page,
+            SearchSortFilterPaginateResult<T> searchSortFilterPaginateResult,
             bool filterEnabled,
-            string sortBy = GenericSortingHelper.DefaultSortOption,
-            string sortDirection = GenericSortingHelper.Ascending,
-            string? existingFilterString = null,
-            int itemsPerPage = DefaultItemsPerPage,
+            IEnumerable<FilterModel>? availableFilters = null,
             string? searchLabel = null,
             Dictionary<string, string>? routeData = null
-        ) : base(page, itemsPerPage)
+        ) : base(searchSortFilterPaginateResult)
         {
-            SortBy = sortBy;
-            SortDirection = sortDirection;
-            SearchString = searchString;
+            SortBy = searchSortFilterPaginateResult.SortBy;
+            SortDirection = searchSortFilterPaginateResult.SortDirection;
+
+            SearchString = searchSortFilterPaginateResult.SearchString;
             SearchLabel = searchLabel;
-            ExistingFilterString = existingFilterString;
+
+            ExistingFilterString = searchSortFilterPaginateResult.FilterString;
             FilterEnabled = filterEnabled;
-            Filters = new List<FilterViewModel>();
+
+            Filters = availableFilters ?? new List<FilterModel>();
             RouteData = routeData ?? new Dictionary<string, string>();
         }
 
-        public string SortDirection { get; set; }
-
-        public string SortBy { get; set; }
+        public string? ExistingFilterString { get; }
+        public bool FilterEnabled { get; }
+        public string? SearchLabel { get; }
+        public string? SearchString { get; }
+        public string? SortBy { get; }
+        public string? SortDirection { get; }
 
         public IEnumerable<SelectListItem> SortBySelectListItems =>
             SelectListHelper.MapOptionsToSelectListItems(SortOptions);
@@ -53,29 +73,8 @@
 
         public bool NoSearchOrFilter => SearchString == null && ExistingFilterString == null;
 
-        public IEnumerable<FilterViewModel> Filters { get; set; }
+        public IEnumerable<FilterModel> Filters { get; set; }
 
         public Dictionary<string, string> RouteData { get; set; }
-
-        protected IEnumerable<T> SortFilterAndPaginate<T>(IEnumerable<T> items) where T:BaseSearchableItem
-        {
-            var sortedItems = SortItems(items);
-            var filteredItems = FilterItems(sortedItems);
-            return PaginateItems(filteredItems);
-        }
-
-        protected IEnumerable<T> SortItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
-        {
-            return GenericSortingHelper.SortAllItems(
-                items.AsQueryable(),
-                SortBy,
-                SortDirection
-            );
-        }
-
-        protected IEnumerable<T> FilterItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
-        {
-            return FilteringHelper.FilterItems(items.AsQueryable(), ExistingFilterString).ToList();
-        }
     }
 }

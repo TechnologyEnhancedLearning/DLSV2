@@ -18,7 +18,7 @@
         // as was the scorer strategy. If there are any issues with strange search results, changing this value or
         // the scorer strategy would be a good place to start. See https://github.com/JakeBayer/FuzzySharp for
         // documentation on the different scorer strategies.
-        private const int MatchCutoffScore = 80;
+        public const int MatchCutoffScore = 80;
 
         private static readonly string[] StopWordsArray =
         {

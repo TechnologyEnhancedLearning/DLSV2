@@ -3,59 +3,29 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class CentreAdministratorsViewModel : BaseSearchablePageViewModel
+    public class CentreAdministratorsViewModel : BaseSearchablePageViewModel<AdminUser>
     {
         public CentreAdministratorsViewModel(
             int centreId,
-            IEnumerable<AdminUser> adminUsers,
-            IEnumerable<string> categories,
-            string? searchString,
-            string? existingFilterString,
-            int page,
-            AdminUser loggedInAdminUser,
-            int? itemsPerPage
+            SearchSortFilterPaginateResult<AdminUser> result,
+            IEnumerable<FilterModel> availableFilters,
+            AdminUser loggedInAdminUser
         ) : base(
-            searchString,
-            page,
+            result,
             true,
-            existingFilterString: existingFilterString,
-            itemsPerPage: itemsPerPage ?? DefaultItemsPerPage,
-            searchLabel: "Search administrators"
+            availableFilters,
+            "Search administrators"
         )
         {
             CentreId = centreId;
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                adminUsers.AsQueryable(),
-                GenericSortingHelper.DefaultSortOption,
-                GenericSortingHelper.Ascending
-            );
-            var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
-            MatchingSearchResults = filteredItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(filteredItems);
-            var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
-            Admins = paginatedItems.Select(
+            var returnPage = string.IsNullOrWhiteSpace(SearchString) ? Page : 1;
+            Admins = result.ItemsToDisplay.Select(
                 adminUser => new SearchableAdminViewModel(adminUser, loggedInAdminUser, returnPage)
             );
-
-            Filters = new[]
-            {
-                new FilterViewModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
-                new FilterViewModel(
-                    "CategoryName",
-                    "Category",
-                    AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
-                ),
-                new FilterViewModel(
-                    "AccountStatus",
-                    "Account Status",
-                    AdministratorsViewModelFilterOptions.AccountStatusOptions
-                ),
-            };
         }
 
         public int CentreId { get; set; }

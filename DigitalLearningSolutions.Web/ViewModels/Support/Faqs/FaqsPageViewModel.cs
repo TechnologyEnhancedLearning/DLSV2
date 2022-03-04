@@ -3,37 +3,25 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.Faqs;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class FaqsPageViewModel : BaseSearchablePageViewModel, ISupportViewModel
+    public class FaqsPageViewModel : BaseSearchablePageViewModel<SearchableFaq>, ISupportViewModel
     {
-        // A MatchCutOffScore of 65 is being used here rather than the default 80.
-        // The default Fuzzy Search configuration does not reliably bring back expected FAQs.
-        // Through trial and error a combination of the PartialTokenSetScorer ratio scorer
-        // and this cut off score bring back reliable results comparable to the JS search.
-        private const int MatchCutOffScore = 65;
-        private const string FaqSortBy = "Weighting,FaqId";
-
         public FaqsPageViewModel(
             DlsSubApplication dlsSubApplication,
             SupportPage currentPage,
             string currentSystemBaseUrl,
-            IEnumerable<SearchableFaq> faqs,
-            int page,
-            string? searchString
-        ) : base(searchString, page, false, FaqSortBy, GenericSortingHelper.Descending, searchLabel: "Search faqs")
+            SearchSortFilterPaginateResult<SearchableFaq> result
+        ) : base(result, false, searchLabel: "Search faqs")
         {
             CurrentPage = currentPage;
             DlsSubApplication = dlsSubApplication;
             CurrentSystemBaseUrl = currentSystemBaseUrl;
 
-            var searchedItems = GenericSearchHelper.SearchItemsUsingTokeniseScorer(faqs, SearchString, MatchCutOffScore)
-                .ToList();
-            var faqsToShow = SortFilterAndPaginate(searchedItems);
-            Faqs = faqsToShow.Select(f => new SearchableFaqViewModel(DlsSubApplication, f));
+            Faqs = result.ItemsToDisplay.Select(f => new SearchableFaqViewModel(DlsSubApplication, f));
         }
 
         public IEnumerable<SearchableFaqViewModel> Faqs { get; set; }

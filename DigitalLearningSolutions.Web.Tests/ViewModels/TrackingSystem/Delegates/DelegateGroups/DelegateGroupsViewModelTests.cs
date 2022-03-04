@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using FluentAssertions;
@@ -88,12 +89,12 @@
 
             var expectedFilters = new[]
             {
-                new FilterViewModel(
+                new FilterModel(
                     nameof(Group.AddedByAdminId),
                     "Added by",
                     DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
                 ),
-                new FilterViewModel(
+                new FilterModel(
                     nameof(Group.LinkedToField),
                     "Linked field",
                     DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<CentreRegistrationPrompt>())

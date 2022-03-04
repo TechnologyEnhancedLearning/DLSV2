@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -24,16 +26,19 @@
         private readonly ICourseService courseService;
         private readonly IGroupsService groupsService;
         private readonly IUserService userService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public GroupCoursesController(
             IUserService userService,
             ICourseService courseService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.userService = userService;
             this.courseService = courseService;
             this.groupsService = groupsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page:int=1}")]
@@ -46,7 +51,9 @@
 
             var groupCourses = groupsService.GetGroupCoursesForCategory(groupId, centreId, categoryIdFilter);
 
-            var model = new GroupCoursesViewModel(groupId, groupName!, groupCourses, page);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(groupCourses, pageNumber: page);
+
+            var model = new GroupCoursesViewModel(groupId, groupName!, result);
 
             return View(model);
         }
@@ -106,25 +113,36 @@
 
             var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
 
-            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId);
+            var courses = courseService.GetEligibleCoursesToAddToGroup(centreId, adminCategoryFilter, groupId).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var model = new AddCourseToGroupCoursesViewModel(
+            var availableFilters = (adminCategoryFilter == null
+                ? AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
+                : AddCourseToGroupViewModelFilterOptions.GetSingleCategoryFilters(courses)).ToList();
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 courses,
-                categories,
-                topics,
-                adminCategoryFilter,
-                groupId,
-                groupName!,
                 searchString,
-                existingFilterString,
-                page
+                sortBy: nameof(CourseAssessmentDetails.CourseName),
+                sortDirection:
+                GenericSortingHelper.Ascending,
+                filterString: existingFilterString,
+                availableFilters: availableFilters,
+                pageNumber: page
             );
 
-            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, existingFilterString);
+            var model = new AddCourseToGroupCoursesViewModel(
+                result,
+                availableFilters,
+                adminCategoryFilter,
+                groupId,
+                groupName!
+            );
+
+            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, result.FilterString);
 
             return View(model);
         }

@@ -1,9 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -24,16 +26,19 @@
         private readonly PromptsService promptsService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserDataService userDataService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public AllDelegatesController(
             IUserDataService userDataService,
             PromptsService promptsService,
-            IJobGroupsDataService jobGroupsDataService
+            IJobGroupsDataService jobGroupsDataService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.userDataService = userDataService;
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -58,22 +63,34 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
-            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userDataService.GetDelegateUserCardsByCentreId(centreId);
 
-            var model = new AllDelegatesViewModel(
-                delegateUsers,
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var availableFilters = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
                 jobGroups,
-                customPrompts,
-                page,
-                searchString,
-                sortBy,
-                sortDirection,
-                existingFilterString,
-                itemsPerPage
+                promptsWithOptions
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, existingFilterString);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                delegateUsers,
+                searchString,
+                sortBy: sortBy,
+                sortDirection : sortDirection,
+                filterString: existingFilterString,
+                defaultFilterString: DelegateActiveStatusFilterOptions.IsActive.FilterValue,
+                availableFilters: availableFilters,
+                pageNumber: page,
+                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+            );
+
+            var model = new AllDelegatesViewModel(
+                result,
+                customPrompts,
+                availableFilters
+            );
+
+            Response.UpdateOrDeleteFilterCookie(DelegateFilterCookieName, result.FilterString);
 
             return View(model);
         }

@@ -2,52 +2,37 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.AllDelegates;
 
-    public class AddGroupDelegateViewModel : BaseSearchablePageViewModel
+    public class AddGroupDelegateViewModel : BaseSearchablePageViewModel<DelegateUserCard>
     {
         public AddGroupDelegateViewModel(
-            List<DelegateUserCard> delegateUserCards,
-            List<(int id, string name)> jobGroups,
+            SearchSortFilterPaginateResult<DelegateUserCard> result,
+            IEnumerable<FilterModel> availableFilters,
             List<CentreRegistrationPrompt> customPrompts,
-            int page,
             int groupId,
-            string groupName,
-            string? searchString,
-            string? existingFilterString
+            string groupName
         ) : base(
-            searchString,
-            page,
+            result,
             true,
-            DefaultSortByOptions.Name.PropertyName,
-            GenericSortingHelper.Ascending,
-            existingFilterString
+            availableFilters
         )
         {
-            var searchedItems = GenericSearchHelper.SearchItems(delegateUserCards.AsQueryable(), SearchString);
-            var paginatedItems = SortFilterAndPaginate(searchedItems);
-
+            GroupId = groupId;
+            GroupName = groupName;
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
-            Delegates = paginatedItems.Select(
+            Delegates = result.ItemsToDisplay.Select(
                 delegateUser =>
                 {
                     var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, page);
+                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions,Page);
                 }
             );
-
-            Filters = GroupDelegatesViewModelFilterOptions.GetAddGroupDelegateFilterViewModels(
-                jobGroups,
-                promptsWithOptions
-            );
-
-            GroupId = groupId;
-            GroupName = groupName;
         }
 
         public string GroupName { get; set; }

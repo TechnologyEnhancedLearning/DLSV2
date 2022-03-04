@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
@@ -21,10 +22,15 @@
     {
         private const string CourseFilterCookieName = "DelegateCoursesFilter";
         private readonly ICourseService courseService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
-        public DelegateCoursesController(ICourseService courseService)
+        public DelegateCoursesController(
+            ICourseService courseService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
+        )
         {
             this.courseService = courseService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -52,17 +58,26 @@
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new DelegateCoursesViewModel(
-                details,
+            var availableFilters = DelegateCourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(details.Categories, details.Topics).ToList();
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                details.Courses,
                 searchString,
-                sortBy,
-                sortDirection,
-                existingFilterString,
-                page,
-                itemsPerPage
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                filterString: existingFilterString,
+                availableFilters: availableFilters,
+                pageNumber: page,
+                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
+            var model = new DelegateCoursesViewModel(
+                result,
+                availableFilters
+            );
+
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, result.FilterString);
 
             return View(model);
         }

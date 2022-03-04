@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.EmailDelegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -45,31 +47,31 @@
             expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
         }
 
-        private (IEnumerable<(int id, string name)> jobGroups, FilterViewModel filter) GetSampleJobGroupsAndFilter()
+        private (IEnumerable<(int id, string name)> jobGroups, FilterModel filter) GetSampleJobGroupsAndFilter()
         {
             var jobGroups = new List<(int id, string name)> { (1, "J 1"), (2, "J 2") };
 
             var jobGroupOptions = new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "J 1",
                     "JobGroupId" + FilteringHelper.Separator +
                     "JobGroupId" + FilteringHelper.Separator + 1,
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "J 2",
                     "JobGroupId" + FilteringHelper.Separator +
                     "JobGroupId" + FilteringHelper.Separator + 2,
                     FilterStatus.Default
                 ),
             };
-            var jobGroupFilter = new FilterViewModel("JobGroupId", "Job Group", jobGroupOptions);
+            var jobGroupFilter = new FilterModel("JobGroupId", "Job Group", jobGroupOptions);
 
             return (jobGroups, jobGroupFilter);
         }
 
-        private (List<CentreRegistrationPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
+        private (List<CentreRegistrationPrompt> customPrompts, List<FilterModel> filters) GetSampleCustomPromptsAndFilters()
         {
             var customPrompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,
@@ -82,19 +84,19 @@
 
             var customPrompt1Options = new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Clinical",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + "Clinical",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Non-Clinical",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + "Non-Clinical",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "No option selected",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
@@ -103,35 +105,35 @@
             };
             var customPrompt4Options = new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "C 1",
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + "C 1",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "C 2",
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + "C 2",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "C 3",
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + "C 3",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "No option selected",
                     "Answer4" + FilteringHelper.Separator +
                     "Answer4" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
                     FilterStatus.Default
                 ),
             };
-            var customPromptFilters = new List<FilterViewModel>
+            var customPromptFilters = new List<FilterModel>
             {
-                new FilterViewModel("CentreRegistrationPrompt1", "First prompt", customPrompt1Options),
-                new FilterViewModel("CentreRegistrationPrompt4", "Fourth prompt", customPrompt4Options),
+                new FilterModel("CentreRegistrationPrompt1", "First prompt", customPrompt1Options),
+                new FilterModel("CentreRegistrationPrompt4", "Fourth prompt", customPrompt4Options),
             };
 
             return (customPrompts, customPromptFilters);

@@ -1,8 +1,10 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.TrackingSystem.Delegates.CourseDelegates
 {
     using System.Collections.Generic;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -27,7 +29,7 @@
             expectedFilters.ForEach(expectedFilter => result.Should().ContainEquivalentOf(expectedFilter));
         }
 
-        private static (List<CourseAdminField> adminFields, List<FilterViewModel> filters) GetSampleAdminFieldsAndFilters()
+        private static (List<CourseAdminField> adminFields, List<FilterModel> filters) GetSampleAdminFieldsAndFilters()
         {
             var adminField1 = PromptsTestHelper.GetDefaultCourseAdminField(
                 1,
@@ -39,19 +41,19 @@
 
             var adminField1Options = new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Yes",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + "Yes",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "No",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + "No",
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "No option selected",
                     "Answer1" + FilteringHelper.Separator +
                     "Answer1" + FilteringHelper.Separator + FilteringHelper.EmptyValue,
@@ -60,23 +62,23 @@
             };
             var adminField3Options = new[]
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Not blank",
                     "Answer3" + FilteringHelper.Separator +
                     "Answer3" + FilteringHelper.Separator + FilteringHelper.FreeTextNotBlankValue,
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Blank",
                     "Answer3" + FilteringHelper.Separator +
                     "Answer3" + FilteringHelper.Separator + FilteringHelper.FreeTextBlankValue,
                     FilterStatus.Default
                 ),
             };
-            var adminFieldFilters = new List<FilterViewModel>
+            var adminFieldFilters = new List<FilterModel>
             {
-                new FilterViewModel("CourseAdminField1", "System access", adminField1Options),
-                new FilterViewModel("CourseAdminField3", "Some Free Text Field", adminField3Options),
+                new FilterModel("CourseAdminField1", "System access", adminField1Options),
+                new FilterModel("CourseAdminField3", "Some Free Text Field", adminField3Options),
             };
 
             return (adminFields, adminFieldFilters);

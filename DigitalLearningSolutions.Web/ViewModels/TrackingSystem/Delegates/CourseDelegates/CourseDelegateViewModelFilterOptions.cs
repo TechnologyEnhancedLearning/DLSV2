@@ -2,8 +2,10 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -13,35 +15,35 @@
 
     public class CourseDelegateViewModelFilterOptions
     {
-        public static readonly IEnumerable<FilterOptionViewModel> ActiveStatusOptions = new[]
+        public static readonly IEnumerable<FilterOptionModel> ActiveStatusOptions = new[]
         {
             CourseDelegateAccountStatusFilterOptions.Inactive,
             CourseDelegateAccountStatusFilterOptions.Active,
         };
 
-        public static readonly IEnumerable<FilterOptionViewModel> LockedStatusOptions = new[]
+        public static readonly IEnumerable<FilterOptionModel> LockedStatusOptions = new[]
         {
             CourseDelegateProgressLockedFilterOptions.Locked,
             CourseDelegateProgressLockedFilterOptions.NotLocked,
         };
 
-        public static readonly IEnumerable<FilterOptionViewModel> RemovedStatusOptions = new[]
+        public static readonly IEnumerable<FilterOptionModel> RemovedStatusOptions = new[]
         {
             CourseDelegateProgressRemovedFilterOptions.Removed,
             CourseDelegateProgressRemovedFilterOptions.NotRemoved,
         };
 
-        public static List<FilterViewModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)
+        public static List<FilterModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)
         {
-            var filters = new List<FilterViewModel>
+            var filters = new List<FilterModel>
             {
-                new FilterViewModel("ActiveStatus", "Active Status", ActiveStatusOptions),
-                new FilterViewModel("LockedStatus", "Locked Status", LockedStatusOptions),
-                new FilterViewModel("RemovedStatus", "Removed Status", RemovedStatusOptions),
+                new FilterModel("ActiveStatus", "Active Status", ActiveStatusOptions),
+                new FilterModel("LockedStatus", "Locked Status", LockedStatusOptions),
+                new FilterModel("RemovedStatus", "Removed Status", RemovedStatusOptions),
             };
             filters.AddRange(
                 adminFields.Select(
-                    field => new FilterViewModel(
+                    field => new FilterModel(
                         $"CourseAdminField{field.PromptNumber}",
                         field.PromptText,
                         GetCourseDelegateAdminFieldOptions(field)
@@ -89,7 +91,7 @@
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetCourseDelegateAdminFieldOptions(CourseAdminField adminField)
+        private static IEnumerable<FilterOptionModel> GetCourseDelegateAdminFieldOptions(CourseAdminField adminField)
         {
             if (adminField.Options.Count > 0)
             {
@@ -99,9 +101,9 @@
             var filterValueName =
                 AdminFieldsHelper.GetAdminFieldAnswerName(adminField.PromptNumber);
 
-            var options = new List<FilterOptionViewModel>
+            var options = new List<FilterOptionModel>
             {
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Not blank",
                     FilteringHelper.BuildFilterValueString(
                         filterValueName,
@@ -110,7 +112,7 @@
                     ),
                     FilterStatus.Default
                 ),
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "Blank",
                     FilteringHelper.BuildFilterValueString(
                         filterValueName,

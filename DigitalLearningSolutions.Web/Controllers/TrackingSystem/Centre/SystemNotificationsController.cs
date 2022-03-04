@@ -20,15 +20,18 @@
     public class SystemNotificationsController : Controller
     {
         private readonly IClockService clockService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISystemNotificationsDataService systemNotificationsDataService;
 
         public SystemNotificationsController(
             ISystemNotificationsDataService systemNotificationsDataService,
-            IClockService clockService
+            IClockService clockService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.systemNotificationsDataService = systemNotificationsDataService;
             this.clockService = clockService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [HttpGet]
@@ -48,7 +51,14 @@
                 Response.Cookies.DeleteSkipSystemNotificationCookie();
             }
 
-            var model = new SystemNotificationsViewModel(unacknowledgedNotifications, page);
+            const int numberOfNotificationsPerPage = 1;
+            var result = searchSortFilterPaginateService.PaginateItems(
+                unacknowledgedNotifications,
+                page,
+                numberOfNotificationsPerPage
+            );
+
+            var model = new SystemNotificationsViewModel(result);
             return View(model);
         }
 

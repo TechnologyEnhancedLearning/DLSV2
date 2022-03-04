@@ -28,19 +28,22 @@
         private readonly IConfiguration configuration;
         private readonly ICourseService courseService;
         private readonly IProgressService progressService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IUserService userService;
 
         public DelegateProgressController(
             ICourseService courseService,
             IUserService userService,
             IProgressService progressService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseService = courseService;
             this.userService = userService;
             this.progressService = progressService;
             this.configuration = configuration;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         public IActionResult Index(int progressId, DelegateProgressAccessRoute accessedVia, int? returnPage)
@@ -233,7 +236,15 @@
                 return NotFound();
             }
 
-            var model = new LearningLogViewModel(accessedVia, learningLog, sortBy, sortDirection);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                learningLog.Entries,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                pageNumber: 1,
+                itemsPerPage: int.MaxValue
+            );
+
+            var model = new LearningLogViewModel(accessedVia, learningLog, result);
             return View(model);
         }
 

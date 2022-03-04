@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Migrations;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
@@ -11,6 +12,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates;
+    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.FeatureManagement.Mvc;
@@ -26,16 +28,19 @@
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService;
         private readonly ICourseDelegatesService courseDelegatesService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public CourseDelegatesController(
             ICourseAdminFieldsService courseAdminFieldsService,
             ICourseDelegatesService courseDelegatesService,
-            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService
+            ICourseDelegatesDownloadFileService courseDelegatesDownloadFileService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.courseAdminFieldsService = courseAdminFieldsService;
             this.courseDelegatesService = courseDelegatesService;
             this.courseDelegatesDownloadFileService = courseDelegatesDownloadFileService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page:int=1}")]
@@ -59,33 +64,43 @@
 
             var centreId = User.GetCentreId();
             var adminCategoryId = User.GetAdminCourseCategoryFilter();
-            CourseDelegatesData courseDelegatesData;
 
             try
             {
-                courseDelegatesData =
-                    courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
-                        centreId,
-                        adminCategoryId,
-                        customisationId
-                    );
+                var courseDelegatesData = courseDelegatesService.GetCoursesAndCourseDelegatesForCentre(
+                    centreId,
+                    adminCategoryId,
+                    customisationId
+                );
+
+                var availableFilters = CourseDelegateViewModelFilterOptions.GetAllCourseDelegatesFilterViewModels(
+                    courseDelegatesData.CourseAdminFields
+                );
+
+                var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    courseDelegatesData.Delegates,
+                    sortBy: sortBy,
+                    sortDirection: sortDirection,
+                    filterString: newFilterString,
+                    defaultFilterString: CourseDelegateAccountStatusFilterOptions.Active.FilterValue,
+                    availableFilters: availableFilters,
+                    pageNumber: page
+                );
+
+                var model = new CourseDelegatesViewModel(
+                    courseDelegatesData,
+                    result,
+                    availableFilters,
+                    "customisationId"
+                );
+
+                Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, result.FilterString);
+                return View(model);
             }
             catch (CourseAccessDeniedException)
             {
                 return NotFound();
             }
-
-            var model = new CourseDelegatesViewModel(
-                courseDelegatesData,
-                "customisationId",
-                sortBy,
-                sortDirection,
-                newFilterString,
-                page
-            );
-
-            Response.UpdateOrDeleteFilterCookie(CourseDelegatesFilterCookieName, newFilterString);
-            return View(model);
         }
 
         [Route("AllCourseDelegates/{customisationId:int}")]

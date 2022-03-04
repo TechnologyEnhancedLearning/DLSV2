@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -26,12 +27,12 @@
 
             Filters = new[]
             {
-                new FilterViewModel(
+                new FilterModel(
                     nameof(Group.AddedByAdminId),
                     "Added by",
                     DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
                 ),
-                new FilterViewModel(
+                new FilterModel(
                     nameof(Group.LinkedToField),
                     "Linked field",
                     DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)

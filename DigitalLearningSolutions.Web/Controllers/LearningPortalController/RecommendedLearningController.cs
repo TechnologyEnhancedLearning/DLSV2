@@ -6,7 +6,9 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.External.Filtered;
+    using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -29,13 +31,15 @@
         private readonly IFilteredApiHelperService filteredApiHelperService;
         private readonly IRecommendedLearningService recommendedLearningService;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public RecommendedLearningController(
             IFilteredApiHelperService filteredApiHelperService,
             ISelfAssessmentService selfAssessmentService,
             IConfiguration configuration,
             IRecommendedLearningService recommendedLearningService,
-            IActionPlanService actionPlanService
+            IActionPlanService actionPlanService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.filteredApiHelperService = filteredApiHelperService;
@@ -43,6 +47,7 @@
             this.configuration = configuration;
             this.recommendedLearningService = recommendedLearningService;
             this.actionPlanService = actionPlanService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Results")]
@@ -301,12 +306,18 @@
             var (recommendedResources, apiIsAccessible) =
                 await recommendedLearningService.GetRecommendedLearningForSelfAssessment(selfAssessmentId, candidateId);
 
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                recommendedResources,
+                searchString,
+                sortBy: nameof(RecommendedResource.RecommendationScore),
+                sortDirection: GenericSortingHelper.Descending,
+                pageNumber: page
+            );
+
             var model = new RecommendedLearningViewModel(
                 assessment,
-                recommendedResources,
-                apiIsAccessible,
-                searchString,
-                page
+                result,
+                apiIsAccessible
             );
             return View("RecommendedLearning", model);
         }

@@ -7,6 +7,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -35,16 +36,23 @@
                 selfAssessmentService.GetSelfAssessmentsForCandidate(delegateId);
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateId);
-            var model = new CurrentPageViewModel(
-                currentCourses,
+
+            var allItems = currentCourses.Cast<CurrentLearningItem>().ToList();
+            allItems.AddRange(selfAssessments);
+            allItems.AddRange(learningResources);
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                allItems,
                 searchString,
-                sortBy,
-                sortDirection,
-                selfAssessments,
-                learningResources,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                pageNumber: page
+            );
+
+            var model = new CurrentPageViewModel(
+                result,
                 apiIsAccessible,
-                bannerText,
-                page
+                bannerText
             );
             return View("Current/Current", model);
         }

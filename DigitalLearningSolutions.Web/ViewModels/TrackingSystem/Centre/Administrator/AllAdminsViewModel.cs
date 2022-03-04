@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -19,13 +20,13 @@
 
             Filters = new[]
             {
-                new FilterViewModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
-                new FilterViewModel(
+                new FilterModel("Role", "Role", AdministratorsViewModelFilterOptions.RoleOptions),
+                new FilterModel(
                     "CategoryName",
                     "Category",
                     AdministratorsViewModelFilterOptions.GetCategoryOptions(categories)
                 ),
-                new FilterViewModel(
+                new FilterModel(
                     "AccountStatus",
                     "Account Status",
                     AdministratorsViewModelFilterOptions.AccountStatusOptions

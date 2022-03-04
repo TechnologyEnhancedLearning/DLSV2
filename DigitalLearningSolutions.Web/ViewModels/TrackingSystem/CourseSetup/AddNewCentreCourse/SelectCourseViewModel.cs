@@ -3,48 +3,27 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class SelectCourseViewModel : BaseSearchablePageViewModel
+    public class SelectCourseViewModel : BaseSearchablePageViewModel<ApplicationDetails>
     {
         public SelectCourseViewModel(
-            IEnumerable<ApplicationDetails> applications,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics,
-            int? adminCategoryFilter,
+            SearchSortFilterPaginateResult<ApplicationDetails> result,
+            IEnumerable<FilterModel> availableFilters,
             string? categoryFilterString,
             string? topicFilterString
         ) : base(
-            null,
-            1,
+            result,
             true,
-            nameof(ApplicationDetails.ApplicationName),
-            GenericSortingHelper.Ascending,
-            FilteringHelper.GetCategoryAndTopicFilterString(categoryFilterString, topicFilterString)
+            availableFilters
         )
         {
-            var applicationsList = applications.ToList();
-            var applicationsToShow = FilterItems(applicationsList);
-
-            ApplicationOptions = applicationsToShow.Select(a => new FilterableApplicationSelectListItemViewModel(a));
+            ApplicationOptions = result.ItemsToDisplay.Select(a => new FilterableApplicationSelectListItemViewModel(a));
 
             CategoryFilterString = categoryFilterString;
             TopicFilterString = topicFilterString;
-
-            Filters = adminCategoryFilter == null
-                ? SelectCourseViewModelFilterOptions.GetAllCategoriesFilters(
-                    categories,
-                    topics,
-                    categoryFilterString,
-                    topicFilterString
-                )
-                : SelectCourseViewModelFilterOptions.GetSingleCategoryFilters(
-                    applicationsList,
-                    categoryFilterString,
-                    topicFilterString
-                );
         }
 
         public int? ApplicationId { get; set; }

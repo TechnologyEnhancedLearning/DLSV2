@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
@@ -12,12 +14,12 @@
 
     public static class DelegatesViewModelFilters
     {
-        public static IEnumerable<FilterOptionViewModel> GetJobGroupOptions(
+        public static IEnumerable<FilterOptionModel> GetJobGroupOptions(
             IEnumerable<(int id, string name)> jobGroups
         )
         {
             return jobGroups.Select(
-                jobGroup => new FilterOptionViewModel(
+                jobGroup => new FilterOptionModel(
                     jobGroup.name,
                     FilteringHelper.BuildFilterValueString(
                         nameof(DelegateUserCard.JobGroupId),
@@ -29,7 +31,7 @@
             );
         }
 
-        public static IEnumerable<FilterOptionViewModel> GetPromptOptions(Prompt prompt)
+        public static IEnumerable<FilterOptionModel> GetPromptOptions(Prompt prompt)
         {
             var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
                 ? DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
@@ -38,14 +40,14 @@
                 : CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber);
 
             var options = prompt.Options.Select(
-                option => new FilterOptionViewModel(
+                option => new FilterOptionModel(
                     option,
                     FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
                     FilterStatus.Default
                 )
             ).ToList();
             options.Add(
-                new FilterOptionViewModel(
+                new FilterOptionModel(
                     "No option selected",
                     FilteringHelper.BuildFilterValueString(
                         filterValueName,

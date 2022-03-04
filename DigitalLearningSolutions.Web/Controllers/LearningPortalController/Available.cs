@@ -22,13 +22,18 @@
                 User.GetCentreId()
             );
             var bannerText = GetBannerText();
-            var model = new AvailablePageViewModel(
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 availableCourses,
                 searchString,
-                sortBy,
-                sortDirection,
-                bannerText,
-                page
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                pageNumber: page
+            );
+
+            var model = new AvailablePageViewModel(
+                result,
+                bannerText
             );
             return View("Available/Available", model);
         }

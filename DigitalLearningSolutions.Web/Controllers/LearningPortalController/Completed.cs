@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -29,16 +30,23 @@
             var (completedLearningResources, apiIsAccessible) =
                 await GetCompletedLearningResourcesIfSignpostingEnabled(delegateId);
             var bannerText = GetBannerText();
+
+            var allItems = completedCourses.Cast<CompletedLearningItem>().ToList();
+            allItems.AddRange(completedLearningResources);
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                allItems,
+                searchString,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                pageNumber: page
+            );
+
             var model = new CompletedPageViewModel(
-                completedCourses,
-                completedLearningResources,
+                result,
                 apiIsAccessible,
                 config,
-                searchString,
-                sortBy,
-                sortDirection,
-                bannerText,
-                page
+                bannerText
             );
             return View("Completed/Completed", model);
         }

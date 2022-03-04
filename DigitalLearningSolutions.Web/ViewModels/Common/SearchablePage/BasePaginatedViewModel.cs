@@ -1,28 +1,39 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Mvc.Rendering;
 
-    public abstract class BasePaginatedViewModel
+    public interface IBasePaginatedViewModel
     {
-        public const int DefaultItemsPerPage = 10;
+        public int MatchingSearchResults { get; set; }
 
-        public int MatchingSearchResults;
+        public int Page { get; set; }
 
-        protected BasePaginatedViewModel(int page, int itemsPerPage = DefaultItemsPerPage)
+        public int TotalPages { get; set; }
+
+        public int ItemsPerPage { get; set; }
+
+        IEnumerable<SelectListItem> ItemsPerPageSelectListItems { get; }
+    }
+
+
+    public abstract class BasePaginatedViewModel<T> : IBasePaginatedViewModel where T : BaseSearchableItem
+    {
+        protected BasePaginatedViewModel(PaginateResult<T> paginateResult)
         {
-            Page = page;
-            ItemsPerPage = itemsPerPage;
+            Page = paginateResult.Page;
+            ItemsPerPage = paginateResult.ItemsPerPage;
+            MatchingSearchResults = paginateResult.MatchingSearchResults;
+            TotalPages = paginateResult.TotalPages;
         }
 
-        public virtual int Page { get; set; }
+        public int MatchingSearchResults { get; set; }
 
-        public virtual int TotalPages { get; set; }
+        public int Page { get; set; }
+
+        public int TotalPages { get; set; }
 
         public int ItemsPerPage { get; set; }
 
@@ -36,37 +47,5 @@
             (50, "50"),
             (100, "100"),
         };
-
-        protected IEnumerable<T> GetItemsOnCurrentPage<T>(IList<T> items)
-        {
-            if (items.Count > ItemsPerPage)
-            {
-                items = items.Skip(OffsetFromPageNumber(Page)).Take(ItemsPerPage).ToList();
-            }
-
-            return items;
-        }
-
-        protected void SetTotalPages()
-        {
-            TotalPages = (int)Math.Ceiling(MatchingSearchResults / (double)ItemsPerPage);
-            if (Page < 1 || Page > TotalPages)
-            {
-                Page = 1;
-            }
-        }
-
-        protected IEnumerable<T> PaginateItems<T>(IEnumerable<T> items) where T:BaseSearchableItem
-        {
-            var listedItems = items.ToList();
-            MatchingSearchResults = listedItems.Count;
-            SetTotalPages();
-            return GetItemsOnCurrentPage(listedItems);
-        }
-
-        private int OffsetFromPageNumber(int pageNumber)
-        {
-            return (pageNumber - 1) * ItemsPerPage;
-        }
     }
 }

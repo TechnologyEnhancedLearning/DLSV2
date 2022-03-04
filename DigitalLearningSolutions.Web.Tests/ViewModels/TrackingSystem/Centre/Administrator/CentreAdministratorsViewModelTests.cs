@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Tests.TestHelpers;
     using DigitalLearningSolutions.Web.Helpers.FilterOptions;
@@ -99,9 +100,9 @@
             };
             var expectedFilters = new[]
             {
-                new FilterViewModel("Role", "Role", roleOptions),
-                new FilterViewModel("CategoryName", "Category", new List<FilterOptionViewModel>()),
-                new FilterViewModel("AccountStatus", "Account Status", accountStatusOptions)
+                new FilterModel("Role", "Role", roleOptions),
+                new FilterModel("CategoryName", "Category", new List<FilterOptionModel>()),
+                new FilterModel("AccountStatus", "Account Status", accountStatusOptions)
             }.AsEnumerable();
 
             // When

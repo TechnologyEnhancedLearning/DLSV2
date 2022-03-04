@@ -33,6 +33,7 @@
         public const string SaveAction = "save";
         private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseService courseService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
         private readonly IConfiguration config;
@@ -41,12 +42,14 @@
             ICourseService courseService,
             ITutorialService tutorialService,
             ISectionService sectionService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IConfiguration config
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
         }
 
@@ -75,18 +78,28 @@
 
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new CourseSetupViewModel(
-                details,
+            var availableFilters = CourseStatisticsViewModelFilterOptions
+                .GetFilterOptions(details.Categories, details.Topics).ToList();
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                details.Courses,
                 searchString,
-                sortBy,
-                sortDirection,
-                existingFilterString,
-                page,
-                itemsPerPage,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                filterString: existingFilterString,
+                defaultFilterString: CourseStatusFilterOptions.IsActive.FilterValue,
+                availableFilters: availableFilters,
+                pageNumber: page,
+                itemsPerPage: itemsPerPage ?? SearchSortFilterPaginateService.DefaultItemsPerPage
+            );
+
+            var model = new CourseSetupViewModel(
+                result,
+                availableFilters,
                 config
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, result.FilterString);
 
             return View(model);
         }
@@ -388,15 +401,39 @@
             var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
 
             var applications = courseService
-                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter).ToList();
             var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
             var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
-            return new SelectCourseViewModel(
+            var availableFilters = (categoryIdFilter == null
+                ? SelectCourseViewModelFilterOptions.GetAllCategoriesFilters(
+                    categories,
+                    topics,
+                    categoryFilterString,
+                    topicFilterString
+                )
+                : SelectCourseViewModelFilterOptions.GetSingleCategoryFilters(
+                    applications,
+                    categoryFilterString,
+                    topicFilterString
+                )).ToList();
+
+            var currentFilterString =
+                FilteringHelper.GetCategoryAndTopicFilterString(categoryFilterString, topicFilterString);
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 applications,
-                categories,
-                topics,
-                categoryIdFilter,
+                sortBy: nameof(ApplicationDetails.ApplicationName),
+                sortDirection: GenericSortingHelper.Ascending,
+                filterString: currentFilterString,
+                availableFilters: availableFilters,
+                pageNumber: 1,
+                itemsPerPage: int.MaxValue
+            );
+
+            return new SelectCourseViewModel(
+                result,
+                availableFilters,
                 categoryFilterString,
                 topicFilterString
             );

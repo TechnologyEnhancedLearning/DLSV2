@@ -3,28 +3,22 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Group
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
 
-    public class GroupCoursesViewModel : BasePaginatedViewModel
+    public class GroupCoursesViewModel : BasePaginatedViewModel<GroupCourse>
     {
         public GroupCoursesViewModel(
             int groupId,
             string groupName,
-            IEnumerable<GroupCourse> groupCourses,
-            int page
-        ) : base(page)
+            PaginateResult<GroupCourse> result
+        ) : base(result)
         {
             GroupId = groupId;
             NavViewModel = new DelegateGroupsSideNavViewModel(groupId, groupName, DelegateGroupPage.Courses);
-
-            var sortedItems = groupCourses.OrderBy(gc => gc.CourseName).ToList();
-
-            MatchingSearchResults = sortedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(sortedItems);
-            GroupCourses = paginatedItems.Select(groupCourse => new GroupCourseViewModel(groupCourse));
+            GroupCourses = result.ItemsToDisplay.Select(groupCourse => new GroupCourseViewModel(groupCourse));
         }
 
         public int GroupId { get; set; }

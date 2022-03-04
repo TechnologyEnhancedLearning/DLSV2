@@ -50,14 +50,19 @@
                 supervisor => new SupervisorDelegateDetailViewModel(supervisor, page)
             );
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                supervisorDelegateDetailViewModels,
+                searchString,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                pageNumber: page
+            );
+
             var model = new MyStaffListViewModel(
                 loggedInAdminUser,
-                supervisorDelegateDetailViewModels,
-                centreRegistrationPrompts,
-                searchString,
-                sortBy,
-                sortDirection,
-                page
+                result,
+                centreRegistrationPrompts
             );
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
             return View("MyStaffList", model);

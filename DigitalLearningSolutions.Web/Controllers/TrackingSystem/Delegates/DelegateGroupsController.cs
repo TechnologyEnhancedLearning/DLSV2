@@ -6,6 +6,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -27,14 +28,17 @@
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
         private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public DelegateGroupsController(
             ICentreRegistrationPromptsService centreRegistrationPromptsService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -57,18 +61,45 @@
 
             var centreId = User.GetCentreId();
             var groups = groupsService.GetGroupsForCentre(centreId).ToList();
+            var admins = groups.Select(
+                g => (g.AddedByAdminId,
+                    DisplayStringHelper.GetPotentiallyInactiveAdminName(
+                        g.AddedByFirstName,
+                        g.AddedByLastName,
+                        g.AddedByAdminActive
+                    ))
+            ).Distinct();
+            var registrationPrompts = GetRegistrationPromptsWithSetOptions(centreId);
+            var availableFilters = new[]
+            {
+                new FilterModel(
+                    nameof(Group.AddedByAdminId),
+                    "Added by",
+                    DelegateGroupsViewModelFilterOptions.GetAddedByOptions(admins)
+                ),
+                new FilterModel(
+                    nameof(Group.LinkedToField),
+                    "Linked field",
+                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(registrationPrompts)
+                ),
+            };
 
-            var model = new DelegateGroupsViewModel(
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
                 groups,
-                GetRegistrationPromptsWithSetOptions(centreId),
                 searchString,
-                sortBy,
-                sortDirection,
-                existingFilterString,
-                page
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                filterString: existingFilterString,
+                availableFilters: availableFilters,
+                pageNumber: page
             );
 
-            Response.UpdateOrDeleteFilterCookie(DelegateGroupsFilterCookieName, existingFilterString);
+            var model = new DelegateGroupsViewModel(
+                result,
+                availableFilters
+            );
+
+            Response.UpdateOrDeleteFilterCookie(DelegateGroupsFilterCookieName, result.FilterString);
 
             return View(model);
         }

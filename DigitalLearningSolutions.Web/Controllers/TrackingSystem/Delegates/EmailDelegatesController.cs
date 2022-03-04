@@ -30,6 +30,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IConfiguration config;
 
         public EmailDelegatesController(
@@ -37,6 +38,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             IJobGroupsDataService jobGroupsDataService,
             IPasswordResetService passwordResetService,
             IUserService userService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IConfiguration config
         )
         {
@@ -44,6 +46,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             this.jobGroupsDataService = jobGroupsDataService;
             this.passwordResetService = passwordResetService;
             this.userService = userService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.config = config;
         }
 
@@ -64,21 +67,39 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
             var delegateUsers = GetDelegateUserCards();
 
-            var model = new EmailDelegatesViewModel(
-                delegateUsers,
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
                 jobGroups,
-                customPrompts,
-                newFilterString,
+                promptsWithOptions
+            );
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                delegateUsers,
+                sortBy: null,
+                sortDirection: null,
+                filterString: newFilterString,
+                availableFilters: availableFilters,
+                pageNumber: 1,
+                itemsPerPage: int.MaxValue
+            );
+
+            var model = new EmailDelegatesViewModel(
+                result,
+                availableFilters,
                 selectAll
             );
 
-            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, newFilterString);
+            Response.UpdateOrDeleteFilterCookie(EmailDelegateFilterCookieName, result.FilterString);
 
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult Index(EmailDelegatesViewModel model, string? existingFilterString = null, string? newFilterToAdd = null)
+        public IActionResult Index(
+            EmailDelegatesFormData formData,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null
+        )
         {
             var delegateUsers = GetDelegateUserCards();
 
@@ -92,18 +113,29 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 );
                 var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical();
                 var customPrompts = promptsService.GetCentreRegistrationPrompts(User.GetCentreId());
-                var viewModel = new EmailDelegatesViewModel(delegateUsers, jobGroups, customPrompts, newFilterString)
-                {
-                    SelectedDelegateIds = model.SelectedDelegateIds,
-                    Day = model.Day,
-                    Month = model.Month,
-                    Year = model.Year,
-                };
+
+                var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+                var availableFilters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(
+                    jobGroups,
+                    promptsWithOptions
+                );
+
+                var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                    delegateUsers,
+                    sortBy: null,
+                    sortDirection: null,
+                    filterString: newFilterString,
+                    availableFilters: availableFilters,
+                    pageNumber: 1,
+                    itemsPerPage: int.MaxValue
+                );
+
+                var viewModel = new EmailDelegatesViewModel(result, availableFilters, formData);
                 return View(viewModel);
             }
 
-            var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
-            var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+            var selectedUsers = delegateUsers.Where(user => formData.SelectedDelegateIds!.Contains(user.Id)).ToList();
+            var emailDate = new DateTime(formData.Year!.Value, formData.Month!.Value, formData.Day!.Value);
             var baseUrl = config.GetAppRootPath();
 
             passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);

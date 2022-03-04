@@ -3,6 +3,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -14,17 +15,27 @@
 
     [SetDlsSubApplication]
     [SetSelectedTab(nameof(NavMenuTab.Support))]
-    [TypeFilter(typeof(ValidateAllowedDlsSubApplication), Arguments = new object[] { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } })]
+    [TypeFilter(
+        typeof(ValidateAllowedDlsSubApplication),
+        Arguments = new object[]
+            { new[] { nameof(DlsSubApplication.TrackingSystem), nameof(DlsSubApplication.Frameworks) } }
+    )]
     [Route("/{dlsSubApplication}/Support/FAQs")]
     public class FaqsController : Controller
     {
         private readonly IConfiguration configuration;
         private readonly IFaqsService faqsService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
-        public FaqsController(IConfiguration configuration, IFaqsService faqsService)
+        public FaqsController(
+            IConfiguration configuration,
+            IFaqsService faqsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
+        )
         {
             this.configuration = configuration;
             this.faqsService = faqsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page=1:int}")]
@@ -34,16 +45,30 @@
             string? searchString = null
         )
         {
+            // A MatchCutOffScore of 65 is being used here rather than the default 80.
+            // The default Fuzzy Search configuration does not reliably bring back expected FAQs.
+            // Through trial and error a combination of the PartialTokenSetScorer ratio scorer
+            // and this cut off score bring back reliable results comparable to the JS search.
+            const int matchCutOffScore = 65;
+            const string faqSortBy = "Weighting,FaqId";
+
             var faqs = faqsService.GetPublishedFaqsForTargetGroup(dlsSubApplication.FaqTargetGroupId!.Value)
                 .Select(f => new SearchableFaq(f));
+
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                faqs,
+                searchString,
+                matchCutOffScore,
+                faqSortBy,
+                GenericSortingHelper.Descending,
+                pageNumber: page
+            );
 
             var model = new FaqsPageViewModel(
                 dlsSubApplication,
                 SupportPage.Faqs,
                 configuration.GetCurrentSystemBaseUrl(),
-                faqs,
-                page,
-                searchString
+                result
             );
             return View("Faqs", model);
         }

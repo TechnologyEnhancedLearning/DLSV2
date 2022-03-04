@@ -26,18 +26,21 @@
         private readonly IGroupsService groupsService;
         private readonly IJobGroupsService jobGroupsService;
         private readonly IUserService userService;
+        private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
 
         public GroupDelegatesController(
             IJobGroupsService jobGroupsService,
             IUserService userService,
             PromptsService promptsService,
-            IGroupsService groupsService
+            IGroupsService groupsService,
+            ISearchSortFilterPaginateService searchSortFilterPaginateService
         )
         {
             this.promptsService = promptsService;
             this.jobGroupsService = jobGroupsService;
             this.userService = userService;
             this.groupsService = groupsService;
+            this.searchSortFilterPaginateService = searchSortFilterPaginateService;
         }
 
         [Route("{page:int=1}")]
@@ -48,7 +51,9 @@
 
             var groupDelegates = groupsService.GetGroupDelegates(groupId);
 
-            var model = new GroupDelegatesViewModel(groupId, groupName!, groupDelegates, page);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(groupDelegates, pageNumber: page);
+
+            var model = new GroupDelegatesViewModel(groupId, groupName!, result);
 
             return View(model);
         }
@@ -74,19 +79,31 @@
             var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
             var groupName = groupsService.GetGroupName(groupId, centreId);
-
-            var model = new AddGroupDelegateViewModel(
-                delegateUsers,
+            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var availableFilters = GroupDelegatesViewModelFilterOptions.GetAddGroupDelegateFilterViewModels(
                 jobGroups,
-                customPrompts,
-                page,
-                groupId,
-                groupName!,
-                searchString,
-                existingFilterString
+                promptsWithOptions
             );
 
-            Response.UpdateOrDeleteFilterCookie(AddGroupDelegateCookieName, existingFilterString);
+            var result = searchSortFilterPaginateService.SearchFilterSortAndPaginate(
+                delegateUsers,
+                searchString,
+                sortBy: DefaultSortByOptions.Name.PropertyName,
+                sortDirection: GenericSortingHelper.Ascending,
+                filterString: existingFilterString,
+                availableFilters: availableFilters,
+                pageNumber: page
+            );
+
+            var model = new AddGroupDelegateViewModel(
+                result,
+                availableFilters,
+                customPrompts,
+                groupId,
+                groupName!
+            );
+
+            Response.UpdateOrDeleteFilterCookie(AddGroupDelegateCookieName, result.FilterString);
             return View(model);
         }
 

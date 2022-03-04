@@ -3,46 +3,29 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
-    public class AddCourseToGroupCoursesViewModel : BaseSearchablePageViewModel
+    public class AddCourseToGroupCoursesViewModel : BaseSearchablePageViewModel<CourseAssessmentDetails>
     {
         public AddCourseToGroupCoursesViewModel(
-            IEnumerable<CourseAssessmentDetails> courses,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics,
+            SearchSortFilterPaginateResult<CourseAssessmentDetails> result,
+            IEnumerable<FilterModel> availableFilters,
             int? adminCategoryFilter,
             int groupId,
-            string groupName,
-            string? searchString,
-            string? existingFilterString,
-            int page
+            string groupName
         ) : base(
-            searchString,
-            page,
+            result,
             true,
-            nameof(CourseAssessmentDetails.CourseName),
-            GenericSortingHelper.Ascending,
-            existingFilterString,
-            searchLabel: "Search courses"
+            availableFilters,
+            "Search courses"
         )
         {
             GroupId = groupId;
             GroupName = groupName;
             AdminCategoryFilter = adminCategoryFilter;
-
-            var courseList = courses.ToList();
-            var searchedCourses = GenericSearchHelper.SearchItems(courseList, SearchString);
-
-            var coursesToShow = SortFilterAndPaginate(searchedCourses);
-
-            Courses = coursesToShow.Select(c => new SearchableCourseViewModel(c, groupId));
-
-            Filters = adminCategoryFilter == null
-                ? AddCourseToGroupViewModelFilterOptions.GetAllCategoriesFilters(categories, topics)
-                : AddCourseToGroupViewModelFilterOptions.GetSingleCategoryFilters(courseList);
+            Courses = result.ItemsToDisplay.Select(c => new SearchableCourseViewModel(c, groupId));
         }
 
         public int GroupId { get; set; }
