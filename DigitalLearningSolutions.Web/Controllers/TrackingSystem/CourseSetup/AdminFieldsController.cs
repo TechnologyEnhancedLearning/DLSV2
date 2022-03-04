@@ -44,7 +44,7 @@
         public IActionResult Index(int customisationId)
         {
             TempData.Clear();
-            var courseAdminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var courseAdminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
 
             var model = new AdminFieldsViewModel(courseAdminFields.AdminFields, customisationId);
             return View(model);
@@ -62,10 +62,10 @@
         [ServiceFilter(typeof(VerifyAdminUserCanManageCourse))]
         public IActionResult EditAdminField(int customisationId, int promptNumber)
         {
-            var courseAdminField = courseAdminFieldsService.GetCustomPromptsForCourse(
+            var courseAdminField = courseAdminFieldsService.GetCourseAdminFieldsForCourse(
                     customisationId
                 ).AdminFields
-                .Single(cp => cp.CustomPromptNumber == promptNumber);
+                .Single(cp => cp.PromptNumber == promptNumber);
 
             var data = TempData.Get<EditAdminFieldData>();
 
@@ -171,7 +171,7 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddAdminFieldData>))]
         public IActionResult AddAdminField(int customisationId, AddAdminFieldViewModel model, string action)
         {
-            UpdateTempDataWithCoursePromptModelValues(model);
+            UpdateTempDataWithAddAdminFieldModelValues(model);
 
             if (action.StartsWith(DeleteAction) && TryGetAnswerIndexFromDeleteAction(action, out var index))
             {
@@ -269,7 +269,7 @@
         {
             ModelState.ClearAllErrors();
 
-            courseAdminFieldsService.UpdateCustomPromptForCourse(
+            courseAdminFieldsService.UpdateAdminFieldForCourse(
                 customisationId,
                 model.PromptNumber,
                 model.OptionsString
@@ -304,7 +304,7 @@
                 return View(model);
             }
 
-            if (courseAdminFieldsService.AddCustomPromptToCourse(
+            if (courseAdminFieldsService.AddAdminFieldToCourse(
                 customisationId,
                 model.AdminFieldId!.Value,
                 model.OptionsString
@@ -334,7 +334,7 @@
 
         private IActionResult RemoveAdminFieldAndRedirect(int customisationId, int promptNumber)
         {
-            courseAdminFieldsService.RemoveCustomPromptFromCourse(customisationId, promptNumber);
+            courseAdminFieldsService.RemoveAdminFieldFromCourse(customisationId, promptNumber);
             return RedirectToAction("Index", new { customisationId });
         }
 
@@ -384,7 +384,7 @@
 
             SetAdminFieldAnswersViewModelOptions(model, optionsString);
 
-            UpdateTempDataWithCoursePromptModelValues(model);
+            UpdateTempDataWithAddAdminFieldModelValues(model);
 
             SetViewBagAdminFieldNameOptions(model.AdminFieldId);
 
@@ -464,12 +464,12 @@
 
         private void SetViewBagAdminFieldNameOptions(int? selectedId = null)
         {
-            var coursePrompts = courseAdminFieldsService.GetCoursePromptsAlphabeticalList();
+            var courseAdminFields = courseAdminFieldsService.GetCourseAdminFieldsAlphabeticalList();
             ViewBag.AdminFieldNameOptions =
-                SelectListHelper.MapOptionsToSelectListItems(coursePrompts, selectedId);
+                SelectListHelper.MapOptionsToSelectListItems(courseAdminFields, selectedId);
         }
 
-        private void UpdateTempDataWithCoursePromptModelValues(AddAdminFieldViewModel model)
+        private void UpdateTempDataWithAddAdminFieldModelValues(AddAdminFieldViewModel model)
         {
             var data = TempData.Peek<AddAdminFieldData>()!;
             data.AddModel = model;

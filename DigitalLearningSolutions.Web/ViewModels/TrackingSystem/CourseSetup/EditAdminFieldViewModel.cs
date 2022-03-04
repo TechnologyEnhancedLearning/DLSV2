@@ -7,11 +7,11 @@
     {
         public EditAdminFieldViewModel() { }
 
-        public EditAdminFieldViewModel(CustomPrompt customPrompt)
+        public EditAdminFieldViewModel(CourseAdminField courseAdminField)
         {
-            PromptNumber = customPrompt.CustomPromptNumber;
-            Prompt = customPrompt.CustomPromptText;
-            OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
+            PromptNumber = courseAdminField.PromptNumber;
+            Prompt = courseAdminField.PromptText;
+            OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(courseAdminField.Options);
             IncludeAnswersTableCaption = true;
         }
 

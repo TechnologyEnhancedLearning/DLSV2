@@ -28,15 +28,15 @@
         public const string NextAction = "next";
         public const string SaveAction = "save";
         public const string BulkAction = "bulk";
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IUserDataService userDataService;
 
         public RegistrationPromptsController(
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserDataService userDataService
         )
         {
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userDataService = userDataService;
         }
 
@@ -45,7 +45,7 @@
             TempData.Clear();
             var centreId = User.GetCentreId();
 
-            var customPrompts = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var customPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
             var model = new DisplayPromptsViewModel(customPrompts.CustomPrompts);
 
@@ -67,8 +67,8 @@
         {
             var centreId = User.GetCentreId();
 
-            var customPrompt = centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
-                .Single(cp => cp.CustomPromptNumber == promptNumber);
+            var customPrompt = centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
+                .Single(cp => cp.RegistrationField.Id == promptNumber);
 
             var data = TempData.Get<EditRegistrationPromptData>();
 
@@ -244,7 +244,7 @@
         public IActionResult AddRegistrationPromptSummary()
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
-            var promptName = centreCustomPromptsService.GetCustomPromptsAlphabeticalList()
+            var promptName = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList()
                 .Single(c => c.id == data.SelectPromptViewModel.CustomPromptId).value;
             var model = new AddRegistrationPromptSummaryViewModel(data, promptName);
 
@@ -258,7 +258,7 @@
         {
             var data = TempData.Peek<AddRegistrationPromptData>()!;
 
-            if (centreCustomPromptsService.AddCustomPromptToCentre(
+            if (centreRegistrationPromptsService.AddCentreRegistrationPrompt(
                 User.GetCentreId(),
                 data.SelectPromptViewModel.CustomPromptId!.Value,
                 data.SelectPromptViewModel.Mandatory,
@@ -285,7 +285,7 @@
             }
 
             var promptName =
-                centreCustomPromptsService.GetPromptNameForCentreAndPromptNumber(User.GetCentreId(), promptNumber);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptNameAndNumber(User.GetCentreId(), promptNumber);
 
             var model = new RemoveRegistrationPromptViewModel(promptName, delegateWithAnswerCount);
 
@@ -312,7 +312,7 @@
         {
             ModelState.ClearAllErrors();
 
-            centreCustomPromptsService.UpdateCustomPromptForCentre(
+            centreRegistrationPromptsService.UpdateCentreRegistrationPrompt(
                 User.GetCentreId(),
                 model.PromptNumber,
                 model.Mandatory,
@@ -402,7 +402,7 @@
 
         private IActionResult RemoveRegistrationPromptAndRedirect(int promptNumber)
         {
-            centreCustomPromptsService.RemoveCustomPromptFromCentre(User.GetCentreId(), promptNumber);
+            centreRegistrationPromptsService.RemoveCentreRegistrationPrompt(User.GetCentreId(), promptNumber);
             return RedirectToAction("Index");
         }
 
@@ -447,7 +447,7 @@
 
         private void SetViewBagCustomPromptNameOptions(int? selectedId = null)
         {
-            var customPrompts = centreCustomPromptsService.GetCustomPromptsAlphabeticalList();
+            var customPrompts = centreRegistrationPromptsService.GetCentreRegistrationPromptsAlphabeticalList();
             ViewBag.CustomPromptNameOptions =
                 SelectListHelper.MapOptionsToSelectListItems(customPrompts, selectedId);
         }

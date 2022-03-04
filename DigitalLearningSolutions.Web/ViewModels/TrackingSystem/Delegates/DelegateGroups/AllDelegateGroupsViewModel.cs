@@ -11,7 +11,7 @@
     {
         public readonly IEnumerable<SearchableDelegateGroupViewModel> DelegateGroups;
 
-        public AllDelegateGroupsViewModel(List<Group> groups, IEnumerable<CustomPrompt> registrationPrompts)
+        public AllDelegateGroupsViewModel(List<Group> groups, IEnumerable<CentreRegistrationPrompt> registrationPrompts)
         {
             DelegateGroups = groups.Select(g => new SearchableDelegateGroupViewModel(g, null));
 

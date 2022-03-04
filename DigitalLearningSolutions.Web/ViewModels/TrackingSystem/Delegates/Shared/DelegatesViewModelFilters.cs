@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Models.CourseDelegates;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
-    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
@@ -29,12 +29,15 @@
             );
         }
 
-        public static IEnumerable<FilterOptionViewModel> GetCustomPromptOptions(CustomPrompt customPrompt)
+        public static IEnumerable<FilterOptionViewModel> GetPromptOptions(Prompt prompt)
         {
-            var filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customPrompt.CustomPromptNumber);
+            var filterValueName = prompt is CentreRegistrationPrompt registrationPrompt
+                ? DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(
+                    registrationPrompt.RegistrationField.Id
+                )
+                : CourseDelegate.GetPropertyNameForAdminFieldAnswer(((CourseAdminField)prompt).PromptNumber);
 
-            var options = customPrompt.Options.Select(
+            var options = prompt.Options.Select(
                 option => new FilterOptionViewModel(
                     option,
                     FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, option),
@@ -55,30 +58,33 @@
             return options;
         }
 
-        public static Dictionary<int, string> GetCustomPromptFilters(
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
+        public static Dictionary<int, string> GetRegistrationPromptFilters(
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
         )
         {
-            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.CustomPromptNumber);
-            var customFieldsWithOptions =
-                customFields.Where(customField => promptsWithOptionsIds.Contains(customField.CustomFieldId));
-            return customFieldsWithOptions
+            var promptsWithOptionsIds = promptsWithOptions.Select(c => c.RegistrationField.Id);
+            var delegateRegistrationPromptsWithOptions =
+                delegateRegistrationPrompts.Where(
+                    delegateRegistrationPrompt =>
+                        promptsWithOptionsIds.Contains(delegateRegistrationPrompt.PromptNumber)
+                );
+            return delegateRegistrationPromptsWithOptions
                 .Select(
-                    customField => new KeyValuePair<int, string>(
-                        customField.CustomFieldId,
-                        GetFilterValueForCustomField(customField)
+                    delegateRegistrationPrompt => new KeyValuePair<int, string>(
+                        delegateRegistrationPrompt.PromptNumber,
+                        GetFilterValueForRegistrationPrompt(delegateRegistrationPrompt)
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        private static string GetFilterValueForCustomField(CustomFieldViewModel customField)
+        private static string GetFilterValueForRegistrationPrompt(DelegatePrompt delegatePrompt)
         {
             var filterValueName =
-                CentreCustomPromptHelper.GetDelegateCustomPromptAnswerName(customField.CustomFieldId);
-            var propertyValue = string.IsNullOrEmpty(customField.Answer)
+                DelegateUserCard.GetPropertyNameForDelegateRegistrationPromptAnswer(delegatePrompt.PromptNumber);
+            var propertyValue = string.IsNullOrEmpty(delegatePrompt.Answer)
                 ? FilteringHelper.EmptyValue
-                : customField.Answer;
+                : delegatePrompt.Answer;
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
     }

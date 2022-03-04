@@ -24,8 +24,8 @@
     public class MyAccountControllerTests
     {
         private const string Email = "test@user.com";
-        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private PromptsService promptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IImageResizeService imageResizeService = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IUserService userService = null!;
@@ -33,11 +33,11 @@
         [SetUp]
         public void Setup()
         {
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             userService = A.Fake<IUserService>();
             imageResizeService = A.Fake<ImageResizeService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
-            centreCustomPromptHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
+            promptsService = new PromptsService(centreRegistrationPromptsService);
         }
 
         [Test]
@@ -45,17 +45,17 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true);
             var formData = new MyAccountEditDetailsFormData();
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),
-                new List<EditCustomFieldViewModel>(),
+                new List<EditDelegateRegistrationPromptViewModel>(),
                 DlsSubApplication.Default
             );
             myAccountController.ModelState.AddModelError(nameof(MyAccountEditDetailsFormData.Email), "Required");
@@ -74,24 +74,24 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
-            var customPromptLists = new List<CustomPrompt>
-                { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
+            var customPromptLists = new List<CentreRegistrationPrompt>
+                { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
             A.CallTo
-                (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
-                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
+                (() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
             var formData = new MyAccountEditDetailsFormData();
-            var expectedPrompt = new EditCustomFieldViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(1, "Custom Prompt", true, new List<string>(), null);
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),
-                new List<EditCustomFieldViewModel> { expectedPrompt },
+                new List<EditDelegateRegistrationPromptViewModel> { expectedPrompt },
                 DlsSubApplication.Default
             );
 
@@ -111,11 +111,11 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(true);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -149,27 +149,27 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
-            var customPromptLists = new List<CustomPrompt>
-                { CustomPromptsTestHelper.GetDefaultCustomPrompt(1, mandatory: true) };
+            var customPromptLists = new List<CentreRegistrationPrompt>
+                { PromptsTestHelper.GetDefaultCentreRegistrationPrompt(1, mandatory: true) };
             A.CallTo
-                (() => centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(2)).Returns(
-                CustomPromptsTestHelper.GetDefaultCentreCustomPrompts(customPromptLists, 2)
+                (() => centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(2)).Returns(
+                PromptsTestHelper.GetDefaultCentreRegistrationPrompts(customPromptLists, 2)
             );
             var formData = new MyAccountEditDetailsFormData
             {
                 ProfileImageFile = A.Fake<FormFile>(),
             };
-            var expectedPrompt = new EditCustomFieldViewModel(1, "Custom Prompt", true, new List<string>(), null);
+            var expectedPrompt = new EditDelegateRegistrationPromptViewModel(1, "Custom Prompt", true, new List<string>(), null);
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),
-                new List<EditCustomFieldViewModel> { expectedPrompt },
+                new List<EditDelegateRegistrationPromptViewModel> { expectedPrompt },
                 DlsSubApplication.Default
             );
 
@@ -189,11 +189,11 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, delegateId: null);
             A.CallTo(() => userService.IsPasswordValid(7, null, "password")).Returns(false);
             A.CallTo(() => userService.NewEmailAddressIsValid(Email, 7, null, 2)).Returns(true);
@@ -210,7 +210,7 @@
             var expectedModel = new MyAccountEditDetailsViewModel(
                 formData,
                 new List<(int id, string name)>(),
-                new List<EditCustomFieldViewModel>(),
+                new List<EditDelegateRegistrationPromptViewModel>(),
                 DlsSubApplication.Default
             );
 
@@ -230,11 +230,11 @@
         {
             // Given
             var myAccountController = new MyAccountController(
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 userService,
                 imageResizeService,
                 jobGroupsDataService,
-                centreCustomPromptHelper
+                promptsService
             ).WithDefaultContext().WithMockUser(true, adminId: null);
             const string action = "unexpectedString";
             var model = new MyAccountEditDetailsFormData();

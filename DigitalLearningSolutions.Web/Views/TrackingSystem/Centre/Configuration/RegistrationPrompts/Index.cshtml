@@ -29,7 +29,7 @@
 
     <div class="@(canAddNewPrompt ? "nhsuk-u-margin-bottom-3" : "nhsuk-u-margin-bottom-7")">
       @foreach (var customField in Model.CustomFields) {
-        <partial name="_CustomPromptExpander" model="customField" />
+        <partial name="_CentreRegistrationPromptExpander" model="customField" />
       }
 
       @if (Model.CustomFields.Count == 0) {
