@@ -26,7 +26,7 @@
         {
             // Given
             var expectedCourseAdminFieldsResult =
-                CustomPromptsTestHelper.GetDefaultCourseAdminFieldsResult(
+                PromptsTestHelper.GetDefaultCourseAdminFieldsResult(
                     "System Access Granted",
                     "Test",
                     "Priority Access",
@@ -44,7 +44,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCourse_correctly_updates_custom_prompt()
+        public void UpdateAdminFieldForCourse_correctly_updates_custom_prompt()
         {
             using var transaction = new TransactionScope();
             try
@@ -53,13 +53,13 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 1, 1, options);
+                courseAdminFieldsDataService.UpdateAdminFieldForCourse(100, 1, 1, options);
                 var courseAdminFields = courseAdminFieldsDataService.GetCourseAdminFields(100);
 
                 // Then
                 using (new AssertionScope())
                 {
-                    courseAdminFields!.CustomField1Options.Should().BeEquivalentTo(options);
+                    courseAdminFields!.CourseAdminField1Options.Should().BeEquivalentTo(options);
                 }
             }
             finally
@@ -69,7 +69,7 @@
         }
 
         [Test]
-        public void GetPromptNameForCourseAndPromptNumber_returns_expected_prompt_name()
+        public void GetPromptName_returns_expected_prompt_name()
         {
             // When
             var result = courseAdminFieldsDataService.GetPromptName(100, 1);
@@ -79,7 +79,7 @@
         }
 
         [Test]
-        public void UpdateCustomPromptForCourse_correctly_adds_custom_prompt()
+        public void UpdateAdminFieldForCourse_correctly_adds_admin_field()
         {
             using var transaction = new TransactionScope();
             try
@@ -88,7 +88,7 @@
                 const string? options = "options";
 
                 // When
-                courseAdminFieldsDataService.UpdateCustomPromptForCourse(100, 3, 1, options);
+                courseAdminFieldsDataService.UpdateAdminFieldForCourse(100, 3, 1, options);
                 var courseCustomPrompts = courseAdminFieldsDataService.GetCourseAdminFields(100);
                 var customPrompt = courseAdminFieldsDataService.GetCoursePromptsAlphabetical()
                     .Single(c => c.id == 1)
@@ -97,8 +97,8 @@
                 // Then
                 using (new AssertionScope())
                 {
-                    courseCustomPrompts!.CustomField3Prompt.Should().BeEquivalentTo(customPrompt);
-                    courseCustomPrompts.CustomField3Options.Should().BeEquivalentTo(options);
+                    courseCustomPrompts!.CourseAdminField3Prompt.Should().BeEquivalentTo(customPrompt);
+                    courseCustomPrompts.CourseAdminField3Options.Should().BeEquivalentTo(options);
                 }
             }
             finally

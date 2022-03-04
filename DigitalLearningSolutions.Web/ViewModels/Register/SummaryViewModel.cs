@@ -29,7 +29,7 @@
         public string? Centre { get; set; }
         public string? JobGroup { get; set; }
         public bool Terms { get; set; }
-        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
+        public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } = new List<DelegateRegistrationPrompt>();
         public bool IsCentreSpecificRegistration { get; set; }
         public string? ProfessionalRegistrationNumber { get; set; }
         public bool? HasProfessionalRegistrationNumber { get; set; }

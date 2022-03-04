@@ -20,7 +20,6 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -33,21 +32,18 @@
         private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
         private readonly ICourseService courseService;
-        private readonly ICourseTopicsService courseTopicsService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
 
         public CourseSetupController(
             ICourseService courseService,
             ITutorialService tutorialService,
-            ISectionService sectionService,
-            ICourseTopicsService courseTopicsService
+            ISectionService sectionService
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
-            this.courseTopicsService = courseTopicsService;
         }
 
         [Route("{page=1:int}")]
@@ -115,34 +111,59 @@
 
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet("AddCourse/SelectCourse")]
-        public IActionResult SelectCourse(int? topicId = null)
+        public IActionResult SelectCourse(
+            string? categoryFilterBy = null,
+            string? topicFilterBy = null
+        )
         {
-            var data = TempData.Peek<AddNewCentreCourseData>()!;
-
-            var model = GetSelectCourseViewModel(data!.Application?.ApplicationId, topicId);
+            var model = GetSelectCourseViewModel(categoryFilterBy, topicFilterBy);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
 
+        [Route("AddCourse/SelectCourseAllCourses")]
+        public IActionResult SelectCourseAllCourses()
+        {
+            var centreId = User.GetCentreId();
+            var adminCategoryFilter = User.GetAdminCourseCategoryFilter();
+
+            var applications = courseService
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, adminCategoryFilter);
+            var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
+
+            var model = new SelectCourseAllCoursesViewModel(applications, categories, topics);
+            return View("AddNewCentreCourse/SelectCourseAllCourses", model);
+        }
+
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpPost("AddCourse/SelectCourse")]
-        public IActionResult SelectCourse(SelectCourseViewModel model)
+        public IActionResult SelectCourse(
+            int? applicationId,
+            string? categoryFilterBy = null,
+            string? topicFilterBy = null
+        )
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
 
-            if (!ModelState.IsValid)
+            if (applicationId == null)
             {
+                ModelState.AddModelError("ApplicationId", "Select a course");
                 return View(
                     "AddNewCentreCourse/SelectCourse",
-                    GetSelectCourseViewModel(data!.Application?.ApplicationId, model.TopicId)
+                    GetSelectCourseViewModel(
+                        categoryFilterBy,
+                        topicFilterBy
+                    )
                 );
             }
 
             var centreId = User.GetCentreId();
             var categoryId = User.GetAdminCourseCategoryFilter();
+
             var selectedApplication =
                 courseService.GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryId)
-                    .Single(ap => ap.ApplicationId == model.ApplicationId);
+                    .Single(ap => ap.ApplicationId == applicationId);
 
             data!.SetApplicationAndResetModels(selectedApplication);
             TempData.Set(data);
@@ -353,36 +374,27 @@
             return View("AddNewCentreCourse/Confirmation", model);
         }
 
-        private SelectCourseViewModel GetSelectCourseViewModel(int? selectedCourseId, int? topicId)
-        {
-            var availableTopics = GetTopicOptionsSelectListOrNull(topicId);
-            var availableApplications = GetApplicationOptionsSelectList(selectedCourseId, topicId);
-            return new SelectCourseViewModel(availableApplications, availableTopics, topicId);
-        }
-
-        private IEnumerable<SelectListItem> GetApplicationOptionsSelectList(int? selectedId, int? topicId)
+        private SelectCourseViewModel GetSelectCourseViewModel(
+            string? categoryFilterBy,
+            string? topicFilterBy
+        )
         {
             var centreId = User.GetCentreId();
             var categoryIdFilter = User.GetAdminCourseCategoryFilter()!;
 
-            var orderedApplications = courseService
-                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter, topicId)
-                .Select(a => (a.ApplicationId, a.ApplicationName));
+            var applications = courseService
+                .GetApplicationOptionsAlphabeticalListForCentre(centreId, categoryIdFilter);
+            var categories = courseService.GetCategoriesForCentreAndCentrallyManagedCourses(centreId);
+            var topics = courseService.GetTopicsForCentreAndCentrallyManagedCourses(centreId);
 
-            return SelectListHelper.MapOptionsToSelectListItems(orderedApplications, selectedId);
-        }
-
-        private IEnumerable<SelectListItem>? GetTopicOptionsSelectListOrNull(int? selectedId)
-        {
-            if (User.GetAdminCourseCategoryFilter() != null)
-            {
-                return null;
-            }
-
-            var centreId = User.GetCentreId();
-            var topics = courseTopicsService.GetActiveTopicsAvailableAtCentre(centreId)
-                .Select(c => (c.CourseTopicID, c.CourseTopic));
-            return SelectListHelper.MapOptionsToSelectListItems(topics, selectedId);
+            return new SelectCourseViewModel(
+                applications,
+                categories,
+                topics,
+                categoryIdFilter,
+                categoryFilterBy,
+                topicFilterBy
+            );
         }
 
         private SetCourseContentViewModel GetSetCourseContentModel(AddNewCentreCourseData data)

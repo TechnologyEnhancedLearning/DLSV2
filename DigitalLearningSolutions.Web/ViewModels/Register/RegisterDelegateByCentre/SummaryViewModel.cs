@@ -30,6 +30,6 @@
         public string? WelcomeEmailDate { get; set; }
         public bool ShouldSendEmail => WelcomeEmailDate != null;
         public string? JobGroup { get; set; }
-        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; } = new List<CustomFieldViewModel>();
+        public IEnumerable<DelegateRegistrationPrompt> DelegateRegistrationPrompts { get; set; } = new List<DelegateRegistrationPrompt>();
     }
 }

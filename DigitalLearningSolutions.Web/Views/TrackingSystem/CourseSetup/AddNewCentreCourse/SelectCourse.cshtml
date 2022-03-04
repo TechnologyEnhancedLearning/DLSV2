@@ -5,12 +5,13 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
+  var errorMessage = errorHasOccurred ? ViewData.ModelState[nameof(Model.ApplicationId)]?.Errors[0].ErrorMessage : null;
+  var defaultOptionText = Model.ApplicationOptions.Any() ? "Select a course" : "No matching courses";
   ViewData["Title"] = errorHasOccurred ? "Error: Add new centre course" : "Add new centre course";
 }
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@new []{ nameof(Model.ApplicationId) }" />
     }
@@ -20,39 +21,38 @@
 
   <div class="nhsuk-grid-column-one-half">
 
-    @if (Model.TopicOptions != null) {
-      <form method="get" role="search">
-        <label class="nhsuk-label nhsuk-u-margin-bottom-1">Filter courses by topic</label>
-        <div class="course-dropdown-container">
-          <select id="selected-topic-Id"
-                  class="nhsuk-select nhsuk-search__input nhsuk-search__input--withdropdown course-dropdown nhsuk-u-margin-bottom-4"
-                  asp-for="TopicId"
-                  asp-items="Model.TopicOptions"
-                  deselectable="true"
-                  default-option="Filter courses by topic"
-                  aria-label="Choose topic">
-            <option value="" selected=@(Model.TopicId != null ? "" : "selected")>Select a topic</option>
-          </select>
-          <button class="nhsuk-search__submit course-submit" type="submit">
-            Select
-          </button>
-        </div>
-      </form>
+    @foreach (var filter in Model.Filters) {
+      <partial name="AddNewCentreCourse/_CategoryTopicFilter" model="@filter" />
     }
 
     <form method="post" novalidate asp-controller="CourseSetup" asp-action="SelectCourse">
-      <input type="hidden" asp-for="ApplicationOptions">
-      <input type="hidden" asp-for="TopicOptions">
-      <input type="hidden" asp-for="TopicId">
+      <input type="hidden" id="filter-by" name="filterBy" value="@Model.FilterBy" />
+      <input type="hidden" id="category-filter-by" name="CategoryFilterBy" value="@Model.CategoryFilterBy" />
+      <input type="hidden" id="topic-filter-by" name="TopicFilterBy" value="@Model.TopicFilterBy" />
 
-      <vc:select-list asp-for="@nameof(Model.ApplicationId)"
-                      label="Course"
-                      value="@Model.ApplicationId?.ToString()"
-                      hint-text=""
-                      deselectable="false"
-                      css-class="nhsuk-u-width-full nhsuk-u-margin-bottom-2"
-                      default-option="Select a course"
-                      select-list-options="@Model.ApplicationOptions" />
+      <div class="nhsuk-u-width-full">
+        <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
+          <label class="nhsuk-label--s nhsuk-u-margin-bottom-1" for="searchable-elements">
+            Course
+          </label>
+          @if (errorHasOccurred) {
+            <span class="nhsuk-error-message" id="@nameof(Model.ApplicationId)-error">
+              <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+            </span>
+          }
+          <select class="nhsuk-select nhsuk-u-width-full course-dropdown nhsuk-u-margin-bottom-2 @(errorHasOccurred ? "nhsuk-input--error" : "")"
+                  aria-describedby="@nameof(Model.ApplicationId)-error @nameof(Model.ApplicationId)-hint"
+                  id="searchable-elements"
+                  name="@nameof(Model.ApplicationId)"
+                  value="@Model.ApplicationId?.ToString()">
+
+            <option id="default-option" disabled selected=@(Model.ApplicationId?.ToString() != null ? "" : "selected")>@defaultOptionText</option>
+            @foreach (var item in Model.ApplicationOptions) {
+              <partial name="AddNewCentreCourse/_SelectCourseFilterableSelectListItem" model="@item" />
+            }
+          </select>
+        </div>
+      </div>
 
       <button class="nhsuk-button" type="submit">Next</button>
     </form>
@@ -61,3 +61,7 @@
 
   </div>
 </div>
+
+@section scripts {
+  <script src="@Url.Content("~/js/trackingSystem/addNewCentreCourseSelectCourse.js")" asp-append-version="true"></script>
+}

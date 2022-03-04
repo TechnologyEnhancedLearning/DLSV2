@@ -14,8 +14,8 @@
 
     public interface IDelegateApprovalsService
     {
-        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
-            GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId);
+        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(int centreId);
 
         public void ApproveDelegate(int delegateId, int centreId);
         public void ApproveAllUnapprovedDelegatesForCentre(int centreId);
@@ -24,7 +24,7 @@
 
     public class DelegateApprovalsService : IDelegateApprovalsService
     {
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly ICentresDataService centresDataService;
         private readonly IConfiguration config;
         private readonly IEmailService emailService;
@@ -33,7 +33,7 @@
 
         public DelegateApprovalsService(
             IUserDataService userDataService,
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IEmailService emailService,
             ICentresDataService centresDataService,
             ILogger<DelegateApprovalsService> logger,
@@ -41,7 +41,7 @@
         )
         {
             this.userDataService = userDataService;
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.emailService = emailService;
             this.centresDataService = centresDataService;
             this.logger = logger;
@@ -51,12 +51,12 @@
         private string LoginUrl => config["AppRootPath"] + "/Login";
         private string FindCentreUrl => config["AppRootPath"] + "/FindYourCentre";
 
-        public List<(DelegateUser delegateUser, List<CustomPromptWithAnswer> prompts)>
-            GetUnapprovedDelegatesWithCustomPromptAnswersForCentre(int centreId)
+        public List<(DelegateUser delegateUser, List<CentreRegistrationPromptWithAnswer> prompts)>
+            GetUnapprovedDelegatesWithRegistrationPromptAnswersForCentre(int centreId)
         {
             var users = userDataService.GetUnapprovedDelegateUsersByCentreId(centreId);
             var usersWithPrompts =
-                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdForDelegateUsers(centreId, users);
 
             return usersWithPrompts;
         }

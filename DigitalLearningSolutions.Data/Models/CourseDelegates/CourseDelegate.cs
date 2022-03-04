@@ -19,6 +19,9 @@
         public DateTime? CompleteByDate { get; set; }
         public DateTime? RemovedDate { get; set; }
         public DateTime? Completed { get; set; }
+        public string? Answer1 { get; set; }
+        public string? Answer2 { get; set; }
+        public string? Answer3 { get; set; }
         public int AllAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public int CustomisationId { get; set; }
@@ -33,6 +36,17 @@
         {
             get => SearchableNameOverrideForFuzzySharp ?? FullNameForSearchingSorting;
             set => SearchableNameOverrideForFuzzySharp = value;
+        }
+
+        public static string GetPropertyNameForAdminFieldAnswer(int coursePromptNumber)
+        {
+            return coursePromptNumber switch
+            {
+                1 => nameof(Answer1),
+                2 => nameof(Answer2),
+                3 => nameof(Answer3),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
     }
 }

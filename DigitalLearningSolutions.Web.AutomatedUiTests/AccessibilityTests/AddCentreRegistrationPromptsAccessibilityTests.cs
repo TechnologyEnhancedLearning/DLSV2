@@ -6,10 +6,10 @@
     using Selenium.Axe;
     using Xunit;
 
-    public class AddCentreCustomPromptsAccessibilityTests : AccessibilityTestsBase,
+    public class AddCentreRegistrationPromptsAccessibilityTests : AccessibilityTestsBase,
         IClassFixture<AccessibilityTestsFixture<Startup>>
     {
-        public AddCentreCustomPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
+        public AddCentreRegistrationPromptsAccessibilityTests(AccessibilityTestsFixture<Startup> fixture) : base(fixture) { }
 
         [Fact]
         public void AddRegistrationPrompt_journey_has_no_accessibility_errors()

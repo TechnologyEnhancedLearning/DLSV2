@@ -264,6 +264,7 @@
         {
             var courseOptions = new CourseOptions
             {
+                Active = editCourseOptionsViewModel.Active,
                 SelfRegister = editCourseOptionsViewModel.AllowSelfEnrolment,
                 HideInLearnerPortal = editCourseOptionsViewModel.HideInLearningPortal,
                 DiagObjSelect = editCourseOptionsViewModel.DiagnosticObjectiveSelection,

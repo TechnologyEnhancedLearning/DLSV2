@@ -88,17 +88,17 @@
 
       @foreach (var customField in Model.CustomFields) {
         @if (customField.Options.Any()) {
-          <vc:select-list asp-for="@("Answer" + customField.CustomFieldId)"
-                          label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+          <vc:select-list asp-for="@("Answer" + customField.PromptNumber)"
+                          label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
                           value="@customField.Answer"
                           hint-text=""
                           deselectable="@(!customField.Mandatory)"
                           css-class="nhsuk-u-width-one-half"
-                          default-option="Select a @customField.CustomPrompt.ToLower()"
+                          default-option="Select a @customField.Prompt.ToLower()"
                           select-list-options="@customField.Options" />
         } else {
-          <vc:text-input asp-for="@("Answer" + customField.CustomFieldId)"
-                         label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+          <vc:text-input asp-for="@("Answer" + customField.PromptNumber)"
+                         label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
                          populate-with-current-value="true"
                          type="text"
                          spell-check="false"

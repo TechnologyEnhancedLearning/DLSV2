@@ -13,15 +13,15 @@
     {
         public SearchableDelegateViewModel(
             DelegateUserCard delegateUser,
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions,
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions,
             int page
         )
         {
-            DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
+            DelegateInfo = new DelegateInfoViewModel(delegateUser, delegateRegistrationPrompts);
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
-            CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(
-                DelegateInfo.CustomFields,
+            RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(
+                DelegateInfo.DelegateRegistrationPrompts,
                 promptsWithOptions
             );
             Page = page;
@@ -35,7 +35,7 @@
             DelegateInfo.JobGroupId.ToString()
         );
 
-        public Dictionary<int, string> CustomPromptFilters { get; set; }
+        public Dictionary<int, string> RegistrationPromptFilters { get; set; }
 
         public int Page { get; set; }
     }

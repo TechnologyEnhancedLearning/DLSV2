@@ -55,7 +55,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -77,7 +77,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 2,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -98,7 +98,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.Name.PropertyName,
@@ -120,7 +120,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 "purple",
                 DelegateSortByOptions.Name.PropertyName,
@@ -142,7 +142,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
@@ -164,7 +164,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
@@ -186,7 +186,7 @@
             var model = new AllDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 1,
                 null,
                 DelegateSortByOptions.RegistrationDate.PropertyName,
@@ -210,10 +210,10 @@
         public void All_delegates_filters_should_only_include_custom_prompts_with_options()
         {
             // Given
-            var customPrompts = new List<CustomPrompt>
+            var customPrompts = new List<CentreRegistrationPrompt>
             {
-                new CustomPrompt(1, "free text", null, true),
-                new CustomPrompt(2, "with options", "A\r\nB", true),
+                new CentreRegistrationPrompt(1, "free text", null, true),
+                new CentreRegistrationPrompt(2, "with options", "A\r\nB", true),
             };
 
             // When
@@ -230,8 +230,8 @@
             );
 
             // Then
-            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CustomPrompt1");
-            model.Filters.Should().Contain(filter => filter.FilterProperty == "CustomPrompt2");
+            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CentreRegistrationPrompt1");
+            model.Filters.Should().Contain(filter => filter.FilterProperty == "CentreRegistrationPrompt2");
         }
     }
 }

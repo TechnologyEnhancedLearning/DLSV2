@@ -40,7 +40,7 @@
 
         private readonly Progress reusableProgressRecord = ProgressTestHelper.GetDefaultProgress();
         private readonly DateTime testDate = new DateTime(2021, 12, 11);
-        private ICentreCustomPromptsService centreCustomPromptsService = null!;
+        private ICentreRegistrationPromptsService centreRegistrationPromptsService = null!;
         private IClockService clockService = null!;
         private IConfiguration configuration = null!;
         private IEmailService emailService = null!;
@@ -60,7 +60,7 @@
             emailService = A.Fake<IEmailService>();
             progressDataService = A.Fake<IProgressDataService>();
             configuration = A.Fake<IConfiguration>();
-            centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
+            centreRegistrationPromptsService = A.Fake<ICentreRegistrationPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
 
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
@@ -78,7 +78,7 @@
                 jobGroupsDataService,
                 progressDataService,
                 configuration,
-                centreCustomPromptsService,
+                centreRegistrationPromptsService,
                 logger
             );
         }
@@ -461,7 +461,7 @@
             const string groupNamePrefix = "Role";
 
             const int linkedToField = 1;
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
@@ -475,10 +475,10 @@
                 true
             );
 
-            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
-            var customPrompts = new List<CustomPrompt> { customPrompt };
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
-            SetUpGenerateGroupFakes(timeNow, customPrompts);
+            SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
 
             // When
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
@@ -540,7 +540,7 @@
             // Given
             const string groupName = "Manager";
             const string groupNamePrefix = "Role";
-            var registrationField = RegistrationField.CentreCustomPrompt1;
+            var registrationField = RegistrationField.CentreRegistrationField1;
 
             var timeNow = DateTime.UtcNow;
             var groupGenerationDetails = new GroupGenerationDetails(
@@ -554,10 +554,10 @@
                 true
             );
 
-            var customPrompt = new CustomPrompt(1, groupNamePrefix, groupName, false);
-            var customPrompts = new List<CustomPrompt> { customPrompt };
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(1, groupNamePrefix, groupName, false);
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
 
-            SetUpGenerateGroupFakes(timeNow, customPrompts);
+            SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts);
 
             // When
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
@@ -585,7 +585,7 @@
             var groupGenerationDetails = new GroupGenerationDetails(
                 1,
                 101,
-                RegistrationField.CentreCustomPrompt1,
+                RegistrationField.CentreRegistrationField1,
                 false,
                 true,
                 false,
@@ -595,16 +595,16 @@
 
             GivenCurrentTimeIs(timeNow);
 
-            var customPrompt = new CustomPrompt(
+            var centreRegistrationPrompt = new CentreRegistrationPrompt(
                 1,
                 groupNamePrefix,
                 $"{duplicateGroupName}\r\n{nonDuplicateGroupName}",
                 false
             );
-            var customPrompts = new List<CustomPrompt> { customPrompt };
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt> { centreRegistrationPrompt };
             var groupAtCentre = new Group { GroupLabel = "Manager" };
 
-            SetUpGenerateGroupFakes(timeNow, customPrompts, new List<Group> { groupAtCentre });
+            SetUpGenerateGroupFakes(timeNow, centreRegistrationPrompts, new List<Group> { groupAtCentre });
 
             // When
             groupsService.GenerateGroupsFromRegistrationField(groupGenerationDetails);
@@ -801,16 +801,16 @@
 
         private void SetUpGenerateGroupFakes(
             DateTime timeNow,
-            IEnumerable<CustomPrompt>? customPrompts = null,
+            IEnumerable<CentreRegistrationPrompt>? centreRegistrationPrompts = null,
             IEnumerable<Group>? groupsAtCentre = null
         )
         {
             GivenCurrentTimeIs(timeNow);
 
-            if (customPrompts != null)
+            if (centreRegistrationPrompts != null)
             {
-                A.CallTo(() => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(A<int>._))
-                    .Returns(customPrompts);
+                A.CallTo(() => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(A<int>._))
+                    .Returns(centreRegistrationPrompts);
             }
 
             A.CallTo(() => groupsDataService.GetGroupsForCentre(A<int>._)).Returns(groupsAtCentre ?? new List<Group>());
@@ -846,7 +846,7 @@
                 if (!isJobGroup)
                 {
                     A.CallTo(
-                            () => centreCustomPromptsService.GetCustomPromptsThatHaveOptionsForCentreByCentreId(
+                            () => centreRegistrationPromptsService.GetCentreRegistrationPromptsThatHaveOptionsByCentreId(
                                 groupGenerationDetails.CentreId
                             )
                         )

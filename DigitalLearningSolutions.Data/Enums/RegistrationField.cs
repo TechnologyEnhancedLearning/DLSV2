@@ -4,39 +4,39 @@
 
     public class RegistrationField : Enumeration
     {
-        public static readonly RegistrationField CentreCustomPrompt1 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField1 = new RegistrationField(
             1,
-            nameof(CentreCustomPrompt1),
+            nameof(CentreRegistrationField1),
             1
         );
 
-        public static readonly RegistrationField CentreCustomPrompt2 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField2 = new RegistrationField(
             2,
-            nameof(CentreCustomPrompt2),
+            nameof(CentreRegistrationField2),
             2
         );
 
-        public static readonly RegistrationField CentreCustomPrompt3 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField3 = new RegistrationField(
             3,
-            nameof(CentreCustomPrompt3),
+            nameof(CentreRegistrationField3),
             3
         );
 
-        public static readonly RegistrationField CentreCustomPrompt4 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField4 = new RegistrationField(
             4,
-            nameof(CentreCustomPrompt4),
+            nameof(CentreRegistrationField4),
             5
         );
 
-        public static readonly RegistrationField CentreCustomPrompt5 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField5 = new RegistrationField(
             5,
-            nameof(CentreCustomPrompt5),
+            nameof(CentreRegistrationField5),
             6
         );
 
-        public static readonly RegistrationField CentreCustomPrompt6 = new RegistrationField(
+        public static readonly RegistrationField CentreRegistrationField6 = new RegistrationField(
             6,
-            nameof(CentreCustomPrompt6),
+            nameof(CentreRegistrationField6),
             7
         );
 

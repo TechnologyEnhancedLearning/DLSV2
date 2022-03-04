@@ -76,21 +76,19 @@ function setUpFilterSubmitButtons() {
 }
 
 function setUpClearFiltersButton() {
-  document.getElementById('clear-filters')?.
-    addEventListener('click', (e) => {
-      e.preventDefault();
-      clearFilters();
-    });
+  document.getElementById('clear-filters')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearFilters();
+  });
 }
 
 function setUpFilterSelectorDropdown() {
-  document.getElementById('filter-selector')?.
-    addEventListener('change', () => {
-      showSelectedFilterDropdown();
-    });
+  document.getElementById('filter-selector')?.addEventListener('change', () => {
+    showSelectedFilterDropdown();
+  });
 }
 
-function getAppliedFilters(filterBy: string): IAppliedFilter[] {
+export function getAppliedFilters(filterBy: string): IAppliedFilter[] {
   return filterBy.split(filterSeparator)
     .map((filter) => newAppliedFilterFromFilter(filter));
 }
@@ -192,7 +190,7 @@ export function getFilterByValue(): string {
   return getFilterByElement().value;
 }
 
-function updateFilterBy(newFilter: string): void {
+export function updateFilterBy(newFilter: string): void {
   const element = getFilterByElement();
   element.value = newFilter;
   sendBrowserAgnosticEvent(element, 'change');

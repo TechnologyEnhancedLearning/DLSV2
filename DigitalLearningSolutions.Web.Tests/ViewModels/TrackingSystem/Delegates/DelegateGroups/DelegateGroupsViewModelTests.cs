@@ -37,7 +37,7 @@
         {
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null!,
                 nameof(Group.SearchableName),
                 GenericSortingHelper.Ascending,
@@ -58,7 +58,7 @@
         {
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null!,
                 nameof(Group.SearchableName),
                 GenericSortingHelper.Ascending,
@@ -96,14 +96,14 @@
                 new FilterViewModel(
                     nameof(Group.LinkedToField),
                     "Linked field",
-                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<CustomPrompt>())
+                    DelegateGroupsViewModelFilterOptions.GetLinkedFieldOptions(new List<CentreRegistrationPrompt>())
                 ),
             }.AsEnumerable();
 
             // When
             var model = new DelegateGroupsViewModel(
                 groups.ToList(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 "K",
                 nameof(Group.SearchableName),
                 GenericSortingHelper.Ascending,
