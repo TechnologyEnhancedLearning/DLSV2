@@ -373,7 +373,7 @@
                         false,
                         testDate
                     )
-                ).MustHaveHappened();
+                ).MustHaveHappenedOnceExactly();
             }
         }
 

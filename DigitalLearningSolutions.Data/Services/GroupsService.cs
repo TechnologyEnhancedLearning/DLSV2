@@ -436,14 +436,16 @@
 
             (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
                 ? GetJobGroupsAndPrefix()
-                : GetCustomPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
+                : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
 
             var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
 
             using var transaction = new TransactionScope();
             foreach (var (id, newGroupName) in newGroupNames)
             {
-                var groupName = groupDetails.PrefixGroupName ? $"{groupNamePrefix} - {newGroupName}" : newGroupName;
+                var groupName = groupDetails.PrefixGroupName
+                    ? GetGroupNameWithPrefix(groupNamePrefix, newGroupName)
+                    : newGroupName;
 
                 if (groupDetails.SkipDuplicateNames && groupsAtCentre.Contains(groupName))
                 {
@@ -556,11 +558,11 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private static bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
+        private static bool GroupLabelMatchesAnswer(string groupLabel, string answer, string linkedFieldName)
         {
             return string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
                 groupLabel,
-                linkedFieldName + " - " + answer,
+                GetGroupNameWithPrefix(linkedFieldName, answer),
                 StringComparison.CurrentCultureIgnoreCase
             );
         }
@@ -640,7 +642,7 @@
             return (jobGroups, groupNamePrefix);
         }
 
-        private (List<(int id, string name)>, string groupNamePrefix) GetCustomPromptsAndPrefix(
+        private (List<(int id, string name)>, string groupNamePrefix) GetCentreRegistrationPromptsAndPrefix(
             int centreId,
             int registrationFieldOptionId
         )
@@ -653,6 +655,11 @@
                 .ToList<(int id, string name)>();
             var groupNamePrefix = registrationPrompt.PromptText;
             return (customPromptOptions, groupNamePrefix);
+        }
+
+        private static string GetGroupNameWithPrefix(string prefix, string groupName)
+        {
+            return $"{prefix} - {groupName}";
         }
     }
 }
