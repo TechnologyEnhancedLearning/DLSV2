@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject IConfiguration configuration
 @using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 @using Microsoft.Extensions.Configuration
 @model RemoveFromCourseViewModel
@@ -14,7 +14,7 @@
     @if (errorHasOccurred) {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
     }
-    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3 word-break">Remove enrolment</h1>
+    <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-8 word-break">Remove enrolment</h1>
     <h2 class="nhsuk-heading-l word-break">Delegate: @Model.Name</h2>
     <h2 class="nhsuk-heading-l word-break">Activity: @Model.CourseName</h2>
     <div class="nhsuk-form-group">
