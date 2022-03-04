@@ -2,7 +2,7 @@
 {
     using System.Net.Http;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.External.Maps;
     using Microsoft.Extensions.Configuration;
     using Newtonsoft.Json;

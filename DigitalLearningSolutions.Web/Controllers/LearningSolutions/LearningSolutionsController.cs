@@ -1,7 +1,6 @@
 namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 {
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
@@ -28,7 +27,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult AccessibilityHelp()
         {
-            var accessibilityText = configDataService.GetConfigValue(ConfigDataDataService.AccessibilityHelpText);
+            var accessibilityText = configDataService.GetConfigValue(ConfigDataService.AccessibilityHelpText);
             if (accessibilityText == null)
             {
                 logger.LogError("Accessibility text from Config table is null");
@@ -41,7 +40,7 @@ namespace DigitalLearningSolutions.Web.Controllers.LearningSolutions
 
         public IActionResult Terms()
         {
-            var termsText = configDataService.GetConfigValue(ConfigDataDataService.TermsText);
+            var termsText = configDataService.GetConfigValue(ConfigDataService.TermsText);
             if (termsText == null)
             {
                 logger.LogError("Terms text from Config table is null");

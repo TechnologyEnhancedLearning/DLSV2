@@ -61,16 +61,15 @@
             configuration = A.Fake<IConfiguration>();
             centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
             logger = A.Fake<ILogger<IGroupsService>>();
-
             jobGroupsDataService = A.Fake<IJobGroupsDataService>(x => x.Strict());
+
             A.CallTo(() => jobGroupsDataService.GetJobGroupsAlphabetical()).Returns(
                 JobGroupsTestHelper.GetDefaultJobGroupsAlphabetical()
             );
-
-
-
             A.CallTo(() => configuration["AppRootPath"]).Returns("baseUrl");
+
             DatabaseModificationsDoNothing();
+
             groupsService = new GroupsService(
                 groupsDataService,
                 clockService,

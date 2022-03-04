@@ -100,27 +100,27 @@
         private (string MailServerUsername, string MailServerPassword, string MailServerAddress, int MailServerPort,
             string MailSenderAddress) GetMailConfig()
         {
-            var mailServerUsername = configDataService.GetConfigValue(ConfigDataDataService.MailUsername)
+            var mailServerUsername = configDataService.GetConfigValue(ConfigDataService.MailUsername)
                                      ?? throw new ConfigValueMissingException
                                      (
                                          configDataService.GetConfigValueMissingExceptionMessage("MailServerUsername")
                                      );
-            var mailServerPassword = configDataService.GetConfigValue(ConfigDataDataService.MailPassword)
+            var mailServerPassword = configDataService.GetConfigValue(ConfigDataService.MailPassword)
                                      ?? throw new ConfigValueMissingException
                                      (
                                          configDataService.GetConfigValueMissingExceptionMessage("MailServerPassword")
                                      );
-            var mailServerAddress = configDataService.GetConfigValue(ConfigDataDataService.MailServer)
+            var mailServerAddress = configDataService.GetConfigValue(ConfigDataService.MailServer)
                                     ?? throw new ConfigValueMissingException
                                     (
                                         configDataService.GetConfigValueMissingExceptionMessage("MailServerAddress")
                                     );
-            var mailServerPortString = configDataService.GetConfigValue(ConfigDataDataService.MailPort)
+            var mailServerPortString = configDataService.GetConfigValue(ConfigDataService.MailPort)
                                        ?? throw new ConfigValueMissingException
                                        (
                                            configDataService.GetConfigValueMissingExceptionMessage("MailServerPortString")
                                        );
-            var mailSenderAddress = configDataService.GetConfigValue(ConfigDataDataService.MailFromAddress)
+            var mailSenderAddress = configDataService.GetConfigValue(ConfigDataService.MailFromAddress)
                                     ?? throw new ConfigValueMissingException
                                     (
                                         configDataService.GetConfigValueMissingExceptionMessage("MailFromAddress")

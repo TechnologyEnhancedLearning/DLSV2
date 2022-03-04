@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Models.Email;
     using MimeKit;
     using System.Linq;
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService;
 
     public interface IFrameworkNotificationService
@@ -154,7 +155,7 @@
         }
         public UriBuilder GetDLSUriBuilder()
         {
-            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataDataService.AppBaseUrl) ??
+            var trackingSystemBaseUrl = configDataService.GetConfigValue(ConfigDataService.AppBaseUrl) ??
                                        throw new ConfigValueMissingException(configDataService.GetConfigValueMissingExceptionMessage("AppBaseUrl"));
             ;
             return new UriBuilder(trackingSystemBaseUrl);

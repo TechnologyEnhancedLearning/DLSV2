@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.SectionContent;
     using Microsoft.Extensions.Configuration;
 

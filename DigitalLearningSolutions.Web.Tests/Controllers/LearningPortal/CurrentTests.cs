@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;

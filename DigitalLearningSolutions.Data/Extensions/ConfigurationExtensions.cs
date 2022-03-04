@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Helpers
+﻿namespace DigitalLearningSolutions.Data.Extensions
 {
     using Microsoft.Extensions.Configuration;
 

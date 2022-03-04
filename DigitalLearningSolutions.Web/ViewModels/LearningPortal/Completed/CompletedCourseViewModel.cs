@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using Microsoft.Extensions.Configuration;
 

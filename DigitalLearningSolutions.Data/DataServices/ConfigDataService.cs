@@ -1,4 +1,4 @@
-﻿namespace DigitalLearningSolutions.Data.Services
+﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using System;
     using System.Data;
@@ -12,7 +12,7 @@
         string GetConfigValueMissingExceptionMessage(string missingConfigValue);
     }
 
-    public class ConfigDataDataService : IConfigDataService
+    public class ConfigDataService : IConfigDataService
     {
         public const string MailServer = "MailServer";
         public const string MailFromAddress = "MailFromAddress";
@@ -26,7 +26,7 @@
 
         private readonly IDbConnection connection;
 
-        public ConfigDataDataService(IDbConnection connection)
+        public ConfigDataService(IDbConnection connection)
         {
             this.connection = connection;
         }

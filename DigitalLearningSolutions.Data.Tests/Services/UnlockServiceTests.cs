@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Tests.Services
 {
+    using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Services;

@@ -12,7 +12,7 @@
     using FluentAssertions.Execution;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
-    using ConfigurationExtensions = DigitalLearningSolutions.Data.Helpers.ConfigurationExtensions;
+    using ConfigurationExtensions = DigitalLearningSolutions.Data.Extensions.ConfigurationExtensions;
 
     public class RecommendedLearningControllerTests
     {
