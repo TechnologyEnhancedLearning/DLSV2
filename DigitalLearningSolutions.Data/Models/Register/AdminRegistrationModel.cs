@@ -16,6 +16,7 @@
             bool isCentreAdmin,
             bool isCentreManager,
             bool isSupervisor,
+            bool isNominatedSupervisor,
             bool isTrainer,
             bool isContentCreator,
             bool isCmsAdmin,
@@ -27,6 +28,7 @@
             IsCentreAdmin = isCentreAdmin;
             IsCentreManager = isCentreManager;
             IsSupervisor = isSupervisor;
+            IsNominatedSupervisor = isNominatedSupervisor;
             IsTrainer = isTrainer;
             IsContentCreator = isContentCreator;
             ProfileImage = profileImage;
@@ -53,7 +55,7 @@
         public bool IsCentreManager { get; set; }
 
         public bool IsSupervisor { get; set; }
-
+        public bool IsNominatedSupervisor { get; set; }
         public bool IsTrainer { get; set; }
 
         public bool ImportOnly { get; set; }
@@ -98,6 +100,11 @@
             if (IsTrainer)
             {
                 roles.Add(7);
+            }
+
+            if (IsNominatedSupervisor)
+            {
+                roles.Add(8);
             }
 
             return roles;

@@ -1,12 +1,12 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.Common
-@model CustomPromptManagementViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup
+@model CentreRegistrationPromptManagementViewModel
 
 <details class="nhsuk-details nhsuk-expander">
   <summary class="nhsuk-details__summary">
     <div class="nhsuk-grid-row">
       <div class="nhsuk-grid-column-three-quarters nhsuk-u-three-quarters-tablet">
         <span class="nhsuk-details__summary-text">
-          @Model.CustomPromptName
+          @Model.PromptName
         </span>
       </div>
       <div class="nhsuk-grid-column-one-quarter nhsuk-u-one-quarter-tablet right-align-tag-column">
@@ -37,13 +37,13 @@
         <a class="nhsuk-button left-button-mobile-margin-bottom nhsuk-u-margin-right-2 nhsuk-u-margin-bottom-1" role="button"
            asp-controller="RegistrationPrompts"
            asp-action="EditRegistrationPromptStart"
-           asp-route-promptNumber="@Model.CustomFieldId">
+           asp-route-promptNumber="@Model.PromptNumber">
           Edit
         </a>
         <a class="nhsuk-button delete-button nhsuk-button--secondary nhsuk-u-margin-bottom-1" role="button"
            asp-controller="RegistrationPrompts"
            asp-action="RemoveRegistrationPrompt"
-           asp-route-promptNumber="@Model.CustomFieldId">
+           asp-route-promptNumber="@Model.PromptNumber">
           Remove
         </a>
       </div>

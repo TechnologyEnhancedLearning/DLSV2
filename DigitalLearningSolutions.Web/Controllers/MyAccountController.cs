@@ -21,25 +21,25 @@
     [Authorize]
     public class MyAccountController : Controller
     {
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly PromptsService promptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
         public MyAccountController(
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            CentreCustomPromptHelper customPromptHelper
+            PromptsService registrationPromptsService
         )
         {
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
-            centreCustomPromptHelper = customPromptHelper;
+            promptsService = registrationPromptsService;
         }
 
         [NoCaching]
@@ -51,7 +51,7 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts =
-                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
                     User.GetCentreId(),
                     delegateUser
                 );
@@ -72,7 +72,7 @@
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(
                 adminUser,
@@ -113,7 +113,7 @@
 
             if (userDelegateId.HasValue)
             {
-                centreCustomPromptHelper.ValidateCustomPrompts(formData, User.GetCentreId(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreId(), ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -174,7 +174,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }
@@ -192,7 +192,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             if (!ModelState.IsValid)
             {
@@ -225,7 +225,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);

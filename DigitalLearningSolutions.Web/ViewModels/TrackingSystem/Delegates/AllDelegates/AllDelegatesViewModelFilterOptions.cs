@@ -36,7 +36,7 @@
 
         public static List<FilterViewModel> GetAllDelegatesFilterViewModels(
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> promptsWithOptions
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
         )
         {
             var filters = new List<FilterViewModel>
@@ -54,9 +54,9 @@
             filters.AddRange(
                 promptsWithOptions.Select(
                     customPrompt => new FilterViewModel(
-                        $"CustomPrompt{customPrompt.CustomPromptNumber}",
-                        customPrompt.CustomPromptText,
-                        DelegatesViewModelFilters.GetCustomPromptOptions(customPrompt)
+                        $"CentreRegistrationPrompt{customPrompt.RegistrationField.Id}",
+                        customPrompt.PromptText,
+                        DelegatesViewModelFilters.GetPromptOptions(customPrompt)
                     )
                 )
             );

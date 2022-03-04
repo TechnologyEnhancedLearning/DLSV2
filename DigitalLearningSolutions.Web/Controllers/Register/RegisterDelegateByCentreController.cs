@@ -33,7 +33,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
     [Route("/TrackingSystem/Delegates/Register/{action}")]
     public class RegisterDelegateByCentreController : Controller
     {
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly PromptsService promptsService;
         private readonly ICryptoService cryptoService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IRegistrationService registrationService;
@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         public RegisterDelegateByCentreController(
             IJobGroupsDataService jobGroupsDataService,
             IUserService userService,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            PromptsService promptsService,
             ICryptoService cryptoService,
             IUserDataService userDataService,
             IRegistrationService registrationService,
@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         {
             this.jobGroupsDataService = jobGroupsDataService;
             this.userService = userService;
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.promptsService = promptsService;
             this.userDataService = userDataService;
             this.registrationService = registrationService;
             this.cryptoService = cryptoService;
@@ -123,7 +123,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
 
             var centreId = data.Centre!.Value;
 
-            centreCustomPromptHelper.ValidateCustomPrompts(
+            promptsService.ValidateCentreRegistrationPrompts(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -308,12 +308,12 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             }
         }
 
-        private IEnumerable<EditCustomFieldViewModel> GetEditCustomFieldsFromModel(
+        private IEnumerable<EditDelegateRegistrationPromptViewModel> GetEditCustomFieldsFromModel(
             LearnerInformationViewModel model,
             int centreId
         )
         {
-            return centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(
+            return promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(
                 centreId,
                 model.Answer1,
                 model.Answer2,
@@ -324,9 +324,9 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             );
         }
 
-        private IEnumerable<CustomFieldViewModel> GetCustomFieldsFromData(DelegateRegistrationData data)
+        private IEnumerable<DelegateRegistrationPrompt> GetCustomFieldsFromData(DelegateRegistrationData data)
         {
-            return centreCustomPromptHelper.GetCustomFieldViewModelsForCentre(
+            return promptsService.GetDelegateRegistrationPromptsForCentre(
                 data.Centre!.Value,
                 data.Answer1,
                 data.Answer2,
@@ -342,7 +342,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
             RegistrationData data
         )
         {
-            model.CustomFields = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
+            model.DelegateRegistrationPrompts = GetEditCustomFieldsFromModel(model, data.Centre!.Value);
             model.JobGroupOptions = SelectListHelper.MapOptionsToSelectListItems(
                 jobGroupsDataService.GetJobGroupsAlphabetical(),
                 model.JobGroup
@@ -352,7 +352,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Register
         private void PopulateSummaryExtraFields(SummaryViewModel model, DelegateRegistrationData data)
         {
             model.JobGroup = jobGroupsDataService.GetJobGroupName((int)data.JobGroup!);
-            model.CustomFields = GetCustomFieldsFromData(data);
+            model.DelegateRegistrationPrompts = GetCustomFieldsFromData(data);
         }
     }
 }

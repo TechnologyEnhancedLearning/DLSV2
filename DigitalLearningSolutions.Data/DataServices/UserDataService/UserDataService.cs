@@ -30,6 +30,7 @@
             int adminId,
             bool isCentreAdmin,
             bool isSupervisor,
+            bool isNominatedSupervisor,
             bool isTrainer,
             bool isContentCreator,
             bool isContentManager,

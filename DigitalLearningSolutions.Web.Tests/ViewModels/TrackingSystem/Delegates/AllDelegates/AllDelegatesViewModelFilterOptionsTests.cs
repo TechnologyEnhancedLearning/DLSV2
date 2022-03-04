@@ -20,7 +20,7 @@
 
             // When
             var result =
-                AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, new List<CustomPrompt>());
+                AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(jobGroups, new List<CentreRegistrationPrompt>());
 
             // Then
             result.Should().ContainEquivalentOf(expectedFilter);
@@ -30,12 +30,12 @@
         public void GetAllDelegatesFilterViewModels_should_return_correct_custom_prompt_filters()
         {
             // Given
-            var (customPrompts, expectedFilters) = GetSampleCustomPromptsAndFilters();
+            var (centreRegistrationPrompts, expectedFilters) = GetSampleCentreRegistrationPromptsAndFilters();
 
             // When
             var result = AllDelegatesViewModelFilterOptions.GetAllDelegatesFilterViewModels(
                 new List<(int, string)>(),
-                customPrompts
+                centreRegistrationPrompts
             );
 
             // Then
@@ -66,18 +66,18 @@
             return (jobGroups, jobGroupFilter);
         }
 
-        private (List<CustomPrompt> customPrompts, List<FilterViewModel> filters) GetSampleCustomPromptsAndFilters()
+        private (List<CentreRegistrationPrompt> centreRegistrationPrompts, List<FilterViewModel> filters) GetSampleCentreRegistrationPromptsAndFilters()
         {
-            var customPrompt1 = CustomPromptsTestHelper.GetDefaultCustomPrompt(
+            var prompt1 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(
                 1,
                 "First prompt",
                 "Clinical\r\nNon-Clinical"
             );
-            var customPrompt3 = CustomPromptsTestHelper.GetDefaultCustomPrompt(3);
-            var customPrompt4 = CustomPromptsTestHelper.GetDefaultCustomPrompt(4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
-            var customPrompts = new List<CustomPrompt> { customPrompt1, customPrompt3, customPrompt4 };
+            var prompt3 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(3);
+            var prompt4 = PromptsTestHelper.GetDefaultCentreRegistrationPrompt(4, "Fourth prompt", "C 1\r\nC 2\r\nC 3");
+            var prompts = new List<CentreRegistrationPrompt> { prompt1, prompt3, prompt4 };
 
-            var customPrompt1Options = new[]
+            var prompt1Options = new[]
             {
                 new FilterOptionViewModel(
                     "Clinical",
@@ -98,7 +98,7 @@
                     FilterStatus.Default
                 ),
             };
-            var customPrompt4Options = new[]
+            var prompt4Options = new[]
             {
                 new FilterOptionViewModel(
                     "C 1",
@@ -127,11 +127,11 @@
             };
             var customPromptFilters = new List<FilterViewModel>
             {
-                new FilterViewModel("CustomPrompt1", "First prompt", customPrompt1Options),
-                new FilterViewModel("CustomPrompt4", "Fourth prompt", customPrompt4Options),
+                new FilterViewModel("CentreRegistrationPrompt1", "First prompt", prompt1Options),
+                new FilterViewModel("CentreRegistrationPrompt4", "Fourth prompt", prompt4Options),
             };
 
-            return (customPrompts, customPromptFilters);
+            return (prompts, customPromptFilters);
         }
     }
 }

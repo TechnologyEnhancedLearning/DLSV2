@@ -18,7 +18,7 @@
             var user = new DelegateUserCard { DateRegistered = date };
 
             // When
-            var model = new DelegateInfoViewModel(user, new List<CustomFieldViewModel>());
+            var model = new DelegateInfoViewModel(user, new List<DelegateRegistrationPrompt>());
 
             // Then
             model.RegistrationDate.Should().Be("13/05/2021");

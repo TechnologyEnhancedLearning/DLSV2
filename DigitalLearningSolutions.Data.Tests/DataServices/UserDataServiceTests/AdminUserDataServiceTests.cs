@@ -162,12 +162,13 @@
             try
             {
                 // When
-                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, 1);
+                userDataService.UpdateAdminUserPermissions(7, true, true, true, true, true, true, true, 1);
                 var updatedUser = userDataService.GetAdminUserById(7)!;
 
                 // Then
                 updatedUser.IsCentreAdmin.Should().BeTrue();
                 updatedUser.IsSupervisor.Should().BeTrue();
+                updatedUser.IsNominatedSupervisor.Should().BeTrue();
                 updatedUser.IsTrainer.Should().BeTrue();
                 updatedUser.IsContentCreator.Should().BeTrue();
                 updatedUser.IsContentManager.Should().BeTrue();

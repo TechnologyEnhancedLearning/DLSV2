@@ -25,8 +25,8 @@
         [SetUp]
         public void SetUp()
         {
-            var centreCustomPromptsService = A.Fake<ICentreCustomPromptsService>();
-            var centreCustomPromptsHelper = new CentreCustomPromptHelper(centreCustomPromptsService);
+            var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+            var centreCustomPromptsHelper = new PromptsService(centreCustomPromptsService);
             var passwordResetService = A.Fake<IPasswordResetService>();
 
             userDataService = A.Fake<IUserDataService>();
@@ -188,7 +188,7 @@
         public void ReactivateDelegate_delegate_on_wrong_centre_returns_not_found_result()
         {
             //Given
-            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(new DelegateUserCard() { CentreId = 1});
+            A.CallTo(() => userDataService.GetDelegateUserCardById(10)).Returns(new DelegateUserCard() { CentreId = 1 });
 
             // When
             var result = viewDelegateController.ReactivateDelegate(2);

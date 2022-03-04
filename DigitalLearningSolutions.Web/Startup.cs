@@ -165,7 +165,7 @@ namespace DigitalLearningSolutions.Web
         {
             services.AddScoped<IActionPlanService, ActionPlanService>();
             services.AddScoped<IActivityService, ActivityService>();
-            services.AddScoped<ICentreCustomPromptsService, CentreCustomPromptsService>();
+            services.AddScoped<ICentreRegistrationPromptsService, CentreRegistrationPromptsService>();
             services.AddScoped<ICentresService, CentresService>();
             services.AddScoped<ICertificateService, CertificateService>();
             services.AddScoped<IClockService, ClockService>();
@@ -223,7 +223,7 @@ namespace DigitalLearningSolutions.Web
         private static void RegisterDataServices(IServiceCollection services)
         {
             services.AddScoped<IActivityDataService, ActivityDataService>();
-            services.AddScoped<ICentreCustomPromptsDataService, CentreCustomPromptsDataService>();
+            services.AddScoped<ICentreRegistrationPromptsDataService, CentreRegistrationPromptsDataService>();
             services.AddScoped<ICentresDataService, CentresDataService>();
             services.AddScoped<ICompetencyLearningResourcesDataService, CompetencyLearningResourcesDataService>();
             services.AddScoped<ICourseAdminFieldsDataService, CourseAdminFieldsDataService>();
@@ -261,7 +261,7 @@ namespace DigitalLearningSolutions.Web
 
         private static void RegisterHelpers(IServiceCollection services)
         {
-            services.AddScoped<CentreCustomPromptHelper>();
+            services.AddScoped<PromptsService>();
             services.AddScoped<ISmtpClientFactory, SmtpClientFactory>();
         }
 

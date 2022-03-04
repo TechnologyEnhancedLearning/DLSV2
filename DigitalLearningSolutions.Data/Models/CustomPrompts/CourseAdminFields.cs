@@ -4,7 +4,7 @@
 
     public class CourseAdminFields
     {
-        public CourseAdminFields(int customisationId, List<CustomPrompt> adminFields)
+        public CourseAdminFields(int customisationId, List<CourseAdminField> adminFields)
         {
             CustomisationId = customisationId;
             AdminFields = adminFields;
@@ -12,6 +12,6 @@
 
         public int CustomisationId { get; set; }
 
-        public List<CustomPrompt> AdminFields { get; set; }
+        public List<CourseAdminField> AdminFields { get; set; }
     }
 }
