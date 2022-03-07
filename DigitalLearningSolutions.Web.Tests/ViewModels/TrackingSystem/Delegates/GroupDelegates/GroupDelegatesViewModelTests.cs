@@ -2,11 +2,9 @@
 {
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.DelegateGroups;
-    using DigitalLearningSolutions.Data.Tests.NBuilderHelpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupDelegates;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
-    using FizzWare.NBuilder;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using NUnit.Framework;
@@ -16,17 +14,24 @@
         private readonly DelegateGroupsSideNavViewModel expectedNavViewModel =
             new DelegateGroupsSideNavViewModel(1, "Group name", DelegateGroupPage.Delegates);
 
-        private GroupDelegate[] groupDelegates = null!;
-
-        [SetUp]
-        public void SetUp()
+        private readonly GroupDelegate[] groupDelegates =
         {
-            groupDelegates = Builder<GroupDelegate>.CreateListOfSize(15)
-                .All()
-                .With(g => g.LastName = "Surname")
-                .With((g, i) => g.FirstName = NBuilderAlphabeticalPropertyNamingHelper.IndexToAlphabeticalString(i))
-                .Build().ToArray();
-        }
+            new GroupDelegate { FirstName = "A", LastName = "Surname" },
+            new GroupDelegate { FirstName = "B", LastName = "Surname" },
+            new GroupDelegate { FirstName = "C", LastName = "Surname" },
+            new GroupDelegate { FirstName = "D", LastName = "Surname" },
+            new GroupDelegate { FirstName = "E", LastName = "Surname" },
+            new GroupDelegate { FirstName = "F", LastName = "Surname" },
+            new GroupDelegate { FirstName = "G", LastName = "Surname" },
+            new GroupDelegate { FirstName = "H", LastName = "Surname" },
+            new GroupDelegate { FirstName = "I", LastName = "Surname" },
+            new GroupDelegate { FirstName = "J", LastName = "Surname" },
+            new GroupDelegate { FirstName = "K", LastName = "Surname" },
+            new GroupDelegate { FirstName = "L", LastName = "Surname" },
+            new GroupDelegate { FirstName = "M", LastName = "Surname" },
+            new GroupDelegate { FirstName = "N", LastName = "Surname" },
+            new GroupDelegate { FirstName = "O", LastName = "Surname" },
+        };
 
         [Test]
         public void GroupDelegatesViewModel_should_return_the_first_page_worth_of_delegates()

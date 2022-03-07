@@ -82,6 +82,18 @@
             return tags;
         }
 
+        public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateCourses(
+            CourseStatistics courseStatistics
+        )
+        {
+            return new List<SearchableTagViewModel>
+            {
+                courseStatistics.Active
+                    ? new SearchableTagViewModel(CourseStatusFilterOptions.IsActive)
+                    : new SearchableTagViewModel(CourseStatusFilterOptions.IsInactive),
+            };
+        }
+
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForCourseDelegate(CourseDelegate courseDelegate)
         {
             var tags = new List<SearchableTagViewModel>();
@@ -133,7 +145,7 @@
                     : new SearchableTagViewModel(DelegateAdminStatusFilterOptions.IsNotAdmin, true),
                 new SearchableTagViewModel(
                     DelegateRegistrationTypeFilterOptions.FromRegistrationType(delegateUser.RegistrationType)
-                )
+                ),
             };
         }
 

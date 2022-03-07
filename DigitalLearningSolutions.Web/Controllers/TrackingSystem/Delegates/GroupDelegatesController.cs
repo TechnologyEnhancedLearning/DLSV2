@@ -22,7 +22,7 @@
     public class GroupDelegatesController : Controller
     {
         private const string AddGroupDelegateCookieName = "AddGroupDelegateFilter";
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
+        private readonly PromptsService promptsService;
         private readonly IGroupsService groupsService;
         private readonly IJobGroupsService jobGroupsService;
         private readonly IUserService userService;
@@ -30,11 +30,11 @@
         public GroupDelegatesController(
             IJobGroupsService jobGroupsService,
             IUserService userService,
-            CentreCustomPromptHelper centreCustomPromptHelper,
+            PromptsService promptsService,
             IGroupsService groupsService
         )
         {
-            this.centreCustomPromptHelper = centreCustomPromptHelper;
+            this.promptsService = promptsService;
             this.jobGroupsService = jobGroupsService;
             this.userService = userService;
             this.groupsService = groupsService;
@@ -71,7 +71,7 @@
 
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical().ToList();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId).ToList();
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId).ToList();
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
@@ -115,7 +115,7 @@
             var centreId = User.GetCentreId();
             var groupName = groupsService.GetGroupName(groupId, centreId);
 
-            var model = new ConfirmDelegateAddedViewModel(delegateUser!.FullName, groupName!, groupId);
+            var model = new ConfirmDelegateAddedViewModel(delegateUser!, groupName!, groupId);
             return View(model);
         }
 
@@ -124,7 +124,7 @@
         {
             var centreId = User.GetCentreId();
             var jobGroups = jobGroupsService.GetJobGroupsAlphabetical();
-            var customPrompts = centreCustomPromptHelper.GetCustomPromptsForCentre(centreId);
+            var customPrompts = promptsService.GetCentreRegistrationPrompts(centreId);
             var delegateUsers = userService.GetDelegatesNotRegisteredForGroupByGroupId(groupId, centreId);
 
             var model = new SelectDelegateAllItemsViewModel(

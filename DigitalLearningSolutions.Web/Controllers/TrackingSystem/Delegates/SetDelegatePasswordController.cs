@@ -6,8 +6,8 @@
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
-    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.ServiceFilter;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.SetDelegatePassword;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@
             }
 
             var model = new SetDelegatePasswordViewModel(
-                delegateUser.FullName,
+                DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName),
                 delegateId,
                 returnPage,
                 isFromViewDelegatePage

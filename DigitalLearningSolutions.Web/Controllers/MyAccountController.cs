@@ -21,28 +21,29 @@
     [Authorize]
     public class MyAccountController : Controller
     {
-        private readonly CentreCustomPromptHelper centreCustomPromptHelper;
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly PromptsService promptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IImageResizeService imageResizeService;
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IUserService userService;
 
         public MyAccountController(
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IUserService userService,
             IImageResizeService imageResizeService,
             IJobGroupsDataService jobGroupsDataService,
-            CentreCustomPromptHelper customPromptHelper
+            PromptsService registrationPromptsService
         )
         {
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.userService = userService;
             this.imageResizeService = imageResizeService;
             this.jobGroupsDataService = jobGroupsDataService;
-            centreCustomPromptHelper = customPromptHelper;
+            promptsService = registrationPromptsService;
         }
 
         [NoCaching]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult Index(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
@@ -50,7 +51,7 @@
             var (adminUser, delegateUser) = userService.GetUsersById(userAdminId, userDelegateId);
 
             var customPrompts =
-                centreCustomPromptsService.GetCentreCustomPromptsWithAnswersByCentreIdAndDelegateUser(
+                centreRegistrationPromptsService.GetCentreRegistrationPromptsWithAnswersByCentreIdAndDelegateUser(
                     User.GetCentreId(),
                     delegateUser
                 );
@@ -62,6 +63,7 @@
 
         [NoCaching]
         [HttpGet("EditDetails")]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult EditDetails(DlsSubApplication dlsSubApplication)
         {
             var userAdminId = User.GetAdminId();
@@ -70,7 +72,7 @@
 
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(
                 adminUser,
@@ -85,6 +87,7 @@
 
         [NoCaching]
         [HttpPost("EditDetails")]
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         public IActionResult EditDetails(
             MyAccountEditDetailsFormData formData,
             string action,
@@ -110,7 +113,7 @@
 
             if (userDelegateId.HasValue)
             {
-                centreCustomPromptHelper.ValidateCustomPrompts(formData, User.GetCentreId(), ModelState);
+                promptsService.ValidateCentreRegistrationPrompts(formData, User.GetCentreId(), ModelState);
             }
 
             if (formData.ProfileImageFile != null)
@@ -171,11 +174,12 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);
         }
 
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostPreviewImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -188,7 +192,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             if (!ModelState.IsValid)
             {
@@ -205,6 +209,7 @@
             return View(model);
         }
 
+        [SetSelectedTab(nameof(NavMenuTab.MyAccount))]
         private IActionResult EditDetailsPostRemoveImage(
             MyAccountEditDetailsFormData formData,
             DlsSubApplication dlsSubApplication
@@ -220,7 +225,7 @@
             var (_, delegateUser) = userService.GetUsersById(null, userDelegateId);
             var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
             var customPrompts =
-                centreCustomPromptHelper.GetEditCustomFieldViewModelsForCentre(delegateUser, User.GetCentreId());
+                promptsService.GetEditDelegateRegistrationPromptViewModelsForCentre(delegateUser, User.GetCentreId());
 
             var model = new MyAccountEditDetailsViewModel(formData, jobGroups, customPrompts, dlsSubApplication);
             return View(model);

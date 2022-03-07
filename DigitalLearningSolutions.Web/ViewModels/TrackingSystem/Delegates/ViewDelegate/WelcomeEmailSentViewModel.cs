@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewDelegate
 {
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
 
     public class WelcomeEmailSentViewModel
     {
@@ -9,7 +10,7 @@
         public WelcomeEmailSentViewModel(DelegateUserCard delegateUser)
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             CandidateNumber = delegateUser.CandidateNumber;
         }
 

@@ -34,8 +34,14 @@
             @Model.JobGroup
           </dd>
         </div>
-        @foreach (var customPrompt in Model.CustomPrompts) {
-          <partial name="../Shared/_CustomPromptSummaryListRow" model="customPrompt" />
+        <div class="nhsuk-summary-list__row basic-summary-list__row">
+          <dt class="nhsuk-summary-list__key">
+            Professional Registration Number
+          </dt>
+          <partial name="_SummaryFieldValue" model="@Model.ProfessionalRegistrationNumber" />
+        </div>
+        @foreach (var delegateRegistrationPrompt in Model.DelegateRegistrationPrompts) {
+          <partial name="../Shared/_CustomPromptSummaryListRow" model="delegateRegistrationPrompt" />
         }
       </dl>
     </div>

@@ -10,7 +10,7 @@
     Manage optional @Model.VocabPlural().ToLower()
   </a>
 }
-@if (Model.SelfAssessment.IsSupervised) {
+@if (Model.SelfAssessment.IsSupervisorResultsReviewed) {
   <a class="nhsuk-button nhsuk-button--secondary trigger-loader"
      asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
      asp-action="StartRequestVerification"

@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.SupervisorController
 {
+    using DigitalLearningSolutions.Data.DataServices.UserDataService;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,8 @@
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ISelfAssessmentService selfAssessmentService;
         private readonly IConfigService configService;
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
+        private readonly IUserDataService userDataService;
         private readonly ILogger<SupervisorController> logger;
         private readonly IConfiguration config;
         public SupervisorController(
@@ -23,8 +25,9 @@
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
            ISelfAssessmentService selfAssessmentService,
-          IConfigService configService,
-          ICentreCustomPromptsService centreCustomPromptsService,
+           IConfigService configService,
+           ICentreRegistrationPromptsService centreRegistrationPromptsService,
+           IUserDataService userDataService,
            ILogger<SupervisorController> logger,
            IConfiguration config)
         {
@@ -33,7 +36,8 @@
             this.frameworkNotificationService = frameworkNotificationService;
             this.selfAssessmentService = selfAssessmentService;
             this.configService = configService;
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
+            this.userDataService = userDataService;
             this.logger = logger;
             this.config = config;
         }

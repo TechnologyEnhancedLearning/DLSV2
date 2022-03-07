@@ -28,9 +28,8 @@
             }
 
             var progressId = int.Parse(context.RouteData.Values["progressId"].ToString()!);
-            var centreId = controller.User.GetCentreId();
             var courseDelegatesData =
-                courseService.GetDelegateCourseProgress(progressId, centreId);
+                courseService.GetDelegateCourseProgress(progressId);
 
             if (courseDelegatesData == null)
             {

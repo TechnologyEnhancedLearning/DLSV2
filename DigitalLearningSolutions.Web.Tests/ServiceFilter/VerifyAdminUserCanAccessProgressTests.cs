@@ -44,7 +44,7 @@
         public void Returns_NotFound_if_service_returns_null()
         {
             // Given
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(null);
 
             // When
@@ -65,11 +65,11 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -92,11 +92,11 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -119,11 +119,11 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 3,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -146,11 +146,11 @@
                 AllCentresCourse = false,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );
@@ -173,11 +173,11 @@
                 AllCentresCourse = true,
                 CourseCategoryId = 1,
             };
-            A.CallTo(() => courseService.GetDelegateCourseProgress(2, 101))
+            A.CallTo(() => courseService.GetDelegateCourseProgress(2))
                 .Returns(
                     new DelegateCourseDetails(
                         delegateCourseInfo,
-                        new List<CustomPromptWithAnswer>(),
+                        new List<CourseAdminFieldWithAnswer>(),
                         new AttemptStats(0, 0)
                     )
                 );

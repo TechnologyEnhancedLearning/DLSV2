@@ -41,12 +41,11 @@
                 delegateFullName,
                 details.DelegateCourseInfo.DelegateEmail
             );
-            CustomFields = details.CustomPrompts.Select(
+            AdminFields = details.CourseAdminFields.Select(
                     cp =>
-                        new CustomFieldViewModel(
-                            cp.CustomPromptNumber,
-                            cp.CustomPromptText,
-                            cp.Mandatory,
+                        new DelegateCourseAdminField(
+                            cp.PromptNumber,
+                            cp.PromptText,
                             cp.Answer
                         )
                 )
@@ -58,7 +57,7 @@
         public bool IsCourseActive { get; set; }
         public string? RemovedDate { get; set; }
         public int EnrolmentMethodId { get; set; }
-        public IEnumerable<CustomFieldViewModel> CustomFields { get; set; }
+        public IEnumerable<DelegateCourseAdminField> AdminFields { get; set; }
         public string DelegateNameAndEmail { get; set; }
         public string? EnrolledByFullName { get; set; }
 

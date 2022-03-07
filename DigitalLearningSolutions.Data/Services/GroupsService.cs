@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Transactions;
     using DigitalLearningSolutions.Data.DataServices;
-    using DigitalLearningSolutions.Data.DataServices.UserDataService;
+    using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Exceptions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models;
@@ -18,7 +18,16 @@
 
     public interface IGroupsService
     {
-        int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId);
+        int AddDelegateGroup(
+            int centreId,
+            string groupLabel,
+            string? groupDescription,
+            int adminUserId,
+            int linkedToField = 0,
+            bool syncFieldChanges = false,
+            bool addNewRegistrants = false,
+            bool populateExisting = false
+        );
 
         void AddDelegateToGroupAndEnrolOnGroupCourses(
             int groupId,
@@ -80,6 +89,8 @@
             int? supervisorAdminId,
             int centreId
         );
+
+        void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails);
     }
 
     public class GroupsService : IGroupsService
@@ -87,15 +98,15 @@
         private const string AddDelegateToGroupAddedByProcess = "AddDelegateToGroup_Refactor";
         private const string AddCourseToGroupAddedByProcess = "AddCourseToDelegateGroup_Refactor";
         private const string EnrolEmailSubject = "New Learning Portal Course Enrolment";
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IClockService clockService;
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
         private readonly IGroupsDataService groupsDataService;
         private readonly IJobGroupsDataService jobGroupsDataService;
+        private readonly ILogger<IGroupsService> logger;
         private readonly IProgressDataService progressDataService;
         private readonly ITutorialContentDataService tutorialContentDataService;
-        private readonly ILogger<IGroupsService> logger;
 
         public GroupsService(
             IGroupsDataService groupsDataService,
@@ -105,7 +116,7 @@
             IJobGroupsDataService jobGroupsDataService,
             IProgressDataService progressDataService,
             IConfiguration configuration,
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             ILogger<IGroupsService> logger
         )
         {
@@ -116,8 +127,35 @@
             this.jobGroupsDataService = jobGroupsDataService;
             this.progressDataService = progressDataService;
             this.configuration = configuration;
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.logger = logger;
+        }
+
+        public int AddDelegateGroup(
+            int centreId,
+            string groupLabel,
+            string? groupDescription,
+            int adminUserId,
+            int linkedToField = 0,
+            bool syncFieldChanges = false,
+            bool addNewRegistrants = false,
+            bool populateExisting = false
+        )
+        {
+            var groupDetails = new GroupDetails
+            {
+                CentreId = centreId,
+                GroupLabel = groupLabel,
+                GroupDescription = groupDescription,
+                AdminUserId = adminUserId,
+                CreatedDate = clockService.UtcNow,
+                LinkedToField = linkedToField,
+                SyncFieldChanges = syncFieldChanges,
+                AddNewRegistrants = addNewRegistrants,
+                PopulateExisting = populateExisting,
+            };
+
+            return groupsDataService.AddDelegateGroup(groupDetails);
         }
 
         public void SynchroniseUserChangesWithGroups(
@@ -130,7 +168,7 @@
                 delegateAccountWithOldDetails.GetCentreAnswersData(),
                 newCentreAnswers,
                 jobGroupsDataService,
-                centreCustomPromptsService
+                centreRegistrationPromptsService
             );
 
             var allSynchronisedGroupsAtCentre =
@@ -138,23 +176,23 @@
 
             foreach (var changedAnswer in changedLinkedFields)
             {
-                var groupToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.SingleOrDefault(
+                var groupsToRemoveDelegateFrom = allSynchronisedGroupsAtCentre.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.OldValue, changedAnswer.LinkedFieldName)
                 );
 
-                var groupToAddDelegateTo = allSynchronisedGroupsAtCentre.SingleOrDefault(
+                var groupsToAddDelegateTo = allSynchronisedGroupsAtCentre.Where(
                     g => g.LinkedToField == changedAnswer.LinkedFieldNumber &&
                          GroupLabelMatchesAnswer(g.GroupLabel, changedAnswer.NewValue, changedAnswer.LinkedFieldName)
                 );
 
                 using var transaction = new TransactionScope();
-                if (groupToRemoveDelegateFrom != null)
+                foreach (var groupToRemoveDelegateFrom in groupsToRemoveDelegateFrom)
                 {
                     RemoveDelegateFromGroup(delegateAccountWithOldDetails.Id, groupToRemoveDelegateFrom.GroupId);
                 }
 
-                if (groupToAddDelegateTo != null)
+                foreach (var groupToAddDelegateTo in groupsToAddDelegateTo)
                 {
                     groupsDataService.AddDelegateToGroup(
                         delegateAccountWithOldDetails.Id,
@@ -197,24 +235,6 @@
             }
         }
 
-        public int AddDelegateGroup(int centreId, string groupLabel, string? groupDescription, int adminUserId)
-        {
-            var groupDetails = new GroupDetails
-            {
-                CentreId = centreId,
-                GroupLabel = groupLabel,
-                GroupDescription = groupDescription,
-                AdminUserId = adminUserId,
-                CreatedDate = clockService.UtcNow,
-                LinkedToField = 0,
-                SyncFieldChanges = false,
-                AddNewRegistrants = false,
-                PopulateExisting = false,
-            };
-
-            return groupsDataService.AddDelegateGroup(groupDetails);
-        }
-
         public void DeleteDelegateGroup(int groupId, bool deleteStartedEnrolment)
         {
             using var transaction = new TransactionScope();
@@ -231,15 +251,22 @@
             transaction.Complete();
         }
 
-        public void AddDelegateToGroupAndEnrolOnGroupCourses(int groupId,
+        public void AddDelegateToGroupAndEnrolOnGroupCourses(
+            int groupId,
             DelegateUser delegateUser,
-            int? addedByAdminId = null)
+            int? addedByAdminId = null
+        )
         {
             using var transaction = new TransactionScope();
 
             groupsDataService.AddDelegateToGroup(delegateUser.Id, groupId, clockService.UtcNow, 0);
 
-            var accountDetailsData = new MyAccountDetailsData(delegateUser.Id, delegateUser.FirstName!, delegateUser.LastName, delegateUser.EmailAddress!);
+            var accountDetailsData = new MyAccountDetailsData(
+                delegateUser.Id,
+                delegateUser.FirstName!,
+                delegateUser.LastName,
+                delegateUser.EmailAddress!
+            );
 
             EnrolDelegateOnGroupCourses(
                 delegateUser,
@@ -381,7 +408,9 @@
             {
                 transaction.Dispose();
                 logger.LogError("Attempted to add a course that a centre does not have access to to a group.");
-                throw new CourseAccessDeniedException($"No course with customisationId {customisationId} available at centre {centreId}");
+                throw new CourseAccessDeniedException(
+                    $"No course with customisationId {customisationId} available at centre {centreId}"
+                );
             }
 
             foreach (var groupDelegate in groupDelegates)
@@ -395,6 +424,56 @@
                     groupCourse,
                     true
                 );
+            }
+
+            transaction.Complete();
+        }
+
+        public void GenerateGroupsFromRegistrationField(GroupGenerationDetails groupDetails)
+        {
+            var isJobGroup = groupDetails.RegistrationField.Equals(RegistrationField.JobGroup);
+            var linkedToField = groupDetails.RegistrationField.LinkedToFieldId;
+
+            (List<(int id, string name)> newGroupNames, string groupNamePrefix) = isJobGroup
+                ? GetJobGroupsAndPrefix()
+                : GetCentreRegistrationPromptsAndPrefix(groupDetails.CentreId, groupDetails.RegistrationField.Id);
+
+            var groupsAtCentre = GetGroupsForCentre(groupDetails.CentreId).Select(g => g.GroupLabel).ToList();
+
+            using var transaction = new TransactionScope();
+            foreach (var (id, newGroupName) in newGroupNames)
+            {
+                var groupName = groupDetails.PrefixGroupName
+                    ? GetGroupNameWithPrefix(groupNamePrefix, newGroupName)
+                    : newGroupName;
+
+                if (groupDetails.SkipDuplicateNames && groupsAtCentre.Contains(groupName))
+                {
+                    continue;
+                }
+
+                var newGroupId = AddDelegateGroup(
+                    groupDetails.CentreId,
+                    groupName,
+                    null,
+                    groupDetails.AdminId,
+                    linkedToField,
+                    groupDetails.SyncFieldChanges,
+                    groupDetails.AddNewRegistrants,
+                    groupDetails.PopulateExisting
+                );
+
+                if (groupDetails.PopulateExisting)
+                {
+                    groupsDataService.AddDelegatesWithMatchingAnswersToGroup(
+                        newGroupId,
+                        clockService.UtcNow,
+                        linkedToField,
+                        groupDetails.CentreId,
+                        isJobGroup ? null : newGroupName,
+                        isJobGroup ? id : (int?)null
+                    );
+                }
             }
 
             transaction.Complete();
@@ -479,9 +558,13 @@
                 .Where(g => g.ChangesToRegistrationDetailsShouldChangeGroupMembership);
         }
 
-        private bool GroupLabelMatchesAnswer(string groupLabel, string? answer, string? linkedFieldName)
+        private static bool GroupLabelMatchesAnswer(string groupLabel, string answer, string linkedFieldName)
         {
-            return groupLabel == answer || groupLabel == linkedFieldName + " - " + answer;
+            return string.Equals(groupLabel, answer, StringComparison.CurrentCultureIgnoreCase) || string.Equals(
+                groupLabel,
+                GetGroupNameWithPrefix(linkedFieldName, answer),
+                StringComparison.CurrentCultureIgnoreCase
+            );
         }
 
         private static bool ProgressShouldBeUpdatedOnEnrolment(
@@ -550,6 +633,33 @@
             };
 
             return new Email(EnrolEmailSubject, body, emailAddress);
+        }
+
+        private (List<(int id, string name)>, string groupNamePrefix) GetJobGroupsAndPrefix()
+        {
+            var jobGroups = jobGroupsDataService.GetJobGroupsAlphabetical().ToList();
+            const string groupNamePrefix = "Job group";
+            return (jobGroups, groupNamePrefix);
+        }
+
+        private (List<(int id, string name)>, string groupNamePrefix) GetCentreRegistrationPromptsAndPrefix(
+            int centreId,
+            int registrationFieldOptionId
+        )
+        {
+            var registrationPrompt = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId).Single(
+                    cp => cp.RegistrationField.Id == registrationFieldOptionId
+                );
+            var customPromptOptions = registrationPrompt.Options.Select((option, index) => (index, option))
+                .ToList<(int id, string name)>();
+            var groupNamePrefix = registrationPrompt.PromptText;
+            return (customPromptOptions, groupNamePrefix);
+        }
+
+        private static string GetGroupNameWithPrefix(string prefix, string groupName)
+        {
+            return $"{prefix} - {groupName}";
         }
     }
 }

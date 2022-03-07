@@ -9,9 +9,7 @@
     public class CourseSetupViewModel : BaseSearchablePageViewModel
     {
         public CourseSetupViewModel(
-            IEnumerable<CourseStatisticsWithAdminFieldResponseCounts> courses,
-            IEnumerable<string> categories,
-            IEnumerable<string> topics,
+            CentreCourseDetails details,
             string? searchString,
             string sortBy,
             string sortDirection,
@@ -29,21 +27,12 @@
             "Search courses"
         )
         {
-            var sortedItems = GenericSortingHelper.SortAllItems(
-                courses.AsQueryable(),
-                sortBy,
-                sortDirection
-            );
-
-            var filteredItems = FilteringHelper.FilterItems(sortedItems.AsQueryable(), filterBy).ToList();
-            var searchedItems = GenericSearchHelper.SearchItems(filteredItems, SearchString).ToList();
-            MatchingSearchResults = searchedItems.Count;
-            SetTotalPages();
-            var paginatedItems = GetItemsOnCurrentPage(searchedItems);
+            var searchedItems = GenericSearchHelper.SearchItems(details.Courses.AsQueryable(), SearchString).ToList();
+            var paginatedItems = SortFilterAndPaginate(searchedItems);
 
             Courses = paginatedItems.Select(c => new SearchableCourseStatisticsViewModel(c));
 
-            Filters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(categories, topics);
+            Filters = CourseStatisticsViewModelFilterOptions.GetFilterOptions(details.Categories, details.Topics);
         }
 
         public IEnumerable<SearchableCourseStatisticsViewModel> Courses { get; set; }

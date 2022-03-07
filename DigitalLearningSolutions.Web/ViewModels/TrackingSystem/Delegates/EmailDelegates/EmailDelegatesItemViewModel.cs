@@ -4,6 +4,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared;
     using DateHelper = DigitalLearningSolutions.Web.Helpers.DateHelper;
@@ -16,7 +17,7 @@
         )
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             Email = delegateUser.EmailAddress;
             if (delegateUser.DateRegistered.HasValue)
             {
@@ -24,18 +25,18 @@
             }
 
             IsDelegateSelected = isDelegateSelected;
-            CustomPromptFilters = new Dictionary<int, string>();
+            RegistrationPromptFilters = new Dictionary<int, string>();
         }
 
         public EmailDelegatesItemViewModel(
             DelegateUser delegateUser,
             bool isDelegateSelected,
-            IEnumerable<CustomFieldViewModel> customFields,
-            IEnumerable<CustomPrompt> promptsWithOptions
+            IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> promptsWithOptions
         )
         {
             Id = delegateUser.Id;
-            Name = delegateUser.SearchableName;
+            Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(delegateUser.FirstName, delegateUser.LastName);
             Email = delegateUser.EmailAddress;
             if (delegateUser.DateRegistered.HasValue)
             {
@@ -44,7 +45,7 @@
 
             IsDelegateSelected = isDelegateSelected;
             JobGroupId = delegateUser.JobGroupId;
-            CustomPromptFilters = DelegatesViewModelFilters.GetCustomPromptFilters(customFields, promptsWithOptions);
+            RegistrationPromptFilters = DelegatesViewModelFilters.GetRegistrationPromptFilters(delegateRegistrationPrompts, promptsWithOptions);
         }
 
         public int Id { get; set; }
@@ -60,6 +61,6 @@
             JobGroupId.ToString()
         );
 
-        public Dictionary<int, string> CustomPromptFilters { get; set; }
+        public Dictionary<int, string> RegistrationPromptFilters { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
 
             DelegateId = details.DelegateCourseInfo.DelegateId;
 
-            CourseCustomPromptsWithAnswers = details.CustomPrompts;
+            CourseAdminFieldsWithAnswers = details.CourseAdminFields;
             TotalAttempts = details.AttemptStats.TotalAttempts;
             AttemptsPassed = details.AttemptStats.AttemptsPassed;
             PassRate = details.AttemptStats.PassRate;
@@ -64,7 +64,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.ViewD
         public int? DiagnosticScore { get; set; }
         public bool IsAssessed { get; set; }
 
-        public List<CustomPromptWithAnswer> CourseCustomPromptsWithAnswers { get; set; }
+        public List<CourseAdminFieldWithAnswer> CourseAdminFieldsWithAnswers { get; set; }
         public int TotalAttempts { get; set; }
         public int AttemptsPassed { get; set; }
         public double PassRate { get; set; }

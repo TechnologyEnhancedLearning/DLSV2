@@ -2,7 +2,7 @@
 @model CheckboxItemViewModel
 
 <div class="nhsuk-checkboxes">
-  <div class="nhsuk-checkboxes__item">
+  <div class="nhsuk-checkboxes__item @(Model.HintText == null ? "nhsuk-u-margin-bottom-4" : "")">
     <input class="nhsuk-checkboxes__input"
            id="@Model.Id"
            name="@Model.Name"

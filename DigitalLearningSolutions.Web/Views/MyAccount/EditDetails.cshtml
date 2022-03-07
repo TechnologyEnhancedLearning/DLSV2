@@ -15,7 +15,21 @@
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred) {
-      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FirstName), nameof(Model.LastName), nameof(Model.Email), nameof(Model.Password), nameof(Model.HasProfessionalRegistrationNumber), nameof(Model.ProfessionalRegistrationNumber) })" />
+      <vc:error-summary order-of-property-names="@(new[] {
+                                                   nameof(Model.FirstName),
+                                                   nameof(Model.LastName),
+                                                   nameof(Model.Email),
+                                                   nameof(Model.HasProfessionalRegistrationNumber),
+                                                   nameof(Model.ProfessionalRegistrationNumber),
+                                                   nameof(Model.Password),
+                                                   nameof(Model.JobGroupId),
+                                                   nameof(Model.Answer1),
+                                                   nameof(Model.Answer2),
+                                                   nameof(Model.Answer3),
+                                                   nameof(Model.Answer4),
+                                                   nameof(Model.Answer5),
+                                                   nameof(Model.Answer6)
+                                                 })" />
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
@@ -29,7 +43,7 @@
 
   <div class="nhsuk-grid-row divider">
     <div class="nhsuk-grid-column-full">
-      <vc:text-input 
+      <vc:text-input
         asp-for="@nameof(Model.FirstName)"
         label="First name"
         populate-with-current-value="true"
@@ -39,7 +53,7 @@
         hint-text=""
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input 
+      <vc:text-input
         asp-for="@nameof(Model.LastName)"
         label="Last name"
         populate-with-current-value="true"
@@ -49,7 +63,7 @@
         hint-text=""
         css-class="nhsuk-u-width-one-half" />
 
-      <vc:text-input 
+      <vc:text-input
         asp-for="@nameof(Model.Email)"
         label="Email address"
         populate-with-current-value="true"
@@ -79,21 +93,21 @@
           default-option="Select a job group"
           select-list-options="@Model.JobGroups" />
 
-        @foreach (EditCustomFieldViewModel customField in Model.CustomFields) {
+        @foreach (EditDelegateRegistrationPromptViewModel customField in Model.DelegateRegistrationPrompts) {
           @if (customField.Options.Any()) {
             <vc:select-list
-              asp-for="@("Answer" + customField.CustomFieldId)"
-              label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+              asp-for="@("Answer" + customField.PromptNumber)"
+              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
               value="@customField.Answer"
               hint-text=""
               deselectable="@(!customField.Mandatory)"
               css-class="nhsuk-u-width-one-half"
-              default-option="Select a @customField.CustomPrompt.ToLower()"
+              default-option="Select a @customField.Prompt.ToLower()"
               select-list-options="@customField.Options" />
           } else {
             <vc:text-input
-              asp-for="@("Answer" + customField.CustomFieldId)"
-              label="@(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))"
+              asp-for="@("Answer" + customField.PromptNumber)"
+              label="@(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))"
               populate-with-current-value="true"
               type="text"
               spell-check="false"
@@ -112,7 +126,7 @@
                                 To remove your profile picture click the remove button.
                                 Changes will not be made until the Save button below is clicked."; }
       <input type="hidden" asp-for="ProfileImage" />
-      <vc:file-input 
+      <vc:file-input
         asp-for="@nameof(Model.ProfileImageFile)"
         label="Profile picture (optional)"
         hint-text="@hintText"

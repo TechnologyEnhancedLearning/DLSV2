@@ -94,17 +94,17 @@
           </a>
         </dd>
       </div>
-      @foreach (var customField in Model.CustomFields) {
+      @foreach (var customField in Model.DelegateRegistrationPrompts) {
         <div class="nhsuk-summary-list__row">
           <dt class="nhsuk-summary-list__key">
-            @(customField.CustomPrompt + (customField.Mandatory ? "" : " (optional)"))
+            @(customField.Prompt + (customField.Mandatory ? "" : " (optional)"))
           </dt>
           <dd class="nhsuk-summary-list__value">
             @customField.Answer
           </dd>
           <dd class="nhsuk-summary-list__actions">
             <a asp-action="LearnerInformation">
-              Change<span class="nhsuk-u-visually-hidden"> @customField.CustomPrompt.ToLower()</span>
+              Change<span class="nhsuk-u-visually-hidden"> @customField.Prompt.ToLower()</span>
             </a>
           </dd>
         </div>

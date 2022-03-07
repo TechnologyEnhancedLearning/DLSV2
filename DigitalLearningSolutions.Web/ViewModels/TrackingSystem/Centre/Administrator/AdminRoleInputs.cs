@@ -17,6 +17,12 @@
             "Oversees individual and groups of delegates. Assigns and reviews self-assessments. Arranges supervision sessions."
         );
 
+        public static CheckboxListItemViewModel NominatedSupervisorCheckbox = new CheckboxListItemViewModel(
+            nameof(EditRolesViewModel.IsNominatedSupervisor),
+            "Nominated Supervisor",
+            "Confirms self-assessment results for learners."
+        );
+
         public static CheckboxListItemViewModel TrainerCheckbox = new CheckboxListItemViewModel(
             nameof(EditRolesViewModel.IsTrainer),
             "Trainer",

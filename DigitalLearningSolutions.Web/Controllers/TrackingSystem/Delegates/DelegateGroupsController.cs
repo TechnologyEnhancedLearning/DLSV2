@@ -5,6 +5,7 @@
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
+    using DigitalLearningSolutions.Data.Models.DelegateGroups;
     using DigitalLearningSolutions.Data.Services;
     using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
@@ -13,6 +14,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateGroups;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -23,15 +25,15 @@
     public class DelegateGroupsController : Controller
     {
         private const string DelegateGroupsFilterCookieName = "DelegateGroupsFilter";
-        private readonly ICentreCustomPromptsService centreCustomPromptsService;
+        private readonly ICentreRegistrationPromptsService centreRegistrationPromptsService;
         private readonly IGroupsService groupsService;
 
         public DelegateGroupsController(
-            ICentreCustomPromptsService centreCustomPromptsService,
+            ICentreRegistrationPromptsService centreRegistrationPromptsService,
             IGroupsService groupsService
         )
         {
-            this.centreCustomPromptsService = centreCustomPromptsService;
+            this.centreRegistrationPromptsService = centreRegistrationPromptsService;
             this.groupsService = groupsService;
         }
 
@@ -226,10 +228,72 @@
             return RedirectToAction("Index");
         }
 
-        private IEnumerable<CustomPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        [HttpGet("Generate")]
+        public IActionResult GenerateGroups()
         {
-            return centreCustomPromptsService.GetCustomPromptsForCentreByCentreId(centreId).CustomPrompts
+            var registrationFieldOptions = GetRegistrationFieldOptionsSelectList();
+
+            var model = new GenerateGroupsViewModel(registrationFieldOptions);
+            return View(model);
+        }
+
+        [HttpPost("Generate")]
+        public IActionResult GenerateGroups(GenerateGroupsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.RegistrationFieldOptions = GetRegistrationFieldOptionsSelectList(model.RegistrationFieldOptionId);
+                return View(model);
+            }
+
+            var adminId = User.GetAdminIdKnownNotNull()!;
+            var centreId = User.GetCentreId();
+            var registrationField = (RegistrationField)model.RegistrationFieldOptionId;
+
+            var fieldIsValid = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId).Select(cp => cp.RegistrationField.Id)
+                .Contains(registrationField!.Id) || registrationField.Equals(RegistrationField.JobGroup);
+
+            if (!fieldIsValid)
+            {
+                return StatusCode(500);
+            }
+
+            var groupDetails = new GroupGenerationDetails(
+                adminId,
+                centreId,
+                registrationField,
+                model.PrefixGroupName,
+                model.PopulateExisting,
+                model.AddNewRegistrants,
+                model.SyncFieldChanges,
+                model.SkipDuplicateNames
+            );
+
+            groupsService.GenerateGroupsFromRegistrationField(groupDetails);
+
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<CentreRegistrationPrompt> GetRegistrationPromptsWithSetOptions(int centreId)
+        {
+            return centreRegistrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId).CustomPrompts
                 .Where(cp => cp.Options.Any());
+        }
+
+        private IEnumerable<SelectListItem> GetRegistrationFieldOptionsSelectList(int? selectedId = null)
+        {
+            var centreId = User.GetCentreId();
+
+            var centreCustomPrompts = centreRegistrationPromptsService
+                .GetCentreRegistrationPromptsThatHaveOptionsByCentreId(centreId);
+            var registrationFieldOptions =
+                PromptsService.MapCentreRegistrationPromptsToDataForSelectList(centreCustomPrompts);
+
+            var jobGroupOption = (RegistrationField.JobGroup.Id, "Job group");
+            registrationFieldOptions.Add(jobGroupOption);
+
+            return SelectListHelper.MapOptionsToSelectListItems(registrationFieldOptions, selectedId);
         }
     }
 }

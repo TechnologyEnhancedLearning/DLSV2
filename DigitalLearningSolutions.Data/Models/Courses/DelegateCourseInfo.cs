@@ -42,7 +42,8 @@
             string delegateLastName,
             string? delegateEmail,
             int delegateCentreId,
-            bool isProgressLocked
+            bool isProgressLocked,
+            string delegateNumber
         )
         {
             ProgressId = progressId;
@@ -79,6 +80,7 @@
             DelegateFirstName = delegateFirstName;
             DelegateLastName = delegateLastName;
             DelegateEmail = delegateEmail;
+            DelegateNumber = delegateNumber;
             DelegateCentreId = delegateCentreId;
             IsProgressLocked = isProgressLocked;
         }
@@ -115,6 +117,7 @@
         public string? DelegateFirstName { get; set; }
         public string DelegateLastName { get; set; }
         public string? DelegateEmail { get; set; }
+        public string DelegateNumber { get; set; }
         public int DelegateCentreId { get; set; }
         public bool IsProgressLocked { get; set; }
     }

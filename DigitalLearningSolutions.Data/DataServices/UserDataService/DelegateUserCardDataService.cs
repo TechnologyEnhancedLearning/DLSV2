@@ -29,6 +29,7 @@
                                                         cd.SelfReg,
                                                         cd.ExternalReg,
                                                         cd.Active,
+                                                        cd.ProfessionalRegistrationNumber,
                                                         (SELECT AdminID
                                                             FROM AdminUsers au
                                                                 WHERE (au.Email = cd.EmailAddress
@@ -46,7 +47,7 @@
         public DelegateUserCard? GetDelegateUserCardById(int id)
         {
             var user = connection.Query<DelegateUserCard>(
-                @$"{DelegateUserSelectQuery} 
+                @$"{DelegateUserSelectQuery}
                         WHERE cd.CandidateId = @id",
                 new { id }
             ).SingleOrDefault();
@@ -57,7 +58,7 @@
         public List<DelegateUserCard> GetDelegateUserCardsByCentreId(int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"{DelegateUserSelectQuery} 
+                @$"{DelegateUserSelectQuery}
                         WHERE cd.CentreId = @centreId AND cd.Approved = 1",
                 new { centreId }
             ).ToList();
@@ -66,7 +67,7 @@
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
         {
             return connection.Query<DelegateUserCard>(
-                @$"{DelegateUserSelectQuery} 
+                @$"{DelegateUserSelectQuery}
                         WHERE cd.CentreId = @centreId
                         AND cd.Approved = 1
                         AND cd.Active = 1

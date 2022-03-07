@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             AdminUser? adminUser,
             DelegateUser? delegateUser,
             List<(int id, string name)> jobGroups,
-            List<EditCustomFieldViewModel> editCustomFieldViewModels,
+            List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
             DlsSubApplication dlsSubApplication
         ) : base(adminUser, delegateUser, jobGroups)
         {
@@ -23,13 +23,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
                 jobGroups,
                 delegateUser?.JobGroupName
             );
-            CustomFields = editCustomFieldViewModels;
+            DelegateRegistrationPrompts = editDelegateRegistrationPromptViewModels;
         }
 
         public MyAccountEditDetailsViewModel(
             MyAccountEditDetailsFormData formData,
             IReadOnlyCollection<(int id, string name)> jobGroups,
-            List<EditCustomFieldViewModel> editCustomFieldViewModels,
+            List<EditDelegateRegistrationPromptViewModel> editDelegateRegistrationPromptViewModels,
             DlsSubApplication dlsSubApplication
         ) : base(formData)
         {
@@ -37,13 +37,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.MyAccount
             var jobGroupName = jobGroups.Where(jg => jg.id == formData.JobGroupId).Select(jg => jg.name)
                 .SingleOrDefault();
             JobGroups = SelectListHelper.MapOptionsToSelectListItemsWithSelectedText(jobGroups, jobGroupName);
-            CustomFields = editCustomFieldViewModels;
+            DelegateRegistrationPrompts = editDelegateRegistrationPromptViewModels;
         }
 
         public DlsSubApplication DlsSubApplication { get; set; }
 
         public IEnumerable<SelectListItem> JobGroups { get; }
 
-        public List<EditCustomFieldViewModel> CustomFields { get; }
+        public List<EditDelegateRegistrationPromptViewModel> DelegateRegistrationPrompts { get; }
     }
 }

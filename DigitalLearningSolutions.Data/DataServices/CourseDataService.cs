@@ -157,7 +157,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 ca.FirstName AS DelegateFirstName,
                 ca.LastName AS DelegateLastName,
                 ca.EmailAddress AS DelegateEmail,
-                ca.CentreID AS DelegateCentreId
+                ca.CentreID AS DelegateCentreId,
+                ca.CandidateNumber AS DelegateNumber
             FROM Customisations cu
             INNER JOIN Applications ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress pr ON pr.CustomisationID = cu.CustomisationID

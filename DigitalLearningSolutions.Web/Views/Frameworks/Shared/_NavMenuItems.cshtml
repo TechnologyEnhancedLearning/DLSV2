@@ -2,20 +2,20 @@
 @using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Data.Enums
-<li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "Frameworks", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Dashboard)">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="Index">
     Dashboard
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected("ViewFrameworks")">
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Frameworks)">
   <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="ViewFrameworks" asp-route-tabname="Mine">
     Frameworks
     <partial name="_NhsChevronRight" />
   </a>
 </li>
 <feature name="@(FeatureFlags.WorkforceManagerInterface)">
-  <li class="nhsuk-header__navigation-item @Html.IsSelected("ViewRoleProfiles")">
+  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.RolesProfiles)">
     <a class="nhsuk-header__navigation-link" asp-controller="RoleProfiles" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">
       Role Profiles
       <partial name="_NhsChevronRight" />
@@ -28,7 +28,7 @@
     <partial name="_NhsChevronRight" />
   </a>
 </li>
-<li class="nhsuk-header__navigation-item @Html.IsSelected(controller: "MyAccount", action: "Index")">
+<li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
   <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
     My account
     <partial name="_NhsChevronRight" />

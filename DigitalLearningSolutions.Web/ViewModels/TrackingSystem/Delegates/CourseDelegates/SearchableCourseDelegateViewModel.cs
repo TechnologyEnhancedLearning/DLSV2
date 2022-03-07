@@ -1,16 +1,27 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.CourseDelegates
 {
+    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models.CourseDelegates;
+    using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
 
     public class SearchableCourseDelegateViewModel : BaseFilterableViewModel
     {
-        public SearchableCourseDelegateViewModel(CourseDelegate courseDelegate)
+        public SearchableCourseDelegateViewModel(
+            CourseDelegate courseDelegate,
+            IList<DelegateCourseAdminField> adminFields,
+            IEnumerable<CourseAdminField> adminFieldsWithOptions
+        )
         {
             DelegateId = courseDelegate.DelegateId;
             CandidateNumber = courseDelegate.CandidateNumber;
-            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(courseDelegate.FullNameForSearchingSorting, courseDelegate.EmailAddress);
+            ProfessionalRegistrationNumber = courseDelegate.ProfessionalRegistrationNumber;
+            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(
+                courseDelegate.FullNameForSearchingSorting,
+                courseDelegate.EmailAddress
+            );
             Active = courseDelegate.Active;
             ProgressId = courseDelegate.ProgressId;
             Locked = courseDelegate.Locked;
@@ -22,6 +33,9 @@
             CustomisationId = courseDelegate.CustomisationId;
             PassRate = courseDelegate.PassRate;
             Tags = FilterableTagHelper.GetCurrentTagsForCourseDelegate(courseDelegate);
+            DelegateCourseAdminFields = adminFields;
+            AdminFieldFilters =
+                CourseDelegateViewModelFilterOptions.GetAdminFieldFilters(adminFields, adminFieldsWithOptions);
         }
 
         public int DelegateId { get; set; }
@@ -37,5 +51,8 @@
         public string? RemovedDate { get; set; }
         public double PassRate { get; set; }
         public int CustomisationId { get; set; }
+        public string? ProfessionalRegistrationNumber { get; set; }
+        public IEnumerable<DelegateCourseAdminField> DelegateCourseAdminFields { get; set; }
+        public Dictionary<int, string> AdminFieldFilters { get; set; }
     }
 }

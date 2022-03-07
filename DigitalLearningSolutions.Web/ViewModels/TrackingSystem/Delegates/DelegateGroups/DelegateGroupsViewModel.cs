@@ -12,7 +12,7 @@
     {
         public DelegateGroupsViewModel(
             List<Group> groups,
-            IEnumerable<CustomPrompt> registrationPrompts,
+            IEnumerable<CentreRegistrationPrompt> registrationPrompts,
             string searchString,
             string sortBy,
             string sortDirection,
