@@ -44,10 +44,7 @@ function setUpFilterDropdowns() {
     filterDropdown.addEventListener('change', (e) => {
       e.preventDefault();
       const newFilter = getCategoryAndTopicFilterStringAndUpdateHiddenInputs();
-
-      if (newFilter != null) {
-        updateExistingFilterString(newFilter);
-      }
+      updateExistingFilterString(newFilter);
     });
   });
 }
@@ -113,22 +110,20 @@ function getCategoryAndTopicFilterStringAndUpdateHiddenInputs() {
   const topicFilterElement = <HTMLSelectElement>document.getElementById('CourseTopic');
   const topicFilterValue = topicFilterElement.value;
 
+  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
+  updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
+
   if (isNullOrEmpty(categoryFilterValue) && isNullOrEmpty(topicFilterValue)) {
-    return null;
+    return '';
   }
 
   if (isNullOrEmpty(categoryFilterValue)) {
-    updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
     return topicFilterValue;
   }
 
   if (isNullOrEmpty(topicFilterValue)) {
-    updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
     return categoryFilterValue;
   }
-
-  updateExistingFilterStringHiddenInput(categoryHiddenInputName, categoryFilterValue);
-  updateExistingFilterStringHiddenInput(topicHiddenInputName, topicFilterValue);
 
   return topicFilterValue + filterSeparator + categoryFilterValue;
 }
