@@ -1,19 +1,30 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.ViewModels.FindYourCentre
 {
-    using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Web.ViewModels.FindYourCentre;
+    using FakeItEasy;
     using FluentAssertions;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class FindYourCentreViewModelTests
     {
-        private string defaultUrl = ConfigHelper.GetAppConfig()["CurrentSystemBaseUrl"] + "/findyourcentre?nonav=true";
+        private IConfiguration config = null!;
+
+        [SetUp]
+        public void Setup()
+        {
+            config = A.Fake<IConfiguration>();
+        }
 
         [Test]
         public void FindYourCentreViewModel_without_centreid_should_have_default_Url()
         {
+            // Given
+            var defaultUrl = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true";
+
             // When
-            var model = new FindYourCentreViewModel();
+            var model = new FindYourCentreViewModel(config);
 
             // Then
             model.Url.Should().BeEquivalentTo(defaultUrl);
@@ -24,12 +35,13 @@
         {
             // Given
             var centreId = "5";
+            var defaultUrl = $"{config.GetCurrentSystemBaseUrl()}/findyourcentre?nonav=true&centreid={centreId}";
 
             // When
-            var model = new FindYourCentreViewModel(centreId);
+            var model = new FindYourCentreViewModel(centreId, config);
 
             // Then
-            model.Url.Should().BeEquivalentTo(defaultUrl + "&centreid=" + centreId);
+            model.Url.Should().BeEquivalentTo(defaultUrl);
         }
     }
 }

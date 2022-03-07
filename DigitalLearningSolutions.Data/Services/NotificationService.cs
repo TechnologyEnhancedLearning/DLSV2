@@ -2,7 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using DigitalLearningSolutions.Data.Helpers;
+    using DigitalLearningSolutions.Data.DataServices;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Email;
     using Microsoft.Extensions.Configuration;

@@ -10,30 +10,34 @@
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class EmailDelegatesControllerTests
     {
         private PromptsService promptsHelper = null!;
         private EmailDelegatesController emailDelegatesController = null!;
-
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private IJobGroupsDataService jobGroupsDataService = null!;
         private IPasswordResetService passwordResetService = null!;
         private IUserService userService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
         {
             var centreCustomPromptsService = A.Fake<ICentreRegistrationPromptsService>();
+
             promptsHelper = new PromptsService(centreCustomPromptsService);
             userService = A.Fake<IUserService>();
             jobGroupsDataService = A.Fake<IJobGroupsDataService>();
             passwordResetService = A.Fake<IPasswordResetService>();
+            config = A.Fake<IConfiguration>();
 
             httpRequest = A.Fake<HttpRequest>();
             httpResponse = A.Fake<HttpResponse>();
+
             const string cookieName = "EmailDelegateFilter";
             const string cookieValue = "JobGroupId|JobGroupId|1";
 
@@ -41,7 +45,8 @@
                     promptsHelper,
                     jobGroupsDataService,
                     passwordResetService,
-                    userService
+                    userService,
+                    config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true)

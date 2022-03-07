@@ -18,6 +18,7 @@
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
 
     public class CourseSetupControllerTests
@@ -91,6 +92,7 @@
         private HttpResponse httpResponse = null!;
         private ISectionService sectionService = null!;
         private ITutorialService tutorialService = null!;
+        private IConfiguration config = null!;
 
         [SetUp]
         public void Setup()
@@ -98,6 +100,7 @@
             courseService = A.Fake<ICourseService>();
             tutorialService = A.Fake<ITutorialService>();
             sectionService = A.Fake<ISectionService>();
+            config = A.Fake<IConfiguration>();
 
             A.CallTo(
                 () => courseService.GetCentreSpecificCourseStatisticsWithAdminFieldResponseCounts(A<int>._, A<int>._)
@@ -114,7 +117,8 @@
             controller = new CourseSetupController(
                     courseService,
                     tutorialService,
-                    sectionService
+                    sectionService,
+                    config
                 )
                 .WithDefaultContext()
                 .WithMockUser(true, 101)
@@ -126,7 +130,8 @@
             controllerWithCookies = new CourseSetupController(
                     courseService,
                     tutorialService,
-                    sectionService
+                    sectionService,
+                    config
                 )
                 .WithMockHttpContext(httpRequest, cookieName, cookieValue, httpResponse)
                 .WithMockUser(true, 101)

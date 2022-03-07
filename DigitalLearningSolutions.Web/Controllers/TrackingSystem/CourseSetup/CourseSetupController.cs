@@ -20,6 +20,7 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
@@ -29,21 +30,24 @@
     [Route("/TrackingSystem/CourseSetup")]
     public class CourseSetupController : Controller
     {
-        private const string CourseFilterCookieName = "CourseFilter";
         public const string SaveAction = "save";
+        private const string CourseFilterCookieName = "CourseFilter";
         private readonly ICourseService courseService;
         private readonly ISectionService sectionService;
         private readonly ITutorialService tutorialService;
+        private readonly IConfiguration config;
 
         public CourseSetupController(
             ICourseService courseService,
             ITutorialService tutorialService,
-            ISectionService sectionService
+            ISectionService sectionService,
+            IConfiguration config
         )
         {
             this.courseService = courseService;
             this.tutorialService = tutorialService;
             this.sectionService = sectionService;
+            this.config = config;
         }
 
         [Route("{page=1:int}")]
@@ -78,7 +82,8 @@
                 sortDirection,
                 existingFilterString,
                 page,
-                itemsPerPage
+                itemsPerPage,
+                config
             );
 
             Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
@@ -93,7 +98,7 @@
             var categoryId = User.GetAdminCourseCategoryFilter();
             var details = courseService.GetCentreCourseDetails(centreId, categoryId);
 
-            var model = new AllCourseStatisticsViewModel(details);
+            var model = new AllCourseStatisticsViewModel(details, config);
 
             return View(model);
         }

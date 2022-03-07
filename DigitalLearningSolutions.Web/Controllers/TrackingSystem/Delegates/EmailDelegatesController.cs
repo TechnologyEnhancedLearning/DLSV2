@@ -5,6 +5,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using System.Linq;
     using DigitalLearningSolutions.Data.DataServices;
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Data.Services;
@@ -14,8 +15,8 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.EmailDelegates;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.FeatureManagement.Mvc;
-    using ConfigHelper = DigitalLearningSolutions.Web.Helpers.ConfigHelper;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -29,18 +30,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly IJobGroupsDataService jobGroupsDataService;
         private readonly IPasswordResetService passwordResetService;
         private readonly IUserService userService;
+        private readonly IConfiguration config;
 
         public EmailDelegatesController(
             PromptsService promptsService,
             IJobGroupsDataService jobGroupsDataService,
             IPasswordResetService passwordResetService,
-            IUserService userService
+            IUserService userService,
+            IConfiguration config
         )
         {
             this.promptsService = promptsService;
             this.jobGroupsDataService = jobGroupsDataService;
             this.passwordResetService = passwordResetService;
             this.userService = userService;
+            this.config = config;
         }
 
         [HttpGet]
@@ -100,7 +104,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             var selectedUsers = delegateUsers.Where(user => model.SelectedDelegateIds!.Contains(user.Id)).ToList();
             var emailDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
-            var baseUrl = ConfigHelper.GetAppRootPath(ConfigHelper.GetAppConfig());
+            var baseUrl = config.GetAppRootPath();
 
             passwordResetService.SendWelcomeEmailsToDelegates(selectedUsers, emailDate, baseUrl);
 
