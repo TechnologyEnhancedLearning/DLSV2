@@ -32,16 +32,16 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1,
             int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 CourseFilterCookieName,
                 CourseStatusFilterOptions.IsActive.FilterValue
@@ -57,12 +57,12 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                filterBy,
+                existingFilterString,
                 page,
                 itemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
 
             return View(model);
         }

@@ -134,89 +134,89 @@
         }
 
         [Test]
-        public void Index_with_no_query_parameters_uses_cookie_value_for_filterBy()
+        public void Index_with_no_query_parameters_uses_cookie_value_for_existingFilterString()
         {
             // When
             var result = controllerWithCookies.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
                 .Be("Status|Active|false");
         }
 
         [Test]
-        public void Index_with_query_parameters_uses_query_parameter_value_for_filterBy()
+        public void Index_with_query_parameters_uses_query_parameter_value_for_existingFilterString()
         {
             // Given
-            const string filterBy = "Status|HideInLearnerPortal|true";
+            const string existingFilterString = "Status|HideInLearnerPortal|true";
 
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(filterBy: filterBy);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
 
             // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                .Be(filterBy);
+            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
+                .Be(existingFilterString);
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_query_parameter_removes_cookie()
+        public void Index_with_CLEAR_existingFilterString_query_parameter_removes_cookie()
         {
             // Given
-            const string filterBy = "CLEAR";
+            const string existingFilterString = "CLEAR";
 
             // When
-            var result = controllerWithCookies.Index(filterBy: filterBy);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString);
 
             // Then
             using (new AssertionScope())
             {
                 A.CallTo(() => httpResponse.Cookies.Delete("CourseFilter")).MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
                     .BeNull();
             }
         }
 
         [Test]
-        public void Index_with_null_filterBy_and_new_filter_query_parameter_adds_new_cookie_value()
+        public void Index_with_null_existingFilterString_and_new_filter_query_parameter_adds_new_cookie_value()
         {
             // Given
-            const string? filterBy = null;
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
+            const string? existingFilterString = null;
+            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
-            A.CallTo(() => httpRequest.Query.ContainsKey("filterBy")).Returns(true);
+            A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
+                    .Be(newFilterToAdd);
             }
         }
 
         [Test]
-        public void Index_with_CLEAR_filterBy_and_new_filter_query_parameter_sets_new_cookie_value()
+        public void Index_with_CLEAR_existingFilterString_and_new_filter_query_parameter_sets_new_cookie_value()
         {
             // Given
-            const string filterBy = "CLEAR";
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
+            const string existingFilterString = "CLEAR";
+            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
             // When
-            var result = controllerWithCookies.Index(filterBy: filterBy, filterValue: newFilterValue);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
                     .MustHaveHappened();
-                result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
-                    .Be(newFilterValue);
+                result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
+                    .Be(newFilterToAdd);
             }
         }
 
@@ -227,7 +227,7 @@
             var result = controller.Index();
 
             // Then
-            result.As<ViewResult>().Model.As<CourseSetupViewModel>().FilterBy.Should()
+            result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
                 .Be("Status|Active|true");
         }
 

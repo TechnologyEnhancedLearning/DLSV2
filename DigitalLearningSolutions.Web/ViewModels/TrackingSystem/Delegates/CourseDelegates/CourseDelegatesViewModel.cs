@@ -13,7 +13,7 @@
             string customisationIdQueryParameterName,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int page
         )
         {
@@ -28,7 +28,7 @@
                     courseDelegatesData,
                     sortBy,
                     sortDirection,
-                    filterBy,
+                    existingFilterString,
                     page,
                     new Dictionary<string, string>
                         { { customisationIdQueryParameterName, courseDelegatesData.CustomisationId.Value.ToString() } }

@@ -18,7 +18,7 @@
             string? searchString,
             string sortBy,
             string sortDirection,
-            string? filterBy,
+            string? existingFilterString,
             int? itemsPerPage
         ) : base(
             searchString,
@@ -26,7 +26,7 @@
             true,
             sortBy,
             sortDirection,
-            filterBy,
+            existingFilterString,
             itemsPerPage ?? DefaultItemsPerPage,
             "Search delegates"
         )
@@ -37,7 +37,7 @@
                 sortDirection
             );
             var searchedItems = GenericSearchHelper.SearchItems(sortedItems, SearchString);
-            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), filterBy).ToList();
+            var filteredItems = FilteringHelper.FilterItems(searchedItems.AsQueryable(), existingFilterString).ToList();
             MatchingSearchResults = filteredItems.Count;
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);

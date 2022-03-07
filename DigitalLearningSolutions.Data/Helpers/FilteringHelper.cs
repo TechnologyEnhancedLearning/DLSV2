@@ -21,73 +21,73 @@
             return group + Separator + propertyName + Separator + propertyValue;
         }
 
-        public static string? AddNewFilterToFilterBy(string? filterBy, string? newFilterValue)
+        public static string? AddNewFilterToFilterString(string? existingFilterString, string? newFilterToAdd)
         {
-            if (filterBy == null)
+            if (existingFilterString == null)
             {
-                return newFilterValue;
+                return newFilterToAdd;
             }
 
-            if (newFilterValue == null || filterBy.Split(FilterSeparator).Contains(newFilterValue))
+            if (newFilterToAdd == null || existingFilterString.Split(FilterSeparator).Contains(newFilterToAdd))
             {
-                return filterBy;
+                return existingFilterString;
             }
 
-            return filterBy + FilterSeparator + newFilterValue;
+            return existingFilterString + FilterSeparator + newFilterToAdd;
         }
 
-        public static string? GetFilterBy(
-            string? filterBy,
-            string? filterValue,
+        public static string? GetFilterString(
+            string? existingFilterString,
+            string? newFilterToAdd,
             HttpRequest request,
             string cookieName,
             string? defaultFilterValue = null
         )
         {
-            if (filterBy == null && filterValue == null)
+            if (existingFilterString == null && newFilterToAdd == null)
             {
                 return request.Cookies.ContainsKey(cookieName)
                     ? request.Cookies[cookieName]
                     : defaultFilterValue;
             }
 
-            if (filterBy?.ToUpper() == ClearString)
+            if (existingFilterString?.ToUpper() == ClearString)
             {
-                filterBy = null;
+                existingFilterString = null;
             }
 
-            return AddNewFilterToFilterBy(filterBy, filterValue);
+            return AddNewFilterToFilterString(existingFilterString, newFilterToAdd);
         }
 
-        public static string? GetCategoryAndTopicFilterBy(
-            string? categoryFilterBy,
-            string? topicFilterBy
+        public static string? GetCategoryAndTopicFilterString(
+            string? categoryFilterString,
+            string? topicFilterString
         )
         {
-            if (categoryFilterBy == null && topicFilterBy == null)
+            if (categoryFilterString == null && topicFilterString == null)
             {
                 return null;
             }
 
-            if (categoryFilterBy == null)
+            if (categoryFilterString == null)
             {
-                return topicFilterBy;
+                return topicFilterString;
             }
 
-            if (topicFilterBy == null)
+            if (topicFilterString == null)
             {
-                return categoryFilterBy;
+                return categoryFilterString;
             }
 
-            return topicFilterBy + FilterSeparator + categoryFilterBy;
+            return topicFilterString + FilterSeparator + categoryFilterString;
         }
 
         public static IEnumerable<T> FilterItems<T>(
             IQueryable<T> items,
-            string? filterBy
+            string? filterString
         ) where T : BaseSearchableItem
         {
-            var listOfFilters = filterBy?.Split(FilterSeparator).ToList() ?? new List<string>();
+            var listOfFilters = filterString?.Split(FilterSeparator).ToList() ?? new List<string>();
 
             var appliedFilters = listOfFilters.Select(filter => new AppliedFilter(filter));
 

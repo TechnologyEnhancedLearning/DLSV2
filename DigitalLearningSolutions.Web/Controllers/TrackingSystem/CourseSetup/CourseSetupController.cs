@@ -51,16 +51,16 @@
             string? searchString = null,
             string? sortBy = null,
             string sortDirection = GenericSortingHelper.Ascending,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1,
             int? itemsPerPage = null
         )
         {
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 CourseFilterCookieName,
                 CourseStatusFilterOptions.IsActive.FilterValue
@@ -76,12 +76,12 @@
                 searchString,
                 sortBy,
                 sortDirection,
-                filterBy,
+                existingFilterString,
                 page,
                 itemsPerPage
             );
 
-            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(CourseFilterCookieName, existingFilterString);
 
             return View(model);
         }
@@ -112,11 +112,11 @@
         [ServiceFilter(typeof(RedirectEmptySessionData<AddNewCentreCourseData>))]
         [HttpGet("AddCourse/SelectCourse")]
         public IActionResult SelectCourse(
-            string? categoryFilterBy = null,
-            string? topicFilterBy = null
+            string? categoryFilterString = null,
+            string? topicFilterString = null
         )
         {
-            var model = GetSelectCourseViewModel(categoryFilterBy, topicFilterBy);
+            var model = GetSelectCourseViewModel(categoryFilterString, topicFilterString);
 
             return View("AddNewCentreCourse/SelectCourse", model);
         }
@@ -140,8 +140,8 @@
         [HttpPost("AddCourse/SelectCourse")]
         public IActionResult SelectCourse(
             int? applicationId,
-            string? categoryFilterBy = null,
-            string? topicFilterBy = null
+            string? categoryFilterString = null,
+            string? topicFilterString = null
         )
         {
             var data = TempData.Peek<AddNewCentreCourseData>()!;
@@ -152,8 +152,8 @@
                 return View(
                     "AddNewCentreCourse/SelectCourse",
                     GetSelectCourseViewModel(
-                        categoryFilterBy,
-                        topicFilterBy
+                        categoryFilterString,
+                        topicFilterString
                     )
                 );
             }
@@ -375,8 +375,8 @@
         }
 
         private SelectCourseViewModel GetSelectCourseViewModel(
-            string? categoryFilterBy,
-            string? topicFilterBy
+            string? categoryFilterString,
+            string? topicFilterString
         )
         {
             var centreId = User.GetCentreId();
@@ -392,8 +392,8 @@
                 categories,
                 topics,
                 categoryIdFilter,
-                categoryFilterBy,
-                topicFilterBy
+                categoryFilterString,
+                topicFilterString
             );
         }
 
