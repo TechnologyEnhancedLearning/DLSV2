@@ -27,7 +27,7 @@ export function setUpFilter(onFilterUpdated: VoidFunction, filterCookieName: str
   setUpClearFiltersButton();
   setUpFilterSelectorDropdown();
   hideAllFilterDropdowns();
-  document.getElementById('filter-by')?.addEventListener('change', onFilterUpdated);
+  document.getElementById('existing-filter-string')?.addEventListener('change', onFilterUpdated);
 }
 
 export function filterSearchableElements(
@@ -35,8 +35,8 @@ export function filterSearchableElements(
   possibleFilters: IAppliedFilterTag[],
 ): ISearchableElement[] {
   let filteredSearchableElements = searchableElements;
-  const filterBy = getFilterByValue();
-  const appliedFilters = getAppliedFilters(filterBy);
+  const existingFilterString = getExistingFilterStringValue();
+  const appliedFilters = getAppliedFilters(existingFilterString);
 
   const filterGroups = _.groupBy(appliedFilters, (filter) => filter.group);
 
@@ -50,8 +50,8 @@ export function filterSearchableElements(
     filteredSearchableElements = _.uniq(flattenedElements);
   });
 
-  if (filterBy) {
-    updateAppliedFilters(filterBy, possibleFilters);
+  if (existingFilterString) {
+    updateAppliedFilters(existingFilterString, possibleFilters);
     showAppliedFilters();
   }
 
@@ -66,7 +66,7 @@ function setUpFilterSubmitButtons() {
     const element = <HTMLInputElement>filterSubmit;
     element.addEventListener('click', (e) => {
       e.preventDefault();
-      const newFilter = appendNewFilterToFilterBy(element);
+      const newFilter = appendNewFilterToExistingFilterString(element);
       if (newFilter) {
         hideAllFilterDropdowns();
         resetFilterSelectorDropdown();
@@ -88,8 +88,8 @@ function setUpFilterSelectorDropdown() {
   });
 }
 
-export function getAppliedFilters(filterBy: string): IAppliedFilter[] {
-  return filterBy.split(filterSeparator)
+export function getAppliedFilters(existingFilterString: string): IAppliedFilter[] {
+  return existingFilterString.split(filterSeparator)
     .map((filter) => newAppliedFilterFromFilter(filter));
 }
 
@@ -112,10 +112,10 @@ function filterElements(
   );
 }
 
-function appendNewFilterToFilterBy(filterSubmit: HTMLInputElement): string {
-  const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
-  addNewFilterValueToFilterBy(filterValue);
-  return filterValue;
+function appendNewFilterToExistingFilterString(filterSubmit: HTMLInputElement): string {
+  const newFilterToAdd = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
+  addNewFilterValueToExistingFilterString(newFilterToAdd);
+  return newFilterToAdd;
 }
 
 function getSelectedFilterFromDropdownAndResetDropdown(
@@ -128,21 +128,23 @@ function getSelectedFilterFromDropdownAndResetDropdown(
   return filterValue;
 }
 
-function addNewFilterValueToFilterBy(newFilterValue: string): void {
+function addNewFilterValueToExistingFilterString(newFilterValue: string): void {
   if (!newFilterValue) return;
 
-  const filterBy = getFilterByValue();
-  if (!filterBy.split(filterSeparator).includes(newFilterValue)) {
-    const updatedFilterBy = filterBy ? filterBy + filterSeparator + newFilterValue : newFilterValue;
-    updateAllFilterByHiddenInputs(updatedFilterBy);
-    updateFilterBy(updatedFilterBy);
-    updateFilterCookieValue(updatedFilterBy);
+  const existingFilterString = getExistingFilterStringValue();
+  if (!existingFilterString.split(filterSeparator).includes(newFilterValue)) {
+    const updatedExistingFilterString = existingFilterString
+      ? existingFilterString + filterSeparator + newFilterValue
+      : newFilterValue;
+    updateAllExistingFilterStringHiddenInputs(updatedExistingFilterString);
+    updateExistingFilterString(updatedExistingFilterString);
+    updateFilterCookieValue(updatedExistingFilterString);
   }
 }
 
 function clearFilters(): void {
-  updateAllFilterByHiddenInputs('');
-  updateFilterBy('');
+  updateAllExistingFilterStringHiddenInputs('');
+  updateExistingFilterString('');
   clearFilterCookie();
   clearAppliedFilters();
   hideAppliedFilters();
@@ -186,12 +188,12 @@ function doesElementMatchFilterValue(
   return filterValue === filter;
 }
 
-export function getFilterByValue(): string {
-  return getFilterByElement().value;
+export function getExistingFilterStringValue(): string {
+  return getExistingFilterStringElement().value;
 }
 
-export function updateFilterBy(newFilter: string): void {
-  const element = getFilterByElement();
+export function updateExistingFilterString(newFilter: string): void {
+  const element = getExistingFilterStringElement();
   element.value = newFilter;
   sendBrowserAgnosticEvent(element, 'change');
 }
@@ -204,13 +206,13 @@ function clearFilterCookie(): void {
   Cookies.remove(cookieName);
 }
 
-function getFilterByElement(): HTMLInputElement {
-  return <HTMLInputElement>document.getElementById('filter-by');
+function getExistingFilterStringElement(): HTMLInputElement {
+  return <HTMLInputElement>document.getElementById('existing-filter-string');
 }
 
-function updateAllFilterByHiddenInputs(newFilter: string): void {
-  const filterByElements = Array.from(document.getElementsByName('filterBy'));
-  filterByElements.forEach((filterElement) => {
+function updateAllExistingFilterStringHiddenInputs(newFilter: string): void {
+  const existingFilterStringElements = Array.from(document.getElementsByName('existingFilterString'));
+  existingFilterStringElements.forEach((filterElement) => {
     const element = <HTMLInputElement>filterElement;
     element.value = newFilter;
   });
@@ -233,9 +235,9 @@ function clearAppliedFilters() {
   appliedFilterContainer.textContent = '';
 }
 
-function updateAppliedFilters(filterBy: string, possibleFilters: IAppliedFilterTag[]) {
+function updateAppliedFilters(existingFilterString: string, possibleFilters: IAppliedFilterTag[]) {
   const appliedFilterContainer = getAppliedFilterContainer();
-  const listOfFilters = filterBy.split(filterSeparator);
+  const listOfFilters = existingFilterString.split(filterSeparator);
   appliedFilterContainer.textContent = '';
   listOfFilters.forEach(
     (filter) => appliedFilterContainer.appendChild(getMatchingFilterTag(possibleFilters, filter)),

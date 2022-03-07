@@ -90,14 +90,14 @@
         public IActionResult AddCourseToGroupSelectCourse(
             int groupId,
             string? searchString = null,
-            string? filterBy = null,
-            string? filterValue = null,
+            string? existingFilterString = null,
+            string? newFilterToAdd = null,
             int page = 1
         )
         {
-            filterBy = FilteringHelper.GetFilterBy(
-                filterBy,
-                filterValue,
+            existingFilterString = FilteringHelper.GetFilterString(
+                existingFilterString,
+                newFilterToAdd,
                 Request,
                 GroupAddCourseFilterCookieName
             );
@@ -120,11 +120,11 @@
                 groupId,
                 groupName!,
                 searchString,
-                filterBy,
+                existingFilterString,
                 page
             );
 
-            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, filterBy);
+            Response.UpdateOrDeleteFilterCookie(GroupAddCourseFilterCookieName, existingFilterString);
 
             return View(model);
         }

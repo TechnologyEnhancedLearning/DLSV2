@@ -12,7 +12,7 @@ else
     : Model.ResultRAG == 1 ? "red"
     : Model.ResultRAG == 2 ? "yellow"
     : "green";
-  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "not yet verified"
+  string hiddenTagText = !isVerifiedOrVerificationNotRequired ? "not yet confirmed"
     : Model.ResultRAG == 0 ? "role expectations not specified"
     : Model.ResultRAG == 1 ? "not meeting role expectations"
     : Model.ResultRAG == 2 ? "partially meeting role expectations"

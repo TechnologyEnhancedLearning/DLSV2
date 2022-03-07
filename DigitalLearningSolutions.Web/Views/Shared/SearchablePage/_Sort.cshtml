@@ -6,7 +6,7 @@
   <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
   @if (Model.FilterEnabled)
   {
-    <input type="hidden" name="filterBy" value="@Model.FilterBy" />
+    <input type="hidden" name="existingFilterString" value="@Model.ExistingFilterString" />
   }
   @foreach (var (key, value) in Model.RouteData)
   {

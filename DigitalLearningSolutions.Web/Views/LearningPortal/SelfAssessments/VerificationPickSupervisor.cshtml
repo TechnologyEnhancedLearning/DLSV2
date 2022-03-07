@@ -9,7 +9,7 @@
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural()</a></li>
-  <li class="nhsuk-breadcrumb__item">Request verification</li>
+  <li class="nhsuk-breadcrumb__item">Request confirmation</li>
 }
 @section mobilebacklink
 {
@@ -22,7 +22,7 @@
   </p>
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
-  <h1>Request @Model.SelfAssessment.Vocabulary.ToLower() verification</h1>
+  <h1>Request @Model.SelfAssessment.Vocabulary.ToLower() confirmation</h1>
   @if (errorHasOccurred)
   {
     <vc:error-summary order-of-property-names="@(new[] {nameof(Model.CandidateAssessmentSupervisorId) })" />
@@ -36,7 +36,7 @@
             Which @Model.SelfAssessment.VerificationRoleName?
           </h2>
           <div class="nhsuk-hint">
-            Choose the @Model.SelfAssessment.VerificationRoleName you wish to request verification of @Model.VocabPlural().ToLower() from.
+            Choose the @Model.SelfAssessment.VerificationRoleName you wish to request confirmation of @Model.VocabPlural().ToLower() from.
           </div>
 
         </legend>
@@ -74,7 +74,7 @@
   }
   else
   {
-    <p>There are no supervisors identified who can verify @Model.VocabPlural().ToLower() for this self assessment.</p>
+    <p>There are no supervisors identified who can confirm @Model.VocabPlural().ToLower() for this self assessment.</p>
     <div class="nhsuk-action-link">
       <a class="nhsuk-action-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
         <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
