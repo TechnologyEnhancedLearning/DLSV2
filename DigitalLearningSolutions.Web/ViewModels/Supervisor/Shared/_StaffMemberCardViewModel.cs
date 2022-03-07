@@ -5,6 +5,6 @@
     public class _StaffMemberCardViewModel
     {
         public SupervisorDelegateDetail SupervisorDelegateDetail { get; set; }
-        public CentreCustomPrompts CentreCustomPrompts { get; set; }
+        public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
     }
 }

@@ -93,7 +93,7 @@
         {
             var centreId = User.GetCentreId();
             var courseDelegates = courseDelegatesService.GetCourseDelegatesForCentre(customisationId, centreId);
-            var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
             var model = new AllCourseDelegatesViewModel(courseDelegates, adminFields.AdminFields);
 
             return View(model);

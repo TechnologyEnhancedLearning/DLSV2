@@ -37,7 +37,7 @@
             <partial name="_SummaryFieldValue" model="@Model.JobGroup" />
           </div>
 
-          foreach (var customField in Model.CustomFields) {
+          foreach (var customField in Model.DelegateRegistrationPrompts) {
             <partial name="../Shared/_CustomPromptSummaryListRow" model="@customField" />
           }
 

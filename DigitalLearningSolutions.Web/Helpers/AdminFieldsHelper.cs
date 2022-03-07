@@ -9,9 +9,9 @@
 
     public static class AdminFieldsHelper
     {
-        public static List<CustomFieldViewModel> GetCourseAdminFieldViewModels(
+        public static List<DelegateCourseAdminField> GetCourseAdminFieldViewModels(
             CourseDelegate courseDelegate,
-            IEnumerable<CustomPrompt> customPrompts
+            IEnumerable<CourseAdminField> courseAdminFields
         )
         {
             var answers = new List<string?>
@@ -21,12 +21,11 @@
                 courseDelegate.Answer3,
             };
 
-            return customPrompts.Select(
-                cp => new CustomFieldViewModel(
-                    cp.CustomPromptNumber,
-                    cp.CustomPromptText,
-                    cp.Mandatory,
-                    answers[cp.CustomPromptNumber - 1]
+            return courseAdminFields.Select(
+                c => new DelegateCourseAdminField(
+                    c.PromptNumber,
+                    c.PromptText,
+                    answers[c.PromptNumber - 1]
                 )
             ).ToList();
         }

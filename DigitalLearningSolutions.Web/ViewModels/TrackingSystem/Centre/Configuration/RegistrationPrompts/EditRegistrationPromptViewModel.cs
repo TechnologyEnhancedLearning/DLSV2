@@ -24,12 +24,12 @@
             Mandatory = mandatory;
         }
 
-        public EditRegistrationPromptViewModel(CustomPrompt customPrompt)
+        public EditRegistrationPromptViewModel(CentreRegistrationPrompt centreRegistrationPrompt)
         {
-            PromptNumber = customPrompt.CustomPromptNumber;
-            Prompt = customPrompt.CustomPromptText;
-            Mandatory = customPrompt.Mandatory;
-            OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(customPrompt.Options);
+            PromptNumber = centreRegistrationPrompt.RegistrationField.Id;
+            Prompt = centreRegistrationPrompt.PromptText;
+            Mandatory = centreRegistrationPrompt.Mandatory;
+            OptionsString = NewlineSeparatedStringListHelper.JoinNewlineSeparatedList(centreRegistrationPrompt.Options);
             IncludeAnswersTableCaption = true;
         }
 

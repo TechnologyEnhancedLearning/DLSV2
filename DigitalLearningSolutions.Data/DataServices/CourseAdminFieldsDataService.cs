@@ -11,11 +11,11 @@
     {
         CourseAdminFieldsResult GetCourseAdminFields(int customisationId);
 
-        void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options);
+        void UpdateAdminFieldForCourse(int customisationId, int promptNumber, string? options);
 
         IEnumerable<(int id, string name)> GetCoursePromptsAlphabetical();
 
-        void UpdateCustomPromptForCourse(
+        void UpdateAdminFieldForCourse(
             int customisationId,
             int promptNumber,
             int promptId,
@@ -47,15 +47,15 @@
         {
             var result = connection.Query<CourseAdminFieldsResult>(
                 @"SELECT
-                        cp1.CoursePrompt AS CustomField1Prompt,
-                        cu.Q1Options AS CustomField1Options,
-                        cu.Q1Mandatory AS CustomField1Mandatory,
-                        cp2.CoursePrompt AS CustomField2Prompt,
-                        cu.Q2Options AS CustomField2Options,
-                        cu.Q2Mandatory AS CustomField2Mandatory,
-                        cp3.CoursePrompt AS CustomField3Prompt,
-                        cu.Q3Options AS CustomField3Options,
-                        cu.Q3Mandatory AS CustomField3Mandatory,
+                        cp1.CoursePrompt AS CourseAdminField1Prompt,
+                        cu.Q1Options AS CourseAdminField1Options,
+                        cu.Q1Mandatory AS CentreRegistrationPrompt1Mandatory,
+                        cp2.CoursePrompt AS CourseAdminField2Prompt,
+                        cu.Q2Options AS CourseAdminField2Options,
+                        cu.Q2Mandatory AS CentreRegistrationPrompt2Mandatory,
+                        cp3.CoursePrompt AS CourseAdminField3Prompt,
+                        cu.Q3Options AS CourseAdminField3Options,
+                        cu.Q3Mandatory AS CentreRegistrationPrompt3Mandatory,
                         ap.CourseCategoryID
                     FROM
                         Customisations AS cu
@@ -74,7 +74,7 @@
             return result;
         }
 
-        public void UpdateCustomPromptForCourse(int customisationId, int promptNumber, string? options)
+        public void UpdateAdminFieldForCourse(int customisationId, int promptNumber, string? options)
         {
             connection.Execute(
                 @$"UPDATE Customisations
@@ -96,7 +96,7 @@
             );
         }
 
-        public void UpdateCustomPromptForCourse(
+        public void UpdateAdminFieldForCourse(
             int customisationId,
             int promptNumber,
             int promptId,

@@ -10,7 +10,7 @@
 
     public class AllCourseDelegatesViewModel : BaseJavaScriptFilterableViewModel
     {
-        public AllCourseDelegatesViewModel(IEnumerable<CourseDelegate> delegates, IList<CustomPrompt> adminFields)
+        public AllCourseDelegatesViewModel(IEnumerable<CourseDelegate> delegates, IList<CourseAdminField> adminFields)
         {
             Delegates = delegates.Select(
                 d =>

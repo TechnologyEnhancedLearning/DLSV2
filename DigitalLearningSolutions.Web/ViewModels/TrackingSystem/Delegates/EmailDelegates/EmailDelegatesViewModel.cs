@@ -27,7 +27,7 @@
         public EmailDelegatesViewModel(
             IEnumerable<DelegateUserCard> delegateUsers,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> customPrompts,
+            IEnumerable<CentreRegistrationPrompt> customPrompts,
             string? existingFilterString,
             bool selectAll = false
         ) : this(existingFilterString)
@@ -58,7 +58,7 @@
                 .ToValidationResultList(nameof(Day), nameof(Month), nameof(Year));
         }
 
-        private void SetFilters(IEnumerable<(int id, string name)> jobGroups, IEnumerable<CustomPrompt> customPrompts)
+        private void SetFilters(IEnumerable<(int id, string name)> jobGroups, IEnumerable<CentreRegistrationPrompt> customPrompts)
         {
             var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
             Filters = EmailDelegatesViewModelFilterOptions.GetEmailDelegatesFilterViewModels(

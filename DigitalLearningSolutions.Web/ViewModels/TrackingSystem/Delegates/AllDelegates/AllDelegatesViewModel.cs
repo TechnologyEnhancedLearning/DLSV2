@@ -13,7 +13,7 @@
         public AllDelegatesViewModel(
             IEnumerable<DelegateUserCard> delegateUserCards,
             IEnumerable<(int id, string name)> jobGroups,
-            IEnumerable<CustomPrompt> customPrompts,
+            IEnumerable<CentreRegistrationPrompt> centreRegistrationPrompts,
             int page,
             string? searchString,
             string sortBy,
@@ -42,13 +42,13 @@
             SetTotalPages();
             var paginatedItems = GetItemsOnCurrentPage(filteredItems);
 
-            var promptsWithOptions = customPrompts.Where(customPrompt => customPrompt.Options.Count > 0);
+            var promptsWithOptions = centreRegistrationPrompts.Where(registrationPrompt => registrationPrompt.Options.Count > 0);
             var returnPage = string.IsNullOrWhiteSpace(searchString) ? page : 1;
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
-                    return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, returnPage);
+                    var delegateRegistrationPrompts = PromptsService.GetDelegateRegistrationPrompts(delegateUser, centreRegistrationPrompts);
+                    return new SearchableDelegateViewModel(delegateUser, delegateRegistrationPrompts, promptsWithOptions, returnPage);
                 }
             );
 

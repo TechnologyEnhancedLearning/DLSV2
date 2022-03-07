@@ -58,7 +58,7 @@
             },
         };
 
-        private CentreCustomPromptHelper centreCustomPromptHelper = null!;
+        private PromptsService promptsService = null!;
 
         private GroupDelegatesController groupDelegatesController = null!;
         private IGroupsService groupsService = null!;
@@ -70,7 +70,7 @@
         [SetUp]
         public void Setup()
         {
-            centreCustomPromptHelper = A.Fake<CentreCustomPromptHelper>();
+            promptsService = A.Fake<PromptsService>();
             groupsService = A.Fake<IGroupsService>();
             jobGroupsService = A.Fake<IJobGroupsService>();
             userService = A.Fake<IUserService>();
@@ -92,7 +92,7 @@
             groupDelegatesController = new GroupDelegatesController(
                     jobGroupsService,
                     userService,
-                    centreCustomPromptHelper,
+                    promptsService,
                     groupsService
                 )
                 .WithMockHttpContext(httpRequest, AddGroupDelegateFilterCookieName, cookieValue, httpResponse)

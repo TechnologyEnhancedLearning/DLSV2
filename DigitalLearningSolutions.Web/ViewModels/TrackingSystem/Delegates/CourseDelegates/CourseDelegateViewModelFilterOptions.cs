@@ -31,7 +31,7 @@
             CourseDelegateProgressRemovedFilterOptions.NotRemoved,
         };
 
-        public static List<FilterViewModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CustomPrompt> adminFields)
+        public static List<FilterViewModel> GetAllCourseDelegatesFilterViewModels(IEnumerable<CourseAdminField> adminFields)
         {
             var filters = new List<FilterViewModel>
             {
@@ -42,8 +42,8 @@
             filters.AddRange(
                 adminFields.Select(
                     field => new FilterViewModel(
-                        $"CustomPrompt{field.CustomPromptNumber}",
-                        field.CustomPromptText,
+                        $"CourseAdminField{field.PromptNumber}",
+                        field.PromptText,
                         GetCourseDelegateAdminFieldOptions(field)
                     )
                 )
@@ -52,36 +52,36 @@
         }
 
         public static Dictionary<int, string> GetAdminFieldFilters(
-            IEnumerable<CustomFieldViewModel> adminFields,
-            IEnumerable<CustomPrompt> fieldsWithOptions
+            IEnumerable<DelegateCourseAdminField> adminFields,
+            IEnumerable<CourseAdminField> fieldsWithOptions
         )
         {
-            var fieldsWithOptionsIds = fieldsWithOptions.Select(c => c.CustomPromptNumber);
+            var fieldsWithOptionsIds = fieldsWithOptions.Select(c => c.PromptNumber);
             return adminFields
                 .Select(
                     adminField => new KeyValuePair<int, string>(
-                        adminField.CustomFieldId,
-                        GetFilterValueForAdminField(adminField, fieldsWithOptionsIds.Contains(adminField.CustomFieldId))
+                        adminField.PromptNumber,
+                        GetFilterValueForAdminField(adminField, fieldsWithOptionsIds.Contains(adminField.PromptNumber))
                     )
                 ).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        private static string GetFilterValueForAdminField(CustomFieldViewModel customField, bool adminFieldHasOptions)
+        private static string GetFilterValueForAdminField(DelegateCourseAdminField delegateCourseAdminField, bool adminFieldHasOptions)
         {
             var filterValueName =
-                AdminFieldsHelper.GetAdminFieldAnswerName(customField.CustomFieldId);
+                AdminFieldsHelper.GetAdminFieldAnswerName(delegateCourseAdminField.PromptNumber);
 
             string propertyValue;
 
             if (adminFieldHasOptions)
             {
-                propertyValue = string.IsNullOrEmpty(customField.Answer)
+                propertyValue = string.IsNullOrEmpty(delegateCourseAdminField.Answer)
                     ? FilteringHelper.EmptyValue
-                    : customField.Answer;
+                    : delegateCourseAdminField.Answer;
             }
             else
             {
-                propertyValue = string.IsNullOrEmpty(customField.Answer)
+                propertyValue = string.IsNullOrEmpty(delegateCourseAdminField.Answer)
                     ? FilteringHelper.FreeTextBlankValue
                     : FilteringHelper.FreeTextNotBlankValue;
             }
@@ -89,15 +89,15 @@
             return FilteringHelper.BuildFilterValueString(filterValueName, filterValueName, propertyValue);
         }
 
-        private static IEnumerable<FilterOptionViewModel> GetCourseDelegateAdminFieldOptions(CustomPrompt adminField)
+        private static IEnumerable<FilterOptionViewModel> GetCourseDelegateAdminFieldOptions(CourseAdminField adminField)
         {
             if (adminField.Options.Count > 0)
             {
-                return DelegatesViewModelFilters.GetCustomPromptOptions(adminField);
+                return DelegatesViewModelFilters.GetPromptOptions(adminField);
             }
 
             var filterValueName =
-                AdminFieldsHelper.GetAdminFieldAnswerName(adminField.CustomPromptNumber);
+                AdminFieldsHelper.GetAdminFieldAnswerName(adminField.PromptNumber);
 
             var options = new List<FilterOptionViewModel>
             {

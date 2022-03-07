@@ -41,17 +41,17 @@
 
         private readonly ICourseAdminFieldsService courseAdminFieldsService;
         private readonly ICourseDelegatesDataService courseDelegatesDataService;
-        private readonly ICentreCustomPromptsService customPromptsService;
+        private readonly ICentreRegistrationPromptsService registrationPromptsService;
 
         public CourseDelegatesDownloadFileService(
             ICourseDelegatesDataService courseDelegatesDataService,
             ICourseAdminFieldsService courseAdminFieldsService,
-            ICentreCustomPromptsService customPromptsService
+            ICentreRegistrationPromptsService registrationPromptsService
         )
         {
             this.courseDelegatesDataService = courseDelegatesDataService;
             this.courseAdminFieldsService = courseAdminFieldsService;
-            this.customPromptsService = customPromptsService;
+            this.registrationPromptsService = registrationPromptsService;
         }
 
         public byte[] GetCourseDelegateDownloadFileForCourse(
@@ -80,9 +80,9 @@
             string sortDirection
         )
         {
-            var adminFields = courseAdminFieldsService.GetCustomPromptsForCourse(customisationId);
+            var adminFields = courseAdminFieldsService.GetCourseAdminFieldsForCourse(customisationId);
 
-            var customRegistrationPrompts = customPromptsService.GetCustomPromptsForCentreByCentreId(centreId);
+            var customRegistrationPrompts = registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
 
             var courseDelegates = courseDelegatesDataService.GetDelegatesOnCourseForExport(customisationId, centreId)
                 .ToList();
@@ -115,7 +115,7 @@
         }
 
         private static void SetUpDataTableColumns(
-            CentreCustomPrompts customRegistrationPrompts,
+            CentreRegistrationPrompts registrationRegistrationPrompts,
             CourseAdminFields adminFields,
             DataTable dataTable
         )
@@ -124,12 +124,12 @@
                 new[] { new DataColumn(LastName), new DataColumn(FirstName), new DataColumn(Email) }
             );
 
-            foreach (var prompt in customRegistrationPrompts.CustomPrompts)
+            foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
             {
                 dataTable.Columns.Add(
-                    !dataTable.Columns.Contains(prompt.CustomPromptText)
-                        ? prompt.CustomPromptText
-                        : $"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"
                 );
             }
 
@@ -147,9 +147,9 @@
             foreach (var prompt in adminFields.AdminFields)
             {
                 dataTable.Columns.Add(
-                    !dataTable.Columns.Contains(prompt.CustomPromptText)
-                        ? prompt.CustomPromptText
-                        : $"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.PromptNumber})"
                 );
             }
         }
@@ -157,7 +157,7 @@
         private static void AddDelegateToDataTable(
             DataTable dataTable,
             CourseDelegateForExport courseDelegate,
-            CentreCustomPrompts customRegistrationPrompts,
+            CentreRegistrationPrompts registrationRegistrationPrompts,
             CourseAdminFields adminFields
         )
         {
@@ -167,17 +167,17 @@
             row[FirstName] = courseDelegate.FirstName;
             row[Email] = courseDelegate.EmailAddress;
 
-            foreach (var prompt in customRegistrationPrompts.CustomPrompts)
+            foreach (var prompt in registrationRegistrationPrompts.CustomPrompts)
             {
-                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"))
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
                 {
-                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.CustomPromptNumber - 1];
+                    row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
+                        courseDelegate.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
                 }
                 else
                 {
-                    row[prompt.CustomPromptText] =
-                        courseDelegate.CustomRegistrationPromptAnswers[prompt.CustomPromptNumber - 1];
+                    row[prompt.PromptText] =
+                        courseDelegate.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
                 }
             }
 
@@ -197,15 +197,15 @@
 
             foreach (var prompt in adminFields.AdminFields)
             {
-                if (dataTable.Columns.Contains($"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"))
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.PromptNumber})"))
                 {
-                    row[$"{prompt.CustomPromptText} (Prompt {prompt.CustomPromptNumber})"] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
+                    row[$"{prompt.PromptText} (Prompt {prompt.PromptNumber})"] =
+                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
                 }
                 else
                 {
-                    row[prompt.CustomPromptText] =
-                        courseDelegate.CustomAdminFieldAnswers[prompt.CustomPromptNumber - 1];
+                    row[prompt.PromptText] =
+                        courseDelegate.DelegateCourseAdminFields[prompt.PromptNumber - 1];
                 }
             }
 

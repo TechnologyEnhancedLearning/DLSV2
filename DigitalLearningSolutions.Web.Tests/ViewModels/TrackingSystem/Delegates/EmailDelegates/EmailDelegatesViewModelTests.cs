@@ -39,7 +39,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null
             );
 
@@ -56,7 +56,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int, string)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null
             );
 
@@ -70,18 +70,18 @@
         public void EmailDelegatesViewModel_should_only_include_custom_prompts_with_options()
         {
             // Given
-            var customPrompts = new List<CustomPrompt>
+            var centreRegistrationPrompts = new List<CentreRegistrationPrompt>
             {
-                new CustomPrompt(1, "free text", null, true),
-                new CustomPrompt(2, "with options", "A\r\nB", true),
+                new CentreRegistrationPrompt(1, "free text", null, true),
+                new CentreRegistrationPrompt(2, "with options", "A\r\nB", true),
             };
 
             // When
-            var model = new EmailDelegatesViewModel(delegateUsers, new List<(int, string)>(), customPrompts, null);
+            var model = new EmailDelegatesViewModel(delegateUsers, new List<(int, string)>(), centreRegistrationPrompts, null);
 
             // Then
-            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CustomPrompt1");
-            model.Filters.Should().Contain(filter => filter.FilterProperty == "CustomPrompt2");
+            model.Filters.Should().NotContain(filter => filter.FilterProperty == "CentreRegistrationPrompt1");
+            model.Filters.Should().Contain(filter => filter.FilterProperty == "CentreRegistrationPrompt2");
         }
 
         [Test]
@@ -94,7 +94,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 existingFilterString
             );
 
@@ -116,7 +116,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 existingFilterString
             );
 
@@ -138,7 +138,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null
             );
 
@@ -157,7 +157,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null
             ) { SelectedDelegateIds = selectedDelegateIds };
 
@@ -175,7 +175,7 @@
             var model = new EmailDelegatesViewModel(
                 delegateUsers,
                 new List<(int id, string name)>(),
-                new List<CustomPrompt>(),
+                new List<CentreRegistrationPrompt>(),
                 null,
                 true
             );

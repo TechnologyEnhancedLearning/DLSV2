@@ -3,22 +3,18 @@
     using System;
     using System.Collections.Generic;
 
-    public class CustomPrompt
+    public abstract class Prompt
     {
-        public CustomPrompt(int customPromptNumber, string text, string? options, bool mandatory)
+        protected Prompt(string promptText, string? options)
         {
-            CustomPromptNumber = customPromptNumber;
-            CustomPromptText = text;
+            PromptText = promptText;
             Options = SplitOptionsString(options);
-            Mandatory = mandatory;
         }
 
-        public int CustomPromptNumber { get; set; }
-        public string CustomPromptText { get; set; }
+        public string PromptText { get; set; }
         public List<string> Options { get; set; }
-        public bool Mandatory { get; set; }
 
-        private List<string> SplitOptionsString(string? options)
+        protected static List<string> SplitOptionsString(string? options)
         {
             var optionsList = new List<string>();
             if (options != null)

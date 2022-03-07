@@ -64,8 +64,8 @@
                 : new List<CourseDelegate>();
 
             var courseAdminFields = currentCustomisationId.HasValue
-                ? courseAdminFieldsService.GetCustomPromptsForCourse(currentCustomisationId.Value).AdminFields
-                : new List<CustomPrompt>();
+                ? courseAdminFieldsService.GetCourseAdminFieldsForCourse(currentCustomisationId.Value).AdminFields
+                : new List<CourseAdminField>();
 
             return new CourseDelegatesData(currentCustomisationId, orderedCourses, courseDelegates, courseAdminFields);
         }

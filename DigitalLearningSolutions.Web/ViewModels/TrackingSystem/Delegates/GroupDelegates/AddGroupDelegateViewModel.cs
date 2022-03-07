@@ -14,7 +14,7 @@
         public AddGroupDelegateViewModel(
             List<DelegateUserCard> delegateUserCards,
             List<(int id, string name)> jobGroups,
-            List<CustomPrompt> customPrompts,
+            List<CentreRegistrationPrompt> customPrompts,
             int page,
             int groupId,
             string groupName,
@@ -36,7 +36,7 @@
             Delegates = paginatedItems.Select(
                 delegateUser =>
                 {
-                    var customFields = CentreCustomPromptHelper.GetCustomFieldViewModels(delegateUser, customPrompts);
+                    var customFields = PromptsService.GetDelegateRegistrationPrompts(delegateUser, customPrompts);
                     return new SearchableDelegateViewModel(delegateUser, customFields, promptsWithOptions, page);
                 }
             );

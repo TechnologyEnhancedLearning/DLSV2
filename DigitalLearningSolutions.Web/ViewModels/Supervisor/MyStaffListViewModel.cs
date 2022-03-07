@@ -15,7 +15,7 @@
         public MyStaffListViewModel(
             AdminUser adminUser,
             IEnumerable<SupervisorDelegateDetailViewModel> supervisorDelegateDetailViewModels,
-            CentreCustomPrompts centreCustomPrompts,
+            CentreRegistrationPrompts centreRegistrationPrompts,
             string? searchString,
             string sortBy,
             string sortDirection,
@@ -23,7 +23,7 @@
         ) : base(searchString, page, false, sortBy, sortDirection, searchLabel: "Search administrators")
         {
             AdminUser = adminUser;
-            CentreCustomPrompts = centreCustomPrompts;
+            CentreRegistrationPrompts = centreRegistrationPrompts;
             var sortedItems = GenericSortingHelper.SortAllItems(
                 supervisorDelegateDetailViewModels.AsQueryable(),
                 sortBy,
@@ -36,7 +36,7 @@
             SuperviseDelegateDetailViewModels = paginatedItems;
         }
 
-        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreCustomPrompts(), null, string.Empty, string.Empty, 1)
+        public MyStaffListViewModel() : this(null, Enumerable.Empty<SupervisorDelegateDetailViewModel>(), new CentreRegistrationPrompts(), null, string.Empty, string.Empty, 1)
         {
 
         }
@@ -48,7 +48,8 @@
             DefaultSortByOptions.Name,
         };
 
-        public CentreCustomPrompts CentreCustomPrompts { get; set; }
+        public CentreRegistrationPrompts CentreRegistrationPrompts { get; set; }
+
         public bool IsNominatedSupervisor
         {
             get
