@@ -113,9 +113,9 @@ function filterElements(
 }
 
 function appendNewFilterToExistingFilterString(filterSubmit: HTMLInputElement): string {
-  const filterValue = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
-  addNewFilterValueToExistingFilterString(filterValue);
-  return filterValue;
+  const newFilterToAdd = getSelectedFilterFromDropdownAndResetDropdown(filterSubmit);
+  addNewFilterValueToExistingFilterString(newFilterToAdd);
+  return newFilterToAdd;
 }
 
 function getSelectedFilterFromDropdownAndResetDropdown(

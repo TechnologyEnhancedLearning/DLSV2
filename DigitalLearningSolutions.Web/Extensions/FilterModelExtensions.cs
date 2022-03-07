@@ -12,7 +12,7 @@
         {
             return filterViewModels.Select(
                 f => f.FilterOptions.Select(
-                    fo => new AppliedFilterViewModel(fo.DisplayText, f.FilterName, fo.NewFilterToAdd)
+                    fo => new AppliedFilterViewModel(fo.DisplayText, f.FilterName, fo.FilterValue)
                 )
             ).SelectMany(af => af).Distinct();
         }

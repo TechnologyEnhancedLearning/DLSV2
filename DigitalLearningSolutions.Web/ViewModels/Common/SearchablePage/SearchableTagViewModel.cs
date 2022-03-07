@@ -7,7 +7,7 @@
         public SearchableTagViewModel(FilterOptionViewModel filterOption, bool hidden = false)
             : base(
                 filterOption.DisplayText,
-                filterOption.NewFilterToAdd,
+                filterOption.FilterValue,
                 filterOption.TagStatus
             )
         {

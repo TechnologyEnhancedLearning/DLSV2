@@ -54,7 +54,7 @@
                 newFilterToAdd,
                 Request,
                 CourseDelegatesFilterCookieName,
-                CourseDelegateAccountStatusFilterOptions.Active.NewFilterToAdd
+                CourseDelegateAccountStatusFilterOptions.Active.FilterValue
             );
 
             var centreId = User.GetCentreId();

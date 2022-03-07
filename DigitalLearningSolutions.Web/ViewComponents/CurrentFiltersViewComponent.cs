@@ -49,7 +49,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.First(filterOption => filterOption.NewFilterToAdd == currentFilter).DisplayText;
+            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).DisplayText;
         }
 
         private static string GetFilterValue(
@@ -57,7 +57,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.First(filterOption => filterOption.NewFilterToAdd == currentFilter).NewFilterToAdd;
+            return filterOptions.First(filterOption => filterOption.FilterValue == currentFilter).FilterValue;
         }
 
         private static bool FilterOptionsContainsFilter(
@@ -65,7 +65,7 @@
             IEnumerable<FilterOptionViewModel> filterOptions
         )
         {
-            return filterOptions.Any(filterOption => filterOption.NewFilterToAdd == currentFilter);
+            return filterOptions.Any(filterOption => filterOption.FilterValue == currentFilter);
         }
     }
 }

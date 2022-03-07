@@ -23,12 +23,12 @@
     @Html.DropDownListFor(m => m.ResponseStatus,
       Model.Filters.First().FilterOptions
         .Where(f => parent.SelfAssessment.IsSupervisorResultsReviewed
-                || f.NewFilterToAdd == SelfAssessmentCompetencyFilter.NotYetResponded.ToString()
-                || f.NewFilterToAdd == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
+                || f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString()
+                || f.FilterValue == SelfAssessmentCompetencyFilter.SelfAssessed.ToString())
         .Select(f => new SelectListItem(
           text: f.DisplayText,
-          value: f.NewFilterToAdd.ToString(),
-          selected: f.NewFilterToAdd == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
+          value: f.FilterValue.ToString(),
+          selected: f.FilterValue == SelfAssessmentCompetencyFilter.NotYetResponded.ToString())
       ),
       new
       {

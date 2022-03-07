@@ -53,7 +53,7 @@
                 newFilterToAdd,
                 Request,
                 DelegateFilterCookieName,
-                DelegateActiveStatusFilterOptions.IsActive.NewFilterToAdd
+                DelegateActiveStatusFilterOptions.IsActive.FilterValue
             );
 
             var centreId = User.GetCentreId();

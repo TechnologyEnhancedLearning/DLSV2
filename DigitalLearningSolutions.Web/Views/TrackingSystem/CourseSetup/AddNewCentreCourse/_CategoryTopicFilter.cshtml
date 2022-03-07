@@ -26,8 +26,8 @@
           @(Model.FilterName == "Category" ? "All categories" : "All topics")
         </option>
         @foreach (var filterOption in Model.FilterOptions) {
-          <option value="@filterOption.NewFilterToAdd"
-                  selected="@(filterOption.NewFilterToAdd == Model.CategoryFilterString || filterOption.NewFilterToAdd == Model.TopicFilterString)">
+          <option value="@filterOption.FilterValue"
+                  selected="@(filterOption.FilterValue == Model.CategoryFilterString || filterOption.FilterValue == Model.TopicFilterString)">
             @filterOption.DisplayText
           </option>
         }

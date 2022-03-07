@@ -32,7 +32,7 @@
                     aria-label="@filter.FilterName filter">
               <option value="" disabled selected="selected">Select @filter.FilterName.ToLower()</option>
               @foreach (var filterOption in filter.FilterOptions) {
-                <option value="@filterOption.NewFilterToAdd">@filterOption.DisplayText</option>
+                <option value="@filterOption.FilterValue">@filterOption.DisplayText</option>
               }
             </select>
             <button class="nhsuk-search__submit filter-submit filter-submit__dropdown" type="submit" id="@filter.FilterProperty-submit">

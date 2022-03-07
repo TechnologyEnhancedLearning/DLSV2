@@ -183,20 +183,20 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
+            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
             A.CallTo(() => httpRequest.Query.ContainsKey("existingFilterString")).Returns(true);
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
                     .MustHaveHappened();
                 result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                    .Be(newFilterToAdd);
             }
         }
 
@@ -205,18 +205,18 @@
         {
             // Given
             const string existingFilterString = "CLEAR";
-            const string newFilterValue = "Status|HideInLearnerPortal|true";
+            const string newFilterToAdd = "Status|HideInLearnerPortal|true";
 
             // When
-            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = controllerWithCookies.Index(existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
             {
-                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterValue, A<CookieOptions>._))
+                A.CallTo(() => httpResponse.Cookies.Append("CourseFilter", newFilterToAdd, A<CookieOptions>._))
                     .MustHaveHappened();
                 result.As<ViewResult>().Model.As<CourseSetupViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                    .Be(newFilterToAdd);
             }
         }
 

@@ -170,10 +170,10 @@
         {
             // Given
             const string? existingFilterString = null;
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            const string newFilterToAdd = "PasswordStatus|IsPasswordSet|true";
 
             // When
-            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
@@ -181,13 +181,13 @@
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
                             AddGroupDelegateFilterCookieName,
-                            newFilterValue,
+                            newFilterToAdd,
                             A<CookieOptions>._
                         )
                     )
                     .MustHaveHappened();
                 result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                    .Be(newFilterToAdd);
             }
         }
 
@@ -196,10 +196,10 @@
         {
             // Given
             const string existingFilterString = "CLEAR";
-            const string newFilterValue = "PasswordStatus|IsPasswordSet|true";
+            const string newFilterToAdd = "PasswordStatus|IsPasswordSet|true";
 
             // When
-            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterValue);
+            var result = groupDelegatesController.SelectDelegate(1, existingFilterString: existingFilterString, newFilterToAdd: newFilterToAdd);
 
             // Then
             using (new AssertionScope())
@@ -207,13 +207,13 @@
                 A.CallTo(
                         () => httpResponse.Cookies.Append(
                             AddGroupDelegateFilterCookieName,
-                            newFilterValue,
+                            newFilterToAdd,
                             A<CookieOptions>._
                         )
                     )
                     .MustHaveHappened();
                 result.As<ViewResult>().Model.As<AddGroupDelegateViewModel>().ExistingFilterString.Should()
-                    .Be(newFilterValue);
+                    .Be(newFilterToAdd);
             }
         }
 

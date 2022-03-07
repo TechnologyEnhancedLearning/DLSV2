@@ -28,17 +28,17 @@
             using (new AssertionScope())
             {
                 result.Count.Should().Be(8);
-                result.Single(f => f.DisplayText == "Prompt 1").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 1").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|1");
-                result.Single(f => f.DisplayText == "Prompt 2").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 2").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|2");
-                result.Single(f => f.DisplayText == "Prompt 3").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 3").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|3");
-                result.Single(f => f.DisplayText == "Prompt 4").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 4").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|5");
-                result.Single(f => f.DisplayText == "Prompt 5").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 5").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|6");
-                result.Single(f => f.DisplayText == "Prompt 6").NewFilterToAdd.Should()
+                result.Single(f => f.DisplayText == "Prompt 6").FilterValue.Should()
                     .Be("LinkedToField|LinkedToField|7");
             }
         }
@@ -57,7 +57,7 @@
             {
                 result.Count.Should().Be(2);
                 result.First().DisplayText.Should().Be("Test Admin");
-                result.First().NewFilterToAdd.Should().Be("AddedByAdminId|AddedByAdminId|1");
+                result.First().FilterValue.Should().Be("AddedByAdminId|AddedByAdminId|1");
             }
         }
     }
