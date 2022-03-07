@@ -45,9 +45,7 @@ function setUpFilterDropdowns() {
       e.preventDefault();
       const newFilter = getCategoryAndTopicFilterByAndUpdateHiddenInputs();
 
-      if (newFilter != null) {
-        updateFilterBy(newFilter);
-      }
+      updateFilterBy(newFilter);
     });
   });
 }
@@ -113,22 +111,20 @@ function getCategoryAndTopicFilterByAndUpdateHiddenInputs() {
   const topicFilterElement = <HTMLSelectElement>document.getElementById('CourseTopic');
   const topicFilterValue = topicFilterElement.value;
 
+  updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
+  updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
+
   if (isNullOrEmpty(categoryFilterValue) && isNullOrEmpty(topicFilterValue)) {
-    return null;
+    return '';
   }
 
   if (isNullOrEmpty(categoryFilterValue)) {
-    updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
     return topicFilterValue;
   }
 
   if (isNullOrEmpty(topicFilterValue)) {
-    updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
     return categoryFilterValue;
   }
-
-  updateFilterByHiddenInput(categoryHiddenInputName, categoryFilterValue);
-  updateFilterByHiddenInput(topicHiddenInputName, topicFilterValue);
 
   return topicFilterValue + filterSeparator + categoryFilterValue;
 }
