@@ -65,14 +65,13 @@
 
         private DlsRole GetSupervisorDlsRole(SupervisorDelegateDetail supervisor)
         {
-            var loggedInUserId = User.GetAdminId();
-            var loggedInAdminUser = userDataService.GetAdminUserById(loggedInUserId!.GetValueOrDefault());
-            bool activeAdminRecordAtSameCenter = loggedInAdminUser != null
-                && loggedInAdminUser.CentreId == supervisor.CentreId
-                && loggedInAdminUser.EmailAddress == supervisor.SupervisorEmail
-                && loggedInAdminUser.Active;
-            return activeAdminRecordAtSameCenter && loggedInAdminUser.IsSupervisor ? DlsRole.Supervisor
-                : activeAdminRecordAtSameCenter && !loggedInAdminUser.IsSupervisor ? DlsRole.NominatedSupervisor
+            var adminUser = userDataService.GetAdminUserByEmailAddress(supervisor.CandidateEmail);
+            bool activeAdminRecordAtSameCenter = adminUser != null
+                && adminUser.CentreId == supervisor.CentreId
+                && adminUser.EmailAddress == supervisor.CandidateEmail
+                && adminUser.Active;
+            return activeAdminRecordAtSameCenter && adminUser.IsSupervisor ? DlsRole.Supervisor
+                : activeAdminRecordAtSameCenter && !adminUser.IsSupervisor ? DlsRole.NominatedSupervisor
                 : DlsRole.Learner;
         }
 

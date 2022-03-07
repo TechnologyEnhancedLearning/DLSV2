@@ -6,6 +6,7 @@
     public class SupervisorDelegateDetail : SupervisorDelegate
     {
         public string CandidateNumber { get; set; }
+        public string CandidateEmail { get; set; }
         public string? JobGroupName { get; set; }
         public string? CustomPrompt1 { get; set; }
         public string? Answer1 { get; set; }
