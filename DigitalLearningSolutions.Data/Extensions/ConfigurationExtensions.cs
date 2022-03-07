@@ -94,31 +94,6 @@
             return config[$"{LearningHubSsoSectionKey}:{LearningHubSsoSecretKey}"];
         }
 
-        public static string GetEvaluateUrl(this IConfiguration config, int progressId, bool fromLearningPortal)
-        {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/finalise?ProgressID={progressId}";
-        }
-
-        public static string GetTrackingUrl(this IConfiguration config)
-        {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/tracker";
-        }
-
-        public static string GetScormPlayerUrl(this IConfiguration config)
-        {
-            return $"{config[CurrentSystemBaseUrlName]}/scoplayer/sco";
-        }
-
-        public static string GetDownloadSummaryUrl(this IConfiguration config, int progressId)
-        {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/summary?ProgressID={progressId}";
-        }
-
-        public static string GetConsolidationPathUrl(this IConfiguration config, string consolidationPath)
-        {
-            return $"{config[CurrentSystemBaseUrlName]}/tracking/dlconsolidation?client={consolidationPath}";
-        }
-
         public static string GetMapsApiKey(this IConfiguration config)
         {
             return config[MapsApiKey];

@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.SectionContent;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class SectionContentViewModel
@@ -49,7 +49,7 @@
             DiagnosticCompletionStatus = GetDiagnosticCompletionStatus(sectionContent);
             ConsolidationExercisePath = sectionContent.ConsolidationPath == null
                 ? null
-                : config.GetConsolidationPathUrl(sectionContent.ConsolidationPath);
+                : OldSystemEndpointHelper.GetConsolidationPathUrl(config, sectionContent.ConsolidationPath);
             ShowConsolidation = ConsolidationExercisePath != null;
             ConsolidationExerciseLabel = sectionContent.CourseSettings.ConsolidationExercise ?? "Consolidation Exercise";
 

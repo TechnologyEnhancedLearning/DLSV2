@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
     using System;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CourseCompletion;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
@@ -62,8 +61,8 @@
                 courseCompletion.TutorialsCompletionThreshold
             );
 
-            DownloadSummaryUrl = config.GetDownloadSummaryUrl(progressId);
-            FinaliseUrl = config.GetEvaluateUrl(progressId, false);
+            DownloadSummaryUrl = OldSystemEndpointHelper.GetDownloadSummaryUrl(config, progressId);
+            FinaliseUrl = OldSystemEndpointHelper.GetEvaluateUrl(config, progressId);
         }
 
         private string? GetEvaluationOrCertificateText(DateTime? completed, DateTime? evaluated, bool isAssessed)

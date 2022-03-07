@@ -1,7 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
     using System.Collections.Generic;
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.DiagnosticAssessment;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
@@ -37,7 +36,7 @@
 
             ContentSource = ContentViewerHelper.IsScormPath(diagnosticContent.DiagnosticAssessmentPath)
                 ? ContentViewerHelper.GetScormAssessmentSource(
-                    config.GetScormPlayerUrl(),
+                    OldSystemEndpointHelper.GetScormPlayerUrl(config),
                     centreId,
                     customisationId,
                     candidateId,
@@ -54,7 +53,7 @@
                     diagnosticContent.Version,
                     progressId,
                     type,
-                    config.GetTrackingUrl(),
+                    OldSystemEndpointHelper.GetTrackingUrl(config),
                     tutorials,
                     diagnosticContent.PassThreshold);
         }

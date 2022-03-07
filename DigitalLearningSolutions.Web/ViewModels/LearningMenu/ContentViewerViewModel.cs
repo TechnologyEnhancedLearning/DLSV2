@@ -1,6 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningMenu
 {
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.TutorialContent;
     using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
@@ -55,12 +54,12 @@
                    $"&Version={tutorialContent.Version}" +
                    $"&ProgressID={ProgressId}" +
                    "&type=learn" +
-                   $"&TrackURL={config.GetTrackingUrl()}";
+                   $"&TrackURL={OldSystemEndpointHelper.GetTrackingUrl(config)}";
         }
 
         private string GetScormSource(IConfiguration config, TutorialContent tutorialContent)
         {
-            return $"{config.GetScormPlayerUrl()}" +
+            return $"{OldSystemEndpointHelper.GetScormPlayerUrl(config)}" +
                    $"?CentreID={CentreId}" +
                    $"&CustomisationID={CustomisationId}" +
                    $"&TutorialID={TutorialId}" +

@@ -1,14 +1,14 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 {
-    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models;
+    using DigitalLearningSolutions.Web.Helpers;
     using Microsoft.Extensions.Configuration;
 
     public class CompletedCourseViewModel : CompletedLearningItemViewModel
     {
         public CompletedCourseViewModel(CompletedLearningItem course, IConfiguration config) : base(course)
         {
-            EvaluateUrl = config.GetEvaluateUrl(course.ProgressID, true);
+            EvaluateUrl = OldSystemEndpointHelper.GetEvaluateUrl(config, course.ProgressID);
         }
 
         public string EvaluateUrl { get; }
