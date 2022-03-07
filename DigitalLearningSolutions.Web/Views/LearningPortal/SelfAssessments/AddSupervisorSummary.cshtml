@@ -1,5 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.Helpers
-@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @model AddSupervisorSummaryViewModel
 @{
   Layout = "SelfAssessments/_Layout";
@@ -28,7 +27,7 @@
       Supervisor
     </dt>
     <dd class="nhsuk-summary-list__value">
-      @DisplayStringHelper.GetPotentiallyInactiveAdminName(Model.Supervisor.Forename, Model.Supervisor.Surname, Model.Supervisor.Active) (@Model.Supervisor.Email)
+      @Model.Supervisor.Forename @Model.Supervisor.Surname (@Model.Supervisor.Email)
     </dd>
     <dd class="nhsuk-summary-list__actions">
       <a asp-action="AddNewSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
