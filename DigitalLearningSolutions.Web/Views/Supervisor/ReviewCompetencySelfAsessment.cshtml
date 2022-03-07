@@ -142,7 +142,7 @@
         <fieldset class="nhsuk-fieldset">
           <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
             <h2 class="nhsuk-fieldset__heading">
-              Verify Self Assessment of @Model.Competency.Vocabulary
+              Confirm Self Assessment of @Model.Competency.Vocabulary
             </h2>
           </legend>
           <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />
@@ -155,7 +155,7 @@
               <div class="nhsuk-radios__item">
                 <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" required="required" type="radio" value="true">
                 <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
-                  Verify self-assessment response
+                  Confirm self-assessment response
                 </label>
                 <div class="nhsuk-hint nhsuk-summary-list" id="cb-verify-item-hint">
                   I agree with @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName's self-assessment against this @Model.Competency.Vocabulary.ToLower()
@@ -207,7 +207,7 @@ else if (ViewContext.RouteData.Values["viewMode"].ToString() == "View" && Model.
 
       <div class="nhsuk-summary-list__row">
       <dt class="nhsuk-summary-list__key">
-        Verified
+        Confirmed
       </dt>
       <dd class="nhsuk-summary-list__value">
         @if (Model.SignedOff)
