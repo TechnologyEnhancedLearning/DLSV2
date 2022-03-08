@@ -24,9 +24,7 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser?.HasBeenPromptedForPrn == true
-                ? delegateUser.ProfessionalRegistrationNumber ?? "Not professionally registered"
-                : "Not yet provided";
+            ProfessionalRegistrationNumber = delegateUser?.GetPrnDisplayString();
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)

@@ -20,10 +20,7 @@
             DelegateInfo = new DelegateInfoViewModel(delegateUser, customFields);
             DelegateCourses = delegateCourses.Select(x => new DelegateCourseInfoViewModel(x)).ToList();
             Tags = FilterableTagHelper.GetCurrentTagsForDelegateUser(delegateUser);
-
-            ProfessionalRegistrationNumber = delegateUser.HasBeenPromptedForPrn
-                ? delegateUser.ProfessionalRegistrationNumber ?? "Not professionally registered"
-                : "Not yet provided";
+            ProfessionalRegistrationNumber = delegateUser.GetPrnDisplayString();
         }
 
         public DelegateInfoViewModel DelegateInfo { get; set; }
