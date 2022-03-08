@@ -1,21 +1,17 @@
-﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
-@{
-  var selfAssessment = (CurrentSelfAssessment)ViewData["selfAssessment"];
-  var questions = ((IGrouping<string, Competency>)ViewData["competencyGroup"])
-    .SelectMany(c => c.AssessmentQuestions)
-    .Where(q => q.Required);
-  var selfAssessed = questions.Count(q => q.ResultId.HasValue);
-  var verified = questions.Count(q => q.Verified.HasValue);
+﻿@{
+  var isSupervisorResultsReviewed = (bool)ViewData["isSupervisorResultsReviewed"];
+  var questionsCount = (int)ViewData["questionsCount"];
+  var selfAssessedCount = (int)ViewData["selfAssessedCount"];
+  var verifiedCount = (int)ViewData["verifiedCount"];
 }
 
 <span class="score">
-  Self assessed: @selfAssessed / @questions.Count()
+  Self assessed: @selfAssessedCount / @questionsCount
 </span>
-<br />
-@if (selfAssessment.IsSupervisorResultsReviewed)
+@if (isSupervisorResultsReviewed)
 {
   <span class="score">
-    Verified: @verified / @questions.Count()
+    Confirmed: @verifiedCount / @questionsCount
   </span>
-  <br />
 }
+<br />
