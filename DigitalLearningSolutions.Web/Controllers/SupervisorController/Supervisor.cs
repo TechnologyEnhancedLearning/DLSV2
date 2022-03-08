@@ -47,7 +47,6 @@
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId);
             var supervisorDelegateDetailViewModels = supervisorDelegateDetails.Select( supervisor =>
             {
-                supervisor.DlsRole = GetSupervisorDlsRole(supervisor);
                 return new SupervisorDelegateDetailViewModel(supervisor, page);
             });
             sortBy ??= DefaultSortByOptions.Name.PropertyName;
@@ -61,18 +60,6 @@
             );
             ModelState.ClearErrorsForAllFieldsExcept("DelegateEmail");
             return View("MyStaffList", model);
-        }
-
-        private DlsRole GetSupervisorDlsRole(SupervisorDelegateDetail supervisor)
-        {
-            var adminUser = userDataService.GetAdminUserByEmailAddress(supervisor.CandidateEmail);
-            bool activeAdminRecordAtSameCenter = adminUser != null
-                && adminUser.CentreId == supervisor.CentreId
-                && adminUser.EmailAddress == supervisor.CandidateEmail
-                && adminUser.Active;
-            return activeAdminRecordAtSameCenter && adminUser.IsSupervisor ? DlsRole.Supervisor
-                : activeAdminRecordAtSameCenter && !adminUser.IsSupervisor ? DlsRole.NominatedSupervisor
-                : DlsRole.Learner;
         }
 
         [HttpPost]
@@ -199,7 +186,6 @@
             var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId)
                 .Select(supervisor =>
                 {
-                    supervisor.DlsRole = GetSupervisorDlsRole(supervisor);
                     return supervisor;
                 }
             );

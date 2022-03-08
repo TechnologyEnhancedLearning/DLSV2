@@ -4,7 +4,7 @@ namespace DigitalLearningSolutions.Web.Extensions
 {
     public static class EnumExtensions
     {
-        public static string GetDescription(this DlsRole? role)
+        public static string GetDescription(this DlsRole role)
         {
             switch (role)
             {

@@ -60,18 +60,20 @@
         au.Forename + ' ' + au.Surname AS SupervisorName, (SELECT COUNT(cas.ID)
         FROM   CandidateAssessmentSupervisors AS cas INNER JOIN
         CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
-        WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount ";
+        WHERE (cas.SupervisorDelegateId = sd.ID) AND (ca.RemovedDate IS NULL)) AS CandidateAssessmentCount,
+        CAST(COALESCE (au2.NominatedSupervisor, 0) AS Bit) AS DelegateIsNominatedSupervisor, CAST(COALESCE (au2.Supervisor, 0) AS Bit) AS DelegateIsSupervisor ";
         private const string supervisorDelegateDetailTables = @"SupervisorDelegates AS sd LEFT OUTER JOIN
-             AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
-             CustomPrompts AS cp6 RIGHT OUTER JOIN
-             CustomPrompts AS cp1 RIGHT OUTER JOIN
-             Centres AS ct ON cp1.CustomPromptID = ct.CustomField1PromptID LEFT OUTER JOIN
-             CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID LEFT OUTER JOIN
-             CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID ON cp6.CustomPromptID = ct.CustomField6PromptID FULL OUTER JOIN
-             JobGroups AS jg RIGHT OUTER JOIN
-             Candidates AS c ON jg.JobGroupID = c.JobGroupID ON ct.CentreID = c.CentreID ON sd.CandidateID = c.CandidateID ";
+        AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID FULL OUTER JOIN
+        CustomPrompts AS cp6 RIGHT OUTER JOIN
+        CustomPrompts AS cp1 RIGHT OUTER JOIN
+        Centres AS ct ON cp1.CustomPromptID = ct.CustomField1PromptID LEFT OUTER JOIN
+        CustomPrompts AS cp2 ON ct.CustomField2PromptID = cp2.CustomPromptID LEFT OUTER JOIN
+        CustomPrompts AS cp3 ON ct.CustomField3PromptID = cp3.CustomPromptID LEFT OUTER JOIN
+        CustomPrompts AS cp4 ON ct.CustomField4PromptID = cp4.CustomPromptID LEFT OUTER JOIN
+        CustomPrompts AS cp5 ON ct.CustomField5PromptID = cp5.CustomPromptID ON cp6.CustomPromptID = ct.CustomField6PromptID FULL OUTER JOIN
+        JobGroups AS jg RIGHT OUTER JOIN
+        Candidates AS c ON jg.JobGroupID = c.JobGroupID ON ct.CentreID = c.CentreID ON sd.CandidateID = c.CandidateID FULL OUTER JOIN
+        AdminUsers AS au2 ON au2.CentreID = c.CentreID AND au2.Email = c.EmailAddress AND au2.Active = 1 AND au2.Approved = 1 AND au2.Email IS NOT NULL";
         private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
         private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
 FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN

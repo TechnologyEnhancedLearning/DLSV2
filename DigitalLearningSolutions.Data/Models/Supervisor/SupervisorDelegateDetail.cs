@@ -24,6 +24,19 @@
         public string? SupervisorName { get; set; }
         public int CandidateAssessmentCount { get; set; }
         public Guid? InviteHash { get; set; }
-        public DlsRole? DlsRole { get; set; }
+        public bool DelegateIsNominatedSupervisor { get; set; }
+        public bool DelegateIsSupervisor { get; set; }
+        public DlsRole DlsRole
+        {
+            get
+            {
+                if (DelegateIsSupervisor)
+                    return DlsRole.Supervisor;
+                else if (DelegateIsNominatedSupervisor)
+                    return DlsRole.NominatedSupervisor;
+                else
+                    return DlsRole.Learner;
+            }
+        }
     }
 }

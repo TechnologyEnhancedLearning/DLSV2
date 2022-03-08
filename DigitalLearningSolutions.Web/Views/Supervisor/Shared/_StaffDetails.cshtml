@@ -94,15 +94,12 @@
     </dd>
     </div>
   }
-  @if (Model.DlsRole != null)
-  {
-    <div class="nhsuk-summary-list__row">
-    <dt class="nhsuk-summary-list__key">
-      DLS Role
-    </dt>
-    <dd class="nhsuk-summary-list__value">
-      @Model.DlsRole.GetDescription()
-    </dd>
-    </div>
-  }
+  <div class="nhsuk-summary-list__row">
+  <dt class="nhsuk-summary-list__key">
+    DLS Role
+  </dt>
+  <dd class="nhsuk-summary-list__value">
+    @Model.DlsRole.GetDescription()
+  </dd>
+  </div>
 </dl>
