@@ -11,7 +11,7 @@
         public DelegateInfoViewModel(DelegateUserCard delegateUser, IEnumerable<DelegateRegistrationPrompt> delegateRegistrationPrompts)
         {
             Id = delegateUser.Id;
-            TitleName = delegateUser.SearchableName;
+            TitleName = DisplayStringHelper.GetNameWithEmailForDisplay(delegateUser.SearchableName, delegateUser.EmailAddress);
             Name = DisplayStringHelper.GetNonSortableFullNameForDisplayOnly(
                 delegateUser.FirstName,
                 delegateUser.LastName
