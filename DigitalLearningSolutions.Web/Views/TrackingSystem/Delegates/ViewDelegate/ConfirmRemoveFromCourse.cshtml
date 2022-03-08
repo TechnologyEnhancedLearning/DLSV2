@@ -5,7 +5,7 @@
 
 @{
   var errorHasOccurred = !ViewData.ModelState.IsValid;
-  ViewData["Title"] = "Remove enrolment";
+  ViewData["Title"] = errorHasOccurred ? "Error: Remove enrolment" : "Remove enrolment";
   var cancelLinkRouteData = new Dictionary<string, string> { { "delegateId", Model.DelegateId.ToString() } };
 }
 
