@@ -4,6 +4,7 @@
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
+    using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
 
@@ -24,7 +25,12 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser?.PrnDisplayString();
+            ProfessionalRegistrationNumber = delegateUser == null
+                ? null
+                : DisplayStringHelper.GetPrnDisplayString(
+                    delegateUser.HasBeenPromptedForPrn,
+                    delegateUser.ProfessionalRegistrationNumber
+                );
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
