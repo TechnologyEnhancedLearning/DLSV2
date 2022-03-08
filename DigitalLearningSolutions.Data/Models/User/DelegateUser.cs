@@ -30,6 +30,13 @@
 
         public override string[] SearchableContent => new[] { SearchableName, CandidateNumber };
 
+        public string PrnDisplayString()
+        {
+            return HasBeenPromptedForPrn
+                ? ProfessionalRegistrationNumber ?? "Not professionally registered"
+                : "Not yet provided";
+        }
+
         public override UserReference ToUserReference()
         {
             return new UserReference(Id, UserType.DelegateUser);
@@ -47,13 +54,6 @@
                 Answer5,
                 Answer6
             );
-        }
-
-        public string GetPrnDisplayString()
-        {
-            return ProfessionalRegistrationNumber = HasBeenPromptedForPrn
-                ? ProfessionalRegistrationNumber ?? "Not professionally registered"
-                : "Not yet provided";
         }
     }
 }

@@ -24,7 +24,7 @@
             DelegateNumber = delegateUser?.CandidateNumber;
             AliasId = delegateUser?.AliasId;
             JobGroup = delegateUser?.JobGroupName;
-            ProfessionalRegistrationNumber = delegateUser?.GetPrnDisplayString();
+            ProfessionalRegistrationNumber = delegateUser?.PrnDisplayString();
 
             DelegateRegistrationPrompts = new List<DelegateRegistrationPrompt>();
             if (customPrompts != null)
