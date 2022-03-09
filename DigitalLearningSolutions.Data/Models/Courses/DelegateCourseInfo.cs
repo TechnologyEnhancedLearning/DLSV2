@@ -29,7 +29,7 @@
             int? enrolledByAdminId,
             string? enrolledByForename,
             string? enrolledBySurname,
-            bool enrolledByAdminActive,
+            bool? enrolledByAdminActive,
             int loginCount,
             int learningTime,
             int? diagnosticScore,

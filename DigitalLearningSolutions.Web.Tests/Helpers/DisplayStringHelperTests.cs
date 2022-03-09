@@ -183,7 +183,7 @@
         }
 
         [Test]
-        public void GetNameWithEmailForDisplay_returns_correctly_formatted_name_for_active_admin()
+        public void GetPotentiallyInactiveAdminName_returns_correctly_formatted_name_for_active_admin()
         {
             // Given
             const string firstName = "FirstName";
@@ -198,7 +198,7 @@
         }
 
         [Test]
-        public void GetNameWithEmailForDisplay_returns_correctly_formatted_name_for_inactive_admin()
+        public void GetPotentiallyInactiveAdminName_returns_correctly_formatted_name_for_inactive_admin()
         {
             // Given
             const string firstName = "FirstName";
@@ -213,7 +213,7 @@
         }
 
         [Test]
-        public void GetNameWithEmailForDisplay_returns_null_for_null_input()
+        public void GetPotentiallyInactiveAdminName_returns_null_for_null_input()
         {
             // When
             var result = DisplayStringHelper.GetPotentiallyInactiveAdminName(null, null, null);
