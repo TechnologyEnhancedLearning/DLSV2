@@ -126,7 +126,10 @@
     <h2>Overall Progress</h2>
     <p class="nhsuk-body-l">
       <span class="score">Self assessed: @selfAssessedTotal / @questionsTotal</span>
-      <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
+      @if (Model.SelfAssessment.IsSupervisorResultsReviewed)
+      {
+        <span class="score">Confirmed: @verifiedTotal / @questionsTotal</span>
+      }
     </p>
     <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs" />
